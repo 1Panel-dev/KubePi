@@ -4,8 +4,10 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/KubeOperator/ekko/pkg/config"
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -19,17 +21,48 @@ var (
 func KubernetesApiProxy(ctx *context.Context) {
 	c := config.GetConfig()
 	proxyPath := ctx.Params().Get("p")
-	u, err := url.Parse(c.KubeApiServerConfig.ApiServer)
+	var urlStr string
+	if c.KubeConfig != "" {
+		cs, err := clientcmd.BuildConfigFromFlags("", c.KubeConfig)
+		if err != nil {
+			ctx.StatusCode(http.StatusInternalServerError)
+			_, _ = ctx.JSON(err.Error())
+			return
+		}
+		urlStr = cs.Host
+
+	} else {
+		urlStr = c.KubeApiServerConfig.ApiServer
+	}
+	u, err := url.Parse(urlStr)
 	if err != nil {
-		_, _ = ctx.JSON(iris.StatusInternalServerError)
+		ctx.StatusCode(http.StatusInternalServerError)
+		_, _ = ctx.JSON(err.Error())
+		return
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
-	proxy.Transport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	if c.KubeConfig != "" {
+		cs, err := clientcmd.BuildConfigFromFlags("", c.KubeConfig)
+		if err != nil {
+			ctx.StatusCode(http.StatusInternalServerError)
+			_, _ = ctx.JSON(err.Error())
+			return
+		}
+		ts, err := rest.TransportFor(cs)
+		if err != nil {
+			ctx.StatusCode(http.StatusInternalServerError)
+			_, _ = ctx.JSON(err.Error())
+			return
+		}
+		proxy.Transport = ts
+	} else {
+		proxy.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		token := fmt.Sprintf("%s %s", keyPrefix, c.Token)
+		ctx.Request().Header.Add(AuthorizationHeader, token)
 	}
-	token := fmt.Sprintf("%s %s", keyPrefix, c.Token)
-	fmt.Println(token)
-	ctx.Request().Header.Add(AuthorizationHeader, token)
 	ctx.Request().URL.Path = proxyPath
+	logrus.Infof("[%s] %s", ctx.Request().Method, ctx.Request().URL.String())
 	proxy.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
 }
