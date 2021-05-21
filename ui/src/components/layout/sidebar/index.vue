@@ -23,19 +23,16 @@
 import {mapGetters} from "vuex"
 import Logo from "@/components/layout/sidebar/Logo"
 import SidebarItem from "@/components/layout/sidebar/SidebarItem"
-import store from "@/store"
 
 export default {
   name: "Sidebar",
   components: { SidebarItem, Logo },
   data () {
-    return {
-      permission_routes:store.getters.permission_routes
-    }
+    return {}
   },
   computed: {
     ...mapGetters([
-      // 'permission_routes',
+      "permission_routes",
       "sidebar"
     ]),
     activeMenu () {
