@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 .idea
+dist
 *.exe
 *.exe~
 *.dll
