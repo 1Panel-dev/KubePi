@@ -1,0 +1,184 @@
+@import "~@/assets/font/Roboto/index.css";
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, Helvetica, PingFang SC, Arial, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}
+
+:focus {
+  outline: none;
+}
+
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+// 滚动条整体部分
+::-webkit-scrollbar {
+  width: 6px; // 纵向滚动条宽度
+  height: 6px; // 横向滚动条高度
+}
+
+// 滑块
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #4A4B4D;
+}
+
+// icon图标属性
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+// 轨道
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+.input-help {
+  font-size: 12px;
+  word-break: break-all;
+  color: #4A4B4D;
+  transform: scale(0.9);
+  transform-origin: left;
+  width: 110%;
+  display: inline-block;
+}
+
+.input-help-blod {
+  font-size: 6px;
+  font-weight: bold;
+  word-break:break-all;
+  color: #4A4B4D;
+}
+
+.input-error {
+  font-size: 4px;
+  word-break:break-all;
+  color:red;
+}
+
+.el-message__content {
+  padding: 0;
+  font-size: 14px;
+  line-height: 2;
+  word-break:break-all;
+}
+
+.el-step__title.is-finish {
+  color: #717379;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.el-step__description.is-finish {
+  color: #606266;
+}
+
+.el-step__title.is-success {
+  font-weight: bold;
+  color: #FA5D50;
+}
+
+.el-step__head.is-success {
+  color: #FA5D50;
+  border-color: #FA5D50;
+}
+
+.myTable {
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.myTable td {
+  width: 50%;
+  padding: 8px;
+  border: 1px solid #DFE6EC;
+  color: #606266;
+  height: 23px;
+}
+.myTable th {
+  border: 1px solid #DFE6EC;
+  color: #909399;
+  height: 30px;
+}
+
+.myTable tr:hover{
+  background-color: #f3f3f3;
+}
+
+.el-button--mini.is-round {
+  padding: 4px 10px;
+}
+
+.ko-color {
+  color: #FA5D50;
+}
+
+.el-table thead {
+  color: #57595f;
+  font-weight: bold;
+}
+
+.ko-dialog {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 25px;
+  .el-dialog__header {
+    padding: 0;
+  }
+  .el-dialog__body {
+    padding: 0;
+  }
+  .el-link.el-link--default {
+    color: unset;
+  }
+  .iconfont {
+    font-size: 14px;
+  }
+  .iconStarStar:before {
+    color: #FDBF16;
+  }
+  .aboutBackground {
+    background: url("~@/assets/KubeOperator-about-background.png") no-repeat;
+    background-size: cover;
+  }
+  .el-link--inner {
+    padding-left: 5px;
+  }
+}
+
+.el-dialog__headerbtn .el-dialog__close {
+  color: #fa5d50;
+}
+.ko-status {
+  .el-link--inner {
+    font-size: 12px;
+  }
+}
