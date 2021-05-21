@@ -11,7 +11,7 @@ $--box-shadow-light: 0 1px 4px 0 rgba(0, 0, 0, .14);
 $--color-text-primary: #3c4858;
 
 /* layout */
-$layout-bg-color: #222629;
+$layout-bg-color: #1c1e20;
 
 /* sidebar */
 $sidebar-open-width: 260px;
@@ -22,7 +22,7 @@ $sidebar-bg-gradient: linear-gradient(to bottom right, #30373D, #3E3E3D);
 /* menu */
 $menu-height: 50px; // 菜单项高度
 $menu-bg-color: transparent; // 菜单项背景
-$menu-bg-color-hover: mix($sidebar-bg-color, #000, 90%); // 菜单项hover背景
+$menu-bg-color-hover: mix($--color-ekko, #000, 90%); // 菜单项hover背景
 $menu-color: #B6C0CD; // 菜单项字体颜色
 $menu-open-bg-color: #252B2F; // 菜单项展开背景
 $menu-active-color: #3884c5; // 菜单项激活时颜色
@@ -56,20 +56,6 @@ $view-padding: 15px;
 
 #nprogress .bar {
   background: $--color-ekko !important; //自定义颜色
-}
-
-//.statusFailed {
-//  color: #0033FF;
-//  text-decoration: underline;
-//}
-
-.koLink {
-  color: #0033FF;
-  text-decoration: underline;
-}
-
-.linkStyle {
-  color: #0033FF;
 }
 
 

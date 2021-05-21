@@ -12,6 +12,7 @@ const Cluster = {
       name: "Dashboard",
       meta: {
         title: "Cluster",
+        icon: "iconfont iconkubernets"
       },
     },
   ]
