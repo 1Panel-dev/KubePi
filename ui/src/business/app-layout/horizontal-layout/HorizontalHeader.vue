@@ -4,15 +4,17 @@
       <sidebar-toggle-button/>
     </div>
     <div class="header-right">
+      <namespace-switch></namespace-switch>
     </div>
   </div>
 </template>
 
 <script>
 import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton"
+import NamespaceSwitch from "@/business/app-layout/header-components/NamspaceSwitch"
 export default {
   name: "HorizontalHeader",
-  components: { SidebarToggleButton }
+  components: { NamespaceSwitch, SidebarToggleButton }
 }
 </script>
 
