@@ -40,7 +40,7 @@ export default {
   .content-container {
     transition: 0.3s;
     color: $--color-text-primary;
-    background-color: #FFFFFF;
+    background-color: #222629;
     overflow: auto;
     height: 100%;
     padding: 20px;
