@@ -31,7 +31,7 @@ $menu-active-bg-color: $--color-primary; // 菜单项激活时背景
 $submenu-height: 40px; // 子菜单项高度
 $submenu-bg-color-hover: mix($menu-open-bg-color, #000, 80%); // 子菜单项hover背景
 $submenu-active-color: $menu-active-color; // 子菜单项激活时颜色
-$submenu-active-bg-color: $--color-primary; // 子菜单项激活时背景
+$submenu-active-bg-color: $menu-open-bg-color; // 子菜单项激活时背景
 
 $menu-active-prefix-color: #3884c5; // 菜单激活前缀颜色
 $menu-active-prefix-width: 4px; // 菜单激活前缀宽度

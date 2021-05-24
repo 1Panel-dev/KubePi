@@ -39,7 +39,7 @@ export const constantRoutes = [
   {
     path: "/",
     component: Layout,
-    redirect: "/cluster",
+    redirect: "/dashboard",
   }
 ]
 
