@@ -12,7 +12,7 @@ const Dashboard = {
       name: "Dashboard",
       meta: {
         title: "business.dashboard.dashboard",
-        icon: "iconfont iconkubernets"
+        icon: "el-icon-data-line"
       },
     },
   ]

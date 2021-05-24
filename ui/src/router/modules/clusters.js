@@ -1,6 +1,6 @@
 import Layout from "@/business/app-layout/horizontal-layout"
 
-const Cluster = {
+const Clusters = {
   path: "/cluster",
   sort: 1,
   component: Layout,
@@ -10,22 +10,12 @@ const Cluster = {
     icon: "iconfont iconkubernets"
   },
   children: [
-    // {
-    //   path: "/cluster",
-    //   component: () => import("@/business/cluster"),
-    //   name: "Cluster",
-    //   meta: {
-    //     title: "business.cluster.cluster",
-    //     icon: "iconfont iconkubernets"
-    //   },
-    // },
     {
       path: "/nodes",
       component: () => import("@/business/cluster/nodes"),
       name: "Nodes",
       meta: {
         title: "Nodes",
-        icon: "iconfont iconnodes"
       }
     },
     {
@@ -34,10 +24,9 @@ const Cluster = {
       name: "namespaces",
       meta: {
         title: "Namespaces",
-        icon: "iconfont iconnamespace"
       }
     }
   ]
 }
 
-export default Cluster
+export default Clusters

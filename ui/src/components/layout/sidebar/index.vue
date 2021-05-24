@@ -54,7 +54,7 @@ export default {
   @import "~@/styles/common/variables";
 
   @mixin sidebar-base-item {
-    //padding-left: 20px !important;
+    padding-left: 20px !important;
     border-radius: 2px;
     color: $menu-color;
   }

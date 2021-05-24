@@ -6,11 +6,32 @@
   "description": "KubeOperator UI",
   "glyphs": [
     {
-      "icon_id": "11478742",
+      "icon_id": "14560260",
       "name": "网络",
       "font_class": "network",
-      "unicode": "e60a",
-      "unicode_decimal": 58890
+      "unicode": "e6d9",
+      "unicode_decimal": 59097
+    },
+    {
+      "icon_id": "16160912",
+      "name": "拼图",
+      "font_class": "custom",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "7688232",
+      "name": "盾牌",
+      "font_class": "accesscontrol",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "15602347",
+      "name": "car dashboard",
+      "font_class": "dashboard",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
     },
     {
       "icon_id": "11507809",
