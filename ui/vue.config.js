@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../template'),
+    outputDir: path.resolve(__dirname, '../web'),
     productionSourceMap: true,
     devServer: {
         port: 4300,
@@ -14,6 +14,13 @@ module.exports = {
             warnings: false,
             errors: true
         },
+        proxy: {
+            '/proxy': {
+                target: 'http://0.0.0.0:2019',
+                ws: true,
+                secure: false,
+            },
+        }
     },
     configureWebpack: {
         devtool: 'source-map',
