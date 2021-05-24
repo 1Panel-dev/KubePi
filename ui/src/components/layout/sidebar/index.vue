@@ -54,7 +54,7 @@ export default {
   @import "~@/styles/common/variables";
 
   @mixin sidebar-base-item {
-    padding-left: 20px !important;
+    //padding-left: 20px !important;
     border-radius: 2px;
     color: $menu-color;
   }
@@ -222,7 +222,7 @@ export default {
         }
 
         .el-submenu__title {
-          padding-left: 20px !important;
+          //padding-left: 20px !important;
         }
 
         .submenu-title-no-dropdown, .el-submenu__title {

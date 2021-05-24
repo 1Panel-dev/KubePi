@@ -5,16 +5,38 @@ const Cluster = {
   sort: 1,
   component: Layout,
   name: "Cluster",
+  meta: {
+    title: "business.cluster.cluster",
+    icon: "iconfont iconkubernets"
+  },
   children: [
+    // {
+    //   path: "/cluster",
+    //   component: () => import("@/business/cluster"),
+    //   name: "Cluster",
+    //   meta: {
+    //     title: "business.cluster.cluster",
+    //     icon: "iconfont iconkubernets"
+    //   },
+    // },
     {
-      path: "/cluster",
-      component: () => import("@/business/cluster"),
-      name: "Dashboard",
+      path: "/nodes",
+      component: () => import("@/business/cluster/nodes"),
+      name: "Nodes",
       meta: {
-        title: "Cluster",
-        icon: "iconfont iconkubernets"
-      },
+        title: "Nodes",
+        icon: "iconfont iconnodes"
+      }
     },
+    {
+      path: "/namespaces",
+      component: () => import("@/business/cluster/namespaces"),
+      name: "namespaces",
+      meta: {
+        title: "Namespaces",
+        icon: "iconfont iconnamespace"
+      }
+    }
   ]
 }
 
