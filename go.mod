@@ -1,6 +1,6 @@
 module github.com/KubeOperator/ekko
 
-go 1.14
+go 1.16
 
 require (
 	github.com/Joker/hpp v1.0.0 // indirect

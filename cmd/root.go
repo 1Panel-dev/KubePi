@@ -1,4 +1,4 @@
-package main
+package cmd 
 
 import (
 	"fmt"
@@ -21,14 +21,14 @@ var (
 )
 
 func init() {
-	rootCmd.Flags().StringVar(&kubeApiServerUrl, "kube-api-server-url", "", "kubernetes api server url, eg:https://127.0.0.1:8443")
-	rootCmd.Flags().StringVar(&accessToken, "kube-access-token", "", "service account token")
-	rootCmd.Flags().StringVar(&kubeConfigPath, "kube-config-path", "${HOME_DIR}/.kube/config", "kube config file path")
-	rootCmd.Flags().StringVar(&bindHost, "bind-host", "0.0.0.0", "ekko bind address")
-	rootCmd.Flags().IntVar(&bindPort, "bind-port", 2019, "ekko bind port")
+	RootCmd.Flags().StringVar(&kubeApiServerUrl, "kube-api-server-url", "", "kubernetes api server url, eg:https://127.0.0.1:8443")
+	RootCmd.Flags().StringVar(&accessToken, "kube-access-token", "", "service account token")
+	RootCmd.Flags().StringVar(&kubeConfigPath, "kube-config-path", "${HOME_DIR}/.kube/config", "kube config file path")
+	RootCmd.Flags().StringVar(&bindHost, "bind-host", "0.0.0.0", "ekko bind address")
+	RootCmd.Flags().IntVar(&bindPort, "bind-port", 2019, "ekko bind port")
 }
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "ekko",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -73,6 +73,3 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func main() {
-	cobra.CheckErr(rootCmd.Execute())
-}

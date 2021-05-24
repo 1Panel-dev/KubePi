@@ -2,8 +2,8 @@ GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 BASEPATH := $(shell pwd)
-BUILDDIR=$(BASEPATH)/dist
-MAIN= $(BASEPATH)/cmd/main.go
+BUILDDIR=$(BASEPATH)/dist/bin
+MAIN= $(BASEPATH)/main.go
 
 APP_NAME=ekko
 
