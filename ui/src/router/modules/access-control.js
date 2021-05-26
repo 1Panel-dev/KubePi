@@ -11,6 +11,14 @@ const Accesscontrol = {
   },
   children: [
     {
+      path: "/serviceaccounts",
+      component: () => import("@/business/access-control/service-accounts"),
+      name: "ServiceAccounts",
+      meta: {
+        title: "Service Accounts",
+      }
+    },
+    {
       path: "/rolebindings",
       component: () => import("@/business/access-control/role-bindings"),
       name: "RoleBindings",
@@ -19,11 +27,19 @@ const Accesscontrol = {
       }
     },
     {
-      path: "/serviceaccounts",
-      component: () => import("@/business/access-control/service-accounts"),
-      name: "ServiceAccounts",
+      path: "/roles",
+      component: () => import("@/business/access-control/roles"),
+      name: "Roles",
       meta: {
-        title: "Service Accounts",
+        title: "Roles",
+      }
+    },
+    {
+      path: "/podsecuritypolicy",
+      component: () => import("@/business/access-control/pod-security-policies"),
+      name: "PodSecurityPolicy",
+      meta: {
+        title: "Pod Security Policy",
       }
     }
   ]

@@ -25,6 +25,14 @@ const Clusters = {
       meta: {
         title: "Namespaces",
       }
+    },
+    {
+      path: "/events",
+      component: () => import("@/business/cluster/events"),
+      name: "events",
+      meta: {
+        title: "Events",
+      }
     }
   ]
 }

@@ -25,6 +25,14 @@ const Storage = {
       meta: {
         title: "Persistent Volume Claims",
       }
+    },
+    {
+      path: "/storageclasses",
+      component: () => import("@/business/storage/storage-classes"),
+      name: "StorageClasses",
+      meta: {
+        title: "Storage Classes",
+      }
     }
   ]
 }

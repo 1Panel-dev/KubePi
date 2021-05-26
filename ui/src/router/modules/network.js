@@ -25,6 +25,22 @@ const Network = {
       meta: {
         title: "Ingresses",
       }
+    },
+    {
+      path: "/endpoints",
+      component: () => import("@/business/network/endpoints"),
+      name: "Endpoints",
+      meta: {
+        title: "Endpoints",
+      }
+    },
+    {
+      path: "/networkpolicies",
+      component: () => import("@/business/network/network-policies"),
+      name: "NetworkPolicies",
+      meta: {
+        title: "Network Policies",
+      }
     }
   ]
 }

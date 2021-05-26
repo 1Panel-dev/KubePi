@@ -25,6 +25,30 @@ const Configuration = {
       meta: {
         title: "Secrets",
       }
+    },
+    {
+      path: "/resourcequotas",
+      component: () => import("@/business/configuration/resource-quotas"),
+      name: "ResourceQuotas",
+      meta: {
+        title: "Resource Quotas",
+      }
+    },
+    {
+      path: "/limitranges",
+      component: () => import("@/business/configuration/limit-ranges"),
+      name: "LimitRanges",
+      meta: {
+        title: "Limit Ranges",
+      }
+    },
+    {
+      path: "/hpa",
+      component: () => import("@/business/configuration/hpa"),
+      name: "HPA",
+      meta: {
+        title: "Horizontal Pod Autoscaler",
+      }
     }
   ]
 }
