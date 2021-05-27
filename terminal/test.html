@@ -1,0 +1,11 @@
+<html>
+<body>
+
+</body>
+<script>
+  const ws = new WebSocket("ws://localhost:8081/echo")
+  ws.onopen = (res) => {
+    ws.send(res)
+  }
+</script>
+</html>
