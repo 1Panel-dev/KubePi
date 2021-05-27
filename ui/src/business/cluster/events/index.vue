@@ -1,13 +1,12 @@
 <template>
-    <layout-content>
-      ceshi
-    </layout-content>
+  <layout-content></layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
+
 export default {
-  name: "Cluster",
+  name: "Events",
   components: { LayoutContent }
 }
 </script>

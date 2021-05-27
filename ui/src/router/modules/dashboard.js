@@ -8,11 +8,11 @@ const Dashboard = {
   children: [
     {
       path: "/dashboard",
-      component: () => import("@/business/dashborad"),
+      component: () => import("@/business/dashboard"),
       name: "Dashboard",
       meta: {
         title: "business.dashboard.dashboard",
-        icon: "iconfont iconkubernets"
+        icon: "el-icon-data-line"
       },
     },
   ]
