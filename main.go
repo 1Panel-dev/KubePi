@@ -17,5 +17,4 @@ func main() {
 	route.EmbedWebDashboard = embedWebDashboard
 	route.EmbedWebTerminal = embedWebTerminal
 	cobra.CheckErr(cmd.RootCmd.Execute())
-
 }

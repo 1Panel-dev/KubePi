@@ -1,75 +1,40 @@
-package cmd 
+package cmd
 
 import (
-	"fmt"
-	"github.com/KubeOperator/ekko/cmd/params"
 	"github.com/KubeOperator/ekko/pkg/config"
 	"github.com/KubeOperator/ekko/pkg/server"
-	"github.com/coreos/etcd/pkg/fileutil"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var (
-	kubeApiServerUrl string
-	accessToken      string
-	kubeConfigPath   string
-
-	bindHost string
-	bindPort int
+	configPath     string
+	serverBindHost string
+	serverBindPort int
 )
 
 func init() {
-	RootCmd.Flags().StringVar(&kubeApiServerUrl, "kube-api-server-url", "", "kubernetes api server url, eg:https://127.0.0.1:8443")
-	RootCmd.Flags().StringVar(&accessToken, "kube-access-token", "", "service account token")
-	RootCmd.Flags().StringVar(&kubeConfigPath, "kube-config-path", "${HOME_DIR}/.kube/config", "kube config file path")
-	RootCmd.Flags().StringVar(&bindHost, "bind-host", "0.0.0.0", "ekko bind address")
-	RootCmd.Flags().IntVar(&bindPort, "bind-port", 2019, "ekko bind port")
+	RootCmd.Flags().StringVar(&serverBindHost, "server-bind-host", "", "ekko bind address")
+	RootCmd.Flags().IntVar(&serverBindPort, "server-bind-port", 0, "ekko bind port")
+	RootCmd.Flags().StringVarP(&configPath, "config-path", "c", "", "config file path")
 }
 
 var RootCmd = &cobra.Command{
 	Use:   "ekko",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// 验证参数合法性
-		validator := params.NewParamValidator([]params.ParamValidateItem{
-			{
-				Value:        kubeApiServerUrl,
-				ValidateFunc: params.KubeApiServerUrlValidateFunc,
-			},
-		})
-		if err := validator.Check(); err != nil {
-			return err
+		if configPath != "" {
+			config.Init(configPath)
+		} else {
+			config.Init()
 		}
-		c := config.EkkoConfig{BindConfig: config.BindConfig{
-			Host: bindHost,
-			Port: bindPort,
-		}}
-
-		if (accessToken == "" && kubeApiServerUrl != "") || (accessToken != "" && kubeApiServerUrl == "") {
-			return fmt.Errorf("kube-api-server-url and kube-access-token must be set together")
+		c := config.GetConfigInstance()
+		if serverBindHost != "" {
+			c.Spec.Server.Bind.Host = serverBindHost
 		}
-		if accessToken != "" && kubeApiServerUrl != "" {
-			fmt.Printf("use token to connect cluster: %s \n", kubeApiServerUrl)
-			c.KubeApiServerConfig.ApiServer = kubeApiServerUrl
-			c.KubeApiServerConfig.Token = accessToken
+		if serverBindPort != 0 {
+			c.Spec.Server.Bind.Port = serverBindPort
 		}
-		if accessToken == "" && kubeApiServerUrl == "" {
-			if strings.Contains(kubeConfigPath, "${HOME_DIR}") || strings.Contains(kubeConfigPath, "~") {
-				hd, _ := homedir.Dir()
-				kubeConfigPath = strings.Replace(kubeConfigPath, "${HOME_DIR}", hd, -1)
-				kubeConfigPath = strings.Replace(kubeConfigPath, "~", hd, -1)
-			}
-			fmt.Printf("use kube-config-file :%s to connect cluster \n", kubeConfigPath)
-			if exists := fileutil.Exist(kubeConfigPath); !exists {
-				return fmt.Errorf("%s,no valid connection credentials were found", kubeConfigPath)
-			}
-			c.KubeConfig = kubeConfigPath
-		}
-		config.SetConfig(c)
 		// 启动 server
 		return server.StartServer()
 	},
 }
-
