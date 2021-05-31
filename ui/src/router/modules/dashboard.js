@@ -12,7 +12,8 @@ const Dashboard = {
       name: "Dashboard",
       meta: {
         title: "business.dashboard.dashboard",
-        icon: "el-icon-data-line"
+        icon: "el-icon-data-line",
+        roles: ['ADMIN']
       },
     },
   ]

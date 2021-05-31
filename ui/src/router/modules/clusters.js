@@ -7,7 +7,7 @@ const Clusters = {
   name: "Cluster",
   meta: {
     title: "business.cluster.cluster",
-    icon: "iconfont iconkubernets"
+    icon: "iconfont iconkubernets",
   },
   children: [
     {
@@ -23,7 +23,7 @@ const Clusters = {
       component: () => import("@/business/cluster/namespaces"),
       name: "namespaces",
       meta: {
-        title: "Namespaces",
+        title: "Namespaces"
       }
     },
     {

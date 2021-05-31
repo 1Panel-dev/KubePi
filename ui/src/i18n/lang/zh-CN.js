@@ -8,7 +8,8 @@ const message = {
       dashboard: "概览"
     },
     cluster: {
-      cluster: "集群"
+      cluster: "集群",
+      list: "集群列表"
     },
     workload: {
       workload: "工作量"
@@ -24,6 +25,11 @@ const message = {
     },
     access_control: {
       access_control: "访问控制"
+    },
+    user: {
+      menu: "用户与权限",
+      user: "用户",
+      role: "角色"
     }
   }
 }

@@ -29,9 +29,9 @@ const mutations = {
   SET_ROLES: (state, roles) => {
     state.roles = roles
   },
-  SET_CURRENT_PROJECT: (state, project) => {
-    state.currentProject = project
-  }
+  SET_CURRENT_MENU: (state, menu) => {
+    state.menu = menu
+  },
 }
 
 const actions = {
@@ -50,8 +50,8 @@ const actions = {
   isLogin () {
     return new Promise((resolve) => {
       // if (state.isLogin) {
-        resolve(true)
-        // return
+      resolve(true)
+      // return
       // }
       // isLogin().then((data) => {
       //   if (data.isLogin) {
@@ -62,6 +62,30 @@ const actions = {
       //   }
       // }).catch(() => {
       //   resolve(false)
+      // })
+    })
+  },
+
+  getCurrentUser ({ commit }) {
+    return new Promise((resolve) => {
+      const user = {
+        name: "admin",
+        roles: ['ADMIN'],
+        menu: "cluster1"
+      }
+      commit("SET_CURRENT_MENU", user.menu)
+      commit("SET_ROLES", user.roles)
+      resolve(user)
+      // getSession().then(data => {
+      //   const user = data.user
+      //   const { name, roles, language, currentProject } = user
+      //   commit("SET_NAME", name)
+      //   commit("SET_ROLES", roles)
+      //   commit("SET_LANGUAGE", language)
+      //   commit("SET_CURRENT_PROJECT", currentProject)
+      //   resolve(user)
+      // }).catch(error => {
+      //   reject(error)
       // })
     })
   },

@@ -2,6 +2,7 @@
   <div class="horizontal-header">
     <div class="header-left">
       <sidebar-toggle-button/>
+      <cluster-switch></cluster-switch>
     </div>
     <div class="header-right">
       <namespace-switch></namespace-switch>
@@ -12,9 +13,10 @@
 <script>
 import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton"
 import NamespaceSwitch from "@/business/app-layout/header-components/NamspaceSwitch"
+import ClusterSwitch from "@/business/app-layout/header-components/ClusterSwitch"
 export default {
   name: "HorizontalHeader",
-  components: { NamespaceSwitch, SidebarToggleButton }
+  components: { ClusterSwitch, NamespaceSwitch, SidebarToggleButton }
 }
 </script>
 

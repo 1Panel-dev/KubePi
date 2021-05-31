@@ -12,13 +12,12 @@ Router.prototype.push = function push (location) {
 }
 
 Vue.use(Router)
-
-
 export const constantRoutes = [
   {
     path: "/redirect",
     component: Layout,
     hidden: true,
+    name: "redirect",
     children: [
       {
         path: "/redirect/:path(.*)",
@@ -26,21 +25,6 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: "/login",
-  //   component: () => import("@/business/login"),
-  //   hidden: true
-  // },
-  // {
-  //   path: "/logger",
-  //   component: () => import("@/business/xterm"),
-  //   hidden: true
-  // },
-  {
-    path: "/",
-    component: Layout,
-    redirect: "/dashboard",
-  }
 ]
 
 /**

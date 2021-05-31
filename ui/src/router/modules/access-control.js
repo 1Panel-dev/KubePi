@@ -1,13 +1,14 @@
 import Layout from "@/business/app-layout/horizontal-layout"
 
-const Accesscontrol = {
+const AccessControl = {
   path: "/accesscontrol",
   sort: 5,
   component: Layout,
   name: "Access Control",
   meta: {
     title: "business.access_control.access_control",
-    icon: "iconfont iconaccesscontrol"
+    icon: "iconfont iconaccesscontrol",
+    global: false
   },
   children: [
     {
@@ -16,6 +17,7 @@ const Accesscontrol = {
       name: "ServiceAccounts",
       meta: {
         title: "Service Accounts",
+        global: false
       }
     },
     {
@@ -24,6 +26,7 @@ const Accesscontrol = {
       name: "RoleBindings",
       meta: {
         title: "Role Bindings",
+        global: false
       }
     },
     {
@@ -32,6 +35,7 @@ const Accesscontrol = {
       name: "Roles",
       meta: {
         title: "Roles",
+        global: false
       }
     },
     {
@@ -40,9 +44,10 @@ const Accesscontrol = {
       name: "PodSecurityPolicy",
       meta: {
         title: "Pod Security Policy",
+        global: false
       }
     }
   ]
 }
 
-export default Accesscontrol
+export default AccessControl
