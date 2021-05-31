@@ -12,7 +12,7 @@ type InitDbPhase struct {
 
 func (i *InitDbPhase) Init() error {
 	c := config.ReadConfig()
-	di, err := storm.Open(c.Spec.Db.Path)
+	di, err := storm.Open(c.Spec.DB.Path)
 	if err != nil {
 		return err
 	}

@@ -90,6 +90,7 @@ func defaultConfig() config.Config {
 			DB: config.DBConfig{
 				Path: "/var/lib/ekko/db/ekko.db",
 			},
+			Logger: config.LoggerConfig{Level: "debug"},
 		},
 	}
 }
