@@ -35,24 +35,33 @@ const mutations = {
 }
 
 const actions = {
-  // login ({ commit }, userInfo) {
-  //   const { username, password, captchaId, code } = userInfo
-  //   return new Promise((resolve, reject) => {
-  //     login({ username: username.trim(), password: password, captchaId: captchaId, code: code }).then(response => {
-  //       commit("LOGIN")
-  //       resolve(response)
-  //     }).catch(error => {
-  //       reject(error)
-  //     })
-  //   })
-  // },
+  login ({ commit }, userInfo) {
+    console.log(userInfo)
+    // const { username, password, captchaId, code } = userInfo
+    return new Promise((resolve) => {
+      commit("LOGIN")
+      const user = {
+        name: "admin",
+        roles: ['ADMIN'],
+        menu: "cluster1"
+      }
+      resolve(user)
+      // login({ username: username.trim(), password: password, captchaId: captchaId, code: code }).then(response => {
+      //   commit("LOGIN")
+      //   resolve(response)
+      // }).catch(error => {
+      //   reject(error)
+      // })
+    })
+  },
 
   isLogin () {
     return new Promise((resolve) => {
-      // if (state.isLogin) {
-      resolve(true)
-      // return
-      // }
+      if (state.login) {
+        resolve(true)
+      }else {
+        resolve(false)
+      }
       // isLogin().then((data) => {
       //   if (data.isLogin) {
       //     commit("LOGIN")

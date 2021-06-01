@@ -25,6 +25,11 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: "/login",
+    component: () => import("@/business/login"),
+    hidden: true
+  },
 ]
 
 /**
