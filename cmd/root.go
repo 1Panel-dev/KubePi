@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/KubeOperator/ekko/pkg/route"
 	"github.com/KubeOperator/ekko/pkg/server"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,6 @@ var RootCmd = &cobra.Command{
 	Use:   "ekko",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		s := server.NewEkkoSerer()
-		return s.Listen()
+		return server.Listen(route.InitRoute)
 	},
 }

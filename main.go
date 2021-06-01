@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"github.com/KubeOperator/ekko/cmd"
-	"github.com/KubeOperator/ekko/pkg/route"
+	"github.com/KubeOperator/ekko/pkg/server"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var embedWebTerminal embed.FS
 var embedWebDashboard embed.FS
 
 func main() {
-	route.EmbedWebDashboard = embedWebDashboard
-	route.EmbedWebTerminal = embedWebTerminal
+	server.EmbedWebDashboard = embedWebDashboard
+	server.EmbedWebTerminal = embedWebTerminal
 	cobra.CheckErr(cmd.RootCmd.Execute())
 }

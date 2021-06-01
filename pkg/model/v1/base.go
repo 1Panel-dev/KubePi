@@ -3,13 +3,13 @@ package v1
 import "time"
 
 type BaseModel struct {
-	ApiVersion string `json:"apiVersion"`
-	Kind       string `json:"kind"`
-	CreateAt   time.Time
-	UpdateAt   time.Time
+	ApiVersion string    `json:"apiVersion"`
+	Kind       string    `json:"kind"`
+	CreateAt   time.Time `json:"createAt" storm:"index"`
+	UpdateAt   time.Time `json:"updateAt" storm:"index"`
 }
 
 type Metadata struct {
-	Name string `json:"name"`
-	Id   string `json:"id"`
+	Name string `json:"name" storm:"index,unique" `
+	UUID string `json:"uuid" storm:"id,index,unique"`
 }
