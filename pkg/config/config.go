@@ -9,9 +9,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var v *viper.Viper
-var configData config.Config
-
 const configErr = "can not parse config file , %s"
 const configNotFoundSkipErr = "config file not found in %s, skip"
 const configReadErr = "can not read config file %s ,%s"
@@ -21,8 +18,8 @@ var configFilePaths = []string{
 	"/etc/ekko",
 }
 
-func Init(path ...string) {
-	v = viper.New()
+func ReadConfig(path ...string) (config.Config, error) {
+	v := viper.New()
 	v.SetConfigName("app")
 	v.SetConfigType("yaml")
 
@@ -46,28 +43,17 @@ func Init(path ...string) {
 
 	var configMap map[string]interface{}
 	if err := v.Unmarshal(&configMap); err != nil {
-		configErrHandler(err)
+		return config.Config{}, err
 	}
 	str, err := json.Marshal(&configMap)
 	if err != nil {
-		configErrHandler(err)
+		return config.Config{}, err
 	}
-	configData = defaultConfig()
-	if err := json.Unmarshal(str, &configData); err != nil {
-		configErrHandler(err)
+	c := defaultConfig()
+	if err := json.Unmarshal(str, &c); err != nil {
+		return config.Config{}, nil
 	}
-}
-
-func ReadConfig() config.Config {
-	return configData
-}
-
-func GetConfigInstance() *config.Config {
-	return &configData
-}
-
-func configErrHandler(err error) {
-	panic(fmt.Sprintf(configErr, err.Error()))
+	return c, nil
 }
 
 func defaultConfig() config.Config {
