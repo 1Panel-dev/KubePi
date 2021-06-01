@@ -46,7 +46,6 @@ router.beforeEach(async (to, from, next) => {
       next({ path: "/" })
       NProgress.done()
     }
-
     await generateRoutes(to, from, next)
   } else {
     /* has not login*/
