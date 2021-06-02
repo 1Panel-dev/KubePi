@@ -5,18 +5,18 @@
       <cluster-switch></cluster-switch>
     </div>
     <div class="header-right">
-      <user-setting></user-setting>
+      <namespace-switch></namespace-switch>
     </div>
   </div>
 </template>
 
 <script>
 import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton"
+import NamespaceSwitch from "@/business/app-layout/header-components/NamspaceSwitch"
 import ClusterSwitch from "@/business/app-layout/header-components/ClusterSwitch"
-import UserSetting from "@/business/app-layout/header-components/UserSetting"
 export default {
   name: "HorizontalHeader",
-  components: { UserSetting, ClusterSwitch, SidebarToggleButton }
+  components: { ClusterSwitch, NamespaceSwitch, SidebarToggleButton }
 }
 </script>
 

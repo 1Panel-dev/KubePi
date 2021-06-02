@@ -26,7 +26,7 @@ const ClusterList = {
       hidden: true,
       name: "ClusterImport",
       meta: {
-        activeMenu: "/clusterlist",
+        title: "business.cluster.import",
         global: true
       }
     },
