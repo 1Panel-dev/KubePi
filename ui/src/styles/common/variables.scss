@@ -50,6 +50,9 @@ $view-padding: 15px;
 /* fit2cloud-ui的variables加载了element-ui的变量 */
 @import "~fit2cloud-ui/src/styles/common/variables";
 
+$ko-search-bar-condition-bgColor: #000000;
+$--input-placeholder-color: #C0C4CC;
+
 :export {
   theme: $--color-primary;
 }
@@ -57,6 +60,7 @@ $view-padding: 15px;
 #nprogress .bar {
   background: $--color-ekko !important; //自定义颜色
 }
+
 
 
 

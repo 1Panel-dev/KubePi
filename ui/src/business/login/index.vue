@@ -128,7 +128,7 @@ export default {
   }
 
   .login-background {
-    background-color: $--background-color-base;
+    background-color: #FFFFFF;
     height: 100%;
     @include login-center;
   }

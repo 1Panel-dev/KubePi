@@ -1,0 +1,92 @@
+@import "~fit2cloud-ui/src/styles/common/mixins.scss";
+@import "../common/variables.scss";
+
+@include b(table) {
+  &.el-table {
+    th.el-table-column--selection>.cell {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    &.el-table--striped .el-table__body tr.el-table__row--striped td {
+      background: $fu-table-striped-bgColor;
+    }
+  }
+
+  &.el-table--small {
+    font-size: 13px;
+  }
+}
+
+@include b(table-column-select) {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+@include b(table-column-select-popper) {
+  @include e(body) {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+
+  @include e(item) {
+    &+& {
+      margin-top: 5px;
+    }
+  }
+
+  @include e(footer) {
+    margin-top: 10px;
+    text-align: center;
+  }
+}
+
+@include b(table-column-select-dialog) {
+  &.el-dialog {
+    width: 640px;
+  }
+
+  .el-checkbox {
+    width: 180px;
+    margin: 5px 10px;
+  }
+}
+
+@include b(table-operations) {
+  div[type='dialog']>.fu-search-bar-button {
+    border: none;
+  }
+}
+
+@include b(table-more-button) {
+  button+& {
+    margin-left: 10px;
+  }
+}
+
+@include b(table-column-dropdown) {
+  @include e(title) {
+    padding: 5px;
+    text-align: center;
+    color: #888888;
+  }
+
+  .el-dropdown-link {
+    cursor: pointer;
+  }
+
+  @include b(icon-more) {
+    transform: rotate(90deg);
+  }
+
+  @include b(show-icon) {
+    display: none;
+  }
+
+}
+
+.el-table__body tr:hover {
+  @include b(show-icon) {
+    display: inline;
+  }
+}

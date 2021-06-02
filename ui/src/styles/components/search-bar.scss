@@ -1,0 +1,257 @@
+@import "~fit2cloud-ui/src/styles/common/mixins.scss";
+@import "../common/variables.scss";
+
+@include b(search-bar) {
+  @include flex-row(flex-start, center);
+  position: relative;
+  width: $fu-search-bar-width;
+  height: $fu-search-bar-height;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #000000;
+  }
+
+  @include e(content) {
+    @include flex-row(flex-start, center);
+    margin-right: 10px;
+    height: 100%;
+  }
+
+  @include e(buttons) {
+    @include flex-row(flex-end, center);
+    flex: auto;
+    height: 100%;
+  }
+
+  @include b(quick-search) {
+    &:after {
+      content: none;
+    }
+  }
+}
+
+@include b(search-bar-button) {
+  &.el-button {
+    @include active-scale(0.9);
+  }
+}
+
+@include b(search-conditions) {
+  @include flex-row(flex-start, center);
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: calc(100% - 2px);
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 5px;
+  }
+
+  @include m(medium) {
+    font-size: 14px;
+    @include e(item) {
+      height: 28px;
+    }
+  }
+  @include m(small) {
+    font-size: 13px;
+    @include e(item) {
+      height: 26px;
+    }
+  }
+  @include m(mini) {
+    font-size: 12px;
+    @include e(item) {
+      height: 24px;
+    }
+  }
+
+  @include e(item) {
+    @include flex-row(flex-start, center);
+    flex-shrink: 0;
+    position: relative;
+    box-sizing: border-box;
+    padding: 0 10px;
+    border-radius: 50px;
+    color: $fu-search-bar-condition-color;
+    background-color: $ko-search-bar-condition-bgColor!important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+    margin-left: 10px;
+    font-size: inherit;
+
+    &:last-child {
+      margin-right: 10px;
+    }
+
+    div + div {
+      margin-left: 4px;
+    }
+
+    .condition-value {
+      font-style: italic;
+    }
+
+    .condition-remove {
+      @include active-scale(0.9);
+      margin-left: 6px;
+      margin-right: -6px;
+      cursor: pointer;
+
+      &:hover {
+        color: $--color-primary;
+      }
+    }
+  }
+}
+
+@include b(quick-search) {
+  @include flex-row(flex-start, center);
+  min-width: 200px;
+  position: relative;
+
+  @include m(medium) {
+    font-size: 14px;
+  }
+
+  @include m(small) {
+    font-size: 13px;
+  }
+
+  @include m(mini) {
+    font-size: 12px;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #D5D5D5;
+  }
+
+  input {
+    border: none;
+    position: relative;
+    font-size: inherit;
+    padding: 10px;
+    width: 200px;
+    box-sizing: border-box;
+    color: $--button-default-font-color;
+    background-color: #232529;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $--input-placeholder-color;
+    }
+  }
+
+  .clean-button {
+    @include active-scale;
+    cursor: pointer;
+
+    &:hover {
+      color: $--color-primary;
+    }
+  }
+}
+
+@include b(complex-search) {
+  @include e(trigger) {
+    i {
+      transition: transform 0.2s;
+    }
+
+    @include when(active) {
+      i {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+@include b(complex-components) {
+  @include e(body) {
+    width: 100%;
+    margin: 5px;
+    min-width: 200px;
+  }
+
+  @include e(footer) {
+    width: 100%;
+    text-align: center;
+    margin: 5px 0;
+  }
+}
+
+@include b(operator-component) {
+  @include flex-row(flex-start, center);
+  padding: 5px;
+
+  @include e(label) {
+    text-align: left;
+    width: 120px;
+    padding: 0 5px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-size: inherit;
+
+    @include m(small) {
+      width: 100px;
+      font-size: 13px;
+    }
+
+    @include m(mini) {
+      width: 100px;
+      font-size: 12px;
+    }
+  }
+
+  @include e(operator) {
+    padding: 0 5px;
+    width: 120px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  @include e(value) {
+    padding: 0 5px;
+    flex-grow: 1;
+    min-width: 240px;
+  }
+}
+
+@include b(complex-select) {
+  &.el-select {
+    width: 100% !important;
+  }
+}
+
+@include b(complex-data) {
+  &.el-date-editor {
+    width: 100% !important;
+  }
+}
+
+@include b(complex-data-time) {
+  &.el-date-editor {
+    width: 100% !important;
+  }
+}

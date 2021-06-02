@@ -51,6 +51,7 @@ export default {
     .content-container__header {
       line-height: 60px;
       font-size: 18px;
+      color: #FFFFFF;
     }
 
     .content-container__toolbar {
