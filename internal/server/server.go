@@ -73,13 +73,15 @@ func (e *EkkoSerer) setUpSession() {
 }
 
 func (e *EkkoSerer) setResultHandler() {
-	e.Done(func(ctx *context.Context) {
+	e.Use(func(ctx *context.Context) {
+		ctx.Next()
 		resp := iris.Map{
 			"status": "success",
 			"data":   ctx.Values().Get("data"),
 		}
 		_, _ = ctx.JSON(resp)
 	})
+
 }
 
 func (e *EkkoSerer) setUpErrHandler() {

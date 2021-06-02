@@ -24,7 +24,7 @@ type service struct {
 func (u *service) Get(name string) (*v1User.User, error) {
 	db := server.DB()
 	var us v1User.User
-	if err := db.One("Name", name, &u); err != nil {
+	if err := db.One("Name", name, &us); err != nil {
 		return nil, err
 	}
 	return &us, nil
@@ -33,7 +33,7 @@ func (u *service) Get(name string) (*v1User.User, error) {
 func (u *service) GetByEmail(email string) (*v1User.User, error) {
 	db := server.DB()
 	var us v1User.User
-	if err := db.One("Email", email, &u); err != nil {
+	if err := db.One("Email", email, &us); err != nil {
 		return nil, err
 	}
 	return &us, nil
