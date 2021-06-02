@@ -7,6 +7,7 @@ import (
 	v1Config "github.com/KubeOperator/ekko/internal/model/v1/config"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
@@ -71,10 +72,20 @@ func (e *EkkoSerer) setUpSession() {
 	e.Use(sess.Handler())
 }
 
+func (e *EkkoSerer) setResultHandler() {
+	e.Done(func(ctx *context.Context) {
+		resp := iris.Map{
+			"status": "success",
+			"data":   ctx.Values().Get("data"),
+		}
+		_, _ = ctx.JSON(resp)
+	})
+}
+
 func (e *EkkoSerer) setUpErrHandler() {
 	e.OnAnyErrorCode(func(ctx iris.Context) {
 		err := iris.Map{
-			"status":  ctx.GetStatusCode(),
+			"status":  "failed",
 			"message": ctx.Values().GetString("message"),
 		}
 		_, _ = ctx.JSON(err)
@@ -87,6 +98,7 @@ func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.setUpLogger()
 	e.setUpDB()
 	e.setUpSession()
+	e.setResultHandler()
 	e.setUpErrHandler()
 	return e
 }
