@@ -5,7 +5,6 @@
       <cluster-switch></cluster-switch>
     </div>
     <div class="header-right">
-<!--      <namespace-switch></namespace-switch>-->
       <user-setting></user-setting>
     </div>
   </div>
