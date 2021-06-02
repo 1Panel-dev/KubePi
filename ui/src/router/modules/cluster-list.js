@@ -20,6 +20,16 @@ const ClusterList = {
         global: true
       }
     },
+    {
+      path: "/import",
+      component: () => import("@/business/cluster-list/import"),
+      hidden: true,
+      name: "ClusterImport",
+      meta: {
+        title: "business.cluster.import",
+        global: true
+      }
+    },
   ]
 }
 

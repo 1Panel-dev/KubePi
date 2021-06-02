@@ -42,7 +42,7 @@ export default {
   name: "ClusterSwitch",
   data() {
     return {
-      menu: ""
+      menu: "global"
     }
   },
   methods: {

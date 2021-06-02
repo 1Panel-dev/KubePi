@@ -43,7 +43,7 @@ const actions = {
       const user = {
         name: "admin",
         roles: ['ADMIN'],
-        menu: "cluster1"
+        menu: "global"
       }
       resolve(user)
       // login({ username: username.trim(), password: password, captchaId: captchaId, code: code }).then(response => {
@@ -80,7 +80,7 @@ const actions = {
       const user = {
         name: "admin",
         roles: ['ADMIN'],
-        menu: "cluster1"
+        menu: "global"
       }
       commit("SET_CURRENT_MENU", user.menu)
       commit("SET_ROLES", user.roles)
