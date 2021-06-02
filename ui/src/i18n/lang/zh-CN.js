@@ -8,7 +8,7 @@ const message = {
       delete: "删除",
       import: "导入",
       create: "创建",
-      cancel: "取消"
+      cancel: "取消",
     },
     table: {
       name: "名称",
