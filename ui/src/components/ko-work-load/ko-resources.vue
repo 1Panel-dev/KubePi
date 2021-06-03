@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="40">
+    <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" clearable itemType="input" deviderName="mCPUs" v-model="form.requests.cpu" />
       </el-col>
@@ -8,7 +8,7 @@
         <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" clearable itemType="input" deviderName="MiB" v-model="form.requests.memory" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="CPU Limit" placeholder="e.g. 1000" clearable itemType="input" deviderName="mCPUs" v-model="form.limits.cpu" />
       </el-col>

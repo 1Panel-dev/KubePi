@@ -12,7 +12,7 @@
             <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
-        <el-table-column min-width="20">
+        <el-table-column width="120px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
           </template>

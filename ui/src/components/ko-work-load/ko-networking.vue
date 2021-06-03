@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="40">
+    <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="Network Mode" clearable itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
       </el-col>
@@ -8,7 +8,7 @@
         <ko-form-item labelName="DNS Policy" clearable itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="Hostname" placeholder="e.g. web" clearable itemType="input" v-model="form.hostname" />
       </el-col>
@@ -17,7 +17,7 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span=12>
         <el-button @click="handleNameserversAdd">Add Nameserver</el-button>
         <el-table v-if="form.dnsConfig.nameservers.length !== 0" :data="form.dnsConfig.nameservers">
@@ -26,7 +26,7 @@
               <ko-form-item placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
-          <el-table-column min-width="20">
+          <el-table-column width="120px">
             <template v-slot:default="{row}">
               <el-button type="text" style="font-size: 20px" @click="handleNameserversDelete(row)">REMOVE</el-button>
             </template>
@@ -41,7 +41,7 @@
               <ko-form-item placeholder="e.g. mycompany.com" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
-          <el-table-column min-width="20">
+          <el-table-column width="120px">
             <template v-slot:default="{row}">
               <el-button type="text" style="font-size: 20px" @click="handleSearchesDelete(row)">REMOVE</el-button>
             </template>
@@ -70,7 +70,7 @@
             <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
-        <el-table-column min-width="20">
+        <el-table-column width="120px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 20px" @click="handleOptionsDelete(row)">REMOVE</el-button>
           </template>
@@ -98,7 +98,7 @@
             <ko-form-item placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
-        <el-table-column min-width="20">
+        <el-table-column width="120px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 20px" @click="handleAliasDelete(row)">REMOVE</el-button>
           </template>

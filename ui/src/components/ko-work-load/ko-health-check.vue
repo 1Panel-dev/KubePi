@@ -7,7 +7,7 @@
         </el-tooltip>
       </label>
     </div>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <el-row style="margin-bottom: 20px;">
           <ko-form-item labelName="Type" clearable itemType="select" v-model="check_type" :selections="type_list" />
@@ -60,7 +60,7 @@
                 <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
               </template>
             </el-table-column>
-            <el-table-column min-width="20">
+            <el-table-column width="120px">
               <template v-slot:default="{row}">
                 <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
               </template>

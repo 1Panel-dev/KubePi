@@ -22,7 +22,7 @@
             <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
           </template>
         </el-table-column>
-        <el-table-column min-width="10">
+        <el-table-column width="120px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
           </template>

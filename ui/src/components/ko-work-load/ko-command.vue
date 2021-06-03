@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="40">
+    <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" clearable itemType="input" v-model="form.entrypoint" />
       </el-col>
@@ -8,7 +8,7 @@
         <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" clearable itemType="input" v-model="form.arguments" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" clearable itemType="input" v-model="form.working_dir" />
       </el-col>
@@ -39,7 +39,7 @@
           <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
         </template>
       </el-table-column>
-      <el-table-column min-width="20">
+      <el-table-column width="120px">
         <template v-slot:default="{row}">
           <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
         </template>
@@ -50,7 +50,7 @@
     <el-table v-if="resource_data.length !== 0" :data="resource_data">
       <el-table-column min-width="40" label="Type">
         <template v-slot:default="{row}">
-          <ko-form-item itemType="select" v-model="row.type" :selections="type_list" />
+          <ko-form-item itemType="select" :withoutLabel="true" v-model="row.type" :selections="type_list" />
         </template>
       </el-table-column>
       <el-table-column min-width="40" label="Source">
@@ -73,7 +73,7 @@
           <ko-form-item clearable itemType="input" v-model="row.prefix_or_alias" />
         </template>
       </el-table-column>
-      <el-table-column min-width="20">
+      <el-table-column width="120px">
         <template v-slot:default="{row}">
           <el-button type="text" style="font-size: 20px" @click="handleResourceDelete(row)">REMOVE</el-button>
         </template>

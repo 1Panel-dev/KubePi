@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="40">
+    <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="Strategy" clearable itemType="radio" v-model="form.strategy.type" :radios="strategy_list" />
       </el-col>
@@ -18,7 +18,7 @@
         </el-row>
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
           <ko-form-item labelName="Minimum Ready Time" deviderName="Seconds" tipContant="Containers in th pods must be up for at least this long before the pod is considered available." clearable itemType="input" v-model="form.minReadySeconds" />
       </el-col>

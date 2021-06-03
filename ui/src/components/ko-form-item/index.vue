@@ -1,41 +1,38 @@
 <template>
   <div class="formClass">
-    <div v-if="!withoutLabel">
-      <label style="color: gray; margin-left: 15px; font-size: 12px">
-        {{labelName}}
-        <el-tooltip v-if="tipContant" class="item" effect="dark" :content="tipContant" placement="top-start">
-          <i class="el-icon-question" />
-        </el-tooltip>
+    <label v-if="!withoutLabel" style="color: gray; margin-left: 16px; font-size: 12px">
+      {{labelName}}
+      <el-tooltip v-if="tipContant" class="item" effect="dark" :content="tipContant" placement="top-start">
+        <i class="el-icon-question" />
+      </el-tooltip>
 
-        <el-select v-if="itemType==='select'" style="width: 100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners">
-          <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value" />
-        </el-select>
+      <el-select v-if="itemType==='select'" style="width: 100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners">
+        <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value" />
+      </el-select>
 
-        <el-input v-if="itemType==='input'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
-
-        <div style="display: block; margin: 10px 0 0 20px">
-          <el-radio-group v-if="itemType==='radio'" v-bind="$attrs" v-on="$listeners">
-            <el-radio v-for="(item, index) in radios" :key="index" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
-          </el-radio-group>
-        </div>
-      </label>
-      <div class="deviderClass" v-if="deviderName">
-        <span>{{deviderName}}</span>
-      </div>
-    </div>
-
-    <div v-if="withoutLabel">
       <el-input v-if="itemType==='input'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
 
+      <div style="display: block; margin: 10px 0 0 20px">
+        <el-radio-group v-if="itemType==='radio'" v-bind="$attrs" v-on="$listeners">
+          <el-radio v-for="(item, index) in radios" :key="index" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
+        </el-radio-group>
+      </div>
+    </label>
+    <div class="deviderClass" v-if="deviderName && !withoutLabel">
+      <span>{{deviderName}}</span>
+    </div>
+    <div v-if="withoutLabel">
       <el-select v-if="itemType==='select'" style="width: 95%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners">
         <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value" />
       </el-select>
 
+      <el-input v-if="itemType==='input'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
+      
       <div style="display: block; margin: 10px 0 0 20px">
-          <el-radio-group v-if="itemType==='radio'" v-bind="$attrs" v-on="$listeners">
-            <el-radio v-for="(item, index) in radios" :key="index" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
-          </el-radio-group>
-        </div>
+        <el-radio-group v-if="itemType==='radio'" v-bind="$attrs" v-on="$listeners">
+          <el-radio v-for="(item, index) in radios" :key="index" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
+        </el-radio-group>
+      </div>
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="40">
+    <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="Privileged" clearable itemType="radio" v-model="form.item1" :radios="privileged_list1" />
       </el-col>
@@ -8,7 +8,7 @@
         <ko-form-item labelName="Privilege Escalation" clearable itemType="radio" v-model="form.item2" :radios="privileged_list2" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="Run as Non-Root" clearable itemType="radio" v-model="form.item3" :radios="privileged_list3" />
       </el-col>
@@ -16,12 +16,12 @@
         <ko-form-item labelName="Read-Only Root Filesystem" clearable itemType="radio" v-model="form.item4" :radios="privileged_list4" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 30px">
+    <el-row :gutter="20" style="margin-top: 30px">
       <el-col :span="12">
         <ko-form-item labelName="Run as User ID" clearable itemType="input" v-model="form.user_id" />
       </el-col>
     </el-row>
-    <el-row :gutter="40" style="margin-top: 20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="Add Capabilities" clearable itemType="input" v-model="form.add_ca" />
       </el-col>
