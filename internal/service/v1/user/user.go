@@ -3,6 +3,7 @@ package user
 import (
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/pkg/api"
 	"os/user"
 )
 
@@ -12,6 +13,7 @@ type Service interface {
 	GetByEmail(email string) (*v1User.User, error)
 	List() ([]v1User.User, error)
 	Delete(name string) error
+	Search(num, size int, conditions api.Conditions) ([]user.User, int, error)
 }
 
 func NewService() Service {
@@ -19,6 +21,20 @@ func NewService() Service {
 }
 
 type service struct {
+}
+
+func (u *service) Search(num, size int, conditions api.Conditions) ([]user.User, int, error) {
+	db := server.DB()
+	query := db.Select().Limit(size).Skip((num - 1) * size)
+	count, err := query.Count(&user.User{})
+	if err != nil {
+		return nil, 0, err
+	}
+	var users []user.User
+	if err := query.Find(&users); err != nil {
+		return nil, 0, err
+	}
+	return users, count, nil
 }
 
 func (u *service) Get(name string) (*v1User.User, error) {
