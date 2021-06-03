@@ -1,5 +1,5 @@
 <template>
-  <el-button circle :class="['sidebar-toggle-button', icon]" @click="toggle"></el-button>
+  <el-button circle  type="text" :class="['sidebar-toggle-button', icon]" @click="toggle"></el-button>
 </template>
 
 <script>
@@ -17,7 +17,7 @@ export default {
       'sidebar'
     ]),
     icon() {
-      return this.sidebar.opened ? "iconfont iconfold" : "iconfont iconunfold"
+      return this.sidebar.opened ? "el-icon-arrow-left" : "el-icon-arrow-right"
     },
   }
 }
