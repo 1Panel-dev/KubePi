@@ -20,12 +20,21 @@ const Workloads = {
     },
     {
       path: "/deployments",
-      component: () => import("@/business/workloads/pods"),
+      component: () => import("@/business/workloads/deployments"),
       name: "Deployments",
       meta: {
         title: "Deployments",
       }
-    }
+    },
+    {
+      path: "/deployments/create",
+      name: "DeploymentCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/deployments/create"),
+      meta: {
+        activeMenu: "/deployments",
+      }
+    },
   ]
 }
 

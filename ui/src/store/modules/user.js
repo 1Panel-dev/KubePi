@@ -63,7 +63,6 @@ const actions = {
             })
         })
     },
-
     getCurrentUser({commit}) {
         return new Promise((resolve, reject) => {
             getCurrentUser().then(data => {
@@ -90,7 +89,6 @@ const actions = {
         })
     },
 }
-
 export default {
     namespaced: true,
     state,

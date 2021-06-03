@@ -39,15 +39,27 @@ const message = {
         title: "登录 EKKO",
         welcome: "欢迎回来，请输入用户名和密码登录",
         expires: '认证信息已过期，请重新登录',
+        table: {
+            name: "名称",
+            created_time: "创建时间"
+        },
+        search: {
+            quickSearch: "搜索"
+        },
+        form: {
+            name: "名称"
+        }
     },
     business: {
         dashboard: {
-            dashboard: "概览"
+            dashboard: "概览",
         },
         cluster: {
             cluster: "集群",
             list: "集群列表",
-            import: "导入集群"
+            import: "导入集群",
+            version: "版本",
+            nodes: "节点"
         },
         workload: {
             workload: "工作量"
@@ -64,12 +76,37 @@ const message = {
         access_control: {
             access_control: "访问控制"
         },
-        user: {
-            menu: "用户与权限",
-            user: "用户",
-            role: "角色"
+        business: {
+            dashboard: {
+                dashboard: "概览"
+            },
+            cluster: {
+                cluster: "集群",
+                list: "集群列表",
+                import: "导入集群"
+            },
+            workload: {
+                workload: "工作量"
+            },
+            network: {
+                network: "网络"
+            },
+            storage: {
+                storage: "存储"
+            },
+            configuration: {
+                configuration: "配置"
+            },
+            access_control: {
+                access_control: "访问控制"
+            },
+            user: {
+                menu: "用户与权限",
+                user: "用户",
+                role: "角色"
+            }
         }
-    }
+    },
 }
 
 
