@@ -13,6 +13,8 @@ import i18n from "./i18n"
 import router from "./router"
 import store from './store'
 import icons from './icons'
+import VueCodemirror from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
 // import plugins from "./plugins";
 // import directives from "./directive";
 // import filters from "./filters";
@@ -27,6 +29,7 @@ Vue.use(ElementUI, {
 Vue.use(Fit2CloudUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
+Vue.use(VueCodemirror);
 library.add(fas, far, fab)
 
 Vue.use(icons);

@@ -144,6 +144,11 @@
       </el-col>
     </el-row>
     <el-row>
+
+      <yaml-editor :value="data1">
+
+      </yaml-editor>
+
       <h2>Events</h2>
       <complex-table class="d-table">
 
@@ -155,10 +160,21 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
+import YamlEditor from "@/components/yaml-editor"
 
 export default {
   name: "Dashboard",
-  components: { ComplexTable, LayoutContent }
+  components: { YamlEditor, ComplexTable, LayoutContent },
+  data() {
+    return {
+      data1: {
+        value1: "test",
+        value2: {
+          value3:123
+        }
+      }
+    }
+  }
 }
 </script>
 
