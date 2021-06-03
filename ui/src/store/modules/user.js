@@ -46,7 +46,7 @@ const actions = {
         })
     },
 
-    isLogin(commit) {
+    isLogin({commit}) {
         return new Promise((resolve) => {
             if (state.login) {
                 resolve(true)
