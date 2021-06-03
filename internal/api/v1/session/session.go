@@ -18,6 +18,15 @@ func NewHandler() *Handler {
 	}
 }
 
+func (h *Handler) IsLogin() iris.Handler {
+	return func(ctx *context.Context) {
+		session := sessions.Get(ctx)
+		loginUser := session.Get("profile")
+		ctx.StatusCode(iris.StatusOK)
+		ctx.Values().Set("data", loginUser != nil)
+	}
+}
+
 func (h *Handler) Login() iris.Handler {
 	return func(ctx *context.Context) {
 		var loginCredential LoginCredential
@@ -77,10 +86,12 @@ func (h *Handler) GetProfile() iris.Handler {
 		ctx.Values().Set("data", loginUser)
 	}
 }
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/sessions")
 	sp.Post("", handler.Login())
 	sp.Delete("", handler.Logout())
 	sp.Get("", handler.GetProfile())
+	sp.Get("/status", handler.IsLogin())
 }

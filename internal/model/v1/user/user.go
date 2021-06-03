@@ -11,6 +11,7 @@ type User struct {
 type Info struct {
 	NickName string `json:"nickName" storm:"index"`
 	Email    string `json:"email" storm:"index,unique"`
+	Language string `json:"language"`
 }
 
 type Authenticate struct {
