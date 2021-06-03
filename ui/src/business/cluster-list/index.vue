@@ -25,6 +25,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
+import {listAll} from "@/api/clusters"
 
 export default {
   name: "ClusterList",
@@ -50,8 +51,6 @@ export default {
         ],
       },
       data: [
-        { name: "测试" },
-        { name: "测试2" }
       ],
       selects: []
     }
@@ -60,6 +59,14 @@ export default {
     onImport () {
       this.$router.push({ name: "ClusterImport" })
     },
+    list() {
+      listAll().then(res => {
+        this.data =res.data
+      })
+    }
+  },
+  created () {
+    this.list()
   }
 }
 </script>

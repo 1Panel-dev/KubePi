@@ -58,7 +58,9 @@ const message = {
     cluster: {
       cluster: "集群",
       list: "集群列表",
-      import: "导入集群"
+      import: "导入集群",
+      api_server_help: "例如: https://172.16.10.100:8443",
+      router_help: "装有 kube-proxy 的任意节点的且可以被访问到的 IP 地址",
     },
     workload: {
       workload: "工作量"
