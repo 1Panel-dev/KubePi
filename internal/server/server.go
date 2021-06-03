@@ -2,16 +2,22 @@ package server
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/config"
+	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Config "github.com/KubeOperator/ekko/internal/model/v1/config"
+	"github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/asdine/storm/v3"
+	"github.com/google/uuid"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"time"
 )
 
 const sessionCookieName = "SESS_COOKIE_EKKO"
@@ -75,19 +81,61 @@ func (e *EkkoSerer) setUpSession() {
 func (e *EkkoSerer) setResultHandler() {
 	e.Use(func(ctx *context.Context) {
 		ctx.Next()
-		resp := iris.Map{
-			"status": "success",
-			"data":   ctx.Values().Get("data"),
+		if ctx.GetStatusCode() >= iris.StatusOK && ctx.GetStatusCode() < iris.StatusBadRequest {
+			resp := iris.Map{
+				"success": true,
+				"data":    ctx.Values().Get("data"),
+			}
+			_, _ = ctx.JSON(resp)
 		}
-		_, _ = ctx.JSON(resp)
 	})
+}
 
+func (e *EkkoSerer) setSuperUser() {
+	var superUser user.User
+	if err := e.db.One("Name", "admin", &superUser); err != nil {
+		if !errors.Is(err, storm.ErrNotFound) {
+			panic(fmt.Sprintf("can not query supper user please check db connection: %s", err.Error()))
+		}
+	}
+
+	if superUser.Name == "" {
+
+		e.logger.Info("creat supper user")
+		superUser = user.User{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "User",
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name: "admin",
+				UUID: uuid.New().String(),
+			},
+			Spec: user.Spec{
+				Info: user.Info{
+					NickName: "administrator",
+					Email:    "support@fit2cloud.com",
+				},
+			},
+		}
+		pass := "admin123"
+		hash, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost) //加密处理
+		superUser.Spec.Authenticate.Password = string(hash)
+		if err := e.db.Save(&superUser); err != nil {
+			panic("can not save supper user please check db connection")
+		}
+		e.logger.Info("create supper user success")
+		e.logger.Info("username: admin")
+		e.logger.Info("password: admin123")
+	}
 }
 
 func (e *EkkoSerer) setUpErrHandler() {
 	e.OnAnyErrorCode(func(ctx iris.Context) {
 		err := iris.Map{
-			"status":  "failed",
+			"success": false,
 			"message": ctx.Values().GetString("message"),
 		}
 		_, _ = ctx.JSON(err)
@@ -102,6 +150,7 @@ func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.setUpSession()
 	e.setResultHandler()
 	e.setUpErrHandler()
+	e.setSuperUser()
 	return e
 }
 

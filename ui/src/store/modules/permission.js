@@ -71,7 +71,6 @@ const actions = {
       let accessedRoutes
       accessedRoutes = filterRolesRoutes(rolesRoutes, user)
       commit("SET_ROUTES", accessedRoutes)
-      console.log(accessedRoutes)
       resolve(accessedRoutes)
     })
   }

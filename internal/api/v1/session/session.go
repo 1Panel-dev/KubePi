@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Handler struct {
@@ -15,6 +16,15 @@ type Handler struct {
 func NewHandler() *Handler {
 	return &Handler{
 		userService: user.NewService(),
+	}
+}
+
+func (h *Handler) IsLogin() iris.Handler {
+	return func(ctx *context.Context) {
+		session := sessions.Get(ctx)
+		loginUser := session.Get("profile")
+		ctx.StatusCode(iris.StatusOK)
+		ctx.Values().Set("data", loginUser != nil)
 	}
 }
 
@@ -32,7 +42,7 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("query user %s error: %s", loginCredential.Username, err.Error()))
 			return
 		}
-		if loginCredential.Password != u.Spec.Authenticate.Password {
+		if err := bcrypt.CompareHashAndPassword([]byte(u.Spec.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
 			ctx.Values().Set("message", "username or password error")
 			return
@@ -77,10 +87,12 @@ func (h *Handler) GetProfile() iris.Handler {
 		ctx.Values().Set("data", loginUser)
 	}
 }
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/sessions")
 	sp.Post("", handler.Login())
 	sp.Delete("", handler.Logout())
 	sp.Get("", handler.GetProfile())
+	sp.Get("/status", handler.IsLogin())
 }
