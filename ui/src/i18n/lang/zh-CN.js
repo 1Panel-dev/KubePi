@@ -12,7 +12,7 @@ const message = {
     },
     table: {
       name: "名称",
-      create_time: "创建时间"
+      created_time: "创建时间"
     },
     search: {
       quickSearch: "搜索"
@@ -23,12 +23,14 @@ const message = {
   },
   business: {
     dashboard: {
-      dashboard: "概览"
+      dashboard: "概览",
     },
     cluster: {
       cluster: "集群",
       list: "集群列表",
-      import: "导入集群"
+      import: "导入集群",
+      version: "版本",
+      nodes: "节点"
     },
     workload: {
       workload: "工作量"

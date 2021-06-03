@@ -80,7 +80,7 @@ const actions = {
       const user = {
         name: "admin",
         roles: ['ADMIN'],
-        menu: "global"
+        menu: "cluster1"
       }
       commit("SET_CURRENT_MENU", user.menu)
       commit("SET_ROLES", user.roles)
