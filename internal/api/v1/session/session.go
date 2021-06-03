@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Handler struct {
@@ -41,7 +42,7 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("query user %s error: %s", loginCredential.Username, err.Error()))
 			return
 		}
-		if loginCredential.Password != u.Spec.Authenticate.Password {
+		if err := bcrypt.CompareHashAndPassword([]byte(u.Spec.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
 			ctx.Values().Set("message", "username or password error")
 			return

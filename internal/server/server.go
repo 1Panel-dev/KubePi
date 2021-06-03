@@ -15,6 +15,7 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
@@ -97,7 +98,9 @@ func (e *EkkoSerer) setSuperUser() {
 			panic(fmt.Sprintf("can not query supper user please check db connection: %s", err.Error()))
 		}
 	}
+
 	if superUser.Name == "" {
+
 		e.logger.Info("creat supper user")
 		superUser = user.User{
 			BaseModel: v1.BaseModel{
@@ -115,11 +118,11 @@ func (e *EkkoSerer) setSuperUser() {
 					NickName: "administrator",
 					Email:    "support@fit2cloud.com",
 				},
-				Authenticate: user.Authenticate{
-					Password: "admin123",
-				},
 			},
 		}
+		pass := "admin123"
+		hash, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost) //加密处理
+		superUser.Spec.Authenticate.Password = string(hash)
 		if err := e.db.Save(&superUser); err != nil {
 			panic("can not save supper user please check db connection")
 		}
