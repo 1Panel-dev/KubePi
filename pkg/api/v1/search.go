@@ -1,4 +1,4 @@
-package api
+package v1
 
 type Condition struct {
 	Field    string      `json:"field"`

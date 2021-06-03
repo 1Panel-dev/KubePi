@@ -20,4 +20,5 @@ func TestNewKubernetesClient(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Println(l)
+
 }
