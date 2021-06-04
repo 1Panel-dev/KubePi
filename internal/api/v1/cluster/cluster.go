@@ -7,6 +7,7 @@ import (
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/util/kubernetes"
+	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"github.com/kataras/iris/v12"
@@ -93,6 +94,19 @@ func (h *Handler) ListAll() iris.Handler {
 	}
 }
 
+func (h *Handler) Search() iris.Handler {
+	return func(ctx *context.Context) {
+		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
+		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
+		clusters, total, err := h.clusterService.Search(pageNum, pageSize)
+		if err != nil && err != storm.ErrNotFound {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+		}
+		ctx.Values().Set("data", pkgV1.Page{Items: clusters, Total: total})
+	}
+}
+
 func (h *Handler) Delete() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -112,4 +126,5 @@ func Install(parent iris.Party) {
 	sp.Post("", handler.Create())
 	sp.Get("", handler.ListAll())
 	sp.Delete("/{name:string}", handler.Delete())
+	sp.Post("/search", handler.Search())
 }

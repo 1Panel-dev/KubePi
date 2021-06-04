@@ -13,3 +13,7 @@ export function listAll(){
 export function deleteBy(name){
   return del(`${authUrl}/${name}`)
 }
+
+export function searchCluster(page,size) {
+  return post(`${authUrl}/search?pageNum=${page}&pageSize=${size}`)
+}

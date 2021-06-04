@@ -30,7 +30,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listAll,deleteBy} from "@/api/clusters"
+import {deleteBy, searchCluster} from "@/api/clusters"
 
 export default {
   name: "ClusterList",
@@ -63,8 +63,9 @@ export default {
       this.$router.push({ name: "ClusterImport" })
     },
     search () {
-      listAll().then(res => {
-        this.data = res.data
+      searchCluster(this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+        this.data = res.data.items
+        this.paginationConfig.total = res.data.total
       })
     },
     del (name) {
@@ -80,7 +81,7 @@ export default {
         const ps = []
         if (name) {
           ps.push(deleteBy(name))
-        }else {
+        } else {
           for (const item of this.selects) {
             ps.push(deleteBy(item.name))
           }

@@ -10,6 +10,7 @@ type Cluster interface {
 	Get(name string) (*v1Cluster.Cluster, error)
 	All() ([]v1Cluster.Cluster, error)
 	Delete(name string) error
+	Search(num, size int) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewClusterService() Cluster {
@@ -40,6 +41,20 @@ func (c *cluster) All() ([]v1Cluster.Cluster, error) {
 		return nil, err
 	}
 	return clusters, nil
+}
+
+func (c *cluster) Search(num, size int) ([]v1Cluster.Cluster, int, error) {
+	db := server.DB()
+	query := db.Select().Limit(size).Skip((num - 1) * size)
+	count, err := query.Count(&v1Cluster.Cluster{})
+	if err != nil {
+		return nil, 0, err
+	}
+	clusters := make([]v1Cluster.Cluster, 0)
+	if err := query.Find(&clusters); err != nil {
+		return clusters, 0, err
+	}
+	return clusters, count, nil
 }
 
 func (c *cluster) Delete(name string) error {
