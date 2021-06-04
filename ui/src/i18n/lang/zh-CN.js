@@ -20,7 +20,8 @@ const message = {
     table: {
       name: "名称",
       create_time: "创建时间",
-      status: "状态"
+      status: "状态",
+      action: "操作"
     },
     search: {
       quickSearch: "搜索"

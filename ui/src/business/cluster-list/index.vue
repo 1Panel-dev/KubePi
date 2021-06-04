@@ -23,6 +23,7 @@
           {{ row.status }}
         </template>
       </el-table-column>
+      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
   </layout-content>
 </template>
@@ -41,6 +42,9 @@ export default {
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
+          click: (row) => {
+            this.del(row.name)
+          }
         },
       ],
       paginationConfig: {

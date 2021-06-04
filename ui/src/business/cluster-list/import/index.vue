@@ -55,7 +55,6 @@ export default {
   methods: {
     onCancel () {
       this.$router.push({ name: "ClusterList" })
-
     },
     onSubmit () {
       create(this.form).then(() => {
@@ -63,6 +62,7 @@ export default {
           type: "success",
           message: this.$t("创建成功")
         })
+        this.$router.push({ name: "ClusterList" })
       })
     }
   },
