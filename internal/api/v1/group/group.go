@@ -1,8 +1,8 @@
-package user
+package group
 
 import (
 	"errors"
-	"github.com/KubeOperator/ekko/internal/service/v1/user"
+	"github.com/KubeOperator/ekko/internal/service/v1/group"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -10,16 +10,16 @@ import (
 )
 
 type Handler struct {
-	userService user.Service
+	groupService group.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		userService: user.NewService(),
+		groupService: group.NewService(),
 	}
 }
 
-func (h *Handler) SearchUsers() iris.Handler {
+func (h *Handler) SearchGroups() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
@@ -31,7 +31,7 @@ func (h *Handler) SearchUsers() iris.Handler {
 				return
 			}
 		}
-		users, total, err := h.userService.Search(pageNum, pageSize, conditions)
+		groups, total, err := h.groupService.Search(pageNum, pageSize, conditions)
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -39,12 +39,12 @@ func (h *Handler) SearchUsers() iris.Handler {
 				return
 			}
 		}
-		ctx.Values().Set("data", pkgV1.Page{Items: users, Total: total})
+		ctx.Values().Set("data", pkgV1.Page{Items: groups, Total: total})
 	}
 }
 
 func Install(parent iris.Party) {
 	handler := NewHandler()
-	sp := parent.Party("/users")
-	sp.Post("/search", handler.SearchUsers())
+	sp := parent.Party("/groups")
+	sp.Post("/search", handler.SearchGroups())
 }

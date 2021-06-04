@@ -1,5 +1,5 @@
 <template>
-    <layout-content :header="$t('business.user.user_list')">
+    <layout-content :header="$t('business.user.user_group_list')">
         <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
                        :pagination-config="paginationConfig">
             <template #header>
@@ -18,19 +18,9 @@
                     <el-link>{{ row.name }}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('business.user.nickname')" min-width="100" fix>
-                <template v-slot:default="{row}">
-                    {{ row.spec.info.nickName }}
-                </template>
-            </el-table-column>
-            <el-table-column :label="$t('business.user.email')" min-width="100" fix>
-                <template v-slot:default="{row}">
-                    {{ row.spec.info.email }}
-                </template>
-            </el-table-column>
             <el-table-column :label="$t('commons.table.create_time')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.createAt  }}
+                    {{ row.createAt }}
                 </template>
             </el-table-column>
         </complex-table>
@@ -40,11 +30,11 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {searchUsers} from "@/api/users"
+    import {searchGroups} from "@/api/groups"
 
 
     export default {
-        name: "User",
+        name: "Group",
         components: {LayoutContent, ComplexTable},
         data() {
             return {
@@ -79,14 +69,11 @@
             search(condition) {
                 this.loading = true
                 const {currentPage, pageSize} = this.paginationConfig
-                searchUsers(currentPage, pageSize, condition).then(data => {
+                searchGroups(currentPage, pageSize, condition).then(data => {
                     this.loading = false
                     this.data = data.data.items
                     this.paginationConfig.total = data.data.total
                 })
-            },
-            onImport() {
-                this.$router.push({name: "ClusterImport"})
             },
         },
         created() {
