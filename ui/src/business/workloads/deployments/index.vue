@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Deployments">
-    <el-button style="float: right" @click="create">创 建</el-button>
+    <el-button @click="create">创 建</el-button>
     <el-table :data="data" v-loading="loading">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable label="State" prop="ip" />

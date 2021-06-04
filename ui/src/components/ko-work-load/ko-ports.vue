@@ -1,28 +1,28 @@
 <template>
-  <div>
+  <div style="margin-top: 20px">
       <el-button @click="handleAdd">Add Port</el-button>
-      <el-table style="color: black; background-color: black" :show-header="false" :data="data">
-        <el-table-column min-width="80">
+      <el-table v-if="ports.length !== 0" :data="ports">
+        <el-table-column min-width="40" label="Name">
           <template v-slot:default="{row}">
-            <ko-form-item labelName="Name" clearable itemType="input" v-model="row.name" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.name" />
           </template>
         </el-table-column>
-        <el-table-column min-width="80">
+        <el-table-column min-width="40" label="Private Container Port">
           <template v-slot:default="{row}">
-            <ko-form-item labelName="Private Container Port" clearable itemType="input" v-model="row.port" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.port" />
           </template>
         </el-table-column>
-        <el-table-column min-width="30">
+        <el-table-column min-width="20" label="Public Host Port">
           <template v-slot:default="{row}">
-            <ko-form-item labelName="Public Host Port" clearable itemType="input" v-model="row.targetPort" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.targetPort" />
           </template>
         </el-table-column>
-        <el-table-column min-width="30">
+        <el-table-column min-width="20" label="Protocol">
           <template v-slot:default="{row}">
-            <ko-form-item labelName="Protocol" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
+            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
           </template>
         </el-table-column>
-        <el-table-column min-width="20">
+        <el-table-column width="120px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
           </template>
@@ -39,7 +39,8 @@ export default {
   components: { KoFormItem },
   data() {
     return {
-      data: [],
+      ports: [],
+      protocol:"",
       protocol_list: [
         { label: "TCP", value: "TCP" },
         { label: "UDP", value: "UDP" },
@@ -49,9 +50,9 @@ export default {
   },
   methods: {
     handleDelete(row) {
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i] === row) {
-          this.data.splice(i, 1)
+      for (let i = 0; i < this.ports.length; i++) {
+        if (this.ports[i] === row) {
+          this.ports.splice(i, 1)
         }
       }
     },
@@ -62,7 +63,7 @@ export default {
         targetPort: "",
         protocol: "",
       }
-      this.data.unshift(item)
+      this.ports.unshift(item)
     },
   },
 }
