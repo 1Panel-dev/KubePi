@@ -7,7 +7,7 @@
           <el-button type="primary" size="small" @click="onImport">
             {{ $t("commons.button.import") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="del()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -30,7 +30,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listAll} from "@/api/clusters"
+import {listAll,deleteBy} from "@/api/clusters"
 
 export default {
   name: "ClusterList",
@@ -54,8 +54,7 @@ export default {
           { field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq" },
         ],
       },
-      data: [
-      ],
+      data: [],
       selects: []
     }
   },
@@ -63,14 +62,43 @@ export default {
     onImport () {
       this.$router.push({ name: "ClusterImport" })
     },
-    list() {
+    search () {
       listAll().then(res => {
-        this.data =res.data
+        this.data = res.data
+      })
+    },
+    del (name) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"),
+        {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning"
+        }
+      ).then(() => {
+        const ps = []
+        if (name) {
+          ps.push(deleteBy(name))
+        }else {
+          for (const item of this.selects) {
+            ps.push(deleteBy(item.name))
+          }
+        }
+        Promise.all(ps).then(() => {
+          this.search()
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.delete_success")
+          })
+        }).catch(() => {
+          this.search()
+        })
       })
     }
   },
   created () {
-    this.list()
+    this.search()
   }
 }
 </script>

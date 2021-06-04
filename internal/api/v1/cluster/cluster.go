@@ -93,9 +93,23 @@ func (h *Handler) ListAll() iris.Handler {
 	}
 }
 
+func (h *Handler) Delete() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		err := h.clusterService.Delete(name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+		ctx.StatusCode(iris.StatusOK)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/clusters")
 	sp.Post("", handler.Create())
 	sp.Get("", handler.ListAll())
+	sp.Delete("/{name:string}", handler.Delete())
 }

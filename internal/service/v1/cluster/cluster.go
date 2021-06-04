@@ -9,6 +9,7 @@ type Cluster interface {
 	Create(cluster *v1Cluster.Cluster) error
 	Get(name string) (*v1Cluster.Cluster, error)
 	All() ([]v1Cluster.Cluster, error)
+	Delete(name string) error
 }
 
 func NewClusterService() Cluster {
@@ -39,4 +40,13 @@ func (c *cluster) All() ([]v1Cluster.Cluster, error) {
 		return nil, err
 	}
 	return clusters, nil
+}
+
+func (c *cluster) Delete(name string) error {
+	db := server.DB()
+	cluster, err := c.Get(name)
+	if err != nil {
+		return err
+	}
+	return db.DeleteStruct(cluster)
 }

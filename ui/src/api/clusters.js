@@ -1,4 +1,4 @@
-import {post,get} from "@/plugins/request"
+import {post, get, del} from "@/plugins/request"
 
 const authUrl = "/api/v1/clusters"
 
@@ -8,4 +8,8 @@ export function create(data) {
 
 export function listAll(){
   return get(authUrl)
+}
+
+export function deleteBy(name){
+  return del(`${authUrl}/${name}`)
 }

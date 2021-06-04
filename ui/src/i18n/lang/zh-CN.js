@@ -15,6 +15,7 @@ const message = {
       create: "创建",
       cancel: "取消",
       login: "登录",
+      confirm: "确定",
     },
     table: {
       name: "名称",
@@ -32,6 +33,14 @@ const message = {
       input: "请输入{0}",
       select: "请选择{0}",
     },
+    msg: {
+      delete_success: "删除成功"
+    },
+    confirm_message:{
+      delete: "此操作不可撤销, 是否继续?",
+      create_success: "创建成功",
+      save_success: "保存成功",
+    }
   },
 
   login: {
