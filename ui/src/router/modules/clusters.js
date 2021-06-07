@@ -21,9 +21,18 @@ const Clusters = {
     {
       path: "/namespaces",
       component: () => import("@/business/cluster/namespaces"),
-      name: "namespaces",
+      name: "Namespaces",
       meta: {
         title: "Namespaces"
+      }
+    },
+    {
+      path: "/namespaces/create",
+      component: () => import("@/business/cluster/namespaces/create"),
+      name: "NamespaceCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/namespaces"
       }
     },
     {
