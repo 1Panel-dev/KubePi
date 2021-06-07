@@ -21,6 +21,15 @@ const UserManagement = {
             }
         },
         {
+            path: "groups",
+            component: () => import("@/business/user-management/group"),
+            name: "Groups",
+            meta: {
+                title: "business.user.user_group",
+                global: true
+            }
+        },
+        {
             path: "roles",
             component: () => import("@/business/user-management/role"),
             name: "Roles",

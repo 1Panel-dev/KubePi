@@ -7,6 +7,7 @@ type BaseModel struct {
 	Kind       string    `json:"kind"`
 	CreateAt   time.Time `json:"createAt" storm:"index"`
 	UpdateAt   time.Time `json:"updateAt" storm:"index"`
+	CreatedBy  string    `json:"createdBy" storm:"index"`
 }
 
 type Metadata struct {

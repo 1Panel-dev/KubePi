@@ -91,54 +91,11 @@ a:hover {
   word-break:break-all;
 }
 
-.el-step__title.is-finish {
-  color: #717379;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.el-step__description.is-finish {
-  color: #606266;
-}
-
-.el-step__title.is-success {
-  font-weight: bold;
-  color: #FA5D50;
-}
-
-.el-step__head.is-success {
-  color: #FA5D50;
-  border-color: #FA5D50;
-}
-
-.myTable {
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-.myTable td {
-  width: 50%;
-  padding: 8px;
-  border: 1px solid #DFE6EC;
-  color: #606266;
-  height: 23px;
-}
-.myTable th {
-  border: 1px solid #DFE6EC;
-  color: #909399;
-  height: 30px;
-}
-
-.myTable tr:hover{
-  background-color: #f3f3f3;
-}
-
 .el-button--mini.is-round {
   padding: 4px 10px;
 }
 
 .el-table thead {
-//   color: #57595f;
   font-weight: bold;
 }
 
@@ -168,21 +125,4 @@ a:hover {
   .el-link--inner {
     padding-left: 5px;
   }
-}
-
-.el-tabs__item {
-  color: #ffffff;
-}
-
-.el-table th, .el-table tr {
-  background-color: #1f2224;
-}
-.el-table--enable-row-hover .el-table__body tr:hover>td{
-  background: #37393a;
-}
-.el-table, .el-table__expanded-cell {
-  background-color: #1f2224;
-}
-.el-table--border tr,td{
-  border: none!important;
 }

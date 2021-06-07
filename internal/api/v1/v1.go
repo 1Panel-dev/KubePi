@@ -2,6 +2,9 @@ package v1
 
 import (
 	"fmt"
+	"github.com/KubeOperator/ekko/internal/api/v1/cluster"
+	"github.com/KubeOperator/ekko/internal/api/v1/group"
+	"github.com/KubeOperator/ekko/internal/api/v1/role"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -21,9 +24,6 @@ func authHandler() iris.Handler {
 		ctx.Next()
 	}
 }
-
-
-
 
 func pageHandler() iris.Handler {
 	return func(ctx *context.Context) {
@@ -54,5 +54,7 @@ func AddV1Route(app iris.Party) {
 	authParty := v1Party.Party("")
 	authParty.Use(authHandler())
 	user.Install(authParty)
-
+	cluster.Install(v1Party)
+	group.Install(authParty)
+	role.Install(authParty)
 }

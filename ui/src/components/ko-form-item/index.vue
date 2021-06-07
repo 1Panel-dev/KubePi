@@ -11,6 +11,7 @@
       </el-select>
 
       <el-input v-if="itemType==='input'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
+      <el-input type="number" v-if="itemType==='number'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
 
       <div v-if="itemType==='radio'" style="display: block; margin: 10px 0 0 20px">
         <el-radio-group v-bind="$attrs" v-on="$listeners">
@@ -27,6 +28,8 @@
       </el-select>
 
       <el-input v-if="itemType==='input'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
+      
+      <el-input type="number" v-if="itemType==='number'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners"></el-input>
 
       <div style="display: block; margin: 10px 0 0 20px">
         <el-radio-group v-if="itemType==='radio'" v-bind="$attrs" v-on="$listeners">

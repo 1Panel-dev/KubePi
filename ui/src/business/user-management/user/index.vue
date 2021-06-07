@@ -13,9 +13,24 @@
                 </el-button-group>
             </template>
             <el-table-column type="selection" fix></el-table-column>
-            <el-table-column :label="$t('commons.table.name')" min-width="100" prop="name" fix>
+            <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     <el-link>{{ row.name }}</el-link>
+                </template>
+            </el-table-column>
+            <el-table-column :label="$t('business.user.nickname')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ row.spec.info.nickName }}
+                </template>
+            </el-table-column>
+            <el-table-column :label="$t('business.user.email')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ row.spec.info.email }}
+                </template>
+            </el-table-column>
+            <el-table-column :label="$t('commons.table.create_time')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ row.createAt  }}
                 </template>
             </el-table-column>
         </complex-table>
@@ -25,6 +40,8 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
+    import {searchUsers} from "@/api/users"
+
 
     export default {
         name: "User",
@@ -54,17 +71,26 @@
                         // { field: "created_at", label: this.$t("commons.table.create_time"), component: "FuComplexDateTime", valueFormat: "yyyy-MM-dd HH:mm:ss" },
                     ],
                 },
-                data: [
-                    {name: "测试"},
-                    {name: "测试2"}
-                ],
+                data: [],
                 selects: []
             }
         },
         methods: {
+            search(condition) {
+                this.loading = true
+                const {currentPage, pageSize} = this.paginationConfig
+                searchUsers(currentPage, pageSize, condition).then(data => {
+                    this.loading = false
+                    this.data = data.data.items
+                    this.paginationConfig.total = data.data.total
+                })
+            },
             onImport() {
                 this.$router.push({name: "ClusterImport"})
             },
+        },
+        created() {
+            this.search()
         }
     }
 </script>

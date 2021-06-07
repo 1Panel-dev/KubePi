@@ -15,5 +15,6 @@ require (
 	golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea // indirect
 	gopkg.in/igm/sockjs-go.v2 v2.1.0
 	k8s.io/api v0.21.1
+	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 )
