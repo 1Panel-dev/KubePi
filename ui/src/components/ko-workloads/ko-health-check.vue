@@ -21,10 +21,10 @@
           </el-row>
         </div>
         <el-row v-if="check_type === 'tcpSocket'">
-          <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.port" />
+          <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.tcpSocket.port" />
         </el-row>
         <el-row v-if="check_type === 'exec'">
-          <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" clearable itemType="input" v-model="form.command" />
+          <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" clearable itemType="input" v-model="form.exec.command" />
         </el-row>
       </el-col>
       <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
@@ -52,12 +52,12 @@
           <el-table v-if="form.httpHeaders.length !== 0" :data="form.httpHeaders">
             <el-table-column min-width="40" label="Key">
               <template v-slot:default="{row}">
-                <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
               </template>
             </el-table-column>
             <el-table-column min-width="40" label="Value">
               <template v-slot:default="{row}">
-                <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+                <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
               </template>
             </el-table-column>
             <el-table-column width="120px">
@@ -102,6 +102,12 @@ export default {
         successThreshold: 1,
         failureThreshold: 3,
         httpHeaders: [],
+        exec: {
+          command: [],
+        },
+        tcpSocket: {
+          port: "",
+        }
       },
     }
   },

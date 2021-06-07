@@ -23,7 +23,7 @@
         <el-table v-if="form.dnsConfig.nameservers.length !== 0" :data="form.dnsConfig.nameservers">
           <el-table-column min-width="80" label="Nameservers">
             <template v-slot:default="{row}">
-              <ko-form-item placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.value" />
+              <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
           <el-table-column width="120px">
@@ -38,7 +38,7 @@
         <el-table v-if="form.dnsConfig.searches.length !== 0" :data="form.dnsConfig.searches">
           <el-table-column min-width="80" label="Searches">
             <template v-slot:default="{row}">
-              <ko-form-item placeholder="e.g. mycompany.com" clearable itemType="input" v-model="row.value" />
+              <ko-form-item :withoutLabel="true" placeholder="e.g. mycompany.com" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
           <el-table-column width="120px">
@@ -62,12 +62,12 @@
       <el-table v-if="form.dnsConfig.options.length !== 0" :data="form.dnsConfig.options">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
         <el-table-column width="120px">
@@ -90,12 +90,12 @@
       <el-table v-if="form.hostAliases.length !== 0" :data="form.hostAliases">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.name" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.ip" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostnames" />
           </template>
         </el-table-column>
         <el-table-column width="120px">
@@ -118,8 +118,8 @@ export default {
   data() {
     return {
       network_mode_list: [
-        { label: "Normal", value: "Normal" },
-        { label: "Host Network", value: "Host Network" },
+        { label: "Normal", value: false },
+        { label: "Host Network", value: true },
       ],
       dns_policy_list: [
         { label: "Default", value: "Default" },
@@ -127,9 +127,9 @@ export default {
         { label: "None", value: "None" },
       ],
       form: {
-        hostname: "",
         subdomain: "",
         dnsPolicy: "",
+        hostname: "",
         hostNetwork: "",
         hostAliases: [],
         dnsConfig: {
