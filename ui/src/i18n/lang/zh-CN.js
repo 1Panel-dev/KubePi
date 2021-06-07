@@ -16,10 +16,12 @@ const message = {
       cancel: "取消",
       login: "登录",
       confirm: "确定",
+      edit_yaml: "YAML",
+      back_form: "返回表单"
     },
     table: {
       name: "名称",
-      create_time: "创建时间",
+      created_time: "创建时间",
       status: "状态",
       action: "操作"
     },
@@ -72,7 +74,11 @@ const message = {
       nodes: "节点",
       api_server_help: "例如: https://172.16.10.100:8443",
       router_help: "装有 kube-proxy 的任意节点的且可以被访问到的 IP 地址",
-      label: "标签"
+      label: "标签",
+      description: "描述"
+    },
+    namespace:{
+      description: "描述"
     },
     workload: {
       workload: "工作量"
