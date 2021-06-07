@@ -15,9 +15,6 @@ import store from './store'
 import icons from './icons'
 import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
-// import plugins from "./plugins";
-// import directives from "./directive";
-// import filters from "./filters";
 import "./permission"
 
 Vue.config.productionTip = false

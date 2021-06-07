@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
       <el-button @click="handleAdd">Add</el-button>
-      <el-table v-if="annotations.length !== 0" :data="annotations">
+      <el-table v-if="labels.length !== 0" :data="labels">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
         <el-table-column width="120px">
@@ -25,18 +25,18 @@
 import KoFormItem from "@/components/ko-form-item/index"
 
 export default {
-  name: "KoAnnotations",
+  name: "KoLabels",
   components: { KoFormItem },
   data() {
     return {
-      annotations: [],
+      labels: [],
     }
   },
   methods: {
     handleDelete(row) {
-      for (let i = 0; i < this.annotations.length; i++) {
-        if (this.annotations[i] === row) {
-          this.annotations.splice(i, 1)
+      for (let i = 0; i < this.labels.length; i++) {
+        if (this.labels[i] === row) {
+          this.labels.splice(i, 1)
         }
       }
     },
@@ -45,7 +45,7 @@ export default {
         key: "",
         value: "",
       }
-      this.annotations.unshift(item)
+      this.labels.unshift(item)
     },
   },
 }
