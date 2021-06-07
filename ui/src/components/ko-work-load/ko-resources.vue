@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 20px">
+  <div style="margin-top: 20px;margin-bottom: 20px">
     <el-row :gutter="20">
       <el-col :span="12">
         <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" clearable itemType="input" deviderName="mCPUs" v-model="form.requests.cpu" />

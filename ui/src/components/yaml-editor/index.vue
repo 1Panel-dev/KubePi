@@ -42,7 +42,6 @@ export default {
     }
   },
   watch: {
-
   },
   mounted () {
     if (this.value !== undefined) {
@@ -51,14 +50,6 @@ export default {
     }
   },
   methods: {
-    // checkValid() {
-    //   setTimeout( () => {
-    //     // this.codemirror.refresh()
-    //     const container = this.$refs.codeMirror
-    //     const len = container.querySelectorAll('.CodeMirror-lint-marker-error').length
-    //     this.isValid = !!len && len > 0
-    //   },1000)
-    // }
   },
 }
 </script>
