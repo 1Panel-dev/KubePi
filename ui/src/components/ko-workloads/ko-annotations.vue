@@ -1,52 +1,103 @@
 <template>
-  <div style="margin-top: 20px">
-      <el-button @click="handleAdd">Add</el-button>
-      <el-table v-if="annotations.length !== 0" :data="annotations">
-        <el-table-column min-width="80" label="Key">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
-          </template>
-        </el-table-column>
-        <el-table-column min-width="80" label="Value">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
-          </template>
-        </el-table-column>
-        <el-table-column width="120px">
-          <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+
+  <div class="tab-content">
+    <el-row :gutter="20">
+      <el-col :span="11">
+        <span>key</span>
+      </el-col>
+      <el-col :span="11">
+        <span>value</span>
+      </el-col>
+      <div v-for="label in labels" v-bind:key="label.index">
+        <div class="grid-content tab-content">
+          <br>
+          <br>
+          <el-col :span="11">
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
+          </el-col>
+          <el-col :span="11">
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.value"/>
+          </el-col>
+          <el-col :span="2">
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </el-col>
+        </div>
+      </div>
+    </el-row>
+    <div style="margin-top: 10px;">
+      <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+    </div>
   </div>
 </template>
-          
+
 <script>
-import KoFormItem from "@/components/ko-form-item/index"
+
+import KoFormItem from "@/components/ko-form-item"
 
 export default {
   name: "KoAnnotations",
   components: { KoFormItem },
-  data() {
+  props: {
+    annotationObj: Object
+  },
+  data () {
     return {
-      annotations: [],
+      labels: [],
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.annotations.length; i++) {
-        if (this.annotations[i] === row) {
-          this.annotations.splice(i, 1)
+    handleDelete (row) {
+      for (let i = 0; i < this.labels.length; i++) {
+        if (this.labels[i] === row) {
+          this.labels.splice(i, 1)
         }
       }
     },
-    handleAdd() {
-      var item = {
+    handleAdd () {
+      const item = {
+        index: Math.random(),
         key: "",
         value: "",
       }
-      this.annotations.unshift(item)
+      this.labels.push(item)
     },
   },
+  watch: {
+    labels: {
+      handler (val) {
+        let obj = {}
+        for (let i = 0; i < val.length; i++) {
+          if (val[i].key !== "") {
+            obj[val[i].key] = val[i].value
+          }
+        }
+        this.$emit("update:annotationObj", obj)
+      },
+      deep: true
+    },
+  },
+  mounted () {
+    if (Object.keys(this.annotationObj).length !== 0) {
+      for (const key in this.annotationObj) {
+        if (Object.prototype.hasOwnProperty.call(this.annotationObj, key)) {
+          const item = {
+            index: Math.random(),
+            key: key,
+            value: this.annotationObj[key],
+          }
+          this.labels.push(item)
+        }
+      }
+    }
+  }
 }
 </script>
+
+<style scoped>
+    .tab-content {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
