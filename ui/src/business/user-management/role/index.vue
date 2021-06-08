@@ -7,9 +7,6 @@
                     <el-button type="primary" size="small" @click="onImport">
                         {{ $t("commons.button.create") }}
                     </el-button>
-                    <el-button type="primary" size="small" :disabled="selects.length===0">
-                        {{ $t("commons.button.delete") }}
-                    </el-button>
                 </el-button-group>
             </template>
             <el-table-column type="selection" fix></el-table-column>
@@ -18,7 +15,7 @@
                     <el-link>{{ row.name }}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('commons.table.create_time')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     {{ row.createAt }}
                 </template>

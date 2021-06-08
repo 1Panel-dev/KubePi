@@ -88,10 +88,18 @@ func (e *EkkoSerer) setResultHandler() {
 
 func (e *EkkoSerer) setUpErrHandler() {
 	e.OnAnyErrorCode(func(ctx iris.Context) {
+		if ctx.Values().GetString("message") == "" {
+			switch ctx.GetStatusCode() {
+			case iris.StatusNotFound:
+				ctx.Values().Set("message", "the server could not find the requested resource")
+			}
+		}
 		err := iris.Map{
 			"success": false,
+			"code":    ctx.GetStatusCode(),
 			"message": ctx.Values().GetString("message"),
 		}
+
 		_, _ = ctx.JSON(err)
 	})
 }
