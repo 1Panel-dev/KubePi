@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/config"
 	v1Config "github.com/KubeOperator/ekko/internal/model/v1/config"
+	"github.com/KubeOperator/ekko/migrate"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -95,6 +96,10 @@ func (e *EkkoSerer) setUpErrHandler() {
 	})
 }
 
+func (e *EkkoSerer) runMigrations() {
+	migrate.RunMigrate(e.db, e.logger)
+}
+
 func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.Application = iris.New()
 	e.setUpConfig()
@@ -103,9 +108,7 @@ func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.setUpSession()
 	e.setResultHandler()
 	e.setUpErrHandler()
-	e.setDefaultUserGroups()
-	e.setDefaultRoles()
-	e.setSuperUser()
+	e.runMigrations()
 	return e
 }
 

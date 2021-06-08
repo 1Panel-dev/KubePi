@@ -69,7 +69,7 @@ const actions = {
 
                 const user = data.data
                 user["roles"] = ["ADMIN"]
-                user["menu"] = ["global"]
+                user["menu"] = ["cluster1"]
                 const {name, roles, menu} = user
                 commit("SET_NAME", name)
                 commit("SET_ROLES", roles)

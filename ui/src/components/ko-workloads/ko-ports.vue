@@ -1,6 +1,7 @@
 <template>
   <div style="margin-top: 20px">
       <el-button @click="handleAdd">Add Port</el-button>
+      <el-checkbox style="float: right; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
       <el-table v-if="ports.length !== 0" :data="ports">
         <el-table-column min-width="40" label="Name">
           <template v-slot:default="{row}">
@@ -9,12 +10,12 @@
         </el-table-column>
         <el-table-column min-width="40" label="Private Container Port">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.port" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.containerPort" />
           </template>
         </el-table-column>
-        <el-table-column min-width="20" label="Public Host Port">
+        <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.targetPort" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.hostPort" />
           </template>
         </el-table-column>
         <el-table-column min-width="20" label="Protocol">
@@ -41,6 +42,7 @@ export default {
     return {
       ports: [],
       protocol:"",
+      isExpose: false,
       protocol_list: [
         { label: "TCP", value: "TCP" },
         { label: "UDP", value: "UDP" },
@@ -59,8 +61,8 @@ export default {
     handleAdd() {
       var item = {
         name: "",
-        port: "",
-        targetPort: "",
+        containerPort: "",
+        hostPort: "",
         protocol: "",
       }
       this.ports.unshift(item)
