@@ -15,7 +15,7 @@ const generateRoutes = async (to, from, next) => {
     } else {
         try {
             const user = await store.dispatch("user/getCurrentUser")
-            user.menu = 'cluster1'
+            user.menu = 'global'
             const accessRoutes = await store.dispatch("permission/generateRoutes", user)
             if (user.menu === 'global') {
                 router.addRoutes([{
