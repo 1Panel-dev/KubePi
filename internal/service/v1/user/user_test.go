@@ -2,7 +2,8 @@ package user
 
 import (
 	"fmt"
-	"github.com/KubeOperator/ekko/internal/model/v1/user"
+	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
+	customStorm "github.com/KubeOperator/ekko/pkg/storm"
 	"github.com/asdine/storm/v3"
 	"testing"
 )
@@ -12,36 +13,44 @@ func TestUserService_Create(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	//u := user.User{
+
+	//rolebinding := v1Role.Banding{
 	//	BaseModel: v1.BaseModel{
 	//		ApiVersion: "v1",
-	//		Kind:       "User",
+	//		Kind:       "RoleBinding",
 	//		CreateAt:   time.Now(),
 	//		UpdateAt:   time.Now(),
+	//		CreatedBy:  "system",
 	//	},
 	//	Metadata: v1.Metadata{
-	//		Name: "test",
 	//		UUID: uuid.New().String(),
+	//		Name: "test",
 	//	},
-	//	Spec: user.Spec{
-	//		Info: user.Info{
-	//			NickName: "iamtest",
-	//			Email:    "chenyang@fit2cloud.com",
+	//	Subjects: []v1Role.Subject{
+	//		{
+	//			Kind: "User",
+	//			Name: "zhangsan",
 	//		},
-	//		Authenticate: user.Authenticate{
-	//			Password: "Calong@2015",
-	//			Token:    "",
+	//		{
+	//			Kind: "Group",
+	//			Name: "group1",
 	//		},
 	//	},
+	//	RoleRef: "administrator",
 	//}
-	//if err := db.Save(&u); err != nil {
+	//if err := db.Save(&rolebinding); err != nil {
 	//	t.Error(err)
 	//}
-	u := user.User{}
-	//if err := db.One("Name", "test", &u); err != nil {
+	var u []v1Role.Banding
+
+	query := db.Select(customStorm.Containers("Subjects", v1Role.Subject{Name: "lisi", Kind: "User"}))
+
+	if err := query.Find(&u); err != nil {
+		t.Error(err)
+	}
+	//if err := db.Find("Subjects", []v1Role.Subject{{Kind: "User", Name: "zhangsan"}, {Kind: "Group", Name: "group1"}}, &u); err != nil {
 	//	t.Error(err)
 	//}
-	fmt.Println(db.Count(&u))
 	fmt.Println(u)
 
 }

@@ -5,6 +5,7 @@ import (
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -79,6 +80,10 @@ func (u *service) Create(us *v1User.User) error {
 	}
 	if us.Kind == "" {
 		us.Kind = "User"
+	}
+	if us.Spec.Authenticate.Password != "" {
+		hash, _ := bcrypt.GenerateFromPassword([]byte(us.Spec.Authenticate.Password), bcrypt.DefaultCost) //加密处理
+		us.Spec.Authenticate.Password = string(hash)
 	}
 	return db.Save(&us)
 }
