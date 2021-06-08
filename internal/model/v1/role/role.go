@@ -11,6 +11,7 @@ type PolicyRule struct {
 type Role struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
+	Rules        []PolicyRule `json:"rules"`
 }
 
 type Subject struct {
@@ -19,8 +20,8 @@ type Subject struct {
 }
 
 type Banding struct {
-	v1.BaseModel
-	v1.Metadata
-	Subjects []Subject `json:"subjects"`
-	RoleRef  string    `json:"roleRef" storm:"index"`
+	v1.BaseModel `storm:"inline"`
+	v1.Metadata  `storm:"inline"`
+	Subjects     []Subject `json:"subjects"`
+	RoleRef      string    `json:"roleRef" storm:"index"`
 }

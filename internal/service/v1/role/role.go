@@ -5,6 +5,8 @@ import (
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/asdine/storm/v3/q"
+	"strings"
 )
 
 type Service interface {
@@ -58,10 +60,18 @@ func (s service) Delete(name string) error {
 
 func (s service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error) {
 	db := server.DB()
-	query := db.Select()
+	var ms []q.Matcher
+	for key := range conditions {
+		if strings.ToLower(conditions[key].Operator) == "in" {
+			m := q.In(conditions[key].Field, conditions[key].Value)
+			ms = append(ms, m)
+		}
+	}
+	query := db.Select(ms...)
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}
+
 	count, err := query.Count(&v1Role.Role{})
 	if err != nil {
 		return nil, 0, err
