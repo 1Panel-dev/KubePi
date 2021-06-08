@@ -17,7 +17,8 @@ const message = {
       login: "登录",
       confirm: "确定",
       edit_yaml: "YAML",
-      back_form: "返回表单"
+      back_form: "返回表单",
+      add: "增加"
     },
     table: {
       name: "名称",
