@@ -9,6 +9,9 @@ const message = {
       confirm: "确认",
       prompt: "提示",
     },
+    personal:{
+      exit:"退出"
+    },
     button: {
       delete: "删除",
       import: "导入",
