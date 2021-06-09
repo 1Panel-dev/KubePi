@@ -9,14 +9,14 @@
                         </div>
                         <div class="login-border"></div>
                         <div class="login-welcome">
-                            {{ $t("login.welcome") }}
+                            {{ $t("commons.login.welcome") }}
                         </div>
                         <div class="login-form">
                             <el-form-item prop="username">
-                                <el-input v-model="form.username" :placeholder="$t('login.username')" autofocus/>
+                                <el-input v-model="form.username" :placeholder="$t('commons.login.username')" autofocus/>
                             </el-form-item>
                             <el-form-item prop="password">
-                                <el-input type="password" v-model="form.password" :placeholder="$t('login.password')"
+                                <el-input type="password" v-model="form.password" :placeholder="$t('commons.login.password')"
                                           maxlength="30"/>
                             </el-form-item>
                         </div>
@@ -66,7 +66,7 @@
                 msg: "",
                 redirect: undefined,
                 otherQuery: {},
-                systemName: this.$t("login.title"),
+                systemName: this.$t("commons.login.title"),
                 loadingPage: false
             }
         },
