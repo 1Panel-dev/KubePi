@@ -20,6 +20,9 @@
             <el-tab-pane label="Labels">
               <ko-labels :labelObj.sync="form.metadata.labels"></ko-labels>
             </el-tab-pane>
+            <el-tab-pane label="annotations">
+              <ko-annotations :annotation-obj.sync="annotations"></ko-annotations>
+            </el-tab-pane>
           </el-tabs>
         </el-col>
       </div>
@@ -46,10 +49,11 @@ import YamlEditor from "@/components/yaml-editor"
 import KoFormItem from "@/components/ko-form-item"
 import KoContainerResourceLimit from "@/components/ko-namespace/ko-container-resource-limit"
 import KoLabels from "@/components/ko-workloads/ko-labels"
+import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 
 export default {
   name: "NamespaceCreate",
-  components: { KoLabels, KoContainerResourceLimit, KoFormItem, YamlEditor, LayoutContent },
+  components: { KoAnnotations, KoLabels, KoContainerResourceLimit, KoFormItem, YamlEditor, LayoutContent },
   data () {
     return {
       form: {
@@ -75,7 +79,8 @@ export default {
         requestsMemory: ""
       },
       labels: {},
-      activeName: ""
+      activeName: "",
+      annotations: ""
     }
   },
   methods: {
@@ -107,6 +112,13 @@ export default {
         }
       }
       formData.metadata.annotations["field.cattle.io/containerDefaultResourceLimit"] = JSON.stringify(resourceData).replace(/[\\]/g, "")
+      let annotations = {}
+      annotations = JSON.parse(JSON.stringify(this.annotations))
+      for (const key in annotations) {
+        if (Object.prototype.hasOwnProperty.call(annotations, key)) {
+          formData.metadata.annotations[key] = annotations[key]
+        }
+      }
       this.yaml = formData
       this.showYaml = true
     },
