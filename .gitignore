@@ -1,12 +1,12 @@
 # Binaries for programs and plugins
 .idea
 dist
-web
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+cmd/server/web
 
 # Test binary, built with `go test -c`
 *.test
