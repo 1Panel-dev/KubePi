@@ -4,7 +4,7 @@
                        :pagination-config="paginationConfig">
             <template #header>
                 <el-button-group>
-                    <el-button type="primary" size="small" @click="onImport">
+                    <el-button type="primary" size="small" @click="onCreate">
                         {{ $t("commons.button.create") }}
                     </el-button>
                 </el-button-group>
@@ -15,11 +15,17 @@
                     <el-link>{{ row.name }}</el-link>
                 </template>
             </el-table-column>
+            <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ row.createdBy}}
+                </template>
+            </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     {{ row.createAt }}
                 </template>
             </el-table-column>
+            <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
         </complex-table>
     </layout-content>
 </template>
@@ -72,6 +78,10 @@
                     this.paginationConfig.total = data.data.total
                 })
             },
+            onCreate() {
+                this.$router.push({name: "RoleCreate"})
+
+            }
         },
         created() {
             this.search()

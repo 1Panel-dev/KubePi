@@ -109,7 +109,9 @@ const message = {
       user_group_list: "用户组列表",
       role_list: "角色列表",
       user: "用户",
-      role: "角色"
+      role: "角色",
+      template:"模版",
+      base_on_exists_role:"基于已有角色"
     }
   },
 }

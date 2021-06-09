@@ -17,7 +17,6 @@ const UserManagement = {
             name: "UserList",
             meta: {
                 title: "business.user.user",
-                global: true
             }
         },
         {
@@ -36,6 +35,15 @@ const UserManagement = {
             meta: {
                 title: "business.user.role",
                 global: true
+            }
+        },
+        {
+            path: "roles/create",
+            component: () => import("@/business/user-management/role/create"),
+            name: "RoleCreate",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/roles",
             }
         },
     ]

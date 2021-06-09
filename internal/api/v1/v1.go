@@ -29,6 +29,7 @@ func authHandler() iris.Handler {
 			ctx.StopWithStatus(iris.StatusUnauthorized)
 			return
 		}
+		ctx.Values().Set("profile", p)
 		ctx.Next()
 	}
 }

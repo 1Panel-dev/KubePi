@@ -109,7 +109,7 @@ const message = {
       user_group_list: "用户组列表",
       role_list: "角色列表",
       user: "用户",
-      role: "角色"
+      role: "角色",
     }
   },
 }

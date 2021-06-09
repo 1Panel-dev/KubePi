@@ -6,11 +6,14 @@ import (
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3/q"
+	"github.com/google/uuid"
 	"strings"
+	"time"
 )
 
 type Service interface {
 	Create(r *v1Role.Role) error
+	CreateWithTemplate(r *v1Role.Role, templateName string) error
 	Get(name string) (*v1Role.Role, error)
 	List() ([]v1Role.Role, error)
 	Delete(name string) error
@@ -25,14 +28,21 @@ type service struct {
 }
 
 func (s service) Create(r *v1Role.Role) error {
-	if r.ApiVersion == "" {
-		r.ApiVersion = "v1"
-	}
-	if r.Kind == "" {
-		r.Kind = "Role"
-	}
 	db := server.DB()
-	return db.Save(&r)
+	r.UUID = uuid.New().String()
+	r.CreateAt = time.Now()
+	r.UpdateAt = time.Now()
+	return db.Save(r)
+}
+
+func (s service) CreateWithTemplate(r *v1Role.Role, templateName string) error {
+	db := server.DB()
+	var template v1Role.Role
+	if err := db.One("Name", templateName, &template); err != nil {
+		return err
+	}
+	r.Rules = template.Rules
+	return s.Create(r)
 }
 
 func (s service) Get(name string) (*v1Role.Role, error) {
