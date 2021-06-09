@@ -1,34 +1,34 @@
 <template>
   <div style="margin-top: 20px">
-      <el-button @click="handleAdd">Add Port</el-button>
-      <el-checkbox style="float: right; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
-      <el-table v-if="ports.length !== 0" :data="ports">
-        <el-table-column min-width="40" label="Name">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.name" />
-          </template>
-        </el-table-column>
-        <el-table-column min-width="40" label="Private Container Port">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.containerPort" />
-          </template>
-        </el-table-column>
-        <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.hostPort" />
-          </template>
-        </el-table-column>
-        <el-table-column min-width="20" label="Protocol">
-          <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
-          </template>
-        </el-table-column>
-        <el-table-column width="120px">
-          <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-button @click="handleAdd">Add Port</el-button>
+    <el-checkbox style="float: right; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
+    <el-table v-if="ports.length !== 0" :data="ports">
+      <el-table-column min-width="40" label="Name">
+        <template v-slot:default="{row}">
+          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.name" />
+        </template>
+      </el-table-column>
+      <el-table-column min-width="40" label="Private Container Port">
+        <template v-slot:default="{row}">
+          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.containerPort" />
+        </template>
+      </el-table-column>
+      <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
+        <template v-slot:default="{row}">
+          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.hostPort" />
+        </template>
+      </el-table-column>
+      <el-table-column min-width="20" label="Protocol">
+        <template v-slot:default="{row}">
+          <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
+        </template>
+      </el-table-column>
+      <el-table-column width="120px">
+        <template v-slot:default="{row}">
+          <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
           
@@ -38,10 +38,13 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoPorts",
   components: { KoFormItem },
+  props: {
+    portArray: Array,
+  },
   data() {
     return {
       ports: [],
-      protocol:"",
+      protocol: "",
       isExpose: false,
       protocol_list: [
         { label: "TCP", value: "TCP" },
@@ -67,6 +70,21 @@ export default {
       }
       this.ports.unshift(item)
     },
+    transformation(parentFrom) {
+      if (this.ports.length !== 0) {
+        parentFrom.ports = this.ports
+        for (const po of parentFrom.ports) {
+          po.expose = this.isExpose
+        }
+      } else {
+        delete parentFrom.ports
+      }
+    },
+  },
+  mounted() {
+    if (this.portArray) {
+      this.ports = this.portArray
+    }
   },
 }
 </script>

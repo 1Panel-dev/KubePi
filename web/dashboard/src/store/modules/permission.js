@@ -5,7 +5,7 @@ const state = {
     addRoutes: []
 }
 
-function hasPermission(user, route) {
+function hasPermission() {
         return true
         // if (route.meta && route.meta.roles){
         //   return user.roles.some(role => route.meta.roles.includes(role))

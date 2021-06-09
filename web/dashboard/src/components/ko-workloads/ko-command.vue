@@ -91,6 +91,9 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoCommand",
   components: { KoFormItem },
+  props: {
+    commandObj: Object,
+  },
   data() {
     return {
       form: {
@@ -157,6 +160,113 @@ export default {
         row.type = row.key
       }
     },
+    transformation(parentFrom) {
+      if (this.form.args) {
+        parentFrom.args = this.form.args.split(",")
+      } else {
+        delete parentFrom.args
+      }
+      if (this.form.workingDir) {
+        parentFrom.workingDir = this.form.workingDir
+      } else {
+        delete parentFrom.workingDir
+      }
+      if (this.form.stdin) {
+        switch (this.form.stdin) {
+          case "No":
+            parentFrom.stdin = false
+            break
+          case "Yes":
+            parentFrom.stdin = true
+            break
+          case "Ones":
+            parentFrom.stdin = true
+            parentFrom.stdinOnce = true
+            break
+        }
+      } else {
+        delete parentFrom.stdin
+      }
+      if (this.form.tty) {
+        parentFrom.tty = this.form.tty
+      } else {
+        delete parentFrom.tty
+      }
+      let envList = []
+      let envFromList = []
+      if (this.form.env || this.form.envFromResource) {
+        for (const en of this.form.env) {
+          envList.push(en)
+        }
+        for (const en of this.form.envFromResource) {
+          switch (en.type) {
+            case "Resource":
+              envList.push({
+                name: en.prefix_or_alias,
+                valueFrom: {
+                  resourceFieldRef: {
+                    containerName: en.source,
+                    divisor: 0,
+                    resource: en.key,
+                  },
+                },
+              })
+              break
+            case "ConfigMap":
+              envList.push({
+                name: en.prefix_or_alias,
+                valueFrom: {
+                  configMapKeyRef: {
+                    name: en.source,
+                    optional: false, // 这个false是什么意思不知道
+                  },
+                },
+              })
+              break
+            case "Secret Key":
+              envList.push({
+                name: en.prefix_or_alias,
+                valueFrom: {
+                  secretKeyRef: {
+                    name: en.source,
+                    optional: false,
+                  },
+                },
+              })
+              break
+            case "Field":
+              envList.push({
+                name: en.prefix_or_alias,
+                valueFrom: {
+                  fieldRef: {
+                    apiVersion: "v1",
+                    fieldPath: en.source,
+                  },
+                },
+              })
+              break
+            case "Secret":
+              envFromList.push({
+                name: en.prefix_or_alias,
+                valueFrom: {
+                  secretRef: {
+                    name: en.source,
+                    optional: false,
+                  },
+                },
+              })
+              break
+          }
+        }
+      }
+      parentFrom.env = envList
+      parentFrom.envFrom = envFromList
+    }
+  },
+  mounted() {
+    if (this.commandObj) {
+      // 给form赋值
+    }
   },
 }
 </script>

@@ -29,13 +29,13 @@
 
     <el-tabs style="margin-top: 50px" v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="Ports" name="Ports">
-        <ko-ports ref="ko_ports" />
+        <ko-ports ref="ko_ports" :portArray="form.spec.template.spec.containers.ports" />
       </el-tab-pane>
       <el-tab-pane label="Command" name="Command">
-        <ko-command ref="ko_command" />
+        <ko-command ref="ko_command" :commandObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Resources" name="Resources">
-        <ko-resources />
+        <ko-resources ref="ko_resource" :resourceObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Health Check" name="Health Check">
         <ko-health-check style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
@@ -54,12 +54,12 @@
       <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
         <ko-upgrade-policy />
       </el-tab-pane>
-      <el-tab-pane label="Labels" name="Labels">
+      <!-- <el-tab-pane label="Labels" name="Labels">
         <ko-labels />
       </el-tab-pane>
       <el-tab-pane label="Annotations" name="Annotations">
         <ko-annotations />
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
     <el-button style="float: center" @click="getinfo">Create</el-button>
   </layout-content>
@@ -76,13 +76,13 @@ import KoSecurityContext from "@/components/ko-workloads/ko-security-context.vue
 import KoNetworking from "@/components/ko-workloads/ko-networking.vue"
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
-import KoLabels from "@/components/ko-workloads/ko-labels.vue"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
-import { deepClone } from "@/utils/deepClone"
+// import KoLabels from "@/components/ko-workloads/ko-labels.vue"
+// import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
+// import { deepClone } from "@/utils/deepClone"
 
 export default {
   name: "DeploymentCreate",
-  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy, KoLabels, KoAnnotations },
+  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy },
   data() {
     return {
       dns_policy_list: [
@@ -121,7 +121,20 @@ export default {
                 envFrom: [],
                 command: [],
                 args: [],
-                resources: {},
+                workingDir: "",
+                stdin: "",
+                tty: false,
+                stdinOnce: "",
+                resources: {
+                  requests: {
+                    memory: "",
+                    cpu: "",
+                  },
+                  limits: {
+                    memory: "",
+                    cpu: "",
+                  },
+                },
                 livenessProbe: {},
                 readinessProbe: {},
                 startupProbe: {},
@@ -156,117 +169,10 @@ export default {
   },
   methods: {
     getinfo() {
-      //ports
-      if (this.$refs.ko_ports.ports) {
-        this.form.spec.template.ports = this.$refs.ko_ports.ports
-        for (const po of this.form.spec.template.ports) {
-          po.expose = this.$refs.ko_ports.isExpose
-        }
-      } else {
-        delete this.form.spec.template.ports
-      }
-      // command
-      const commandForm = deepClone(this.$refs.ko_command.form)
-      if (commandForm.args) {
-        this.form.spec.template.spec.containers.args = commandForm.args.split(",")
-      } else {
-        delete this.form.spec.template.spec.containers.args
-      }
-      if (commandForm.workingDir) {
-        this.form.spec.template.spec.containers.workingDir = commandForm.workingDir
-      } else {
-        delete this.form.spec.template.spec.containers.workingDir
-      }
-      if (commandForm.stdin) {
-        switch (commandForm.stdin) {
-          case "No":
-            this.form.spec.template.spec.containers.stdin = false
-            break
-          case "Yes":
-            this.form.spec.template.spec.containers.stdin = true
-            break
-          case "Ones":
-            this.form.spec.template.spec.containers.stdin = true
-            this.form.spec.template.spec.containers.stdinOnce = true
-            break
-        }
-      } else {
-        delete this.form.spec.template.spec.containers.stdin
-      }
-      if (commandForm.tty) {
-        this.form.spec.template.spec.containers.tty = commandForm.tty
-      } else {
-        delete this.form.spec.template.spec.containers.tty
-      }
-      let envList = []
-      let envFromList = []
-      if (commandForm.env || commandForm.envFromResource) {
-        for (const en of commandForm.env) {
-          envList.push(en)
-        }
-        for (const en of commandForm.envFromResource) {
-          switch (en.type) {
-            case "Resource":
-              envList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  resourceFieldRef: {
-                    containerName: en.source,
-                    divisor: 0,
-                    resource: en.key,
-                  },
-                },
-              })
-              break
-            case "ConfigMap":
-              envList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  configMapKeyRef: {
-                    name: en.source,
-                    optional: false, // 这个false是什么意思不知道
-                  },
-                },
-              })
-              break
-            case "Secret Key":
-              envList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  secretKeyRef: {
-                    name: en.source,
-                    optional: false,
-                  },
-                },
-              })
-              break
-            case "Field":
-              envList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  fieldRef: {
-                    apiVersion: "v1",
-                    fieldPath: en.source,
-                  },
-                },
-              })
-              break
-            case "Secret":
-              envFromList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  secretRef: {
-                    name: en.source,
-                    optional: false,
-                  },
-                },
-              })
-              break
-          }
-        }
-      }
-      this.form.spec.template.spec.containers.env = envList
-      this.form.spec.template.spec.containers.envFrom = envFromList
+      this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_command.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_resource.transformation(this.form.spec.template.spec.containers.resources)
+
       console.log(this.form.spec.template.spec.containers)
     },
     handleClick() {},

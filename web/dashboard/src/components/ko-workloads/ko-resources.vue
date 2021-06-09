@@ -25,6 +25,9 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoResources",
   components: { KoFormItem },
+  props: {
+    resourceObj: Object
+  },
   data() {
     return {
       form: {
@@ -40,6 +43,28 @@ export default {
     }
   },
   methods: {
+    transformation(parentFrom) {
+      if(this.form.requests.memory) {
+        parentFrom.requests.memory = this.form.requests.memory
+      } else {
+        delete parentFrom.requests.memory
+      }
+      if(this.form.requests.cpu) {
+        parentFrom.requests.cpu = this.form.requests.cpu
+      } else {
+        delete parentFrom.requests.cpu
+      }
+      if(this.form.limits.memory) {
+        parentFrom.limits.memory = this.form.limits.memory
+      } else {
+        delete parentFrom.limits.memory
+      }
+      if(this.form.limits.cpu) {
+        parentFrom.limits.cpu = this.form.limits.cpu
+      } else {
+        delete parentFrom.limits.cpu
+      }
+    }
   },
 }
 </script>
