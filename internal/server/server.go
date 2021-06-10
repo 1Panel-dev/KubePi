@@ -13,6 +13,7 @@ import (
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strings"
 )
 
 const sessionCookieName = "SESS_COOKIE_EKKO"
@@ -76,12 +77,24 @@ func (e *EkkoSerer) setUpSession() {
 func (e *EkkoSerer) setResultHandler() {
 	e.Use(func(ctx *context.Context) {
 		ctx.Next()
-		if ctx.GetStatusCode() >= iris.StatusOK && ctx.GetStatusCode() < iris.StatusBadRequest {
-			resp := iris.Map{
-				"success": true,
-				"data":    ctx.Values().Get("data"),
+		isProxyPath := func() bool {
+			p := ctx.Request().URL.Path
+			ss := strings.Split(p, "/")
+			if len(ss) >= 2 {
+				if ss[1] == "proxy" {
+					return true
+				}
 			}
-			_, _ = ctx.JSON(resp)
+			return false
+		}()
+		if isProxyPath {
+			if ctx.GetStatusCode() >= iris.StatusOK && ctx.GetStatusCode() < iris.StatusBadRequest {
+				resp := iris.Map{
+					"success": true,
+					"data":    ctx.Values().Get("data"),
+				}
+				_, _ = ctx.JSON(resp)
+			}
 		}
 	})
 }
