@@ -78,7 +78,7 @@ func (e *EkkoSerer) setResultHandler() {
 	e.Use(func(ctx *context.Context) {
 		ctx.Next()
 		isProxyPath := func() bool {
-			p := ctx.Request().URL.Path
+			p := ctx.GetCurrentRoute().Path()
 			ss := strings.Split(p, "/")
 			if len(ss) >= 2 {
 				if ss[1] == "proxy" {
@@ -87,7 +87,7 @@ func (e *EkkoSerer) setResultHandler() {
 			}
 			return false
 		}()
-		if isProxyPath {
+		if !isProxyPath {
 			if ctx.GetStatusCode() >= iris.StatusOK && ctx.GetStatusCode() < iris.StatusBadRequest {
 				resp := iris.Map{
 					"success": true,

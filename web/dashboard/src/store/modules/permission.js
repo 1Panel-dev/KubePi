@@ -5,7 +5,10 @@ const state = {
     addRoutes: []
 }
 
-function hasPermission() {
+function hasPermission(user, route) {
+  if (user && route){
+    console.log("")
+  }
         return true
         // if (route.meta && route.meta.roles){
         //   return user.roles.some(role => route.meta.roles.includes(role))
@@ -56,12 +59,16 @@ const mutations = {
 
 const actions = {
     generateRoutes({commit}, p) {
-        return new Promise(resolve => {
+        return new Promise((resolve,reject)=> {
             const user = p
             let accessedRoutes
+          try {
             accessedRoutes = filterRolesRoutes(rolesRoutes, user)
             commit("SET_ROUTES", accessedRoutes)
             resolve(accessedRoutes)
+          }catch (error){
+            reject(error)
+          }
         })
     }
 }

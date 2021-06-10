@@ -15,7 +15,7 @@
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="100" prop="name" fix>
         <template v-slot:default="{row}">
-          <el-link>{{ row.name }}</el-link>
+          <el-link href="/dashboard">{{ row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" min-width="100" prop="name" fix>

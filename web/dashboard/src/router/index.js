@@ -30,6 +30,11 @@ export const constantRoutes = [
     component: () => import("@/business/login"),
     hidden: true
   },
+  {
+    path: "/",
+    component: Layout,
+    redirect: "/dashboard",
+  }
 ]
 
 /**
