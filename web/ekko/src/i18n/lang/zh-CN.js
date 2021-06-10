@@ -21,7 +21,8 @@ const message = {
       confirm: "确定",
       edit_yaml: "YAML",
       back_form: "返回表单",
-      add: "增加"
+      add: "增加",
+      edit:"编辑"
     },
     table: {
       name: "名称",
@@ -42,7 +43,9 @@ const message = {
       select: "请选择{0}",
     },
     msg: {
-      delete_success: "删除成功"
+      create_success:"创建成功",
+      delete_success: "删除成功",
+      update_success:"修改成功"
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
@@ -111,7 +114,10 @@ const message = {
       user: "用户",
       role: "角色",
       template:"模版",
-      base_on_exists_role:"基于已有角色"
+      base_on_exists_role:"基于已有角色",
+      permission_setting:"权限设置",
+      password:"密码",
+      confirm_password:"确认密码"
     }
   },
 }

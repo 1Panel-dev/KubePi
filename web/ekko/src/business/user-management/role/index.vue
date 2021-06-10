@@ -12,7 +12,7 @@
             <el-table-column type="selection" fix></el-table-column>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    <el-link>{{ row.name }}</el-link>
+                    {{ row.name }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
@@ -33,7 +33,7 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {searchRoles} from "@/api/roles"
+    import {searchRoles, deleteRole} from "@/api/roles"
 
 
     export default {
@@ -43,8 +43,18 @@
             return {
                 buttons: [
                     {
+                        label: this.$t("commons.button.edit"),
+                        icon: "el-icon-edit",
+                        click: (row) => {
+                            this.onEdit(row.name)
+                        }
+                    },
+                    {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
+                        click: (row) => {
+                            this.onDelete(row.name)
+                        }
                     },
                 ],
                 paginationConfig: {
@@ -81,6 +91,24 @@
             onCreate() {
                 this.$router.push({name: "RoleCreate"})
 
+            },
+            onEdit(name) {
+                this.$router.push({name: "RoleEdit", params: {name: name}})
+            },
+            onDelete(name) {
+                this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+                    confirmButtonText: this.$t("commons.button.confirm"),
+                    cancelButtonText: this.$t("commons.button.cancel"),
+                    type: 'warning'
+                }).then(() => {
+                    deleteRole(name).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: this.$t("commons.msg.delete_success"),
+                        });
+                        this.search()
+                    })
+                });
             }
         },
         created() {

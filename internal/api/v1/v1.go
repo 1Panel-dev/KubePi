@@ -132,13 +132,14 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 					if _, ok := resourceMap[resourceName]; !ok {
 						resourceMap[resourceName] = collectons.NewStringSet()
 					}
-					if len(ss) == 4 {
+					if strings.HasSuffix(routes[i].Path, "/search") {
+						verbs := resourceMap[resourceName]
+						verbs.Add("list")
+
+					} else {
 						verb := strings.ToLower(routes[i].Method)
 						verbs := resourceMap[resourceName]
 						verbs.Add(verb)
-					} else if strings.HasSuffix(routes[i].Path, "/search") {
-						verbs := resourceMap[resourceName]
-						verbs.Add("list")
 					}
 				}
 			}

@@ -2,6 +2,7 @@
 const getters = {
   sidebar: state => state.app.sidebar,
   name: state => state.user.name,
+  nickName:state=>state.user.nickName,
   // language: state => state.user.language,
   permission_routes: state => state.permission.routes,
   menu: state => state.user.menu,

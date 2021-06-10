@@ -4,7 +4,7 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="form"  label-width="150px" label-position="left">
+                    <el-form ref="form" :model="form" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="form.name"></el-input>
@@ -66,7 +66,7 @@
                 createRole(req).then(() => {
                     this.$message({
                         type: "success",
-                        message: "create role successed"
+                        message: this.$t("commons.msg.create_success")
                     })
                     this.$router.push({name: "Roles"})
                 })

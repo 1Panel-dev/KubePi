@@ -5,7 +5,9 @@ import (
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 type Service interface {
@@ -75,15 +77,12 @@ func (u *service) Delete(name string) error {
 
 func (u *service) Create(us *v1User.User) error {
 	db := server.DB()
-	if us.ApiVersion == "" {
-		us.ApiVersion = "v1"
-	}
-	if us.Kind == "" {
-		us.Kind = "User"
-	}
+	us.UUID = uuid.New().String()
+	us.CreateAt = time.Now()
+	us.UpdateAt = time.Now()
 	if us.Spec.Authenticate.Password != "" {
 		hash, _ := bcrypt.GenerateFromPassword([]byte(us.Spec.Authenticate.Password), bcrypt.DefaultCost) //加密处理
 		us.Spec.Authenticate.Password = string(hash)
 	}
-	return db.Save(&us)
+	return db.Save(us)
 }

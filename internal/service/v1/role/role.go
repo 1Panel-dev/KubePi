@@ -1,7 +1,6 @@
 package role
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -17,6 +16,7 @@ type Service interface {
 	Get(name string) (*v1Role.Role, error)
 	List() ([]v1Role.Role, error)
 	Delete(name string) error
+	Update(name string, role *v1Role.Role) error
 	Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error)
 }
 
@@ -25,6 +25,18 @@ func NewService() Service {
 }
 
 type service struct {
+}
+
+func (s service) Update(name string, role *v1Role.Role) error {
+	r, err := s.Get(name)
+	if err != nil {
+		return err
+	}
+	db := server.DB()
+	role.UUID = r.UUID
+	role.CreateAt = r.CreateAt
+	role.UpdateAt = time.Now()
+	return db.Update(role)
 }
 
 func (s service) Create(r *v1Role.Role) error {
@@ -65,7 +77,11 @@ func (s service) List() ([]v1Role.Role, error) {
 
 func (s service) Delete(name string) error {
 	db := server.DB()
-	return db.DeleteStruct(v1Role.Role{Metadata: v1.Metadata{Name: name}})
+	item, err := s.Get(name)
+	if err != nil {
+		return err
+	}
+	return db.DeleteStruct(item)
 }
 
 func (s service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error) {
