@@ -35,6 +35,9 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoUpgradePolicy",
   components: { KoFormItem },
+  props: {
+    upgradePolicyParentObj: Object,
+  },
   data() {
     return {
       strategy_list: [
@@ -57,6 +60,7 @@ export default {
       },
     }
   },
-  methods: {},
+  methods: {
+  },
 }
 </script>

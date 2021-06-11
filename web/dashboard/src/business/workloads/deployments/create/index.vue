@@ -1,65 +1,62 @@
 <template>
   <layout-content header="Deployment - Create">
     <el-row :gutter="20">
-      <el-col :span="8">
+      <el-col :span="12">
         <el-row>
           <el-col :span="10">
-            <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.namespace" />
+            <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
           </el-col>
           <el-col :span="14">
             <ko-form-item labelName="Name" clearable itemType="input" v-model="form.name" />
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="8">
-        <ko-form-item labelName="Description" placeholder="Any text you want that better describes this resource" clearable itemType="input" v-model="form.description" />
-      </el-col>
-      <el-col :span="8">
-        <ko-form-item labelName="Replicas" clearable itemType="input" v-model="form.replicas" />
+      <el-col :span="12">
+        <ko-form-item labelName="Description" placeholder="Any text you want that better describes this resource" clearable itemType="input" v-model="description" />
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top: 30px">
-      <el-col :span="8">
-        <ko-form-item labelName="Container Image" clearable itemType="input" v-model="form.description" />
+      <el-col :span="12">
+        <ko-form-item labelName="Container Image" clearable itemType="input" v-model="form.spec.template.spec.containers.image" />
       </el-col>
-      <el-col :span="8">
-        <ko-form-item labelName="Image Pull Policy" clearable itemType="input" v-model="form.replicas" />
+      <el-col :span="12">
+        <ko-form-item labelName="Image Pull Policy" clearable itemType="select" v-model="form.spec.template.spec.containers.imagePullPolicy" :selections="image_pull_policy_list" />
       </el-col>
     </el-row>
 
-    <el-tabs style="margin-top: 50px" v-model="activeName" @tab-click="handleClick">
+    <el-tabs style="margin-top: 50px" v-model="activeName">
       <el-tab-pane label="Ports" name="Ports">
-        <ko-ports ref="ko_ports" :portArray="form.spec.template.spec.containers.ports" />
+        <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Command" name="Command">
-        <ko-command ref="ko_command" :commandObj="form.spec.template.spec.containers" />
+        <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Resources" name="Resources">
-        <ko-resources ref="ko_resource" :resourceObj="form.spec.template.spec.containers" />
+        <ko-resources ref="ko_resource" :resourceParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Health Check" name="Health Check">
-        <ko-health-check style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
-        <ko-health-check style="margin-top=30px" health_check_type="Liveness Check" health_check_helper="Containers will be restarted when this check is failing. Not recommended for most uses." />
-        <ko-health-check style="margin-top=30px" health_check_type="Startup Check" health_check_helper="Containers will wait until this check succeeds before attempting other health checks." />
+        <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
+        <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Liveness Check" health_check_helper="Containers will be restarted when this check is failing. Not recommended for most uses." />
+        <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Startup Check" health_check_helper="Containers will wait until this check succeeds before attempting other health checks." />
       </el-tab-pane>
       <el-tab-pane label="Security Context" name="Security Context">
-        <ko-security-context />
+        <ko-security-context ref="ko_security_context" :securityContextParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Networking" name="Networking">
-        <ko-networking />
+        <ko-networking ref="ko_networking" :networkingParentObj="form.spec.template.spec" />
       </el-tab-pane>
       <el-tab-pane label="Node Scheduling" name="Node Scheduling">
-        <ko-node-scheduling />
+        <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-        <ko-upgrade-policy />
+        <ko-upgrade-policy ref="ko_upgrade_policy" :upgradePolicyParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
-      <!-- <el-tab-pane label="Labels" name="Labels">
-        <ko-labels />
+      <el-tab-pane label="Labels" name="Labels">
+        <ko-labels ref="labels" :labelParentObj="form.metadata" />
       </el-tab-pane>
       <el-tab-pane label="Annotations" name="Annotations">
-        <ko-annotations />
-      </el-tab-pane> -->
+        <ko-annotations ref="annotations" :annotationsParentObj="form.metadata" />
+      </el-tab-pane>
     </el-tabs>
     <el-button style="float: center" @click="getinfo">Create</el-button>
   </layout-content>
@@ -76,106 +73,83 @@ import KoSecurityContext from "@/components/ko-workloads/ko-security-context.vue
 import KoNetworking from "@/components/ko-workloads/ko-networking.vue"
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
-// import KoLabels from "@/components/ko-workloads/ko-labels.vue"
-// import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
-// import { deepClone } from "@/utils/deepClone"
+import KoLabels from "@/components/ko-workloads/ko-labels.vue"
+import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 
 export default {
   name: "DeploymentCreate",
-  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy },
+  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy, KoLabels, KoAnnotations },
   data() {
     return {
-      dns_policy_list: [
-        { label: "zhangsan", value: "zhangsan111" },
-        { label: "lisi", value: "lisi111" },
-      ],
       namespace_list: [
         { label: "kube-system", value: "kube-system" },
         { label: "kube-public", value: "kube-public" },
         { label: "kube-operator", value: "kube-operator" },
         { label: "default", value: "default" },
       ],
+      image_pull_policy_list: [
+        { label: "Always", value: "Always" },
+        { label: "ifNotPresent", value: "ifNotPresent" },
+        { label: "Never", value: "Never" },
+      ],
       activeName: "Ports",
+      description: "",
       form: {
         apiVersion: "apps/v1",
         kind: "Deployment",
         metadata: {
           name: "",
-          labels: {
-            app: "",
-          },
+          namespace: "",
         },
         spec: {
-          replicas: 3,
-          selector: "",
+          replicas: 1,
           template: {
             metadata: {
-              labels: [],
+              labels: {
+                "workload.user.cattle.io/workloadselector": "deployment-default-undefined",
+              },
             },
             spec: {
               containers: {
                 name: "",
                 image: "",
-                ports: [],
-                env: [],
-                envFrom: [],
-                command: [],
-                args: [],
-                workingDir: "",
-                stdin: "",
-                tty: false,
-                stdinOnce: "",
-                resources: {
-                  requests: {
-                    memory: "",
-                    cpu: "",
-                  },
-                  limits: {
-                    memory: "",
-                    cpu: "",
-                  },
-                },
-                livenessProbe: {},
-                readinessProbe: {},
-                startupProbe: {},
-                securityContext: {},
-                affinity: {
-                  nodeAffinity: {
-                    requiredDuringSchedulingIgnoredDuringExecution: {
-                      nodeSelectorTerms: [],
-                    },
-                    preferredDuringSchedulingIgnoredDuringExecution: {
-                      preference: [],
-                    },
-                  },
-                },
-                hostname: "",
-                subdomain: "",
-                dnsPolicy: "",
-                hostNetwork: "",
-                hostAliases: [],
-                dnsConfig: [],
+                imagePullPolicy: "Always",
               },
+              restartPolicy: "Always",
             },
           },
         },
-        name: "",
-        description: "",
-        replicas: "",
-        network_mode: "",
-        dns_policy: "",
+        type: "apps.deployment",
       },
     }
   },
   methods: {
     getinfo() {
+      // ports
       this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers)
+      // command
       this.$refs.ko_command.transformation(this.form.spec.template.spec.containers)
-      this.$refs.ko_resource.transformation(this.form.spec.template.spec.containers.resources)
+      // resource
+      this.$refs.ko_resource.transformation(this.form.spec.template.spec.containers)
+      // health_check
+      this.$refs.ko_health_readiness_check.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_health_liveness_check.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_health_startup_check.transformation(this.form.spec.template.spec.containers)
+      // security context
+      this.$refs.ko_security_context.transformation(this.form.spec.template.spec.containers)
+      // networking
+      this.$refs.ko_networking.transformation(this.form.spec.template.spec)
+      // node scheduling
+      this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec.containers)
+      // upgrade policy
+      this.$refs.ko_upgrade_policy.transformation(this.form.spec.template.spec.containers)
+      // labels
+      this.$refs.ko_labels.transformation(this.form.spec.metadata)
+      // annotations
+      this.$refs.ko_annotations.transformation(this.form.metadata)
 
       console.log(this.form.spec.template.spec.containers)
     },
-    handleClick() {},
   },
 }
 </script>

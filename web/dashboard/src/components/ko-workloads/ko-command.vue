@@ -92,7 +92,7 @@ export default {
   name: "KoCommand",
   components: { KoFormItem },
   props: {
-    commandObj: Object,
+    commandParentObj: Object,
   },
   data() {
     return {
@@ -163,13 +163,9 @@ export default {
     transformation(parentFrom) {
       if (this.form.args) {
         parentFrom.args = this.form.args.split(",")
-      } else {
-        delete parentFrom.args
       }
       if (this.form.workingDir) {
         parentFrom.workingDir = this.form.workingDir
-      } else {
-        delete parentFrom.workingDir
       }
       if (this.form.stdin) {
         switch (this.form.stdin) {
@@ -184,13 +180,9 @@ export default {
             parentFrom.stdinOnce = true
             break
         }
-      } else {
-        delete parentFrom.stdin
       }
       if (this.form.tty) {
         parentFrom.tty = this.form.tty
-      } else {
-        delete parentFrom.tty
       }
       let envList = []
       let envFromList = []
@@ -259,13 +251,56 @@ export default {
           }
         }
       }
-      parentFrom.env = envList
-      parentFrom.envFrom = envFromList
-    }
+      if (envList.length !== 0) {
+        parentFrom.env = envList
+      }
+      if (envFromList.length !== 0) {
+        parentFrom.envFrom = envFromList
+      }
+    },
   },
   mounted() {
-    if (this.commandObj) {
-      // 给form赋值
+    if (this.commandParentObj) {
+      if (this.commandParentObj.args) {
+        this.form.args = this.commandParentObj.args
+      }
+      if (this.commandParentObj.workingDir) {
+        this.form.workingDir = this.commandParentObj.workingDir
+      }
+      if (this.commandParentObj.stdinOnce) {
+        this.form.stdinOnce = true
+        this.form.stdin = "Ones"
+      }
+      if (this.commandParentObj.stdin) {
+        this.form.stdin = this.commandParentObj.stdin ? "Yes" : "No"
+      }
+      if (this.commandParentObj.tty) {
+        this.form.tty = this.commandParentObj.tty
+      }
+      if (this.commandParentObj.env) {
+        for (const en of this.commandParentObj.env) {
+          if (en.valueFrom) {
+            if (en.valueFrom.resourceFieldRef) {
+              this.form.envFromResource.push({ source: en.valueFrom.resourceFieldRef.containerName, key: en.valueFrom.resourceFieldRef.resource, type: "Resource", prefix_or_alias: en.valueFrom.name })
+            } else if (en.valueFrom.configMapKeyRef) {
+              this.form.envFromResource.push({ source: en.valueFrom.configMapKeyRef.name, key: "ConfigMap", type: "ConfigMap", prefix_or_alias: en.valueFrom.name })
+            } else if (en.valueFrom.secretKeyRef) {
+              this.form.envFromResource.push({ source: en.valueFrom.secretKeyRef.name, key: "Secret Key", type: "Secret Key", prefix_or_alias: en.valueFrom.name })
+            } else if (en.valueFrom.fieldRef) {
+              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.name, type: "Field", prefix_or_alias: en.valueFrom.name })
+            }
+          } else {
+            this.form.env.push(en)
+          }
+        }
+        for (const en of this.commandParentObj.envFrom) {
+          if (en.valueFrom) {
+            if (en.valueFrom.secretRef) {
+              this.form.envFromResource.push({ source: en.valueFrom.secretRef.name, key: "Secret", type: "Secret", prefix_or_alias: en.valueFrom.name })
+            }
+          }
+        }
+      }
     }
   },
 }

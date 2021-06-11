@@ -26,7 +26,7 @@ export default {
   name: "KoResources",
   components: { KoFormItem },
   props: {
-    resourceObj: Object
+    resourceParentObj: Object,
   },
   data() {
     return {
@@ -44,25 +44,43 @@ export default {
   },
   methods: {
     transformation(parentFrom) {
-      if(this.form.requests.memory) {
-        parentFrom.requests.memory = this.form.requests.memory
-      } else {
-        delete parentFrom.requests.memory
+      if (this.form.requests.memory || this.form.requests.cpu) {
+        parentFrom.requests = {}
+        if (this.form.requests.memory) {
+          parentFrom.requests.memory = this.form.requests.memory + "Mi"
+        }
+        if (this.form.requests.cpu) {
+          parentFrom.requests.cpu = this.form.requests.cpu + "m"
+        }
       }
-      if(this.form.requests.cpu) {
-        parentFrom.requests.cpu = this.form.requests.cpu
-      } else {
-        delete parentFrom.requests.cpu
+      if (this.form.limits.memory || this.form.limits.cpu) {
+        parentFrom.limits = {}
+        if (this.form.limits.memory) {
+          parentFrom.limits.memory = this.form.limits.memory + "Mi"
+        }
+        if (this.form.limits.cpu) {
+          parentFrom.limits.cpu = this.form.limits.cpu + "m"
+        }
       }
-      if(this.form.limits.memory) {
-        parentFrom.limits.memory = this.form.limits.memory
-      } else {
-        delete parentFrom.limits.memory
+    },
+  },
+  mounted() {
+    if (this.resourceParentObj.resources) {
+      if (this.resourceParentObj.resources.requests) {
+        if (this.resourceParentObj.resources.requests.memory) {
+          this.form.requests.memory =  Number(this.resourceParentObj.resources.requests.memory.replace("Mi", ""))
+        }
+        if (this.resourceParentObj.resources.requests.cpu) {
+          this.form.requests.cpu =  Number(this.resourceParentObj.resources.requests.cpu.replace("Mi", ""))
+        }
       }
-      if(this.form.limits.cpu) {
-        parentFrom.limits.cpu = this.form.limits.cpu
-      } else {
-        delete parentFrom.limits.cpu
+      if (this.resourceParentObj.resources.limits) {
+        if (this.resourceParentObj.resources.limits.memory) {
+          this.form.limits.memory =  Number(this.resourceParentObj.resources.limits.memory.replace("Mi", ""))
+        }
+        if (this.resourceParentObj.resources.limits.cpu) {
+          this.form.limits.cpu = Number(this.resourceParentObj.resources.limits.cpu.replace("m", ""))
+        }
       }
     }
   },
