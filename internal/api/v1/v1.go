@@ -9,6 +9,7 @@ import (
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	v1RoleService "github.com/KubeOperator/ekko/internal/service/v1/role"
 	v1RoleBindingService "github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -78,7 +79,7 @@ func roleHandler() iris.Handler {
 		rbs, err := roleBindingService.GetRoleBindingBySubject(v1Role.Subject{
 			Kind: "User",
 			Name: u.Name,
-		})
+		}, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -216,6 +217,21 @@ func matchRoles(requestResource, requestMethod string, rs []v1Role.Role) (bool, 
 	return resourceMatch, methodMatch
 }
 
+func resourceNameInvalidHandler() iris.Handler {
+	return func(ctx *context.Context) {
+		r := ctx.GetCurrentRoute()
+		if strings.Contains(r.Path(), "/:name") {
+			resourceName := ctx.Params().GetString("name")
+			if resourceName == "" {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", fmt.Sprintf("invalid resource name %s", resourceName))
+				return
+			}
+		}
+		ctx.Next()
+	}
+}
+
 func AddV1Route(app iris.Party) {
 	v1Party := app.Party("/v1")
 	v1Party.Use(pageHandler())
@@ -226,6 +242,7 @@ func AddV1Route(app iris.Party) {
 	authParty.Use(authHandler())
 	authParty.Use(roleHandler())
 	authParty.Use(roleAccessHandler())
+	authParty.Use(resourceNameInvalidHandler())
 	authParty.Get("/", apiResourceHandler(authParty))
 	user.Install(authParty)
 	cluster.Install(v1Party)

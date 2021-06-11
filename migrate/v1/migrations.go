@@ -69,7 +69,7 @@ var CreateAdministrator = migrations.Migration{
 			},
 		}
 
-		binding := v1Role.Banding{
+		binding := v1Role.Binding{
 			BaseModel: v1.BaseModel{
 				ApiVersion: "v1",
 				Kind:       "RoleBinding",

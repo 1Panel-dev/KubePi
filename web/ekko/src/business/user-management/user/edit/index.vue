@@ -1,5 +1,5 @@
 <template>
-    <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Users' }">
+    <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Users' }">
         <el-row v-loading="loading">
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
@@ -20,16 +20,6 @@
                             <el-input v-model="form.email"></el-input>
                         </el-form-item>
 
-
-                        <el-form-item :label="$t('business.user.password')" prop="password" required>
-                            <el-input type="password" v-model="form.password"></el-input>
-                        </el-form-item>
-
-
-                        <el-form-item :label="$t('business.user.confirm_password')" prop="confirmPassword" required>
-                            <el-input type="password" v-model="form.confirmPassword"></el-input>
-                        </el-form-item>
-
                         <el-form-item :label="$t('business.user.role')" prop="roles">
                             <el-select v-model="form.roles" multiple placeholder="请选择">
                                 <el-option
@@ -40,7 +30,6 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-
 
                         <el-form-item>
                             <div style="float: right">
@@ -60,47 +49,36 @@
 
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
-    import {createUser} from "@/api/users"
+    import {updateUser, getUser} from "@/api/users"
     import {listRoles} from "@/api/roles"
 
     export default {
-        name: "UserCreate",
+        name: "UserEdit",
+        props: ["name"],
         components: {LayoutContent},
         data() {
             return {
                 loading: false,
+                user: {},
                 roleOptions: [],
                 form: {
                     name: "",
                     nickName: "",
                     email: "",
-                    password: "",
-                    confirmPassword: "",
-                    roles: [],
+                    roles: []
                 },
             }
         },
         methods: {
             onConfirm() {
-                const req = {
-                    "apiVersion": "v1",
-                    "kind": "User",
-                    "name": this.form.name,
-                    "roles": this.form.roles,
-                    "spec": {
-                        "info": {
-                            "nickName": this.form.nickName,
-                            "email": this.form.email,
-                        },
-                        "authenticate": {
-                            "password": this.form.confirmPassword
-                        }
-                    }
-                }
-                createUser(req).then(() => {
+                this.user.name = this.form.name
+                this.user.spec.info.nickName = this.form.nickName
+                this.user.spec.info.email = this.form.email
+                this.user.roles = this.form.roles
+                updateUser(this.name, this.user).then(() => {
                     this.$message({
                         type: "success",
-                        message: this.$t("commons.msg.create_success")
+                        message: this.$t("commons.msg.update_success")
                     })
                     this.$router.push({name: "Users"})
                 })
@@ -108,18 +86,28 @@
             onCancel() {
                 this.$router.push({name: "Users"})
             },
-        },
-        created() {
-            this.loading = true
-            listRoles().then(d => {
-                d.data.forEach(r => {
-                    this.roleOptions.push({
-                        label: r.name,
-                        value: r.name,
+            onCreated() {
+                this.loading = true
+                getUser(this.name).then(data => {
+                    this.form.name = data.data.name;
+                    this.form.nickName = data.data.spec.info.nickName;
+                    this.form.email = data.data.spec.info.email;
+                    this.form.roles = data.data.roles;
+                    this.user = data.data;
+                    listRoles().then(d => {
+                        d.data.forEach(r => {
+                            this.roleOptions.push({
+                                label: r.name,
+                                value: r.name,
+                            })
+                        })
+                        this.loading = false
                     })
                 })
-                this.loading = false
-            })
+            }
+        },
+        created() {
+            this.onCreated()
         }
     }
 </script>

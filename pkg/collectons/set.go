@@ -14,6 +14,27 @@ func (s *StringSet) Add(item string) {
 	s.data[item] = nil
 }
 
+func (s *StringSet) Exists(item string) bool {
+	_, ok := s.data[item]
+	return ok
+}
+
+func (s *StringSet) Difference(items []string) []string {
+	result := make([]string, 0)
+	for k, _ := range s.data {
+		exists := false
+		for i := range items {
+			if k == items[i] {
+				exists = true
+			}
+		}
+		if !exists {
+			result = append(result, k)
+		}
+	}
+	return result
+}
+
 func (s *StringSet) ToSlice() []string {
 	var result []string
 	for k, _ := range s.data {

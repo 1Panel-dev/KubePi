@@ -19,7 +19,7 @@ type Subject struct {
 	Name string `json:"name"`
 }
 
-type Banding struct {
+type Binding struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
 	Subjects     []Subject `json:"subjects"`

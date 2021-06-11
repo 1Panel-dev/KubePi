@@ -1,6 +1,7 @@
 package role
 
 import (
+	"errors"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -31,6 +32,9 @@ func (s service) Update(name string, role *v1Role.Role) error {
 	r, err := s.Get(name)
 	if err != nil {
 		return err
+	}
+	if r.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
 	}
 	db := server.DB()
 	role.UUID = r.UUID
@@ -80,6 +84,9 @@ func (s service) Delete(name string) error {
 	item, err := s.Get(name)
 	if err != nil {
 		return err
+	}
+	if item.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(item)
 }

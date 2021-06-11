@@ -29,6 +29,16 @@ const UserManagement = {
             }
         },
         {
+            props: true,
+            path: "users/edit/:name",
+            component: () => import("@/business/user-management/user/edit"),
+            name: "UserEdit",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/users",
+            }
+        },
+        {
             path: "groups",
             component: () => import("@/business/user-management/group"),
             name: "Groups",
