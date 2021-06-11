@@ -21,7 +21,7 @@
               <ko-labels :labelObj.sync="form.metadata.labels"></ko-labels>
             </el-tab-pane>
             <el-tab-pane label="annotations">
-              <ko-annotations :annotation-obj.sync="annotations"></ko-annotations>
+              <ko-annotations :annotationObj.sync="annotations"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -80,7 +80,7 @@ export default {
       },
       labels: {},
       activeName: "",
-      annotations: ""
+      annotations: {}
     }
   },
   methods: {

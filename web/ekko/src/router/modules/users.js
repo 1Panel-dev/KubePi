@@ -14,10 +14,18 @@ const UserManagement = {
         {
             path: "users",
             component: () => import("@/business/user-management/user"),
-            name: "UserList",
+            name: "Users",
             meta: {
                 title: "business.user.user",
-                global: true
+            }
+        },
+        {
+            path: "users/create",
+            component: () => import("@/business/user-management/user/create"),
+            name: "UserCreate",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/users",
             }
         },
         {
@@ -38,6 +46,25 @@ const UserManagement = {
                 global: true
             }
         },
+        {
+            path: "roles/create",
+            component: () => import("@/business/user-management/role/create"),
+            name: "RoleCreate",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/roles",
+            }
+        },
+        {
+            props: true,
+            path: "roles/edit/:name",
+            component: () => import("@/business/user-management/role/edit"),
+            name: "RoleEdit",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/roles",
+            },
+        }
     ]
 }
 

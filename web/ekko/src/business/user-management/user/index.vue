@@ -1,10 +1,10 @@
 <template>
-    <layout-content :header="$t('business.user.user_list')">
+    <layout-content :header="$t('business.cluster.list')">
         <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
                        :pagination-config="paginationConfig">
             <template #header>
                 <el-button-group>
-                    <el-button type="primary" size="small" @click="onImport">
+                    <el-button type="primary" size="small" @click="onCreate">
                         {{ $t("commons.button.create") }}
                     </el-button>
                 </el-button-group>
@@ -35,6 +35,8 @@
                     {{ row.createAt }}
                 </template>
             </el-table-column>
+
+<!--            <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>-->
         </complex-table>
     </layout-content>
 </template>
@@ -44,16 +46,18 @@
     import ComplexTable from "@/components/complex-table"
     import {searchUsers} from "@/api/users"
 
-
     export default {
-        name: "User",
-        components: {LayoutContent, ComplexTable},
+        name: "ClusterList",
+        components: {ComplexTable, LayoutContent},
         data() {
             return {
                 buttons: [
                     {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
+                        click: (row) => {
+                            this.del(row.name)
+                        }
                     },
                 ],
                 paginationConfig: {
@@ -70,7 +74,6 @@
                             component: "FuComplexInput",
                             defaultOperator: "eq"
                         },
-                        // { field: "created_at", label: this.$t("commons.table.create_time"), component: "FuComplexDateTime", valueFormat: "yyyy-MM-dd HH:mm:ss" },
                     ],
                 },
                 data: [],
@@ -87,9 +90,39 @@
                     this.paginationConfig.total = data.data.total
                 })
             },
-            onImport() {
-                this.$router.push({name: "ClusterImport"})
+            onCreate() {
+                this.$router.push({name: "UserCreate"})
             },
+            del(name) {
+                console.log(name)
+                // this.$confirm(
+                //     this.$t("commons.confirm_message.delete"),
+                //     this.$t("commons.message_box.prompt"),
+                //     {
+                //         confirmButtonText: this.$t("commons.button.confirm"),
+                //         cancelButtonText: this.$t("commons.button.cancel"),
+                //         type: "warning"
+                //     }
+                // ).then(() => {
+                //     const ps = []
+                //     if (name) {
+                //         ps.push(deleteBy(name))
+                //     } else {
+                //         for (const item of this.selects) {
+                //             ps.push(deleteBy(item.name))
+                //         }
+                //     }
+                //     Promise.all(ps).then(() => {
+                //         this.search()
+                //         this.$message({
+                //             type: "success",
+                //             message: this.$t("commons.msg.delete_success")
+                //         })
+                //     }).catch(() => {
+                //         this.search()
+                //     })
+                // })
+            }
         },
         created() {
             this.search()

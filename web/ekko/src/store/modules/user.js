@@ -20,6 +20,9 @@ const mutations = {
     SET_NAME: (state, name) => {
         state.name = name
     },
+    SET_NICK_NAME: (state, nickName) => {
+        state.nickName = nickName
+    },
     SET_LANGUAGE: (state, language) => {
         state.language = language
         setLanguage(language)
@@ -70,11 +73,12 @@ const actions = {
                 const user = data.data
                 user["roles"] = ["ADMIN"]
                 user["menu"] = ["cluster1"]
-                const {name, roles, menu} = user
+                const {name, roles, menu, nickName} = user
                 commit("SET_NAME", name)
                 commit("SET_ROLES", roles)
                 commit("SET_LANGUAGE", "zh-CN")
                 commit("SET_CURRENT_MENU", menu)
+                commit("SET_NICK_NAME", nickName)
                 resolve(user)
             }).catch(error => {
                 reject(error)

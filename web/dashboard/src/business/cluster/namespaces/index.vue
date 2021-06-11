@@ -1,7 +1,7 @@
 <template>
   <layout-content header="Namespaces">
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-          :pagination-config="paginationConfig">
+                   :pagination-config="paginationConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -13,22 +13,22 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')"  prop="name" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" fix>
         <template v-slot:default="{row}">
           <el-link>{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')"  prop="label" fix>
+      <el-table-column :label="$t('business.cluster.label')" prop="label" fix>
         <template v-slot:default="{row}">
           {{ row.label }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.status')"  prop="status" fix>
+      <el-table-column :label="$t('commons.table.status')" prop="status" fix>
         <template v-slot:default="{row}">
           {{ row.status }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')"  prop="age" fix>
+      <el-table-column :label="$t('commons.table.created_time')" prop="age" fix>
         <template v-slot:default="{row}">
           {{ row.age }}
         </template>
@@ -41,11 +41,12 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
+import {listNamespace} from "@/api/namespace"
 
 export default {
   name: "NamespaceList",
   components: { ComplexTable, LayoutContent },
-  data() {
+  data () {
     return {
       buttons: [
         {
@@ -71,9 +72,20 @@ export default {
     }
   },
   methods: {
-    onCreate(){
+    onCreate () {
       this.$router.push({ name: "NamespaceCreate" })
+    },
+    listNamespaces (clusterName) {
+
+      listNamespace(clusterName).then((res) =>{
+        console.log(res)
+      }).catch(error => {
+        console.log(error)
+      })
     }
+  },
+  created () {
+    this.listNamespaces("test1")
   }
 }
 </script>

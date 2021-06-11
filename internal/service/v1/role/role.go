@@ -1,19 +1,22 @@
 package role
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3/q"
+	"github.com/google/uuid"
 	"strings"
+	"time"
 )
 
 type Service interface {
 	Create(r *v1Role.Role) error
+	CreateWithTemplate(r *v1Role.Role, templateName string) error
 	Get(name string) (*v1Role.Role, error)
 	List() ([]v1Role.Role, error)
 	Delete(name string) error
+	Update(name string, role *v1Role.Role) error
 	Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error)
 }
 
@@ -24,15 +27,34 @@ func NewService() Service {
 type service struct {
 }
 
-func (s service) Create(r *v1Role.Role) error {
-	if r.ApiVersion == "" {
-		r.ApiVersion = "v1"
-	}
-	if r.Kind == "" {
-		r.Kind = "Role"
+func (s service) Update(name string, role *v1Role.Role) error {
+	r, err := s.Get(name)
+	if err != nil {
+		return err
 	}
 	db := server.DB()
-	return db.Save(&r)
+	role.UUID = r.UUID
+	role.CreateAt = r.CreateAt
+	role.UpdateAt = time.Now()
+	return db.Update(role)
+}
+
+func (s service) Create(r *v1Role.Role) error {
+	db := server.DB()
+	r.UUID = uuid.New().String()
+	r.CreateAt = time.Now()
+	r.UpdateAt = time.Now()
+	return db.Save(r)
+}
+
+func (s service) CreateWithTemplate(r *v1Role.Role, templateName string) error {
+	db := server.DB()
+	var template v1Role.Role
+	if err := db.One("Name", templateName, &template); err != nil {
+		return err
+	}
+	r.Rules = template.Rules
+	return s.Create(r)
 }
 
 func (s service) Get(name string) (*v1Role.Role, error) {
@@ -55,7 +77,11 @@ func (s service) List() ([]v1Role.Role, error) {
 
 func (s service) Delete(name string) error {
 	db := server.DB()
-	return db.DeleteStruct(v1Role.Role{Metadata: v1.Metadata{Name: name}})
+	item, err := s.Get(name)
+	if err != nil {
+		return err
+	}
+	return db.DeleteStruct(item)
 }
 
 func (s service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error) {

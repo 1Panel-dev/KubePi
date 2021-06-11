@@ -2,7 +2,6 @@ import router from "./router"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 import store from "./store"
-import Layout from "@/business/app-layout/horizontal-layout"
 
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
@@ -17,11 +16,6 @@ const generateRoutes = async (to, from, next) => {
             const user = await store.dispatch("user/getCurrentUser")
             user.menu = 'global'
             const accessRoutes = await store.dispatch("permission/generateRoutes", user)
-            router.addRoutes([{
-                path: "/",
-                component: Layout,
-                redirect: "/dashboard",
-            },])
             router.addRoutes(accessRoutes)
             next({...to, replace: true})
         } catch (error) {

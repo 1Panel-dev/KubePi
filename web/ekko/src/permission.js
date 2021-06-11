@@ -15,21 +15,12 @@ const generateRoutes = async (to, from, next) => {
     } else {
         try {
             const user = await store.dispatch("user/getCurrentUser")
-            user.menu = 'global'
             const accessRoutes = await store.dispatch("permission/generateRoutes", user)
-            if (user.menu === 'global') {
-                router.addRoutes([{
-                    path: "/",
-                    component: Layout,
-                    redirect: "/clusterlist",
-                },])
-            } else {
-                router.addRoutes([{
-                    path: "/",
-                    component: Layout,
-                    redirect: "/dashboard",
-                },])
-            }
+            router.addRoute({
+                path: "/",
+                component: Layout,
+                redirect: "/clusterlist",
+            })
             router.addRoutes(accessRoutes)
             next({...to, replace: true})
         } catch (error) {

@@ -2,7 +2,7 @@
     <el-dropdown trigger="click" @command="handleCommand">
     <span class="el-dropdown-link">
         <i class="el-icon-user-solid" style="margin-right: 3px"></i>
-        <span>{{ name }}</span>
+        <span>{{ nickName }}</span>
         <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
         <el-dropdown-menu slot="dropdown">
@@ -22,7 +22,7 @@
         name: "UserSetting",
         computed: {
             ...mapGetters([
-                "name"
+                "nickName"
             ])
         },
         methods: {

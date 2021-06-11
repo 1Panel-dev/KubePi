@@ -16,6 +16,7 @@ import icons from './icons'
 import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import "./permission"
+import "@/styles/common/ekko.css"
 
 Vue.config.productionTip = false
 
