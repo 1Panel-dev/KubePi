@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -36,7 +37,7 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		u, err := h.userService.Get(loginCredential.Username)
+		u, err := h.userService.Get(loginCredential.Username, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("query user %s error: %s", loginCredential.Username, err.Error()))

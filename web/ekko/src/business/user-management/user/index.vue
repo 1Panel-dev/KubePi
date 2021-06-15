@@ -36,7 +36,7 @@
                 </template>
             </el-table-column>
 
-<!--            <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>-->
+            <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
         </complex-table>
     </layout-content>
 </template>
@@ -44,7 +44,7 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {searchUsers} from "@/api/users"
+    import {searchUsers, deleteUser} from "@/api/users"
 
     export default {
         name: "ClusterList",
@@ -53,10 +53,17 @@
             return {
                 buttons: [
                     {
+                        label: this.$t("commons.button.edit"),
+                        icon: "el-icon-edit",
+                        click: (row) => {
+                            this.onEdit(row.name)
+                        }
+                    },
+                    {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
                         click: (row) => {
-                            this.del(row.name)
+                            this.onDelete(row.name)
                         }
                     },
                 ],
@@ -93,36 +100,25 @@
             onCreate() {
                 this.$router.push({name: "UserCreate"})
             },
-            del(name) {
-                console.log(name)
-                // this.$confirm(
-                //     this.$t("commons.confirm_message.delete"),
-                //     this.$t("commons.message_box.prompt"),
-                //     {
-                //         confirmButtonText: this.$t("commons.button.confirm"),
-                //         cancelButtonText: this.$t("commons.button.cancel"),
-                //         type: "warning"
-                //     }
-                // ).then(() => {
-                //     const ps = []
-                //     if (name) {
-                //         ps.push(deleteBy(name))
-                //     } else {
-                //         for (const item of this.selects) {
-                //             ps.push(deleteBy(item.name))
-                //         }
-                //     }
-                //     Promise.all(ps).then(() => {
-                //         this.search()
-                //         this.$message({
-                //             type: "success",
-                //             message: this.$t("commons.msg.delete_success")
-                //         })
-                //     }).catch(() => {
-                //         this.search()
-                //     })
-                // })
+            onEdit(name) {
+                this.$router.push({name: "UserEdit", params: {name: name}})
+            },
+            onDelete(name) {
+                this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+                    confirmButtonText: this.$t("commons.button.confirm"),
+                    cancelButtonText: this.$t("commons.button.cancel"),
+                    type: 'warning'
+                }).then(() => {
+                    deleteUser(name).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: this.$t("commons.msg.delete_success"),
+                        });
+                        this.search()
+                    })
+                });
             }
+
         },
         created() {
             this.search()

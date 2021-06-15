@@ -1,9 +1,9 @@
 package user
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
+	"errors"
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
-	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -11,23 +11,42 @@ import (
 )
 
 type Service interface {
-	Create(u *v1User.User) error
-	Get(name string) (*v1User.User, error)
-	GetByEmail(email string) (*v1User.User, error)
-	List() ([]v1User.User, error)
-	Delete(name string) error
-	Search(num, size int, conditions pkgV1.Conditions) ([]v1User.User, int, error)
+	common.DBService
+	Create(u *v1User.User, options common.DBOptions) error
+	Get(name string, options common.DBOptions) (*v1User.User, error)
+	GetByEmail(email string, options common.DBOptions) (*v1User.User, error)
+	List(options common.DBOptions) ([]v1User.User, error)
+	Delete(name string, options common.DBOptions) error
+	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error)
+	Update(name string, u *v1User.User, options common.DBOptions) error
 }
 
 func NewService() Service {
-	return &service{}
+	return &service{
+	}
 }
 
 type service struct {
+	common.DefaultDBService
 }
 
-func (u *service) Search(num, size int, conditions pkgV1.Conditions) ([]v1User.User, int, error) {
-	db := server.DB()
+func (u *service) Update(name string, us *v1User.User, options common.DBOptions) error {
+	cu, err := u.Get(name, options)
+	if err != nil {
+		return err
+	}
+	if cu.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
+	}
+	db := u.GetDB(options)
+	us.UUID = cu.UUID
+	us.CreateAt = cu.CreateAt
+	us.UpdateAt = time.Now()
+	return db.Update(us)
+}
+
+func (u *service) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error) {
+	db := u.GetDB(options)
 	query := db.Select()
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
@@ -43,8 +62,8 @@ func (u *service) Search(num, size int, conditions pkgV1.Conditions) ([]v1User.U
 	return users, count, nil
 }
 
-func (u *service) Get(name string) (*v1User.User, error) {
-	db := server.DB()
+func (u *service) Get(name string, options common.DBOptions) (*v1User.User, error) {
+	db := u.GetDB(options)
 	var us v1User.User
 	if err := db.One("Name", name, &us); err != nil {
 		return nil, err
@@ -52,8 +71,8 @@ func (u *service) Get(name string) (*v1User.User, error) {
 	return &us, nil
 }
 
-func (u *service) GetByEmail(email string) (*v1User.User, error) {
-	db := server.DB()
+func (u *service) GetByEmail(email string, options common.DBOptions) (*v1User.User, error) {
+	db := u.GetDB(options)
 	var us v1User.User
 	if err := db.One("Email", email, &us); err != nil {
 		return nil, err
@@ -61,8 +80,8 @@ func (u *service) GetByEmail(email string) (*v1User.User, error) {
 	return &us, nil
 }
 
-func (u *service) List() ([]v1User.User, error) {
-	db := server.DB()
+func (u *service) List(options common.DBOptions) ([]v1User.User, error) {
+	db := u.GetDB(options)
 	users := make([]v1User.User, 0)
 	if err := db.All(users); err != nil {
 		return nil, err
@@ -70,13 +89,20 @@ func (u *service) List() ([]v1User.User, error) {
 	return users, nil
 }
 
-func (u *service) Delete(name string) error {
-	db := server.DB()
-	return db.DeleteStruct(v1User.User{Metadata: v1.Metadata{Name: name}})
+func (u *service) Delete(name string, options common.DBOptions) error {
+	db := u.GetDB(options)
+	item, err := u.Get(name, options)
+	if err != nil {
+		return err
+	}
+	if item.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
+	}
+	return db.DeleteStruct(item)
 }
 
-func (u *service) Create(us *v1User.User) error {
-	db := server.DB()
+func (u *service) Create(us *v1User.User, options common.DBOptions) error {
+	db := u.GetDB(options)
 	us.UUID = uuid.New().String()
 	us.CreateAt = time.Now()
 	us.UpdateAt = time.Now()
