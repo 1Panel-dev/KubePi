@@ -17,6 +17,8 @@ import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import "./permission"
 import "@/styles/common/ekko.css"
+import filters from "./filters";
+
 
 Vue.config.productionTip = false
 
@@ -31,6 +33,8 @@ Vue.use(VueCodemirror);
 library.add(fas, far, fab)
 
 Vue.use(icons);
+Vue.use(filters);
+
 new Vue({
   el: '#app',
   i18n,

@@ -1,7 +1,7 @@
 <template>
   <layout-content header="Namespaces">
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig">
+                   :pagination-config="paginationConfig" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -13,24 +13,24 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="name" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
         <template v-slot:default="{row}">
-          <el-link>{{ row.name }}</el-link>
+          <el-link>{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="label" fix>
+      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
         <template v-slot:default="{row}">
-          {{ row.label }}
+          <el-button v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">{{key}}={{value}}</el-button>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.status')" prop="status" fix>
+      <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          {{ row.status }}
+          {{ row.status.phase }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" prop="age" fix>
+      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.age }}
+          {{ row.metadata.creationTimestamp | datetimeFormat }}
         </template>
       </el-table-column>
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
@@ -68,7 +68,8 @@ export default {
         ],
       },
       data: [],
-      selects: []
+      selects: [],
+      loading: false
     }
   },
   methods: {
@@ -76,11 +77,13 @@ export default {
       this.$router.push({ name: "NamespaceCreate" })
     },
     listNamespaces (clusterName) {
-
+      this.loading = true
       listNamespace(clusterName).then((res) =>{
-        console.log(res)
+        this.data = res.items
       }).catch(error => {
         console.log(error)
+      }).finally(() => {
+        this.loading = false
       })
     }
   },
