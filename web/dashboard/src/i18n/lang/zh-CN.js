@@ -34,7 +34,8 @@ const message = {
       quickSearch: "搜索"
     },
     form: {
-      name: "名称"
+      name: "名称",
+      detail: "详情"
     },
     validate: {
       limit: "长度在 {0} 到 {1} 个字符",
@@ -42,12 +43,12 @@ const message = {
       select: "请选择{0}",
     },
     msg: {
-      delete_success: "删除成功"
+      delete_success: "删除成功",
+      create_success: "创建成功",
+      save_success: "保存成功",
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
-      create_success: "创建成功",
-      save_success: "保存成功",
     },
     login: {
       username: "用户名",

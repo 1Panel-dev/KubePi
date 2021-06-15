@@ -64,25 +64,25 @@ export default {
       this.annotations.push(item)
     },
     transformation(parentFrom) {
-      if(this.annotations) {
-        let obj = {}
+      if(this.annotations&&parentFrom.annotations) {
         for (let i = 0; i < this.annotations.length; i++) {
           if (this.annotations[i].key !== "") {
-            obj[this.annotations[i].key] = this.annotations[i].value
+            parentFrom.annotations[this.annotations[i].key] = this.annotations[i].value
           }
         }
-        parentFrom.annotations = obj
       }
-    }
+    },
   },
   mounted () {
-    if (this.annotationsParentObj.annotations) {
-      for(const item of this.annotationsParentObj.annotations) {
-        this.labels.push({
-          index: Math.random(),
-          key: Object.keys(item)[0],
-          value: Object.values(item)[0],
-        })
+    if (this.annotationsParentObj) {
+      for(const key in this.annotationsParentObj) {
+        if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj, key)) {
+          this.annotations.push({
+            index: Math.random(),
+            key: key,
+            value: this.annotationsParentObj[key],
+          })
+        }
       }
     }
   }
