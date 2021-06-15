@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Namespaces' }">
+  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
     <br>
     <el-row :gutter="20">
       <div class="grid-content bg-purple-light" v-if="!showYaml">
@@ -75,7 +75,7 @@ export default {
         requestsMemory: ""
       },
       activeName: "",
-      annotations: {}
+      annotations: {},
     }
   },
   methods: {
@@ -84,8 +84,15 @@ export default {
     },
     onSubmit () {
       const data = this.transformYaml()
-      createNamespace("test1", data).then(res => {
-        console.log(res)
+      this.loading = true
+      createNamespace("test1", data).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.create_success"),
+        })
+        this.$router.push({ name: "Namespaces" })
+      }).finally(() => {
+        this.loading = false
       })
     },
     transformYaml() {
@@ -101,7 +108,6 @@ export default {
       return formData
     },
     onEditYaml () {
-
       this.yaml = this.transformYaml()
       this.showYaml = true
     },

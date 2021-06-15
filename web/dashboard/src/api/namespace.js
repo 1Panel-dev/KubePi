@@ -12,3 +12,7 @@ export function listNamespace (cluster_name) {
 export function createNamespace (cluster_name, data) {
   return post(`${namespaceUrl(cluster_name)}`, data)
 }
+
+export function getNamespace(cluster_name,namespace) {
+  return get(`${namespaceUrl(cluster_name)}/${namespace}`)
+}

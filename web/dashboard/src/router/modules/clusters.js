@@ -36,6 +36,16 @@ const Clusters = {
       }
     },
     {
+      path: "/namespaces/detail/:name",
+      props: true,
+      component: () => import("@/business/cluster/namespaces/detail"),
+      name: "NamespaceDetail",
+      hidden: true,
+      meta: {
+        activeMenu: "/namespaces"
+      }
+    },
+    {
       path: "/events",
       component: () => import("@/business/cluster/events"),
       name: "events",
