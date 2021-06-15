@@ -63,25 +63,25 @@ export default {
       this.labels.push(item)
     },
     transformation(parentFrom) {
-      if (this.labels) {
-        let obj = {}
+      if (this.labels&&parentFrom.labels) {
         for (let i = 0; i < this.labels.length; i++) {
           if (this.labels[i].key !== "") {
-            obj[this.labels[i].key] = this.labels[i].value
+            parentFrom.labels[this.labels[i].key] = this.labels[i].value
           }
         }
-        parentFrom.labels = obj
       }
     },
   },
   mounted() {
     if (this.labelParentObj.labels) {
-      for(const item of this.labelParentObj.labels) {
-        this.labels.push({
-          index: Math.random(),
-          key: Object.keys(item)[0],
-          value: Object.values(item)[0],
-        })
+      for(const key in this.labelParentObj.labels) {
+        if (Object.prototype.hasOwnProperty.call(this.labelParentObj.labels, key)) {
+          this.labels.push({
+            index: Math.random(),
+            key: key,
+            value: this.labelParentObj.labels[key],
+          })
+        }
       }
     }
   },

@@ -9,19 +9,16 @@
         </el-col>
         <el-col :span="12">
           <ko-form-item :labelName="$t('business.namespace.description')" clearable itemType="input"
-                        v-model="form.metadata.annotations['field.cattle.io/description']"></ko-form-item>
+                        v-model="form.metadata.annotations['description']"></ko-form-item>
         </el-col>
         <el-col :span="24">
           <br>
           <el-tabs v-model="activeName" tab-position="left" style="background-color: #141418;" @tab-click="handleClick">
-            <el-tab-pane label="Container Resource Limit">
-              <ko-container-resource-limit :resourceLimit.sync="resourceLimit"></ko-container-resource-limit>
-            </el-tab-pane>
             <el-tab-pane label="Labels">
-              <ko-labels :labelObj.sync="form.metadata.labels"></ko-labels>
+              <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
             </el-tab-pane>
-            <el-tab-pane label="annotations">
-              <ko-annotations :annotationObj.sync="annotations"></ko-annotations>
+            <el-tab-pane label="Annotations">
+              <ko-annotations ref="ko_annotations" :annotationsParentObj="annotations"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -47,13 +44,13 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import KoFormItem from "@/components/ko-form-item"
-import KoContainerResourceLimit from "@/components/ko-namespace/ko-container-resource-limit"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
+import {createNamespace} from "@/api/namespace"
 
 export default {
   name: "NamespaceCreate",
-  components: { KoAnnotations, KoLabels, KoContainerResourceLimit, KoFormItem, YamlEditor, LayoutContent },
+  components: { KoAnnotations, KoLabels, KoFormItem, YamlEditor, LayoutContent },
   data () {
     return {
       form: {
@@ -62,8 +59,7 @@ export default {
         metadata: {
           name: "",
           annotations: {
-            "field.cattle.io/description": "",
-            "field.cattle.io/containerDefaultResourceLimit": ""
+            "description": ""
           },
           labels: {}
         },
@@ -78,7 +74,6 @@ export default {
         requestsCpu: "",
         requestsMemory: ""
       },
-      labels: {},
       activeName: "",
       annotations: {}
     }
@@ -88,38 +83,26 @@ export default {
       this.$router.push({ name: "Namespaces" })
     },
     onSubmit () {
-
+      const data = this.transformYaml()
+      createNamespace("test1", data).then(res => {
+        console.log(res)
+      })
     },
-    onEditYaml () {
+    transformYaml() {
       let formData = {}
       formData = JSON.parse(JSON.stringify((this.form)))
-      if (formData.metadata.annotations["field.cattle.io/description"] === "") {
-        delete formData.metadata.annotations["field.cattle.io/description"]
+      if (formData.metadata.annotations["description"] === "") {
+        delete formData.metadata.annotations["description"]
       }
-      let resourceData = {}
-      resourceData = JSON.parse(JSON.stringify(this.resourceLimit))
-      for (const key in resourceData) {
-        if (Object.prototype.hasOwnProperty.call(resourceData, key)) {
-          if (resourceData[key] === "") {
-            delete resourceData[key]
-          } else {
-            if (key === "limitsCpu") {
-              resourceData.limitsCpu = resourceData.limitsCpu + "m"
-            } else {
-              resourceData[key] = resourceData[key] + "Mi"
-            }
-          }
-        }
-      }
-      formData.metadata.annotations["field.cattle.io/containerDefaultResourceLimit"] = JSON.stringify(resourceData).replace(/[\\]/g, "")
-      let annotations = {}
-      annotations = JSON.parse(JSON.stringify(this.annotations))
-      for (const key in annotations) {
-        if (Object.prototype.hasOwnProperty.call(annotations, key)) {
-          formData.metadata.annotations[key] = annotations[key]
-        }
-      }
-      this.yaml = formData
+      // labels
+      this.$refs.ko_labels.transformation(formData.metadata)
+      // annotations
+      this.$refs.ko_annotations.transformation(formData.metadata)
+      return formData
+    },
+    onEditYaml () {
+
+      this.yaml = this.transformYaml()
       this.showYaml = true
     },
     backToForm () {
