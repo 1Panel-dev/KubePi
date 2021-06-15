@@ -70,7 +70,7 @@
                 </el-table-column>
                 <el-table-column min-width="35" label="Operator">
                   <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list"/>
+                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
                   </template>
                 </el-table-column>
                 <el-table-column min-width="40" label="Value">
@@ -103,7 +103,7 @@
       <el-table v-if="form.nodeSelector.length !== 0" :data="form.nodeSelector">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
@@ -127,6 +127,9 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoNodeScheduling",
   components: { KoFormItem },
+  props: {
+    nodeSchedulingParentObj: Object,
+  },
   data() {
     return {
       scheduling_type_list: [
@@ -161,7 +164,7 @@ export default {
     },
     handleAdd() {
       var item = {
-        name: "",
+        key: "",
         value: "",
       }
       this.form.nodeSelector.unshift(item)
@@ -221,6 +224,75 @@ export default {
         if (this.preference[i] === preferItem) {
           this.preference.splice(i, 1)
         }
+      }
+    },
+    transformation(parentFrom) {
+      switch (this.scheduling_type) {
+        case "specific_node":
+          if (this.form.nodeSelector.length !== 0) {
+            let obj = {}
+            for (let i = 0; i < this.form.nodeSelector.length; i++) {
+              if (this.form.nodeSelector[i].key !== "") {
+                obj[this.form.nodeSelector[i].key] = this.form.nodeSelector[i].value
+              }
+            }
+            parentFrom.nodeSelector = obj
+          }
+          break
+        case "matching_rules":
+          if (this.nodeSelectorTerms.length !== 0) {
+            for (const item of this.nodeSelectorTerms) {
+              if (item.matchExpressions.length !== 0) {
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution = {}
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                let matchs = []
+                for (const match of item.matchExpressions) {
+                  if (match.value) {
+                    matchs.push({
+                      key: match.key,
+                      operator: match.operator,
+                      value: match.split(","),
+                    })
+                  } else {
+                    matchs.push({
+                      key: match.key,
+                      operator: match.operator,
+                    })
+                  }
+                }
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push({
+                  matchExpressions: matchs,
+                })
+              }
+            }
+          }
+          if (this.preference.length !== 0) {
+            for (const item of this.preference) {
+              if (item.matchExpressions.length !== 0) {
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution = {}
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.preference = []
+                let matchs = []
+                for (const match of item.matchExpressions) {
+                  if (match.value) {
+                    matchs.push({
+                      key: match.key,
+                      operator: match.operator,
+                      value: match.split(","),
+                    })
+                  } else {
+                    matchs.push({
+                      key: match.key,
+                      operator: match.operator,
+                    })
+                  }
+                }
+                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push({
+                  matchExpressions: matchs,
+                })
+              }
+            }
+          }
+          break
       }
     },
   },

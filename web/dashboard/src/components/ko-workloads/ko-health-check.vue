@@ -14,10 +14,10 @@
         </el-row>
         <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
           <el-row style="margin-bottom: 20px;">
-            <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.port" />
+            <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.httpGet.port" />
           </el-row>
           <el-row>
-            <ko-form-item labelName="Request Path" clearable itemType="input" v-model="form.path" />
+            <ko-form-item labelName="Request Path" clearable itemType="input" v-model="form.httpGet.path" />
           </el-row>
         </div>
         <el-row v-if="check_type === 'tcpSocket'">
@@ -52,7 +52,7 @@
           <el-table v-if="form.httpHeaders.length !== 0" :data="form.httpHeaders">
             <el-table-column min-width="40" label="Key">
               <template v-slot:default="{row}">
-                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
               </template>
             </el-table-column>
             <el-table-column min-width="40" label="Value">
@@ -81,6 +81,7 @@ export default {
   props: {
     health_check_type: String,
     health_check_helper: String,
+    healthCheckParentObj: Object,
   },
   components: { KoFormItem },
   data() {
@@ -94,8 +95,10 @@ export default {
       ],
       check_type: "",
       form: {
-        port: "",
-        path: "",
+        httpGet: {
+          port: "",
+          path: "",
+        },
         periodSeconds: 10,
         initialDelaySeconds: 0,
         timeoutSeconds: 3,
@@ -103,11 +106,11 @@ export default {
         failureThreshold: 3,
         httpHeaders: [],
         exec: {
-          command: [],
+          command: "",
         },
         tcpSocket: {
           port: "",
-        }
+        },
       },
     }
   },
@@ -121,11 +124,78 @@ export default {
     },
     handleAdd() {
       var item = {
-        name: "",
+        key: "",
         value: "",
       }
       this.form.httpHeaders.unshift(item)
     },
+    transformation(parentFrom) {
+      if (this.check_type === "None" || this.check_type === "") {
+        return
+      }
+      let childForm = {}
+      if (this.form.periodSeconds) {
+        childForm.periodSeconds = this.form.periodSeconds
+      }
+      if (this.form.initialDelaySeconds) {
+        childForm.initialDelaySeconds = this.form.initialDelaySeconds
+      }
+      if (this.form.timeoutSeconds) {
+        childForm.timeoutSeconds = this.form.timeoutSeconds
+      }
+      if (this.form.successThreshold) {
+        childForm.successThreshold = this.form.successThreshold
+      }
+      if (this.form.failureThreshold) {
+        childForm.failureThreshold = this.form.failureThreshold
+      }
+      if (this.form.httpHeaders) {
+        let obj = {}
+        for (let i = 0; i < this.form.httpHeaders.length; i++) {
+          if (this.form.httpHeaders[i].key !== "") {
+            obj[this.form.httpHeaders[i].key] = this.form.httpHeaders[i].value
+          }
+        }
+        childForm.httpHeaders = obj
+      }
+      switch (this.check_type) {
+        case ("httpGet", "httpsGet"):
+          childForm.httpGet = {}
+          if (this.form.httpGet.path) {
+            childForm.httpGet.path = this.form.httpGet.path
+          }
+          if (this.form.httpGet.port) {
+            childForm.httpGet.port = this.form.httpGet.port
+          }
+          break
+        case "tcpSocket":
+          if (this.form.tcpSocket.port) {
+            childForm.tcpSocket.port = this.form.tcpSocket.port
+          }
+          break
+        case "exec":
+          if (this.form.exec.command) {
+            childForm.exec.command = this.form.command
+          }
+          break
+        default:
+          break
+      }
+      switch (this.health_check_type) {
+        case "Readiness Check":
+          parentFrom.readinessProbe = childForm
+          break
+        case "Liveness Check":
+          parentFrom.livenessProbe = childForm
+          break
+        case "Startup Check":
+          parentFrom.startupProbe = childForm
+          break
+      }
+    },
   },
+  mounted(){
+   //
+  }
 }
 </script>

@@ -8,7 +8,7 @@
       <el-col :span="11">
         <span>value</span>
       </el-col>
-      <div v-for="label in labels" v-bind:key="label.index">
+      <div v-for="label in annotations" v-bind:key="label.index">
         <div class="grid-content tab-content">
           <br>
           <br>
@@ -40,18 +40,18 @@ export default {
   name: "KoAnnotations",
   components: { KoFormItem },
   props: {
-    annotationObj: Object
+    annotationsParentObj: Object
   },
   data () {
     return {
-      labels: [],
+      annotations: [],
     }
   },
   methods: {
     handleDelete (row) {
-      for (let i = 0; i < this.labels.length; i++) {
-        if (this.labels[i] === row) {
-          this.labels.splice(i, 1)
+      for (let i = 0; i < this.annotations.length; i++) {
+        if (this.annotations[i] === row) {
+          this.annotations.splice(i, 1)
         }
       }
     },
@@ -61,34 +61,28 @@ export default {
         key: "",
         value: "",
       }
-      this.labels.push(item)
+      this.annotations.push(item)
     },
-  },
-  watch: {
-    labels: {
-      handler (val) {
+    transformation(parentFrom) {
+      if(this.annotations) {
         let obj = {}
-        for (let i = 0; i < val.length; i++) {
-          if (val[i].key !== "") {
-            obj[val[i].key] = val[i].value
+        for (let i = 0; i < this.annotations.length; i++) {
+          if (this.annotations[i].key !== "") {
+            obj[this.annotations[i].key] = this.annotations[i].value
           }
         }
-        this.$emit("update:annotationObj", obj)
-      },
-      deep: true
-    },
+        parentFrom.annotations = obj
+      }
+    }
   },
   mounted () {
-    if (Object.keys(this.annotationObj).length !== 0) {
-      for (const key in this.annotationObj) {
-        if (Object.prototype.hasOwnProperty.call(this.annotationObj, key)) {
-          const item = {
-            index: Math.random(),
-            key: key,
-            value: this.annotationObj[key],
-          }
-          this.labels.push(item)
-        }
+    if (this.annotationsParentObj.annotations) {
+      for(const item of this.annotationsParentObj.annotations) {
+        this.labels.push({
+          index: Math.random(),
+          key: Object.keys(item)[0],
+          value: Object.values(item)[0],
+        })
       }
     }
   }

@@ -13,10 +13,10 @@
           <br>
           <br>
           <el-col :span="11">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key" />
           </el-col>
           <el-col :span="11">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value"/>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value" />
           </el-col>
           <el-col :span="2">
             <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
@@ -33,29 +33,28 @@
 </template>
 
 <script>
-
 import KoFormItem from "@/components/ko-form-item"
 
 export default {
   name: "KoLabels",
   components: { KoFormItem },
   props: {
-    labelObj: Object
+    labelParentObj: Object,
   },
-  data () {
+  data() {
     return {
       labels: [],
     }
   },
   methods: {
-    handleDelete (row) {
+    handleDelete(row) {
       for (let i = 0; i < this.labels.length; i++) {
         if (this.labels[i] === row) {
           this.labels.splice(i, 1)
         }
       }
     },
-    handleAdd () {
+    handleAdd() {
       const item = {
         index: Math.random(),
         key: "",
@@ -63,41 +62,35 @@ export default {
       }
       this.labels.push(item)
     },
-  },
-  watch: {
-    labels: {
-      handler (val) {
+    transformation(parentFrom) {
+      if (this.labels) {
         let obj = {}
-        for (let i = 0; i < val.length; i++) {
-          if (val[i].key !== "") {
-            obj[val[i].key] = val[i].value
+        for (let i = 0; i < this.labels.length; i++) {
+          if (this.labels[i].key !== "") {
+            obj[this.labels[i].key] = this.labels[i].value
           }
         }
-        this.$emit("update:labelObj", obj)
-      },
-      deep: true
+        parentFrom.labels = obj
+      }
     },
   },
-  mounted () {
-    if (Object.keys(this.labelObj).length !== 0) {
-      for (const key in this.labelObj) {
-        if (Object.prototype.hasOwnProperty.call(this.labelObj, key)) {
-            const item = {
-              index: Math.random(),
-              key: key,
-              value: this.labelObj[key],
-            }
-            this.labels.push(item)
-        }
+  mounted() {
+    if (this.labelParentObj.labels) {
+      for(const item of this.labelParentObj.labels) {
+        this.labels.push({
+          index: Math.random(),
+          key: Object.keys(item)[0],
+          value: Object.values(item)[0],
+        })
       }
     }
-  }
+  },
 }
 </script>
 
 <style scoped>
-    .tab-content {
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
+.tab-content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 </style>

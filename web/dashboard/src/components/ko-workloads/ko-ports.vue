@@ -39,7 +39,7 @@ export default {
   name: "KoPorts",
   components: { KoFormItem },
   props: {
-    portArray: Array,
+    portParentObj: Object,
   },
   data() {
     return {
@@ -76,14 +76,12 @@ export default {
         for (const po of parentFrom.ports) {
           po.expose = this.isExpose
         }
-      } else {
-        delete parentFrom.ports
       }
     },
   },
   mounted() {
-    if (this.portArray) {
-      this.ports = this.portArray
+    if (this.portParentObj.ports) {
+      this.ports = this.portParentObj.ports
     }
   },
 }

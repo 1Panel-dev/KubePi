@@ -95,7 +95,7 @@
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostnames" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostname" />
           </template>
         </el-table-column>
         <el-table-column width="120px">
@@ -115,6 +115,9 @@ import KoFormItem from "@/components/ko-form-item/index"
 export default {
   name: "KoNetworking",
   components: { KoFormItem },
+  props: {
+    networkingParentObj: Object,
+  },
   data() {
     return {
       network_mode_list: [
@@ -123,7 +126,7 @@ export default {
       ],
       dns_policy_list: [
         { label: "Default", value: "Default" },
-        { label: "ClusterFirst", value: "ClusterFirst" },
+        { label: "ClusterFirst", value: "Cluster First" },
         { label: "None", value: "None" },
       ],
       form: {
@@ -190,11 +193,92 @@ export default {
     },
     handleAliasAdd() {
       var item = {
-        name: "",
-        value: "",
+        ip: "",
+        hostname: "",
       }
       this.form.hostAliases.unshift(item)
     },
+    transformation(parentFrom) {
+      if (this.form.subdomain) {
+        parentFrom.subdomain = this.form.subdomain
+      }
+      if (this.form.dnsPolicy) {
+        parentFrom.dnsPolicy = this.form.dnsPolicy
+      }
+      if (this.form.hostname) {
+        parentFrom.hostname = this.form.hostname
+      }
+      if (this.form.hostNetwork) {
+        parentFrom.hostNetwork = true
+      }
+      if (this.form.hostAliases.length !== 0) {
+        let aliases = []
+        for (const item of this.form.hostAliases) {
+          aliases.push({
+            ip: item.ip,
+            hostnames: item.hostnames.split(","),
+          })
+        }
+        parentFrom.hostAliases = aliases
+      }
+      if (this.form.dnsConfig.nameservers.length !== 0 || this.form.dnsConfig.searches.length !== 0 || this.form.dnsConfig.options.length !== 0) {
+        parentFrom.dnsConfig = {}
+        if (this.form.dnsConfig.nameservers.length !== 0) {
+          let nameservers = []
+          for (const item of this.form.dnsConfig.nameservers) {
+            nameservers.push(item.value)
+          }
+          parentFrom.dnsConfig.nameservers = nameservers
+        }
+        if (this.form.dnsConfig.searches.length !== 0) {
+          let searches = []
+          for (const item of this.form.dnsConfig.searches) {
+            searches.push(item.value)
+          }
+          parentFrom.dnsConfig.searches = searches
+        }
+        if (this.form.dnsConfig.options.length !== 0) {
+          parentFrom.dnsConfig.options = this.form.dnsConfig.options
+        }
+      }
+    },
+  },
+  mounted() {
+    if (this.networkingParentObj.subdomain) {
+      this.form.subdomain = this.networkingParentObj.subdomain
+    }
+    if (this.networkingParentObj.dnsPolicy) {
+      this.form.dnsPolicy = this.networkingParentObj.dnsPolicy
+    }
+    if (this.networkingParentObj.hostname) {
+      this.hostname = this.networkingParentObj.hostname
+    }
+    if (this.networkingParentObj.hostNetwork) {
+      this.hostNetwork = true
+    }
+    if (this.networkingParentObj.hostAliases) {
+      for (const item of this.networkingParentObj.hostAliases) {
+        this.form.hostAliases.push({
+          ip: item.ip,
+          hostnames: item.hostnames.join(","),
+        })
+      }
+    }
+    if (this.networkingParentObj.dnsConfig) {
+      if (this.networkingParentObj.dnsConfig.nameservers) {
+        for (const item of this.networkingParentObj.dnsConfig.nameservers) {
+          this.form.dnsConfig.nameservers.push({ value: item })
+        }
+      }
+      if (this.networkingParentObj.dnsConfig.searches) {
+        for (const item of this.networkingParentObj.dnsConfig.searches) {
+          this.form.dnsConfig.searches.push({ value: item })
+        }
+      }
+      if (this.networkingParentObj.dnsConfig.options) {
+        this.form.dnsConfig.options = this.networkingParentObj.dnsConfig.option
+      }
+    }
   },
 }
 </script>
