@@ -19,7 +19,7 @@ const generateRoutes = async (to, from, next) => {
             router.addRoute({
                 path: "/",
                 component: Layout,
-                redirect: "/clusterlist",
+                redirect: "/clusters",
             })
             router.addRoutes(accessRoutes)
             next({...to, replace: true})

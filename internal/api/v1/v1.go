@@ -245,7 +245,7 @@ func AddV1Route(app iris.Party) {
 	authParty.Use(resourceNameInvalidHandler())
 	authParty.Get("/", apiResourceHandler(authParty))
 	user.Install(authParty)
-	cluster.Install(v1Party)
+	cluster.Install(authParty)
 	group.Install(authParty)
 	role.Install(authParty)
 }
