@@ -1,7 +1,7 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" >
+                    >
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -37,6 +37,7 @@
       </el-table-column>
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
+    <ko-page :page.sync="page" @change="listNamespaces('test1')" ></ko-page>
   </layout-content>
 </template>
 
@@ -44,10 +45,11 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace} from "@/api/namespace"
+import KoPage from "@/components/ko-page"
 
 export default {
   name: "NamespaceList",
-  components: { ComplexTable, LayoutContent },
+  components: { KoPage, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
@@ -58,11 +60,6 @@ export default {
           }
         },
       ],
-      paginationConfig: {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-      },
       searchConfig: {
         quickPlaceholder: this.$t("commons.search.quickSearch"),
         components: [
@@ -72,6 +69,11 @@ export default {
       data: [],
       selects: [],
       loading: false,
+      page: {
+        pageSize: 10,
+        nextToken:"",
+        remainCount: 0,
+      }
     }
   },
   methods: {
@@ -80,8 +82,10 @@ export default {
     },
     listNamespaces (clusterName) {
       this.loading = true
-      listNamespace(clusterName).then((res) => {
+      listNamespace(clusterName,this.page.pageSize,this.page.nextToken).then((res) => {
         this.data = res.items
+        this.page.nextToken =  res.metadata["continue"] ? res.metadata["continue"] : ""
+        this.page.remainCount = res.metadata["remainingItemCount"] ? res.metadata["remainingItemCount"] : 0
       }).catch(error => {
         console.log(error)
       }).finally(() => {

@@ -5,14 +5,19 @@ const namespaceUrl = (cluster_name) => {
 }
 
 
-export function listNamespace (cluster_name) {
-  return get(`${namespaceUrl(cluster_name)}`)
+export function listNamespace (cluster_name, limit,continueToken) {
+  let url = namespaceUrl(cluster_name)
+  url += "?limit=" + limit
+  if (continueToken) {
+    url += "&continue=" + continueToken
+  }
+  return get(url)
 }
 
 export function createNamespace (cluster_name, data) {
   return post(`${namespaceUrl(cluster_name)}`, data)
 }
 
-export function getNamespace(cluster_name,namespace) {
+export function getNamespace (cluster_name, namespace) {
   return get(`${namespaceUrl(cluster_name)}/${namespace}`)
 }
