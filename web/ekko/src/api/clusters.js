@@ -1,19 +1,20 @@
 import {post, get, del} from "@/plugins/request"
 
-const authUrl = "/api/v1/clusters"
+const baseUrl = "/api/v1/clusters"
 
-export function create(data) {
-  return post(authUrl, data)
+export function createCluster(data) {
+    return post(baseUrl, data)
 }
 
-export function listAll(){
-  return get(authUrl)
+export function listClusters() {
+    return get(baseUrl)
 }
 
-export function deleteBy(name){
-  return del(`${authUrl}/${name}`)
+export function deleteBy(name) {
+    return del(`${baseUrl}/${name}`)
 }
 
-export function searchCluster(page,size) {
-  return post(`${authUrl}/search?pageNum=${page}&pageSize=${size}`)
+export function searchClusters(page, size, conditions) {
+    return post(`${baseUrl}/search?pageNum=${page}&pageSize=${size}`, conditions)
 }
+

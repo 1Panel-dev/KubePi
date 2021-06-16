@@ -3,14 +3,19 @@ package cluster
 import (
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/google/uuid"
+	"time"
 )
 
 type Cluster interface {
-	Create(cluster *v1Cluster.Cluster) error
+	common.DBService
+	Create(cluster *v1Cluster.Cluster, options common.DBOptions) error
 	Get(name string) (*v1Cluster.Cluster, error)
 	All() ([]v1Cluster.Cluster, error)
 	Delete(name string) error
-	Search(num, size int) ([]v1Cluster.Cluster, int, error)
+	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewClusterService() Cluster {
@@ -18,10 +23,14 @@ func NewClusterService() Cluster {
 }
 
 type cluster struct {
+	common.DefaultDBService
 }
 
-func (c *cluster) Create(cluster *v1Cluster.Cluster) error {
-	db := server.DB()
+func (c *cluster) Create(cluster *v1Cluster.Cluster, options common.DBOptions) error {
+	db := c.GetDB(options)
+	cluster.UUID = uuid.New().String()
+	cluster.CreateAt = time.Now()
+	cluster.UpdateAt = time.Now()
 	return db.Save(cluster)
 }
 
@@ -43,8 +52,8 @@ func (c *cluster) All() ([]v1Cluster.Cluster, error) {
 	return clusters, nil
 }
 
-func (c *cluster) Search(num, size int) ([]v1Cluster.Cluster, int, error) {
-	db := server.DB()
+func (c *cluster) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
+	db := c.GetDB(options)
 	query := db.Select().Limit(size).Skip((num - 1) * size)
 	count, err := query.Count(&v1Cluster.Cluster{})
 	if err != nil {

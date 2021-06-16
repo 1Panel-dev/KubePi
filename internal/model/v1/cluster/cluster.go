@@ -3,10 +3,45 @@ package cluster
 import v1 "github.com/KubeOperator/ekko/internal/model/v1"
 
 type Cluster struct {
-	v1.BaseModel `storm:"inline"`
-	v1.Metadata  `storm:"inline"`
-	ApiServer    string `json:"apiServer"`
-	Router       string `json:"router"`
-	Token        string `json:"token"`
-	Status       string `json:"status"`
+	v1.BaseModel  `storm:"inline"`
+	v1.Metadata   `storm:"inline"`
+	CaCertificate Certificate `json:"caCertificate" storm:"inline"`
+	Spec          Spec        `json:"spec" storm:"inline"`
+	Status        Status      `json:"status" storm:"inline"`
+}
+
+type Spec struct {
+	Connect        Connect        `json:"connect" storm:"inline"`
+	Authentication Authentication `json:"authentication" storm:"inline"`
+}
+
+type Connect struct {
+	Direction string  `json:"direction"`
+	Forward   Forward `json:"forward" storm:"inline"`
+}
+
+type Forward struct {
+	ApiServer string `json:"apiServer"`
+	Proxy     Proxy  `json:"proxy"   storm:"inline"`
+}
+
+type Proxy struct {
+	URL      string `json:"url"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type Authentication struct {
+	Mode        string      `json:"mode"`
+	BearerToken string      `json:"bearerToken"`
+	Certificate Certificate `json:"certificate" storm:"inline"`
+}
+
+type Certificate struct {
+	KeyData  []byte `json:"keyData"`
+	CertData []byte `json:"certData"`
+}
+
+type Status struct {
+	Version string `json:"version"`
 }
