@@ -26,7 +26,13 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Active'" type="success" size="mini" plain round>{{
+          <el-button v-if="row.status.phase ==='Active'" type="success" size="mini" plain round>
+            {{
+              row.status.phase
+            }}
+          </el-button>
+          <el-button v-if="row.status.phase ==='Terminating'" type="warning" size="mini" plain round>
+            {{
               row.status.phase
             }}
           </el-button>

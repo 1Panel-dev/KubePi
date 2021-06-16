@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="yaml-editor">
-      <codemirror  :options="options"></codemirror>
+      <codemirror v-model="content" :options="options"></codemirror>
     </div>
   </div>
 </template>
@@ -38,7 +38,8 @@ export default {
         lineWrapping: true,
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
         lint: true
-      }
+      },
+      content: ""
     }
   },
   watch: {
@@ -50,6 +51,12 @@ export default {
     }
   },
   methods: {
+    getValue() {
+      let yaml = require("js-yaml")
+      const data=yaml.load(this.content)
+      console.log(data)
+      return data
+    }
   },
 }
 </script>
