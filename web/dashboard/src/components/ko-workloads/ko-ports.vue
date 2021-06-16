@@ -10,12 +10,12 @@
       </el-table-column>
       <el-table-column min-width="40" label="Private Container Port">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.containerPort" />
+          <ko-form-item :withoutLabel="true" clearable itemType="number" v-model.number="row.containerPort" />
         </template>
       </el-table-column>
       <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.hostPort" />
+          <ko-form-item :withoutLabel="true" clearable itemType="number" v-model.number="row.hostPort" />
         </template>
       </el-table-column>
       <el-table-column min-width="20" label="Protocol">
@@ -65,8 +65,6 @@ export default {
       var item = {
         name: "",
         containerPort: "",
-        hostPort: "",
-        protocol: "",
       }
       this.ports.unshift(item)
     },

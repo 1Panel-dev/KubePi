@@ -14,14 +14,14 @@
         </el-row>
         <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
           <el-row style="margin-bottom: 20px;">
-            <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.httpGet.port" />
+            <ko-form-item labelName="Check Port" clearable itemType="number" v-model.number="form.httpGet.port" />
           </el-row>
           <el-row>
             <ko-form-item labelName="Request Path" clearable itemType="input" v-model="form.httpGet.path" />
           </el-row>
         </div>
         <el-row v-if="check_type === 'tcpSocket'">
-          <ko-form-item labelName="Check Port" clearable itemType="input" v-model="form.tcpSocket.port" />
+          <ko-form-item labelName="Check Port" clearable itemType="number" v-model.number="form.tcpSocket.port" />
         </el-row>
         <el-row v-if="check_type === 'exec'">
           <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" clearable itemType="input" v-model="form.exec.command" />
@@ -159,7 +159,8 @@ export default {
         childForm.httpHeaders = obj
       }
       switch (this.check_type) {
-        case ("httpGet", "httpsGet"):
+        case "httpGet":
+        case "httpsGet":
           childForm.httpGet = {}
           if (this.form.httpGet.path) {
             childForm.httpGet.path = this.form.httpGet.path
@@ -169,13 +170,15 @@ export default {
           }
           break
         case "tcpSocket":
+          childForm.tcpSocket = {}
           if (this.form.tcpSocket.port) {
             childForm.tcpSocket.port = this.form.tcpSocket.port
           }
           break
         case "exec":
+          childForm.exec = {}
           if (this.form.exec.command) {
-            childForm.exec.command = this.form.command
+            childForm.exec.command = this.form.exec.command
           }
           break
         default:
@@ -192,10 +195,12 @@ export default {
           parentFrom.startupProbe = childForm
           break
       }
+
+      console.log(parentFrom)
     },
   },
-  mounted(){
-   //
-  }
+  mounted() {
+    //
+  },
 }
 </script>

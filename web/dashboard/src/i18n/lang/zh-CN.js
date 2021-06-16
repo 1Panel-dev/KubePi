@@ -17,6 +17,7 @@ const message = {
       import: "导入",
       create: "创建",
       cancel: "取消",
+      edit: "编辑",
       login: "登录",
       confirm: "确定",
       edit_yaml: "YAML",

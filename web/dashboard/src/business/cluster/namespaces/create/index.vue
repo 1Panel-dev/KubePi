@@ -18,7 +18,7 @@
               <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
             </el-tab-pane>
             <el-tab-pane label="Annotations">
-              <ko-annotations ref="ko_annotations" :annotationsParentObj="annotations"></ko-annotations>
+              <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -59,7 +59,7 @@ export default {
         metadata: {
           name: "",
           annotations: {
-            "description": ""
+            "description": "asadas"
           },
           labels: {}
         },
