@@ -11,7 +11,7 @@
             :total="total"
             :page-count="1"
             layout="total, sizes, prev, slot, next">
-        <el-button>{{currentPage}}</el-button>
+      <el-button>{{ currentPage }}</el-button>
     </el-pagination>
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
       type: Number,
       default: 10
     },
-    page:Object
+    page: Object
   },
   data () {
     return {
@@ -43,37 +43,41 @@ export default {
   watch: {
     continue: {},
     page: {
-      handler() {
-        if (this.page&& this.page.remainCount){
-          this.total = this.page.pageSize * this.currentPage + this.page.remainCount
+      handler () {
+        if (this.page) {
+          if (this.page.total !== 0) {
+            this.total = this.page.total
+          } else {
+            this.total = this.page.pageSize * this.currentPage + this.page.remainCount
+          }
         }
       },
       immediate: true,
       deep: true
     }
   },
-  methods:{
+  methods: {
     handleSizeChange: function (size) {
       const page = {
         pageSize: size,
-        nextToken:"",
+        nextToken: "",
         remainingItemCount: 0,
       }
-      this.$emit('update:page', page)
-      this.$emit("change");
+      this.$emit("update:page", page)
+      this.$emit("change")
       this.currentPage = 1
     },
-    pageNext() {
-      this.currentPage ++
+    pageNext () {
+      this.currentPage++
       this.preToken.push(this.page.nextToken)
-      this.$emit("change");
+      this.$emit("change")
     },
-    pageAhead() {
-      this.currentPage --
-      this.page.nextToken = this.preToken[this.preToken.length -2]
+    pageAhead () {
+      this.currentPage--
+      this.page.nextToken = this.preToken[this.preToken.length - 2]
       this.preToken.pop()
-      this.$emit('update:page',  this.page)
-      this.$emit("change");
+      this.$emit("update:page", this.page)
+      this.$emit("change")
     }
   }
 }
