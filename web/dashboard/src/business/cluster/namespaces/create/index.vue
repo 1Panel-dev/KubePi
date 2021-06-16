@@ -3,14 +3,18 @@
     <br>
     <el-row :gutter="20">
       <div class="grid-content bg-purple-light" v-if="!showYaml">
-        <el-col :span="12">
-          <ko-form-item :labelName="$t('commons.table.name')" clearable itemType="input"
-                        v-model="form.metadata.name"></ko-form-item>
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item :labelName="$t('business.namespace.description')" clearable itemType="input"
-                        v-model="form.metadata.annotations['description']"></ko-form-item>
-        </el-col>
+        <el-form label-position="top" :model="form">
+          <el-col :span="12">
+            <el-form-item :label="$t('commons.table.name')">
+              <el-input clearable v-model="form.metadata.name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.namespace.description')">
+              <el-input clearable v-model="form.metadata.annotations['description']"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-form>
         <el-col :span="24">
           <br>
           <el-tabs v-model="activeName" tab-position="left" style="background-color: #141418;" @tab-click="handleClick">
@@ -24,7 +28,7 @@
         </el-col>
       </div>
       <div class="grid-content bg-purple-light" v-if="showYaml">
-        <yaml-editor :value="yaml"></yaml-editor>
+        <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
       </div>
       <div class="grid-content bg-purple-light">
         <div style="float: right;margin-top: 10px">
@@ -43,14 +47,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import KoFormItem from "@/components/ko-form-item"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import {createNamespace} from "@/api/namespace"
 
 export default {
   name: "NamespaceCreate",
-  components: { KoAnnotations, KoLabels, KoFormItem, YamlEditor, LayoutContent },
+  components: { KoAnnotations, KoLabels, YamlEditor, LayoutContent },
   data () {
     return {
       form: {
@@ -83,9 +86,14 @@ export default {
       this.$router.push({ name: "Namespaces" })
     },
     onSubmit () {
-      const data = this.transformYaml()
+      let data = {}
+      if (this.showYaml) {
+        data = this.$refs.yaml_editor.getValue()
+      } else {
+        data = this.transformYaml()
+      }
       this.loading = true
-      createNamespace("test1", data).then(() => {
+      createNamespace(this.clusterName, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -95,7 +103,7 @@ export default {
         this.loading = false
       })
     },
-    transformYaml() {
+    transformYaml () {
       let formData = {}
       formData = JSON.parse(JSON.stringify((this.form)))
       if (formData.metadata.annotations["description"] === "") {

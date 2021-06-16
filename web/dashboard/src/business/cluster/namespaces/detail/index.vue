@@ -74,7 +74,8 @@ export default {
   data () {
     return {
       item: {
-        metadata: {}
+        metadata: {},
+        status: {}
       },
       loading: false
     }
