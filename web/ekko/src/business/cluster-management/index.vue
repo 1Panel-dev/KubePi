@@ -11,8 +11,8 @@
                                     {{item.name}}
                                 </el-col>
                                 <el-col :span="6">
-                                    <el-button icon="el-icon-user" circle></el-button>
-                                    <el-button icon="el-icon-delete" circle></el-button>
+                                    <el-button icon="el-icon-setting" @click="onDetail(item.name)" circle></el-button>
+                                    <el-button icon="el-icon-delete" @click="onDelete(item.name)" circle></el-button>
                                 </el-col>
                             </el-row>
                         </div>
@@ -43,7 +43,7 @@
 
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
-    import {listClusters} from "@/api/clusters"
+    import {listClusters, deleteCluster} from "@/api/clusters"
 
 
     export default {
@@ -57,15 +57,36 @@
         methods: {
             onCreate() {
                 this.$router.push({name: "ClusterCreate"})
+            },
+            onDetail(name) {
+                this.$router.push({name: "ClusterDetail", params: {name: name}})
+            },
+            onDelete(name) {
+                this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+                    confirmButtonText: this.$t("commons.button.confirm"),
+                    cancelButtonText: this.$t("commons.button.cancel"),
+                    type: 'warning'
+                }).then(() => {
+                    deleteCluster(name).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: this.$t("commons.msg.delete_success"),
+                        });
+                        this.onVueCreated()
+                    })
+                });
+            },
+            onVueCreated() {
+                listClusters().then(data => {
+                    this.items = data.data;
+                    this.items.push({
+                        add: true,
+                    })
+                })
             }
         },
         created() {
-            listClusters().then(data => {
-                this.items = data.data;
-                this.items.push({
-                    add: true,
-                })
-            })
+            this.onVueCreated()
         }
     }
 </script>
