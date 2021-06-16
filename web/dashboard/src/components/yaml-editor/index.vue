@@ -53,9 +53,7 @@ export default {
   methods: {
     getValue() {
       let yaml = require("js-yaml")
-      const data=yaml.load(this.content)
-      console.log(data)
-      return data
+      return yaml.load(this.content)
     }
   },
 }

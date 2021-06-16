@@ -9,7 +9,6 @@
             :page-sizes="pageSizes"
             :page-size="pageSize"
             :total="total"
-            :page-count="1"
             layout="total, sizes, prev, slot, next">
       <el-button>{{ currentPage }}</el-button>
     </el-pagination>
@@ -44,11 +43,12 @@ export default {
     continue: {},
     page: {
       handler () {
-        if (this.page) {
-          if (this.page.total !== 0) {
-            this.total = this.page.total
-          } else {
+        if (this.page ) {
+          if (this.page.remainCount > 0) {
             this.total = this.page.pageSize * this.currentPage + this.page.remainCount
+          }
+          if (this.page.items > 0 ){
+            this.total = this.page.pageSize * (this.currentPage-1) + this.page.items
           }
         }
       },
