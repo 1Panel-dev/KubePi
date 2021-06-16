@@ -1,5 +1,7 @@
 package collectons
 
+
+
 type StringSet struct {
 	data map[string]interface{}
 }

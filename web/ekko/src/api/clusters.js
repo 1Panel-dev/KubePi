@@ -10,7 +10,7 @@ export function listClusters() {
     return get(baseUrl)
 }
 
-export function deleteBy(name) {
+export function deleteCluster(name) {
     return del(`${baseUrl}/${name}`)
 }
 

@@ -20,9 +20,11 @@ const message = {
       edit: "编辑",
       login: "登录",
       confirm: "确定",
-      edit_yaml: "YAML",
+      yaml: "YAML",
       back_form: "返回表单",
-      add: "增加"
+      add: "增加",
+      edit: "编辑",
+      edit_yaml: "编辑 YAML"
     },
     table: {
       name: "名称",

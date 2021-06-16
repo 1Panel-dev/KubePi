@@ -9,16 +9,16 @@ import (
 	"time"
 )
 
-type Cluster interface {
+type Service interface {
 	common.DBService
 	Create(cluster *v1Cluster.Cluster, options common.DBOptions) error
 	Get(name string) (*v1Cluster.Cluster, error)
 	All() ([]v1Cluster.Cluster, error)
-	Delete(name string) error
+	Delete(name string, options common.DBOptions) error
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
-func NewClusterService() Cluster {
+func NewClusterService() Service {
 	return &cluster{}
 }
 
@@ -66,8 +66,8 @@ func (c *cluster) Search(num, size int, conditions pkgV1.Conditions, options com
 	return clusters, count, nil
 }
 
-func (c *cluster) Delete(name string) error {
-	db := server.DB()
+func (c *cluster) Delete(name string, options common.DBOptions) error {
+	db := c.GetDB(options)
 	cluster, err := c.Get(name)
 	if err != nil {
 		return err

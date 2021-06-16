@@ -1,5 +1,5 @@
 <template>
-    <layout-content :header="$t('business.cluster.list')">
+    <layout-content :header="$t('business.user.user_list')">
         <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
                        :pagination-config="paginationConfig">
             <template #header>

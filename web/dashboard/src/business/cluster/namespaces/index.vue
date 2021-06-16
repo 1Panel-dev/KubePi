@@ -1,13 +1,12 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" >
+    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -27,7 +26,16 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Active'" type="success" size="mini" plain round>{{ row.status.phase }}</el-button>
+          <el-button v-if="row.status.phase ==='Active'" type="success" size="mini" plain round>
+            {{
+              row.status.phase
+            }}
+          </el-button>
+          <el-button v-if="row.status.phase ==='Terminating'" type="warning" size="mini" plain round>
+            {{
+              row.status.phase
+            }}
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -35,34 +43,53 @@
           {{ row.metadata.creationTimestamp | datetimeFormat }}
         </template>
       </el-table-column>
-      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
+    <ko-page :page.sync="page" @change="search"></ko-page>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNamespace} from "@/api/namespace"
+import {listNamespace, deleteNamespace} from "@/api/namespace"
+import KoPage from "@/components/ko-page"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NamespaceList",
-  components: { ComplexTable, LayoutContent },
+  components: { KoTableOperations, KoPage, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: false }
+            })
+          }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
-          click: () => {
+          click: (row) => {
+            this.onDelete(row)
           }
         },
       ],
-      paginationConfig: {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-      },
       searchConfig: {
         quickPlaceholder: this.$t("commons.search.quickSearch"),
         components: [
@@ -72,16 +99,36 @@ export default {
       data: [],
       selects: [],
       loading: false,
+      page: {
+        pageSize: 10,
+        nextToken: "",
+        remainCount: 0,
+        items: 0
+      },
+      clusterName: "test1"
     }
   },
   methods: {
     onCreate () {
       this.$router.push({ name: "NamespaceCreate" })
     },
-    listNamespaces (clusterName) {
+    search (init) {
       this.loading = true
-      listNamespace(clusterName).then((res) => {
+      if (init) {
+        this.page = {
+          pageSize: this.page.pageSize,
+          nextToken: "",
+          remainCount: 0,
+        }
+      }
+      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken).then((res) => {
         this.data = res.items
+        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
+        if (res.metadata["remainingItemCount"]) {
+          this.page.remainCount = res.metadata["remainingItemCount"]
+        } else {
+          this.page.items = res.items.length
+        }
       }).catch(error => {
         console.log(error)
       }).finally(() => {
@@ -90,10 +137,43 @@ export default {
     },
     openDetail (row) {
       this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name, cluster: "test1" } })
+    },
+    onDelete (row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteNamespace(this.clusterName, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteNamespace(this.clusterName, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
+        }
+      })
     }
   },
   created () {
-    this.listNamespaces("test1")
+    this.search()
   }
 }
 </script>

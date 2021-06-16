@@ -3,23 +3,30 @@ package cluster
 import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
+	"github.com/KubeOperator/ekko/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
+	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	authV1 "k8s.io/api/authorization/v1"
+	"sync"
 )
 
 type Handler struct {
-	clusterService cluster.Cluster
+	clusterService        cluster.Service
+	clusterBindingService clusterbinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		clusterService: cluster.NewClusterService(),
+		clusterService:        cluster.NewClusterService(),
+		clusterBindingService: clusterbinding.NewService(),
 	}
 }
 
@@ -38,6 +45,15 @@ func (h *Handler) CreateCluster() iris.Handler {
 			req.Spec.Authentication.Certificate.CertData = []byte(req.CertDataStr)
 			req.Spec.Authentication.Certificate.KeyData = []byte(req.KeyDataStr)
 		}
+		// 生成一个rsa格式的私钥
+		privateKey, err := certificate.GeneratePrivateKey()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+
+		}
+		req.PrivateKey = *privateKey
 
 		client := kubernetes.NewKubernetes(req.Cluster)
 		if err := client.Ping(); err != nil {
@@ -47,6 +63,58 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		v, _ := client.Version()
 		req.Status.Version = v.GitVersion
+		requiredPermissions := map[string][]string{
+			"namespaces":       {"get", "post", "delete"},
+			"clusterroles":     {"get", "post", "delete"},
+			"clusterrolebings": {"get", "post", "delete"},
+			"roles":            {"get", "post", "delete"},
+			"rolebindings":     {"get", "post", "delete"},
+		}
+		wg := sync.WaitGroup{}
+		errCh := make(chan error)
+		resultCh := make(chan kubernetes.PermissionCheckResult)
+		doneCh := make(chan struct{})
+		for key := range requiredPermissions {
+			for i := range requiredPermissions[key] {
+				wg.Add(1)
+				i := i
+				go func(key string, index int) {
+					rs, err := client.HasPermission(authV1.ResourceAttributes{
+						Verb:     requiredPermissions[key][i],
+						Resource: key,
+					})
+					if err != nil {
+						errCh <- err
+						wg.Done()
+						return
+					}
+					resultCh <- rs
+					wg.Done()
+				}(key, i)
+			}
+		}
+		go func() {
+			wg.Wait()
+			doneCh <- struct{}{}
+		}()
+		for {
+			select {
+			case <-doneCh:
+				goto end
+			case err := <-errCh:
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			case b := <-resultCh:
+				if !b.Allowed {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", fmt.Errorf("permission %s-%s  not allowed", b.Resource.Resource, b.Resource.Verb))
+					return
+				}
+			}
+		}
+	end:
+		// 判断是否拥有创建ClusterRole/Namespace/的权限
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		req.CreatedBy = profile.Name
@@ -75,6 +143,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
+			return
 		}
 		ctx.Values().Set("data", pkgV1.Page{Items: clusters, Total: total})
 	}
@@ -97,13 +166,78 @@ func (h *Handler) ListClusters() iris.Handler {
 func (h *Handler) DeleteCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		err := h.clusterService.Delete(name)
+		err := h.clusterService.Delete(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
 		ctx.StatusCode(iris.StatusOK)
+	}
+}
+
+func (h *Handler) GetClusterMembers() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		bindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		subjectMap := map[v1Cluster.Subject]v1Cluster.Binding{}
+		for i := range bindings {
+			for j := range bindings[i].Subjects {
+				subjectMap[bindings[i].Subjects[j]] = bindings[i]
+			}
+		}
+		var members []Member
+		for key := range subjectMap {
+			members = append(members, Member{
+				Name:        key.Name,
+				Kind:        key.Kind,
+				BindingName: subjectMap[key].Name,
+				CreateAt:    subjectMap[key].CreateAt,
+			})
+		}
+		ctx.Values().Set("data", members)
+	}
+}
+
+func (h *Handler) CreateClusterMember() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		var req Member
+		err := ctx.ReadJSON(&req)
+		if err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		binding := v1Cluster.Binding{
+			BaseModel: v1.BaseModel{
+				Kind:      "ClusterBinding",
+				CreatedBy: profile.Name,
+			},
+			Metadata: v1.Metadata{
+				Name: fmt.Sprintf("%s-%s-cluster-binding", name, req.Name),
+			},
+			Subjects: []v1Cluster.Subject{
+				{
+					Name: req.Name,
+					Kind: req.Kind,
+				},
+			},
+			ClusterRef: name,
+		}
+		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", req)
 	}
 }
 
@@ -114,4 +248,6 @@ func Install(parent iris.Party) {
 	sp.Get("", handler.ListClusters())
 	sp.Delete("/:name", handler.DeleteCluster())
 	sp.Post("/search", handler.SearchClusters())
+	sp.Get("/:name/users", handler.GetClusterMembers())
+	sp.Post("/:name/users", handler.CreateClusterMember())
 }
