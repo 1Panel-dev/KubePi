@@ -1,12 +1,12 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
     <br>
     <el-row :gutter="20">
       <div class="grid-content bg-purple-light" v-if="!showYaml">
-        <el-form label-position="top" :model="form">
+        <el-form label-position="top" :model="item">
           <el-col :span="12">
             <el-form-item :label="$t('commons.table.name')">
-              <el-input clearable v-model="form.metadata.name"></el-input>
+              <el-input disabled v-model="item.metadata.name"></el-input>
             </el-form-item>
           </el-col>
         </el-form>
@@ -14,10 +14,10 @@
           <br>
           <el-tabs v-model="activeName" tab-position="left" style="background-color: #141418;" @tab-click="handleClick">
             <el-tab-pane label="Labels">
-              <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
+              <ko-labels ref="ko_labels" :key="loading" :labelParentObj="item.metadata"></ko-labels>
             </el-tab-pane>
             <el-tab-pane label="Annotations">
-              <ko-annotations ref="ko_annotations" :annotationsParentObj="annotations"></ko-annotations>
+              <ko-annotations ref="ko_annotations"  :key="loading" :annotationsParentObj="item.metadata.annotations"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -41,45 +41,34 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import YamlEditor from "@/components/yaml-editor"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
-import {createNamespace} from "@/api/namespace"
+import YamlEditor from "@/components/yaml-editor"
+import {editNamespace, getNamespace} from "@/api/namespace"
 
 export default {
-  name: "NamespaceCreate",
-  components: { KoAnnotations, KoLabels, YamlEditor, LayoutContent },
+  name: "NamespaceEdit",
+  components: { LayoutContent,KoAnnotations, KoLabels ,YamlEditor},
+  props: {
+    name: String,
+    cluster: String,
+    yamlShow: Boolean
+  },
   data () {
     return {
-      form: {
-        apiVersion: "v1",
-        kind: "Namespace",
+      item: {
         metadata: {
-          name: "",
-          annotations: {
-          },
-          labels: {}
         },
+        status: {}
       },
-      rules: {},
-      loading: false,
       showYaml: false,
       yaml: {},
-      resourceLimit: {
-        limitsCpu: "",
-        limitsMemory: "",
-        requestsCpu: "",
-        requestsMemory: ""
-      },
       activeName: "",
-      annotations: {},
+      loading: false
     }
   },
   methods: {
-    onCancel () {
-      this.$router.push({ name: "Namespaces" })
-    },
-    onSubmit () {
+    onSubmit() {
       let data = {}
       if (this.showYaml) {
         data = this.$refs.yaml_editor.getValue()
@@ -87,7 +76,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createNamespace(this.clusterName, data).then(() => {
+      editNamespace(this.cluster,this.item.metadata.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -97,25 +86,42 @@ export default {
         this.loading = false
       })
     },
+    onEditYaml() {
+      this.yaml = this.transformYaml()
+      this.showYaml = true
+    },
+    backToForm() {
+      this.showYaml = false
+    },
+    getNamespaceByName () {
+      this.loading = true
+      getNamespace(this.cluster, this.name).then(res => {
+        this.item = res
+        this.loading = false
+        if(this.yamlShow) {
+          this.showYaml = this.yamlShow
+          this.yaml = JSON.parse(JSON.stringify(this.item))
+        }
+      })
+    },
+    onCancel(){
+      this.$router.push({ name: "Namespaces" })
+    },
+    handleClick(tab) {
+      this.activeName = tab.index
+    },
     transformYaml () {
       let formData = {}
-      formData = JSON.parse(JSON.stringify((this.form)))
+      formData = JSON.parse(JSON.stringify(this.item))
       // labels
       this.$refs.ko_labels.transformation(formData.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(formData.metadata)
       return formData
     },
-    onEditYaml () {
-      this.yaml = this.transformYaml()
-      this.showYaml = true
-    },
-    backToForm () {
-      this.showYaml = false
-    },
-    handleClick (tab) {
-      this.activeName = tab.index
-    }
+  },
+  created () {
+    this.getNamespaceByName()
   }
 }
 </script>

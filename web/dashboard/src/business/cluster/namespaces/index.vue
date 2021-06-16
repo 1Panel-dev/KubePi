@@ -43,7 +43,7 @@
           {{ row.metadata.creationTimestamp | datetimeFormat }}
         </template>
       </el-table-column>
-      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
     <ko-page :page.sync="page" @change="search"></ko-page>
   </layout-content>
@@ -54,13 +54,34 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace} from "@/api/namespace"
 import KoPage from "@/components/ko-page"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NamespaceList",
-  components: { KoPage, ComplexTable, LayoutContent },
+  components: { KoTableOperations, KoPage, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: false }
+            })
+          }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+            })
+          }
+        },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
@@ -105,7 +126,7 @@ export default {
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         if (res.metadata["remainingItemCount"]) {
           this.page.remainCount = res.metadata["remainingItemCount"]
-        }else {
+        } else {
           this.page.items = res.items.length
         }
       }).catch(error => {
@@ -128,8 +149,8 @@ export default {
         this.ps = []
         if (row) {
           this.ps.push(deleteNamespace(this.clusterName, row.metadata.name))
-        }else {
-          if (this.selects.length >0) {
+        } else {
+          if (this.selects.length > 0) {
             for (const select of this.selects) {
               this.ps.push(deleteNamespace(this.clusterName, select.metadata.name))
             }
