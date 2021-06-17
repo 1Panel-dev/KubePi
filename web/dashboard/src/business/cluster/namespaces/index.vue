@@ -121,10 +121,11 @@ export default {
       listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        if (res.metadata["remainingItemCount"]) {
-          this.page.remainCount = res.metadata["remainingItemCount"]
-        } else {
+        this.page.remainCount = res.metadata["remainingItemCount"] ?  res.metadata["remainingItemCount"]: 0
+        if (!res.metadata["remainingItemCount"]) {
           this.page.items = res.items.length
+        }else {
+          this.page.items = 0
         }
       }).catch(error => {
         console.log(error)

@@ -50,22 +50,19 @@ export default {
     return {
       preToken: [""],
       total: 0,
-      current:1,
+      current: 1,
     }
   },
   watch: {
-    continue: {},
     paginationConfig: {
-      handler () {
-        if (this.paginationConfig ) {
-          if (this.paginationConfig.remainCount > 0) {
-            this.total = this.paginationConfig.pageSize * this.currentPage + this.paginationConfig.remainCount
-          }else if (this.paginationConfig.items > 0) {
-            this.total = this.paginationConfig.pageSize * (this.currentPage-1) + this.paginationConfig.items
-          }
+      handler (newValue) {
+        if (newValue.remainCount > 0) {
+          this.total = newValue.pageSize * this.current + newValue.remainCount
+        }
+        if (newValue.items > 0) {
+          this.total = newValue.pageSize * (this.current - 1) + newValue.items
         }
       },
-      immediate: true,
       deep: true
     }
   },
@@ -81,20 +78,17 @@ export default {
     pageNext () {
       this.current++
       this.preToken.push(this.paginationConfig.nextToken)
-      this.$emit('update:currentPage', this.currentPage)
+      this.$emit("update:currentPage", this.currentPage)
       this.$emit("change")
     },
     pageAhead () {
       this.current--
-      this.preToken.pop()
       this.$emit("update:nextToken", this.preToken[this.preToken.length - 2])
-      this.$emit('update:currentPage', this.currentPage)
+      this.preToken.pop()
+      this.$emit("update:currentPage", this.currentPage)
       this.$emit("change")
     },
-    computedTotal() {
-
-    }
-  }
+  },
 }
 </script>
 
