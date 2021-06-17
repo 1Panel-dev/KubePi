@@ -83,7 +83,7 @@ func (u *service) GetByEmail(email string, options common.DBOptions) (*v1User.Us
 func (u *service) List(options common.DBOptions) ([]v1User.User, error) {
 	db := u.GetDB(options)
 	users := make([]v1User.User, 0)
-	if err := db.All(users); err != nil {
+	if err := db.All(&users); err != nil {
 		return nil, err
 	}
 	return users, nil

@@ -10,6 +10,7 @@ type Subject struct {
 type Binding struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
-	Subjects     []Subject `json:"subjects"`
-	ClusterRef   string    `json:"clusterRef" storm:"index"`
+	Subject      Subject `json:"subject" storm:"inline"`
+	ClusterRef   string  `json:"clusterRef" storm:"index"`
+	Certificate  []byte  `json:"certificate"`
 }

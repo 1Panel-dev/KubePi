@@ -26,10 +26,12 @@ const message = {
         },
         table: {
             name: "名称",
+            kind: "类型",
             created_time: "创建时间",
             status: "状态",
             action: "操作",
             creat_by: "创建者",
+            description: "描述",
         },
         search: {
             quickSearch: "搜索"
@@ -104,6 +106,11 @@ const message = {
         },
         access_control: {
             access_control: "访问控制"
+        },
+        cluster_role: {
+            none: "无",
+            cluster_administrator: "集群管理员",
+            cluster_viewer: "只读用户",
         },
         user: {
             user_management: "用户与权限",

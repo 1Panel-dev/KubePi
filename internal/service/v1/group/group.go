@@ -4,31 +4,29 @@ import (
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Group "github.com/KubeOperator/ekko/internal/model/v1/group"
 	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 )
 
 type Service interface {
+	common.DBService
 	Create(u *v1Group.Group) error
 	Get(name string) (*v1Group.Group, error)
-	List() ([]v1Group.Group, error)
+	List(options common.DBOptions) ([]v1Group.Group, error)
 	Delete(name string) error
 	Search(num, size int, conditions pkgV1.Conditions) ([]v1Group.Group, int, error)
 }
 
 func NewService() Service {
-	return &service{}
+	return &service{
+	}
 }
 
 type service struct {
+	common.DefaultDBService
 }
 
 func (s service) Create(u *v1Group.Group) error {
-	if u.ApiVersion == "" {
-		u.ApiVersion = "v1"
-	}
-	if u.Kind == "" {
-		u.Kind = "Group"
-	}
 	db := server.DB()
 	return db.Save(&u)
 }
@@ -42,8 +40,8 @@ func (s service) Get(name string) (*v1Group.Group, error) {
 	return &g, nil
 }
 
-func (s service) List() ([]v1Group.Group, error) {
-	db := server.DB()
+func (s service) List(options common.DBOptions) ([]v1Group.Group, error) {
+	db := s.GetDB(options)
 	gs := make([]v1Group.Group, 0)
 	if err := db.All(&gs); err != nil {
 		return gs, err

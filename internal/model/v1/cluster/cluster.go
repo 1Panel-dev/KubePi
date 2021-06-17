@@ -1,17 +1,16 @@
 package cluster
 
 import (
-	"crypto/rsa"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 )
 
 type Cluster struct {
 	v1.BaseModel  `storm:"inline"`
 	v1.Metadata   `storm:"inline"`
-	CaCertificate Certificate    `json:"caCertificate" storm:"inline"`
-	Spec          Spec           `json:"spec" storm:"inline"`
-	PrivateKey    rsa.PrivateKey `json:"-" storm:"inline"`
-	Status        Status         `json:"status" storm:"inline"`
+	CaCertificate Certificate `json:"caCertificate" storm:"inline"`
+	Spec          Spec        `json:"spec" storm:"inline"`
+	PrivateKey    []byte      `json:"privateKey"`
+	Status        Status      `json:"status" storm:"inline"`
 }
 
 type Spec struct {

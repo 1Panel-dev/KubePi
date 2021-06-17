@@ -22,3 +22,6 @@ export function updateUser(name, user) {
 
     return put(`${baseUrl}/${name}`, user)
 }
+export function listUsers() {
+    return get(`${baseUrl}`)
+}

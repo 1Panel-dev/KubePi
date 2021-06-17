@@ -144,6 +144,18 @@ func (h *Handler) GetUser() iris.Handler {
 	}
 }
 
+func (h *Handler) GetUsers() iris.Handler {
+	return func(ctx *context.Context) {
+		us, err := h.userService.List(common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", us)
+	}
+}
+
 func (h *Handler) UpdateUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
@@ -236,4 +248,5 @@ func Install(parent iris.Party) {
 	sp.Delete("/:name", handler.DeleteUser())
 	sp.Get("/:name", handler.GetUser())
 	sp.Put("/:name", handler.UpdateUser())
+	sp.Get("/", handler.GetUsers())
 }

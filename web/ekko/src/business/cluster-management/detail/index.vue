@@ -7,7 +7,8 @@
         <!--        </el-tabs>-->
         <el-menu class="menuClass" router :default-active="$route.path" mode="horizontal">
             <el-menu-item :index="'/clusters/detail/'+name+'/overview'">概览</el-menu-item>
-                        <el-menu-item :index="'/clusters/detail/'+name+'/members'">角色管理</el-menu-item>
+            <el-menu-item :index="'/clusters/detail/'+name+'/clusterroles'">角色管理</el-menu-item>
+            <el-menu-item :index="'/clusters/detail/'+name+'/members'">成员管理</el-menu-item>
         </el-menu>
         <br/>
         <div class="detailClass">

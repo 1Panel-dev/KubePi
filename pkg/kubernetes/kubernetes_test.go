@@ -33,9 +33,6 @@ func TestNewKubernetes(t *testing.T) {
 		t.Error(err)
 	}
 
-	list, err := cls.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(len(list.Items))
+	certs, err := cls.CertificatesV1().CertificateSigningRequests().List(context.TODO(), metav1.ListOptions{})
+	fmt.Println(certs)
 }
