@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data">
+    <complex-table :selects.sync="selects" :data="data" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -10,6 +10,9 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+      </template>
+      <template #toolbar>
+        <el-input></el-input>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -45,7 +48,6 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
-    <ko-page :page.sync="page" @change="search"></ko-page>
   </layout-content>
 </template>
 
@@ -53,12 +55,11 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace} from "@/api/namespace"
-import KoPage from "@/components/ko-page"
 import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NamespaceList",
-  components: { KoTableOperations, KoPage, ComplexTable, LayoutContent },
+  components: { KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
@@ -90,12 +91,6 @@ export default {
           }
         },
       ],
-      searchConfig: {
-        quickPlaceholder: this.$t("commons.search.quickSearch"),
-        components: [
-          { field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq" },
-        ],
-      },
       data: [],
       selects: [],
       loading: false,
@@ -103,7 +98,8 @@ export default {
         pageSize: 10,
         nextToken: "",
         remainCount: 0,
-        items: 0
+        items: 0,
+        currentPage: 1
       },
       clusterName: "test1"
     }

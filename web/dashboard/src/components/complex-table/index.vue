@@ -4,19 +4,11 @@
       <slot name="header">{{ header }}</slot>
     </div>
 
-    <div class="complex-table__toolbar" v-if="$slots.toolbar || searchConfig">
+    <div class="complex-table__toolbar" v-if="$slots.toolbar">
       <div>
         <slot name="toolbar">
-
         </slot>
       </div>
-      <fu-search-bar v-bind="searchConfig" @exec="search">
-        <template #complex>
-          <slot name="complex"></slot>
-        </template>
-        <slot name="buttons"></slot>
-        <fu-table-column-select :columns="columns"/>
-      </fu-search-bar>
     </div>
 
     <div class="complex-table__body">
@@ -28,10 +20,10 @@
 
     <div class="complex-table__pagination" v-if="$slots.pagination || paginationConfig">
       <slot name="pagination">
-        <fu-table-pagination :current-page.sync="paginationConfig.currentPage"
-                             :page-size.sync="paginationConfig.pageSize"
-                             v-bind="paginationConfig"
-                             @change="search"/>
+        <ko-page :pagination-config="paginationConfig" :next-token.sync="paginationConfig.nextToken"
+                 :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize"
+                 :items.sync="paginationConfig.items" :remain-count.sync="paginationConfig.remainCount"
+                 @change="search"></ko-page>
       </slot>
     </div>
   </div>
@@ -39,8 +31,11 @@
 
 <script>
 
+import KoPage from "@/components/ko-page"
+
 export default {
   name: "ComplexTable",
+  components: { KoPage },
   props: {
     columns: {
       type: Array,
@@ -50,7 +45,7 @@ export default {
     header: String,
     searchConfig: Object,
     paginationConfig: Object,
-    selects:Array
+    selects: Array
   },
   data () {
     return {
@@ -65,7 +60,6 @@ export default {
       this.$emit("search", this.condition, e)
     },
     handleSelectionChange (val) {
-      // this.selects = val
       this.$emit("update:selects", val)
     }
   },
@@ -84,11 +78,7 @@ export default {
     }
 
     .complex-table__toolbar {
-      @include flex-row(space-between, center);
-
-      .fu-search-bar {
-        width: auto;
-      }
+      @include flex-row(flex-end, center);
     }
 
     .complex-table__pagination {
