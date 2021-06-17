@@ -19,7 +19,6 @@ import "./permission"
 import "@/styles/common/ekko.css"
 import filters from "./filters";
 
-
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, {

@@ -54,7 +54,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNamespace, deleteNamespace} from "@/api/namespace"
+import {listNamespace, deleteNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
 
 export default {

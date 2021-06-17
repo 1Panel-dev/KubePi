@@ -68,7 +68,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getNamespace} from "@/api/namespace"
+import {getNamespace} from "@/api/namespaces"
 
 export default {
   name: "NamespaceDetail",
