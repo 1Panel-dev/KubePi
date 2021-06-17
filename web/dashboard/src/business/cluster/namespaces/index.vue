@@ -12,7 +12,7 @@
         </el-button-group>
       </template>
       <template #toolbar>
-        <el-input></el-input>
+        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName" @change="search(true)" @clear="search(true)"></el-input>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -101,7 +101,8 @@ export default {
         items: 0,
         currentPage: 1
       },
-      clusterName: "test1"
+      clusterName: "test1",
+      searchName: ""
     }
   },
   methods: {
@@ -117,7 +118,7 @@ export default {
           remainCount: 0,
         }
       }
-      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken).then((res) => {
+      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         if (res.metadata["remainingItemCount"]) {

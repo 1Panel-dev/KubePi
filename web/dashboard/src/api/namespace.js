@@ -5,11 +5,14 @@ const namespaceUrl = (cluster_name) => {
 }
 
 
-export function listNamespace (cluster_name, limit,continueToken) {
+export function listNamespace (cluster_name, limit, continueToken, search) {
   let url = namespaceUrl(cluster_name)
   url += "?limit=" + limit
   if (continueToken) {
     url += "&continue=" + continueToken
+  }
+  if (search && search !== "") {
+    url += "&fieldSelector=metadata.name=" + search
   }
   return get(url)
 }
@@ -22,10 +25,10 @@ export function getNamespace (cluster_name, namespace) {
   return get(`${namespaceUrl(cluster_name)}/${namespace}`)
 }
 
-export function deleteNamespace(cluster_name, namespace){
+export function deleteNamespace (cluster_name, namespace) {
   return del(`${namespaceUrl(cluster_name)}/${namespace}`)
 }
 
-export function editNamespace(cluster_name,namespace, data){
+export function editNamespace (cluster_name, namespace, data) {
   return patch(`${namespaceUrl(cluster_name)}/${namespace}`, data)
 }

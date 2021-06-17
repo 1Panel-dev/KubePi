@@ -23,7 +23,8 @@ const message = {
       back_form: "返回表单",
       add: "增加",
       edit: "编辑",
-      edit_yaml: "编辑 YAML"
+      edit_yaml: "编辑 YAML",
+      search: "搜索"
     },
     table: {
       name: "名称",
