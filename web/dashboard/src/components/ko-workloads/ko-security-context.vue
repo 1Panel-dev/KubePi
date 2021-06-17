@@ -84,53 +84,55 @@ export default {
     },
     transformation(parentFrom) {
       if (this.form.privileged) {
-        parentFrom.privileged = this.form.privileged
+        parentFrom.securityContext.privileged = this.form.privileged
       }
       if (this.form.allowPrivilegeEscalation) {
-        parentFrom.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation
+        parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation
       }
       if (this.form.runAsRoot) {
-        parentFrom.runAsRoot = this.form.runAsRoot
+        parentFrom.securityContext.runAsRoot = this.form.runAsRoot
       }
       if (this.form.readOnlyRootFilesystem) {
-        parentFrom.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem
+        parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem
       }
       if (this.form.runAsUser) {
-        parentFrom.runAsUser = this.form.runAsUser
+        parentFrom.securityContext.runAsUser = this.form.runAsUser
       }
       if (this.form.capabilities.add.length !== 0 || this.form.capabilities.drop.length !== 0) {
-        parentFrom.capabilities = {}
+        parentFrom.securityContext.capabilities = {}
         if (this.form.capabilities.add.length !== 0) {
-          parentFrom.capabilities.add = this.form.capabilities.add
+          parentFrom.securityContext.capabilities.add = this.form.capabilities.add
         }
         if (this.form.capabilities.drop.length !== 0) {
-          parentFrom.capabilities.drop = this.form.capabilities.drop
+          parentFrom.securityContext.capabilities.drop = this.form.capabilities.drop
         }
       }
     },
   },
   mounted() {
-    if (this.securityContextParentObj.privileged) {
-      this.form.privileged = this.securityContextParentObj.privileged
-    }
-    if (this.securityContextParentObj.allowPrivilegeEscalation) {
-      this.form.allowPrivilegeEscalation = this.securityContextParentObj.allowPrivilegeEscalation
-    }
-    if (this.securityContextParentObj.runAsRoot) {
-      this.form.runAsRoot = this.securityContextParentObj.runAsRoot
-    }
-    if (this.securityContextParentObj.readOnlyRootFilesystem) {
-      this.form.readOnlyRootFilesystem = this.securityContextParentObj.readOnlyRootFilesystem
-    }
-    if (this.securityContextParentObj.runAsUser) {
-      this.runAsUser = this.securityContextParentObj.runAsUser
-    }
-    if (this.securityContextParentObj.capabilities) {
-      if (this.securityContextParentObj.capabilities.add) {
-        this.form.capabilities.add = this.securityContextParentObj.capabilities.add
+    if (this.securityContextParentObj.securityContext) {
+      if (this.securityContextParentObj.securityContext.privileged) {
+        this.form.privileged = this.securityContextParentObj.privileged
       }
-      if (this.securityContextParentObj.capabilities.drop) {
-        this.form.capabilities.drop = this.securityContextParentObj.capabilities.drop
+      if (this.securityContextParentObj.securityContext.allowPrivilegeEscalation) {
+        this.form.allowPrivilegeEscalation = this.securityContextParentObj.allowPrivilegeEscalation
+      }
+      if (this.securityContextParentObj.securityContext.runAsRoot) {
+        this.form.runAsRoot = this.securityContextParentObj.runAsRoot
+      }
+      if (this.securityContextParentObj.securityContext.readOnlyRootFilesystem) {
+        this.form.readOnlyRootFilesystem = this.securityContextParentObj.readOnlyRootFilesystem
+      }
+      if (this.securityContextParentObj.securityContext.runAsUser) {
+        this.runAsUser = this.securityContextParentObj.runAsUser
+      }
+      if (this.securityContextParentObj.securityContext.capabilities) {
+        if (this.securityContextParentObj.capabilities.add) {
+          this.form.capabilities.add = this.securityContextParentObj.capabilities.add
+        }
+        if (this.securityContextParentObj.securityContext.capabilities.drop) {
+          this.form.capabilities.drop = this.securityContextParentObj.capabilities.drop
+        }
       }
     }
   },

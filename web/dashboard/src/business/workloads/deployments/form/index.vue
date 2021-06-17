@@ -7,7 +7,7 @@
             <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
           </el-col>
           <el-col :span="14">
-            <ko-form-item labelName="Name" clearable itemType="input" v-model="form.name" />
+            <ko-form-item labelName="Name" clearable itemType="input" v-model="form.metadata.name" />
           </el-col>
         </el-row>
       </el-col>
@@ -52,13 +52,25 @@
         <ko-upgrade-policy ref="ko_upgrade_policy" :upgradePolicyParentObj="form.spec.template.spec.containers" />
       </el-tab-pane>
       <el-tab-pane label="Labels" name="Labels">
-        <ko-labels ref="labels" :labelParentObj="form.metadata" />
+        <ko-labels ref="ko_labels" :labelParentObj="form.metadata" />
       </el-tab-pane>
       <el-tab-pane label="Annotations" name="Annotations">
-        <ko-annotations ref="annotations" :annotationsParentObj="form.metadata" />
+        <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" />
       </el-tab-pane>
     </el-tabs>
-    <el-button style="float: center" @click="getinfo">Create</el-button>
+    <div class="grid-content bg-purple-light" v-if="showYaml">
+      <yaml-editor :value="yaml"></yaml-editor>
+    </div>
+    <div class="grid-content bg-purple-light">
+      <div style="float: right;margin-top: 10px">
+        <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.edit_yaml") }}</el-button>
+        <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+        <el-button v-loading="loading" @click="onSubmit()" type="primary">
+          {{ $t("commons.button.create") }}
+        </el-button>
+      </div>
+    </div>
   </layout-content>
 </template>
 
@@ -76,11 +88,16 @@ import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
 import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 
+import YamlEditor from "@/components/yaml-editor"
+
 export default {
-  name: "DeploymentCreate",
-  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy, KoLabels, KoAnnotations },
+  name: "DeploymentForm",
+  components: { LayoutContent, KoFormItem, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoNodeScheduling, KoUpgradePolicy, KoLabels, KoAnnotations, YamlEditor },
   data() {
     return {
+      showYaml: false,
+      yaml: "",
+      loading: false,
       namespace_list: [
         { label: "kube-system", value: "kube-system" },
         { label: "kube-public", value: "kube-public" },
@@ -98,8 +115,8 @@ export default {
         apiVersion: "apps/v1",
         kind: "Deployment",
         metadata: {
-          name: "",
-          namespace: "",
+          name: "my-test-deployment",
+          namespace: "kube-operator",
         },
         spec: {
           replicas: 1,
@@ -111,8 +128,8 @@ export default {
             },
             spec: {
               containers: {
-                name: "",
-                image: "",
+                name: "container-name",
+                image: "nginx/xxx",
                 imagePullPolicy: "Always",
               },
               restartPolicy: "Always",
@@ -124,7 +141,7 @@ export default {
     }
   },
   methods: {
-    getinfo() {
+    transformYaml() {
       // ports
       this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers)
       // command
@@ -144,11 +161,33 @@ export default {
       // upgrade policy
       this.$refs.ko_upgrade_policy.transformation(this.form.spec.template.spec.containers)
       // labels
-      this.$refs.ko_labels.transformation(this.form.spec.metadata)
+      this.$refs.ko_labels.transformation(this.form.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(this.form.metadata)
-
-      console.log(this.form.spec.template.spec.containers)
+      return this.form
+    },
+    onCancel() {
+      this.$router.push({ name: "Deployments" })
+    },
+    onSubmit() {
+      // const data = this.transformYaml()
+      // this.loading = true
+      // createNamespace("test1", data).then(() => {
+      //   this.$message({
+      //     type: "success",
+      //     message: this.$t("commons.msg.create_success"),
+      //   })
+      //   this.$router.push({ name: "Namespaces" })
+      // }).finally(() => {
+      //   this.loading = false
+      // })
+    },
+    onEditYaml() {
+      this.yaml = this.transformYaml()
+      this.showYaml = true
+    },
+    backToForm() {
+      this.showYaml = false
     },
   },
 }

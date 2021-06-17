@@ -61,6 +61,9 @@ export default {
     }
   },
   methods: {
+    transformation(parentFrom) {
+      parentFrom.strategy = ""
+    }
   },
 }
 </script>

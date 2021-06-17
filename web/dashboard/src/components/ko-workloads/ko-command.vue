@@ -161,6 +161,10 @@ export default {
       }
     },
     transformation(parentFrom) {
+      console.log(this.form.args)
+      if (this.form.command) {
+        parentFrom.command = this.form.command.split(",")
+      }
       if (this.form.args) {
         parentFrom.args = this.form.args.split(",")
       }
@@ -215,7 +219,7 @@ export default {
                 },
               })
               break
-            case "Secret Key":
+            case "Secret key":
               envList.push({
                 name: en.prefix_or_alias,
                 valueFrom: {
@@ -261,8 +265,11 @@ export default {
   },
   mounted() {
     if (this.commandParentObj) {
+      if (this.commandParentObj.command) {
+        this.form.command = this.commandParentObj.command.join(",")
+      }
       if (this.commandParentObj.args) {
-        this.form.args = this.commandParentObj.args
+        this.form.args = this.commandParentObj.args.join(",")
       }
       if (this.commandParentObj.workingDir) {
         this.form.workingDir = this.commandParentObj.workingDir
@@ -281,13 +288,13 @@ export default {
         for (const en of this.commandParentObj.env) {
           if (en.valueFrom) {
             if (en.valueFrom.resourceFieldRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.resourceFieldRef.containerName, key: en.valueFrom.resourceFieldRef.resource, type: "Resource", prefix_or_alias: en.valueFrom.name })
+              this.form.envFromResource.push({ source: en.valueFrom.resourceFieldRef.containerName, key: en.valueFrom.resourceFieldRef.resource, type: "Resource", prefix_or_alias: en.name })
             } else if (en.valueFrom.configMapKeyRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.configMapKeyRef.name, key: "ConfigMap", type: "ConfigMap", prefix_or_alias: en.valueFrom.name })
+              this.form.envFromResource.push({ source: en.valueFrom.configMapKeyRef.name, key: "ConfigMap", type: "ConfigMap", prefix_or_alias: en.name })
             } else if (en.valueFrom.secretKeyRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.secretKeyRef.name, key: "Secret Key", type: "Secret Key", prefix_or_alias: en.valueFrom.name })
+              this.form.envFromResource.push({ source: en.valueFrom.secretKeyRef.name, key: "Secret key", type: "Secret key", prefix_or_alias: en.name })
             } else if (en.valueFrom.fieldRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.name, type: "Field", prefix_or_alias: en.valueFrom.name })
+              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.fieldPath , type: "Field", prefix_or_alias: en.name })
             }
           } else {
             this.form.env.push(en)
@@ -296,7 +303,7 @@ export default {
         for (const en of this.commandParentObj.envFrom) {
           if (en.valueFrom) {
             if (en.valueFrom.secretRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.secretRef.name, key: "Secret", type: "Secret", prefix_or_alias: en.valueFrom.name })
+              this.form.envFromResource.push({ source: en.valueFrom.secretRef.name, key: "Secret", type: "Secret", prefix_or_alias: en.name })
             }
           }
         }

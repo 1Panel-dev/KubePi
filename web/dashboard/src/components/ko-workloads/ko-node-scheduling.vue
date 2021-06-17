@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="20" style="margin-top: 20px">
+    <el-row v-if="form.scheduling_type!=='matching_rules'" :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <ko-form-item labelName="Node Name" clearable itemType="select" v-model="form.nodeName" :selections="node_list" />
       </el-col>
@@ -39,7 +39,7 @@
                 <el-table-column min-width="40" label="Value">
                   <template v-slot:default="{row}">
                     <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.values" />
+                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
                   </template>
                 </el-table-column>
                 <el-table-column width="120px">
@@ -76,7 +76,7 @@
                 <el-table-column min-width="40" label="Value">
                   <template v-slot:default="{row}">
                     <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.values" />
+                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
                   </template>
                 </el-table-column>
                 <el-table-column width="120px">
@@ -227,7 +227,7 @@ export default {
       }
     },
     transformation(parentFrom) {
-      switch (this.scheduling_type) {
+      switch (this.form.scheduling_type) {
         case "specific_node":
           if (this.form.nodeSelector.length !== 0) {
             let obj = {}
@@ -241,17 +241,18 @@ export default {
           break
         case "matching_rules":
           if (this.nodeSelectorTerms.length !== 0) {
+            let reqlist = []
+            let reqExist = false
             for (const item of this.nodeSelectorTerms) {
               if (item.matchExpressions.length !== 0) {
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution = {}
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                reqExist = true
                 let matchs = []
                 for (const match of item.matchExpressions) {
                   if (match.value) {
                     matchs.push({
                       key: match.key,
                       operator: match.operator,
-                      value: match.split(","),
+                      value: match.value.split(","),
                     })
                   } else {
                     matchs.push({
@@ -260,17 +261,24 @@ export default {
                     })
                   }
                 }
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push({
+                reqlist.push({
                   matchExpressions: matchs,
                 })
+              }
+              if (reqExist) {
+                parentFrom.affinity = {}
+                parentFrom.affinity.nodeAffinity = {}
+                parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
+                parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = reqlist
               }
             }
           }
           if (this.preference.length !== 0) {
+            let prelist = []
+            let preExist = false
             for (const item of this.preference) {
               if (item.matchExpressions.length !== 0) {
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution = {}
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.preference = []
+                preExist = true
                 let matchs = []
                 for (const match of item.matchExpressions) {
                   if (match.value) {
@@ -286,9 +294,15 @@ export default {
                     })
                   }
                 }
-                parentFrom.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push({
+                prelist.push({
                   matchExpressions: matchs,
                 })
+              }
+              if (preExist) {
+                parentFrom.affinity = {}
+                parentFrom.affinity.nodeAffinity = {}
+                parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = {}
+                parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = prelist
               }
             }
           }

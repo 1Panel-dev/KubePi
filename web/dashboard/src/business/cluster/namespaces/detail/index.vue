@@ -50,6 +50,12 @@
                 </el-button>
               </td>
             </tr>
+            <tr>
+              <td>Created</td>
+              <td>
+                {{ item.metadata.creationTimestamp | datetimeFormat }}
+              </td>
+            </tr>
           </table>
           <div style="float: right;margin-top: 10px">
             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>

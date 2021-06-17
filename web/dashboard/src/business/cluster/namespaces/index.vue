@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data">
+    <complex-table :selects.sync="selects" :data="data" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -10,6 +10,9 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+      </template>
+      <template #toolbar>
+        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName" @change="search(true)" @clear="search(true)"></el-input>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -43,9 +46,8 @@
           {{ row.metadata.creationTimestamp | datetimeFormat }}
         </template>
       </el-table-column>
-      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
-    <ko-page :page.sync="page" @change="search"></ko-page>
   </layout-content>
 </template>
 
@@ -53,14 +55,34 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace} from "@/api/namespace"
-import KoPage from "@/components/ko-page"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NamespaceList",
-  components: { KoPage, ComplexTable, LayoutContent },
+  components: { KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: false }
+            })
+          }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "NamespaceEdit",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+            })
+          }
+        },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
@@ -69,12 +91,6 @@ export default {
           }
         },
       ],
-      searchConfig: {
-        quickPlaceholder: this.$t("commons.search.quickSearch"),
-        components: [
-          { field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq" },
-        ],
-      },
       data: [],
       selects: [],
       loading: false,
@@ -82,9 +98,11 @@ export default {
         pageSize: 10,
         nextToken: "",
         remainCount: 0,
-        items: 0
+        items: 0,
+        currentPage: 1
       },
-      clusterName: "test1"
+      clusterName: "test1",
+      searchName: ""
     }
   },
   methods: {
@@ -100,12 +118,12 @@ export default {
           remainCount: 0,
         }
       }
-      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken).then((res) => {
+      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         if (res.metadata["remainingItemCount"]) {
           this.page.remainCount = res.metadata["remainingItemCount"]
-        }else {
+        } else {
           this.page.items = res.items.length
         }
       }).catch(error => {
@@ -128,8 +146,8 @@ export default {
         this.ps = []
         if (row) {
           this.ps.push(deleteNamespace(this.clusterName, row.metadata.name))
-        }else {
-          if (this.selects.length >0) {
+        } else {
+          if (this.selects.length > 0) {
             for (const select of this.selects) {
               this.ps.push(deleteNamespace(this.clusterName, select.metadata.name))
             }
