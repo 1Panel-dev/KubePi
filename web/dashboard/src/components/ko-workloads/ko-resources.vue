@@ -2,18 +2,18 @@
   <div style="margin-top: 20px;margin-bottom: 20px">
     <el-row :gutter="20">
       <el-col :span="12">
-        <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" clearable itemType="input" deviderName="mCPUs" v-model="form.requests.cpu" />
+        <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" clearable itemType="number" deviderName="mCPUs" v-model="form.requests.cpu" />
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" clearable itemType="input" deviderName="MiB" v-model="form.requests.memory" />
+        <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.requests.memory" />
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
-        <ko-form-item labelName="CPU Limit" placeholder="e.g. 1000" clearable itemType="input" deviderName="mCPUs" v-model="form.limits.cpu" />
+        <ko-form-item labelName="CPU Limit" placeholder="e.g. 1000" clearable itemType="number" deviderName="mCPUs" v-model="form.limits.cpu" />
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="Memory Limit" placeholder="e.g. 128" clearable itemType="input" deviderName="MiB" v-model="form.limits.memory" />
+        <ko-form-item labelName="Memory Limit" placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.limits.memory" />
       </el-col>
     </el-row>
   </div>
@@ -45,21 +45,21 @@ export default {
   methods: {
     transformation(parentFrom) {
       if (this.form.requests.memory || this.form.requests.cpu) {
-        parentFrom.requests = {}
+        parentFrom.resources.requests = {}
         if (this.form.requests.memory) {
-          parentFrom.requests.memory = this.form.requests.memory + "Mi"
+          parentFrom.resources.requests.memory = this.form.requests.memory + "Mi"
         }
         if (this.form.requests.cpu) {
-          parentFrom.requests.cpu = this.form.requests.cpu + "m"
+          parentFrom.resources.requests.cpu = this.form.requests.cpu + "m"
         }
       }
       if (this.form.limits.memory || this.form.limits.cpu) {
-        parentFrom.limits = {}
+        parentFrom.resources.limits = {}
         if (this.form.limits.memory) {
-          parentFrom.limits.memory = this.form.limits.memory + "Mi"
+          parentFrom.resources.limits.memory = this.form.limits.memory + "Mi"
         }
         if (this.form.limits.cpu) {
-          parentFrom.limits.cpu = this.form.limits.cpu + "m"
+          parentFrom.resources.limits.cpu = this.form.limits.cpu + "m"
         }
       }
     },

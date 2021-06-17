@@ -95,7 +95,7 @@
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostname" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostnames" />
           </template>
         </el-table-column>
         <el-table-column width="120px">
@@ -126,7 +126,7 @@ export default {
       ],
       dns_policy_list: [
         { label: "Default", value: "Default" },
-        { label: "ClusterFirst", value: "Cluster First" },
+        { label: "ClusterFirst", value: "ClusterFirst" },
         { label: "None", value: "None" },
       ],
       form: {
@@ -194,7 +194,7 @@ export default {
     handleAliasAdd() {
       var item = {
         ip: "",
-        hostname: "",
+        hostnames: "",
       }
       this.form.hostAliases.unshift(item)
     },
