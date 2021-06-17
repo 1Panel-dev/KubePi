@@ -57,6 +57,16 @@ const Clusters = {
                     meta: {
                         activeMenu: "/clusters",
                     },
+                },
+                {
+                    path: "clusterroles",
+                    props: true,
+                    component: () => import("@/business/cluster-management/detail/clusterroles"),
+                    hidden: true,
+                    name: "ClusterRoles",
+                    meta: {
+                        activeMenu: "/clusters",
+                    },
                 }
             ]
 

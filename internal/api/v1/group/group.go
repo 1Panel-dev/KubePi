@@ -2,6 +2,7 @@ package group
 
 import (
 	"errors"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/group"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3"
@@ -43,8 +44,21 @@ func (h *Handler) SearchGroups() iris.Handler {
 	}
 }
 
+func (h *Handler) GetGroups() iris.Handler {
+	return func(ctx *context.Context) {
+		us, err := h.groupService.List(common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", us)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/groups")
 	sp.Post("/search", handler.SearchGroups())
+	sp.Get("/", handler.GetGroups())
 }

@@ -11,17 +11,22 @@
             </template>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.name }}
+                    {{ row.metadata.name }}
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('commons.table.kind')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.kind}}
+                    {{$t("business.cluster_role."+row.metadata.annotations["ekko-i18n"])}}
+                </template>
+            </el-table-column>
+            <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ row.metadata.annotations["created-by"] }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.createAt }}
+                    {{ row.metadata.annotations["created-at"] }}
                 </template>
             </el-table-column>
             <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
@@ -51,49 +56,36 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="集群角色">
-                    <el-select v-model="memberForm.clusterRoles" multiple placeholder="请选择">
-                        <el-option
-                                v-for="(item,index) in clusterRolesOptions"
-                                :key="index"
-                                :value="item.metadata.name">
-                            {{item.metadata.name}}
-                        </el-option>
-                    </el-select>
-                </el-form-item>
+
             </el-form>
             <span slot="footer" class="dialog-footer">
-    <el-button @click="createDialogOpened = false">取 消</el-button>
-    <el-button type="primary" @click="onConfirm">确 定</el-button>
-  </span>
+                <el-button @click="createDialogOpened = false">取 消</el-button>
+                <el-button type="primary" @click="onConfirm">确 定</el-button>
+            </span>
         </el-dialog>
-
-
     </layout-content>
 </template>
 
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {createClusterMember, listClusterMembers} from "@/api/clusters"
+    import {createClusterMember} from "@/api/clusters"
     import {listUsers} from "@/api/users"
     import {listGroups} from "@/api/groups"
     import {listClusterRoles} from "@/api/clusters";
 
 
     export default {
-        name: "ClusterMembers",
+        name: "ClusterRoles",
         props: ["name"],
         components: {LayoutContent, ComplexTable},
         data() {
             return {
                 createDialogOpened: false,
                 memberOptions: [],
-                clusterRolesOptions: [],
                 memberForm: {
                     subjectKind: "",
                     subjectName: "",
-                    clusterRoles: []
                 },
                 buttons: [
                     {
@@ -117,7 +109,7 @@
         methods: {
             list() {
                 this.loading = false
-                listClusterMembers(this.name).then(data => {
+                listClusterRoles(this.name).then(data => {
                     this.loading = false
                     this.data = data.data
                 })
@@ -125,9 +117,6 @@
             onCreate() {
                 this.memberForm.subjectKind = ""
                 this.createDialogOpened = true
-                listClusterRoles(this.name).then(data => {
-                    this.clusterRolesOptions = data.data
-                })
                 this.onSubjectKindChange()
             },
             onDelete() {
