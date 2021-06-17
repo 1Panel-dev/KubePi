@@ -32,6 +32,7 @@ const message = {
       status: "状态",
       action: "操作",
       creat_by: "创建者",
+      time: "时间"
     },
     search: {
       quickSearch: "搜索"
