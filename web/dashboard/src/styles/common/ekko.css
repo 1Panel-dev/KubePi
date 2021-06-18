@@ -1,4 +1,4 @@
-.el-loading-mask{
+.el-loading-mask {
     background: rgba(0, 0, 0, 0.8)
 }
 
@@ -18,20 +18,32 @@
     width: 50%;
     padding: 8px;
     height: 23px;
-    border-bottom:  1px solid #383c42;
-    word-wrap:break-word;
+    border-bottom: 1px solid #383c42;
+    word-wrap: break-word;
 }
+
 .myTable td div {
     margin-top: 2px
 }
+
 .myTable th {
     border: 0;
     height: 30px;
 }
-
-.myTable tr:hover{
+.myTable tr:hover {
     background-color: #2b2f33;
 }
-.myTable tr:first-child:hover{
+
+.myTable tr:first-child:hover {
     background-color: transparent !important;
+}
+
+.myTable tr td:nth-child(2) {
+    color: #85888e;
+}
+
+
+.myTag {
+    display: inline-block;
+    margin: 2px;
 }

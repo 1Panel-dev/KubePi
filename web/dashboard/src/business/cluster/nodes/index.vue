@@ -26,10 +26,10 @@
       </el-table-column>
       <el-table-column :label="$t('business.node.role')" prop="metadata.labels" fix max-width="50px">
         <template v-slot:default="{row}">
-          <div v-for="(item,name,index) in row.metadata.labels" :key="index">
-            <span v-if="item"></span>
-            <el-tag v-if="name.indexOf('node-role.kubernetes.io') > -1">{{name.substring(name.indexOf('.io')+4)}}</el-tag>
-          </div>
+            <div v-for="(item,name,index) in row.metadata.labels" :key="index" style="display:inline-block">
+              <span v-if="item"></span>
+              <el-tag v-if="name.indexOf('node-role.kubernetes.io') > -1">{{name.substring(name.indexOf('.io')+4)}}</el-tag>
+            </div>
         </template>
       </el-table-column>
     </complex-table>

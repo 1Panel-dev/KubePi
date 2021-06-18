@@ -15,7 +15,7 @@
             <tr>
               <td>Labels</td>
               <td>
-                <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index">
+                <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
                   <el-tag type="info" size="small">
                     {{ key }} = {{ value }}
                   </el-tag>
@@ -25,7 +25,7 @@
             <tr>
               <td>Annotations</td>
               <td>
-                <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index">
+                <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
                   <el-tag type="info" size="small">
                     {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
                   </el-tag>
@@ -35,7 +35,7 @@
             <tr>
               <td>Finalizers</td>
               <td>
-                <div v-for="value in item.metadata.finalizers" v-bind:key="value">
+                <div v-for="value in item.metadata.finalizers" v-bind:key="value" class="myTag">
                   <el-tag type="info" size="small">
                     {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
                   </el-tag>
