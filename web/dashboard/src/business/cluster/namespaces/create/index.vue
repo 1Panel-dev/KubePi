@@ -44,7 +44,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
-import {createNamespace} from "@/api/namespace"
+import {createNamespace} from "@/api/namespaces"
 
 export default {
   name: "NamespaceCreate",
@@ -57,7 +57,7 @@ export default {
         metadata: {
           name: "",
           annotations: {
-            "description": "asadas"
+            "description": ""
           },
           labels: {}
         },

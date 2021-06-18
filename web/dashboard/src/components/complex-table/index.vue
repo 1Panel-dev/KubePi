@@ -20,10 +20,14 @@
 
     <div class="complex-table__pagination" v-if="$slots.pagination || paginationConfig">
       <slot name="pagination">
-        <ko-page :pagination-config="paginationConfig" :next-token.sync="paginationConfig.nextToken"
-                 :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize"
-                 :items.sync="paginationConfig.items" :remain-count.sync="paginationConfig.remainCount"
-                 @change="search"></ko-page>
+<!--          <ko-page  :pagination-config="paginationConfig" :next-token.sync="paginationConfig.nextToken"-->
+<!--                   :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize"-->
+<!--                   :items.sync="paginationConfig.items" :remain-count.sync="paginationConfig.remainCount"-->
+<!--                   @change="search"></ko-page>-->
+        <k8s-page :pagination-config="paginationConfig" :next-token.sync="paginationConfig.nextToken"
+                  :page-size.sync="paginationConfig.pageSize" :items.sync="paginationConfig.items"
+                  :remain-count.sync="paginationConfig.remainCount" @change="search">
+        </k8s-page>
       </slot>
     </div>
   </div>
@@ -31,11 +35,11 @@
 
 <script>
 
-import KoPage from "@/components/ko-page"
 
+import K8sPage from "@/components/k8s-page"
 export default {
   name: "ComplexTable",
-  components: { KoPage },
+  components: { K8sPage  },
   props: {
     columns: {
       type: Array,
@@ -49,19 +53,16 @@ export default {
   },
   data () {
     return {
-      condition: {},
+      pageShow: false
     }
   },
   methods: {
-    search (condition, e) {
-      if (condition) {
-        this.condition = condition
-      }
-      this.$emit("search", this.condition, e)
+    search () {
+      this.$emit("search")
     },
     handleSelectionChange (val) {
       this.$emit("update:selects", val)
-    }
+    },
   },
 }
 </script>

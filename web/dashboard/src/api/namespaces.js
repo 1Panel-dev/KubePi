@@ -7,7 +7,9 @@ const namespaceUrl = (cluster_name) => {
 
 export function listNamespace (cluster_name, limit, continueToken, search) {
   let url = namespaceUrl(cluster_name)
-  url += "?limit=" + limit
+  if (limit) {
+    url += "?limit=" + limit
+  }
   if (continueToken) {
     url += "&continue=" + continueToken
   }

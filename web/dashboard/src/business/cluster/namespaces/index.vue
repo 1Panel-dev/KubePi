@@ -54,7 +54,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNamespace, deleteNamespace} from "@/api/namespace"
+import {listNamespace, deleteNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
@@ -97,9 +97,6 @@ export default {
       page: {
         pageSize: 10,
         nextToken: "",
-        remainCount: 0,
-        items: 0,
-        currentPage: 1
       },
       clusterName: "test1",
       searchName: ""
@@ -115,17 +112,11 @@ export default {
         this.page = {
           pageSize: this.page.pageSize,
           nextToken: "",
-          remainCount: 0,
         }
       }
       listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        if (res.metadata["remainingItemCount"]) {
-          this.page.remainCount = res.metadata["remainingItemCount"]
-        } else {
-          this.page.items = res.items.length
-        }
       }).catch(error => {
         console.log(error)
       }).finally(() => {

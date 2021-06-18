@@ -32,6 +32,7 @@ const message = {
       status: "状态",
       action: "操作",
       creat_by: "创建者",
+      time: "时间"
     },
     search: {
       quickSearch: "搜索"
@@ -86,7 +87,19 @@ const message = {
       label: "标签",
       description: "描述"
     },
+    event: {
+      reason: "原因",
+      type: "类型",
+      time: "时间",
+      resource: "对象",
+      message: "消息"
+    },
+    node: {
+      ready:"准备就绪",
+      role: "角色"
+    },
     namespace: {
+      namespace: "命名空间",
       description: "描述"
     },
     workload: {

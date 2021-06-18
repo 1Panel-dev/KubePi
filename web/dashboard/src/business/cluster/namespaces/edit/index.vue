@@ -44,7 +44,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
-import {editNamespace, getNamespace} from "@/api/namespace"
+import {editNamespace, getNamespace} from "@/api/namespaces"
 
 export default {
   name: "NamespaceEdit",
