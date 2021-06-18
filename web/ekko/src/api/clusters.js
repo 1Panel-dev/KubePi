@@ -30,3 +30,19 @@ export function createClusterMember(name, member) {
 export function listClusterRoles(name) {
     return get(`${baseUrl}/${name}/clusterroles`)
 }
+
+export function createClusterRole(name, clusterRole) {
+    return post(`${baseUrl}/${name}/clusterroles`, clusterRole)
+}
+
+export function listClusterApiGroups(name) {
+    return get(`${baseUrl}/${name}/apigroups`)
+}
+
+export function listClusterResourceByGroupVersion(name, groupVersion) {
+    return get(`${baseUrl}/${name}/apigroups/${groupVersion}`)
+}
+
+export function deleteClusterRole(name, clusterRoleName) {
+    return del(`${baseUrl}/${name}/clusterroles/${clusterRoleName}`)
+}

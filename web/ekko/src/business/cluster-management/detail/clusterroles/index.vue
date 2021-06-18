@@ -32,32 +32,100 @@
             <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
         </complex-table>
 
-
         <el-dialog
                 title="提示"
-                :visible.sync="createDialogOpened"
-                width="20%"
-                center>
-            <el-form :model="memberForm" label-position="left" label-width="120px">
-                <el-form-item label="主体类型">
-                    <el-select v-model="memberForm.subjectKind" @change="onSubjectKindChange">
-                        <el-option value="User">
-                            用户
-                        </el-option>
-                        <el-option value="Group">
-                            用户组
+                :visible.sync="ruleDialogOpened"
+                width="40%"
+                center z-index="20">
+            <el-form :model="ruleForm" label-position="left" label-width="120px">
+                <el-form-item label="API Group">
+                    <el-select v-model="ruleForm.groupVersion" @change="onAPIGroupChange">
+                        <el-option v-for="(item,index) in apiGroupsOptions" :key="index"
+                                   :value="item.preferredVersion.groupVersion">
+                            {{item.preferredVersion.groupVersion}}
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="主体名称">
-                    <el-select v-model="memberForm.subjectName">
-                        <el-option v-for="(item, index) in memberOptions" :key="index" :value="item.name">
+
+                <el-form-item label="API Resource">
+                    <el-select multiple v-model="ruleForm.resources" :disabled="resourcesDisable"
+                               @change="onResourcesChange">
+                        <el-option v-for="(item,index) in apiResourceOptions"
+                                   :key="index"
+                                   :value="item.name">
                             {{item.name}}
                         </el-option>
                     </el-select>
                 </el-form-item>
 
+                <el-form-item label="Verbs">
+                    <el-select multiple v-model="ruleForm.verbs" :disabled="verbsDisable" @change="onVerbsChange">
+                        <el-option v-for="(item,index) in verbOptions"
+                                   :key="index"
+                                   :value="item">
+                            {{item}}
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
             </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ruleDialogOpened=false">取 消</el-button>
+                <el-button type="primary" @click="onRuleConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog
+                title="提示"
+                :visible.sync="createDialogOpened"
+                width="60%"
+                center z-index="10">
+
+            <el-form :model="clusterRoleForm" label-position="left" label-width="120px">
+                <el-form-item label="名称">
+                    <el-input v-model="clusterRoleForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="规则">
+                    <el-button @click="onRuleCreate"><i class="el-icon-plus "></i></el-button>
+                    <el-table
+                            :data="clusterRoleForm.rules"
+                            border
+                            style="width: 100%">
+                        <el-table-column
+                                prop="apiGroup"
+                                label="API Group"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="resource"
+                                label="API Resource"
+                        >
+                            <template v-slot:default="{row}">
+                                <span v-for="v in row.resources" :key="v">{{v}}<br/></span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="verbs"
+                                label="Verbs"
+                        >
+                            <template v-slot:default="{row}">
+                                <span v-for="v in row.verbs" :key="v">{{v}}<br/></span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column>
+                            <template v-slot:default="{row}">
+                                <el-button
+                                        size="mini" circle @click="onRuleDelete(row)">
+                                    <i class="el-icon-delete"></i>
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-form-item>
+
+            </el-form>
+
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="createDialogOpened = false">取 消</el-button>
                 <el-button type="primary" @click="onConfirm">确 定</el-button>
@@ -69,10 +137,13 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {createClusterMember} from "@/api/clusters"
-    import {listUsers} from "@/api/users"
-    import {listGroups} from "@/api/groups"
-    import {listClusterRoles} from "@/api/clusters";
+    import {
+        listClusterRoles,
+        listClusterApiGroups,
+        listClusterResourceByGroupVersion,
+        createClusterRole,
+        deleteClusterRole
+    } from "@/api/clusters";
 
 
     export default {
@@ -82,10 +153,21 @@
         data() {
             return {
                 createDialogOpened: false,
+                ruleDialogOpened: false,
+                apiGroupsOptions: [],
+                apiResourceOptions: [],
+                verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
                 memberOptions: [],
-                memberForm: {
-                    subjectKind: "",
-                    subjectName: "",
+                clusterRoleForm: {
+                    name: "",
+                    rules: [],
+                },
+                resourcesDisable: false,
+                verbsDisable: false,
+                ruleForm: {
+                    groupVersion: "",
+                    resources: [],
+                    verbs: []
                 },
                 buttons: [
                     {
@@ -99,7 +181,7 @@
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
                         click: (row) => {
-                            this.onDelete(row.name)
+                            this.onDelete(row)
                         }
                     },
                 ],
@@ -115,38 +197,93 @@
                 })
             },
             onCreate() {
-                this.memberForm.subjectKind = ""
+                this.clusterRoleForm = {
+                    name: "",
+                    rules: [],
+                }
                 this.createDialogOpened = true
-                this.onSubjectKindChange()
+                listClusterApiGroups(this.name).then(data => {
+                    this.apiGroupsOptions.push({preferredVersion: {groupVersion: "*"}})
+                    this.apiGroupsOptions = this.apiGroupsOptions.concat(data.data)
+                })
             },
-            onDelete() {
+            onRuleCreate() {
+                this.ruleForm = {
+                    groupVersion: "",
+                    resources: [],
+                    verbs: [],
+                }
+                this.ruleDialogOpened = true
+                this.resourcesDisable = false
+                this.verbsDisable = false
+            },
+            onAPIGroupChange() {
+                this.apiResourceOptions = []
+                this.ruleForm.resources = []
+                this.ruleForm.verbs = []
+                this.resourcesDisable = false
+                this.verbsDisable = false
+                if (this.ruleForm.groupVersion === "*") {
+                    this.apiResourceOptions = [{name: "*"}]
+                    this.ruleForm.resources = ["*"]
+                    this.resourcesDisable = true
+                    return
+                }
+                listClusterResourceByGroupVersion(this.name, this.ruleForm.groupVersion).then(data => {
+                    this.apiResourceOptions.push({name: "*"})
+                    this.apiResourceOptions = this.apiResourceOptions.concat(data.data);
+                })
+            },
+            onResourcesChange() {
+                if (this.ruleForm.resources.indexOf("*") > -1) {
+                    this.ruleForm.resources = ["*"]
+                }
+            },
+            onVerbsChange() {
+                if (this.ruleForm.verbs.indexOf("*") > -1) {
+                    this.ruleForm.verbs = ["*"]
+                }
+            },
+            onRuleConfirm() {
+                this.clusterRoleForm.rules.push({
+                    apiGroup: this.ruleForm.groupVersion,
+                    resources: this.ruleForm.resources,
+                    verbs: this.ruleForm.verbs
+                })
+                this.ruleDialogOpened = false
+            },
+            onRuleDelete(row) {
+                this.clusterRoleForm.rules.splice(this.clusterRoleForm.rules.indexOf(row), 1)
+            },
+            onDelete(row) {
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
                     confirmButtonText: this.$t("commons.button.confirm"),
                     cancelButtonText: this.$t("commons.button.cancel"),
                     type: 'warning'
                 }).then(() => {
+                    deleteClusterRole(this.name, row.metadata.name).then(() => {
+                        this.list()
+                    })
                 });
             },
-            onSubjectKindChange() {
-                this.memberForm.subjectName = ""
-                if (this.memberForm.subjectKind === 'Group') {
-                    listGroups().then((data) => {
-                        this.memberOptions = data.data;
-                    })
-                }
-                if (this.memberForm.subjectKind === 'User') {
-                    listUsers().then((data) => {
-                        this.memberOptions = data.data;
-                    })
-                }
-            },
             onConfirm() {
-                createClusterMember(this.name, {
-                    kind: this.memberForm.subjectKind,
-                    name: this.memberForm.subjectName
-                }).then(() => {
-                    this.createDialogOpened = false
+                const req = {
+                    metadata: {
+                        name: this.clusterRoleForm.name,
+                    },
+                    rules: []
+                }
+                for (const rule of this.clusterRoleForm.rules) {
+                    console.log(rule)
+                    req.rules.push({
+                        apiGroups: [rule.apiGroup],
+                        resources: rule.resources,
+                        verbs: rule.verbs,
+                    })
+                }
+                createClusterRole(this.name, req).then(() => {
                     this.list()
+                    this.createDialogOpened = false
                 })
             }
         },
