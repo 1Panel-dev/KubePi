@@ -97,9 +97,6 @@ export default {
       page: {
         pageSize: 10,
         nextToken: "",
-        remainCount: 0,
-        items: 0,
-        currentPage: 1
       },
       clusterName: "test1",
       searchName: ""
@@ -115,18 +112,11 @@ export default {
         this.page = {
           pageSize: this.page.pageSize,
           nextToken: "",
-          remainCount: 0,
         }
       }
       listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        this.page.remainCount = res.metadata["remainingItemCount"] ?  res.metadata["remainingItemCount"]: 0
-        if (!res.metadata["remainingItemCount"]) {
-          this.page.items = res.items.length
-        }else {
-          this.page.items = 0
-        }
       }).catch(error => {
         console.log(error)
       }).finally(() => {

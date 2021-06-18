@@ -57,7 +57,7 @@ export default {
         metadata: {
           name: "",
           annotations: {
-            "description": "asadas"
+            "description": ""
           },
           labels: {}
         },

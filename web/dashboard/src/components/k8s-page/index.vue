@@ -2,37 +2,25 @@
   <div style="float: right">
     <el-pagination
             @size-change="handleSizeChange"
-            @prev-click="pageAhead"
-            @next-click="pageNext"
-            :current-page="currentPage"
-            :page-sizes="pageSizes"
             :page-size="pageSize"
-            :total="total"
-            layout="total, sizes, prev, slot, next">
+            :page-sizes="pageSizes"
+            layout="sizes,slot">
+      <el-button icon="el-icon-arrow-left" @click="pageAhead()" :disabled="current === 1"></el-button>
       <el-button>{{ current }}</el-button>
+      <el-button icon="el-icon-arrow-right" @click="pageNext()" :disabled="nextToken===''"></el-button>
     </el-pagination>
   </div>
 </template>
 
 <script>
 export default {
-  name: "KoPage",
+  name: "K8sPage",
   props: {
-    pageSizes: {
-      type: Array,
-      default: function () {
-        return [5, 10, 20, 50, 100]
-      }
-    },
     pageSize: {
       type: Number,
       default: 10
     },
     paginationConfig: Object,
-    currentPage: {
-      type: Number,
-      default: 1
-    },
     nextToken: {
       type: String,
       default: ""
@@ -45,12 +33,17 @@ export default {
       type: Number,
       default: 0
     },
+    pageSizes: {
+      type: Array,
+      default: function () {
+        return [5, 10, 20, 50, 100]
+      }
+    },
   },
   data () {
     return {
-      preToken: [""],
-      total: 0,
       current: 1,
+      preToken: [""],
     }
   },
   watch: {
@@ -78,17 +71,15 @@ export default {
     pageNext () {
       this.current++
       this.preToken.push(this.paginationConfig.nextToken)
-      this.$emit("update:currentPage", this.currentPage)
       this.$emit("change")
     },
     pageAhead () {
       this.current--
       this.$emit("update:nextToken", this.preToken[this.preToken.length - 2])
       this.preToken.pop()
-      this.$emit("update:currentPage", this.currentPage)
       this.$emit("change")
     },
-  },
+  }
 }
 </script>
 
