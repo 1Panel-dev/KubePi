@@ -134,6 +134,44 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 		ctx.Values().Set("data", resp)
 	}
 }
+func (h *Handler) DeleteClusterRole() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		clusterRole := ctx.Params().GetString("clusterrole")
+		c, err := h.clusterService.Get(name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
+			return
+		}
+		k := kubernetes.NewKubernetes(*c)
+		client, err := k.Client()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get kubernetes client failed: %s", err.Error()))
+			return
+		}
+		r, err := client.RbacV1().ClusterRoles().Get(goContext.TODO(), clusterRole, metav1.GetOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get cluster role   failed: %s", err.Error()))
+			return
+		}
+		createBy, ok := r.Annotations["created-by"]
+		if ok {
+			if createBy == "system" {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", fmt.Sprintf("can not delete it ,beacuse it created by system"))
+				return
+			}
+		}
+		if err := client.RbacV1().ClusterRoles().Delete(goContext.TODO(), r.Name, metav1.DeleteOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("delete  cluster role failed: %s", err.Error()))
+			return
+		}
+	}
+}
 
 func (h *Handler) GetClusterRoles() iris.Handler {
 	return func(ctx *context.Context) {
