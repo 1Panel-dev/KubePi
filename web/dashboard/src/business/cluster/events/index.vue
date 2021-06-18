@@ -5,22 +5,28 @@
         <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"
                   @change="search(true)" @clear="search(true)"></el-input>
       </template>
-      <el-table-column label="Reason" prop="reason" fix max-width="50px">
+      <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
         <template v-slot:default="{row}">
           {{ row.reason }}
         </template>
       </el-table-column>
-      <el-table-column label="Namespace" prop="namespace" fix max-width="50px">
+      <el-table-column :label="$t('business.event.type')" prop="type" fix max-width="50px">
+        <template v-slot:default="{row}">
+          <el-tag v-if="row.type ==='Normal'">{{ row.type }}</el-tag>
+          <el-tag v-else type="danger">{{ row.type }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.namespace.namespace')" prop="namespace" fix max-width="50px">
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Message" prop="resource" fix min-width="200px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.event.message')"  prop="resource" fix min-width="200px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           {{ row.message }}
         </template>
       </el-table-column>
-      <el-table-column label="Resource" prop="resource" fix min-width="200px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.event.resource')"  prop="resource" fix min-width="200px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link>{{ row.involvedObject.kind }} / {{ row.involvedObject.name }}</el-link>
         </template>
@@ -63,7 +69,7 @@ export default {
           nextToken: "",
         }
       }
-      listEvents(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then(res => {
+      listEvents(this.clusterName, this.page.pageSize, this.page.nextToken, this.searchName).then(res => {
         this.loading = false
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
