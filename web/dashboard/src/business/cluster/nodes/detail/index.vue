@@ -87,9 +87,9 @@
       <el-col :span="23">
         <br>
         <el-card>
-          <div slot="header" class="clearfix">
-            <span>{{ $t("business.node.allocation") }}</span>
-          </div>
+<!--          <div slot="header" class="clearfix">-->
+<!--            <span>{{ $t("business.node.allocation") }}</span>-->
+<!--          </div>-->
           <el-row :gutter="20">
             <div style="text-align: center">
               <el-col :span="9">
@@ -234,7 +234,18 @@
               </el-table-column>
             </complex-table>
           </el-tab-pane>
-          <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+          <el-tab-pane :label="$t('business.pod.image')">
+            <table style="width: 90%" class="myTable">
+              <tr>
+                <th scope="col" width="70%" align="left">{{ $t("commons.table.name") }}</th>
+                <th scope="col"  align="left">{{$t('business.pod.size')}} </th>
+              </tr>
+              <tr v-for="(image,index) in item.status.images" v-bind:key="index">
+                <td>{{ image.names[1] ? image.names[1]:image.names[0] }}</td>
+                <td>{{ Math.round(image.sizeBytes / (1024 * 1024)) }} MB</td>
+              </tr>
+            </table>
+          </el-tab-pane>
           <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
         </el-tabs>
       </el-col>

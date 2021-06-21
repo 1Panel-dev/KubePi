@@ -122,7 +122,8 @@ const message = {
       reason: "原因",
       message: "信息",
       lastHeartbeatTime: "最后检测时间",
-      lastTransitionTime:  "最后迁移时间"
+      lastTransitionTime:  "最后迁移时间",
+      size: "大小"
     },
     namespace: {
       namespace: "命名空间",
