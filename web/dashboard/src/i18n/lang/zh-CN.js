@@ -118,6 +118,11 @@ const message = {
       image: "镜像",
       ready: "准备就绪",
       restart: "重启",
+      type: "类别",
+      reason: "原因",
+      message: "信息",
+      lastHeartbeatTime: "最后检测时间",
+      lastTransitionTime:  "最后迁移时间"
     },
     namespace: {
       namespace: "命名空间",
