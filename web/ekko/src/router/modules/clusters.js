@@ -39,16 +39,6 @@ const Clusters = {
             },
             children: [
                 {
-                    path: "overview",
-                    props: true,
-                    component: () => import("@/business/cluster-management/detail/overview"),
-                    hidden: true,
-                    name: "ClusterOverview",
-                    meta: {
-                        activeMenu: "/clusters",
-                    },
-                },
-                {
                     path: "members",
                     props: true,
                     component: () => import("@/business/cluster-management/detail/members"),

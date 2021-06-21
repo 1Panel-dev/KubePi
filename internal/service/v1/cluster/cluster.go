@@ -12,14 +12,16 @@ import (
 type Service interface {
 	common.DBService
 	Create(cluster *v1Cluster.Cluster, options common.DBOptions) error
-	Get(name string) (*v1Cluster.Cluster, error)
+	Get(name string, options common.DBOptions, ) (*v1Cluster.Cluster, error)
 	All() ([]v1Cluster.Cluster, error)
 	Delete(name string, options common.DBOptions) error
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewClusterService() Service {
-	return &cluster{}
+	return &cluster{
+		DefaultDBService:      common.DefaultDBService{},
+	}
 }
 
 type cluster struct {
@@ -34,8 +36,8 @@ func (c *cluster) Create(cluster *v1Cluster.Cluster, options common.DBOptions) e
 	return db.Save(cluster)
 }
 
-func (c *cluster) Get(name string) (*v1Cluster.Cluster, error) {
-	db := server.DB()
+func (c *cluster) Get(name string, options common.DBOptions) (*v1Cluster.Cluster, error) {
+	db := c.GetDB(options)
 	var cluster v1Cluster.Cluster
 	if err := db.One("Name", name, &cluster); err != nil {
 		return nil, err
@@ -68,7 +70,7 @@ func (c *cluster) Search(num, size int, conditions pkgV1.Conditions, options com
 
 func (c *cluster) Delete(name string, options common.DBOptions) error {
 	db := c.GetDB(options)
-	cluster, err := c.Get(name)
+	cluster, err := c.Get(name, options)
 	if err != nil {
 		return err
 	}

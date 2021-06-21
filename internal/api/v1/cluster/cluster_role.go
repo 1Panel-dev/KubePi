@@ -2,14 +2,10 @@ package cluster
 
 import (
 	goContext "context"
-	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
-	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	rbacV1 "k8s.io/api/rbac/v1"
@@ -17,79 +13,44 @@ import (
 	"time"
 )
 
-func (h *Handler) GetClusterMembers() iris.Handler {
+func (h *Handler) UpdateClusterRole() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		bindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, common.DBOptions{})
-		if err != nil && !errors.Is(err, storm.ErrNotFound) {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		subjectMap := map[v1Cluster.Subject]v1Cluster.Binding{}
-		for i := range bindings {
-			subjectMap[bindings[i].Subject] = bindings[i]
-		}
-		members := make([]Member, 0)
-		for key := range subjectMap {
-			members = append(members, Member{
-				Name:        key.Name,
-				Kind:        key.Kind,
-				BindingName: subjectMap[key].Name,
-				CreateAt:    subjectMap[key].CreateAt,
-			})
-		}
-		ctx.Values().Set("data", members)
-	}
-}
+		clusterRoleName := ctx.Params().GetString("clusterrole")
 
-func (h *Handler) CreateClusterMember() iris.Handler {
-	return func(ctx *context.Context) {
-		name := ctx.Params().GetString("name")
-		var req Member
-		err := ctx.ReadJSON(&req)
-		if err != nil {
+		var req rbacV1.ClusterRole
+		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-		u := ctx.Values().Get("profile")
-		profile := u.(session.UserProfile)
-		binding := v1Cluster.Binding{
-			BaseModel: v1.BaseModel{
-				Kind:      "ClusterBinding",
-				CreatedBy: profile.Name,
-			},
-			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("%s-%s-cluster-binding", name, req.Name),
-			},
-			Subject: v1Cluster.Subject{
-				Name: req.Name,
-				Kind: req.Kind,
-			},
-			ClusterRef: name,
-		}
-		// 生成用户证书
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
 		k := kubernetes.NewKubernetes(*c)
-		cert, err := k.CreateCommonUser(req.Name)
+		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
+			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		binding.Certificate = cert
-		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+		instance, err := client.RbacV1().ClusterRoles().Get(goContext.TODO(), clusterRoleName, metav1.GetOptions{})
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
+			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		ctx.Values().Set("data", req)
+		instance.Rules = req.Rules
+		resp, err := client.RbacV1().ClusterRoles().Update(goContext.TODO(), instance, metav1.UpdateOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("create cluster role failed: %s", err.Error()))
+			return
+		}
+		ctx.Values().Set("data", resp)
 	}
 }
 
@@ -102,7 +63,7 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
@@ -138,7 +99,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		clusterRole := ctx.Params().GetString("clusterrole")
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
@@ -176,7 +137,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 func (h *Handler) GetClusterRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))

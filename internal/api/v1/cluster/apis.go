@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"fmt"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -10,7 +11,7 @@ import (
 func (h *Handler) ListApiGroups() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name,common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
@@ -37,7 +38,7 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		groupVersion := ctx.Params().GetString("group")
-		c, err := h.clusterService.Get(name)
+		c, err := h.clusterService.Get(name,common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))

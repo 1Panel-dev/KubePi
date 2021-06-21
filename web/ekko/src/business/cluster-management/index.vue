@@ -59,7 +59,7 @@
                 this.$router.push({name: "ClusterCreate"})
             },
             onDetail(name) {
-                this.$router.push({name: "ClusterDetail", params: {name: name}})
+                this.$router.push({name: "ClusterMembers", params: {name: name}})
             },
             onDelete(name) {
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {

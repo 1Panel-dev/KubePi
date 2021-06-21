@@ -95,16 +95,17 @@ func (k *Kubernetes) CreateDefaultClusterRoles() error {
 		return err
 	}
 	for i := range defaultRoles {
-		_, err := client.RbacV1().ClusterRoles().Get(context.TODO(), defaultRoles[i].Name, metav1.GetOptions{})
+		instance, err := client.RbacV1().ClusterRoles().Get(context.TODO(), defaultRoles[i].Name, metav1.GetOptions{})
 		if err != nil {
 			if !strings.Contains(strings.ToLower(err.Error()), "not found") {
 				return err
 			}
 		}
-
-		_, err = client.RbacV1().ClusterRoles().Create(context.TODO(), &defaultRoles[i], metav1.CreateOptions{})
-		if err != nil {
-			return err
+		if instance == nil {
+			_, err = client.RbacV1().ClusterRoles().Create(context.TODO(), &defaultRoles[i], metav1.CreateOptions{})
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -118,7 +119,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	}
 	csr := certv1.CertificateSigningRequest{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf("%s-%s", commonName, "ekko"),
+			Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
 		},
 		Spec: certv1.CertificateSigningRequestSpec{
 			SignerName: "kubernetes.io/kube-apiserver-client",
