@@ -114,6 +114,11 @@ const message = {
       kubeProxy_version: "kubeProxy 版本",
       allocation: "分配"
     },
+    pod: {
+      image: "镜像",
+      ready: "准备就绪",
+      restart: "重启",
+    },
     namespace: {
       namespace: "命名空间",
       description: "描述"

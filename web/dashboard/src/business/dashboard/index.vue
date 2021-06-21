@@ -111,10 +111,7 @@ export default {
       resources: [],
       page: {
         pageSize: 10,
-        nextToken: "",
-        remainCount: 0,
-        items: 0,
-        currentPage: 1
+        nextToken: ""
       },
       events: [],
       loading: false
@@ -197,12 +194,6 @@ export default {
         this.loading = false
         this.events = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        this.page.remainCount = res.metadata["remainingItemCount"] ?  res.metadata["remainingItemCount"]: 0
-        if (!res.metadata["remainingItemCount"]) {
-          this.page.items = res.items.length
-        }else {
-          this.page.items = 0
-        }
       })
     },
     getData (items, keys) {

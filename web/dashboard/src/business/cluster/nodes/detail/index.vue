@@ -154,6 +154,57 @@
           </el-row>
         </el-card>
       </el-col>
+      <el-col :span="23">
+        <br>
+        <el-tabs type="border-card">
+          <el-tab-pane label="Pods">
+            <complex-table :pagination-config="page" :data="pods" :search="listPodsByNodeName">
+              <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100px">
+                <template v-slot:default="{row}">
+                  <el-link> {{ row.metadata.name }}</el-link>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.namespace.namespace')" prop="namespace" fix max-width="30px">
+                <template v-slot:default="{row}">
+                  {{ row.metadata.namespace }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.image')" prop="image" min-width="200px" show-overflow-tooltip>
+                <template v-slot:default="{row}">
+                  <span v-if=" row.spec.containers.length >0 ">{{ row.spec.containers[0].image }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.ready')" prop="ready" fix max-width="10px">
+                <template v-slot:default="{row}">
+                  <span v-show="false">{{ readPod = 0 }}</span>
+                  <div v-for="(c,index) in row.status.containerStatuses" v-bind:key="index">
+                    <span v-show="false" v-if="c.ready">{{ readPod++ }}</span>
+                  </div>
+                  <span>{{ readPod }}/{{ row.status.containerStatuses.length }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('commons.table.status')" prop="status" fix max-width="30px">
+                <template v-slot:default="{row}">
+                  {{ row.status.phase }}
+                </template>
+              </el-table-column>
+              <el-table-column label="IP" prop="ip" fix max-width="50px">
+                <template v-slot:default="{row}">
+                  {{ row.status.podIP }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix max-width="30px">
+                <template v-slot:default="{row}">
+                  {{ row.metadata.creationTimestamp | datetimeFormat }}
+                </template>
+              </el-table-column>
+            </complex-table>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('commons.table.status')">配置管理</el-tab-pane>
+          <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+          <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+        </el-tabs>
+      </el-col>
     </el-row>
   </layout-content>
 </template>
@@ -161,11 +212,12 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getNode} from "@/api/nodes"
-import {listPodsByNode} from "@/api/pods"
+import {listPods} from "@/api/pods"
+import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "NodeDetail",
-  components: { LayoutContent },
+  components: { ComplexTable, LayoutContent },
   props: {
     name: String,
     cluster: String,
@@ -199,7 +251,11 @@ export default {
         usage: 0,
         limit: 110,
         podsCount: 0
-      }
+      },
+      page: {
+        pageSize: 20,
+        nextToken: "",
+      },
     }
   },
   methods: {
@@ -209,14 +265,13 @@ export default {
         this.item = res
         this.loading = false
         this.listPodsByNodeName(this.item.metadata.name)
-
         this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
         this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
         this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
     },
-    listPodsByNodeName (nodeName) {
-      listPodsByNode(this.cluster, nodeName).then(res => {
+    listPodsByNodeName () {
+      listPods(this.cluster, 0, "", this.item.metadata.name).then(res => {
         this.pods = res.items
         this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
         this.podsData.podsCount = res.items.length
@@ -266,7 +321,7 @@ export default {
     },
     memFormat () {
       return this.memResource.limitsUsage + "%"
-    }
+    },
   },
   created () {
     this.getNodeByName()
