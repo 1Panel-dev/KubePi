@@ -158,7 +158,7 @@
         <br>
         <el-tabs type="border-card">
           <el-tab-pane label="Pods">
-            <complex-table :pagination-config="page" :data="pods" :search="listPodsByNodeName">
+            <complex-table :pagination-config="page" :data="pods" :search="pageNodes">
               <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100px">
                 <template v-slot:default="{row}">
                   <el-link> {{ row.metadata.name }}</el-link>
@@ -200,7 +200,40 @@
               </el-table-column>
             </complex-table>
           </el-tab-pane>
-          <el-tab-pane :label="$t('commons.table.status')">配置管理</el-tab-pane>
+          <el-tab-pane :label="$t('commons.table.status')">
+            <complex-table :data="item.status.conditions">
+              <el-table-column :label="$t('business.pod.type')" prop="type">
+                <template v-slot:default="{row}">
+                  {{ row.type }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('commons.table.status')" prop="status">
+                <template v-slot:default="{row}">
+                  {{ row.status }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.reason')" prop="reason">
+                <template v-slot:default="{row}">
+                  {{ row.reason }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.message')" prop="reason">
+                <template v-slot:default="{row}">
+                  {{ row.message }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.lastHeartbeatTime')" prop="reason">
+                <template v-slot:default="{row}">
+                  {{ row.lastHeartbeatTime }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('business.pod.lastTransitionTime')" prop="reason">
+                <template v-slot:default="{row}">
+                  {{ row.lastTransitionTime }}
+                </template>
+              </el-table-column>
+            </complex-table>
+          </el-tab-pane>
           <el-tab-pane label="角色管理">角色管理</el-tab-pane>
           <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
         </el-tabs>
@@ -264,15 +297,15 @@ export default {
       getNode(this.cluster, this.name).then(res => {
         this.item = res
         this.loading = false
-        this.listPodsByNodeName(this.item.metadata.name)
+        this.listPodsByNodeName()
+        this.pageNodes()
         this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
         this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
         this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
     },
     listPodsByNodeName () {
-      listPods(this.cluster, 0, "", this.item.metadata.name).then(res => {
-        this.pods = res.items
+      listPods(this.cluster, null, null, this.item.metadata.name).then(res => {
         this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
         this.podsData.podsCount = res.items.length
 
@@ -322,6 +355,11 @@ export default {
     memFormat () {
       return this.memResource.limitsUsage + "%"
     },
+    pageNodes () {
+      listPods(this.cluster, this.page.pageSize, this.page.nextToken, this.item.metadata.name).then(res => {
+        this.pods = res.items
+      })
+    }
   },
   created () {
     this.getNodeByName()
