@@ -69,6 +69,47 @@
         </el-dialog>
 
 
+        <el-dialog
+                title="提示"
+                :visible.sync="editDialogOpened"
+                width="20%"
+                center>
+            <el-form :model="editForm" label-position="left" label-width="120px">
+                <el-form-item label="主体类型">
+                    <el-select v-model="editForm.subjectKind" disabled @change="onSubjectKindChange">
+                        <el-option value="User">
+                            用户
+                        </el-option>
+                        <el-option value="Group">
+                            用户组
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="主体名称">
+                    <el-select v-model="editForm.subjectName" disabled>
+                        <el-option v-for="(item, index) in memberOptions" :key="index" :value="item.name">
+                            {{item.name}}
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="集群角色">
+                    <el-select v-model="editForm.clusterRoles" multiple placeholder="请选择">
+                        <el-option
+                                v-for="(item,index) in clusterRolesOptions"
+                                :key="index"
+                                :value="item.metadata.name">
+                            {{item.metadata.name}}
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="editDialogOpened = false">取 消</el-button>
+    <el-button type="primary" @click="onEditConfirm">确 定</el-button>
+  </span>
+        </el-dialog>
+
+
     </layout-content>
 </template>
 
@@ -78,7 +119,7 @@
     import {createClusterMember, listClusterMembers} from "@/api/clusters"
     import {listUsers} from "@/api/users"
     import {listGroups} from "@/api/groups"
-    import {listClusterRoles} from "@/api/clusters";
+    import {listClusterRoles, deleteClusterMember, getClusterMember, updateClusterMember} from "@/api/clusters";
 
 
     export default {
@@ -88,9 +129,15 @@
         data() {
             return {
                 createDialogOpened: false,
+                editDialogOpened: false,
                 memberOptions: [],
                 clusterRolesOptions: [],
                 memberForm: {
+                    subjectKind: "",
+                    subjectName: "",
+                    clusterRoles: []
+                },
+                editForm: {
                     subjectKind: "",
                     subjectName: "",
                     clusterRoles: []
@@ -100,14 +147,14 @@
                         label: this.$t("commons.button.edit"),
                         icon: "el-icon-edit",
                         click: (row) => {
-                            this.onEdit(row.name)
+                            this.onEdit(row)
                         }
                     },
                     {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
                         click: (row) => {
-                            this.onDelete(row.name)
+                            this.onDelete(row)
                         }
                     },
                 ],
@@ -124,18 +171,35 @@
             },
             onCreate() {
                 this.memberForm.subjectKind = ""
+                this.memberForm.clusterRoles = []
                 this.createDialogOpened = true
                 listClusterRoles(this.name).then(data => {
                     this.clusterRolesOptions = data.data
                 })
                 this.onSubjectKindChange()
             },
-            onDelete() {
+
+            onEdit(row) {
+                listClusterRoles(this.name).then(data => {
+                    this.clusterRolesOptions = data.data
+                    getClusterMember(this.name, row.name, row.kind).then(data => {
+                        this.editForm.subjectName = data.data.name
+                        this.editForm.subjectKind = data.data.kind
+                        this.editForm.clusterRoles = data.data.clusterRoles
+                    })
+                })
+                this.editDialogOpened = true
+            },
+            onDelete(raw) {
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
                     confirmButtonText: this.$t("commons.button.confirm"),
                     cancelButtonText: this.$t("commons.button.cancel"),
                     type: 'warning'
                 }).then(() => {
+                    deleteClusterMember(this.name, raw.name, raw.kind).then(() => {
+                        this.$message.success("删除成功")
+                        this.list()
+                    })
                 });
             },
             onSubjectKindChange() {
@@ -151,10 +215,22 @@
                     })
                 }
             },
+            onEditConfirm() {
+                updateClusterMember(this.name, this.editForm.subjectName, {
+                    name: this.editForm.subjectName,
+                    kind: this.editForm.subjectKind,
+                    clusterRoles: this.editForm.clusterRoles
+                }).then(() => {
+                    this.editDialogOpened = false
+                    this.list()
+                })
+            },
+
             onConfirm() {
                 createClusterMember(this.name, {
                     kind: this.memberForm.subjectKind,
-                    name: this.memberForm.subjectName
+                    name: this.memberForm.subjectName,
+                    clusterRoles: this.memberForm.clusterRoles
                 }).then(() => {
                     this.createDialogOpened = false
                     this.list()

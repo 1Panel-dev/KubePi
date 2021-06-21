@@ -67,8 +67,9 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-
             </el-form>
+
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ruleDialogOpened=false">取 消</el-button>
                 <el-button type="primary" @click="onRuleConfirm">确 定</el-button>
@@ -122,7 +123,6 @@
                         </el-table-column>
                     </el-table>
                 </el-form-item>
-
             </el-form>
 
 
@@ -131,6 +131,63 @@
                 <el-button type="primary" @click="onConfirm">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+                title="提示"
+                :visible.sync="editDialogOpened"
+                width="60%"
+                center z-index="10">
+
+            <el-form :model="editForm" label-position="left" label-width="120px">
+                <el-form-item label="名称">
+                    <el-input v-model="editForm.name" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="规则">
+                    <el-button @click="onRuleCreate"><i class="el-icon-plus "></i></el-button>
+                    <el-table
+                            :data="editForm.rules"
+                            border
+                            style="width: 100%">
+                        <el-table-column
+                                prop="apiGroup"
+                                label="API Group"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="resource"
+                                label="API Resource"
+                        >
+                            <template v-slot:default="{row}">
+                                <span v-for="v in row.resources" :key="v">{{v}}<br/></span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="verbs"
+                                label="Verbs"
+                        >
+                            <template v-slot:default="{row}">
+                                <span v-for="v in row.verbs" :key="v">{{v}}<br/></span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column>
+                            <template v-slot:default="{row}">
+                                <el-button
+                                        size="mini" circle @click="onRuleDelete(row)">
+                                    <i class="el-icon-delete"></i>
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-form-item>
+            </el-form>
+
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editDialogOpened = false">取 消</el-button>
+                <el-button type="primary" @click="onEditConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
+
     </layout-content>
 </template>
 
@@ -142,7 +199,8 @@
         listClusterApiGroups,
         listClusterResourceByGroupVersion,
         createClusterRole,
-        deleteClusterRole
+        deleteClusterRole,
+        updateClusterRole
     } from "@/api/clusters";
 
 
@@ -153,12 +211,18 @@
         data() {
             return {
                 createDialogOpened: false,
+                editDialogOpened: false,
                 ruleDialogOpened: false,
                 apiGroupsOptions: [],
                 apiResourceOptions: [],
+                operation: "",
                 verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
                 memberOptions: [],
                 clusterRoleForm: {
+                    name: "",
+                    rules: [],
+                },
+                editForm: {
                     name: "",
                     rules: [],
                 },
@@ -174,7 +238,7 @@
                         label: this.$t("commons.button.edit"),
                         icon: "el-icon-edit",
                         click: (row) => {
-                            this.onEdit(row.name)
+                            this.onEdit(row)
                         }
                     },
                     {
@@ -197,11 +261,32 @@
                 })
             },
             onCreate() {
+                this.operation = "create"
                 this.clusterRoleForm = {
                     name: "",
                     rules: [],
                 }
                 this.createDialogOpened = true
+                listClusterApiGroups(this.name).then(data => {
+                    this.apiGroupsOptions.push({preferredVersion: {groupVersion: "*"}})
+                    this.apiGroupsOptions = this.apiGroupsOptions.concat(data.data)
+                })
+            },
+
+            onEdit(row) {
+                this.operation = "update"
+                this.editForm.name = row.metadata.name
+                this.editForm.rules = []
+                for (const rule of row.rules) {
+                    if (rule.apiGroups) {
+                        this.editForm.rules.push({
+                            apiGroup: rule.apiGroups[0],
+                            resources: rule.resources,
+                            verbs: rule.verbs,
+                        })
+                    }
+                }
+                this.editDialogOpened = true
                 listClusterApiGroups(this.name).then(data => {
                     this.apiGroupsOptions.push({preferredVersion: {groupVersion: "*"}})
                     this.apiGroupsOptions = this.apiGroupsOptions.concat(data.data)
@@ -245,15 +330,34 @@
                 }
             },
             onRuleConfirm() {
-                this.clusterRoleForm.rules.push({
-                    apiGroup: this.ruleForm.groupVersion,
-                    resources: this.ruleForm.resources,
-                    verbs: this.ruleForm.verbs
-                })
+                switch (this.operation) {
+                    case "create":
+                        this.clusterRoleForm.rules.push({
+                            apiGroup: this.ruleForm.groupVersion,
+                            resources: this.ruleForm.resources,
+                            verbs: this.ruleForm.verbs
+                        })
+                        break
+                    case "update":
+                        this.editForm.rules.push({
+                            apiGroup: this.ruleForm.groupVersion,
+                            resources: this.ruleForm.resources,
+                            verbs: this.ruleForm.verbs
+                        })
+                        break
+                }
                 this.ruleDialogOpened = false
             },
+
             onRuleDelete(row) {
-                this.clusterRoleForm.rules.splice(this.clusterRoleForm.rules.indexOf(row), 1)
+                switch (this.operation) {
+                    case "create":
+                        this.clusterRoleForm.rules.splice(this.clusterRoleForm.rules.indexOf(row), 1)
+                        break
+                    case "update":
+                        this.editForm.rules.splice(this.clusterRoleForm.rules.indexOf(row), 1)
+                        break
+                }
             },
             onDelete(row) {
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
@@ -266,6 +370,7 @@
                     })
                 });
             },
+
             onConfirm() {
                 const req = {
                     metadata: {
@@ -284,6 +389,26 @@
                 createClusterRole(this.name, req).then(() => {
                     this.list()
                     this.createDialogOpened = false
+                })
+            },
+            onEditConfirm() {
+                const req = {
+                    metadata: {
+                        name: this.editForm.name,
+                    },
+                    rules: []
+                }
+                for (const rule of this.editForm.rules) {
+                    req.rules.push({
+                        apiGroups: [rule.apiGroup],
+                        resources: rule.resources,
+                        verbs: rule.verbs,
+                    })
+                }
+                console.log(123)
+                updateClusterRole(this.name, req.metadata.name, req).then(() => {
+                    this.list()
+                    this.editDialogOpened = false
                 })
             }
         },

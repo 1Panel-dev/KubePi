@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
+	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
@@ -170,12 +171,37 @@ func (h *Handler) ListClusters() iris.Handler {
 func (h *Handler) DeleteCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		err := h.clusterService.Delete(name, common.DBOptions{})
+
+		tx, err := server.DB().Begin(true)
 		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+		txOptions := common.DBOptions{DB: tx}
+
+		if err := h.clusterService.Delete(name, txOptions); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
+		clusterBindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, txOptions)
+		if err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+		for i := range clusterBindings {
+			if err := h.clusterBindingService.Delete(clusterBindings[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+				return
+			}
+		}
+		_ = tx.Commit()
 		ctx.StatusCode(iris.StatusOK)
 	}
 }
@@ -189,9 +215,14 @@ func Install(parent iris.Party) {
 	sp.Post("/search", handler.SearchClusters())
 	sp.Get("/:name/members", handler.GetClusterMembers())
 	sp.Post("/:name/members", handler.CreateClusterMember())
+	sp.Delete("/:name/members/:member", handler.DeleteClusterMember())
+	sp.Put("/:name/members/:member", handler.UpdateClusterMember())
+	sp.Get("/:name/members/:member", handler.GetClusterMember())
 	sp.Get("/:name/clusterroles", handler.GetClusterRoles())
 	sp.Post("/:name/clusterroles", handler.CreateClusterRole())
+	sp.Put("/:name/clusterroles/:clusterrole", handler.UpdateClusterRole())
 	sp.Delete("/:name/clusterroles/:clusterrole", handler.DeleteClusterRole())
 	sp.Get("/:name/apigroups", handler.ListApiGroups())
 	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
+
 }
