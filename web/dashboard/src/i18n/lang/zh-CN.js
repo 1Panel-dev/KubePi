@@ -111,7 +111,8 @@ const message = {
       kernel: "操作系统内核",
       container: "容器 runtime 版本",
       kubelet_version: "kubelet 版本",
-      kubeProxy_version: "kubeProxy 版本"
+      kubeProxy_version: "kubeProxy 版本",
+      allocation: "分配"
     },
     namespace: {
       namespace: "命名空间",

@@ -47,3 +47,7 @@
     display: inline-block;
     margin: 2px;
 }
+
+.el-progress-circle__track {
+    stroke: #414248;
+}
