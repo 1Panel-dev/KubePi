@@ -18,7 +18,7 @@ type Service interface {
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
-func NewClusterService() Service {
+func NewService() Service {
 	return &cluster{
 		DefaultDBService:      common.DefaultDBService{},
 	}

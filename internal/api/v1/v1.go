@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/api/v1/group"
+	"github.com/KubeOperator/ekko/internal/api/v1/proxy"
 	"github.com/KubeOperator/ekko/internal/api/v1/role"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
@@ -248,4 +249,5 @@ func AddV1Route(app iris.Party) {
 	cluster.Install(authParty)
 	group.Install(authParty)
 	role.Install(authParty)
+	proxy.Install(authParty)
 }

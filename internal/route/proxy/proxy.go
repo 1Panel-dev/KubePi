@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	clusterService = cluster.NewClusterService()
+	clusterService = cluster.NewService()
 )
 
 func AddProxyRoute(app iris.Party) {

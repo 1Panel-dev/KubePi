@@ -25,7 +25,7 @@ type Handler struct {
 
 func NewHandler() *Handler {
 	return &Handler{
-		clusterService:        cluster.NewClusterService(),
+		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
 	}
 }
