@@ -73,6 +73,14 @@ const message = {
     },
   },
   business: {
+    common: {
+      label: "标签",
+      annotation:"注释",
+      basic: "基本信息",
+      expand:"展开",
+      pack_up: "收起",
+      system: "系统信息"
+    },
     dashboard: {
       dashboard: "概览"
     },
@@ -96,7 +104,15 @@ const message = {
     },
     node: {
       ready:"准备就绪",
-      role: "角色"
+      role: "角色",
+      os: "操作系统",
+      arch: "系统架构",
+      osImage: "操作系统镜像",
+      kernel: "操作系统内核",
+      container: "容器 runtime 版本",
+      kubelet_version: "kubelet 版本",
+      kubeProxy_version: "kubeProxy 版本",
+      allocation: "分配"
     },
     namespace: {
       namespace: "命名空间",
