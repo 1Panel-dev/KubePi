@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data">
+    <complex-table :selects.sync="selects" :data="data" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -10,6 +10,9 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+      </template>
+      <template #toolbar>
+        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName" @change="search(true)" @clear="search(true)"></el-input>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -45,20 +48,19 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
-    <ko-page :page.sync="page" @change="search"></ko-page>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNamespace, deleteNamespace} from "@/api/namespace"
-import KoPage from "@/components/ko-page"
+import {listNamespace, deleteNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
+import {downloadYaml} from "@/utils/actions"
 
 export default {
   name: "NamespaceList",
-  components: { KoTableOperations, KoPage, ComplexTable, LayoutContent },
+  components: { KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
@@ -83,6 +85,13 @@ export default {
           }
         },
         {
+          label: this.$t("commons.button.download_yaml"),
+          icon: "el-icon-download",
+          click: (row) => {
+            downloadYaml(row.metadata.name+".yml",row)
+          }
+        },
+        {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           click: (row) => {
@@ -90,22 +99,15 @@ export default {
           }
         },
       ],
-      searchConfig: {
-        quickPlaceholder: this.$t("commons.search.quickSearch"),
-        components: [
-          { field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq" },
-        ],
-      },
       data: [],
       selects: [],
       loading: false,
       page: {
         pageSize: 10,
         nextToken: "",
-        remainCount: 0,
-        items: 0
       },
-      clusterName: "test1"
+      clusterName: "test1",
+      searchName: ""
     }
   },
   methods: {
@@ -118,17 +120,11 @@ export default {
         this.page = {
           pageSize: this.page.pageSize,
           nextToken: "",
-          remainCount: 0,
         }
       }
-      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken).then((res) => {
+      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        if (res.metadata["remainingItemCount"]) {
-          this.page.remainCount = res.metadata["remainingItemCount"]
-        } else {
-          this.page.items = res.items.length
-        }
       }).catch(error => {
         console.log(error)
       }).finally(() => {

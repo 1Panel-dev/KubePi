@@ -2,14 +2,20 @@
     <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Roles' }">
 
         <el-row>
-            <el-col :span="2"><br/></el-col>
-            <el-col :span="20">
+            <el-col :span="4"><br/></el-col>
+            <el-col :span="10">
                 <div class="grid-content bg-purple-light">
                     <el-form ref="form" :model="role" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="role.name"></el-input>
                         </el-form-item>
+
+                        <el-form-item :label="$t('commons.table.description')" prop="description">
+                            <el-input v-model="role.description"></el-input>
+                        </el-form-item>
+
+
                         <el-form-item :label="$t('business.user.permission_setting')">
                             <el-table
                                     :data="resources"
@@ -17,7 +23,7 @@
                                     style="width: 100%">
                                 <el-table-column
                                         prop="name"
-                                        label="资源名称"
+                                        :label="$t('business.user.resource_name')"
                                         min-width="180">
                                 </el-table-column>
                                 <el-table-column>
@@ -25,7 +31,7 @@
                                         <div>
                                             <el-checkbox :indeterminate="indeterminate" v-model="allSelect"
                                                          @change="onAllSelectChange">
-                                                全选
+                                                {{$t('commons.button.all_select')}}
                                             </el-checkbox>
                                         </div>
                                     </template>
@@ -40,14 +46,14 @@
                                 </el-table-column>
                             </el-table>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item style="float: right">
                             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
                             <el-button type="primary" @click="onConfirm">{{ $t("commons.button.confirm") }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
             </el-col>
-            <el-col :span="2"><br/></el-col>
+            <el-col :span="4"><br/></el-col>
         </el-row>
 
 
@@ -71,13 +77,7 @@
                 indeterminate: true,
                 role: {},
                 resources: [],
-
                 roles: [],
-                useTemplate: false,
-                form: {
-                    name: "",
-                    template: "",
-                },
             }
         },
         methods: {

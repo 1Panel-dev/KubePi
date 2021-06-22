@@ -22,14 +22,17 @@ const message = {
             edit_yaml: "YAML",
             back_form: "返回表单",
             add: "增加",
-            edit: "编辑"
+            edit: "编辑",
+            all_select: "全选"
         },
         table: {
             name: "名称",
+            kind: "类型",
             created_time: "创建时间",
             status: "状态",
             action: "操作",
             creat_by: "创建者",
+            description: "描述",
         },
         search: {
             quickSearch: "搜索"
@@ -105,6 +108,11 @@ const message = {
         access_control: {
             access_control: "访问控制"
         },
+        cluster_role: {
+            none: "无",
+            cluster_administrator: "集群管理员",
+            cluster_viewer: "只读用户",
+        },
         user: {
             user_management: "用户与权限",
             user_group: "用户组",
@@ -119,14 +127,22 @@ const message = {
             base_on_exists_role: "基于已有角色",
             permission_setting: "权限设置",
             password: "密码",
-            confirm_password: "确认密码"
+            confirm_password: "确认密码",
+            resource_name: "资源名称"
+
         }
     },
+}
+
+
+const raw = {
+    _administrator: "超级管理员"
 }
 
 
 export default {
     ...el,
     ...fu,
-    ...message
+    ...message,
+    ...raw
 }

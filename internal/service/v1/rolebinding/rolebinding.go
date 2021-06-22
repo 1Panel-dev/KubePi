@@ -25,7 +25,7 @@ type service struct {
 	common.DefaultDBService
 }
 
-func (s service) CreateRoleBinding(binding *v1Role.Binding, options common.DBOptions) error {
+func (s *service) CreateRoleBinding(binding *v1Role.Binding, options common.DBOptions) error {
 	db := s.GetDB(options)
 	binding.UUID = uuid.New().String()
 	binding.CreateAt = time.Now()
@@ -33,7 +33,7 @@ func (s service) CreateRoleBinding(binding *v1Role.Binding, options common.DBOpt
 	return db.Save(binding)
 }
 
-func (s service) GetRoleBindingBySubject(subject v1Role.Subject, options common.DBOptions) ([]v1Role.Binding, error) {
+func (s *service) GetRoleBindingBySubject(subject v1Role.Subject, options common.DBOptions) ([]v1Role.Binding, error) {
 	db := s.GetDB(options)
 	query := db.Select(customStorm.Containers("Subjects", subject))
 	var rbs []v1Role.Binding
@@ -43,7 +43,7 @@ func (s service) GetRoleBindingBySubject(subject v1Role.Subject, options common.
 	return rbs, nil
 }
 
-func (s service) Delete(name string, options common.DBOptions) error {
+func (s *service) Delete(name string, options common.DBOptions) error {
 	db := s.GetDB(options)
 	var binding v1Role.Binding
 	if err := db.One("Name", name, &binding); err != nil {

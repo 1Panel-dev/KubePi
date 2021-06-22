@@ -1,9 +1,7 @@
 package kubernetes
 
 import (
-	"context"
 	"fmt"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"testing"
@@ -33,9 +31,9 @@ func TestNewKubernetes(t *testing.T) {
 		t.Error(err)
 	}
 
-	list, err := cls.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	gs, as, err := cls.ServerGroupsAndResources()
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(len(list.Items))
+	fmt.Println(gs, as)
 }

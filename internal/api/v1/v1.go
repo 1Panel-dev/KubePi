@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/api/v1/group"
+	"github.com/KubeOperator/ekko/internal/api/v1/proxy"
 	"github.com/KubeOperator/ekko/internal/api/v1/role"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
@@ -127,7 +128,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				if len(ss) >= 4 {
 					resourceName := ss[3]
 					//过滤session资源
-					if resourceName == "sessions" {
+					if resourceName == "sessions" || resourceName == "proxy" {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {
@@ -248,4 +249,5 @@ func AddV1Route(app iris.Party) {
 	cluster.Install(authParty)
 	group.Install(authParty)
 	role.Install(authParty)
+	proxy.Install(authParty)
 }

@@ -13,8 +13,9 @@ type Cluster struct {
 }
 
 type Member struct {
-	Name        string    `json:"name"`
-	Kind        string    `json:"kind"`
-	CreateAt    time.Time `json:"createAt"`
-	BindingName string    `json:"bindingName"`
+	Name         string    `json:"name"`
+	Kind         string    `json:"kind"`
+	ClusterRoles []string  `json:"clusterRoles"`
+	CreateAt     time.Time `json:"createAt"`
+	BindingName  string    `json:"bindingName"`
 }

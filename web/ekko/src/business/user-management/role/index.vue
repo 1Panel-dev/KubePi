@@ -15,6 +15,13 @@
                     {{ row.name }}
                 </template>
             </el-table-column>
+
+            <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
+                <template v-slot:default="{row}">
+                    {{ $t(row.description) }}
+                </template>
+            </el-table-column>
+
             <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     {{ row.createdBy}}

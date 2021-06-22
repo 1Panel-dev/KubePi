@@ -36,6 +36,7 @@
                 </template>
             </el-table-column>
 
+
             <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
         </complex-table>
     </layout-content>

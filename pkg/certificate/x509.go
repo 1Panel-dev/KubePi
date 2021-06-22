@@ -9,12 +9,21 @@ import (
 	"encoding/pem"
 )
 
-func GeneratePrivateKey() (*rsa.PrivateKey, error) {
-	return rsa.GenerateKey(rand.Reader, 2048)
+func GeneratePrivateKey() ([]byte, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return nil, err
+	}
+	derStream := x509.MarshalPKCS1PrivateKey(privateKey)
+	return derStream, nil
 
 }
 
-func CreateClientCertificateRequest(userName string, key *rsa.PrivateKey) ([]byte, error) {
+func CreateClientCertificateRequest(userName string, key []byte) ([]byte, error) {
+	privateKey, err := x509.ParsePKCS1PrivateKey(key)
+	if err != nil {
+		return nil, err
+	}
 	subj := pkix.Name{
 		CommonName: userName,
 	}
@@ -27,7 +36,7 @@ func CreateClientCertificateRequest(userName string, key *rsa.PrivateKey) ([]byt
 		RawSubject:         asn1Subj,
 		SignatureAlgorithm: x509.SHA256WithRSA,
 	}
-	csrBytes, err := x509.CreateCertificateRequest(rand.Reader, csr, key)
+	csrBytes, err := x509.CreateCertificateRequest(rand.Reader, csr, privateKey)
 	if err != nil {
 		return nil, err
 	}

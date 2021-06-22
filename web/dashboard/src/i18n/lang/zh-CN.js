@@ -23,7 +23,11 @@ const message = {
       back_form: "返回表单",
       add: "增加",
       edit: "编辑",
-      edit_yaml: "编辑 YAML"
+      edit_yaml: "编辑 YAML",
+      search: "搜索",
+      upload: "从 YAML 文件读取",
+      view_yaml: "查看 YAML",
+      download_yaml: "下载 YAML"
     },
     table: {
       name: "名称",
@@ -31,6 +35,7 @@ const message = {
       status: "状态",
       action: "操作",
       creat_by: "创建者",
+      time: "时间"
     },
     search: {
       quickSearch: "搜索"
@@ -71,6 +76,14 @@ const message = {
     },
   },
   business: {
+    common: {
+      label: "标签",
+      annotation:"注释",
+      basic: "基本信息",
+      expand:"展开",
+      pack_up: "收起",
+      system: "系统信息",
+    },
     dashboard: {
       dashboard: "概览"
     },
@@ -85,7 +98,40 @@ const message = {
       label: "标签",
       description: "描述"
     },
+    event: {
+      reason: "原因",
+      type: "类型",
+      time: "时间",
+      resource: "对象",
+      message: "消息"
+    },
+    node: {
+      ready:"准备就绪",
+      role: "角色",
+      os: "操作系统",
+      arch: "系统架构",
+      osImage: "操作系统镜像",
+      kernel: "操作系统内核",
+      container: "容器 runtime 版本",
+      kubelet_version: "kubelet 版本",
+      kubeProxy_version: "kubeProxy 版本",
+      allocation: "分配"
+    },
+    pod: {
+      image: "镜像",
+      ready: "准备就绪",
+      restart: "重启",
+      type: "类别",
+      reason: "原因",
+      message: "信息",
+      lastHeartbeatTime: "最后检测时间",
+      lastTransitionTime:  "最后迁移时间",
+      size: "大小",
+      resource: "资源信息",
+      address: "地址"
+    },
     namespace: {
+      namespace: "命名空间",
       description: "描述"
     },
     workload: {

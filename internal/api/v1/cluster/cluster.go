@@ -3,8 +3,8 @@ package cluster
 import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
-	"github.com/KubeOperator/ekko/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
+	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
@@ -25,7 +25,7 @@ type Handler struct {
 
 func NewHandler() *Handler {
 	return &Handler{
-		clusterService:        cluster.NewClusterService(),
+		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
 	}
 }
@@ -53,7 +53,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 
 		}
-		req.PrivateKey = *privateKey
+		req.PrivateKey = privateKey
 
 		client := kubernetes.NewKubernetes(req.Cluster)
 		if err := client.Ping(); err != nil {
@@ -118,6 +118,11 @@ func (h *Handler) CreateCluster() iris.Handler {
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		req.CreatedBy = profile.Name
+		if err := client.CreateDefaultClusterRoles(); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		if err := h.clusterService.Create(&req.Cluster, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -166,78 +171,38 @@ func (h *Handler) ListClusters() iris.Handler {
 func (h *Handler) DeleteCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		err := h.clusterService.Delete(name, common.DBOptions{})
+
+		tx, err := server.DB().Begin(true)
 		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+		txOptions := common.DBOptions{DB: tx}
+
+		if err := h.clusterService.Delete(name, txOptions); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-		ctx.StatusCode(iris.StatusOK)
-	}
-}
-
-func (h *Handler) GetClusterMembers() iris.Handler {
-	return func(ctx *context.Context) {
-		name := ctx.Params().GetString("name")
-		bindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, common.DBOptions{})
+		clusterBindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, txOptions)
 		if err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-		subjectMap := map[v1Cluster.Subject]v1Cluster.Binding{}
-		for i := range bindings {
-			for j := range bindings[i].Subjects {
-				subjectMap[bindings[i].Subjects[j]] = bindings[i]
+		for i := range clusterBindings {
+			if err := h.clusterBindingService.Delete(clusterBindings[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+				return
 			}
 		}
-		var members []Member
-		for key := range subjectMap {
-			members = append(members, Member{
-				Name:        key.Name,
-				Kind:        key.Kind,
-				BindingName: subjectMap[key].Name,
-				CreateAt:    subjectMap[key].CreateAt,
-			})
-		}
-		ctx.Values().Set("data", members)
-	}
-}
-
-func (h *Handler) CreateClusterMember() iris.Handler {
-	return func(ctx *context.Context) {
-		name := ctx.Params().GetString("name")
-		var req Member
-		err := ctx.ReadJSON(&req)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
-			return
-		}
-		u := ctx.Values().Get("profile")
-		profile := u.(session.UserProfile)
-		binding := v1Cluster.Binding{
-			BaseModel: v1.BaseModel{
-				Kind:      "ClusterBinding",
-				CreatedBy: profile.Name,
-			},
-			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("%s-%s-cluster-binding", name, req.Name),
-			},
-			Subjects: []v1Cluster.Subject{
-				{
-					Name: req.Name,
-					Kind: req.Kind,
-				},
-			},
-			ClusterRef: name,
-		}
-		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		ctx.Values().Set("data", req)
+		_ = tx.Commit()
+		ctx.StatusCode(iris.StatusOK)
 	}
 }
 
@@ -248,6 +213,16 @@ func Install(parent iris.Party) {
 	sp.Get("", handler.ListClusters())
 	sp.Delete("/:name", handler.DeleteCluster())
 	sp.Post("/search", handler.SearchClusters())
-	sp.Get("/:name/users", handler.GetClusterMembers())
-	sp.Post("/:name/users", handler.CreateClusterMember())
+	sp.Get("/:name/members", handler.GetClusterMembers())
+	sp.Post("/:name/members", handler.CreateClusterMember())
+	sp.Delete("/:name/members/:member", handler.DeleteClusterMember())
+	sp.Put("/:name/members/:member", handler.UpdateClusterMember())
+	sp.Get("/:name/members/:member", handler.GetClusterMember())
+	sp.Get("/:name/clusterroles", handler.GetClusterRoles())
+	sp.Post("/:name/clusterroles", handler.CreateClusterRole())
+	sp.Put("/:name/clusterroles/:clusterrole", handler.UpdateClusterRole())
+	sp.Delete("/:name/clusterroles/:clusterrole", handler.DeleteClusterRole())
+	sp.Get("/:name/apigroups", handler.ListApiGroups())
+	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
+
 }

@@ -12,6 +12,6 @@ type Group struct {
 type Binding struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
-	GroupRef     string   `json:"groupRef" storm:"index"`
-	UserNames    []string `json:"userNames"`
+	GroupRef     string `json:"groupRef" storm:"index"`
+	UserRef      string `json:"userRef"`
 }

@@ -48,6 +48,35 @@ const UserManagement = {
             }
         },
         {
+            path: "groups/create",
+            component: () => import("@/business/user-management/group/create"),
+            name: "GroupCreate",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/groups",
+            }
+        },
+        {
+            path: "groups/edit/:name",
+            props: true,
+            component: () => import("@/business/user-management/group/edit"),
+            name: "GroupEdit",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/groups",
+            }
+        },
+        {
+            props: true,
+            path: "groups/binding/:name",
+            component: () => import("@/business/user-management/group/binding"),
+            name: "GroupBinding",
+            hidden: true,
+            meta: {
+                activeMenu: "/user-management/groups",
+            },
+        },
+        {
             path: "roles",
             component: () => import("@/business/user-management/role"),
             name: "Roles",
@@ -74,7 +103,8 @@ const UserManagement = {
             meta: {
                 activeMenu: "/user-management/roles",
             },
-        }
+        },
+
     ]
 }
 
