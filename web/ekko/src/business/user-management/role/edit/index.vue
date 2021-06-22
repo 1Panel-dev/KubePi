@@ -2,8 +2,8 @@
     <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Roles' }">
 
         <el-row>
-            <el-col :span="2"><br/></el-col>
-            <el-col :span="20">
+            <el-col :span="4"><br/></el-col>
+            <el-col :span="10">
                 <div class="grid-content bg-purple-light">
                     <el-form ref="form" :model="role" label-width="150px" label-position="left">
 
@@ -40,14 +40,14 @@
                                 </el-table-column>
                             </el-table>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item  style="float: right">
                             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
                             <el-button type="primary" @click="onConfirm">{{ $t("commons.button.confirm") }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
             </el-col>
-            <el-col :span="2"><br/></el-col>
+            <el-col :span="4"><br/></el-col>
         </el-row>
 
 

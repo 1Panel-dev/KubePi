@@ -1,24 +1,27 @@
 package group
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
+	"errors"
 	v1Group "github.com/KubeOperator/ekko/internal/model/v1/group"
-	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/google/uuid"
+	"time"
 )
 
 type Service interface {
 	common.DBService
-	Create(u *v1Group.Group) error
-	Get(name string) (*v1Group.Group, error)
+	Create(u *v1Group.Group, options common.DBOptions) error
+	Update(name string, u *v1Group.Group, options common.DBOptions) error
+	Get(name string, options common.DBOptions) (*v1Group.Group, error)
 	List(options common.DBOptions) ([]v1Group.Group, error)
-	Delete(name string) error
-	Search(num, size int, conditions pkgV1.Conditions) ([]v1Group.Group, int, error)
+	Delete(name string, options common.DBOptions) error
+	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Group.Group, int, error)
 }
 
 func NewService() Service {
 	return &service{
+		DefaultDBService: common.DefaultDBService{},
 	}
 }
 
@@ -26,13 +29,23 @@ type service struct {
 	common.DefaultDBService
 }
 
-func (s service) Create(u *v1Group.Group) error {
-	db := server.DB()
-	return db.Save(&u)
+func (s *service) Update(name string, g *v1Group.Group, options common.DBOptions) error {
+	cu, err := s.Get(name, options)
+	if err != nil {
+		return err
+	}
+	if cu.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
+	}
+	db := s.GetDB(options)
+	g.UUID = cu.UUID
+	g.CreateAt = cu.CreateAt
+	g.UpdateAt = time.Now()
+	return db.Save(g)
 }
 
-func (s service) Get(name string) (*v1Group.Group, error) {
-	db := server.DB()
+func (s *service) Get(name string, options common.DBOptions) (*v1Group.Group, error) {
+	db := s.GetDB(options)
 	var g v1Group.Group
 	if err := db.One("Name", name, &g); err != nil {
 		return nil, err
@@ -40,7 +53,27 @@ func (s service) Get(name string) (*v1Group.Group, error) {
 	return &g, nil
 }
 
-func (s service) List(options common.DBOptions) ([]v1Group.Group, error) {
+func (s *service) Delete(name string, options common.DBOptions) error {
+	db := s.GetDB(options)
+	item, err := s.Get(name, options)
+	if err != nil {
+		return err
+	}
+	if item.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
+	}
+	return db.DeleteStruct(item)
+}
+
+func (s *service) Create(g *v1Group.Group, options common.DBOptions) error {
+	db := s.GetDB(options)
+	g.UUID = uuid.New().String()
+	g.CreateAt = time.Now()
+	g.UpdateAt = time.Now()
+	return db.Save(g)
+}
+
+func (s *service) List(options common.DBOptions) ([]v1Group.Group, error) {
 	db := s.GetDB(options)
 	gs := make([]v1Group.Group, 0)
 	if err := db.All(&gs); err != nil {
@@ -49,14 +82,9 @@ func (s service) List(options common.DBOptions) ([]v1Group.Group, error) {
 	return gs, nil
 }
 
-func (s service) Delete(name string) error {
-	db := server.DB()
-	return db.DeleteStruct(v1Group.Group{Metadata: v1.Metadata{Name: name}})
-}
+func (s *service) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Group.Group, int, error) {
 
-func (s service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Group.Group, int, error) {
-
-	db := server.DB()
+	db := s.GetDB(options)
 	query := db.Select()
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)

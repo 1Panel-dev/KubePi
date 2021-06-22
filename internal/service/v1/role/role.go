@@ -28,7 +28,7 @@ func NewService() Service {
 type service struct {
 }
 
-func (s service) Update(name string, role *v1Role.Role) error {
+func (s *service) Update(name string, role *v1Role.Role) error {
 	r, err := s.Get(name)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (s service) Update(name string, role *v1Role.Role) error {
 	return db.Update(role)
 }
 
-func (s service) Create(r *v1Role.Role) error {
+func (s *service) Create(r *v1Role.Role) error {
 	db := server.DB()
 	r.UUID = uuid.New().String()
 	r.CreateAt = time.Now()
@@ -51,7 +51,7 @@ func (s service) Create(r *v1Role.Role) error {
 	return db.Save(r)
 }
 
-func (s service) CreateWithTemplate(r *v1Role.Role, templateName string) error {
+func (s *service) CreateWithTemplate(r *v1Role.Role, templateName string) error {
 	db := server.DB()
 	var template v1Role.Role
 	if err := db.One("Name", templateName, &template); err != nil {
@@ -61,7 +61,7 @@ func (s service) CreateWithTemplate(r *v1Role.Role, templateName string) error {
 	return s.Create(r)
 }
 
-func (s service) Get(name string) (*v1Role.Role, error) {
+func (s *service) Get(name string) (*v1Role.Role, error) {
 	db := server.DB()
 	var r v1Role.Role
 	if err := db.One("Name", name, &r); err != nil {
@@ -70,7 +70,7 @@ func (s service) Get(name string) (*v1Role.Role, error) {
 	return &r, nil
 }
 
-func (s service) List() ([]v1Role.Role, error) {
+func (s *service) List() ([]v1Role.Role, error) {
 	db := server.DB()
 	rs := make([]v1Role.Role, 0)
 	if err := db.All(&rs); err != nil {
@@ -79,7 +79,7 @@ func (s service) List() ([]v1Role.Role, error) {
 	return rs, nil
 }
 
-func (s service) Delete(name string) error {
+func (s *service) Delete(name string) error {
 	db := server.DB()
 	item, err := s.Get(name)
 	if err != nil {
@@ -91,7 +91,7 @@ func (s service) Delete(name string) error {
 	return db.DeleteStruct(item)
 }
 
-func (s service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error) {
+func (s *service) Search(num, size int, conditions pkgV1.Conditions) ([]v1Role.Role, int, error) {
 	db := server.DB()
 	var ms []q.Matcher
 	for key := range conditions {
