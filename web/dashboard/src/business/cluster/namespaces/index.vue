@@ -56,6 +56,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
+import {downloadYaml} from "@/utils/actions"
 
 export default {
   name: "NamespaceList",
@@ -81,6 +82,13 @@ export default {
               name: "NamespaceEdit",
               params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
             })
+          }
+        },
+        {
+          label: this.$t("commons.button.download_yaml"),
+          icon: "el-icon-download",
+          click: (row) => {
+            downloadYaml(row.metadata.name+".yml",row)
           }
         },
         {

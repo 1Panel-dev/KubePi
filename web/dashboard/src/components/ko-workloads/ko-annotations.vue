@@ -75,7 +75,7 @@ export default {
     },
   },
   mounted() {
-    if (this.annotationsParentObj.annotations) {
+    if (this.annotationsParentObj&&this.annotationsParentObj.annotations) {
       for (const key in this.annotationsParentObj.annotations) {
         if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj.annotations, key)) {
           this.annotations.push({
