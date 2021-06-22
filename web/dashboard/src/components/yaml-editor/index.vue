@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="yaml-editor">
-      <codemirror v-model="content" :options="options"></codemirror>
+      <codemirror ref="editor" v-model="content" :options="options"></codemirror>
     </div>
   </div>
 </template>
@@ -20,6 +20,8 @@ import 'codemirror/addon/fold/foldgutter'
 import 'codemirror/addon/fold/brace-fold'
 import 'codemirror/addon/fold/comment-fold'
 import 'codemirror/addon/fold/indent-fold'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/search/search'
 import "js-yaml"
 
 window.jsyaml = require('js-yaml')
@@ -47,7 +49,12 @@ export default {
   mounted () {
     if (this.value !== undefined) {
       let yaml = require("js-yaml")
-      this.options.value = yaml.dump(this.value)
+      this.$refs.editor.codemirror.setValue(yaml.dump(this.value))
+      //折叠一些无用的key
+      const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
+      if (cursor.findNext()){
+        this.$refs.editor.codemirror.foldCode(cursor.from())
+      }
     }
   },
   methods: {
