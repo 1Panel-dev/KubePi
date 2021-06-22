@@ -24,7 +24,8 @@ const message = {
       add: "增加",
       edit: "编辑",
       edit_yaml: "编辑 YAML",
-      search: "搜索"
+      search: "搜索",
+      upload: "上传"
     },
     table: {
       name: "名称",
@@ -79,7 +80,7 @@ const message = {
       basic: "基本信息",
       expand:"展开",
       pack_up: "收起",
-      system: "系统信息"
+      system: "系统信息",
     },
     dashboard: {
       dashboard: "概览"

@@ -14,7 +14,7 @@ export function listEvents (cluster_name, limit, continueToken, search) {
     url += "&continue=" + continueToken
   }
   if (search && search !== "") {
-    url += "&fieldSelector=reason=" + search
+    url += "&fieldSelector=metadata.namespace=" + search
   }
   return get(url)
 }
