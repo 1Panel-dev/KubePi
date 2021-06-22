@@ -25,8 +25,9 @@ const message = {
       edit: "编辑",
       edit_yaml: "编辑 YAML",
       search: "搜索",
-      upload: "从 Yaml 文件读取",
-      view_yaml: "查看 YAML"
+      upload: "从 YAML 文件读取",
+      view_yaml: "查看 YAML",
+      download_yaml: "下载 YAML"
     },
     table: {
       name: "名称",
