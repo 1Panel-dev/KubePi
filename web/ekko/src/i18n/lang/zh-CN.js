@@ -22,7 +22,8 @@ const message = {
             edit_yaml: "YAML",
             back_form: "返回表单",
             add: "增加",
-            edit: "编辑"
+            edit: "编辑",
+            all_select: "全选"
         },
         table: {
             name: "名称",
@@ -126,14 +127,22 @@ const message = {
             base_on_exists_role: "基于已有角色",
             permission_setting: "权限设置",
             password: "密码",
-            confirm_password: "确认密码"
+            confirm_password: "确认密码",
+            resource_name: "资源名称"
+
         }
     },
+}
+
+
+const raw = {
+    _administrator: "超级管理员"
 }
 
 
 export default {
     ...el,
     ...fu,
-    ...message
+    ...message,
+    ...raw
 }

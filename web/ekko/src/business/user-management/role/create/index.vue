@@ -9,6 +9,11 @@
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
+
+                        <el-form-item :label="$t('commons.table.description')" prop="description">
+                            <el-input v-model="form.description"></el-input>
+                        </el-form-item>
+
                         <el-form-item>
                             <el-checkbox v-model="useTemplate">{{$t('business.user.base_on_exists_role')}}
                             </el-checkbox>
@@ -51,6 +56,7 @@
                 useTemplate: false,
                 form: {
                     name: "",
+                    description: "",
                     template: "",
                 },
             }
@@ -61,7 +67,8 @@
                     "apiVersion": "v1",
                     "kind": "Role",
                     "templateRef": this.form.template,
-                    "name": this.form.name
+                    "name": this.form.name,
+                    "description": this.form.description
                 }
                 createRole(req).then(() => {
                     this.$message({
@@ -78,7 +85,6 @@
         created() {
             listRoles().then(data => {
                 this.roles = data.data
-                console.log(this.roles)
             })
         }
     }
