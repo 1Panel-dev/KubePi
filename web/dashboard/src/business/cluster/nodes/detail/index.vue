@@ -270,7 +270,7 @@
       </el-row>
     </div>
     <div v-if="yamlShow&&!loading">
-      <yaml-editor :value="yaml"></yaml-editor>
+      <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
     </div>
   </layout-content>
 </template>
