@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"encoding/pem"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
@@ -53,7 +54,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			TLSClientConfig: rest.TLSClientConfig{
 				Insecure: true,
 				CertData: binding.Certificate,
-				KeyData:  c.PrivateKey,
+				KeyData:  pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey}),
 			},
 		}
 		apiUrl, err := url.Parse(c.Spec.Connect.Forward.ApiServer)
