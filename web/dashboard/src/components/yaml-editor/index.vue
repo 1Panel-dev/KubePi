@@ -3,9 +3,11 @@
     <div class="yaml-editor">
       <codemirror ref="editor" v-model="content" :options="options"></codemirror>
     </div>
-    <el-upload class="upload" :before-upload="readFile" action="" >
-      <el-button>{{ $t("commons.button.upload") }}</el-button>
-    </el-upload>
+    <div class="upload" v-if="!readOnly"  >
+      <el-upload  :before-upload="readFile" action="" >
+        <el-button>{{ $t("commons.button.upload") }}</el-button>
+      </el-upload>
+    </div>
   </div>
 </template>
 
@@ -32,7 +34,9 @@ export default {
   props: {
     value: {
       type: Object,
-      default: {}
+      default: function () {
+        return {}
+      }
     },
     readOnly: {
       type: Boolean,
