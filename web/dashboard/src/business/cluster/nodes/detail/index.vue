@@ -288,7 +288,10 @@ export default {
   props: {
     name: String,
     cluster: String,
-    yamlShow: false
+    yamlShow: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

@@ -3,9 +3,11 @@
     <div class="yaml-editor">
       <codemirror ref="editor" v-model="content" :options="options"></codemirror>
     </div>
+    <el-upload class="upload" :before-upload="readFile" action="" >
+      <el-button>{{ $t("commons.button.upload") }}</el-button>
+    </el-upload>
   </div>
 </template>
-
 
 <script>
 import "codemirror/addon/lint/lint.css"
@@ -50,7 +52,8 @@ export default {
         gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
         lint: true
       },
-      content: ""
+      content: "",
+      file: File
     }
   },
   watch: {},
@@ -70,6 +73,17 @@ export default {
     getValue () {
       let yaml = require("js-yaml")
       return yaml.load(this.content)
+    },
+    readFile (file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onerror = e => {
+        console.log("error" + e)
+      }
+      reader.onload = () => {
+        this.$refs.editor.codemirror.setValue(reader.result)
+      }
+      return false
     }
   },
 }
@@ -88,5 +102,11 @@ export default {
 
     .yaml-editor >>> .CodeMirror-scroll {
         min-height: 600px;
+    }
+
+    .upload {
+        display: inline-block;
+        float: left;
+        margin-top: 10px;
     }
 </style>
