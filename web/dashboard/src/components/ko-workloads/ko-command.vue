@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column width="120px">
         <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
+          <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,7 +78,7 @@
       </el-table-column>
       <el-table-column width="120px">
         <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 20px" @click="handleResourceDelete(row)">REMOVE</el-button>
+          <el-button type="text" style="font-size: 10px" @click="handleResourceDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -300,6 +300,8 @@ export default {
             this.form.env.push(en)
           }
         }
+      }
+      if (this.commandParentObj.envFrom) {
         for (const en of this.commandParentObj.envFrom) {
           if (en.valueFrom) {
             if (en.valueFrom.secretRef) {

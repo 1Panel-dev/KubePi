@@ -75,14 +75,16 @@ export default {
     },
   },
   mounted() {
-    if (this.annotationsParentObj.annotations) {
-      for (const key in this.annotationsParentObj.annotations) {
-        if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj.annotations, key)) {
-          this.annotations.push({
-            index: Math.random(),
-            key: key,
-            value: this.annotationsParentObj.annotations[key],
-          })
+    if (this.annotationsParentObj) {
+      if (this.annotationsParentObj.annotations) {
+        for (const key in this.annotationsParentObj.annotations) {
+          if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj.annotations, key)) {
+            this.annotations.push({
+              index: Math.random(),
+              key: key,
+              value: this.annotationsParentObj.annotations[key],
+            })
+          }
         }
       }
     }

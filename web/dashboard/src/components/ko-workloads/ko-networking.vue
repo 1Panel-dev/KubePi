@@ -28,7 +28,7 @@
           </el-table-column>
           <el-table-column width="120px">
             <template v-slot:default="{row}">
-              <el-button type="text" style="font-size: 20px" @click="handleNameserversDelete(row)">REMOVE</el-button>
+              <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row)">{{ $t("commons.button.delete") }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -43,7 +43,7 @@
           </el-table-column>
           <el-table-column width="120px">
             <template v-slot:default="{row}">
-              <el-button type="text" style="font-size: 20px" @click="handleSearchesDelete(row)">REMOVE</el-button>
+              <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row)">{{ $t("commons.button.delete") }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -72,7 +72,7 @@
         </el-table-column>
         <el-table-column width="120px">
           <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 20px" @click="handleOptionsDelete(row)">REMOVE</el-button>
+            <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,7 +100,7 @@
         </el-table-column>
         <el-table-column width="120px">
           <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 20px" @click="handleAliasDelete(row)">REMOVE</el-button>
+            <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -244,39 +244,41 @@ export default {
     },
   },
   mounted() {
-    if (this.networkingParentObj.subdomain) {
-      this.form.subdomain = this.networkingParentObj.subdomain
-    }
-    if (this.networkingParentObj.dnsPolicy) {
-      this.form.dnsPolicy = this.networkingParentObj.dnsPolicy
-    }
-    if (this.networkingParentObj.hostname) {
-      this.hostname = this.networkingParentObj.hostname
-    }
-    if (this.networkingParentObj.hostNetwork) {
-      this.hostNetwork = true
-    }
-    if (this.networkingParentObj.hostAliases) {
-      for (const item of this.networkingParentObj.hostAliases) {
-        this.form.hostAliases.push({
-          ip: item.ip,
-          hostnames: item.hostnames.join(","),
-        })
+    if (this.networkingParentObj) {
+      if (this.networkingParentObj.subdomain) {
+        this.form.subdomain = this.networkingParentObj.subdomain
       }
-    }
-    if (this.networkingParentObj.dnsConfig) {
-      if (this.networkingParentObj.dnsConfig.nameservers) {
-        for (const item of this.networkingParentObj.dnsConfig.nameservers) {
-          this.form.dnsConfig.nameservers.push({ value: item })
+      if (this.networkingParentObj.dnsPolicy) {
+        this.form.dnsPolicy = this.networkingParentObj.dnsPolicy
+      }
+      if (this.networkingParentObj.hostname) {
+        this.hostname = this.networkingParentObj.hostname
+      }
+      if (this.networkingParentObj.hostNetwork) {
+        this.hostNetwork = true
+      }
+      if (this.networkingParentObj.hostAliases) {
+        for (const item of this.networkingParentObj.hostAliases) {
+          this.form.hostAliases.push({
+            ip: item.ip,
+            hostnames: item.hostnames.join(","),
+          })
         }
       }
-      if (this.networkingParentObj.dnsConfig.searches) {
-        for (const item of this.networkingParentObj.dnsConfig.searches) {
-          this.form.dnsConfig.searches.push({ value: item })
+      if (this.networkingParentObj.dnsConfig) {
+        if (this.networkingParentObj.dnsConfig.nameservers) {
+          for (const item of this.networkingParentObj.dnsConfig.nameservers) {
+            this.form.dnsConfig.nameservers.push({ value: item })
+          }
         }
-      }
-      if (this.networkingParentObj.dnsConfig.options) {
-        this.form.dnsConfig.options = this.networkingParentObj.dnsConfig.option
+        if (this.networkingParentObj.dnsConfig.searches) {
+          for (const item of this.networkingParentObj.dnsConfig.searches) {
+            this.form.dnsConfig.searches.push({ value: item })
+          }
+        }
+        if (this.networkingParentObj.dnsConfig.options) {
+          this.form.dnsConfig.options = this.networkingParentObj.dnsConfig.option
+        }
       }
     }
   },

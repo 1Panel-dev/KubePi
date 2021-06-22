@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Deployment - Create">
+  <layout-content :header="'Deployment - ' + operation + ' - With - Form'">
     <el-row :gutter="20">
       <el-col :span="12">
         <el-row>
@@ -17,7 +17,7 @@
     </el-row>
     <el-row :gutter="20" style="margin-top: 30px">
       <el-col :span="12">
-        <ko-form-item labelName="Container Image" clearable itemType="input" v-model="form.spec.template.spec.containers.image" />
+        <ko-form-item labelName="Container Image" clearable itemType="input" v-model="form.spec.template.spec.containers[0].image" />
       </el-col>
       <el-col :span="12">
         <ko-form-item labelName="Image Pull Policy" clearable itemType="select" v-model="form.spec.template.spec.containers.imagePullPolicy" :selections="image_pull_policy_list" />
@@ -26,36 +26,36 @@
 
     <el-tabs style="margin-top: 50px" v-model="activeName">
       <el-tab-pane label="Ports" name="Ports">
-        <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers" />
+        <ko-ports ref="ko_ports" :key="isRefresh" :portParentObj="form.spec.template.spec.containers[0]" />
       </el-tab-pane>
       <el-tab-pane label="Command" name="Command">
-        <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers" />
+        <ko-command ref="ko_command" :key="isRefresh" :commandParentObj="form.spec.template.spec.containers[0]" />
       </el-tab-pane>
       <el-tab-pane label="Resources" name="Resources">
-        <ko-resources ref="ko_resource" :resourceParentObj="form.spec.template.spec.containers" />
+        <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[0]" />
       </el-tab-pane>
-      <el-tab-pane label="Health Check" name="Health Check">
-        <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
-        <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Liveness Check" health_check_helper="Containers will be restarted when this check is failing. Not recommended for most uses." />
-        <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers" style="margin-top=30px" health_check_type="Startup Check" health_check_helper="Containers will wait until this check succeeds before attempting other health checks." />
+      <el-tab-pane label="Health Check" :key="isRefresh" name="Health Check">
+        <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[0]" style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
+        <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[0]" style="margin-top=30px" health_check_type="Liveness Check" health_check_helper="Containers will be restarted when this check is failing. Not recommended for most uses." />
+        <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[0]" style="margin-top=30px" health_check_type="Startup Check" health_check_helper="Containers will wait until this check succeeds before attempting other health checks." />
       </el-tab-pane>
       <el-tab-pane label="Security Context" name="Security Context">
-        <ko-security-context ref="ko_security_context" :securityContextParentObj="form.spec.template.spec.containers" />
+        <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="form.spec.template.spec.containers[0]" />
       </el-tab-pane>
       <el-tab-pane label="Networking" name="Networking">
-        <ko-networking ref="ko_networking" :networkingParentObj="form.spec.template.spec" />
+        <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.template.spec" />
       </el-tab-pane>
       <el-tab-pane label="Node Scheduling" name="Node Scheduling">
-        <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec.containers" />
+        <ko-node-scheduling ref="ko_node_scheduling" :key="isRefresh" :nodeSchedulingParentObj="form.spec.template.spec" />
       </el-tab-pane>
       <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-        <ko-upgrade-policy ref="ko_upgrade_policy" :upgradePolicyParentObj="form.spec.template.spec.containers" />
+        <ko-upgrade-policy ref="ko_upgrade_policy" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
       </el-tab-pane>
       <el-tab-pane label="Labels" name="Labels">
-        <ko-labels ref="ko_labels" :labelParentObj="form.metadata" />
+        <ko-labels ref="ko_labels" :key="isRefresh" :labelParentObj="form.spec.template.metadata" />
       </el-tab-pane>
       <el-tab-pane label="Annotations" name="Annotations">
-        <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" />
+        <ko-annotations ref="ko_annotations" :key="isRefresh" :annotationsParentObj="form.spec.template.metadata" />
       </el-tab-pane>
     </el-tabs>
     <div class="grid-content bg-purple-light" v-if="showYaml">
@@ -89,6 +89,7 @@ import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 
 import YamlEditor from "@/components/yaml-editor"
+import { getDeploymentByName } from "@/api/workloads"
 
 export default {
   name: "DeploymentForm",
@@ -97,6 +98,8 @@ export default {
     return {
       showYaml: false,
       yaml: "",
+      isRefresh: false,
+      operation: "",
       loading: false,
       namespace_list: [
         { label: "kube-system", value: "kube-system" },
@@ -127,11 +130,11 @@ export default {
               },
             },
             spec: {
-              containers: {
-                name: "container-name",
-                image: "nginx/xxx",
-                imagePullPolicy: "Always",
-              },
+              containers: [{
+                name: "",
+                image: "",
+                imagePullPolicy: "",
+              }],
               restartPolicy: "Always",
             },
           },
@@ -141,6 +144,13 @@ export default {
     }
   },
   methods: {
+    search() {
+      getDeploymentByName(this.$route.params.cluster, this.$route.params.namespace, this.$route.params.name)
+        .then((res) => {
+          this.form = res
+          this.isRefresh = !this.isRefresh
+        })
+    },
     transformYaml() {
       // ports
       this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers)
@@ -157,13 +167,13 @@ export default {
       // networking
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
       // node scheduling
-      this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec)
       // upgrade policy
-      this.$refs.ko_upgrade_policy.transformation(this.form.spec.template.spec.containers)
+      this.$refs.ko_upgrade_policy.transformation(this.form.spec)
       // labels
-      this.$refs.ko_labels.transformation(this.form.metadata)
+      this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
       // annotations
-      this.$refs.ko_annotations.transformation(this.form.metadata)
+      this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
       return this.form
     },
     onCancel() {
@@ -189,6 +199,14 @@ export default {
     backToForm() {
       this.showYaml = false
     },
+  },
+  mounted() {
+    if (this.$route.params.name) {
+      this.search()
+      this.operation = "Edit"
+    } else {
+      this.operation = "Create"
+    }
   },
 }
 </script>
