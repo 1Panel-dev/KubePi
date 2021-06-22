@@ -123,7 +123,9 @@ const message = {
       message: "信息",
       lastHeartbeatTime: "最后检测时间",
       lastTransitionTime:  "最后迁移时间",
-      size: "大小"
+      size: "大小",
+      resource: "资源信息",
+      address: "地址"
     },
     namespace: {
       namespace: "命名空间",

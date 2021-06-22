@@ -246,7 +246,22 @@
               </tr>
             </table>
           </el-tab-pane>
-          <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+          <el-tab-pane :label="$t('business.pod.resource')">
+            <table style="width: 100%" class="myTable">
+              <tr>
+                <td>Pod CIDR</td>
+                <td>{{item.spec.podCIDR}}</td>
+              </tr>
+              <tr>
+                <td>{{$t('business.pod.address')}}</td>
+                <td>
+                  <span v-for="(address,index) in item.status.addresses" v-bind:key="index">
+                      {{address.type}} : {{address.address}}
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </el-tab-pane>
         </el-tabs>
       </el-col>
     </el-row>
@@ -273,7 +288,8 @@ export default {
         metadata: {},
         status: {
           nodeInfo: {}
-        }
+        },
+        spec: {}
       },
       showItem: false,
       pods: [],
