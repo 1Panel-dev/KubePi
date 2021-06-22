@@ -32,6 +32,7 @@
             </div>
         </template>
       </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </layout-content>
 </template>
@@ -40,10 +41,11 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNodes} from "@/api/nodes"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NodeList",
-  components: { ComplexTable, LayoutContent },
+  components: { KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       data: [],
@@ -54,6 +56,18 @@ export default {
       loading: false,
       searchName: "",
       clusterName: "test1",
+      buttons: [
+        {
+          label: this.$t("commons.button.view_yaml"),
+          icon: "el-icon-view",
+          click: (row) => {
+            this.$router.push({
+              name: "NodeDetail",
+              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+            })
+          }
+        },
+      ]
     }
   },
   methods: {
