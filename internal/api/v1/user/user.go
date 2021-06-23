@@ -131,7 +131,7 @@ func (h *Handler) GetUser() iris.Handler {
 			return
 		}
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: u.Name}, common.DBOptions{})
-		if err != nil {
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -181,7 +181,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 			return
 		}
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: userName}, common.DBOptions{})
-		if err != nil {
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
