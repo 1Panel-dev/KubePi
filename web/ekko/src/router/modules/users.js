@@ -5,6 +5,10 @@ const UserManagement = {
     sort: 2,
     component: Layout,
     name: "UserManagement",
+    requirePermission: {
+        resource: "users",
+        verb: "list"
+    },
     meta: {
         title: "business.user.user_management",
         icon: "el-icon-user",
@@ -15,6 +19,10 @@ const UserManagement = {
             path: "users",
             component: () => import("@/business/user-management/user"),
             name: "Users",
+            requirePermission: {
+                resource: "users",
+                verb: "list"
+            },
             meta: {
                 title: "business.user.user",
             }
@@ -42,6 +50,10 @@ const UserManagement = {
             path: "groups",
             component: () => import("@/business/user-management/group"),
             name: "Groups",
+            requirePermission: {
+                resource: "groups",
+                verb: "list"
+            },
             meta: {
                 title: "business.user.user_group",
                 global: true
@@ -80,6 +92,10 @@ const UserManagement = {
             path: "roles",
             component: () => import("@/business/user-management/role"),
             name: "Roles",
+            requirePermission: {
+                resource: "roles",
+                verb: "list"
+            },
             meta: {
                 title: "business.user.role",
                 global: true

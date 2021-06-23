@@ -33,12 +33,6 @@ const checkAuth = response => {
     }
 }
 
-const checkPermission = response => {
-    // 请根据实际需求修改
-    if (response.status === 403) {
-        location.href = "/403"
-    }
-}
 
 // 请根据实际需求修改
 instance.interceptors.response.use(response => {
@@ -48,10 +42,8 @@ instance.interceptors.response.use(response => {
     let msg
     if (error.response) {
         checkAuth(error.response)
-        checkPermission(error.response)
         msg = error.response.data.message || error.response.data
     } else {
-        console.log("error: " + error)
         msg = error.message
     }
     $error(msg)

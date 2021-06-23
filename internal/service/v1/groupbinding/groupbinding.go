@@ -13,6 +13,7 @@ type Service interface {
 	Create(binding *v1Group.Binding, options common.DBOptions) error
 	Delete(groupName, userName string, options common.DBOptions) error
 	ListByGroupName(groupName string, options common.DBOptions) ([]v1Group.Binding, error)
+	ListByUserName(userName string, options common.DBOptions) ([]v1Group.Binding, error)
 }
 
 func NewService() Service {
@@ -23,6 +24,15 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (s *service) ListByUserName(userName string, options common.DBOptions) ([]v1Group.Binding, error) {
+	db := s.GetDB(options)
+	bindings := make([]v1Group.Binding, 0)
+	if err := db.Find("UserRef", userName, &bindings); err != nil {
+		return bindings, err
+	}
+	return bindings, nil
 }
 
 func (s *service) Create(binding *v1Group.Binding, options common.DBOptions) error {

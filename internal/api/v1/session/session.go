@@ -1,9 +1,17 @@
 package session
 
 import (
+	"errors"
 	"fmt"
+	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
+	"github.com/KubeOperator/ekko/internal/service/v1/role"
+	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
+	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/KubeOperator/ekko/pkg/collectons"
+	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
@@ -11,12 +19,18 @@ import (
 )
 
 type Handler struct {
-	userService user.Service
+	userService         user.Service
+	roleService         role.Service
+	rolebindingService  rolebinding.Service
+	groupbindingService groupbinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		userService: user.NewService(),
+		userService:         user.NewService(),
+		roleService:         role.NewService(),
+		rolebindingService:  rolebinding.NewService(),
+		groupbindingService: groupbinding.NewService(),
 	}
 }
 
@@ -48,16 +62,99 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", "username or password error")
 			return
 		}
+
+		permissions, err := h.aggregateResourcePermissions(loginCredential.Username)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		session := sessions.Get(ctx)
 		profile := UserProfile{
-			Name:     u.Name,
-			NickName: u.Spec.Info.NickName,
-			Email:    u.Spec.Info.Email,
+			Name:                u.Name,
+			NickName:            u.Spec.Info.NickName,
+			Email:               u.Spec.Info.Email,
+			ResourcePermissions: permissions,
 		}
 		session.Set("profile", profile)
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", profile)
 	}
+}
+
+func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string, error) {
+	// 查询user 绑定的role
+	// 查询user 绑定的group
+	// 查询group 绑定的role
+	// 查询 roles 下的资源 进行merge
+
+	userRoleBindings, err := h.rolebindingService.GetRoleBindingBySubject(v1Role.Subject{
+		Kind: "User",
+		Name: name,
+	}, common.DBOptions{})
+	if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		return nil, err
+	}
+	groups, err := h.groupbindingService.ListByUserName(name, common.DBOptions{})
+	if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		return nil, err
+	}
+	var groupRoleBinds []v1Role.Binding
+	for i := range groups {
+		bindings, err := h.rolebindingService.GetRoleBindingBySubject(v1Role.Subject{
+			Kind: "Group",
+			Name: groups[i].GroupRef,
+		}, common.DBOptions{})
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			return nil, err
+		}
+		groupRoleBinds = append(groupRoleBinds, bindings...)
+	}
+	allRoleBindings := append(userRoleBindings, groupRoleBinds...)
+	var roleNames []string
+	for i := range allRoleBindings {
+		roleNames = append(roleNames, allRoleBindings[i].RoleRef)
+	}
+	rs, _, err := h.roleService.Search(0, 0, pkgV1.Conditions{
+		"Name": pkgV1.Condition{
+			Field:    "Name",
+			Operator: "in",
+			Value:    roleNames,
+		},
+	})
+	if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		return nil, err
+	}
+	mapping := map[string]*collectons.StringSet{}
+	var policyRoles []v1Role.PolicyRule
+	//merge permissions
+	for i := range rs {
+		for j := range rs[i].Rules {
+			policyRoles = append(policyRoles, rs[i].Rules[j])
+		}
+	}
+	for i := range policyRoles {
+		for j := range policyRoles[i].Resource {
+			_, ok := mapping[policyRoles[i].Resource[j]]
+			if !ok {
+				mapping[policyRoles[i].Resource[j]] = collectons.NewStringSet()
+			}
+			for k := range policyRoles[i].Verbs {
+				mapping[policyRoles[i].Resource[j]].Add(policyRoles[i].Verbs[k])
+				if policyRoles[i].Verbs[k] == "*" {
+					break
+				}
+			}
+			if policyRoles[i].Resource[j] == "*" {
+				break
+			}
+		}
+	}
+	resourceMapping := map[string][]string{}
+	for key := range mapping {
+		resourceMapping[key] = mapping[key].ToSlice()
+	}
+	return resourceMapping, nil
 }
 
 func (h *Handler) Logout() iris.Handler {
@@ -84,8 +181,22 @@ func (h *Handler) GetProfile() iris.Handler {
 			ctx.Values().Set("message", "no login user")
 			return
 		}
+		p, ok := loginUser.(UserProfile)
+		if !ok {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", "can not parse to session user")
+			return
+		}
+		permissions, err := h.aggregateResourcePermissions(p.Name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		p.ResourcePermissions = permissions
+		session.Set("profile", p)
 		ctx.StatusCode(iris.StatusOK)
-		ctx.Values().Set("data", loginUser)
+		ctx.Values().Set("data", p)
 	}
 }
 

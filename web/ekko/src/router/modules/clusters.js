@@ -5,6 +5,10 @@ const Clusters = {
     sort: 1,
     component: Layout,
     name: "ClusterManagement",
+    requirePermission: {
+        resource: "clusters",
+        verb: "list"
+    },
     meta: {
         title: "business.cluster.list",
         icon: "iconfont iconkubernets",
