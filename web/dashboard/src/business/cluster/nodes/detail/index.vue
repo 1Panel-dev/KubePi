@@ -88,13 +88,15 @@
         <el-col :span="24">
           <br>
           <el-card>
-            <!--          <div slot="header" class="clearfix">-->
-            <!--            <span>{{ $t("business.node.allocation") }}</span>-->
-            <!--          </div>-->
+            <div class="card_title">
+              <h3>{{ $t("business.node.allocation") }}</h3>
+            </div>
             <el-row :gutter="20">
               <div style="text-align: center">
                 <el-col :span="9">
-                  <h4>CPU</h4>
+                  <div>
+                    <span>CPU</span>
+                  </div>
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div>Requests</div>
@@ -117,7 +119,9 @@
               </div>
               <div style="text-align: center">
                 <el-col :span="9">
-                  <h4>Memory</h4>
+                  <div>
+                    <span>Memory</span>
+                  </div>
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div>Requests</div>
@@ -130,6 +134,7 @@
                       <div>Limits</div>
                       <br>
                       <el-progress type="circle"
+
                                    :percentage="memResource.limitsUsage  >= 100 ? 100: memResource.limitsUsage"
                                    :format="memFormat"></el-progress>
                       <br>
@@ -140,7 +145,9 @@
               </div>
               <el-col :span="6">
                 <div style="text-align: center">
-                  <h4>Pods</h4>
+                  <div>
+                    <span>Pods</span>
+                  </div>
                   <el-row :gutter="20">
                     <el-col>
                       <div>Allocation</div>
@@ -393,7 +400,7 @@ export default {
       })
     },
     cpuFormat () {
-      return this.cpuResource.limitsUsage + "%"
+      return this.cpuResource.limitsUsage + "\n %"
     },
     memFormat () {
       return this.memResource.limitsUsage + "%"
