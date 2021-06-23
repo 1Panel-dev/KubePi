@@ -25,7 +25,7 @@ type service struct {
 	common.DefaultDBService
 }
 
-func (s service) GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error) {
+func (s *service) GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error) {
 	db := s.GetDB(options)
 	query := db.Select(q.And(q.Eq("ClusterRef", clusterName), q.Eq("Subject", subject)))
 	var rb v1Cluster.Binding
@@ -35,7 +35,7 @@ func (s service) GetBindingByClusterNameAndSubject(clusterName string, subject v
 	return &rb, nil
 }
 
-func (s service) CreateClusterBinding(binding *v1Cluster.Binding, options common.DBOptions) error {
+func (s *service) CreateClusterBinding(binding *v1Cluster.Binding, options common.DBOptions) error {
 	db := s.GetDB(options)
 	binding.UUID = uuid.New().String()
 	binding.CreateAt = time.Now()
@@ -43,7 +43,7 @@ func (s service) CreateClusterBinding(binding *v1Cluster.Binding, options common
 	return db.Save(binding)
 }
 
-func (s service) GetClusterBindingByClusterName(clusterName string, options common.DBOptions) ([]v1Cluster.Binding, error) {
+func (s *service) GetClusterBindingByClusterName(clusterName string, options common.DBOptions) ([]v1Cluster.Binding, error) {
 	db := s.GetDB(options)
 	query := db.Select(q.Eq("ClusterRef", clusterName))
 	var rbs []v1Cluster.Binding
@@ -53,7 +53,7 @@ func (s service) GetClusterBindingByClusterName(clusterName string, options comm
 	return rbs, nil
 }
 
-func (s service) Delete(name string, options common.DBOptions) error {
+func (s *service) Delete(name string, options common.DBOptions) error {
 	db := s.GetDB(options)
 	var binding v1Cluster.Binding
 	if err := db.One("Name", name, &binding); err != nil {

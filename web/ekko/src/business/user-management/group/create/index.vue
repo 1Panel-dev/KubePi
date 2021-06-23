@@ -1,6 +1,6 @@
 <template>
-    <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Roles' }">
-        <el-row>
+    <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Groups' }">
+        <el-row v-loading="loading">
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
@@ -10,24 +10,17 @@
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
 
-                        <el-form-item :label="$t('commons.table.description')" prop="description">
-                            <el-input v-model="form.description"></el-input>
-                        </el-form-item>
-
-                        <el-form-item>
-                            <el-checkbox v-model="useTemplate">{{$t('business.user.base_on_exists_role')}}
-                            </el-checkbox>
-                        </el-form-item>
-                        <el-form-item prop="template" v-if="useTemplate">
-                            <el-select v-model="form.template" clearable>
+                        <el-form-item :label="$t('business.user.role')" prop="roles">
+                            <el-select v-model="form.roles" multiple placeholder="请选择">
                                 <el-option
-                                        v-for="item in roles"
-                                        :key="item.name"
-                                        :label="item.name"
-                                        :value="item.name">
+                                        v-for="item in roleOptions "
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
+
                         <el-form-item>
                             <div style="float: right">
                                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
@@ -45,19 +38,20 @@
 
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
-    import {listRoles, createRole} from "@/api/roles"
+    import {createGroup} from "@/api/groups"
+    import {listRoles} from "@/api/roles"
+
 
     export default {
-        name: "RoleCreate",
+        name: "GroupCreate",
         components: {LayoutContent},
         data() {
             return {
-                roles: [],
-                useTemplate: false,
+                loading: false,
+                roleOptions: [],
                 form: {
                     name: "",
-                    description: "",
-                    template: "",
+                    roles: [],
                 },
             }
         },
@@ -65,26 +59,32 @@
             onConfirm() {
                 const req = {
                     "apiVersion": "v1",
-                    "kind": "Role",
-                    "templateRef": this.form.template,
+                    "kind": "User",
                     "name": this.form.name,
-                    "description": this.form.description
+                    "roles": this.form.roles,
                 }
-                createRole(req).then(() => {
+                createGroup(req).then(() => {
                     this.$message({
                         type: "success",
                         message: this.$t("commons.msg.create_success")
                     })
-                    this.$router.push({name: "Roles"})
+                    this.$router.push({name: "Groups"})
                 })
             },
             onCancel() {
-                this.$router.push({name: "Roles"})
+                this.$router.push({name: "Groups"})
             },
         },
         created() {
-            listRoles().then(data => {
-                this.roles = data.data
+            this.loading = true
+            listRoles().then(d => {
+                d.data.forEach(r => {
+                    this.roleOptions.push({
+                        label: r.name,
+                        value: r.name,
+                    })
+                })
+                this.loading = false
             })
         }
     }

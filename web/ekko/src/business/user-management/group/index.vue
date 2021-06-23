@@ -4,11 +4,8 @@
                        :pagination-config="paginationConfig">
             <template #header>
                 <el-button-group>
-                    <el-button type="primary" size="small" @click="onImport">
+                    <el-button type="primary" size="small" @click="onCreate">
                         {{ $t("commons.button.create") }}
-                    </el-button>
-                    <el-button type="primary" size="small" :disabled="selects.length===0">
-                        {{ $t("commons.button.delete") }}
                     </el-button>
                 </el-button-group>
             </template>
@@ -18,19 +15,21 @@
                     <el-link>{{ row.name }}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('commons.table.create_time')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     {{ row.createAt }}
                 </template>
             </el-table-column>
+            <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
         </complex-table>
+
     </layout-content>
 </template>
 
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
-    import {searchGroups} from "@/api/groups"
+    import {searchGroups, deleteGroup} from "@/api/groups"
 
 
     export default {
@@ -40,8 +39,25 @@
             return {
                 buttons: [
                     {
+                        label: "binding",
+                        icon: "el-icon-connection",
+                        click: (row) => {
+                            this.onBinding(row.name)
+                        }
+                    },
+                    {
+                        label: this.$t("commons.button.edit"),
+                        icon: "el-icon-edit",
+                        click: (row) => {
+                            this.onEdit(row.name)
+                        }
+                    },
+                    {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
+                        click: (row) => {
+                            this.onDelete(row.name)
+                        }
                     },
                 ],
                 paginationConfig: {
@@ -66,6 +82,30 @@
             }
         },
         methods: {
+            onCreate() {
+                this.$router.push({name: "GroupCreate"})
+            },
+            onEdit(name) {
+                this.$router.push({name: "GroupEdit", params: {name: name}})
+            },
+            onBinding(name) {
+                this.$router.push({name: "GroupBinding", params: {name: name}})
+            },
+            onDelete(name) {
+                this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+                    confirmButtonText: this.$t("commons.button.confirm"),
+                    cancelButtonText: this.$t("commons.button.cancel"),
+                    type: 'warning'
+                }).then(() => {
+                    deleteGroup(name).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: this.$t("commons.msg.delete_success"),
+                        });
+                        this.search()
+                    })
+                });
+            },
             search(condition) {
                 this.loading = true
                 const {currentPage, pageSize} = this.paginationConfig

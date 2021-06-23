@@ -32,8 +32,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name: "administrator",
-				UUID: uuid.New().String(),
+				Name:     "administrator",
+				Description: "_administrator",
+				UUID:     uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
 				{

@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column width="120px">
         <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
+          <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,8 +78,10 @@ export default {
     },
   },
   mounted() {
-    if (this.portParentObj.ports) {
-      this.ports = this.portParentObj.ports
+    if (this.portParentObj) {
+      if (this.portParentObj.ports) {
+        this.ports = this.portParentObj.ports
+      }
     }
   },
 }

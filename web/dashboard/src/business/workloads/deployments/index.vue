@@ -1,7 +1,7 @@
 <template>
   <layout-content header="Deployments">
-    <el-button @click="handleFormCreate">Form创建</el-button>
     <el-button @click="handleYamlCreate">Yaml创建</el-button>
+    <el-button @click="handleFormCreate">Form创建</el-button>
     <el-table :data="data" v-loading="loading">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable label="Name" prop="name" />

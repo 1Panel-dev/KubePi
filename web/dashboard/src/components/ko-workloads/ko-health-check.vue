@@ -62,7 +62,7 @@
             </el-table-column>
             <el-table-column width="120px">
               <template v-slot:default="{row}">
-                <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
+                <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -160,8 +160,18 @@ export default {
       }
       switch (this.check_type) {
         case "httpGet":
+          childForm.httpGet = {}
+          childForm.httpGet.scheme = "HTTP"
+          if (this.form.httpGet.path) {
+            childForm.httpGet.path = this.form.httpGet.path
+          }
+          if (this.form.httpGet.port) {
+            childForm.httpGet.port = this.form.httpGet.port
+          }
+          break
         case "httpsGet":
           childForm.httpGet = {}
+          childForm.httpGet.scheme = "HTTPS"
           if (this.form.httpGet.path) {
             childForm.httpGet.path = this.form.httpGet.path
           }
@@ -200,7 +210,66 @@ export default {
     },
   },
   mounted() {
-    //
+    if (this.healthCheckParentObj) {
+      let prodeForm = {}
+      switch (this.health_check_type) {
+        case "Readiness Check":
+          prodeForm = this.healthCheckParentObj.readinessProbe
+          break
+        case "Liveness Check":
+          prodeForm = this.healthCheckParentObj.livenessProbe
+          break
+        case "Startup Check":
+          prodeForm = this.healthCheckParentObj.startupProbe
+          break
+      }
+      if (prodeForm) {
+        if (prodeForm.httpGet) {
+          if (prodeForm.httpGet.scheme) {
+            if (prodeForm.httpGet.scheme == "HTTP") {
+              this.check_type = "httpGet"
+            } else {
+              this.check_type = "httpsGet"
+            }
+          } else {
+            this.check_type = "httpGet"
+          }
+          if (prodeForm.httpGet.port) {
+            this.form.httpGet.port = prodeForm.httpGet.port
+          }
+          if (prodeForm.httpGet.path) {
+            this.form.httpGet.path = prodeForm.httpGet.path
+          }
+        }
+        if (prodeForm.tcpSocket) {
+          this.check_type = "tcpSocket"
+          if (prodeForm.tcpSocket.port) {
+            this.form.tcpSocket.port = prodeForm.tcpSocket.port
+          }
+        }
+        if (prodeForm.exec) {
+          this.check_type = "exec"
+          if (prodeForm.exec.command) {
+            this.form.exec.command = prodeForm.exec.command
+          }
+        }
+        if (prodeForm.initialDelaySeconds) {
+          this.form.initialDelaySeconds = prodeForm.initialDelaySeconds
+        }
+        if (prodeForm.timeoutSeconds) {
+          this.form.timeoutSeconds = prodeForm.timeoutSeconds
+        }
+        if (prodeForm.periodSeconds) {
+          this.form.periodSeconds = prodeForm.periodSeconds
+        }
+        if (prodeForm.successThreshold) {
+          this.form.successThreshold = prodeForm.successThreshold
+        }
+        if (prodeForm.failureThreshold) {
+          this.form.failureThreshold = prodeForm.failureThreshold
+        }
+      }
+    }
   },
 }
 </script>

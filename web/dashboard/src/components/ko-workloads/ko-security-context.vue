@@ -10,7 +10,7 @@
     </el-row>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
-        <ko-form-item labelName="Run as Non-Root" clearable itemType="radio" v-model="form.runAsRoot" :radios="non_root_list" />
+        <ko-form-item labelName="Run as Non-Root" clearable itemType="radio" v-model="form.runAsNonRoot" :radios="non_root_list" />
       </el-col>
       <el-col :span="12">
         <ko-form-item labelName="Read-Only Root Filesystem" clearable itemType="radio" v-model="form.readOnlyRootFilesystem" :radios="ready_only_root_files_list" />
@@ -68,7 +68,7 @@ export default {
       form: {
         privileged: "",
         allowPrivilegeEscalation: "",
-        runAsRoot: "",
+        runAsNonRoot: "",
         readOnlyRootFilesystem: false,
         runAsUser: "",
         capabilities: {
@@ -89,8 +89,8 @@ export default {
       if (this.form.allowPrivilegeEscalation) {
         parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation
       }
-      if (this.form.runAsRoot) {
-        parentFrom.securityContext.runAsRoot = this.form.runAsRoot
+      if (this.form.runAsNonRoot) {
+        parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot
       }
       if (this.form.readOnlyRootFilesystem) {
         parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem
@@ -110,28 +110,30 @@ export default {
     },
   },
   mounted() {
-    if (this.securityContextParentObj.securityContext) {
-      if (this.securityContextParentObj.securityContext.privileged) {
-        this.form.privileged = this.securityContextParentObj.privileged
-      }
-      if (this.securityContextParentObj.securityContext.allowPrivilegeEscalation) {
-        this.form.allowPrivilegeEscalation = this.securityContextParentObj.allowPrivilegeEscalation
-      }
-      if (this.securityContextParentObj.securityContext.runAsRoot) {
-        this.form.runAsRoot = this.securityContextParentObj.runAsRoot
-      }
-      if (this.securityContextParentObj.securityContext.readOnlyRootFilesystem) {
-        this.form.readOnlyRootFilesystem = this.securityContextParentObj.readOnlyRootFilesystem
-      }
-      if (this.securityContextParentObj.securityContext.runAsUser) {
-        this.runAsUser = this.securityContextParentObj.runAsUser
-      }
-      if (this.securityContextParentObj.securityContext.capabilities) {
-        if (this.securityContextParentObj.capabilities.add) {
-          this.form.capabilities.add = this.securityContextParentObj.capabilities.add
+    if (this.securityContextParentObj) {
+      if (this.securityContextParentObj.securityContext) {
+        if (this.securityContextParentObj.securityContext.privileged !== undefined) {
+          this.form.privileged = this.securityContextParentObj.securityContext.privileged
         }
-        if (this.securityContextParentObj.securityContext.capabilities.drop) {
-          this.form.capabilities.drop = this.securityContextParentObj.capabilities.drop
+        if (this.securityContextParentObj.securityContext.allowPrivilegeEscalation !== undefined) {
+          this.form.allowPrivilegeEscalation = this.securityContextParentObj.securityContext.allowPrivilegeEscalation
+        }
+        if (this.securityContextParentObj.securityContext.runAsNonRoot !== undefined) {
+          this.form.runAsNonRoot = this.securityContextParentObj.securityContext.runAsNonRoot
+        }
+        if (this.securityContextParentObj.securityContext.readOnlyRootFilesystem !== undefined) {
+          this.form.readOnlyRootFilesystem = this.securityContextParentObj.securityContext.readOnlyRootFilesystem
+        }
+        if (this.securityContextParentObj.securityContext.runAsUser) {
+          this.form.runAsUser = this.securityContextParentObj.securityContext.runAsUser
+        }
+        if (this.securityContextParentObj.securityContext.capabilities) {
+          if (this.securityContextParentObj.securityContext.capabilities.add) {
+            this.form.capabilities.add = this.securityContextParentObj.securityContext.capabilities.add
+          }
+          if (this.securityContextParentObj.securityContext.capabilities.drop) {
+            this.form.capabilities.drop = this.securityContextParentObj.securityContext.capabilities.drop
+          }
         }
       }
     }
