@@ -1,9 +1,12 @@
-
 import {get} from "@/plugins/request"
 
 
 const configMapUrl = (cluster_name) => {
   return `/proxy/${cluster_name}/api/v1/configmaps`
+}
+
+const namespaceMapUrl = (cluster_name, namespace) => {
+  return `/proxy/${cluster_name}/api/v1/namespaces/${namespace}/configmaps`
 }
 
 export function listConfigMaps (cluster_name, limit, continueToken, search) {
@@ -16,7 +19,11 @@ export function listConfigMaps (cluster_name, limit, continueToken, search) {
     param.continue = continueToken
   }
   if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace="+search
+    param.fieldSelector = "metadata.namespace=" + search
   }
-  return get(url,param)
+  return get(url, param)
+}
+
+export function getConfigMap (cluster_name, namespace, name) {
+  return get(`${namespaceMapUrl(cluster_name, namespace)}/${name}`)
 }

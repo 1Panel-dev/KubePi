@@ -1,7 +1,6 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{ name: 'Nodes' }" v-loading="loading">
     <div v-if="!yamlShow">
-
       <el-row :gutter="20">
         <el-col :span="15">
           <el-card>

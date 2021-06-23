@@ -144,7 +144,8 @@ const message = {
       storage: "存储"
     },
     configuration: {
-      configuration: "配置"
+      configuration: "配置",
+      data: "数据"
     },
     access_control: {
       access_control: "访问控制"

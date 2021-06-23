@@ -13,9 +13,39 @@ const Configuration = {
     {
       path: "/configmaps",
       component: () => import("@/business/configuration/config-maps"),
-      name: "Configmaps",
+      name: "ConfigMaps",
       meta: {
         title: "Config Maps",
+      }
+    },
+    {
+      path: "/configmaps/:namespace/create",
+      component: () => import("@/business/configuration/config-maps/create"),
+      name: "ConfigMapCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/configmaps"
+      }
+    },
+    {
+      path: "/configmaps/:namespace/:name",
+      component: () => import("@/business/configuration/config-maps/detail"),
+      name: "ConfigMapDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/configmaps"
+      }
+    },
+    {
+      path: "/configmaps/:namespace/:name/edit",
+      component: () => import("@/business/configuration/config-maps/edit"),
+      name: "ConfigMapEdit",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/configmaps"
       }
     },
     {
