@@ -44,7 +44,7 @@
                 </el-table-column>
                 <el-table-column width="120px">
                   <template v-slot:default="{row}">
-                    <el-button type="text" style="font-size: 20px" @click="handleRuleRequiredDelete(nodeSelectorTerms[index], row)">REMOVE</el-button>
+                    <el-button type="text" style="font-size: 10px" @click="handleRuleRequiredDelete(nodeSelectorTerms[index], row)">{{ $t("commons.button.delete") }}</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -56,16 +56,16 @@
           <div style="margin-top: 10px">
             <el-button @click="handleSelectorPreferAdd()">Add Node Selector</el-button>
           </div>
-          <div v-for="(item, index) in preference" :key="index">
+          <div v-for="(item, index) in preferenceInfos" :key="index">
             <div style="border: solid 1px rgb(228, 204, 204); border-radius: 5px;padding: 5px; margin-top: 5px;">
               <div>
-                <el-button type="text" style="float: right;margin-right: 20px; font-size: 16px" @click="handleSelectorPreferClose(preference[index])">X</el-button>
-                <el-button @click="handleRulePreferAdd(preference[index])">Add</el-button>
+                <el-button type="text" style="float: right;margin-right: 20px; font-size: 16px" @click="handleSelectorPreferClose(preferenceInfos[index])">X</el-button>
+                <el-button @click="handleRulePreferAdd(preferenceInfos[index])">Add</el-button>
               </div>
-              <el-table :data="item.matchExpressions">
+              <el-table :data="item.preference.matchExpressions">
                 <el-table-column min-width="40" label="Key">
                   <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.name" />
+                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
                   </template>
                 </el-table-column>
                 <el-table-column min-width="35" label="Operator">
@@ -81,7 +81,7 @@
                 </el-table-column>
                 <el-table-column width="120px">
                   <template v-slot:default="{row}">
-                    <el-button type="text" style="font-size: 20px" @click="handleRulePreferDelete(preference[index], row)">REMOVE</el-button>
+                    <el-button type="text" style="font-size: 10px" @click="handleRulePreferDelete(preferenceInfos[index], row)">{{ $t("commons.button.delete") }}</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -113,7 +113,7 @@
         </el-table-column>
         <el-table-column width="120px">
           <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">REMOVE</el-button>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -146,7 +146,7 @@ export default {
       ],
       node_list: [],
       nodeSelectorTerms: [],
-      preference: [],
+      preferenceInfos: [],
       form: {
         scheduling_type: "specific_node",
         nodeName: "",
@@ -199,9 +199,9 @@ export default {
     },
 
     handleRulePreferDelete(preferItem, row) {
-      for (let i = 0; i < preferItem.matchExpressions.length; i++) {
-        if (preferItem.matchExpressions[i] === row) {
-          preferItem.matchExpressions.splice(i, 1)
+      for (let i = 0; i < preferItem.preference.matchExpressions.length; i++) {
+        if (preferItem.preference.matchExpressions[i] === row) {
+          preferItem.preference.matchExpressions.splice(i, 1)
         }
       }
     },
@@ -211,18 +211,18 @@ export default {
         operator: "",
         value: "",
       }
-      preferItem.matchExpressions.unshift(item)
+      preferItem.preference.matchExpressions.unshift(item)
     },
     handleSelectorPreferAdd() {
       var item = {
         matchExpressions: [],
       }
-      this.preference.unshift(item)
+      this.preferenceInfos.unshift(item)
     },
     handleSelectorPreferClose(preferItem) {
-      for (let i = 0; i < this.preference.length; i++) {
-        if (this.preference[i] === preferItem) {
-          this.preference.splice(i, 1)
+      for (let i = 0; i < this.preferenceInfos.length; i++) {
+        if (this.preferenceInfos[i] === preferItem) {
+          this.preferenceInfos.splice(i, 1)
         }
       }
     },
@@ -252,7 +252,7 @@ export default {
                     matchs.push({
                       key: match.key,
                       operator: match.operator,
-                      value: match.value.split(","),
+                      values: match.value.split(","),
                     })
                   } else {
                     matchs.push({
@@ -273,19 +273,19 @@ export default {
               }
             }
           }
-          if (this.preference.length !== 0) {
+          if (this.preferenceInfos.length !== 0) {
             let prelist = []
             let preExist = false
-            for (const item of this.preference) {
-              if (item.matchExpressions.length !== 0) {
+            for (const item of this.preferenceInfos) {
+              if (item.preference.matchExpressions.length !== 0) {
                 preExist = true
                 let matchs = []
-                for (const match of item.matchExpressions) {
+                for (const match of item.preference.matchExpressions) {
                   if (match.value) {
                     matchs.push({
                       key: match.key,
                       operator: match.operator,
-                      value: match.split(","),
+                      values: match.split(","),
                     })
                   } else {
                     matchs.push({
@@ -309,6 +309,37 @@ export default {
           break
       }
     },
+  },
+  mounted() {
+    if (this.nodeSchedulingParentObj) {
+      if (this.nodeSchedulingParentObj.affinity) {
+        this.form.scheduling_type = "matching_rules"
+        if (this.nodeSchedulingParentObj.affinity) {
+          if (this.nodeSchedulingParentObj.affinity.nodeAffinity) {
+
+            if (this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+              if (this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
+                this.nodeSelectorTerms = this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
+                for (const term of this.nodeSelectorTerms) {
+                  for (const express of term.matchExpressions) {
+                    express.value = express.values.join(",")
+                  }
+                }
+              }
+            }
+
+            if (this.nodeSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+              this.preferenceInfos = this.nodeSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+              for (const pre of this.preferenceInfos) {
+                for (const express of pre.preference.matchExpressions) {
+                  express.value = express.values.join(",")
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
 }
 </script>

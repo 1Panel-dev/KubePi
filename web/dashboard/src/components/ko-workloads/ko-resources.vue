@@ -21,6 +21,7 @@
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import {cpuUnitConvert, memeryUnitConvert} from '@/utils/unitConvert'
 
 export default {
   name: "KoResources",
@@ -65,21 +66,23 @@ export default {
     },
   },
   mounted() {
-    if (this.resourceParentObj.resources) {
-      if (this.resourceParentObj.resources.requests) {
-        if (this.resourceParentObj.resources.requests.memory) {
-          this.form.requests.memory =  Number(this.resourceParentObj.resources.requests.memory.replace("Mi", ""))
+    if (this.resourceParentObj) {
+      if (this.resourceParentObj.resources) {
+        if (this.resourceParentObj.resources.requests) {
+          if (this.resourceParentObj.resources.requests.memory) {
+            this.form.requests.memory = memeryUnitConvert(this.resourceParentObj.resources.requests.memory)
+          }
+          if (this.resourceParentObj.resources.requests.cpu) {
+            this.form.requests.cpu = cpuUnitConvert(this.resourceParentObj.resources.requests.cpu)
+          }
         }
-        if (this.resourceParentObj.resources.requests.cpu) {
-          this.form.requests.cpu =  Number(this.resourceParentObj.resources.requests.cpu.replace("Mi", ""))
-        }
-      }
-      if (this.resourceParentObj.resources.limits) {
-        if (this.resourceParentObj.resources.limits.memory) {
-          this.form.limits.memory =  Number(this.resourceParentObj.resources.limits.memory.replace("Mi", ""))
-        }
-        if (this.resourceParentObj.resources.limits.cpu) {
-          this.form.limits.cpu = Number(this.resourceParentObj.resources.limits.cpu.replace("m", ""))
+        if (this.resourceParentObj.resources.limits) {
+          if (this.resourceParentObj.resources.limits.memory) {
+            this.form.limits.memory = memeryUnitConvert(this.resourceParentObj.resources.limits.memory)
+          }
+          if (this.resourceParentObj.resources.limits.cpu) {
+            this.form.limits.cpu = cpuUnitConvert(this.resourceParentObj.resources.limits.cpu)
+          }
         }
       }
     }
