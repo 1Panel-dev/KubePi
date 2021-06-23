@@ -11,6 +11,7 @@ import (
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	v1GroupBindingService "github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	v1RoleService "github.com/KubeOperator/ekko/internal/service/v1/role"
 	v1RoleBindingService "github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -82,21 +83,51 @@ func roleHandler() iris.Handler {
 			Name: u.Name,
 		}, common.DBOptions{})
 		if err != nil {
-			if !errors.Is(err, storm.ErrNotFound) {
+			if !errors.As(err, &storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
 			}
 		}
+		// 查询绑定了那些用户组
+		groupBindingService := v1GroupBindingService.NewService()
+		gps, err := groupBindingService.ListByUserName(u.Name, common.DBOptions{})
+		if err != nil {
+			if !errors.As(err, &storm.ErrNotFound) {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+
 		roleNameHash := map[string]struct{}{}
 		for i := range rbs {
 			roleName := rbs[i].RoleRef
 			roleNameHash[roleName] = struct{}{}
 		}
+
+		for i := range gps {
+			b, err := roleBindingService.GetRoleBindingBySubject(v1Role.Subject{
+				Kind: "Group",
+				Name: gps[i].GroupRef,
+			}, common.DBOptions{})
+			if err != nil {
+				if !errors.As(err, &storm.ErrNotFound) {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
+				}
+			}
+			for j := range b {
+				roleNameHash[b[j].RoleRef] = struct{}{}
+			}
+
+		}
 		var roleNames []string
 		for key := range roleNameHash {
 			roleNames = append(roleNames, key)
 		}
+
 		roleService := v1RoleService.NewService()
 		rs, _, err := roleService.Search(0, 0, pkgV1.Conditions{
 			"Name": pkgV1.Condition{
@@ -114,6 +145,28 @@ func roleHandler() iris.Handler {
 		ctx.Values().Set("roles", rs)
 		ctx.Next()
 	}
+}
+
+func getVerbByRoute(path, method string) string {
+	switch strings.ToLower(method) {
+	case "put":
+		return "update"
+	case "delete":
+		return "delete"
+	case "get":
+		if strings.Contains(path, "/:name") {
+			return "get"
+		} else {
+			return "list"
+		}
+	case "post":
+		if strings.HasSuffix(path, "search") {
+			return "list"
+		} else {
+			return "create"
+		}
+	}
+	return ""
 }
 
 func apiResourceHandler(party iris.Party) iris.Handler {
@@ -134,15 +187,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 					if _, ok := resourceMap[resourceName]; !ok {
 						resourceMap[resourceName] = collectons.NewStringSet()
 					}
-					if strings.HasSuffix(routes[i].Path, "/search") {
-						verbs := resourceMap[resourceName]
-						verbs.Add("list")
-
-					} else {
-						verb := strings.ToLower(routes[i].Method)
-						verbs := resourceMap[resourceName]
-						verbs.Add(verb)
-					}
+					resourceMap[resourceName].Add(getVerbByRoute(routes[i].Path, routes[i].Method))
 				}
 			}
 		}
@@ -181,19 +226,22 @@ func roleAccessHandler() iris.Handler {
 		//// 通过api resource 过滤出来资源主体,method 过滤操作
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
-		rs := ctx.Values().Get("roles")
-		roles := rs.([]v1Role.Role)
-		requestResource := ctx.Values().GetString("resource")
-		if requestResource != "" {
-			requestMethod := strings.ToLower(ctx.Request().Method)
-			resourceMatched, methodMatch := matchRoles(requestResource, requestMethod, roles)
-
-			if !(resourceMatched && methodMatch) {
-				ctx.StopWithStatus(iris.StatusForbidden)
-				ctx.Values().Set("message", fmt.Sprintf("user %s has can't access  resource %s  method %s", u.Name, requestResource, requestMethod))
-				return
+		if !strings.Contains(ctx.Request().URL.Path, "/proxy") {
+			rs := ctx.Values().Get("roles")
+			roles := rs.([]v1Role.Role)
+			requestResource := ctx.Values().GetString("resource")
+			if requestResource != "" {
+				currentRoute := ctx.GetCurrentRoute()
+				requestVerb := getVerbByRoute(currentRoute.Path(), currentRoute.Method())
+				resourceMatched, methodMatch := matchRoles(requestResource, requestVerb, roles)
+				if !(resourceMatched && methodMatch) {
+					ctx.StopWithStatus(iris.StatusForbidden)
+					ctx.Values().Set("message", fmt.Sprintf("user %s has can't access  resource %s  method %s", u.Name, requestResource, requestVerb))
+					return
+				}
 			}
 		}
+
 		ctx.Next()
 	}
 }

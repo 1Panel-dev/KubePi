@@ -7,7 +7,8 @@ type LoginCredential struct {
 }
 
 type UserProfile struct {
-	Name     string `json:"name"`
-	NickName string `json:"nickName"`
-	Email    string `json:"email"`
+	Name                string              `json:"name"`
+	NickName            string              `json:"nickName"`
+	Email               string              `json:"email"`
+	ResourcePermissions map[string][]string `json:"resourcePermissions"`
 }
