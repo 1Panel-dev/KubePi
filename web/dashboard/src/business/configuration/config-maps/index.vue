@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ConfigMaps">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search">
+    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -58,7 +58,7 @@ import {listNamespace} from "@/api/namespaces"
 
 export default {
   name: "ConfigMaps",
-  components: { ComplexTable, LayoutContent,KoTableOperations },
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
@@ -96,7 +96,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name+".yml",row)
+            downloadYaml(row.metadata.name + ".yml", row)
           }
         },
         {
@@ -125,12 +125,19 @@ export default {
       })
     },
     onCreate () {
+      this.$router.push({
+        name: "ConfigMapCreate",
+        params: { cluster: this.clusterName }
+      })
     },
     onDelete () {
 
     },
-    openDetail () {
-
+    openDetail (row) {
+      this.$router.push({
+        name: "ConfigMapDetail",
+        params: { name: row.metadata.name, namespace: row.metadata.namespace, cluster: this.clusterName }
+      })
     },
     listAllNameSpaces () {
       listNamespace(this.clusterName).then(res => {

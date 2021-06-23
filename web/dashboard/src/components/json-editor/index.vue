@@ -1,0 +1,57 @@
+<template>
+  <div class="yaml-editor">
+    <codemirror ref="editor" v-model="content" :options="options"></codemirror>
+  </div>
+</template>
+
+<script>
+import "codemirror/lib/codemirror.css"
+import "codemirror/theme/rubyblue.css"
+import "codemirror/mode/javascript/javascript"
+
+export default {
+  name: "JsonEditor",
+  props: {
+    value: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    },
+  },
+  data () {
+    return {
+      options: {
+        value: "",
+        mode: "application/json",
+        theme: "rubyblue",
+        lineNumbers: true,
+        tabSize: 2,
+        readOnly: true,
+        gutters: ['CodeMirror-lint-markers'],
+      },
+      content: "",
+      file: File
+    }
+  },
+  watch: {
+    value: function () {
+      let content = JSON.stringify(this.value, null, "\t")
+      this.$refs.editor.codemirror.setValue(content)
+      this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+    }
+  },
+}
+</script>
+
+<style scoped>
+    .yaml-editor {
+        height: 100%;
+        position: relative;
+    }
+
+    .yaml-editor >>> .CodeMirror {
+        height: auto;
+        min-height: 300px;
+    }
+</style>
