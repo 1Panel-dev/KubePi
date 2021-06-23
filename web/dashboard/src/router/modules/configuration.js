@@ -19,7 +19,7 @@ const Configuration = {
       }
     },
     {
-      path: "/configmaps/:namespace/create",
+      path: "/configmaps/create",
       component: () => import("@/business/configuration/config-maps/create"),
       name: "ConfigMapCreate",
       props: true,

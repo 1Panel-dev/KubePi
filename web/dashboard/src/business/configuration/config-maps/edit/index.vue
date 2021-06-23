@@ -7,7 +7,14 @@ import LayoutContent from "@/components/layout/LayoutContent"
 
 export default {
   name: "ConfigMapEdit",
-  components: { LayoutContent }
+  components: { LayoutContent },
+  props: {},
+  data () {
+    return {}
+  },
+  methods: {},
+  created () {
+  }
 }
 </script>
 

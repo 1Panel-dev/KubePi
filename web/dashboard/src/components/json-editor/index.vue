@@ -28,6 +28,7 @@ export default {
         lineNumbers: true,
         tabSize: 2,
         readOnly: true,
+        lineWrapping: true,
         gutters: ['CodeMirror-lint-markers'],
       },
       content: "",

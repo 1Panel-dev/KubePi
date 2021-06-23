@@ -3,23 +3,43 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-card>
-          <table style="width: 100%" class="dTable">
+          <table style="width: 100%" class="myTable">
             <tr>
-              <th scope="col" align="left">
+              <th scope="col"  align="left">
                 <h3>{{ $t("business.common.basic") }}</h3></th>
               <th scope="col"></th>
             </tr>
             <tr>
               <td>{{ $t("commons.table.name") }}</td>
-              <td>{{ $t("business.namespace.namespace") }}</td>
-              <td>{{ $t("commons.table.created_time") }}</td>
-              <td>UID</td>
+              <td>{{ item.metadata.name }}</td>
             </tr>
             <tr>
-              <td>{{ item.metadata.name }}</td>
+              <td>{{ $t("business.namespace.namespace") }}</td>
               <td>{{ item.metadata.namespace }}</td>
+            </tr>
+            <tr>
+              <td>{{ $t("commons.table.created_time") }}</td>
               <td>{{ item.metadata.creationTimestamp | datetimeFormat }}</td>
-              <td>{{ item.metadata.uid }}</td>
+            </tr>
+            <tr>
+              <td>{{ $t("business.common.label") }}</td>
+              <td colspan="4">
+                <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
+                  <el-tag type="info" size="small">
+                    {{ key }} = {{ value }}
+                  </el-tag>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>{{ $t("business.common.annotation") }}</td>
+              <td colspan="4">
+                <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
+                  <el-tag type="info" size="small">
+                    {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
+                  </el-tag>
+                </div>
+              </td>
             </tr>
           </table>
         </el-card>
