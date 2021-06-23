@@ -6,9 +6,8 @@
 
 <script>
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/material-darker.css"
+import "codemirror/theme/rubyblue.css"
 import "codemirror/mode/javascript/javascript"
-import "js-yaml"
 
 export default {
   name: "JsonEditor",
@@ -24,18 +23,12 @@ export default {
     return {
       options: {
         value: "",
-        mode: {
-          name: "javascript",
-          json: true,
-          statementIndent: 2
-        },
-        theme: "material-darker",
+        mode: "application/json",
+        theme: "rubyblue",
         lineNumbers: true,
         tabSize: 2,
-        foldGutter: true,
-        lineWrapping: true,
-        lint: true,
-        readOnly: true
+        readOnly: true,
+        gutters: ['CodeMirror-lint-markers'],
       },
       content: "",
       file: File
@@ -60,6 +53,5 @@ export default {
     .yaml-editor >>> .CodeMirror {
         height: auto;
         min-height: 300px;
-        /*background-color: #2c2c2c;*/
     }
 </style>
