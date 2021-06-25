@@ -9,11 +9,11 @@
               <th scope="col"></th>
             </tr>
             <tr>
-              <td>Name</td>
+              <td>{{$t('commons.table.name')}}</td>
               <td>{{ item.metadata.name }}</td>
             </tr>
             <tr>
-              <td>Labels</td>
+              <td>{{$t('business.common.label')}}</td>
               <td>
                 <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
                   <el-tag type="info" size="small">
@@ -23,7 +23,7 @@
               </td>
             </tr>
             <tr>
-              <td>Annotations</td>
+              <td>{{$t('business.common.annotation')}}</td>
               <td>
                 <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
                   <el-tag type="info" size="small">
@@ -43,7 +43,7 @@
               </td>
             </tr>
             <tr>
-              <td>Status</td>
+              <td>{{$t('commons.table.status')}}</td>
               <td>
                 <el-button v-if="item.status.phase ==='Active'" type="success" size="mini" plain round>
                   {{ item.status.phase }}
@@ -51,7 +51,7 @@
               </td>
             </tr>
             <tr>
-              <td>Created</td>
+              <td>{{$t('commons.table.created_time')}}</td>
               <td>
                 {{ item.metadata.creationTimestamp | datetimeFormat }}
               </td>

@@ -33,7 +33,7 @@
                 :visible.sync="createDialogOpened"
                 width="20%"
                 center>
-            <el-form :model="memberForm" label-position="left" label-width="120px">
+            <el-form :model="memberForm" label-position="left" label- width="60px">
                 <el-form-item label="主体类型">
                     <el-select v-model="memberForm.subjectKind" @change="onSubjectKindChange">
                         <el-option value="User">
@@ -74,7 +74,7 @@
                 :visible.sync="editDialogOpened"
                 width="20%"
                 center>
-            <el-form :model="editForm" label-position="left" label-width="120px">
+            <el-form :model="editForm" label-position="left" label- width="60px">
                 <el-form-item label="主体类型">
                     <el-select v-model="editForm.subjectKind" disabled @change="onSubjectKindChange">
                         <el-option value="User">

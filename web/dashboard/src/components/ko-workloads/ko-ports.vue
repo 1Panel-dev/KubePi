@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <el-button @click="handleAdd">Add Port</el-button>
-    <el-checkbox style="float: right; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
+    <el-checkbox style="margin-left: 20px; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
     <el-table v-if="ports.length !== 0" :data="ports">
       <el-table-column min-width="40" label="Name">
         <template v-slot:default="{row}">
@@ -23,7 +23,7 @@
           <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
         </template>
       </el-table-column>
-      <el-table-column width="120px">
+      <el-table-column  width="60px">
         <template v-slot:default="{row}">
           <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>

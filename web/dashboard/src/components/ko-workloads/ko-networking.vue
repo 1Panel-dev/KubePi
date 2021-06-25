@@ -26,7 +26,7 @@
               <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
-          <el-table-column width="120px">
+          <el-table-column  width="60px">
             <template v-slot:default="{row}">
               <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row)">{{ $t("commons.button.delete") }}</el-button>
             </template>
@@ -41,7 +41,7 @@
               <ko-form-item :withoutLabel="true" placeholder="e.g. mycompany.com" clearable itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
-          <el-table-column width="120px">
+          <el-table-column  width="60px">
             <template v-slot:default="{row}">
               <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row)">{{ $t("commons.button.delete") }}</el-button>
             </template>
@@ -70,7 +70,7 @@
             <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
-        <el-table-column width="120px">
+        <el-table-column  width="60px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>
@@ -98,7 +98,7 @@
             <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostnames" />
           </template>
         </el-table-column>
-        <el-table-column width="120px">
+        <el-table-column  width="60px">
           <template v-slot:default="{row}">
             <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>

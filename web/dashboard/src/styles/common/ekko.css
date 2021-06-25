@@ -80,10 +80,47 @@
     background-color: transparent !important;
 }
 
-.dTable tr:nth-child(odd) td{
+.dTable tr:nth-child(odd) td {
     color: #85888e;
 }
 
 .card_title {
     margin-top: -10px;
+}
+
+.tab-table {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+    margin: auto;
+}
+
+.tab-table td {
+    height: 23px;
+    word-wrap: break-word;
+    padding: 5px;
+}
+
+.tab-table th {
+    border: 0;
+    height: 25px;
+    font-size: 15px;
+    color: #868690;
+    padding: 5px;
+}
+
+.tab-table tr:hover {
+    background-color: transparent !important;
+}
+
+.tab-table tr:nth-child(odd) td {
+    color: #85888e;
+}
+
+.tab-content {
+    margin: 10px;
+}
+
+.tab-title {
+    font-size: large;
 }

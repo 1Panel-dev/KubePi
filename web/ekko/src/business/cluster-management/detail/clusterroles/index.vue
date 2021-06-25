@@ -37,7 +37,7 @@
                 :visible.sync="ruleDialogOpened"
                 width="40%"
                 center z-index="20">
-            <el-form :model="ruleForm" label-position="left" label-width="120px">
+            <el-form :model="ruleForm" label-position="left" label- width="60px">
                 <el-form-item label="API Group">
                     <el-select v-model="ruleForm.groupVersion" @change="onAPIGroupChange">
                         <el-option v-for="(item,index) in apiGroupsOptions" :key="index"
@@ -82,7 +82,7 @@
                 width="60%"
                 center z-index="10">
 
-            <el-form :model="clusterRoleForm" label-position="left" label-width="120px">
+            <el-form :model="clusterRoleForm" label-position="left" label- width="60px">
                 <el-form-item label="名称">
                     <el-input v-model="clusterRoleForm.name"></el-input>
                 </el-form-item>
@@ -138,7 +138,7 @@
                 width="60%"
                 center z-index="10">
 
-            <el-form :model="editForm" label-position="left" label-width="120px">
+            <el-form :model="editForm" label-position="left" label- width="60px">
                 <el-form-item label="名称">
                     <el-input v-model="editForm.name" disabled></el-input>
                 </el-form-item>
@@ -379,7 +379,6 @@
                     rules: []
                 }
                 for (const rule of this.clusterRoleForm.rules) {
-                    console.log(rule)
                     req.rules.push({
                         apiGroups: [rule.apiGroup],
                         resources: rule.resources,
