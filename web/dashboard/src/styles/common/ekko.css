@@ -30,6 +30,7 @@
     border: 0;
     height: 30px;
 }
+
 .myTable tr:hover {
     background-color: #2b2f33;
 }
@@ -38,7 +39,7 @@
     background-color: transparent !important;
 }
 
-.myTable tr td:nth-child(2) {
+.myTable tr td:nth-child(even) {
     color: #85888e;
 }
 
@@ -50,4 +51,39 @@
 
 .el-progress-circle__track {
     stroke: #414248;
+}
+
+.dTable {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+    margin-top: -10px;
+}
+
+.dTable td {
+    width: 50%;
+    padding: 8px;
+    height: 23px;
+    word-wrap: break-word;
+}
+
+.dTable td div {
+    margin-top: 2px
+}
+
+.dTable th {
+    border: 0;
+    height: 40px;
+}
+
+.dTable tr:hover {
+    background-color: transparent !important;
+}
+
+.dTable tr:nth-child(odd) td{
+    color: #85888e;
+}
+
+.card_title {
+    margin-top: -10px;
 }

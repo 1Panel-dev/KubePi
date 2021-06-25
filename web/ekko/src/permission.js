@@ -9,13 +9,13 @@ NProgress.configure({showSpinner: false}) // NProgress Configuration
 const whiteList = ["/login"] // no redirect whitelist
 
 const generateRoutes = async (to, from, next) => {
-    const hasRoles = store.getters.roles && store.getters.roles.length > 0
-    if (hasRoles) {
+    const hasPermissions = store.getters.permissions && store.getters.permissions.length > 0
+    if (hasPermissions) {
         next()
     } else {
         try {
-            const user = await store.dispatch("user/getCurrentUser")
-            const accessRoutes = await store.dispatch("permission/generateRoutes", user)
+            const {resourcePermissions} = await store.dispatch("user/getCurrentUser")
+            const accessRoutes = await store.dispatch("permission/generateRoutes", resourcePermissions)
             router.addRoute({
                 path: "/",
                 component: Layout,

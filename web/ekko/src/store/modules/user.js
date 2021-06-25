@@ -7,7 +7,8 @@ const state = {
     name: "",
     currentProject: "",
     language: getLanguage(),
-    roles: []
+    roles: [],
+    permissions: []
 }
 
 const mutations = {
@@ -27,12 +28,10 @@ const mutations = {
         state.language = language
         setLanguage(language)
     },
-    SET_ROLES: (state, roles) => {
-        state.roles = roles
+    SET_RESOURCE_PERMISSIONS: (state, permissions) => {
+        state.permissions = permissions
     },
-    SET_CURRENT_MENU: (state, menu) => {
-        state.menu = menu
-    },
+
 }
 
 const actions = {
@@ -69,15 +68,12 @@ const actions = {
     getCurrentUser({commit}) {
         return new Promise((resolve, reject) => {
             getCurrentUser().then(data => {
-
                 const user = data.data
                 user["roles"] = ["ADMIN"]
-                user["menu"] = ["cluster1"]
-                const {name, roles, menu, nickName} = user
+                const {name, nickName} = user
                 commit("SET_NAME", name)
-                commit("SET_ROLES", roles)
+                commit("SET_RESOURCE_PERMISSIONS", [1])
                 commit("SET_LANGUAGE", "zh-CN")
-                commit("SET_CURRENT_MENU", menu)
                 commit("SET_NICK_NAME", nickName)
                 resolve(user)
             }).catch(error => {

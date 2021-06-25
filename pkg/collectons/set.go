@@ -1,7 +1,5 @@
 package collectons
 
-
-
 type StringSet struct {
 	data map[string]interface{}
 }
@@ -38,7 +36,7 @@ func (s *StringSet) Difference(items []string) []string {
 }
 
 func (s *StringSet) ToSlice() []string {
-	var result []string
+	result := make([]string, 0)
 	for k, _ := range s.data {
 		result = append(result, k)
 	}
