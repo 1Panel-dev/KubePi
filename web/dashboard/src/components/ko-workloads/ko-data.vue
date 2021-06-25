@@ -29,6 +29,9 @@
         <tr>
           <td align="left">
             <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+            <el-upload  :before-upload="readFile" action=""  style="display: inline-block;margin-left: 5px">
+              <el-button>{{ $t("commons.button.upload") }}</el-button>
+            </el-upload>
           </td>
         </tr>
       </table>
@@ -64,6 +67,22 @@ export default {
         value: "",
       }
       this.data.push(item)
+    },
+    readFile(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onerror = e => {
+        console.log("error" + e)
+      }
+      reader.onload = () => {
+        const item = {
+          index: Math.random(),
+          key: file.name,
+          value: reader.result,
+        }
+        this.data.push(item)
+      }
+      return false
     },
     transformation (parentFrom) {
       if (this.data) {
