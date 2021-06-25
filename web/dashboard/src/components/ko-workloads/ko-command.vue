@@ -2,18 +2,18 @@
   <div style="margin-top: 20px">
     <el-row :gutter="20">
       <el-col :span="12">
-        <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" clearable itemType="input" v-model="form.command" />
+        <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" clearable itemType="input" v-model="form.args" />
+        <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="input" v-model="form.args" />
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
-        <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" clearable itemType="input" v-model="form.workingDir" />
+        <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
       </el-col>
       <el-col :span="6">
-        <ko-form-item labelName="Stdin" clearable itemType="select" v-model="form.stdin" :selections="stdin_list" />
+        <ko-form-item labelName="Stdin" itemType="select" v-model="form.stdin" :selections="stdin_list" />
       </el-col>
       <el-col :span="6">
         <el-checkbox style="margin-top: 20px" :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
@@ -31,12 +31,12 @@
     <el-table v-if="form.env.length !== 0" :data="form.env">
       <el-table-column min-width="80" label="Key">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+          <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.name" />
         </template>
       </el-table-column>
       <el-table-column min-width="80" label="Value">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+          <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
         </template>
       </el-table-column>
       <el-table-column width="60px">
@@ -48,24 +48,23 @@
 
     <el-button style="margin-top: 20px" @click="handleResourceAdd">Add form Resource</el-button>
     <el-table v-if="form.envFromResource.length !== 0" :data="form.envFromResource">
-      <el-table-column min-width="40" label="Type">
+      <el-table-column min-width="25" label="Type">
         <template v-slot:default="{row}">
           <ko-form-item :withoutLabel="true" @change="changeType(row, 'type')" itemType="select" v-model="row.type" :selections="type_list" />
         </template>
       </el-table-column>
       <el-table-column min-width="40" label="Source">
         <template v-slot:default="{row}">
-          <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" clearable itemType="input" v-model="row.source" />
-          <ko-form-item v-if="row.type === 'ConfigMap' || 'ConfigMap key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="config_map_list" />
-          <ko-form-item v-if="row.type === 'Secret key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_key_list" />
-          <ko-form-item v-if="row.type === 'Secret'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_list" />
+          <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" itemType="input" v-model="row.source" />
+          <ko-form-item v-if="row.type === 'ConfigMap' || row.type === 'ConfigMap key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="config_map_list" />
+          <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="secret_list" />
         </template>
       </el-table-column>
       <el-table-column min-width="40" label="Key">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. requests.cpu" v-if="row.type ==='Resource'" clearable itemType="input" v-model="row.key" />
-          <ko-form-item :withoutLabel="true" v-if="row.type === 'ConfigMap' || row.type === 'Secret key' || row.type === 'Secret'" @change="changeType(row, 'key')" clearable itemType="select" v-model="row.key" :selections="type_list" />
-          <ko-form-item :withoutLabel="true" v-if="row.type ==='Field'" disabled clearable itemType="input" value="n/a" />
+          <ko-form-item :withoutLabel="true" placeholder="e.g. requests.cpu" v-if="row.type ==='Resource'" itemType="select" v-model="row.key" />
+          <ko-form-item :withoutLabel="true" v-if="row.type === 'ConfigMap' || row.type === 'Secret key' || row.type === 'Secret'" @change="changeType(row, 'key')" itemType="select" v-model="row.key" :selections="type_list" />
+          <ko-form-item :withoutLabel="true" v-if="row.type ==='Field'" disabled itemType="input" value="n/a" />
         </template>
       </el-table-column>
       <el-table-column min-width="10">
@@ -73,7 +72,7 @@
       </el-table-column>
       <el-table-column min-width="40" label="Prefix or Alias">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.prefix_or_alias" />
+          <ko-form-item :withoutLabel="true" itemType="input" v-model="row.prefix_or_alias" />
         </template>
       </el-table-column>
       <el-table-column width="60px">
@@ -87,6 +86,8 @@
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import { listSecrets } from "@/api/secrets"
+import { listConfigMaps } from "@/api/configmaps"
 
 export default {
   name: "KoCommand",
@@ -105,9 +106,8 @@ export default {
         env: [],
         envFromResource: [],
       },
-      config_map_list: [{ label: "kube-root-ca.crt", value: "kube-root-ca.crt" }],
-      secret_key_list: [{ label: "default-token-fkpdx", value: "default-token-fkpdx" }],
-      secret_list: [{ label: "default-token-fkpdx", value: "default-token-fkpdx" }],
+      config_map_list: [],
+      secret_list: [],
       type_list: [
         { label: "Resource", value: "Resource" },
         { label: "ConfigMap", value: "ConfigMap" },
@@ -124,6 +124,23 @@ export default {
     }
   },
   methods: {
+    loadSecrets() {
+      listSecrets(this.$route.params.cluster).then((res) => {
+        this.secret_list = []
+        for(const secret of res.items) {
+          this.secret_list.push({label: secret.metadata.name, value: secret.metadata.name})
+        }
+      })
+    },
+    loadConfigMaps() {
+      listConfigMaps(this.$route.params.cluster).then((res) => {
+        this.config_map_list = []
+        for(const cm of res.items) {
+          this.config_map_list.push({label: cm.metadata.name, value: cm.metadata.name})
+        }
+      })
+    },
+
     handleDelete(row) {
       for (let i = 0; i < this.form.env.length; i++) {
         if (this.form.env[i] === row) {
@@ -264,6 +281,8 @@ export default {
     },
   },
   mounted() {
+    this.loadSecrets()
+    this.loadConfigMaps()
     if (this.commandParentObj) {
       if (this.commandParentObj.command) {
         this.form.command = this.commandParentObj.command.join(",")

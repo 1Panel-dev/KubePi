@@ -119,7 +119,9 @@ import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 
 import YamlEditor from "@/components/yaml-editor"
-import { getDeploymentByName, createDeployment } from "@/api/workloads"
+import { createDeployment } from "@/api/workloads"
+import { listNamespace } from "@/api/namespaces"
+
 
 export default {
   name: "DeploymentForm",
@@ -131,12 +133,7 @@ export default {
       isRefresh: false,
       operation: "",
       loading: false,
-      namespace_list: [
-        { label: "kube-system", value: "kube-system" },
-        { label: "kube-public", value: "kube-public" },
-        { label: "kube-operator", value: "kube-operator" },
-        { label: "default", value: "default" },
-      ],
+      namespace_list: [],
       image_pull_policy_list: [
         { label: "Always", value: "Always" },
         { label: "ifNotPresent", value: "ifNotPresent" },
@@ -175,10 +172,12 @@ export default {
     }
   },
   methods: {
-    search() {
-      getDeploymentByName(this.$route.params.cluster, this.$route.params.namespace, this.$route.params.name).then((res) => {
-        this.form = res
-        this.isRefresh = !this.isRefresh
+    loadNamespace() {
+      listNamespace(this.$route.params.cluster).then((res) => {
+        this.namespace_list = []
+        for(const ns of res.items) {
+          this.namespace_list.push({label: ns.metadata.name, value: ns.metadata.name})
+        }
       })
     },
     selectContainer() {
@@ -259,6 +258,7 @@ export default {
   mounted() {
     this.currentIndex = 0
     this.currentContainerIndex = 0
+    this.loadNamespace()
   },
 }
 </script>

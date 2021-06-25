@@ -4,15 +4,15 @@
       <el-col :span="12">
         <el-row>
           <el-col :span="12">
-            <ko-form-item labelName="Container Name" clearable itemType="input" v-model="form.name" />
+            <ko-form-item labelName="Container Name" itemType="input" v-model="form.name" />
           </el-col>
           <el-col :span="12">
-            <ko-form-item labelName="Pull Policy" clearable itemType="select" v-model="form.imagePullPolicy" :selections="image_pull_policy_list" />
+            <ko-form-item labelName="Pull Policy" itemType="select" v-model="form.imagePullPolicy" :selections="image_pull_policy_list" />
           </el-col>
         </el-row>
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="Container Image" placeholder="e.g. nginx:latest" clearable itemType="input" v-model="form.image" />
+        <ko-form-item labelName="Container Image" placeholder="e.g. nginx:latest" itemType="input" v-model="form.image" />
       </el-col>
     </el-row>
   </div>

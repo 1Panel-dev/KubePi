@@ -8,18 +8,18 @@
             <el-button style="float: right; padding: 3px 0" type="text" @click="handlePodRulesDelete(index)">删 除</el-button>
             <el-row style="margin-top: 20px">
               <el-col :span="12">
-                <ko-form-item labelName="Type" clearable itemType="radio" v-model="item.type" :radios="type_list" />
+                <ko-form-item labelName="Type" itemType="radio" v-model="item.type" :radios="type_list" />
               </el-col>
               <el-col :span="12">
-                <ko-form-item labelName="Priority" clearable itemType="radio" v-model="item.priority" :radios="priority_list" />
+                <ko-form-item labelName="Priority" itemType="radio" v-model="item.priority" :radios="priority_list" />
               </el-col>
             </el-row>
             <el-row style="margin-top: 20px">
               <el-col :span="12">
-                <ko-form-item labelName="Namespace" clearable itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
+                <ko-form-item labelName="Namespace" itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
               </el-col>
               <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
-                <ko-form-item labelName="Namespace" clearable itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
+                <ko-form-item labelName="Namespace" itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
               </el-col>
             </el-row>
 
@@ -27,18 +27,18 @@
             <el-table :data="item.rules">
               <el-table-column min-width="40" label="Key">
                 <template v-slot:default="{row}">
-                  <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
+                  <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
                 </template>
               </el-table-column>
               <el-table-column min-width="30" label="Operator">
                 <template v-slot:default="{row}">
-                  <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
+                  <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
                 </template>
               </el-table-column>
               <el-table-column min-width="40" label="Value">
                 <template v-slot:default="{row}">
                   <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                  <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
+                  <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
                 </template>
               </el-table-column>
               <el-table-column width="60px">
@@ -49,7 +49,7 @@
             </el-table>
             <el-row style="margin-top: 20px">
               <el-col :span=24>
-                <ko-form-item labelName="Topology Key" clearable itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
+                <ko-form-item labelName="Topology Key" itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
               </el-col>
             </el-row>
           </el-card>
@@ -61,12 +61,12 @@
         <el-divider content-position="left">Node Scheduling</el-divider>
         <el-row style="margin-top: 20px">
           <el-col :span="24">
-            <ko-form-item labelName="Scheduling Type" radioLayout="vertical" clearable itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
+            <ko-form-item labelName="Scheduling Type" radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
           </el-col>
         </el-row>
         <el-row style="margin-top: 20px" v-if="scheduling_type === 'specific_node'">
           <el-col :span="24">
-            <ko-form-item labelName="Node Name" clearable itemType="select" v-model="nodeName" :selections="node_list" />
+            <ko-form-item labelName="Node Name" itemType="select" v-model="nodeName" :selections="node_list" />
           </el-col>
         </el-row>
         <div v-if="scheduling_type === 'matching_rules'">
@@ -75,10 +75,10 @@
               <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">删 除</el-button>
               <el-row style="margin-top: 20px">
                 <el-col :span="12">
-                  <ko-form-item labelName="Priority" clearable itemType="radio" v-model="item.priority" :radios="priority_list" />
+                  <ko-form-item labelName="Priority" itemType="radio" v-model="item.priority" :radios="priority_list" />
                 </el-col>
                 <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
-                  <ko-form-item labelName="Weight" clearable itemType="number" v-model="item.weight" />
+                  <ko-form-item labelName="Weight" itemType="number" v-model="item.weight" />
                 </el-col>
               </el-row>
 
@@ -86,18 +86,18 @@
               <el-table :data="item.rules">
                 <el-table-column min-width="40" label="Key">
                   <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
+                    <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
                   </template>
                 </el-table-column>
                 <el-table-column min-width="30" label="Operator">
                   <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
+                    <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
                   </template>
                 </el-table-column>
                 <el-table-column min-width="40" label="Value">
                   <template v-slot:default="{row}">
                     <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
+                    <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
                   </template>
                 </el-table-column>
                 <el-table-column width="60px">
@@ -119,27 +119,27 @@
       <el-table v-if="tolerations.length !== 0" :data="tolerations">
         <el-table-column min-width="40" label="Label Key">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
+            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
           </template>
         </el-table-column>
         <el-table-column min-width="15" label="Operator">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="tolerations_operator_list" />
+            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="tolerations_operator_list" />
           </template>
         </el-table-column>
         <el-table-column min-width="40" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
         <el-table-column min-width="25" label="Effect">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.effect" :selections="effect_list" />
+            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.effect" :selections="effect_list" />
           </template>
         </el-table-column>
         <el-table-column min-width="20" label="Toleration Seconds(s)">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" :disabled="row.effect !== 'NoExecute'" clearable itemType="number" v-model.number="row.tolerationSeconds" />
+            <ko-form-item :withoutLabel="true" :disabled="row.effect !== 'NoExecute'" itemType="number" v-model.number="row.tolerationSeconds" />
           </template>
         </el-table-column>
         <el-table-column width="60px">
@@ -452,7 +452,6 @@ export default {
               for (const express of s.preference.matchExpressions) {
                 rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
               }
-              console.log(s)
               const weight = s.weight ? s.weight : 1
               this.nodeSchedulings.push({ type: "Node", priority: "Preferred", weight: weight, rules: rules })
             }

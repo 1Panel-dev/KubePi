@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     onCreate () {
-      this.$router.push({ name: "DeploymentCreate" })
+      this.$router.push({ name: "DeploymentCreate", params: { cluster: "songliucs", yamlShow: false }})
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

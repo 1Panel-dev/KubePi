@@ -5,22 +5,22 @@
     <el-table v-if="ports.length !== 0" :data="ports">
       <el-table-column min-width="40" label="Name">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.name" />
+          <ko-form-item :withoutLabel="true" itemType="input" v-model="row.name" />
         </template>
       </el-table-column>
       <el-table-column min-width="40" label="Private Container Port">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="number" v-model.number="row.containerPort" />
+          <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.containerPort" />
         </template>
       </el-table-column>
       <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="number" v-model.number="row.hostPort" />
+          <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.hostPort" />
         </template>
       </el-table-column>
       <el-table-column min-width="20" label="Protocol">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.protocol" :selections="protocol_list" />
+          <ko-form-item :withoutLabel="true" itemType="select" v-model="row.protocol" :selections="protocol_list" />
         </template>
       </el-table-column>
       <el-table-column  width="60px">

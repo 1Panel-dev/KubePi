@@ -2,18 +2,18 @@
   <div style="margin-top: 20px">
     <el-row :gutter="20">
       <el-col :span="12">
-        <ko-form-item labelName="Network Mode" clearable itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
+        <ko-form-item labelName="Network Mode" itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="DNS Policy" clearable itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
+        <ko-form-item labelName="DNS Policy" itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
-        <ko-form-item labelName="Hostname" placeholder="e.g. web" clearable itemType="input" v-model="form.hostname" />
+        <ko-form-item labelName="Hostname" placeholder="e.g. web" itemType="input" v-model="form.hostname" />
       </el-col>
       <el-col :span="12">
-        <ko-form-item labelName="Subdomain" placeholder="e.g. web" clearable itemType="input" v-model="form.subdomain" />
+        <ko-form-item labelName="Subdomain" placeholder="e.g. web" itemType="input" v-model="form.subdomain" />
       </el-col>
     </el-row>
 
@@ -23,7 +23,7 @@
         <el-table v-if="form.dnsConfig.nameservers.length !== 0" :data="form.dnsConfig.nameservers">
           <el-table-column min-width="80" label="Nameservers">
             <template v-slot:default="{row}">
-              <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.value" />
+              <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
           <el-table-column  width="60px">
@@ -38,7 +38,7 @@
         <el-table v-if="form.dnsConfig.searches.length !== 0" :data="form.dnsConfig.searches">
           <el-table-column min-width="80" label="Searches">
             <template v-slot:default="{row}">
-              <ko-form-item :withoutLabel="true" placeholder="e.g. mycompany.com" clearable itemType="input" v-model="row.value" />
+              <ko-form-item :withoutLabel="true" placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
             </template>
           </el-table-column>
           <el-table-column  width="60px">
@@ -62,12 +62,12 @@
       <el-table v-if="form.dnsConfig.options.length !== 0" :data="form.dnsConfig.options">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.name" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
           </template>
         </el-table-column>
         <el-table-column  width="60px">
@@ -90,12 +90,12 @@
       <el-table v-if="form.hostAliases.length !== 0" :data="form.hostAliases">
         <el-table-column min-width="80" label="Key">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" clearable itemType="input" v-model="row.ip" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
           </template>
         </el-table-column>
         <el-table-column min-width="80" label="Value">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" clearable itemType="input" v-model="row.hostnames" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
           </template>
         </el-table-column>
         <el-table-column  width="60px">

@@ -10,41 +10,41 @@
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <el-row style="margin-bottom: 20px;">
-          <ko-form-item labelName="Type" clearable itemType="select" v-model="check_type" :selections="type_list" />
+          <ko-form-item labelName="Type" itemType="select" v-model="check_type" :selections="type_list" />
         </el-row>
         <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
           <el-row style="margin-bottom: 20px;">
-            <ko-form-item labelName="Check Port" clearable itemType="number" v-model.number="form.httpGet.port" />
+            <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.httpGet.port" />
           </el-row>
           <el-row>
-            <ko-form-item labelName="Request Path" clearable itemType="input" v-model="form.httpGet.path" />
+            <ko-form-item labelName="Request Path" itemType="input" v-model="form.httpGet.path" />
           </el-row>
         </div>
         <el-row v-if="check_type === 'tcpSocket'">
-          <ko-form-item labelName="Check Port" clearable itemType="number" v-model.number="form.tcpSocket.port" />
+          <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.tcpSocket.port" />
         </el-row>
         <el-row v-if="check_type === 'exec'">
-          <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" clearable itemType="input" v-model="form.exec.command" />
+          <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
         </el-row>
       </el-col>
       <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
         <el-row :gutter="10" style="margin-bottom: 20px;">
           <el-col :span="8">
-            <ko-form-item labelName="Check Interval" placeholder="Default: 10" clearable deviderName="sec" itemType="input" v-model="form.periodSeconds" />
+            <ko-form-item labelName="Check Interval" placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
           </el-col>
           <el-col :span="8">
-            <ko-form-item labelName="Initial Delay" placeholder="Default: 0" clearable deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
+            <ko-form-item labelName="Initial Delay" placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
           </el-col>
           <el-col :span="8">
-            <ko-form-item labelName="Timeout" placeholder="Default: 3" clearable deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
+            <ko-form-item labelName="Timeout" placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
           </el-col>
         </el-row>
         <el-row :gutter="10" style="margin-bottom: 20px;">
           <el-col :span="12">
-            <ko-form-item labelName="Seccess Threshold" placeholder="Default: 1" clearable itemType="input" v-model="form.successThreshold" />
+            <ko-form-item labelName="Seccess Threshold" placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
           </el-col>
           <el-col :span="12">
-            <ko-form-item labelName="Failure Threshold" placeholder="Default: 3" clearable itemType="input" v-model="form.failureThreshold" />
+            <ko-form-item labelName="Failure Threshold" placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
           </el-col>
         </el-row>
         <el-row style="margin-bottom: 20px;">
@@ -52,12 +52,12 @@
           <el-table v-if="form.httpHeaders.length !== 0" :data="form.httpHeaders">
             <el-table-column min-width="40" label="Key">
               <template v-slot:default="{row}">
-                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
               </template>
             </el-table-column>
             <el-table-column min-width="40" label="Value">
               <template v-slot:default="{row}">
-                <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+                <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
               </template>
             </el-table-column>
             <el-table-column  width="60px">

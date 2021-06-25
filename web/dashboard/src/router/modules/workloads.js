@@ -27,7 +27,7 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/create",
+      path: "/deployments/create/:cluster/:yamlShow",
       name: "DeploymentCreate",
       hidden: true,
       component: () => import("@/business/workloads/deployments/create"),
