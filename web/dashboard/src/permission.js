@@ -27,6 +27,15 @@ const generateRoutes = async (to, from, next) => {
 //路由前置钩子，根据实际需求修改
 router.beforeEach(async (to, from, next) => {
     NProgress.start()
+    if (!to.query["cluster"]) {
+        if (from.query["cluster"]) {
+            const q = to.query
+            q["cluster"] = from.query["cluster"]
+            next({path: to.path, query: q})
+        } else {
+            console.log("no cluster")
+        }
+    }
     const isLogin = await store.dispatch("user/isLogin")
     if (isLogin) {
         if (to.path === "/login") {

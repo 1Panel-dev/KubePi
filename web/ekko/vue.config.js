@@ -22,6 +22,9 @@ module.exports = {
             },
             '/api': {
                 target: 'http://0.0.0.0:2019',
+            },
+            '/dashboard': {
+                target: 'http://0.0.0.0:4400',
             }
         }
     },

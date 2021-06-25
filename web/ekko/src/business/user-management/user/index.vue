@@ -4,12 +4,12 @@
                        :pagination-config="paginationConfig">
             <template #header>
                 <el-button-group>
-                    <el-button type="primary" size="small" @click="onCreate">
+                    <el-button v-has-permissions="[{resource:'users',verb:'create'}]" type="primary" size="small"
+                               @click="onCreate">
                         {{ $t("commons.button.create") }}
                     </el-button>
                 </el-button-group>
             </template>
-            <el-table-column type="selection" fix></el-table-column>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     <el-link>{{ row.name }}</el-link>
@@ -46,6 +46,7 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
     import {searchUsers, deleteUser} from "@/api/users"
+    import {checkPermissions} from "@/utils/permission";
 
     export default {
         name: "ClusterList",
@@ -58,14 +59,16 @@
                         icon: "el-icon-edit",
                         click: (row) => {
                             this.onEdit(row.name)
-                        }
+                        },
+                        disabled: !checkPermissions({resource: "users", verb: "update"})
                     },
                     {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
                         click: (row) => {
                             this.onDelete(row.name)
-                        }
+                        },
+                        disabled: !checkPermissions({resource: "users", verb: "delete"})
                     },
                 ],
                 paginationConfig: {

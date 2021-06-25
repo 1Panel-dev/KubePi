@@ -16,24 +16,28 @@ import icons from './icons'
 import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import "./permission"
+import directives from "./directive";
+
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, {
-  size: "small",
-  i18n: (key, value) => i18n.t(key, value)
+    size: "small",
+    i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(Fit2CloudUI, {
-  i18n: (key, value) => i18n.t(key, value)
+    i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(VueCodemirror);
+
 library.add(fas, far, fab)
 
 Vue.use(icons);
+Vue.use(directives);
 new Vue({
-  el: '#app',
-  i18n,
-  router,
-  store,
-  render: h => h(App),
+    el: '#app',
+    i18n,
+    router,
+    store,
+    render: h => h(App),
 })

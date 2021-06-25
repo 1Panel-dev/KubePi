@@ -4,12 +4,12 @@
                        :pagination-config="paginationConfig">
             <template #header>
                 <el-button-group>
-                    <el-button type="primary" size="small" @click="onCreate">
+                    <el-button v-has-permissions="[{resource:'groups',verb:'create'}]" type="primary" size="small"
+                               @click="onCreate">
                         {{ $t("commons.button.create") }}
                     </el-button>
                 </el-button-group>
             </template>
-            <el-table-column type="selection" fix></el-table-column>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
                     <el-link>{{ row.name }}</el-link>
@@ -30,6 +30,7 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import ComplexTable from "@/components/complex-table"
     import {searchGroups, deleteGroup} from "@/api/groups"
+    import {checkPermissions} from "@/utils/permission";
 
 
     export default {
@@ -43,21 +44,24 @@
                         icon: "el-icon-connection",
                         click: (row) => {
                             this.onBinding(row.name)
-                        }
+                        },
+                        disabled: !checkPermissions({resource: "groups", verb: "update"})
                     },
                     {
                         label: this.$t("commons.button.edit"),
                         icon: "el-icon-edit",
                         click: (row) => {
                             this.onEdit(row.name)
-                        }
+                        },
+                        disabled: !checkPermissions({resource: "groups", verb: "update"})
                     },
                     {
                         label: this.$t("commons.button.delete"),
                         icon: "el-icon-delete",
                         click: (row) => {
                             this.onDelete(row.name)
-                        }
+                        },
+                        disabled: !checkPermissions({resource: "groups", verb: "delete"})
                     },
                 ],
                 paginationConfig: {
