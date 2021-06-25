@@ -4,12 +4,12 @@
       <el-row :gutter="20">
         <div class="grid-content bg-purple-light" v-if="!showYaml">
           <el-form label-position="top" :model="form">
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item :label="$t('commons.table.name')" required>
                 <el-input clearable v-model="form.metadata.name"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required>
                 <el-select v-model="form.metadata.namespace">
                   <el-option label="All Namespaces" value=""></el-option>
