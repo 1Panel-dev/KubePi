@@ -26,7 +26,7 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Namespace" prop="metadata.namespace">
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>

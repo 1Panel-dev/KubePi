@@ -63,29 +63,4 @@ export default {
 </script>
           
 <style>
-.formClass {
-  border: solid 1px rgb(228, 204, 204);
-  border-radius: 5px;
-  position: relative;
-  display: table;
-  width: 98%;
-}
-.formClass .el-input__inner {
-  border: none !important;
-  background: none !important;
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-}
-.formClass .el-input__inner::placeholder {
-  color: #aaaaaa;
-}
-.formClass .deviderClass {
-  display: table-cell;
-  width: 1%;
-  white-space: nowrap;
-  vertical-align: middle;
-  border-left: 1px solid #dddddd;
-  padding: 0 10px;
-}
 </style>>

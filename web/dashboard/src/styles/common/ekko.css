@@ -87,3 +87,39 @@
 .card_title {
     margin-top: -10px;
 }
+
+.tab-table {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+}
+
+.tab-table td {
+    height: 23px;
+    word-wrap: break-word;
+    padding: 8px;
+}
+
+.tab-table th {
+    border: 0;
+    height: 40px;
+    font-size: 15px;
+    color: #868690;
+    padding: 8px;
+}
+
+.tab-table tr:hover {
+    background-color: transparent !important;
+}
+
+.tab-table tr:nth-child(odd) td{
+    color: #85888e;
+}
+
+.tab-content {
+    margin: 10px;
+}
+
+.tab-title {
+    font-size: large;
+}
