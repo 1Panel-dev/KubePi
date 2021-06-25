@@ -3,36 +3,44 @@
 
         <el-row :gutter="10">
             <el-col :span="4" v-for="(item,index) in items" :key="index">
-                <el-card class="box-card" shadow="hover">
+                <el-card class="card_header box-card " style="margin-left:10px; margin-top:20px" shadow="hover">
                     <div v-if="!item.add">
                         <div slot="header" class="clearfix">
-                            <el-row>
-                                <el-col :span="18" style="font-size: 18px">
-                                    {{item.name}}
-                                </el-col>
-                                <el-col :span="6">
-                                    <el-button icon="el-icon-user" @click="onGotoDashboard(item.name)"
-                                               circle></el-button>
-                                    <el-button icon="el-icon-setting" @click="onDetail(item.name)" circle></el-button>
-                                    <el-button icon="el-icon-delete" @click="onDelete(item.name)" circle></el-button>
-                                </el-col>
-                            </el-row>
+                            <b style="font-size: 20px">{{item.name}}</b>
+                            <div style="float: right">
+                                <el-dropdown trigger="click" @command="handleCommand">
+                                    <el-button type="text" size="large" class="bottom-button">More</el-button>
+
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item :command="{name:item.name,action:'manage'}">管理集群
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :command="{name:item.name,action:'delete'}">删除
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+
+                            </div>
+                            <hr style="border-color: gray"/>
                         </div>
                         <div>
                             <el-row>
-                                <el-col :span="4">
-                                    <img width="38px" height="38px" src="~@/assets/kubernetes.png" alt="kubernetes.png">
+                                <el-col :span="4" style="padding-top: 10px">
+                                    <img height="48px" src="~@/assets/kubernetes.png" alt="kubernetes.png">
                                 </el-col>
                                 <el-col :span="20">
-                                    <table>
-                                        <tr>
-                                            <th style="width: 60%;text-align: left">版本</th>
-                                            <td style="padding-left: 20px">{{item.status.version}}</td>
-                                        </tr>
-                                    </table>
+                                    <ul>
+                                        <li style="list-style-type: none;margin: 5px">版本:{{item.status.version}}</li>
+<!--                                        <li style="list-style-type: none;margin: 5px">创建时间:{{item.createAt}}</li>-->
+                                    </ul>
                                 </el-col>
                             </el-row>
                         </div>
+                        <div class="bottom clearfix">
+                            <el-button type="text" size="large" class="bottom-button"
+                                       @click="onGotoDashboard(item.name)">Open
+                            </el-button>
+                        </div>
+
                     </div>
                     <div v-if="item.add" @click="onCreate">
                         <i class="el-icon-plus"></i>
@@ -57,6 +65,19 @@
             }
         },
         methods: {
+
+            handleCommand(command) {
+                const name = command.name
+                switch (command.action) {
+                    case "manage":
+                        this.onDetail(name)
+                        break
+                    case "delete":
+                        this.onDelete(name)
+                        break
+                }
+            },
+
             onCreate() {
                 this.$router.push({name: "ClusterCreate"})
             },
@@ -97,5 +118,23 @@
 </script>
 
 <style scoped>
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        content: "";
+    }
 
+    .clearfix:after {
+        clear: both
+    }
+
+    .bottom {
+        margin-top: 13px;
+        line-height: 12px;
+    }
+
+    .bottom-button {
+        padding: 0;
+        float: right;
+    }
 </style>
