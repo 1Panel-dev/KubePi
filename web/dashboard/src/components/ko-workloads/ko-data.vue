@@ -18,7 +18,7 @@
             <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value"/>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value"/>
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
