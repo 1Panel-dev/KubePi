@@ -50,7 +50,7 @@
     <el-table v-if="form.envFromResource.length !== 0" :data="form.envFromResource">
       <el-table-column min-width="25" label="Type">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" @change="changeType(row, 'type')" itemType="select" v-model="row.type" :selections="type_list" />
+          <ko-form-item :withoutLabel="true" itemType="select" v-model="row.type" :selections="type_list" />
         </template>
       </el-table-column>
       <el-table-column min-width="40" label="Source">
@@ -62,9 +62,10 @@
       </el-table-column>
       <el-table-column min-width="40" label="Key">
         <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. requests.cpu" v-if="row.type ==='Resource'" itemType="select" v-model="row.key" />
-          <ko-form-item :withoutLabel="true" v-if="row.type === 'ConfigMap' || row.type === 'Secret key' || row.type === 'Secret'" @change="changeType(row, 'key')" itemType="select" v-model="row.key" :selections="type_list" />
-          <ko-form-item :withoutLabel="true" v-if="row.type ==='Field'" disabled itemType="input" value="n/a" />
+          <ko-form-item :withoutLabel="true" v-if="row.type ==='Resource'" itemType="select" v-model="row.key" :selections="resource_key_list" />
+          <ko-form-item :withoutLabel="true" v-if="row.type ==='ConfigMap key'" itemType="select" v-model="row.key" :selections="cm_key_list" />
+          <ko-form-item :withoutLabel="true" v-if="row.type ==='Secret key'" itemType="select" v-model="row.key" :selections="secret_key_list" />
+          <ko-form-item :withoutLabel="true" v-if="row.type === 'Secret' || row.type === 'ConfigMap' || row.type === 'Field'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
         </template>
       </el-table-column>
       <el-table-column min-width="10">
@@ -108,6 +109,16 @@ export default {
       },
       config_map_list: [],
       secret_list: [],
+      resource_key_list: [
+        { label: "limits.cpu", value: "limits.cpu" },
+        { label: "limits.ephemeral-storage", value: "limits.ephemeral-storage" },
+        { label: "limits.memory", value: "limits.memory" },
+        { label: "requests.cpu", value: "requests.cpu" },
+        { label: "requests.ephemeral-storage", value: "requests.ephemeral-storage" },
+        { label: "requests.memory", value: "requests.memory" },
+      ],
+      cm_key_list: [],
+      secret_key_list: [],
       type_list: [
         { label: "Resource", value: "Resource" },
         { label: "ConfigMap", value: "ConfigMap" },
@@ -171,13 +182,7 @@ export default {
       }
       this.form.envFromResource.unshift(item)
     },
-    changeType(row, operator) {
-      if (operator === "type") {
-        row.key = row.type
-      } else {
-        row.type = row.key
-      }
-    },
+    
     transformation(parentFrom) {
       if (this.form.command) {
         parentFrom.command = this.form.command.split(",")
