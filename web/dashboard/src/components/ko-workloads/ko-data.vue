@@ -3,36 +3,36 @@
     <div class="tab-title">
       <span>Data</span>
     </div>
-    <table style="width: 90%" class="tab-table">
-      <tr>
-        <th scope="col" width="48%" align="left">
-          <label>key</label>
-        </th>
-        <th scope="col" width="48%" align="left">
-          <label>value</label>
-        </th>
-        <th></th>
-      </tr>
-      <tr v-for="label in data" v-bind:key="label.index">
-        <td >
-          <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
-        </td>
-        <td >
-          <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value"/>
-        </td>
-        <td>
-          <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-        </td>
-      </tr>
-    </table>
-  </div>
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="48%" align="left">
+            <label>key</label>
+          </th>
+          <th scope="col" width="48%" align="left">
+            <label>value</label>
+          </th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="label in data" v-bind:key="label.index">
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value"/>
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+          </td>
+        </tr>
+      </table>
+    </div>
 </template>
 
 <script>
@@ -40,7 +40,7 @@ import KoFormItem from "@/components/ko-form-item"
 
 export default {
   name: "KoData",
-  components: {KoFormItem},
+  components: { KoFormItem },
   props: {
     dataObj: Object
   },
