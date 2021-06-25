@@ -51,6 +51,7 @@ export const rolesRoutes = [
 ]
 
 const createRouter = () => new Router({
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
