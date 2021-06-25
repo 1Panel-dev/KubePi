@@ -11,6 +11,8 @@
                                     {{item.name}}
                                 </el-col>
                                 <el-col :span="6">
+                                    <el-button icon="el-icon-user" @click="onGotoDashboard(item.name)"
+                                               circle></el-button>
                                     <el-button icon="el-icon-setting" @click="onDetail(item.name)" circle></el-button>
                                     <el-button icon="el-icon-delete" @click="onDelete(item.name)" circle></el-button>
                                 </el-col>
@@ -75,6 +77,9 @@
                         this.onVueCreated()
                     })
                 });
+            },
+            onGotoDashboard(name) {
+                window.open(`/dashboard?cluster=${name}`, "_blank")
             },
             onVueCreated() {
                 listClusters().then(data => {
