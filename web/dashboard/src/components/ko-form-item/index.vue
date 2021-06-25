@@ -13,6 +13,7 @@
       <el-input v-if="itemType==='input'" style="width:100%;" size="mini" v-bind="$attrs" v-on="$listeners">
         <template v-if="deviderName && !withoutLabel" slot="append">{{deviderName}}</template>
       </el-input>
+
       <el-input type="number" v-if="itemType==='number'" style="width:100%; margin-top: 2px" size="mini" v-bind="$attrs" v-on="$listeners">
         <template v-if="deviderName && !withoutLabel" slot="append">{{deviderName}}</template>
       </el-input>
@@ -42,6 +43,10 @@
           <el-radio v-for="(item, index) in radios" :key="index" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
         </el-radio-group>
       </div>
+
+      <el-input v-if="itemType==='textarea'" style="width:100%;" type="textarea" :rows="1" v-bind="$attrs" v-on="$listeners" autosize>
+        <template v-if="deviderName && !withoutLabel" slot="append">{{deviderName}}</template>
+      </el-input>
     </div>
   </div>
 </template>
