@@ -21,7 +21,7 @@
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import {cpuUnitConvert, memeryUnitConvert} from '@/utils/unitConvert'
+import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoResources",
@@ -45,6 +45,9 @@ export default {
   },
   methods: {
     transformation(parentFrom) {
+      if (!parentFrom.resources) {
+        parentFrom.resources = {}
+      }
       if (this.form.requests.memory || this.form.requests.cpu) {
         parentFrom.resources.requests = {}
         if (this.form.requests.memory) {

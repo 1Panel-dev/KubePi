@@ -4,7 +4,7 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form :model="form" label-position="left" :rules="rules" label-width="120px">
+                    <el-form :model="form" label-position="left" :rules="rules" label- width="60px">
                         <el-form-item :label="$t('commons.table.name')" prop="name">
                             <el-input v-model="form.name" clearable></el-input>
                         </el-form-item>

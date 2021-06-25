@@ -16,7 +16,7 @@
         <ko-form-item labelName="Stdin" clearable itemType="select" v-model="form.stdin" :selections="stdin_list" />
       </el-col>
       <el-col :span="6">
-        <el-checkbox :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
+        <el-checkbox style="margin-top: 20px" :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
       </el-col>
     </el-row>
     <div style="margin-top: 30px">
@@ -39,9 +39,9 @@
           <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
         </template>
       </el-table-column>
-      <el-table-column width="120px">
+      <el-table-column width="60px">
         <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 20px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
+          <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +56,7 @@
       <el-table-column min-width="40" label="Source">
         <template v-slot:default="{row}">
           <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" clearable itemType="input" v-model="row.source" />
-          <ko-form-item v-if="row.type === 'ConfigMap'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="config_map_list" />
+          <ko-form-item v-if="row.type === 'ConfigMap' || 'ConfigMap key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="config_map_list" />
           <ko-form-item v-if="row.type === 'Secret key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_key_list" />
           <ko-form-item v-if="row.type === 'Secret'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_list" />
         </template>
@@ -76,7 +76,7 @@
           <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.prefix_or_alias" />
         </template>
       </el-table-column>
-      <el-table-column width="120px">
+      <el-table-column width="60px">
         <template v-slot:default="{row}">
           <el-button type="text" style="font-size: 10px" @click="handleResourceDelete(row)">{{ $t("commons.button.delete") }}</el-button>
         </template>
@@ -114,6 +114,7 @@ export default {
         { label: "Secret key", value: "Secret key" },
         { label: "Field", value: "Field" },
         { label: "Secret", value: "Secret" },
+        { label: "ConfigMap key", value: "ConfigMap key" },
       ],
       stdin_list: [
         { label: "No", value: "No" },
@@ -161,7 +162,6 @@ export default {
       }
     },
     transformation(parentFrom) {
-      console.log(this.form.args)
       if (this.form.command) {
         parentFrom.command = this.form.command.split(",")
       }
@@ -274,11 +274,11 @@ export default {
       if (this.commandParentObj.workingDir) {
         this.form.workingDir = this.commandParentObj.workingDir
       }
-      if (this.commandParentObj.stdinOnce) {
+      if (this.commandParentObj.stdinOnce != undefined) {
         this.form.stdinOnce = true
         this.form.stdin = "Ones"
       }
-      if (this.commandParentObj.stdin) {
+      if (this.commandParentObj.stdin != undefined) {
         this.form.stdin = this.commandParentObj.stdin ? "Yes" : "No"
       }
       if (this.commandParentObj.tty) {
@@ -294,7 +294,7 @@ export default {
             } else if (en.valueFrom.secretKeyRef) {
               this.form.envFromResource.push({ source: en.valueFrom.secretKeyRef.name, key: "Secret key", type: "Secret key", prefix_or_alias: en.name })
             } else if (en.valueFrom.fieldRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.fieldPath , type: "Field", prefix_or_alias: en.name })
+              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.fieldPath, type: "Field", prefix_or_alias: en.name })
             }
           } else {
             this.form.env.push(en)

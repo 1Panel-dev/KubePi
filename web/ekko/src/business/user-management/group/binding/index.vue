@@ -35,7 +35,7 @@
                 :visible.sync="createDialogOpened"
                 width="20%"
                 center z-index="20">
-            <el-form :model="form" label-position="left" label-width="120px">
+            <el-form :model="form" label-position="left" label- width="60px">
                 <el-form-item label="Username">
                     <el-select v-model="form.username">
                         <el-option v-for="(item,index) in userOptions" :key="index"

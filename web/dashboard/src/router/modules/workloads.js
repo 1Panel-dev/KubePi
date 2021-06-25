@@ -27,20 +27,19 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/from/:cluster/:namespace/:name",
-      name: "DeploymentForm",
+      path: "/deployments/create",
+      name: "DeploymentCreate",
       hidden: true,
-      component: () => import("@/business/workloads/deployments/form"),
+      component: () => import("@/business/workloads/deployments/create"),
       meta: {
         activeMenu: "/deployments",
       }
     },
-
     {
-      path: "/deployments/yaml/:cluster/:namespace/:name",
-      name: "DeploymentYaml",
+      path: "/deployments/edit/:cluster/:namespace/:name/:yamlShow",
+      name: "DeploymentEdit",
       hidden: true,
-      component: () => import("@/business/workloads/deployments/yaml"),
+      component: () => import("@/business/workloads/deployments/edit"),
       meta: {
         activeMenu: "/deployments",
       }

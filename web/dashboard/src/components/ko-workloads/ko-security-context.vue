@@ -83,6 +83,9 @@ export default {
       this.privileged_escalation_list[0].disabledOption = value
     },
     transformation(parentFrom) {
+      if (!parentFrom.securityContext) {
+        parentFrom.securityContext = {}
+      }
       if (this.form.privileged) {
         parentFrom.securityContext.privileged = this.form.privileged
       }

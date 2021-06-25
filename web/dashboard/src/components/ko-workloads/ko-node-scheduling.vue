@@ -1,126 +1,157 @@
 <template>
-  <div style="margin-top: 20px">
+  <div>
     <el-row :gutter="20">
       <el-col :span="12">
-        <ko-form-item labelName="Node Scheduling" clearable itemType="radio" v-model="form.scheduling_type" :radios="scheduling_type_list" />
-      </el-col>
-    </el-row>
+        <el-divider content-position="left">Pod Scheduling</el-divider>
+        <div v-for="(item, index) in podSchedulings" :key="index">
+          <el-card style="margin-top: 10px">
+            <el-button style="float: right; padding: 3px 0" type="text" @click="handlePodRulesDelete(index)">删 除</el-button>
+            <el-row style="margin-top: 20px">
+              <el-col :span="12">
+                <ko-form-item labelName="Type" clearable itemType="radio" v-model="item.type" :radios="type_list" />
+              </el-col>
+              <el-col :span="12">
+                <ko-form-item labelName="Priority" clearable itemType="radio" v-model="item.priority" :radios="priority_list" />
+              </el-col>
+            </el-row>
+            <el-row style="margin-top: 20px">
+              <el-col :span="12">
+                <ko-form-item labelName="Namespace" clearable itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
+              </el-col>
+              <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
+                <ko-form-item labelName="Namespace" clearable itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
+              </el-col>
+            </el-row>
 
-    <el-row v-if="form.scheduling_type!=='matching_rules'" :gutter="20" style="margin-top: 20px">
+            <el-button style="margin-top: 20px" @click="handleMatchAdd(item)">Add</el-button>
+            <el-table :data="item.rules">
+              <el-table-column min-width="40" label="Key">
+                <template v-slot:default="{row}">
+                  <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
+                </template>
+              </el-table-column>
+              <el-table-column min-width="30" label="Operator">
+                <template v-slot:default="{row}">
+                  <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
+                </template>
+              </el-table-column>
+              <el-table-column min-width="40" label="Value">
+                <template v-slot:default="{row}">
+                  <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                  <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
+                </template>
+              </el-table-column>
+              <el-table-column width="60px">
+                <template v-slot:default="{row}">
+                  <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, row)">{{ $t("commons.button.delete") }}</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-row style="margin-top: 20px">
+              <el-col :span=24>
+                <ko-form-item labelName="Topology Key" clearable itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
+        <el-button style="margin-top: 20px" @click="handlePodRulesAdd()">Add Node Selector</el-button>
+      </el-col>
+
       <el-col :span="12">
-        <ko-form-item labelName="Node Name" clearable itemType="select" v-model="form.nodeName" :selections="node_list" />
+        <el-divider content-position="left">Node Scheduling</el-divider>
+        <el-row style="margin-top: 20px">
+          <el-col :span="24">
+            <ko-form-item labelName="Scheduling Type" radioLayout="vertical" clearable itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
+          </el-col>
+        </el-row>
+        <el-row style="margin-top: 20px" v-if="scheduling_type === 'specific_node'">
+          <el-col :span="24">
+            <ko-form-item labelName="Node Name" clearable itemType="select" v-model="nodeName" :selections="node_list" />
+          </el-col>
+        </el-row>
+        <div v-if="scheduling_type === 'matching_rules'">
+          <div v-for="(item, index) in nodeSchedulings" :key="index">
+            <el-card style="margin-top: 10px">
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">删 除</el-button>
+              <el-row style="margin-top: 20px">
+                <el-col :span="12">
+                  <ko-form-item labelName="Priority" clearable itemType="radio" v-model="item.priority" :radios="priority_list" />
+                </el-col>
+                <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
+                  <ko-form-item labelName="Weight" clearable itemType="number" v-model="item.weight" />
+                </el-col>
+              </el-row>
+
+              <el-button style="margin-top: 20px" @click="handleMatchAdd(item)">Add Rule</el-button>
+              <el-table :data="item.rules">
+                <el-table-column min-width="40" label="Key">
+                  <template v-slot:default="{row}">
+                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
+                  </template>
+                </el-table-column>
+                <el-table-column min-width="30" label="Operator">
+                  <template v-slot:default="{row}">
+                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
+                  </template>
+                </el-table-column>
+                <el-table-column min-width="40" label="Value">
+                  <template v-slot:default="{row}">
+                    <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
+                  </template>
+                </el-table-column>
+                <el-table-column width="60px">
+                  <template v-slot:default="{row}">
+                    <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, row)">{{ $t("commons.button.delete") }}</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </div>
+        </div>
+        <el-button v-if="scheduling_type === 'matching_rules'" style="margin-top: 20px" @click="handleNodeRulesAdd()">Add Node Selector</el-button>
       </el-col>
     </el-row>
 
-    <div v-if="form.scheduling_type==='matching_rules'">
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <label>Require any of:</label>
-          <div style="margin-top: 10px">
-            <el-button @click="handleSelectorRequiredAdd()">Add Node Selector</el-button>
-          </div>
-          <div v-for="(item, index) in nodeSelectorTerms" :key="index">
-            <div style="border: solid 1px rgb(228, 204, 204); border-radius: 5px;padding: 5px; margin-top: 5px;">
-              <div>
-                <el-button type="text" style="float: right;margin-right: 20px; font-size: 16px" @click="handleSelectorRequiredClose(nodeSelectorTerms[index])">X</el-button>
-                <el-button @click="handleRuleRequiredAdd(nodeSelectorTerms[index])">Add</el-button>
-              </div>
-              <el-table :data="item.matchExpressions">
-                <el-table-column min-width="40" label="Key">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
-                  </template>
-                </el-table-column>
-                <el-table-column min-width="35" label="Operator">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
-                  </template>
-                </el-table-column>
-                <el-table-column min-width="40" label="Value">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
-                  </template>
-                </el-table-column>
-                <el-table-column width="120px">
-                  <template v-slot:default="{row}">
-                    <el-button type="text" style="font-size: 10px" @click="handleRuleRequiredDelete(nodeSelectorTerms[index], row)">{{ $t("commons.button.delete") }}</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <label>Prefer any of:</label>
-          <div style="margin-top: 10px">
-            <el-button @click="handleSelectorPreferAdd()">Add Node Selector</el-button>
-          </div>
-          <div v-for="(item, index) in preferenceInfos" :key="index">
-            <div style="border: solid 1px rgb(228, 204, 204); border-radius: 5px;padding: 5px; margin-top: 5px;">
-              <div>
-                <el-button type="text" style="float: right;margin-right: 20px; font-size: 16px" @click="handleSelectorPreferClose(preferenceInfos[index])">X</el-button>
-                <el-button @click="handleRulePreferAdd(preferenceInfos[index])">Add</el-button>
-              </div>
-              <el-table :data="item.preference.matchExpressions">
-                <el-table-column min-width="40" label="Key">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
-                  </template>
-                </el-table-column>
-                <el-table-column min-width="35" label="Operator">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="operator_list" />
-                  </template>
-                </el-table-column>
-                <el-table-column min-width="40" label="Value">
-                  <template v-slot:default="{row}">
-                    <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else clearable itemType="input" v-model="row.value" />
-                  </template>
-                </el-table-column>
-                <el-table-column width="120px">
-                  <template v-slot:default="{row}">
-                    <el-button type="text" style="font-size: 10px" @click="handleRulePreferDelete(preferenceInfos[index], row)">{{ $t("commons.button.delete") }}</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
-
-    <div style="margin-top: 20px" v-if="form.scheduling_type==='specific_node'">
-      <label>Nodes with these labels
-        <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-          <i class="el-icon-question" />
-        </el-tooltip>
-      </label>
-      <div style="margin-top: 10px">
-        <el-button @click="handleAdd">Add</el-button>
-      </div>
-      <el-table v-if="form.nodeSelector.length !== 0" :data="form.nodeSelector">
-        <el-table-column min-width="80" label="Key">
+    <el-row :gutter="20" style="margin-top: 20px">
+      <el-divider content-position="left">Tolerations</el-divider>
+      <el-button @click="handleTolerationsAdd()">Add Toleration</el-button>
+      <el-table v-if="tolerations.length !== 0" :data="tolerations">
+        <el-table-column min-width="40" label="Label Key">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.key" />
           </template>
         </el-table-column>
-        <el-table-column min-width="80" label="Value">
+        <el-table-column min-width="15" label="Operator">
           <template v-slot:default="{row}">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.operator" :selections="tolerations_operator_list" />
           </template>
         </el-table-column>
-        <el-table-column width="120px">
+        <el-table-column min-width="40" label="Value">
           <template v-slot:default="{row}">
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
+            <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.value" />
+          </template>
+        </el-table-column>
+        <el-table-column min-width="25" label="Effect">
+          <template v-slot:default="{row}">
+            <ko-form-item :withoutLabel="true" clearable itemType="select" v-model="row.effect" :selections="effect_list" />
+          </template>
+        </el-table-column>
+        <el-table-column min-width="20" label="Toleration Seconds(s)">
+          <template v-slot:default="{row}">
+            <ko-form-item :withoutLabel="true" :disabled="row.effect !== 'NoExecute'" clearable itemType="number" v-model.number="row.tolerationSeconds" />
+          </template>
+        </el-table-column>
+        <el-table-column width="60px">
+          <template v-slot:default="{row}">
+            <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(row)">{{ $t("commons.button.delete") }}</el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-row>
   </div>
 </template>
-          
+
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 
@@ -128,13 +159,26 @@ export default {
   name: "KoNodeScheduling",
   components: { KoFormItem },
   props: {
-    nodeSchedulingParentObj: Object,
+    schedulingParentObj: Object,
   },
   data() {
     return {
       scheduling_type_list: [
+        { label: "Run pods on any avaliable node", value: "any_node" },
         { label: "Run pods on specific node(s)", value: "specific_node" },
-        { label: "Run pods on node(s) matching these scheduling rules", value: "matching_rules" },
+        { label: "Run pods on node(s) matching scheduling rules", value: "matching_rules" },
+      ],
+      type_list: [
+        { label: "Affinity", value: "Affinity" },
+        { label: "Anti-Affinity", value: "Anti-Affinity" },
+      ],
+      priority_list: [
+        { label: "Preferred", value: "Preferred" },
+        { label: "Required", value: "Required" },
+      ],
+      namespace_operation_list: [
+        { label: "This pod's namespace", value: "podNamespace" },
+        { label: "Pods in these namespaces", value: "selectNamespace" },
       ],
       operator_list: [
         { label: "<", value: "Lt" },
@@ -144,196 +188,305 @@ export default {
         { label: "=", value: "In" },
         { label: "!=", value: "NotIn" },
       ],
+      tolerations_operator_list: [
+        { label: "Exists", value: "Exists" },
+        { label: "=", value: "Equal" },
+      ],
+      effect_list: [
+        { label: "All", value: "All" },
+        { label: "NoSchedule", value: "NoSchedule" },
+        { label: "PreferNoSchedule", value: "PreferNoSchedule" },
+        { label: "NoExecute", value: "NoExecute" },
+      ],
+      namespace_list: [
+        { label: "kube-system", value: "kube-system" },
+        { label: "kube-public", value: "kube-public" },
+        { label: "kube-operator", value: "kube-operator" },
+        { label: "default", value: "default" },
+      ],
+      podSchedulings: [],
+      scheduling_type: "any_node",
+      nodeName: "",
       node_list: [],
-      nodeSelectorTerms: [],
-      preferenceInfos: [],
-      form: {
-        scheduling_type: "specific_node",
-        nodeName: "",
-        nodeSelector: [],
-      },
+      nodeSchedulings: [],
+      tolerations: [],
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.form.nodeSelector.length; i++) {
-        if (this.form.nodeSelector[i] === row) {
-          this.form.nodeSelector.splice(i, 1)
-        }
-      }
-    },
-    handleAdd() {
+    handlePodRulesAdd() {
       var item = {
-        key: "",
-        value: "",
+        type: "Affinity",
+        priority: "Preferred",
+        namespaceOperation: "podNamespace",
+        namespaces: "",
+        rules: [],
+        topologyKey: "",
       }
-      this.form.nodeSelector.unshift(item)
+      this.podSchedulings.push(item)
     },
-    handleRuleRequiredDelete(requireItem, row) {
-      for (let i = 0; i < requireItem.matchExpressions.length; i++) {
-        if (requireItem.matchExpressions[i] === row) {
-          requireItem.matchExpressions.splice(i, 1)
-        }
+    handlePodRulesDelete(index) {
+      this.podSchedulings.splice(index, 1)
+    },
+
+    handleNodeRulesAdd() {
+      var item = {
+        priority: "Preferred",
+        rules: [],
       }
+      this.nodeSchedulings.push(item)
     },
-    handleRuleRequiredAdd(requireItem) {
+    handleNodeRulesDelete(index) {
+      this.nodeSchedulings.splice(index, 1)
+    },
+
+    handleTolerationsAdd() {
       var item = {
         key: "",
         operator: "",
         value: "",
+        effect: "",
+        tolerationSeconds: "",
       }
-      requireItem.matchExpressions.unshift(item)
+      this.tolerations.unshift(item)
     },
-    handleSelectorRequiredAdd() {
-      var item = {
-        matchExpressions: [],
-      }
-      this.nodeSelectorTerms.unshift(item)
-    },
-    handleSelectorRequiredClose(requireItem) {
-      for (let i = 0; i < this.nodeSelectorTerms.length; i++) {
-        if (this.nodeSelectorTerms[i] === requireItem) {
-          this.nodeSelectorTerms.splice(i, 1)
+    handleTolerationsDelete(row) {
+      for (let i = 0; i < this.tolerations.length; i++) {
+        if (this.tolerations[i] === row) {
+          this.tolerations.splice(i, 1)
         }
       }
     },
 
-    handleRulePreferDelete(preferItem, row) {
-      for (let i = 0; i < preferItem.preference.matchExpressions.length; i++) {
-        if (preferItem.preference.matchExpressions[i] === row) {
-          preferItem.preference.matchExpressions.splice(i, 1)
-        }
-      }
-    },
-    handleRulePreferAdd(preferItem) {
+    handleMatchAdd(schedulingItem) {
       var item = {
         key: "",
         operator: "",
         value: "",
       }
-      preferItem.preference.matchExpressions.unshift(item)
+      schedulingItem.rules.push(item)
     },
-    handleSelectorPreferAdd() {
-      var item = {
-        matchExpressions: [],
-      }
-      this.preferenceInfos.unshift(item)
-    },
-    handleSelectorPreferClose(preferItem) {
-      for (let i = 0; i < this.preferenceInfos.length; i++) {
-        if (this.preferenceInfos[i] === preferItem) {
-          this.preferenceInfos.splice(i, 1)
+    handleMatchDelete(schedulingItem, row) {
+      for (let i = 0; i < schedulingItem.rules.length; i++) {
+        if (schedulingItem.rules[i] === row) {
+          schedulingItem.rules.splice(i, 1)
         }
       }
     },
+    valueTrans(type, priority, s) {
+      let namespaceOperation,
+        namespaces = ""
+      if (s.namespaces) {
+        namespaceOperation = "selectNamespace"
+        namespaces = s.namespaces
+      } else {
+        namespaceOperation = "podNamespace"
+      }
+      let rules = []
+      for (const express of s.matchExpressions) {
+        rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+      }
+      const topologyKey = s.topologyKey ? s.topologyKey : ""
+      this.podSchedulings.push({
+        type: type,
+        priority: priority,
+        namespaceOperation: namespaceOperation,
+        namespaces: namespaces,
+        rules: rules,
+        topologyKey: topologyKey,
+      })
+    },
+    getMatchExpress(schedule) {
+      let matchs = []
+      if (schedule.rules.length === 0) {
+        return matchs
+      }
+      for (const rule of schedule.rules) {
+        if (rule.value) {
+          matchs.push({
+            key: rule.key,
+            operator: rule.operator,
+            values: rule.value.split(","),
+          })
+        } else {
+          matchs.push({
+            key: rule.key,
+            operator: rule.operator,
+          })
+        }
+      }
+      return matchs
+    },
+
     transformation(parentFrom) {
-      switch (this.form.scheduling_type) {
-        case "specific_node":
-          if (this.form.nodeSelector.length !== 0) {
-            let obj = {}
-            for (let i = 0; i < this.form.nodeSelector.length; i++) {
-              if (this.form.nodeSelector[i].key !== "") {
-                obj[this.form.nodeSelector[i].key] = this.form.nodeSelector[i].value
-              }
-            }
-            parentFrom.nodeSelector = obj
-          }
-          break
-        case "matching_rules":
-          if (this.nodeSelectorTerms.length !== 0) {
-            let reqlist = []
-            let reqExist = false
-            for (const item of this.nodeSelectorTerms) {
-              if (item.matchExpressions.length !== 0) {
-                reqExist = true
-                let matchs = []
-                for (const match of item.matchExpressions) {
-                  if (match.value) {
-                    matchs.push({
-                      key: match.key,
-                      operator: match.operator,
-                      values: match.value.split(","),
-                    })
-                  } else {
-                    matchs.push({
-                      key: match.key,
-                      operator: match.operator,
-                    })
+      if (this.tolerations.length !== 0) {
+        parentFrom.tolerations = this.tolerations
+      }
+      if (this.scheduling_type === "specific_node") {
+        parentFrom.nodeName = this.nodeName
+      }
+      if (this.scheduling_type === "matching_rules") {
+        if (this.nodeSchedulings.length !== 0) {
+          for (const nS of this.podSchedulings) {
+            const matchs = this.getMatchExpress(nS)
+            if (matchs.length !== 0) {
+              let itemAdd = {}
+              switch (nS.priority) {
+                case "Preferred":
+                  if (!parentFrom.nodeAffinity) {
+                    parentFrom.nodeAffinity = {}
                   }
-                }
-                reqlist.push({
-                  matchExpressions: matchs,
-                })
-              }
-              if (reqExist) {
-                parentFrom.affinity = {}
-                parentFrom.affinity.nodeAffinity = {}
-                parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
-                parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = reqlist
-              }
-            }
-          }
-          if (this.preferenceInfos.length !== 0) {
-            let prelist = []
-            let preExist = false
-            for (const item of this.preferenceInfos) {
-              if (item.preference.matchExpressions.length !== 0) {
-                preExist = true
-                let matchs = []
-                for (const match of item.preference.matchExpressions) {
-                  if (match.value) {
-                    matchs.push({
-                      key: match.key,
-                      operator: match.operator,
-                      values: match.split(","),
-                    })
-                  } else {
-                    matchs.push({
-                      key: match.key,
-                      operator: match.operator,
-                    })
+                  if (!parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+                    parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
                   }
-                }
-                prelist.push({
-                  matchExpressions: matchs,
-                })
-              }
-              if (preExist) {
-                parentFrom.affinity = {}
-                parentFrom.affinity.nodeAffinity = {}
-                parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = {}
-                parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = prelist
+                  itemAdd.weight = 1
+                  itemAdd.preference = {}
+                  itemAdd.preference.matchExpressions = matchs
+                  parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                  break
+                case "Required":
+                  if (!parentFrom.nodeAffinity) {
+                    parentFrom.nodeAffinity = {}
+                  }
+                  if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                    parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
+                  }
+                  if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
+                    parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                  }
+                  parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
+                  break
               }
             }
           }
-          break
+        }
+      }
+      if (this.podSchedulings.length !== 0) {
+        for (const pS of this.podSchedulings) {
+          const matchs = this.getMatchExpress(pS)
+          if (matchs.length !== 0) {
+            let itemAdd = {}
+            if (pS.namespaceOperation === "selectNamespace" && pS.namespaces.length !== 0) {
+              itemAdd.namespaces = pS.namespaces
+            }
+            itemAdd.topologyKey = pS.topologyKey
+            switch (pS.type + "+" + pS.priority) {
+              case "Affinity+Required":
+                if (!parentFrom.podAffinity) {
+                  parentFrom.podAffinity = {}
+                }
+                if (!parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                  parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
+                }
+                itemAdd.labelSelector = {}
+                itemAdd.labelSelector.matchExpressions = matchs
+                parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                break
+              case "Affinity+Preferred":
+                if (!parentFrom.podAffinity) {
+                  parentFrom.podAffinity = {}
+                }
+                if (!parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+                  parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+                }
+                itemAdd.podAffinityTerm = {}
+                itemAdd.weight = 1
+                itemAdd.podAffinityTerm.labelSelector = {}
+                itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
+                parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                break
+              case "Anti-Affinity+Required":
+                if (!parentFrom.podAntiAffinity) {
+                  parentFrom.podAntiAffinity = {}
+                }
+                if (!parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                  parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
+                }
+                itemAdd._anti = true
+                itemAdd.labelSelector = {}
+                itemAdd.labelSelector.matchExpressions = matchs
+                parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                break
+              case "Anti-Affinity+Preferred":
+                if (!parentFrom.podAntiAffinity) {
+                  parentFrom.podAntiAffinity = {}
+                }
+                if (!parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+                  parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+                }
+                itemAdd._anti = true
+                itemAdd.podAffinityTerm = {}
+                itemAdd.weight = 1
+                itemAdd.podAffinityTerm.labelSelector = {}
+                itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
+                parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                break
+            }
+          }
+        }
       }
     },
   },
   mounted() {
-    if (this.nodeSchedulingParentObj) {
-      if (this.nodeSchedulingParentObj.affinity) {
-        this.form.scheduling_type = "matching_rules"
-        if (this.nodeSchedulingParentObj.affinity) {
-          if (this.nodeSchedulingParentObj.affinity.nodeAffinity) {
-
-            if (this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-              if (this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
-                this.nodeSelectorTerms = this.nodeSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
-                for (const term of this.nodeSelectorTerms) {
-                  for (const express of term.matchExpressions) {
-                    express.value = express.values.join(",")
-                  }
+    this.nodeSchedulings = []
+    this.podSchedulings = []
+    if (this.schedulingParentObj) {
+      if (this.schedulingParentObj.affinity) {
+        if (this.schedulingParentObj.affinity.nodeAffinity) {
+          this.scheduling_type = "matching_rules"
+          if (this.schedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            if (this.schedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
+              const schedulings = this.schedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
+              for (const s of schedulings) {
+                let rules = []
+                for (const express of s.matchExpressions) {
+                  rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
                 }
+                this.nodeSchedulings.push({ type: "Node", priority: "Required", rules: rules })
               }
             }
+          }
+          if (this.schedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.schedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              let rules = []
+              for (const express of s.preference.matchExpressions) {
+                rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+              }
+              console.log(s)
+              const weight = s.weight ? s.weight : 1
+              this.nodeSchedulings.push({ type: "Node", priority: "Preferred", weight: weight, rules: rules })
+            }
+          }
+        }
 
-            if (this.nodeSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-              this.preferenceInfos = this.nodeSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
-              for (const pre of this.preferenceInfos) {
-                for (const express of pre.preference.matchExpressions) {
-                  express.value = express.values.join(",")
-                }
+        if (this.schedulingParentObj.affinity.podAffinity) {
+          if (this.schedulingParentObj.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.schedulingParentObj.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              this.valueTrans("Affinity", "Required", s)
+            }
+          }
+          if (this.schedulingParentObj.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.schedulingParentObj.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              if (s.podAffinityTerm) {
+                this.valueTrans("Affinity", "Preferred", s.podAffinityTerm)
+              }
+            }
+          }
+        }
+        if (this.schedulingParentObj.affinity.podAntiAffinity) {
+          if (this.schedulingParentObj.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.schedulingParentObj.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              this.valueTrans("Anti-Affinity", "Required", s)
+            }
+          }
+          if (this.schedulingParentObj.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.schedulingParentObj.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              if (s.podAffinityTerm) {
+                this.valueTrans("Anti-Affinity", "Preferred", s.podAffinityTerm)
               }
             }
           }
