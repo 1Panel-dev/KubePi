@@ -1,43 +1,51 @@
 <template>
   <div style="margin-top: 20px">
-    <el-button @click="handleAdd">Add Port</el-button>
-    <el-checkbox style="margin-left: 20px; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
-    <el-table v-if="ports.length !== 0" :data="ports">
-      <el-table-column min-width="40" label="Name">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" itemType="input" v-model="row.name" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="40" label="Private Container Port">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.containerPort" />
-        </template>
-      </el-table-column>
-      <el-table-column v-if="isExpose" min-width="20" label="Public Host Port">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.hostPort" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="20" label="Protocol">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" itemType="select" v-model="row.protocol" :selections="protocol_list" />
-        </template>
-      </el-table-column>
-      <el-table-column  width="60px">
-        <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <ko-card title="Ports">
+      <el-checkbox style="margin-left: 20px; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="40%" align="left"><label>name</label></th>
+          <th scope="col" width="20%" align="left"><label>Private Container Port</label></th>
+          <th scope="col" v-if="isExpose" width="20%" align="left"><label>Public Host Port</label></th>
+          <th scope="col" width="16%" align="left"><label>Protocol</label></th>
+          <th align="left" width="1%"></th>
+        </tr>
+        <tr v-for="row in ports" v-bind:key="row.index">
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.name" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.containerPort" />
+          </td>
+          <td v-if="isExpose">
+            <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.hostPort" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.protocol" :selections="protocol_list" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+          </td>
+        </tr>
+      </table>
+    </ko-card>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoPorts",
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   props: {
     portParentObj: Object,
   },
@@ -54,19 +62,15 @@ export default {
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.ports.length; i++) {
-        if (this.ports[i] === row) {
-          this.ports.splice(i, 1)
-        }
-      }
+    handleDelete(index) {
+      this.ports.splice(index, 1)
     },
     handleAdd() {
       var item = {
         name: "",
         containerPort: "",
       }
-      this.ports.unshift(item)
+      this.ports.push(item)
     },
     transformation(parentFrom) {
       if (this.ports.length !== 0) {

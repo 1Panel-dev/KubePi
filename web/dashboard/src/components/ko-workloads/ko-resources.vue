@@ -1,31 +1,34 @@
 <template>
-  <div style="margin-top: 20px;margin-bottom: 20px">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model="form.requests.cpu" />
-      </el-col>
-      <el-col :span="12">
-        <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model="form.requests.memory" />
-      </el-col>
-    </el-row>
-    <el-row :gutter="20" style="margin-top: 20px">
-      <el-col :span="12">
-        <ko-form-item labelName="CPU Limit" placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model="form.limits.cpu" />
-      </el-col>
-      <el-col :span="12">
-        <ko-form-item labelName="Memory Limit" placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model="form.limits.memory" />
-      </el-col>
-    </el-row>
+  <div style="margin-top: 20px">
+    <ko-card title="Resources">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model="form.requests.cpu" />
+        </el-col>
+        <el-col :span="12">
+          <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model="form.requests.memory" />
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-top: 20px">
+        <el-col :span="12">
+          <ko-form-item labelName="CPU Limit" placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model="form.limits.cpu" />
+        </el-col>
+        <el-col :span="12">
+          <ko-form-item labelName="Memory Limit" placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model="form.limits.memory" />
+        </el-col>
+      </el-row>
+    </ko-card>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import KoCard from "@/components/ko-card/index"
 import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoResources",
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   props: {
     resourceParentObj: Object,
   },

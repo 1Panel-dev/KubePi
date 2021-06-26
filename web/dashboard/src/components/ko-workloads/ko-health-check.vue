@@ -1,80 +1,83 @@
 <template>
   <div style="margin-top: 20px">
-    <div>
-      <label>{{health_check_type}}
-        <el-tooltip class="item" effect="dark" :content="health_check_helper" placement="top-start">
-          <i class="el-icon-question" />
-        </el-tooltip>
-      </label>
-    </div>
-    <el-row :gutter="20" style="margin-top: 20px">
-      <el-col :span="12">
-        <el-row style="margin-bottom: 20px;">
-          <ko-form-item labelName="Type" itemType="select" v-model="check_type" :selections="type_list" />
-        </el-row>
-        <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
+    <ko-card :title="health_check_type" :description="health_check_helper">
+      <el-row :gutter="20" style="margin-top: 10px">
+        <el-col :span="12">
           <el-row style="margin-bottom: 20px;">
-            <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.httpGet.port" />
+            <ko-form-item labelName="Type" itemType="select" v-model="check_type" :selections="type_list" />
           </el-row>
-          <el-row>
-            <ko-form-item labelName="Request Path" itemType="input" v-model="form.httpGet.path" />
+          <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
+            <el-row style="margin-bottom: 20px;">
+              <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.httpGet.port" />
+            </el-row>
+            <el-row>
+              <ko-form-item labelName="Request Path" itemType="input" v-model="form.httpGet.path" />
+            </el-row>
+          </div>
+          <el-row v-if="check_type === 'tcpSocket'">
+            <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.tcpSocket.port" />
           </el-row>
-        </div>
-        <el-row v-if="check_type === 'tcpSocket'">
-          <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.tcpSocket.port" />
-        </el-row>
-        <el-row v-if="check_type === 'exec'">
-          <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
-        </el-row>
-      </el-col>
-      <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
-        <el-row :gutter="10" style="margin-bottom: 20px;">
-          <el-col :span="8">
-            <ko-form-item labelName="Check Interval" placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
-          </el-col>
-          <el-col :span="8">
-            <ko-form-item labelName="Initial Delay" placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
-          </el-col>
-          <el-col :span="8">
-            <ko-form-item labelName="Timeout" placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
-          </el-col>
-        </el-row>
-        <el-row :gutter="10" style="margin-bottom: 20px;">
-          <el-col :span="12">
-            <ko-form-item labelName="Seccess Threshold" placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
-          </el-col>
-          <el-col :span="12">
-            <ko-form-item labelName="Failure Threshold" placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
-          </el-col>
-        </el-row>
-        <el-row style="margin-bottom: 20px;">
-          <el-button @click="handleAdd">Add</el-button>
-          <el-table v-if="form.httpHeaders.length !== 0" :data="form.httpHeaders">
-            <el-table-column min-width="40" label="Key">
-              <template v-slot:default="{row}">
-                <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
-              </template>
-            </el-table-column>
-            <el-table-column min-width="40" label="Value">
-              <template v-slot:default="{row}">
-                <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
-              </template>
-            </el-table-column>
-            <el-table-column  width="60px">
-              <template v-slot:default="{row}">
-                <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-row>
-      </el-col>
-    </el-row>
-    <el-divider></el-divider>
+          <el-row v-if="check_type === 'exec'">
+            <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
+          </el-row>
+        </el-col>
+        <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
+          <el-row :gutter="10" style="margin-bottom: 20px;">
+            <el-col :span="8">
+              <ko-form-item labelName="Check Interval" placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
+            </el-col>
+            <el-col :span="8">
+              <ko-form-item labelName="Initial Delay" placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
+            </el-col>
+            <el-col :span="8">
+              <ko-form-item labelName="Timeout" placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
+            </el-col>
+          </el-row>
+          <el-row :gutter="10" style="margin-bottom: 20px;">
+            <el-col :span="12">
+              <ko-form-item labelName="Seccess Threshold" placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
+            </el-col>
+            <el-col :span="12">
+              <ko-form-item labelName="Failure Threshold" placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
+            </el-col>
+          </el-row>
+          <el-row style="margin-bottom: 20px;">
+            <el-divider content-position="left">Header</el-divider>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="45%" align="left"><label>key</label></th>
+                <th scope="col" width="45%" align="left"><label>value</label></th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="row in form.httpHeaders" v-bind:key="row.index">
+                <td>
+                  <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
+                </td>
+                <td>
+                  <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleAdd">Add</el-button>
+                </td>
+              </tr>
+            </table>
+          </el-row>
+        </el-col>
+      </el-row>
+    </ko-card>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoHealthCheck",
@@ -83,7 +86,7 @@ export default {
     health_check_helper: String,
     healthCheckParentObj: Object,
   },
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   data() {
     return {
       type_list: [
@@ -115,19 +118,15 @@ export default {
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.form.httpHeaders.length; i++) {
-        if (this.form.httpHeaders[i] === row) {
-          this.form.httpHeaders.splice(i, 1)
-        }
-      }
+    handleDelete(index) {
+      this.form.httpHeaders.splice(index, 1)
     },
     handleAdd() {
       var item = {
         key: "",
         value: "",
       }
-      this.form.httpHeaders.unshift(item)
+      this.form.httpHeaders.push(item)
     },
     transformation(parentFrom) {
       if (this.check_type === "None" || this.check_type === "") {
