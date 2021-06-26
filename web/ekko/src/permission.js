@@ -9,7 +9,7 @@ NProgress.configure({showSpinner: false}) // NProgress Configuration
 const whiteList = ["/login"] // no redirect whitelist
 
 const generateRoutes = async (to, from, next) => {
-    const hasPermissions = store.getters.permissions && store.getters.permissions.length > 0
+    const hasPermissions = Object.keys(store.getters.permissions).length > 0
     if (hasPermissions) {
         next()
     } else {

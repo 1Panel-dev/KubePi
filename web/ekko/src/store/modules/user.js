@@ -8,7 +8,7 @@ const state = {
     currentProject: "",
     language: getLanguage(),
     roles: [],
-    permissions: []
+    permissions: {}
 }
 
 const mutations = {
@@ -70,9 +70,9 @@ const actions = {
             getCurrentUser().then(data => {
                 const user = data.data
                 user["roles"] = ["ADMIN"]
-                const {name, nickName} = user
+                const {name, resourcePermissions, nickName} = user
                 commit("SET_NAME", name)
-                commit("SET_RESOURCE_PERMISSIONS", [1])
+                commit("SET_RESOURCE_PERMISSIONS", resourcePermissions)
                 commit("SET_LANGUAGE", "zh-CN")
                 commit("SET_NICK_NAME", nickName)
                 resolve(user)
