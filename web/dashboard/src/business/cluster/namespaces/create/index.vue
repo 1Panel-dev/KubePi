@@ -12,11 +12,9 @@
         </el-form>
         <el-col :span="24">
           <br>
-          <el-tabs v-model="activeName" tab-position="left" style="background-color: #141418;" @tab-click="handleClick">
-            <el-tab-pane label="Labels">
+          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
+            <el-tab-pane label="Labels/Annotations">
               <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-            </el-tab-pane>
-            <el-tab-pane label="Annotations">
               <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
             </el-tab-pane>
           </el-tabs>

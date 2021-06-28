@@ -21,6 +21,7 @@
           </el-option>
         </el-select>
       </template>
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
@@ -50,7 +51,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listConfigMaps} from "@/api/configmaps"
+import {deleteConfigMap, listConfigMaps} from "@/api/configmaps"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {downloadYaml} from "@/utils/actions"
@@ -130,8 +131,38 @@ export default {
         params: { cluster: this.clusterName }
       })
     },
-    onDelete () {
-
+    onDelete (row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteConfigMap(this.clusterName, row.metadata.namespace, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteConfigMap(this.clusterName, select.metadata.namespace, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
+        }
+      })
     },
     openDetail (row) {
       this.$router.push({

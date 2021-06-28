@@ -12,7 +12,6 @@
             <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required>
                 <el-select v-model="form.metadata.namespace">
-                  <el-option label="All Namespaces" value=""></el-option>
                   <el-option v-for="namespace in namespaces"
                              :key="namespace.metadata.name"
                              :label="namespace.metadata.name"
@@ -27,10 +26,8 @@
                 <el-tab-pane label="Data">
                   <ko-data ref="ko_data" :labelParentObj="form.data"></ko-data>
                 </el-tab-pane>
-                <el-tab-pane label="Labels">
+                <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                </el-tab-pane>
-                <el-tab-pane label="Annotations">
                   <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>

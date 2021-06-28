@@ -1,4 +1,4 @@
-import {get, post} from "@/plugins/request"
+import {del, get, post} from "@/plugins/request"
 
 
 const configMapUrl = (cluster_name) => {
@@ -30,4 +30,8 @@ export function getConfigMap (cluster_name, namespace, name) {
 
 export function createConfigMap (cluster_name, namespace, data) {
   return post(`${namespaceMapUrl(cluster_name, namespace)}`, data)
+}
+
+export function deleteConfigMap(cluster_name,namespace, name) {
+  return del(`${namespaceMapUrl(cluster_name, namespace)}/${name}`)
 }
