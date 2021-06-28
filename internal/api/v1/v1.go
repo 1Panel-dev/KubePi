@@ -135,7 +135,7 @@ func roleHandler() iris.Handler {
 				Operator: "in",
 				Value:    roleNames,
 			},
-		})
+		},common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

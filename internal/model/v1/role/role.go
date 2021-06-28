@@ -22,6 +22,6 @@ type Subject struct {
 type Binding struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
-	Subjects     []Subject `json:"subjects"`
+	Subject     Subject `json:"subjects"`
 	RoleRef      string    `json:"roleRef" storm:"index"`
 }

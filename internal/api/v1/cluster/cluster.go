@@ -3,6 +3,7 @@ package cluster
 import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
+	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
@@ -114,20 +115,64 @@ func (h *Handler) CreateCluster() iris.Handler {
 			}
 		}
 	end:
-		// 判断是否拥有创建ClusterRole/Namespace/的权限
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
+
+		tx, err := server.DB().Begin(true)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		txOptions := common.DBOptions{DB: tx}
+
 		req.CreatedBy = profile.Name
 		if err := client.CreateDefaultClusterRoles(); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		if err := h.clusterService.Create(&req.Cluster, common.DBOptions{}); err != nil {
+		if err := h.clusterService.Create(&req.Cluster, txOptions); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		// 把创建者以管理员身份加入集群中
+
+		binding := v1Cluster.Binding{
+			BaseModel: v1.BaseModel{
+				Kind:      "ClusterBinding",
+				CreatedBy: profile.Name,
+			},
+			Metadata: v1.Metadata{
+				Name: fmt.Sprintf("%s-%s-cluster-binding-", req.Name, profile.Name),
+			},
+			Subject: v1Cluster.Subject{
+				Name: profile.Name,
+				Kind: "User",
+			},
+			ClusterRef: req.Name,
+		}
+
+		csr, err := client.CreateCommonUser(profile.Name)
+		if err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		binding.Certificate = csr
+
+		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		_ = tx.Commit()
+
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -157,7 +202,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
-		clusters, err := h.clusterService.All()
+		clusters, err := h.clusterService.List(common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))

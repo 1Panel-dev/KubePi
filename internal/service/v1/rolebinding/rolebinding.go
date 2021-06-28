@@ -4,7 +4,7 @@ import (
 	"errors"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	customStorm "github.com/KubeOperator/ekko/pkg/storm"
+	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
 )
@@ -12,6 +12,7 @@ import (
 type Service interface {
 	common.DBService
 	GetRoleBindingBySubject(subject v1Role.Subject, options common.DBOptions) ([]v1Role.Binding, error)
+	GetRoleBindingsByRoleName(roleName string, options common.DBOptions) ([]v1Role.Binding, error)
 	CreateRoleBinding(binding *v1Role.Binding, options common.DBOptions) error
 	Delete(name string, options common.DBOptions) error
 }
@@ -25,6 +26,15 @@ type service struct {
 	common.DefaultDBService
 }
 
+func (s *service) GetRoleBindingsByRoleName(roleName string, options common.DBOptions) ([]v1Role.Binding, error) {
+	db := s.GetDB(options)
+	var r []v1Role.Binding
+	if err := db.Find("RoleRef", roleName, &r); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
 func (s *service) CreateRoleBinding(binding *v1Role.Binding, options common.DBOptions) error {
 	db := s.GetDB(options)
 	binding.UUID = uuid.New().String()
@@ -35,7 +45,7 @@ func (s *service) CreateRoleBinding(binding *v1Role.Binding, options common.DBOp
 
 func (s *service) GetRoleBindingBySubject(subject v1Role.Subject, options common.DBOptions) ([]v1Role.Binding, error) {
 	db := s.GetDB(options)
-	query := db.Select(customStorm.Containers("Subjects", subject))
+	query := db.Select(q.Eq("Subject", subject))
 	var rbs []v1Role.Binding
 	if err := query.Find(&rbs); err != nil {
 		return rbs, err

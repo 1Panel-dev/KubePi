@@ -2,7 +2,6 @@ package cluster
 
 import (
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/google/uuid"
@@ -12,15 +11,15 @@ import (
 type Service interface {
 	common.DBService
 	Create(cluster *v1Cluster.Cluster, options common.DBOptions) error
-	Get(name string, options common.DBOptions, ) (*v1Cluster.Cluster, error)
-	All() ([]v1Cluster.Cluster, error)
+	Get(name string, options common.DBOptions) (*v1Cluster.Cluster, error)
+	List(options common.DBOptions) ([]v1Cluster.Cluster, error)
 	Delete(name string, options common.DBOptions) error
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewService() Service {
 	return &cluster{
-		DefaultDBService:      common.DefaultDBService{},
+		DefaultDBService: common.DefaultDBService{},
 	}
 }
 
@@ -45,8 +44,8 @@ func (c *cluster) Get(name string, options common.DBOptions) (*v1Cluster.Cluster
 	return &cluster, nil
 }
 
-func (c *cluster) All() ([]v1Cluster.Cluster, error) {
-	db := server.DB()
+func (c *cluster) List(options common.DBOptions) ([]v1Cluster.Cluster, error) {
+	db := c.GetDB(options)
 	var clusters []v1Cluster.Cluster
 	if err := db.All(&clusters); err != nil {
 		return nil, err

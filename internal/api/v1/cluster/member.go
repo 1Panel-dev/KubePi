@@ -9,6 +9,7 @@ import (
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/ekko/pkg/collectons"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -191,12 +192,14 @@ func (h *Handler) GetClusterMember() iris.Handler {
 		}
 
 		var member Member
+		member.ClusterRoles = make([]string, 0)
 		member.Kind = binding.Subject.Kind
 		member.Name = binding.Subject.Name
+		set := collectons.NewStringSet()
 		for i := range clusterRoleBindings.Items {
-			member.ClusterRoles = append(member.ClusterRoles, clusterRoleBindings.Items[i].RoleRef.Name)
+			set.Add(clusterRoleBindings.Items[i].RoleRef.Name)
 		}
-
+		member.ClusterRoles = set.ToSlice()
 		ctx.Values().Set("data", &member)
 	}
 
