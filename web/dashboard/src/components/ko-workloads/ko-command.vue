@@ -1,96 +1,113 @@
 <template>
   <div style="margin-top: 20px">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" clearable itemType="input" v-model="form.command" />
-      </el-col>
-      <el-col :span="12">
-        <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" clearable itemType="input" v-model="form.args" />
-      </el-col>
-    </el-row>
-    <el-row :gutter="20" style="margin-top: 20px">
-      <el-col :span="12">
-        <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" clearable itemType="input" v-model="form.workingDir" />
-      </el-col>
-      <el-col :span="6">
-        <ko-form-item labelName="Stdin" clearable itemType="select" v-model="form.stdin" :selections="stdin_list" />
-      </el-col>
-      <el-col :span="6">
-        <el-checkbox style="margin-top: 20px" :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
-      </el-col>
-    </el-row>
-    <div style="margin-top: 30px">
-      <label>Environment Variables
-        <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-          <i class="el-icon-question" />
-        </el-tooltip>
-      </label>
-    </div>
+    <ko-card title="Command">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
+        </el-col>
+        <el-col :span="12">
+          <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="input" v-model="form.args" />
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-top: 20px">
+        <el-col :span="12">
+          <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
+        </el-col>
+        <el-col :span="6">
+          <ko-form-item labelName="Stdin" itemType="select" v-model="form.stdin" :selections="stdin_list" />
+        </el-col>
+        <el-col :span="6">
+          <el-checkbox style="margin-top: 20px" :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
+        </el-col>
+      </el-row>
+      <div style="margin-top: 30px">
+        <label>Environment Variables
+          <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
+            <i class="el-icon-question" />
+          </el-tooltip>
+        </label>
+      </div>
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="48%" align="left"><label>key</label></th>
+          <th scope="col" width="48%" align="left"><label>value</label></th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="row in form.env" v-bind:key="row.index">
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.name" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">Add</el-button>
+          </td>
+        </tr>
+      </table>
 
-    <el-button style="margin-top: 20px" @click="handleAdd">Add</el-button>
-    <el-table v-if="form.env.length !== 0" :data="form.env">
-      <el-table-column min-width="80" label="Key">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="row.name" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="80" label="Value">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="row.value" />
-        </template>
-      </el-table-column>
-      <el-table-column width="60px">
-        <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 10px" @click="handleDelete(row)">{{ $t("commons.button.delete") }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-button style="margin-top: 20px" @click="handleResourceAdd">Add form Resource</el-button>
-    <el-table v-if="form.envFromResource.length !== 0" :data="form.envFromResource">
-      <el-table-column min-width="40" label="Type">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" @change="changeType(row, 'type')" itemType="select" v-model="row.type" :selections="type_list" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="40" label="Source">
-        <template v-slot:default="{row}">
-          <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" clearable itemType="input" v-model="row.source" />
-          <ko-form-item v-if="row.type === 'ConfigMap' || 'ConfigMap key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="config_map_list" />
-          <ko-form-item v-if="row.type === 'Secret key'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_key_list" />
-          <ko-form-item v-if="row.type === 'Secret'" :withoutLabel="true" clearable itemType="select" v-model="row.source" :selections="secret_list" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="40" label="Key">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" placeholder="e.g. requests.cpu" v-if="row.type ==='Resource'" clearable itemType="input" v-model="row.key" />
-          <ko-form-item :withoutLabel="true" v-if="row.type === 'ConfigMap' || row.type === 'Secret key' || row.type === 'Secret'" @change="changeType(row, 'key')" clearable itemType="select" v-model="row.key" :selections="type_list" />
-          <ko-form-item :withoutLabel="true" v-if="row.type ==='Field'" disabled clearable itemType="input" value="n/a" />
-        </template>
-      </el-table-column>
-      <el-table-column min-width="10">
-        <span style="font-size: 20px; color: white;">AS</span>
-      </el-table-column>
-      <el-table-column min-width="40" label="Prefix or Alias">
-        <template v-slot:default="{row}">
-          <ko-form-item :withoutLabel="true" clearable itemType="input" v-model="row.prefix_or_alias" />
-        </template>
-      </el-table-column>
-      <el-table-column width="60px">
-        <template v-slot:default="{row}">
-          <el-button type="text" style="font-size: 10px" @click="handleResourceDelete(row)">{{ $t("commons.button.delete") }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="15%" align="left"><label>type</label></th>
+          <th scope="col" width="30%" align="left"><label>source</label></th>
+          <th scope="col" width="20%" align="left"><label>key</label></th>
+          <th scope="col" width="5%" align="left"><label>AS</label></th>
+          <th scope="col" width="23%" align="left"><label>Prefix or Alias</label></th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="row in form.envFromResource" v-bind:key="row.index">
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.type" :selections="type_list" />
+          </td>
+          <td>
+            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" itemType="input" v-model="row.source" />
+            <ko-form-item v-if="row.type === 'ConfigMap' || row.type === 'ConfigMap key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="config_map_list" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="secret_list" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='Resource'" itemType="select" v-model="row.key" :selections="resource_key_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='ConfigMap key'" itemType="select" v-model="row.key" :selections="cm_key_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='Secret key'" itemType="select" v-model="row.key" :selections="secret_key_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type === 'Secret' || row.type === 'ConfigMap' || row.type === 'Field'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+          </td>
+          <td>
+            <span style="font-size: 20px; color: white;">AS</span>
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.prefix_or_alias" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleResourceDelete(row.index)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleResourceAdd">Add form Resource</el-button>
+          </td>
+        </tr>
+      </table>
+    </ko-card>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import KoCard from "@/components/ko-card/index"
+import { listSecrets } from "@/api/secrets"
+import { listConfigMaps } from "@/api/configmaps"
 
 export default {
   name: "KoCommand",
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   props: {
     commandParentObj: Object,
   },
@@ -105,9 +122,18 @@ export default {
         env: [],
         envFromResource: [],
       },
-      config_map_list: [{ label: "kube-root-ca.crt", value: "kube-root-ca.crt" }],
-      secret_key_list: [{ label: "default-token-fkpdx", value: "default-token-fkpdx" }],
-      secret_list: [{ label: "default-token-fkpdx", value: "default-token-fkpdx" }],
+      config_map_list: [],
+      secret_list: [],
+      resource_key_list: [
+        { label: "limits.cpu", value: "limits.cpu" },
+        { label: "limits.ephemeral-storage", value: "limits.ephemeral-storage" },
+        { label: "limits.memory", value: "limits.memory" },
+        { label: "requests.cpu", value: "requests.cpu" },
+        { label: "requests.ephemeral-storage", value: "requests.ephemeral-storage" },
+        { label: "requests.memory", value: "requests.memory" },
+      ],
+      cm_key_list: [],
+      secret_key_list: [],
       type_list: [
         { label: "Resource", value: "Resource" },
         { label: "ConfigMap", value: "ConfigMap" },
@@ -124,27 +150,34 @@ export default {
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.form.env.length; i++) {
-        if (this.form.env[i] === row) {
-          this.form.env.splice(i, 1)
+    loadSecrets() {
+      listSecrets(this.$route.params.cluster).then((res) => {
+        this.secret_list = []
+        for (const secret of res.items) {
+          this.secret_list.push({ label: secret.metadata.name, value: secret.metadata.name })
         }
-      }
+      })
     },
-    handleResourceDelete(row) {
-      for (let i = 0; i < this.form.envFromResource.length; i++) {
-        if (this.form.envFromResource[i] === row) {
-          this.form.envFromResource.splice(i, 1)
+    loadConfigMaps() {
+      listConfigMaps(this.$route.params.cluster).then((res) => {
+        this.config_map_list = []
+        for (const cm of res.items) {
+          this.config_map_list.push({ label: cm.metadata.name, value: cm.metadata.name })
         }
-      }
+      })
     },
+
     handleAdd() {
       var item = {
         name: "",
         value: "",
       }
-      this.form.env.unshift(item)
+      this.form.env.push(item)
     },
+    handleDelete(index) {
+      this.form.env.splice(index, 1)
+    },
+
     handleResourceAdd() {
       var item = {
         type: "Resource",
@@ -152,15 +185,12 @@ export default {
         key: "",
         prefix_or_alias: "",
       }
-      this.form.envFromResource.unshift(item)
+      this.form.envFromResource.push(item)
     },
-    changeType(row, operator) {
-      if (operator === "type") {
-        row.key = row.type
-      } else {
-        row.type = row.key
-      }
+    handleResourceDelete(index) {
+      this.form.envFromResource.splice(index, 1)
     },
+
     transformation(parentFrom) {
       if (this.form.command) {
         parentFrom.command = this.form.command.split(",")
@@ -264,6 +294,8 @@ export default {
     },
   },
   mounted() {
+    this.loadSecrets()
+    this.loadConfigMaps()
     if (this.commandParentObj) {
       if (this.commandParentObj.command) {
         this.form.command = this.commandParentObj.command.join(",")

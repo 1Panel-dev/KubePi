@@ -1,43 +1,46 @@
 <template>
-
-  <div class="tab-content">
-    <el-row :gutter="20">
-      <el-col :span="11">
-        <span>key</span>
-      </el-col>
-      <el-col :span="11">
-        <span>value</span>
-      </el-col>
-      <div v-for="label in annotations" v-bind:key="label.index">
-        <div class="grid-content tab-content">
-          <br>
-          <br>
-          <el-col :span="11">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key" />
-          </el-col>
-          <el-col :span="11">
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="input" v-model="label.value" />
-          </el-col>
-          <el-col :span="2">
+  <div style="margin-top: 20px">
+    <ko-card title="Annotations">
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="48%" align="left">
+            <label>key</label>
+          </th>
+          <th scope="col" width="48%" align="left">
+            <label>value</label>
+          </th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="label in annotations" v-bind:key="label.index">
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="label.key" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="label.value" />
+          </td>
+          <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
               {{ $t("commons.button.delete") }}
             </el-button>
-          </el-col>
-        </div>
-      </div>
-    </el-row>
-    <div style="margin-top: 10px;">
-      <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-    </div>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+          </td>
+        </tr>
+      </table>
+    </ko-card>
   </div>
 </template>
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
+import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoAnnotations",
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   props: {
     annotationsParentObj: Object,
   },
@@ -75,7 +78,7 @@ export default {
     },
   },
   mounted() {
-    if (this.annotationsParentObj&&this.annotationsParentObj.annotations) {
+    if (this.annotationsParentObj && this.annotationsParentObj.annotations) {
       for (const key in this.annotationsParentObj.annotations) {
         if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj.annotations, key)) {
           this.annotations.push({

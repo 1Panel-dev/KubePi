@@ -27,7 +27,16 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/create",
+      path: "/deployments/detail/:cluster/:namespace/:name",
+      name: "DeploymentDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/deployments/detail"),
+      meta: {
+        activeMenu: "/deployments",
+      }
+    },
+    {
+      path: "/deployments/create/:cluster/:yamlShow",
       name: "DeploymentCreate",
       hidden: true,
       component: () => import("@/business/workloads/deployments/create"),

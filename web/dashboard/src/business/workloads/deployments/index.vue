@@ -12,23 +12,22 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable label="Name" prop="name" />
+      <el-table-column sortable label="Name" prop="name" >
+        <template v-slot:default="{row}">
+          <el-link @click="openDetail(row)">{{ row.name }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column sortable label="Status" prop="status" >
         <template v-slot:default="{row}">
           <el-button v-if="row.status ==='Active'" type="success" size="mini" plain round>
-            {{
-              row.status
-            }}
+            {{row.status}}
           </el-button>
           <el-button v-if="row.status ==='Terminating'" type="warning" size="mini" plain round>
-            {{
-              row.status.phase
-            }}
+            {{row.status.phase}}
           </el-button>
         </template>
       </el-table-column>
       <el-table-column sortable label="Namespace" prop="namespace" />
-      <el-table-column sortable label="Endpoints" prop="ip" />
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.created_time | datetimeFormat }}
@@ -99,7 +98,10 @@ export default {
   },
   methods: {
     onCreate () {
-      this.$router.push({ name: "DeploymentCreate" })
+      this.$router.push({ name: "DeploymentCreate", params: { cluster: "songliucs", yamlShow: false }})
+    },
+    openDetail(row) {
+      this.$router.push({ name: "DeploymentDetail", params: { cluster: "songliucs", namespace: row.namespace, name: row.name } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -159,9 +161,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-    openDetail (row) {
-      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name, cluster: "test1" } })
     },
   },
   mounted() {
