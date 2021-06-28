@@ -32,9 +32,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name:     "administrator",
+				Name:        "administrator",
 				Description: "_administrator",
-				UUID:     uuid.New().String(),
+				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
 				{
@@ -81,11 +81,9 @@ var CreateAdministrator = migrations.Migration{
 				Name: fmt.Sprintf("role-binding-%s-%s", roleAdministrator.Name, userAdmin.Name),
 				UUID: uuid.New().String(),
 			},
-			Subjects: []v1Role.Subject{
-				{
-					Kind: "User",
-					Name: userAdmin.Name,
-				},
+			Subject: v1Role.Subject{
+				Kind: "User",
+				Name: userAdmin.Name,
 			},
 			RoleRef: roleAdministrator.Name,
 		}
