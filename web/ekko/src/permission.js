@@ -16,11 +16,13 @@ const generateRoutes = async (to, from, next) => {
         try {
             const {resourcePermissions} = await store.dispatch("user/getCurrentUser")
             const accessRoutes = await store.dispatch("permission/generateRoutes", resourcePermissions)
-            router.addRoute({
-                path: "/",
-                component: Layout,
-                redirect: "/clusters",
-            })
+            if (accessRoutes.length > 0) {
+                router.addRoute({
+                    path: "/",
+                    component: Layout,
+                    redirect: accessRoutes[0].path,
+                })
+            }
             router.addRoutes(accessRoutes)
             next({...to, replace: true})
         } catch (error) {
