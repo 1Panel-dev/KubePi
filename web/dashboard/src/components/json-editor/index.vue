@@ -39,7 +39,9 @@ export default {
     value: function () {
       let content = JSON.stringify(this.value, null, "\t")
       this.$refs.editor.codemirror.setValue(content)
-      this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+      if (content.indexOf('\\n') > -1) {
+        this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+      }
     }
   },
 }

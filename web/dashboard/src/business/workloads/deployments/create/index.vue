@@ -36,7 +36,7 @@
           </el-row>
         </el-col>
       </el-row>
-      <el-tabs style="margin-top: 30px;background-color: #141418;" v-model="activeName">
+      <el-tabs style="margin-top: 30px;background-color: #141418;" v-model="activeName"  type="border-card">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
             <ko-container ref="ko_general" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" />

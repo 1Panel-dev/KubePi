@@ -1,8 +1,6 @@
 <template>
-  <div class="tab-content">
-    <div class="tab-title">
-      <span>Data</span>
-    </div>
+  <div style="margin-top: 20px">
+    <ko-card title="Data">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">
@@ -35,15 +33,17 @@
           </td>
         </tr>
       </table>
+    </ko-card>
     </div>
 </template>
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
+import KoCard from "@/components/ko-card"
 
 export default {
   name: "KoData",
-  components: { KoFormItem },
+  components: { KoCard, KoFormItem },
   props: {
     dataObj: Object
   },

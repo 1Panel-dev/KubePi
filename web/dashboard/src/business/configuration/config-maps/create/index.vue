@@ -22,7 +22,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <br>
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" >
                 <el-tab-pane label="Data">
