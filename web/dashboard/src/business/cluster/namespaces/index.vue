@@ -70,9 +70,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "NamespaceEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName },
-              query: { yamlShow: true }
+              path: "/namespaces/edit/"+row.metadata.name ,
+              query: { yamlShow: false }
             })
           }
         },
@@ -81,8 +80,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "NamespaceEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName },
+              path: "/namespaces/edit/"+row.metadata.name ,
               query: { yamlShow: true }
             })
           }
@@ -109,7 +107,7 @@ export default {
         pageSize: 10,
         nextToken: "",
       },
-      clusterName: "test1",
+      clusterName: "",
       searchName: ""
     }
   },
@@ -135,7 +133,7 @@ export default {
       })
     },
     openDetail (row) {
-      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name, cluster: "test1" } })
+      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name } })
     },
     onDelete (row) {
       this.$confirm(

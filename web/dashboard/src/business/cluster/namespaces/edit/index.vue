@@ -51,7 +51,6 @@ export default {
   components: { LayoutContent,KoAnnotations, KoLabels ,YamlEditor},
   props: {
     name: String,
-    cluster: String,
   },
   data () {
     return {
@@ -127,9 +126,9 @@ export default {
     },
   },
   created () {
-    this.getNamespaceByName()
-    this.showYaml = this.$route.query.yamlShow
     this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow  === "true"
+    this.getNamespaceByName()
   }
 }
 </script>
