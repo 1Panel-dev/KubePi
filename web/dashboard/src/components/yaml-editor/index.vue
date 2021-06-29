@@ -60,7 +60,20 @@ export default {
       file: File
     }
   },
-  watch: {},
+  watch: {
+    value:function (newValue) {
+      if (newValue !== undefined) {
+        let yaml = require("js-yaml")
+        this.$refs.editor.codemirror.setValue(yaml.dump(newValue))
+        //折叠一些无用的key
+        const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
+        if (cursor.findNext()) {
+          this.$refs.editor.codemirror.foldCode(cursor.from())
+        }
+        this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
+      }
+    }
+  },
   mounted () {
     if (this.value !== undefined) {
       let yaml = require("js-yaml")

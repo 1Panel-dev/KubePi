@@ -12,7 +12,8 @@
         </el-button-group>
       </template>
       <template #toolbar>
-        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName" @change="search(true)" @clear="search(true)"></el-input>
+        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"
+                  @change="search(true)" @clear="search(true)"></el-input>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -69,8 +70,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "NamespaceEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: false }
+              path: "/namespaces/edit/"+row.metadata.name ,
+              query: { yamlShow: false }
             })
           }
         },
@@ -79,8 +80,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "NamespaceEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+              path: "/namespaces/edit/"+row.metadata.name ,
+              query: { yamlShow: true }
             })
           }
         },
@@ -88,7 +89,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name+".yml",row)
+            downloadYaml(row.metadata.name + ".yml", row)
           }
         },
         {
@@ -106,7 +107,7 @@ export default {
         pageSize: 10,
         nextToken: "",
       },
-      clusterName: "test1",
+      clusterName: "",
       searchName: ""
     }
   },
@@ -122,7 +123,7 @@ export default {
           nextToken: "",
         }
       }
-      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken,this.searchName).then((res) => {
+      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken, this.searchName).then((res) => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
       }).catch(error => {
@@ -132,7 +133,7 @@ export default {
       })
     },
     openDetail (row) {
-      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name, cluster: "test1" } })
+      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name } })
     },
     onDelete (row) {
       this.$confirm(
@@ -169,6 +170,7 @@ export default {
     }
   },
   created () {
+    this.clusterName = this.$route.query.cluster
     this.search()
   }
 }

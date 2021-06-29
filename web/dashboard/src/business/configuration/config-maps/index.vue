@@ -68,7 +68,7 @@ export default {
         nextToken: "",
       },
       selects: [],
-      clusterName: "test1",
+      clusterName: "",
       loading: false,
       conditions: "",
       namespaces: [],
@@ -177,6 +177,7 @@ export default {
     }
   },
   created () {
+    this.clusterName = this.$route.query.cluster
     this.listAllNameSpaces()
     this.search()
   }

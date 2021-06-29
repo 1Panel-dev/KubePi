@@ -174,6 +174,7 @@
                 this.memberForm.clusterRoles = []
                 this.createDialogOpened = true
                 listClusterRoles(this.name).then(data => {
+                    console.log(data)
                     this.clusterRolesOptions = data.data
                 })
                 this.onSubjectKindChange()

@@ -9,29 +9,7 @@ function hasPermission(user, route) {
   if (user && route){
     console.log("")
   }
-        return true
-        // if (route.meta && route.meta.roles){
-        //   return user.roles.some(role => route.meta.roles.includes(role))
-        // }else {
-        //   return true
-        // }
-
-    // if (user.menu === 'global') {
-    //   // if (route.global && route.global) {
-    //   //   return true
-    //   // }
-    //   return !!(route.meta && route.meta.global);
-    // }else {
-    //   // if (route.meta && route.meta.global){
-    //   //     return false
-    //   // }
-    //   // if (route.meta && route.meta.roles){
-    //   //   return user.roles.some(role => route.meta.roles.includes(role))
-    //   // }else {
-    //   //   return true
-    //   // }
-    //   return true
-    // }
+  return true
 }
 
 
@@ -73,16 +51,9 @@ const actions = {
     }
 }
 
-const menuActions = {
-    SET_MENU: (state, menu) => {
-        state.menu = menu
-    }
-}
-
 export default {
     namespaced: true,
     state,
     mutations,
     actions,
-    menuActions
 }

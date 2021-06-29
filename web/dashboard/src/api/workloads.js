@@ -1,10 +1,10 @@
 import { get, del, post } from "@/plugins/request";
 
 const deploymentUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/apis/apps/v1/deployments`;
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/deployments`;
 };
 const deploymentWithNsUrl = (cluster_name, namespaces) => {
-return `/proxy/${cluster_name}/apis/apps/v1/namespaces/${namespaces}/deployments`;
+return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespaces}/deployments`;
 };
 
 export function listDeployments(cluster_name) {

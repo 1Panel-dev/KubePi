@@ -2,7 +2,7 @@ import {get} from "@/plugins/request"
 
 
 const jobUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/apis/batch/v1/jobs`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/jobs`
 }
 
 export function listJobs (cluster_name, limit, continueToken, search) {

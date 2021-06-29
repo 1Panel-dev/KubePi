@@ -12,7 +12,7 @@
         </el-form>
         <el-col :span="24">
           <br>
-          <el-tabs v-model="activeName" tab-position="left" style="background-color: #141418;" @tab-click="handleClick">
+          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="Labels">
               <ko-labels ref="ko_labels" :key="loading" :labelParentObj="item.metadata"></ko-labels>
             </el-tab-pane>
@@ -51,8 +51,6 @@ export default {
   components: { LayoutContent,KoAnnotations, KoLabels ,YamlEditor},
   props: {
     name: String,
-    cluster: String,
-    yamlShow: Boolean
   },
   data () {
     return {
@@ -88,18 +86,25 @@ export default {
     },
     onEditYaml() {
       this.yaml = this.transformYaml()
-      this.showYaml = true
+      this.$router.push({
+        name: "NamespaceEdit",
+        params: { name: this.name, cluster: this.clusterName },
+        query: { yamlShow: true }
+      })
     },
     backToForm() {
-      this.showYaml = false
+      this.$router.push({
+        name: "NamespaceEdit",
+        params: { name: this.name, cluster: this.clusterName},
+        query: { yamlShow: false }
+      })
     },
     getNamespaceByName () {
       this.loading = true
       getNamespace(this.cluster, this.name).then(res => {
         this.item = res
         this.loading = false
-        if(this.yamlShow) {
-          this.showYaml = this.yamlShow
+        if(this.showYaml) {
           this.yaml = JSON.parse(JSON.stringify(this.item))
         }
       })
@@ -121,6 +126,8 @@ export default {
     },
   },
   created () {
+    this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow  === "true"
     this.getNamespaceByName()
   }
 }

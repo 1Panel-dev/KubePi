@@ -293,11 +293,6 @@ export default {
   components: { YamlEditor, ComplexTable, LayoutContent },
   props: {
     name: String,
-    cluster: String,
-    yamlShow: {
-      type: Boolean,
-      default: false
-    }
   },
   data () {
     return {
@@ -412,6 +407,8 @@ export default {
     }
   },
   created () {
+    this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === 'true'
     this.getNodeByName()
   }
 }

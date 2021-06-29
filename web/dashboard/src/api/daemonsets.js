@@ -2,7 +2,7 @@ import {get} from "@/plugins/request"
 
 
 const daemonSetUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/apis/apps/v1/daemonsets`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/daemonsets`
 }
 
 export function listDaemonSets (cluster_name, limit, continueToken, search) {
