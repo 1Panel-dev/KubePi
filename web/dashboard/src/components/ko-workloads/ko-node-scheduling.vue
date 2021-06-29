@@ -1,68 +1,80 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Pod Scheduling">
-      <el-row>
-        <el-col :span="24">
-          <ko-form-item labelName="Scheduling Type" radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
-        </el-col>
-      </el-row>
-      <el-row style="margin-top: 20px" v-if="scheduling_type === 'specific_node'">
-        <el-col :span="24">
-          <ko-form-item labelName="Node Name" itemType="select" v-model="nodeName" :selections="node_list" />
-        </el-col>
-      </el-row>
-      <div v-if="scheduling_type === 'matching_rules'">
-        <div v-for="(item, index) in nodeSchedulings" :key="index">
-          <el-card style="margin-top: 10px">
-            <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">删 除</el-button>
-            <el-row style="margin-top: 20px">
-              <el-col :span="12">
-                <ko-form-item labelName="Priority" itemType="radio" v-model="item.priority" :radios="priority_list" />
-              </el-col>
-              <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
-                <ko-form-item labelName="Weight" itemType="number" v-model="item.weight" />
-              </el-col>
-            </el-row>
+    <ko-card title="Node Scheduling">
+      <el-form label-position="top" ref="form">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="Scheduling Type">
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="scheduling_type === 'specific_node'">
+          <el-col :span="24">
+            <el-form-item label="Node Name">
+              <ko-form-item itemType="select" v-model="nodeName" :selections="node_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="scheduling_type === 'matching_rules'">
+          <div v-for="(item, index) in nodeSchedulings" :key="index">
+            <el-card style="margin-top: 10px">
+              <el-row>
+                <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">删 除</el-button>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="Priority">
+                    <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
+                  <el-form-item label="Weight">
+                    <ko-form-item itemType="number" v-model="item.weight" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
 
-            <table style="width: 98%" class="tab-table">
-              <tr>
-                <th scope="col" width="40%" align="left">
-                  <label>key</label>
-                </th>
-                <th scope="col" width="15%" align="left">
-                  <label>operator</label>
-                </th>
-                <th scope="col" width="40%" align="left">
-                  <label>value</label>
-                </th>
-                <th align="left"></th>
-              </tr>
-              <tr v-for="(row, index) in item.rules" v-bind:key="index">
-                <td>
-                  <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
-                </td>
-                <td>
-                  <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
-                </td>
-                <td>
-                  <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                  <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
-                </td>
-                <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
-                    {{ $t("commons.button.delete") }}
-                  </el-button>
-                </td>
-              </tr>
-              <tr>
-                <td align="left">
-                  <el-button @click="handleMatchAdd(item)">Add Rule</el-button>
-                </td>
-              </tr>
-            </table>
-          </el-card>
+              <table style="width: 98%" class="tab-table">
+                <tr>
+                  <th scope="col" width="40%" align="left">
+                    <label>key</label>
+                  </th>
+                  <th scope="col" width="15%" align="left">
+                    <label>operator</label>
+                  </th>
+                  <th scope="col" width="40%" align="left">
+                    <label>value</label>
+                  </th>
+                  <th align="left"></th>
+                </tr>
+                <tr v-for="(row, index) in item.rules" v-bind:key="index">
+                  <td>
+                    <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
+                  </td>
+                  <td>
+                    <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
+                  </td>
+                  <td>
+                    <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                    <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
+                  </td>
+                  <td>
+                    <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
+                      {{ $t("commons.button.delete") }}
+                    </el-button>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="left">
+                    <el-button @click="handleMatchAdd(item)">Add Rule</el-button>
+                  </td>
+                </tr>
+              </table>
+            </el-card>
+          </div>
         </div>
-      </div>
+      </el-form>
       <el-button v-if="scheduling_type === 'matching_rules'" @click="handleNodeRulesAdd()">Add Node Selector</el-button>
     </ko-card>
   </div>
@@ -71,11 +83,11 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
-import {listNodes} from "@/api/nodes"
+import { listNodes } from "@/api/nodes"
 
 export default {
   name: "KoNodeScheduling",
-  components: { KoFormItem,KoCard },
+  components: { KoFormItem, KoCard },
   props: {
     nodeSchedulingParentObj: Object,
   },

@@ -1,35 +1,51 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Security Context">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <ko-form-item @change="privilegedChanged" labelName="Privileged" itemType="radio" v-model="form.privileged" :radios="privileged_list" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Privilege Escalation" itemType="radio" v-model="form.allowPrivilegeEscalation" :radios="privileged_escalation_list" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="Run as Non-Root" itemType="radio" v-model="form.runAsNonRoot" :radios="non_root_list" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Read-Only Root Filesystem" itemType="radio" v-model="form.readOnlyRootFilesystem" :radios="ready_only_root_files_list" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 30px">
-        <el-col :span="12">
-          <ko-form-item labelName="Run as User ID" itemType="input" v-model="form.runAsUser" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="Add Capabilities" multiple itemType="select" v-model="form.capabilities.add" :selections="capability_list" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Drop Capabilities" multiple itemType="select" v-model="form.capabilities.drop" :selections="capability_list" />
-        </el-col>
-      </el-row>
+      <el-form label-position="top" ref="form" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Privileged" prop="privileged">
+              <ko-form-item @change="privilegedChanged" itemType="radio" v-model="form.privileged" :radios="privileged_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Privilege Escalation" prop="allowPrivilegeEscalation">
+              <ko-form-item itemType="radio" v-model="form.allowPrivilegeEscalation" :radios="privileged_escalation_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Run as Non-Root" prop="runAsNonRoot">
+              <ko-form-item itemType="radio" v-model="form.runAsNonRoot" :radios="non_root_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Read-Only Root Filesystem" prop="readOnlyRootFilesystem">
+              <ko-form-item itemType="radio" v-model="form.readOnlyRootFilesystem" :radios="ready_only_root_files_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" >
+          <el-col :span="12">
+            <el-form-item label="Run as User ID" prop="runAsUser">
+              <ko-form-item itemType="input" v-model="form.runAsUser" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Add Capabilities" prop="capabilities.add">
+              <ko-form-item multiple itemType="select" v-model="form.capabilities.add" :selections="capability_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Drop Capabilities" prop="capabilities.drop">
+              <ko-form-item multiple itemType="select" v-model="form.capabilities.drop" :selections="capability_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
     </ko-card>
   </div>
 </template>

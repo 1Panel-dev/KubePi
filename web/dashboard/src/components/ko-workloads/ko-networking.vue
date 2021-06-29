@@ -1,24 +1,34 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Networking">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <ko-form-item labelName="Network Mode" itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="DNS Policy" itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="Hostname" placeholder="e.g. web" itemType="input" v-model="form.hostname" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Subdomain" placeholder="e.g. web" itemType="input" v-model="form.subdomain" />
-        </el-col>
-      </el-row>
+      <el-form label-position="top" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Network Mode" prop="hostNetwork">
+              <ko-form-item itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="DNS Policy" prop="dnsPolicy">
+              <ko-form-item itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Hostname" prop="hostname">
+              <ko-form-item placeholder="e.g. web" itemType="input" v-model="form.hostname" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Subdomain" prop="subdomain">
+              <ko-form-item placeholder="e.g. web" itemType="input" v-model="form.subdomain" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
 
-      <el-row :gutter="20" style="margin-top: 20px">
+      <el-row :gutter="20">
         <el-col :span=12>
           <table style="width: 98%" class="tab-table">
             <tr>

@@ -1,35 +1,51 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Update Policy">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <ko-form-item labelName="Strategy" radioLayout="vertical" itemType="radio" v-model="form.strategy.type" :radios="strategy_list" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px" v-if="form.strategy.type === 'RollingUpdate'">
-        <el-col :span="12">
-          <ko-form-item labelName="Max Surge" deviderName="%" tipContant="The maximum number of pods allowed beyond the desired scale at any given time." itemType="input" v-model="form.strategy.rollingUpdate.maxSurge" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Max Unavailable" deviderName="%" tipContant="The maximum number of pods which can be unavailable at any given time." itemType="input" v-model="form.strategy.rollingUpdate.maxUnavailable" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="Minimum Ready Time" deviderName="Seconds" tipContant="Containers in th pods must be up for at least this long before the pod is considered available." itemType="input" v-model="form.minReadySeconds" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Revision History Limit" deviderName="Revision" tipContant="The number of old ReplicaSets to retain for rollback." itemType="input" v-model="form.revisionHistoryLimit" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="Progress Deadline" deviderName="Seconds" tipContant="How long to wait without seeing progress before marking the deploument as stalled." itemType="input" v-model="form.progressDeadlineSeconds" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Termination Grace Period" deviderName="Seconds" tipContant="The duration the pod needs to terminate successfully." itemType="input" v-model="form.terminationGracePeriodSeconds" />
-        </el-col>
-      </el-row>
+      <el-form label-position="top" ref="form" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Strategy" prop="strategy.type">
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.strategy.type" :radios="strategy_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" v-if="form.strategy.type === 'RollingUpdate'">
+          <el-col :span="12">
+            <el-form-item label="Max Surge" prop="strategy.rollingUpdate.maxSurge">
+              <ko-form-item deviderName="%" itemType="input" v-model="form.strategy.rollingUpdate.maxSurge" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Max Unavailable" prop="strategy.rollingUpdate.maxUnavailable">
+              <ko-form-item deviderName="%" itemType="input" v-model="form.strategy.rollingUpdate.maxUnavailable" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Minimum Ready Time" prop="minReadySeconds">
+              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.minReadySeconds" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Revision History Limit" prop="revisionHistoryLimit">
+              <ko-form-item deviderName="Revision" itemType="input" v-model="form.revisionHistoryLimit" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Progress Deadline" prop="progressDeadlineSeconds">
+              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.progressDeadlineSeconds" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Termination Grace Period" prop="terminationGracePeriodSeconds">
+              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.terminationGracePeriodSeconds" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
     </ko-card>
   </div>
 </template>
