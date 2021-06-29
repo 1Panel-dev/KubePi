@@ -15,6 +15,7 @@ type Service interface {
 	CreateClusterBinding(binding *v1Cluster.Binding, options common.DBOptions) error
 	Delete(name string, options common.DBOptions) error
 	GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error)
+	GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error)
 }
 
 func NewService() Service {
@@ -23,6 +24,16 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (s *service) GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error) {
+	db := s.GetDB(options)
+	query := db.Select(q.Eq("Subject", subject))
+	var rbs []v1Cluster.Binding
+	if err := query.Find(&rbs); err != nil {
+		return rbs, err
+	}
+	return rbs, nil
 }
 
 func (s *service) GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error) {

@@ -121,7 +121,7 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 			Operator: "in",
 			Value:    roleNames,
 		},
-	})
+	}, common.DBOptions{})
 	if err != nil && !errors.As(err, &storm.ErrNotFound) {
 		return nil, err
 	}

@@ -4,7 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
+	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/role"
+	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -12,12 +15,14 @@ import (
 )
 
 type Handler struct {
-	roleService role.Service
+	roleService        role.Service
+	roleBindingService rolebinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		roleService: role.NewService(),
+		roleService:        role.NewService(),
+		roleBindingService: rolebinding.NewService(),
 	}
 }
 
@@ -33,7 +38,7 @@ func (h *Handler) SearchRoles() iris.Handler {
 				return
 			}
 		}
-		groups, total, err := h.roleService.Search(pageNum, pageSize, conditions)
+		groups, total, err := h.roleService.Search(pageNum, pageSize, conditions, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -47,7 +52,7 @@ func (h *Handler) SearchRoles() iris.Handler {
 
 func (h *Handler) ListRoles() iris.Handler {
 	return func(ctx *context.Context) {
-		roles, err := h.roleService.List()
+		roles, err := h.roleService.List(common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -71,13 +76,13 @@ func (h *Handler) CreateRole() iris.Handler {
 		profile := u.(session.UserProfile)
 		req.CreatedBy = profile.Name
 		if req.TemplateRef != "" {
-			if err := h.roleService.CreateWithTemplate(&req.Role, req.TemplateRef); err != nil {
+			if err := h.roleService.CreateWithTemplate(&req.Role, req.TemplateRef, common.DBOptions{}); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
 			}
 		} else {
-			if err := h.roleService.Create(&req.Role); err != nil {
+			if err := h.roleService.Create(&req.Role, common.DBOptions{}); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
@@ -90,16 +95,30 @@ func (h *Handler) CreateRole() iris.Handler {
 func (h *Handler) DeleteRole() iris.Handler {
 	return func(ctx *context.Context) {
 		roleName := ctx.Params().GetString("name")
-		if roleName == "" {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("invalid resource name %s", roleName))
-			return
-		}
-		if err := h.roleService.Delete(roleName); err != nil {
+		tx, _ := server.DB().Begin(true)
+		txOptions := common.DBOptions{DB: tx}
+		rbs, err := h.roleBindingService.GetRoleBindingsByRoleName(roleName, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		for i := range rbs {
+			if err := h.roleBindingService.Delete(rbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+		if err := h.roleService.Delete(roleName, txOptions); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		_ = tx.Commit()
 	}
 }
 
@@ -117,7 +136,7 @@ func (h *Handler) UpdateRole() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		if err := h.roleService.Update(roleName, &req.Role); err != nil {
+		if err := h.roleService.Update(roleName, &req.Role, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -134,7 +153,7 @@ func (h *Handler) GetRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("invalid resource name %s", roleName))
 			return
 		}
-		r, err := h.roleService.Get(roleName)
+		r, err := h.roleService.Get(roleName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

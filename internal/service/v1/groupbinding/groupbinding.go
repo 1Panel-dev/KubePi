@@ -11,9 +11,10 @@ import (
 type Service interface {
 	common.DBService
 	Create(binding *v1Group.Binding, options common.DBOptions) error
-	Delete(groupName, userName string, options common.DBOptions) error
+	Delete(name string, options common.DBOptions) error
 	ListByGroupName(groupName string, options common.DBOptions) ([]v1Group.Binding, error)
 	ListByUserName(userName string, options common.DBOptions) ([]v1Group.Binding, error)
+	GetGroupBindingByGroupNameAndUserName(username string, groupName string, options common.DBOptions) (*v1Group.Binding, error)
 }
 
 func NewService() Service {
@@ -24,6 +25,16 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (s *service) GetGroupBindingByGroupNameAndUserName(username string, groupName string, options common.DBOptions) (*v1Group.Binding, error) {
+	db := s.GetDB(options)
+	var gb v1Group.Binding
+	query := db.Select(q.And(q.Eq("UserRef", username), q.Eq("GroupRef", groupName)))
+	if err := query.First(&gb); err != nil {
+		return nil, err
+	}
+	return &gb, nil
 }
 
 func (s *service) ListByUserName(userName string, options common.DBOptions) ([]v1Group.Binding, error) {
@@ -43,10 +54,13 @@ func (s *service) Create(binding *v1Group.Binding, options common.DBOptions) err
 	return db.Save(binding)
 }
 
-func (s *service) Delete(groupName, userName string, options common.DBOptions) error {
+func (s *service) Delete(name string, options common.DBOptions) error {
 	db := s.GetDB(options)
 	var binding v1Group.Binding
-	if err := db.Select(q.And(q.Eq("GroupRef", groupName), q.Eq("UserRef", userName))).First(&binding); err != nil {
+	//if err := db.Select(q.And(q.Eq("GroupRef", groupName), q.Eq("UserRef", userName))).First(&binding); err != nil {
+	//	return err
+	//}
+	if err := db.One("Name", name, &binding); err != nil {
 		return err
 	}
 	return db.DeleteStruct(&binding)

@@ -74,10 +74,17 @@ func (h *Handler) DeleteGroupMember() iris.Handler {
 	return func(ctx *context.Context) {
 		groupName := ctx.Params().GetString("name")
 		memberName := ctx.Params().GetString("member")
-		if err := h.groupBindingService.Delete(groupName, memberName, common.DBOptions{}); err != nil {
+		gb, err := h.groupBindingService.GetGroupBindingByGroupNameAndUserName(memberName, groupName, common.DBOptions{})
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		if err := h.groupBindingService.Delete(gb.Name, common.DBOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
 	}
 }

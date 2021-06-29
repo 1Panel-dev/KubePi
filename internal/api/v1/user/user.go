@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
+	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -18,14 +21,18 @@ import (
 )
 
 type Handler struct {
-	userService        user.Service
-	roleBindingService rolebinding.Service
+	userService           user.Service
+	roleBindingService    rolebinding.Service
+	groupBindingService   groupbinding.Service
+	clusterBindingService clusterbinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		userService:        user.NewService(),
-		roleBindingService: rolebinding.NewService(),
+		userService:           user.NewService(),
+		roleBindingService:    rolebinding.NewService(),
+		groupBindingService:   groupbinding.NewService(),
+		clusterBindingService: clusterbinding.NewService(),
 	}
 }
 
@@ -89,11 +96,9 @@ func (h *Handler) CreateUser() iris.Handler {
 					Metadata: v1.Metadata{
 						Name: fmt.Sprintf("role-binding-%s-%s", roleName, req.Name),
 					},
-					Subjects: []v1Role.Subject{
-						{
-							Kind: "User",
-							Name: req.Name,
-						},
+					Subject: v1Role.Subject{
+						Kind: "User",
+						Name: req.Name,
 					},
 					RoleRef: roleName,
 				}
@@ -113,11 +118,69 @@ func (h *Handler) CreateUser() iris.Handler {
 func (h *Handler) DeleteUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
-		if err := h.userService.Delete(userName, common.DBOptions{}); err != nil {
+		tx, _ := server.DB().Begin(true)
+		txOptions := common.DBOptions{DB: tx}
+
+		rbs, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{
+			Kind: "User",
+			Name: userName,
+		}, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		for i := range rbs {
+			if err := h.roleBindingService.Delete(rbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+		gbs, err := h.groupBindingService.ListByUserName(userName, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		for i := range gbs {
+			if err := h.groupBindingService.Delete(gbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+
+		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{
+			Kind: "User",
+			Name: userName,
+		}, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
+		for i := range cbs {
+			if err := h.clusterBindingService.Delete(cbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+		if err := h.userService.Delete(userName, txOptions); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		_ = tx.Commit()
 	}
 }
 
@@ -204,11 +267,9 @@ func (h *Handler) UpdateUser() iris.Handler {
 				Metadata: v1.Metadata{
 					Name: fmt.Sprintf("role-binding-%s-%s", r, req.Name),
 				},
-				Subjects: []v1Role.Subject{
-					{
-						Kind: "User",
-						Name: req.Name,
-					},
+				Subject: v1Role.Subject{
+					Kind: "User",
+					Name: req.Name,
 				},
 				RoleRef: r,
 			}

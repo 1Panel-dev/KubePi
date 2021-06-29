@@ -90,11 +90,9 @@ func (h *Handler) CreateGroup() iris.Handler {
 				Metadata: v1.Metadata{
 					Name: fmt.Sprintf("%s-group:%s-binding", roleName, req.Name),
 				},
-				Subjects: []v1Role.Subject{
-					{
-						Kind: "Group",
-						Name: req.Name,
-					},
+				Subject: v1Role.Subject{
+					Kind: "Group",
+					Name: req.Name,
 				},
 				RoleRef: roleName,
 			}
@@ -161,11 +159,9 @@ func (h *Handler) UpdateGroup() iris.Handler {
 				Metadata: v1.Metadata{
 					Name: fmt.Sprintf("role-binding-%s-%s", r, req.Name),
 				},
-				Subjects: []v1Role.Subject{
-					{
-						Kind: "Group",
-						Name: req.Name,
-					},
+				Subject: v1Role.Subject{
+					Kind: "Group",
+					Name: req.Name,
 				},
 				RoleRef: r,
 			}
@@ -200,16 +196,31 @@ func (h *Handler) UpdateGroup() iris.Handler {
 func (h *Handler) DeleteGroup() iris.Handler {
 	return func(ctx *context.Context) {
 		groupName := ctx.Params().GetString("name")
-		if groupName == "" {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("invalid resource name %s", groupName))
-			return
-		}
-		if err := h.groupService.Delete(groupName, common.DBOptions{}); err != nil {
+		tx, _ := server.DB().Begin(true)
+		txOptions := common.DBOptions{DB: tx}
+
+		gbs, err := h.groupBindingService.ListByGroupName(groupName, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		for i := range gbs {
+			if err := h.groupBindingService.Delete(gbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+
+		if err := h.groupService.Delete(groupName, common.DBOptions{}); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		_ = tx.Commit()
 	}
 }
 
