@@ -2,7 +2,7 @@ import {get} from "@/plugins/request"
 
 
 const statefulSetUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/apis/apps/v1/statefulsets`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/statefulsets`
 }
 
 export function listStatefulSets (cluster_name, limit, continueToken, search) {

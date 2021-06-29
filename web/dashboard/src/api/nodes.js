@@ -1,7 +1,7 @@
 import {get} from "@/plugins/request"
 
 const nodeUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/api/v1/nodes`
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/nodes`
 }
 
 
