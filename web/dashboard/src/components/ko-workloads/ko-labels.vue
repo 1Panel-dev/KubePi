@@ -11,7 +11,7 @@
           </th>
           <th align="left"></th>
         </tr>
-        <tr v-for="row in labels" v-bind:key="row.index">
+        <tr v-for="(row, index) in labels" v-bind:key="index">
           <td>
             <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
           </td>
@@ -19,7 +19,7 @@
             <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>
@@ -50,9 +50,6 @@ export default {
     }
   },
   methods: {
-    handleDelete(index) {
-      this.labels.splice(index, 1)
-    },
     handleAdd() {
       const item = {
         index: Math.random(),
@@ -60,6 +57,9 @@ export default {
         value: "",
       }
       this.labels.push(item)
+    },
+    handleDelete(index) {
+      this.labels.splice(index, 1)
     },
     transformation(parentFrom) {
       if (this.labels) {

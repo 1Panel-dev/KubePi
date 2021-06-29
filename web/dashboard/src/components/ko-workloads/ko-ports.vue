@@ -1,30 +1,45 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Ports">
-      <el-checkbox style="margin-left: 20px; margin-top: 10px" v-model="isExpose">isExpose</el-checkbox>
       <table style="width: 98%" class="tab-table">
         <tr>
-          <th scope="col" width="40%" align="left"><label>name</label></th>
-          <th scope="col" width="20%" align="left"><label>Private Container Port</label></th>
-          <th scope="col" v-if="isExpose" width="20%" align="left"><label>Public Host Port</label></th>
-          <th scope="col" width="16%" align="left"><label>Protocol</label></th>
+          <th scope="col" width="20%" align="left"><label>service type</label></th>
+          <th scope="col" width="20%" align="left"><label>name</label></th>
+          <th scope="col" width="15%" align="left"><label>private container port</label></th>
+          <th scope="col" width="10%" align="left"><label>protocol</label></th>
+          <th scope="col" width="5%" align="left"><label>expose</label></th>
+          <th scope="col" width="15%" align="left"><label>public host port</label></th>
+          <th scope="col" width="15%" align="left"><label>listening port</label></th>
+          <th scope="col" width="10%" align="left"><label>host ip</label></th>
           <th align="left" width="1%"></th>
         </tr>
-        <tr v-for="row in ports" v-bind:key="row.index">
+        <tr v-for="(row, index) in ports" v-bind:key="index">
+          <td>
+            <ko-form-item :withoutLabel="true" itemType="select" v-model="row._serviceType" :selections="service_type_list" />
+          </td>
           <td>
             <ko-form-item :withoutLabel="true" itemType="input" v-model="row.name" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.containerPort" />
-          </td>
-          <td v-if="isExpose">
-            <ko-form-item :withoutLabel="true" itemType="number" v-model.number="row.hostPort" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
           </td>
           <td>
             <ko-form-item :withoutLabel="true" itemType="select" v-model="row.protocol" :selections="protocol_list" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+            <el-switch v-model="row.expose" />
+          </td>
+          <td>
+            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" :withoutLabel="true" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
+          </td>
+          <td>
+            <ko-form-item :disabled="row._serviceType === 'ClusterIP' || row._serviceType === '' || !row.expose" :withoutLabel="true" placeholder="e.g. 80" itemType="number" v-model.number="row._listeningPort" />
+          </td>
+          <td>
+            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.hostIP" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>
@@ -52,39 +67,89 @@ export default {
   data() {
     return {
       ports: [],
-      protocol: "",
-      isExpose: false,
       protocol_list: [
         { label: "TCP", value: "TCP" },
         { label: "UDP", value: "UDP" },
-        { label: "SCTP", value: "SCTP" },
+      ],
+      service_type_list: [
+        { label: "Do not create a service", value: "" },
+        { label: "Cluster IP", value: "ClusterIP" },
+        { label: "Node Port", value: "NodePort" },
+        { label: "Load Balancer", value: "LoadBalancer" },
       ],
     }
   },
   methods: {
-    handleDelete(index) {
-      this.ports.splice(index, 1)
-    },
     handleAdd() {
       var item = {
         name: "",
+        expose: false,
+        protocol: "TCP",
         containerPort: "",
+        hostPort: "",
+        hostIP: "",
+        _serviceType: "",
+        _listeningPort: "",
       }
       this.ports.push(item)
     },
+    handleDelete(index) {
+      this.ports.splice(index, 1)
+    },
     transformation(parentFrom) {
       if (this.ports.length !== 0) {
-        parentFrom.ports = this.ports
-        for (const po of parentFrom.ports) {
-          po.expose = this.isExpose
+        parentFrom.ports = []
+        for (const po of this.ports) {
+          var itemPo = {}
+          itemPo.name = po.name
+          itemPo.expose = po.expose
+          itemPo.protocol = po.protocol
+          itemPo.containerPort = po.containerPort
+          itemPo._serviceType = po._serviceType
+          if (po.expose) {
+            switch (po._serviceType) {
+              case "":
+              case "ClusterIP":
+                itemPo.hostPort = po.hostPort
+                itemPo.hostIP = po.hostIP
+                break
+              case "NodePort":
+              case "LoadBalancer":
+                itemPo._listeningPort = po._listeningPort
+                break
+            }
+          }
+          parentFrom.ports.push(itemPo)
         }
       }
     },
   },
   mounted() {
+    this.ports = []
     if (this.portParentObj) {
       if (this.portParentObj.ports) {
-        this.ports = this.portParentObj.ports
+        for (const po of this.portParentObj.ports) {
+          var itemPo = {}
+          itemPo.name = po.name
+          itemPo.expose = po.expose
+          itemPo.protocol = po.protocol
+          itemPo.containerPort = po.containerPort
+          itemPo._serviceType = po._serviceType
+          if (po.expose) {
+            switch (po._listeningPort) {
+              case "":
+              case "ClusterIP":
+                itemPo.hostPort = po.hostPort
+                itemPo.hostIP = po.hostIP
+                break
+              case "NodePort":
+              case "LoadBalancer":
+                itemPo._listeningPort = po._listeningPort
+                break
+            }
+          }
+          this.ports.push(itemPo)
+        }
       }
     }
   },

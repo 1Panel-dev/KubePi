@@ -49,7 +49,7 @@
                 <th scope="col" width="45%" align="left"><label>value</label></th>
                 <th align="left"></th>
               </tr>
-              <tr v-for="row in form.httpHeaders" v-bind:key="row.index">
+              <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
                 <td>
                   <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
                 </td>
@@ -57,7 +57,7 @@
                   <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
                 </td>
                 <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
+                  <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
                     {{ $t("commons.button.delete") }}
                   </el-button>
                 </td>
