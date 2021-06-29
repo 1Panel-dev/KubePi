@@ -2,7 +2,7 @@
   <div class="horizontal-header">
     <div class="header-left">
       <sidebar-toggle-button/>
-      <cluster-switch></cluster-switch>
+      <home></home>
     </div>
     <div class="header-right">
       <user-setting></user-setting>
@@ -12,11 +12,11 @@
 
 <script>
 import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton"
-import ClusterSwitch from "@/business/app-layout/header-components/ClusterSwitch"
 import UserSetting from "@/business/app-layout/header-components/UserSetting"
+import Home from "@/business/app-layout/header-components/Home"
 export default {
   name: "HorizontalHeader",
-  components: { UserSetting, ClusterSwitch, SidebarToggleButton }
+  components: { Home, UserSetting, SidebarToggleButton }
 }
 </script>
 
