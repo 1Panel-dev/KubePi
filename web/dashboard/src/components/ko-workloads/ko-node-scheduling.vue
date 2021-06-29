@@ -37,7 +37,7 @@
                 </th>
                 <th align="left"></th>
               </tr>
-              <tr v-for="row in item.rules" v-bind:key="row.index">
+              <tr v-for="(row, index) in item.rules" v-bind:key="index">
                 <td>
                   <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
                 </td>
@@ -49,7 +49,7 @@
                   <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
                 </td>
                 <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, row.index)">
+                  <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
                     {{ $t("commons.button.delete") }}
                   </el-button>
                 </td>
@@ -71,6 +71,7 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
+import {listNodes} from "@/api/nodes"
 
 export default {
   name: "KoNodeScheduling",
@@ -104,6 +105,14 @@ export default {
     }
   },
   methods: {
+    loadNodes() {
+      listNodes(this.$route.params.cluster).then((res) => {
+        this.node_list = []
+        for (const node of res.items) {
+          this.node_list.push({ label: node.metadata.name, value: node.metadata.name })
+        }
+      })
+    },
     handleNodeRulesAdd() {
       var item = {
         priority: "Preferred",
@@ -191,6 +200,7 @@ export default {
     },
   },
   mounted() {
+    this.loadNodes()
     this.nodeSchedulings = []
     if (this.nodeSchedulingParentObj) {
       if (this.nodeSchedulingParentObj.affinity) {

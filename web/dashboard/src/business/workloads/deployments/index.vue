@@ -12,12 +12,12 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable label="Name" prop="name" >
+      <el-table-column sortable label="Name" prop="name">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Status" prop="status" >
+      <el-table-column sortable label="Status" prop="status">
         <template v-slot:default="{row}">
           <el-button v-if="row.status ==='Active'" type="success" size="mini" plain round>
             {{row.status}}
@@ -58,13 +58,6 @@ export default {
             this.$router.push({ name: "DeploymentEdit", params: { cluster: "songliucs", namespace: row.namespace, name: row.name, yamlShow: false } })
           },
         },
-         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { cluster: "songliucs", namespace: row.namespace, name: row.name, yamlShow: false } })
-          },
-        },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
@@ -97,8 +90,8 @@ export default {
     }
   },
   methods: {
-    onCreate () {
-      this.$router.push({ name: "DeploymentCreate", params: { cluster: "songliucs", yamlShow: false }})
+    onCreate() {
+      this.$router.push({ name: "DeploymentCreate", params: { cluster: "songliucs", yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({ name: "DeploymentDetail", params: { cluster: "songliucs", namespace: row.namespace, name: row.name } })

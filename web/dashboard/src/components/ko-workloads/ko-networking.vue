@@ -114,7 +114,7 @@
             <th scope="col" width="48%" align="left"><label>value</label></th>
             <th align="left"></th>
           </tr>
-          <tr v-for="row in form.hostAliases" v-bind:key="row.index">
+          <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
             <td>
               <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
             </td>
@@ -122,7 +122,7 @@
               <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
             </td>
             <td>
-              <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(row.index)">
+              <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>

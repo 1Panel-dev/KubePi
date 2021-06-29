@@ -20,7 +20,7 @@
           </th>
           <th align="left"></th>
         </tr>
-        <tr v-for="row in tolerations" v-bind:key="row.index">
+        <tr v-for="(row, index) in tolerations" v-bind:key="index">
           <td>
             <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
           </td>
@@ -37,7 +37,7 @@
             <ko-form-item :withoutLabel="true" :disabled="row.effect !== 'NoExecute'" itemType="number" v-model.number="row.tolerationSeconds" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(row.index)">
+            <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

@@ -3,15 +3,11 @@
     <br>
     <div v-if="!showYaml">
       <el-row :gutter="20">
-        <el-col :span="12">
-          <el-row>
-            <el-col :span="10">
-              <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
-            </el-col>
-            <el-col :span="14">
-              <ko-form-item labelName="Name" clearable itemType="input" v-model="form.metadata.name" />
-            </el-col>
-          </el-row>
+        <el-col :span="5">
+          <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
+        </el-col>
+        <el-col :span="7">
+          <ko-form-item labelName="Name" clearable itemType="input" v-model="form.metadata.name" />
         </el-col>
         <el-col :span="12">
           <ko-form-item labelName="Replicas" placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model="form.spec.replicas" />
@@ -25,19 +21,19 @@
             </el-col>
             <el-col :span="2">
               <div style="margin-top: 16px">
-                <el-button style="width:100%" size="mini" @click="handleAddContainer">+</el-button>
+                <el-button style="width:100%" @click="handleAddContainer">+</el-button>
               </div>
             </el-col>
             <el-col :span="2">
               <div style="margin-top: 16px">
-                <el-button style="width:100%" size="mini" @click="handleDeleteContainer">-</el-button>
+                <el-button style="width:100%" @click="handleDeleteContainer">-</el-button>
               </div>
             </el-col>
           </el-row>
         </el-col>
       </el-row>
 
-      <el-tabs style="margin-top: 30px;background-color: #141418;" v-model="activeName">
+      <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
             <ko-container ref="ko_general" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
@@ -77,6 +73,9 @@
             <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" />
           </div>
         </el-tab-pane>
+        <el-tab-pane label="Storage" name="Storage">
+          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :containerIndex="currentIndex" />
+        </el-tab-pane>
       </el-tabs>
     </div>
     <div class="grid-content bg-purple-light" v-if="showYaml">
@@ -109,13 +108,14 @@ import KoTolerations from "@/components/ko-workloads/ko-tolerations.vue"
 import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
 import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
+import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 import { getDeploymentByName, createDeployment } from "@/api/workloads"
 
 export default {
   name: "DeploymentForm",
-  components: { LayoutContent, KoFormItem, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, YamlEditor },
+  components: { LayoutContent, KoFormItem, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, KoStorage, YamlEditor },
   data() {
     return {
       showYaml: false,
@@ -216,6 +216,8 @@ export default {
       this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
+      // storage
+      this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },
     onCancel() {

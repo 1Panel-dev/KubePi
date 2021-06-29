@@ -34,7 +34,7 @@
               </th>
               <th align="left"></th>
             </tr>
-            <tr v-for="row in item.rules" v-bind:key="row.index">
+            <tr v-for="(row, index) in item.rules" v-bind:key="index">
               <td>
                 <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
               </td>
@@ -46,7 +46,7 @@
                 <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, row)">
+                <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -75,7 +75,7 @@ import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoPodScheduling",
-  components: { KoFormItem,KoCard },
+  components: { KoFormItem, KoCard },
   props: {
     podScheduling: Object,
   },
@@ -134,12 +134,8 @@ export default {
       }
       schedulingItem.rules.push(item)
     },
-    handleMatchDelete(schedulingItem, row) {
-      for (let i = 0; i < schedulingItem.rules.length; i++) {
-        if (schedulingItem.rules[i] === row) {
-          schedulingItem.rules.splice(i, 1)
-        }
-      }
+    handleMatchDelete(schedulingItem, index) {
+      schedulingItem.rules.splice(index, 1)
     },
     valueTrans(type, priority, s) {
       let namespaceOperation,

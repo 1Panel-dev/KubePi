@@ -11,15 +11,15 @@
           </th>
           <th align="left"></th>
         </tr>
-        <tr v-for="label in annotations" v-bind:key="label.index">
+        <tr v-for="(row, index) in annotations" v-bind:key="index">
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="label.key" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="label.value" />
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>
@@ -50,20 +50,15 @@ export default {
     }
   },
   methods: {
-    handleDelete(row) {
-      for (let i = 0; i < this.annotations.length; i++) {
-        if (this.annotations[i] === row) {
-          this.annotations.splice(i, 1)
-        }
-      }
-    },
     handleAdd() {
       const item = {
-        index: Math.random(),
         key: "",
         value: "",
       }
       this.annotations.push(item)
+    },
+    handleDelete(index) {
+      this.annotations.splice(index, 1)
     },
     transformation(parentFrom) {
       if (this.annotations) {

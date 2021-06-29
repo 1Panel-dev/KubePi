@@ -29,69 +29,42 @@
       </div>
       <table style="width: 98%" class="tab-table">
         <tr>
-          <th scope="col" width="48%" align="left"><label>key</label></th>
-          <th scope="col" width="48%" align="left"><label>value</label></th>
-          <th align="left"></th>
-        </tr>
-        <tr v-for="row in form.env" v-bind:key="row.index">
-          <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.name" />
-          </td>
-          <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
-          </td>
-          <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(row.index)">
-              {{ $t("commons.button.delete") }}
-            </el-button>
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-            <el-button @click="handleAdd">Add</el-button>
-          </td>
-        </tr>
-      </table>
-
-      <table style="width: 98%" class="tab-table">
-        <tr>
           <th scope="col" width="15%" align="left"><label>type</label></th>
-          <th scope="col" width="30%" align="left"><label>source</label></th>
-          <th scope="col" width="20%" align="left"><label>key</label></th>
-          <th scope="col" width="5%" align="left"><label>AS</label></th>
-          <th scope="col" width="23%" align="left"><label>Prefix or Alias</label></th>
+          <th scope="col" width="30%" align="left"><label>prefix/variable</label></th>
+          <th scope="col" width="20%" align="left"><label>source</label></th>
+          <th scope="col" width="28%" align="left"><label>value</label></th>
           <th align="left"></th>
         </tr>
-        <tr v-for="row in form.envFromResource" v-bind:key="row.index">
+        <tr v-for="(row, index) in form.envResource" v-bind:key="index">
           <td>
             <ko-form-item :withoutLabel="true" itemType="select" v-model="row.type" :selections="type_list" />
-          </td>
-          <td>
-            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" itemType="input" v-model="row.source" />
-            <ko-form-item v-if="row.type === 'ConfigMap' || row.type === 'ConfigMap key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="config_map_list" />
-            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="secret_list" />
-          </td>
-          <td>
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='Resource'" itemType="select" v-model="row.key" :selections="resource_key_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='ConfigMap key'" itemType="select" v-model="row.key" :selections="cm_key_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='Secret key'" itemType="select" v-model="row.key" :selections="secret_key_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type === 'Secret' || row.type === 'ConfigMap' || row.type === 'Field'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
-          </td>
-          <td>
-            <span style="font-size: 20px; color: white;">AS</span>
           </td>
           <td>
             <ko-form-item :withoutLabel="true" itemType="input" v-model="row.prefix_or_alias" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleResourceDelete(row.index)">
+            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" :withoutLabel="true" itemType="input" disabled placeholder="N/A" />
+            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" itemType="input" v-model="row.source" />
+            <ko-form-item v-if="row.type === 'ConfigMap key'" :withoutLabel="true" itemType="select" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'ConfigMap'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="secret_list" />
+          </td>
+          <td>
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="input" v-model="row.value" />
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='Resource'" itemType="select" v-model="row.value" :selections="resource_value_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='ConfigMap key'" itemType="select" v-model="row.value" :selections="config_map_value_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type ==='Secret key'" itemType="select" v-model="row.value" :selections="secret_value_list" />
+            <ko-form-item :withoutLabel="true" v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>
         </tr>
         <tr>
           <td align="left">
-            <el-button @click="handleResourceAdd">Add form Resource</el-button>
+            <el-button @click="handleAdd">Add Variable</el-button>
           </td>
         </tr>
       </table>
@@ -119,12 +92,13 @@ export default {
         workingDir: "",
         stdin: "",
         tty: false,
-        env: [],
-        envFromResource: [],
+        envResource: [],
       },
+      config_map_name_list: [],
       config_map_list: [],
+      config_map_value_list: [],
       secret_list: [],
-      resource_key_list: [
+      resource_value_list: [
         { label: "limits.cpu", value: "limits.cpu" },
         { label: "limits.ephemeral-storage", value: "limits.ephemeral-storage" },
         { label: "limits.memory", value: "limits.memory" },
@@ -132,15 +106,19 @@ export default {
         { label: "requests.ephemeral-storage", value: "requests.ephemeral-storage" },
         { label: "requests.memory", value: "requests.memory" },
       ],
-      cm_key_list: [],
-      secret_key_list: [],
+      secret_value_list: [
+        { label: "ca.crt", value: "ca.crt" },
+        { label: "namespace", value: "namespace" },
+        { label: "token", value: "token" },
+      ],
       type_list: [
+        { label: "Key/Value Pair", value: "Key/Value Pair" },
+        { label: "Pod Field", value: "Pod Field" },
         { label: "Resource", value: "Resource" },
-        { label: "ConfigMap", value: "ConfigMap" },
-        { label: "Secret key", value: "Secret key" },
-        { label: "Field", value: "Field" },
-        { label: "Secret", value: "Secret" },
         { label: "ConfigMap key", value: "ConfigMap key" },
+        { label: "Secret key", value: "Secret key" },
+        { label: "Secret", value: "Secret" },
+        { label: "ConfigMap", value: "ConfigMap" },
       ],
       stdin_list: [
         { label: "No", value: "No" },
@@ -160,35 +138,35 @@ export default {
     },
     loadConfigMaps() {
       listConfigMaps(this.$route.params.cluster).then((res) => {
-        this.config_map_list = []
+        this.config_map_name_list = []
         for (const cm of res.items) {
-          this.config_map_list.push({ label: cm.metadata.name, value: cm.metadata.name })
+          this.config_map_name_list.push({ label: cm.metadata.name, value: cm.metadata.name })
+          this.config_map_list.push(cm)
         }
       })
+    },
+    changeConfigMap(comfigmap) {
+      this.config_map_value_list = []
+      for (const cm of this.config_map_list) {
+        if (comfigmap === cm.metadata.name && cm.metadata.namespace === "kube-system") {
+          for (const item of Object.keys(cm.data)) {
+            this.config_map_value_list.push({ label: item, value: item })
+          }
+        }
+      }
     },
 
     handleAdd() {
       var item = {
-        name: "",
+        type: "Resource",
+        prefix_or_alias: "",
+        source: "",
         value: "",
       }
-      this.form.env.push(item)
+      this.form.envResource.push(item)
     },
     handleDelete(index) {
-      this.form.env.splice(index, 1)
-    },
-
-    handleResourceAdd() {
-      var item = {
-        type: "Resource",
-        source: "",
-        key: "",
-        prefix_or_alias: "",
-      }
-      this.form.envFromResource.push(item)
-    },
-    handleResourceDelete(index) {
-      this.form.envFromResource.splice(index, 1)
+      this.form.envResource.splice(index, 1)
     },
 
     transformation(parentFrom) {
@@ -220,12 +198,12 @@ export default {
       }
       let envList = []
       let envFromList = []
-      if (this.form.env || this.form.envFromResource) {
-        for (const en of this.form.env) {
-          envList.push(en)
-        }
-        for (const en of this.form.envFromResource) {
+      if (this.form.envResource) {
+        for (const en of this.form.envResource) {
           switch (en.type) {
+            case "Key/Value Pair":
+              envList.push({ name: en.prefix_or_alias, value: en.value })
+              break
             case "Resource":
               envList.push({
                 name: en.prefix_or_alias,
@@ -233,17 +211,18 @@ export default {
                   resourceFieldRef: {
                     containerName: en.source,
                     divisor: 0,
-                    resource: en.key,
+                    resource: en.value,
                   },
                 },
               })
               break
-            case "ConfigMap":
+            case "ConfigMap key":
               envList.push({
                 name: en.prefix_or_alias,
                 valueFrom: {
                   configMapKeyRef: {
                     name: en.source,
+                    key: en.value,
                     optional: false, // 这个false是什么意思不知道
                   },
                 },
@@ -255,30 +234,38 @@ export default {
                 valueFrom: {
                   secretKeyRef: {
                     name: en.source,
+                    key: en.value,
                     optional: false,
                   },
                 },
               })
               break
-            case "Field":
+            case "Pod Field":
               envList.push({
                 name: en.prefix_or_alias,
                 valueFrom: {
                   fieldRef: {
                     apiVersion: "v1",
-                    fieldPath: en.source,
+                    fieldPath: en.value,
                   },
                 },
               })
               break
             case "Secret":
               envFromList.push({
-                name: en.prefix_or_alias,
-                valueFrom: {
-                  secretRef: {
-                    name: en.source,
-                    optional: false,
-                  },
+                prefix: en.prefix_or_alias,
+                secretRef: {
+                  name: en.source,
+                  optional: false,
+                },
+              })
+              break
+            case "ConfigMap":
+              envFromList.push({
+                prefix: en.prefix_or_alias,
+                configMapRef: {
+                  name: en.source,
+                  optional: false, // 这个false是什么意思不知道
                 },
               })
               break
@@ -320,25 +307,25 @@ export default {
         for (const en of this.commandParentObj.env) {
           if (en.valueFrom) {
             if (en.valueFrom.resourceFieldRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.resourceFieldRef.containerName, key: en.valueFrom.resourceFieldRef.resource, type: "Resource", prefix_or_alias: en.name })
+              this.form.envResource.push({ source: en.valueFrom.resourceFieldRef.containerName, value: en.valueFrom.resourceFieldRef.resource, type: "Resource", prefix_or_alias: en.name })
             } else if (en.valueFrom.configMapKeyRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.configMapKeyRef.name, key: "ConfigMap", type: "ConfigMap", prefix_or_alias: en.name })
+              this.form.envResource.push({ source: en.valueFrom.configMapKeyRef.name, value: en.valueFrom.configMapKeyRef.key, type: "ConfigMap key", prefix_or_alias: en.name })
             } else if (en.valueFrom.secretKeyRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.secretKeyRef.name, key: "Secret key", type: "Secret key", prefix_or_alias: en.name })
+              this.form.envResource.push({ source: en.valueFrom.secretKeyRef.name, value: en.valueFrom.secretKeyRef.key, type: "Secret key", prefix_or_alias: en.name })
             } else if (en.valueFrom.fieldRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.fieldRef.fieldPath, type: "Field", prefix_or_alias: en.name })
+              this.form.envResource.push({ value: en.valueFrom.fieldRef.fieldPath, type: "Pod Field", prefix_or_alias: en.name })
             }
-          } else {
-            this.form.env.push(en)
+          } else if (en.value) {
+            this.form.envResource.push({ value: en.value, type: "Key/Value Pair", prefix_or_alias: en.name })
           }
         }
       }
       if (this.commandParentObj.envFrom) {
         for (const en of this.commandParentObj.envFrom) {
-          if (en.valueFrom) {
-            if (en.valueFrom.secretRef) {
-              this.form.envFromResource.push({ source: en.valueFrom.secretRef.name, key: "Secret", type: "Secret", prefix_or_alias: en.name })
-            }
+          if (en.configMapRef) {
+            this.form.envResource.push({ source: en.configMapRef.name, type: "ConfigMap", prefix_or_alias: en.prefix })
+          } else if (en.secretRef) {
+            this.form.envResource.push({ source: en.secretRef.name, type: "Secret", prefix_or_alias: en.prefix })
           }
         }
       }
