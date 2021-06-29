@@ -1,67 +1,76 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
     <el-row>
-      <el-col :span="20" :offset="2">
-        <div>
-          <table style="width: 90%" class="myTable">
-            <tr>
-              <th scope="col" width="30%"></th>
-              <th scope="col"></th>
-            </tr>
-            <tr>
-              <td>{{$t('commons.table.name')}}</td>
-              <td>{{ item.metadata.name }}</td>
-            </tr>
-            <tr>
-              <td>{{$t('business.common.label')}}</td>
-              <td>
-                <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ key }} = {{ value }}
-                  </el-tag>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>{{$t('business.common.annotation')}}</td>
-              <td>
-                <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
-                  </el-tag>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Finalizers</td>
-              <td>
-                <div v-for="value in item.metadata.finalizers" v-bind:key="value" class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
-                  </el-tag>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>{{$t('commons.table.status')}}</td>
-              <td>
-                <el-button v-if="item.status.phase ==='Active'" type="success" size="mini" plain round>
-                  {{ item.status.phase }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td>{{$t('commons.table.created_time')}}</td>
-              <td>
-                {{ item.metadata.creationTimestamp | datetimeFormat }}
-              </td>
-            </tr>
-          </table>
-          <div style="float: right;margin-top: 10px">
-            <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
+      <el-card v-if="!yamlShow">
+        <el-col :span="24">
+            <table class="myTable">
+              <tr>
+                <th scope="col" width="30%"  align="left">
+                  <h3>{{ $t("business.common.basic") }}</h3>
+                </th>
+                <th scope="col">
+                </th>
+              </tr>
+              <tr>
+                <td>{{ $t("commons.table.name") }}</td>
+                <td>{{ item.metadata.name }}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.common.label") }}</td>
+                <td>
+                  <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
+                    <el-tag type="info" size="small">
+                      {{ key }} = {{ value }}
+                    </el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.common.annotation") }}</td>
+                <td>
+                  <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
+                    <el-tag type="info" size="small">
+                      {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
+                    </el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Finalizers</td>
+                <td>
+                  <div v-for="value in item.metadata.finalizers" v-bind:key="value" class="myTag">
+                    <el-tag type="info" size="small">
+                      {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
+                    </el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ $t("commons.table.status") }}</td>
+                <td>
+                  <el-button v-if="item.status.phase ==='Active'" type="success" size="mini" plain round>
+                    {{ item.status.phase }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td>{{ $t("commons.table.created_time") }}</td>
+                <td>
+                  {{ item.metadata.creationTimestamp | datetimeFormat }}
+                </td>
+              </tr>
+            </table>
+          <div class="bottom-button">
+            <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
           </div>
+        </el-col>
+      </el-card>
+      <div v-if="yamlShow">
+        <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+        <div class="bottom-button">
+          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
-      </el-col>
+      </div>
     </el-row>
   </layout-content>
 </template>
@@ -69,13 +78,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getNamespace} from "@/api/namespaces"
+import YamlEditor from "@/components/yaml-editor"
 
 export default {
   name: "NamespaceDetail",
-  components: { LayoutContent },
+  components: { YamlEditor, LayoutContent },
   props: {
-    name: String,
-    cluster: String
+    name: String
   },
   data () {
     return {
@@ -83,7 +92,9 @@ export default {
         metadata: {},
         status: {}
       },
-      loading: false
+      loading: false,
+      yamlShow: false,
+      yaml: {}
     }
   },
   methods: {
@@ -92,13 +103,21 @@ export default {
       getNamespace(this.cluster, this.name).then(res => {
         this.loading = false
         this.item = res
+        this.yaml = JSON.parse(JSON.stringify(this.item))
       })
     },
-    onCancel(){
-      this.$router.push({ name: "Namespaces" })
+  },
+  watch: {
+    yamlShow:function (newValue) {
+      this.$router.push({
+        path: "/namespaces/detail/"+this.name,
+        query: { yamlShow: newValue }
+      })
     }
   },
   created () {
+    this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === 'true'
     this.getNamespaceByName()
   },
 }

@@ -72,13 +72,10 @@ const actions = {
       getCurrentUser().then(data => {
         const user = data.data
         user["roles"] = ["ADMIN"]
-        user["menu"] = ["cluster1"]
-        const { name, roles, menu } = user
+        const { name, roles } = user
         commit("SET_NAME", name)
         commit("SET_ROLES", roles)
         commit("SET_LANGUAGE", "zh-CN")
-        commit("SET_CURRENT_MENU", menu)
-        commit("SET_CURRENT_CLUSTER", "cluster1")
         resolve(user)
       }).catch(error => {
         reject(error)

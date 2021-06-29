@@ -2,11 +2,11 @@ import {del, get, post} from "@/plugins/request"
 
 
 const configMapUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/api/v1/configmaps`
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/configmaps`
 }
 
 const namespaceMapUrl = (cluster_name, namespace) => {
-  return `/proxy/${cluster_name}/api/v1/namespaces/${namespace}/configmaps`
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/configmaps`
 }
 
 export function listConfigMaps (cluster_name, limit, continueToken, search) {

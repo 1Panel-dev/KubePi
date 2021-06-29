@@ -10,26 +10,27 @@
           <el-link @click="onDetail(row)"> {{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Internal IP"  prop="metadata.name" fix max-width="50px">
+      <el-table-column label="Internal IP" prop="metadata.name" fix max-width="50px">
         <template v-slot:default="{row}">
           <div v-for="(address,index) in row.status.addresses" v-bind:key="index">
-            <span v-if="address.type === 'InternalIP'">{{address.address}}</span>
+            <span v-if="address.type === 'InternalIP'">{{ address.address }}</span>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.node.ready')" prop="status.conditions" fix max-width="50px">
         <template v-slot:default="{row}">
           <div v-for="(condition,index) in row.status.conditions" v-bind:key="index">
-            <span v-if="condition.type === 'Ready'">{{condition.status}}</span>
+            <span v-if="condition.type === 'Ready'">{{ condition.status }}</span>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.node.role')" prop="metadata.labels" fix max-width="50px">
         <template v-slot:default="{row}">
-            <div v-for="(item,name,index) in row.metadata.labels" :key="index" style="display:inline-block">
-              <span v-if="item"></span>
-              <el-tag v-if="name.indexOf('node-role.kubernetes.io') > -1">{{name.substring(name.indexOf('.io')+4)}}</el-tag>
-            </div>
+          <div v-for="(item,name,index) in row.metadata.labels" :key="index" style="display:inline-block">
+            <span v-if="item"></span>
+            <el-tag v-if="name.indexOf('node-role.kubernetes.io') > -1">{{ name.substring(name.indexOf(".io") + 4) }}
+            </el-tag>
+          </div>
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
@@ -55,16 +56,13 @@ export default {
       },
       loading: false,
       searchName: "",
-      clusterName: "test1",
+      clusterName: "",
       buttons: [
         {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
           click: (row) => {
-            this.$router.push({
-              name: "NodeDetail",
-              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
-            })
+            this.$router.push({ path: "/nodes/detail/"+row.metadata.name, query: { yamlShow: "true" } })
           }
         },
       ]
@@ -85,11 +83,12 @@ export default {
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
       })
     },
-    onDetail(row) {
-      this.$router.push({ name: "NodeDetail",params:{name:row.metadata.name,cluster:this.clusterName} })
+    onDetail (row) {
+      this.$router.push({ path: "/nodes/detail/"+row.metadata.name, query: { yamlShow: "false" } })
     }
   },
   created () {
+    this.clusterName = this.$route.query.cluster
     this.search()
   }
 }

@@ -68,7 +68,7 @@ export default {
         nextToken: "",
       },
       selects: [],
-      clusterName: "test1",
+      clusterName: "",
       loading: false,
       conditions: "",
       namespaces: [],
@@ -78,8 +78,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: false }
+              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              query: { yamlShow: false }
             })
           }
         },
@@ -88,8 +88,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
-              params: { name: row.metadata.name, cluster: this.clusterName, yamlShow: true }
+              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              query: { yamlShow: true }
             })
           }
         },
@@ -166,8 +166,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "ConfigMapDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace, cluster: this.clusterName }
+        path: '/' +row.metadata.namespace+"/configmaps/detail/" + row.metadata.name,
+        query: { yamlShow: false }
       })
     },
     listAllNameSpaces () {
@@ -177,6 +177,7 @@ export default {
     }
   },
   created () {
+    this.clusterName = this.$route.query.cluster
     this.listAllNameSpaces()
     this.search()
   }

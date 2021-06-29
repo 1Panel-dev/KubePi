@@ -131,3 +131,16 @@
     width: 100%;
     margin: 12px 0;
 }
+
+.el-form--label-top .el-form-item__label {
+    float: none;
+    display: inline-block;
+    text-align: left;
+    padding: 0;
+}
+
+.bottom-button {
+    padding-bottom: 10px;
+    padding-top: 5px;
+    float: right;
+}

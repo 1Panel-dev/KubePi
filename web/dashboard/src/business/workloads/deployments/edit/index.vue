@@ -2,43 +2,53 @@
   <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Deployments' }" v-loading="loading">
     <br>
     <div v-if="!showYaml">
-      <el-row :gutter="20">
-        <el-col :span="5">
-          <ko-form-item labelName="Namespace" clearable itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
-        </el-col>
-        <el-col :span="7">
-          <ko-form-item labelName="Name" clearable itemType="input" v-model="form.metadata.name" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Replicas" placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model="form.spec.replicas" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 10px">
-        <el-col :span="12">
-          <el-row>
-            <el-col :span="20">
-              <ko-form-item @change="selectContainer" labelName="Container" itemType="select" v-model="currentIndex" :selections="container_lists" />
-            </el-col>
-            <el-col :span="2">
-              <div style="margin-top: 16px">
-                <el-button style="width:100%" @click="handleAddContainer">+</el-button>
-              </div>
-            </el-col>
-            <el-col :span="2">
-              <div style="margin-top: 16px">
-                <el-button style="width:100%" @click="handleDeleteContainer">-</el-button>
-              </div>
-            </el-col>
-          </el-row>
-        </el-col>
-      </el-row>
+      <el-form label-position="top" ref="form" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="5">
+            <el-form-item label="Namespace" prop="metadata.namespace">
+              <ko-form-item itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label="Name" prop="metadata.name" :rules="requiredRules">
+              <ko-form-item itemType="input" v-model="form.metadata.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Replicas" prop="spec.replicas" :rules="numberRules">
+              <ko-form-item placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model="form.spec.replicas" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin-top: 10px">
+          <el-col :span="12">
+            <el-row>
+              <el-col :span="20">
+                <el-form-item label="Container">
+                  <ko-form-item @change="selectContainer" itemType="select" v-model="currentIndex" :selections="container_lists" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="2">
+                <div style="margin-top: 33px">
+                  <el-button style="width:100%" @click="handleAddContainer">+</el-button>
+                </div>
+              </el-col>
+              <el-col :span="2">
+                <div style="margin-top: 33px">
+                  <el-button style="width:100%" @click="handleDeleteContainer">-</el-button>
+                </div>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-form>
 
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
             <ko-container ref="ko_general" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
-            <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
+            <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :namespace="form.metadata.namespace" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Resources" name="Resources">
@@ -74,7 +84,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :containerIndex="currentIndex" />
+          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :containerIndex="currentContainerIndex" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -112,6 +122,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 import { getDeploymentByName, createDeployment } from "@/api/workloads"
+import Rule from "@/utils/rules"
 
 export default {
   name: "DeploymentForm",
@@ -165,6 +176,8 @@ export default {
         type: "apps.deployment",
       },
       operationLoading: false,
+      numberRules: [Rule.NumberRule],
+      requiredRules: [Rule.RequiredRule],
     }
   },
   methods: {
@@ -185,6 +198,9 @@ export default {
     },
     handleDeleteContainer() {
       this.currentContainerName = 0
+      if(this.container_lists.length <= 1) {
+        return
+      }
       for (let i = 0; i < this.container_lists.length; i++) {
         if (this.container_lists[i].value === this.container_lists.length - 1) {
           this.container_lists.splice(i, 1)

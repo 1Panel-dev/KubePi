@@ -4,7 +4,7 @@
       <el-row :gutter="20">
         <el-col :span="15">
           <el-card>
-            <table style="width: 90%" class="myTable">
+            <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" width="30%" align="left">
                   <h3>{{ $t("business.common.basic") }}</h3></th>
@@ -44,6 +44,9 @@
                 </td>
               </tr>
             </table>
+            <div class="bottom-button">
+              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
+            </div>
           </el-card>
         </el-col>
         <el-col :span="9">
@@ -275,8 +278,11 @@
         </el-col>
       </el-row>
     </div>
-    <div v-if="yamlShow&&!loading">
+    <div v-if="yamlShow">
       <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+      <div class="bottom-button">
+        <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
+      </div>
     </div>
   </layout-content>
 </template>
@@ -293,11 +299,6 @@ export default {
   components: { YamlEditor, ComplexTable, LayoutContent },
   props: {
     name: String,
-    cluster: String,
-    yamlShow: {
-      type: Boolean,
-      default: false
-    }
   },
   data () {
     return {
@@ -334,7 +335,8 @@ export default {
         pageSize: 20,
         nextToken: "",
       },
-      yaml: {}
+      yaml: {},
+      yamlShow: false
     }
   },
   methods: {
@@ -345,13 +347,12 @@ export default {
         this.loading = false
         if (this.yamlShow) {
           this.yaml = JSON.parse(JSON.stringify(this.item))
-        } else {
-          this.listPodsByNodeName()
-          this.pageNodes()
-          this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
-          this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
-          this.podsData.limit = parseInt(this.item.status.allocatable.pods)
         }
+        this.listPodsByNodeName()
+        this.pageNodes()
+        this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
+        this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
+        this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
     },
     listPodsByNodeName () {
@@ -411,7 +412,20 @@ export default {
       })
     }
   },
+  watch: {
+    yamlShow: function (newValue) {
+      if (newValue) {
+        this.yaml = JSON.parse(JSON.stringify(this.item))
+      }
+      this.$router.push({
+        path: "/nodes/detail/" + this.name,
+        query: { yamlShow: newValue }
+      })
+    }
+  },
   created () {
+    this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === "true"
     this.getNodeByName()
   }
 }

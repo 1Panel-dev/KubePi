@@ -1,7 +1,7 @@
 import {del, get, patch, post} from "@/plugins/request"
 
 const namespaceUrl = (cluster_name) => {
-  return `/proxy/${cluster_name}/api/v1/namespaces`
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces`
 }
 
 
