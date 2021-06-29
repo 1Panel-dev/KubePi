@@ -29,7 +29,7 @@ const Configuration = {
       }
     },
     {
-      path: "/configmaps/:namespace/:name",
+      path: "/:namespace/configmaps/detail/:name",
       component: () => import("@/business/configuration/config-maps/detail"),
       name: "ConfigMapDetail",
       props: true,
@@ -39,7 +39,7 @@ const Configuration = {
       }
     },
     {
-      path: "/configmaps/:namespace/:name/edit",
+      path: "/:namespace/configmaps/edit/:name",
       component: () => import("@/business/configuration/config-maps/edit"),
       name: "ConfigMapEdit",
       props: true,

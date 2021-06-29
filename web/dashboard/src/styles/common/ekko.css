@@ -12,6 +12,7 @@
     border-collapse: collapse;
     font-size: 12px;
     table-layout: fixed;
+    margin-bottom: 20px;
 }
 
 .myTable td {
@@ -130,4 +131,10 @@
     height: 1px;
     width: 100%;
     margin: 12px 0;
+}
+
+.bottom-button {
+    padding-bottom: 10px;
+    padding-top: 5px;
+    float: right;
 }

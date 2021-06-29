@@ -28,6 +28,7 @@ const message = {
       upload: "从文件读取",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
+      back_detail: "返回详情"
     },
     table: {
       name: "名称",

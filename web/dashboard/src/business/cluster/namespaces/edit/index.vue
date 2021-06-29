@@ -86,18 +86,10 @@ export default {
     },
     onEditYaml() {
       this.yaml = this.transformYaml()
-      this.$router.push({
-        name: "NamespaceEdit",
-        params: { name: this.name, cluster: this.clusterName },
-        query: { yamlShow: true }
-      })
+      this.showYaml = true
     },
     backToForm() {
-      this.$router.push({
-        name: "NamespaceEdit",
-        params: { name: this.name, cluster: this.clusterName},
-        query: { yamlShow: false }
-      })
+      this.showYaml = false
     },
     getNamespaceByName () {
       this.loading = true
@@ -124,6 +116,14 @@ export default {
       this.$refs.ko_annotations.transformation(formData.metadata)
       return formData
     },
+  },
+  watch: {
+    showYaml:function (newValue) {
+      this.$router.push({
+        path: "/namespaces/edit/"+this.name ,
+        query: { yamlShow: newValue }
+      })
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster
