@@ -4,7 +4,7 @@
         <el-row :gutter="10">
             <el-col :span="4" v-for="(item,index) in items" :key="index">
                 <el-card class="card_header box-card " style="margin-left:10px; margin-top:20px" shadow="hover">
-                    <div v-if="!item.add">
+                    <div>
                         <div slot="header" class="clearfix">
                             <b style="font-size: 20px">{{item.name}}</b>
                             <div style="float: right">
@@ -12,9 +12,11 @@
                                     <el-button type="text" size="large" class="bottom-button">More</el-button>
 
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item :command="{name:item.name,action:'manage'}">管理集群
+                                        <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'update'}"
+                                                          :command="{name:item.name,action:'manage'}">管理集群
                                         </el-dropdown-item>
-                                        <el-dropdown-item :command="{name:item.name,action:'delete'}">删除
+                                        <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'delete'}"
+                                                          :command="{name:item.name,action:'delete'}">删除
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>
@@ -30,19 +32,28 @@
                                 <el-col :span="20">
                                     <ul>
                                         <li style="list-style-type: none;margin: 5px">版本:{{item.status.version}}</li>
-<!--                                        <li style="list-style-type: none;margin: 5px">创建时间:{{item.createAt}}</li>-->
+                                        <!--                                        <li style="list-style-type: none;margin: 5px">创建时间:{{item.createAt}}</li>-->
                                     </ul>
                                 </el-col>
                             </el-row>
                         </div>
                         <div class="bottom clearfix">
                             <el-button type="text" size="large" class="bottom-button"
+                                       v-has-permissions="{resource:'clusters',verb:'get'}"
                                        @click="onGotoDashboard(item.name)">Open
                             </el-button>
                         </div>
 
                     </div>
-                    <div v-if="item.add" @click="onCreate">
+
+                </el-card>
+
+
+            </el-col>
+            <el-col :span="4">
+                <el-card v-has-permissions="{resource:'clusters',verb:'update'}" class="card_header box-card "
+                         style="margin-left:10px; margin-top:20px" shadow="hover">
+                    <div @click="onCreate">
                         <i class="el-icon-plus"></i>
                     </div>
                 </el-card>
@@ -105,9 +116,6 @@
             onVueCreated() {
                 listClusters().then(data => {
                     this.items = data.data;
-                    this.items.push({
-                        add: true,
-                    })
                 })
             }
         },

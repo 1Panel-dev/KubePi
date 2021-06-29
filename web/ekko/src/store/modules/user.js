@@ -69,7 +69,6 @@ const actions = {
         return new Promise((resolve, reject) => {
             getCurrentUser().then(data => {
                 const user = data.data
-                user["roles"] = ["ADMIN"]
                 const {name, resourcePermissions, nickName} = user
                 commit("SET_NAME", name)
                 commit("SET_RESOURCE_PERMISSIONS", resourcePermissions)
