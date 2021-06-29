@@ -80,9 +80,11 @@ func (e *EkkoSerer) setResultHandler() {
 		isProxyPath := func() bool {
 			p := ctx.GetCurrentRoute().Path()
 			ss := strings.Split(p, "/")
-			if len(ss) >= 2 {
-				if ss[1] == "proxy" {
-					return true
+			if len(ss) >= 3 {
+				for i := range ss {
+					if ss[i] == "proxy" {
+						return true
+					}
 				}
 			}
 			return false

@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	goContext "context"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
@@ -16,6 +17,8 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
+	rbacV1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync"
 )
 
@@ -166,6 +169,36 @@ func (h *Handler) CreateCluster() iris.Handler {
 		binding.Certificate = csr
 
 		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		// 管理员权限
+
+		kc, err := client.Client()
+		if err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
+		if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: fmt.Sprintf("ekko:cluster-admin-%s", profile.Name),
+			},
+			Subjects: []rbacV1.Subject{
+				{
+					Kind: "User",
+					Name: profile.Name,
+				},
+			},
+			RoleRef: rbacV1.RoleRef{
+				Name: "cluster-admin",
+				Kind: "ClusterRole",
+			},
+		}, metav1.CreateOptions{}); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
