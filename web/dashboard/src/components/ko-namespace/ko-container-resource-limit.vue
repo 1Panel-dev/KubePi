@@ -1,25 +1,31 @@
 <template>
   <div class="tab-content">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <ko-form-item labelName="CPU Reservation" placeholder="e.g. 1000" clearable itemType="number" deviderName="mCPUs"
-                      v-model="form.requestsCpu"></ko-form-item>
-      </el-col>
-      <el-col :span="12">
-        <ko-form-item labelName="Memory Reservation" placeholder="e.g. 128" clearable itemType="number" deviderName="MiB"
-                      v-model="form.requestsMemory"/>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20" style="margin-top: 20px">
-      <el-col :span="12">
-        <ko-form-item labelName="CPU Limit" placeholder="e.g. 128" clearable itemType="number" deviderName="mCPUs"
-                      v-model="form.limitsCpu"/>
-      </el-col>
-      <el-col :span="12">
-        <ko-form-item labelName="Memory Limit" placeholder="e.g. 128" clearable itemType="number" deviderName="MiB"
-                      v-model="form.limitsMemory"/>
-      </el-col>
-    </el-row>
+    <el-form label-position="top" ref="form" :rules="rules" :model="form">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="CPU Reservation" prop="requestsCpu">
+            <ko-form-item placeholder="e.g. 1000" clearable itemType="number" deviderName="mCPUs" v-model="form.requestsCpu" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Memory Reservation" prop="requestsMemory">
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.requestsMemory" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="CPU Limit" prop="limitsCpu">
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="mCPUs" v-model="form.limitsCpu" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Memory Limit" prop="limitsMemory">
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.limitsMemory" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
 
@@ -30,32 +36,33 @@ export default {
   name: "KoContainerResourceLimit",
   components: { KoFormItem },
   props: {
-    resourceLimit: Object
+    resourceLimit: Object,
   },
-  data () {
+  data() {
     return {
       form: {
         limitsCpu: "",
         limitsMemory: "",
         requestsCpu: "",
-        requestsMemory: ""
-      }
+        requestsMemory: "",
+      },
+      rules: [],
     }
   },
   watch: {
     form(val) {
       this.$emit("update:resourceLimit", val)
-    }
+    },
   },
-  mounted () {
+  mounted() {
     this.form = this.resourceLimit
-  }
+  },
 }
 </script>
 
 <style scoped>
-    .tab-content {
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
+.tab-content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 </style>

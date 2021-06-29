@@ -1,26 +1,33 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Command">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <ko-form-item labelName="Entrypoint" placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
-        </el-col>
-        <el-col :span="12">
-          <ko-form-item labelName="Arguments" placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="input" v-model="form.args" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style="margin-top: 20px">
-        <el-col :span="12">
-          <ko-form-item labelName="WorkingDir" placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
-        </el-col>
-        <el-col :span="6">
-          <ko-form-item labelName="Stdin" itemType="select" v-model="form.stdin" :selections="stdin_list" />
-        </el-col>
-        <el-col :span="6">
-          <el-checkbox style="margin-top: 20px" :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
-        </el-col>
-      </el-row>
-      <div style="margin-top: 30px">
+      <el-form label-position="top" ref="form" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Entrypoint" prop="command">
+              <ko-form-item placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Arguments" prop="args">
+              <ko-form-item placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="input" v-model="form.args" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="WorkingDir" prop="workingDir">
+              <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Stdin" prop="stdin">
+              <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div>
         <label>Environment Variables
           <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
             <i class="el-icon-question" />
@@ -83,6 +90,15 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     commandParentObj: Object,
+    namespace: String,
+  },
+  watch: {
+    namespace: {
+      handler(newName) {
+        this.namespace = newName
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -146,9 +162,10 @@ export default {
       })
     },
     changeConfigMap(comfigmap) {
+      console.log(this.namespace)
       this.config_map_value_list = []
       for (const cm of this.config_map_list) {
-        if (comfigmap === cm.metadata.name && cm.metadata.namespace === "kube-system") {
+        if (comfigmap === cm.metadata.name && cm.metadata.namespace === this.namespace) {
           for (const item of Object.keys(cm.data)) {
             this.config_map_value_list.push({ label: item, value: item })
           }

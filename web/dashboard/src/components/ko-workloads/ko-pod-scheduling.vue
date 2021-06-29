@@ -1,69 +1,83 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Node Scheduling">
-      <div v-for="(item, index) in podSchedulings" :key="index">
-        <el-card style="margin-top: 10px">
-          <el-button style="float: right; padding: 3px 0" type="text" @click="handlePodRulesDelete(index)">删 除</el-button>
-          <el-row style="margin-top: 20px">
-            <el-col :span="12">
-              <ko-form-item labelName="Type" itemType="radio" v-model="item.type" :radios="type_list" />
-            </el-col>
-            <el-col :span="12">
-              <ko-form-item labelName="Priority" itemType="radio" v-model="item.priority" :radios="priority_list" />
-            </el-col>
-          </el-row>
-          <el-row style="margin-top: 20px">
-            <el-col :span="12">
-              <ko-form-item labelName="Namespace" itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
-            </el-col>
-            <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
-              <ko-form-item labelName="Namespace" itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
-            </el-col>
-          </el-row>
+    <ko-card title="Pod Scheduling">
+      <el-form label-position="top">
+        <div v-for="(item, index) in podSchedulings" :key="index">
+          <el-card style="margin-top: 10px">
+            <el-row>
+              <el-button style="float: right;" type="text" @click="handlePodRulesDelete(index)">删 除</el-button>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="Type">
+                  <ko-form-item itemType="radio" v-model="item.type" :radios="type_list" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="Priority">
+                  <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="Namespace Operation">
+                  <ko-form-item itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
+                <el-form-item label="Namespace">
+                  <ko-form-item itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
+                </el-form-item>
+              </el-col>
+            </el-row>
 
-          <table style="width: 98%" class="tab-table">
-            <tr>
-              <th scope="col" width="40%" align="left">
-                <label>key</label>
-              </th>
-              <th scope="col" width="15%" align="left">
-                <label>operator</label>
-              </th>
-              <th scope="col" width="40%" align="left">
-                <label>value</label>
-              </th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="(row, index) in item.rules" v-bind:key="index">
-              <td>
-                <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
-              </td>
-              <td>
-                <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
-              </td>
-              <td>
-                <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleMatchAdd(item)">{{ $t("commons.button.add") }}</el-button>
-              </td>
-            </tr>
-          </table>
-          <el-row style="margin-top: 20px">
-            <el-col :span=24>
-              <ko-form-item labelName="Topology Key" itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
-            </el-col>
-          </el-row>
-        </el-card>
-      </div>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="40%" align="left">
+                  <label>key</label>
+                </th>
+                <th scope="col" width="15%" align="left">
+                  <label>operator</label>
+                </th>
+                <th scope="col" width="40%" align="left">
+                  <label>value</label>
+                </th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="(row, index) in item.rules" v-bind:key="index">
+                <td>
+                  <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
+                </td>
+                <td>
+                  <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
+                </td>
+                <td>
+                  <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                  <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleMatchAdd(item)">{{ $t("commons.button.add") }}</el-button>
+                </td>
+              </tr>
+            </table>
+            <el-row style="margin-top: 10px">
+              <el-col :span=24>
+                <el-form-item label="Topology Key">
+                  <ko-form-item itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
+      </el-form>
       <el-button @click="handlePodRulesAdd()">Add Node Selector</el-button>
     </ko-card>
   </div>

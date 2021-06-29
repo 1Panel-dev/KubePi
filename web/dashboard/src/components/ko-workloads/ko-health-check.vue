@@ -1,76 +1,98 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :title="health_check_type" :description="health_check_helper">
-      <el-row :gutter="20" style="margin-top: 10px">
-        <el-col :span="12">
-          <el-row style="margin-bottom: 20px;">
-            <ko-form-item labelName="Type" itemType="select" v-model="check_type" :selections="type_list" />
-          </el-row>
-          <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
-            <el-row style="margin-bottom: 20px;">
-              <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.httpGet.port" />
+      <el-form label-position="top" ref="form" :model="form">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-row>
+              <el-form-item label="Type">
+                <ko-form-item itemType="select" v-model="check_type" :selections="type_list" />
+              </el-form-item>
+            </el-row>
+            <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
+              <el-row>
+                <el-form-item label="Check Port" prop="httpGet.port">
+                  <ko-form-item itemType="number" v-model.number="form.httpGet.port" />
+                </el-form-item>
+              </el-row>
+              <el-row>
+                <el-form-item label="Request Path" prop="httpGet.path">
+                  <ko-form-item itemType="input" v-model="form.httpGet.path" />
+                </el-form-item>
+              </el-row>
+            </div>
+            <el-row v-if="check_type === 'tcpSocket'">
+              <el-form-item label="Check Port" prop="tcpSocket.port">
+                <ko-form-item itemType="number" v-model.number="form.tcpSocket.port" />
+              </el-form-item>
+            </el-row>
+            <el-row v-if="check_type === 'exec'">
+              <el-form-item label="Command to run" prop="exec.command">
+                <ko-form-item placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
+              </el-form-item>
+            </el-row>
+          </el-col>
+          <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
+            <el-row :gutter="10">
+              <el-col :span="8">
+                <el-form-item label="Check Interval" prop="periodSeconds">
+                  <ko-form-item placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="Initial Delay" prop="initialDelaySeconds">
+                  <ko-form-item placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="Timeout" prop="timeoutSeconds">
+                  <ko-form-item placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="10">
+              <el-col :span="12">
+                <el-form-item label="Seccess Threshold" prop="successThreshold">
+                  <ko-form-item placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="Failure Threshold" prop="failureThreshold">
+                  <ko-form-item placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row>
-              <ko-form-item labelName="Request Path" itemType="input" v-model="form.httpGet.path" />
+              <div><label>Header</label></div>
+              <table style="width: 98%" class="tab-table">
+                <tr>
+                  <th scope="col" width="45%" align="left"><label>key</label></th>
+                  <th scope="col" width="45%" align="left"><label>value</label></th>
+                  <th align="left"></th>
+                </tr>
+                <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
+                  <td>
+                    <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
+                  </td>
+                  <td>
+                    <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+                  </td>
+                  <td>
+                    <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+                      {{ $t("commons.button.delete") }}
+                    </el-button>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="left">
+                    <el-button @click="handleAdd">Add</el-button>
+                  </td>
+                </tr>
+              </table>
             </el-row>
-          </div>
-          <el-row v-if="check_type === 'tcpSocket'">
-            <ko-form-item labelName="Check Port" itemType="number" v-model.number="form.tcpSocket.port" />
-          </el-row>
-          <el-row v-if="check_type === 'exec'">
-            <ko-form-item labelName="Command to run" placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
-          </el-row>
-        </el-col>
-        <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
-          <el-row :gutter="10" style="margin-bottom: 20px;">
-            <el-col :span="8">
-              <ko-form-item labelName="Check Interval" placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
-            </el-col>
-            <el-col :span="8">
-              <ko-form-item labelName="Initial Delay" placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
-            </el-col>
-            <el-col :span="8">
-              <ko-form-item labelName="Timeout" placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
-            </el-col>
-          </el-row>
-          <el-row :gutter="10" style="margin-bottom: 20px;">
-            <el-col :span="12">
-              <ko-form-item labelName="Seccess Threshold" placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
-            </el-col>
-            <el-col :span="12">
-              <ko-form-item labelName="Failure Threshold" placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
-            </el-col>
-          </el-row>
-          <el-row style="margin-bottom: 20px;">
-            <el-divider content-position="left">Header</el-divider>
-            <table style="width: 98%" class="tab-table">
-              <tr>
-                <th scope="col" width="45%" align="left"><label>key</label></th>
-                <th scope="col" width="45%" align="left"><label>value</label></th>
-                <th align="left"></th>
-              </tr>
-              <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
-                <td>
-                  <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
-                </td>
-                <td>
-                  <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
-                </td>
-                <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-                    {{ $t("commons.button.delete") }}
-                  </el-button>
-                </td>
-              </tr>
-              <tr>
-                <td align="left">
-                  <el-button @click="handleAdd">Add</el-button>
-                </td>
-              </tr>
-            </table>
-          </el-row>
-        </el-col>
-      </el-row>
+          </el-col>
+        </el-row>
+      </el-form>
     </ko-card>
   </div>
 </template>

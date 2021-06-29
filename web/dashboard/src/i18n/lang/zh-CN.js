@@ -49,6 +49,8 @@ const message = {
       limit: "长度在 {0} 到 {1} 个字符",
       input: "请输入{0}",
       select: "请选择{0}",
+      required_msg: "输入项不能为空",
+      number_limit: "请输入正确的数字",
     },
     msg: {
       delete_success: "删除成功",

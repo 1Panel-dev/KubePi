@@ -3,15 +3,15 @@
     <ko-card title="Ports">
       <table style="width: 98%" class="tab-table">
         <tr>
-          <th scope="col" width="20%" align="left"><label>service type</label></th>
-          <th scope="col" width="20%" align="left"><label>name</label></th>
-          <th scope="col" width="15%" align="left"><label>private container port</label></th>
-          <th scope="col" width="10%" align="left"><label>protocol</label></th>
+          <th scope="col" width="16%" align="left"><label>service type</label></th>
+          <th scope="col" width="16%" align="left"><label>name</label></th>
+          <th scope="col" width="10%" align="left"><label>private port</label></th>
+          <th scope="col" width="8%" align="left"><label>protocol</label></th>
           <th scope="col" width="5%" align="left"><label>expose</label></th>
-          <th scope="col" width="15%" align="left"><label>public host port</label></th>
-          <th scope="col" width="15%" align="left"><label>listening port</label></th>
-          <th scope="col" width="10%" align="left"><label>host ip</label></th>
-          <th align="left" width="1%"></th>
+          <th scope="col" width="10%" align="left"><label>public port</label></th>
+          <th scope="col" width="10%" align="left"><label>listening port</label></th>
+          <th scope="col" width="15%" align="left"><label>host ip</label></th>
+          <th align="left"></th>
         </tr>
         <tr v-for="(row, index) in ports" v-bind:key="index">
           <td>

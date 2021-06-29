@@ -12,7 +12,6 @@
     border-collapse: collapse;
     font-size: 12px;
     table-layout: fixed;
-    margin-bottom: 20px;
 }
 
 .myTable td {
@@ -131,6 +130,13 @@
     height: 1px;
     width: 100%;
     margin: 12px 0;
+}
+
+.el-form--label-top .el-form-item__label {
+    float: none;
+    display: inline-block;
+    text-align: left;
+    padding: 0;
 }
 
 .bottom-button {
