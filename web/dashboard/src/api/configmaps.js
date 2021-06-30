@@ -38,5 +38,4 @@ export function deleteConfigMap(cluster_name,namespace, name) {
 
 export function updateConfigMap(cluster_name, namespace,name, data) {
   return patch(`${namespaceMapUrl(cluster_name, namespace)}/${name}`, data)
-
 }

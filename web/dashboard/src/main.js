@@ -18,6 +18,7 @@ import 'codemirror/lib/codemirror.css';
 import "./permission"
 import "@/styles/common/ekko.css"
 import filters from "./filters";
+import JsonViewer from 'vue-json-viewer'
 
 Vue.config.productionTip = false
 
@@ -33,6 +34,7 @@ library.add(fas, far, fab)
 
 Vue.use(icons);
 Vue.use(filters);
+Vue.use(JsonViewer)
 
 new Vue({
   el: '#app',

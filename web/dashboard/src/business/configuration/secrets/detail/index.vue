@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ConfigMaps'}" v-loading="loading">
+  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Secrets'}" v-loading="loading">
     <el-row :gutter="20">
       <div v-if="!yamlShow">
         <el-col :span="24">
@@ -14,6 +14,10 @@
               <tr>
                 <td>{{ $t("commons.table.name") }}</td>
                 <td>{{ item.metadata.name }}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.configuration.type") }}</td>
+                <td>{{ item.type }}</td>
               </tr>
               <tr>
                 <td>{{ $t("business.namespace.namespace") }}</td>
@@ -38,20 +42,17 @@
                 <td colspan="4">
                   <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
                     <el-tag type="info" size="small" v-if="value.length < 100">
-                      {{ key }} = {{value}}
+                      {{ key }} = {{ value }}
                     </el-tag>
-                    <el-tooltip  v-if="value.length > 100" :content="value" placement="top">
-                      <el-tag type="info" size="small" v-if="value.length >= 100" >
-                        {{ key }} = {{value.substring(0, 100) + "..." }}
+                    <el-tooltip v-if="value.length > 100" :content="value" placement="top">
+                      <el-tag type="info" size="small" v-if="value.length >= 100">
+                        {{ key }} = {{ value.substring(0, 100) + "..." }}
                       </el-tag>
                     </el-tooltip>
                   </div>
                 </td>
               </tr>
             </table>
-            <div class="bottom-button">
-              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-            </div>
           </el-card>
         </el-col>
         <el-col :span="24">
@@ -60,26 +61,22 @@
             <div class="card_title">
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>
-            <div>
-              <div v-if="item.data">
-                <json-editor :value="item.data" >
-                </json-editor>
-              </div>
-              <div v-else-if="item.binaryData">
-                <span> Binary Data: {{ bystesLength(item.binaryData.content) }} bytes</span>
-              </div>
-              <div v-else>
-                <span>{{ $t("business.configuration.no_data") }}</span>
-              </div>
+            <div v-for="(value,key) in item.data" v-bind:key="key" >
+              <ko-data :title="key">
+                <json-viewer v-if="jsonV(value)" :value="getContent(value)"  :copyable=true
+                             theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
+                <el-card v-else style="background: #112234;border: 0;">
+                  <div style="white-space: pre-line;">
+                   <span>{{ getValue(value) }} </span>
+                  </div>
+                </el-card>
+              </ko-data>
             </div>
           </el-card>
         </el-col>
       </div>
       <div v-if="yamlShow">
-        <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
-        <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
-        </div>
+
       </div>
     </el-row>
   </layout-content>
@@ -87,56 +84,49 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getConfigMap} from "@/api/configmaps"
-import JsonEditor from "@/components/json-editor"
-import YamlEditor from "@/components/yaml-editor"
+import {getSecret} from "@/api/secrets"
+import {isJSON} from "@/utils/data"
+import KoData from "@/components/ko-data"
 
 export default {
-  name: "ConfigMapDetail",
-  components: { YamlEditor, JsonEditor, LayoutContent },
+  name: "SecretDetail",
+  components: { KoData, LayoutContent },
   props: {
     name: String,
-    namespace: String,
+    namespace: String
   },
   data () {
     return {
       item: {
-        metadata: {}
+        metadata: {},
+        type: ""
       },
-      loading: false,
-      yamlShow: false,
       cluster: "",
-      yaml: {}
+      yamlShow: false,
+      loading: false
     }
   },
   methods: {
     getDetail () {
-      getConfigMap(this.cluster, this.namespace, this.name).then(res => {
+      this.loading = true
+      getSecret(this.cluster, this.namespace, this.name).then(res => {
+        this.loading = false
         this.item = res
       })
     },
-    bystesLength (str) {
-      let count = 0
-      for (let i = 0; i < str.length; i++) {
-        if (str.charCodeAt(i) > 255) {
-          count += 2
-        } else {
-          count++
-        }
-      }
-      return count
-    }
-  },
-  watch: {
-    yamlShow: function (newValue) {
-      if (newValue) {
-        this.yaml = JSON.parse(JSON.stringify(this.item))
-      }
-      this.$router.push({
-        path: "/" + this.namespace + "/configmaps/detail/" + this.name,
-        query: { yamlShow: newValue }
-      })
-      this.getDetail()
+    getContent (value) {
+      const { Base64 } = require("js-base64")
+      const content = Base64.decode(value)
+      return JSON.parse(content)
+    },
+    jsonV (str) {
+      const { Base64 } = require("js-base64")
+      const content = Base64.decode(str)
+      return isJSON(content)
+    },
+    getValue (value) {
+      const { Base64 } = require("js-base64")
+      return Base64.decode(value)
     }
   },
   created () {

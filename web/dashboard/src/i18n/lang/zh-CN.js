@@ -150,7 +150,8 @@ const message = {
     configuration: {
       configuration: "配置",
       data: "数据",
-      no_data: "没有数据可显示"
+      no_data: "没有数据可显示",
+      type: "类型"
     },
     access_control: {
       access_control: "访问控制"

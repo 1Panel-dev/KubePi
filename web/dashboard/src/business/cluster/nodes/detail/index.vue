@@ -36,9 +36,14 @@
                   </el-link>
                   <div v-if="showItem">
                     <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                      <el-tag type="info" size="small">
-                        {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
+                      <el-tag type="info" size="small" v-if="value.length < 100">
+                        {{ key }} = {{value}}
                       </el-tag>
+                      <el-tooltip  v-if="value.length > 100" :content="value" placement="top">
+                        <el-tag type="info" size="small" v-if="value.length >= 100" >
+                          {{ key }} = {{value.substring(0, 100) + "..." }}
+                        </el-tag>
+                      </el-tooltip>
                     </div>
                   </div>
                 </td>
