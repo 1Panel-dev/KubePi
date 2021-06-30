@@ -85,6 +85,5 @@ func (h *Handler) DeleteGroupMember() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-
 	}
 }
