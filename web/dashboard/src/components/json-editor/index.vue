@@ -36,14 +36,21 @@ export default {
     }
   },
   watch: {
-    value: function () {
-      let content = JSON.stringify(this.value, null, "\t")
+    value: function (newValue) {
+      let content = JSON.stringify(newValue, null, "\t")
       this.$refs.editor.codemirror.setValue(content)
       if (content.indexOf('\\n') > -1) {
         this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
       }
     }
   },
+  mounted () {
+    let content = JSON.stringify(this.value, null, "\t")
+    this.$refs.editor.codemirror.setValue(content)
+    if (content.indexOf('\\n') > -1) {
+      this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+    }
+  }
 }
 </script>
 

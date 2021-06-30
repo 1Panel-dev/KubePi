@@ -1,5 +1,7 @@
 <template>
-  <layout-content></layout-content>
+  <layout-content :header="$t('commons.form.edit')">
+    <el-row></el-row>
+  </layout-content>
 </template>
 
 <script>

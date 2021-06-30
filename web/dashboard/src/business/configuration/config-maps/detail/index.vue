@@ -1,4 +1,4 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ConfigMaps'}" v-loading="loading">
     <el-row :gutter="20">
       <div v-if="!yamlShow">
@@ -7,7 +7,8 @@
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" align="left">
-                  <h3>{{ $t("business.common.basic") }}</h3></th>
+                  <h3>{{ $t("business.common.basic") }}</h3>
+                </th>
                 <th scope="col"></th>
               </tr>
               <tr>
@@ -55,8 +56,16 @@
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>
             <div>
-              <json-editor :value="item.data">
-              </json-editor>
+              <div v-if="item.data">
+                <json-editor :value="item.data" >
+                </json-editor>
+              </div>
+              <div v-else-if="item.binaryData">
+                <span> Binary Data: {{ bystesLength(item.binaryData.content) }} bytes</span>
+              </div>
+              <div v-else>
+                <span>{{ $t("business.configuration.no_data") }}</span>
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -100,6 +109,17 @@ export default {
       getConfigMap(this.cluster, this.namespace, this.name).then(res => {
         this.item = res
       })
+    },
+    bystesLength (str) {
+      let count = 0
+      for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) > 255) {
+          count += 2
+        } else {
+          count++
+        }
+      }
+      return count
     }
   },
   watch: {

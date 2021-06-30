@@ -148,7 +148,8 @@ const message = {
     },
     configuration: {
       configuration: "配置",
-      data: "数据"
+      data: "数据",
+      no_data: "没有数据可显示"
     },
     access_control: {
       access_control: "访问控制"
