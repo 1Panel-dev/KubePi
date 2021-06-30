@@ -13,6 +13,8 @@ type Service interface {
 	common.DBService
 	GetClusterBindingByClusterName(clusterName string, options common.DBOptions) ([]v1Cluster.Binding, error)
 	CreateClusterBinding(binding *v1Cluster.Binding, options common.DBOptions) error
+	UpdateClusterBinding(name string, binding *v1Cluster.Binding, options common.DBOptions) error
+
 	Delete(name string, options common.DBOptions) error
 	GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error)
 	GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error)
@@ -24,6 +26,23 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (s *service) UpdateClusterBinding(name string, binding *v1Cluster.Binding, options common.DBOptions) error {
+	db := s.GetDB(options)
+
+	var b v1Cluster.Binding
+	if err := db.One("Name", name, &b); err != nil {
+		return err
+	}
+	if b.CreatedBy == "system" {
+		return errors.New("can not delete this resource,because it created by system")
+	}
+	binding.UUID = b.UUID
+	binding.CreatedBy = b.CreatedBy
+	binding.CreateAt = b.CreateAt
+	binding.UpdateAt = time.Now()
+	return db.Update(binding)
 }
 
 func (s *service) GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error) {

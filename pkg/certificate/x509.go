@@ -7,6 +7,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/pem"
+	"errors"
 )
 
 func GeneratePrivateKey() ([]byte, error) {
@@ -45,4 +46,16 @@ func CreateClientCertificateRequest(userName string, key []byte, org ...string) 
 	}
 	pemBytes := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE REQUEST", Bytes: csrBytes})
 	return pemBytes, nil
+}
+
+func ParseX509Certificate(certPem []byte) (*x509.Certificate, error) {
+	b, _ := pem.Decode(certPem)
+	if b == nil {
+		return nil, errors.New("can not decode pem block")
+	}
+	c, err := x509.ParseCertificate(b.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }

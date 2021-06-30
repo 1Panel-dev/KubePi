@@ -257,7 +257,6 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			},
 			ClusterRef: name,
 		}
-		// 生成用户证书
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -265,25 +264,25 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			return
 		}
 		k := kubernetes.NewKubernetes(*c)
-		// 查询相关用户组
-
-		gs, err := h.groupBindingService.ListByUserName(req.Name, common.DBOptions{})
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("list user failed: %s", err.Error()))
-			return
+		if req.Kind == "User" {
+			gs, err := h.groupBindingService.ListByUserName(req.Name, common.DBOptions{})
+			if err != nil && !errors.As(err, &storm.ErrNotFound) {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("list user failed: %s", err.Error()))
+				return
+			}
+			groupNames := make([]string, 0)
+			for i := range gs {
+				groupNames = append(groupNames, gs[i].GroupRef)
+			}
+			cert, err := k.CreateCommonUser(req.Name, groupNames...)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
+				return
+			}
+			binding.Certificate = cert
 		}
-		groupNames := make([]string, 0)
-		for i := range gs {
-			groupNames = append(groupNames, gs[i].GroupRef)
-		}
-		cert, err := k.CreateCommonUser(req.Name, groupNames...)
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
-			return
-		}
-		binding.Certificate = cert
 		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

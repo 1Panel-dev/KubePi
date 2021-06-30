@@ -5,30 +5,39 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
+	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
+	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
+	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/group"
 	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/collectons"
+	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )
 
 type Handler struct {
-	groupService        group.Service
-	groupBindingService groupbinding.Service
-	roleBindingService  rolebinding.Service
+	groupService          group.Service
+	groupBindingService   groupbinding.Service
+	roleBindingService    rolebinding.Service
+	clusterBindingService clusterbinding.Service
+	clusterService        cluster.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		groupService:        group.NewService(),
-		groupBindingService: groupbinding.NewService(),
-		roleBindingService:  rolebinding.NewService(),
+		groupService:          group.NewService(),
+		groupBindingService:   groupbinding.NewService(),
+		roleBindingService:    rolebinding.NewService(),
+		clusterBindingService: clusterbinding.NewService(),
+		clusterService:        cluster.NewService(),
 	}
 }
 
@@ -187,7 +196,6 @@ func (h *Handler) UpdateGroup() iris.Handler {
 				}
 			}
 		}
-
 		_ = tx.Commit()
 		ctx.Values().Set("data", &req)
 	}
@@ -205,7 +213,11 @@ func (h *Handler) DeleteGroup() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+
+		var affectUserNames []string
+
 		for i := range gbs {
+			affectUserNames = append(affectUserNames, gbs[i].UserRef)
 			if err := h.groupBindingService.Delete(gbs[i].Name, txOptions); err != nil {
 				_ = tx.Rollback()
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -214,7 +226,85 @@ func (h *Handler) DeleteGroup() iris.Handler {
 			}
 		}
 
-		if err := h.groupService.Delete(groupName, common.DBOptions{}); err != nil {
+		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{
+			Kind: "Group",
+			Name: groupName,
+		}, txOptions)
+		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		for i := range cbs {
+			if err := h.clusterBindingService.Delete(cbs[i].Name, txOptions); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+		}
+		// 为用户组下所有的用户 重新生成集群访问证书
+		for i := range affectUserNames {
+			ccbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{
+				Kind: "User",
+				Name: affectUserNames[i],
+			}, txOptions)
+			if err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			//解析证书
+			for j := range ccbs {
+				cert, err := certificate.ParseX509Certificate(ccbs[j].Certificate)
+				if err != nil {
+					_ = tx.Rollback()
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
+				}
+				// 去除当前的用户组
+				var currentGroups []string
+				exists := false
+				for k := range cert.Subject.Organization {
+					if cert.Subject.Organization[k] != groupName {
+						currentGroups = append(currentGroups, cert.Subject.Organization[k])
+					} else {
+						exists = true
+					}
+				}
+				if exists {
+					// 获取当前集群
+					c, err := h.clusterService.Get(ccbs[j].ClusterRef, txOptions)
+					if err != nil {
+						_ = tx.Rollback()
+						ctx.StatusCode(iris.StatusInternalServerError)
+						ctx.Values().Set("message", err.Error())
+						return
+					}
+					client := kubernetes.NewKubernetes(*c)
+					// 重新签发证书
+					userCert, err := client.CreateCommonUser(affectUserNames[i], currentGroups...)
+					if err != nil {
+						_ = tx.Rollback()
+						ctx.StatusCode(iris.StatusInternalServerError)
+						ctx.Values().Set("message", err.Error())
+						return
+					}
+					ccbs[j].Certificate = userCert
+					if err := h.clusterBindingService.UpdateClusterBinding(ccbs[j].Name, &ccbs[j], txOptions); err != nil {
+						_ = tx.Rollback()
+						ctx.StatusCode(iris.StatusInternalServerError)
+						ctx.Values().Set("message", err.Error())
+						return
+					}
+				}
+			}
+		}
+
+		if err := h.groupService.Delete(groupName, txOptions); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
