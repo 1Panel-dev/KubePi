@@ -29,7 +29,7 @@
           <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
           <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
           <el-button v-loading="loading" @click="onSubmit" type="primary">
-            {{ $t("commons.button.create") }}
+            {{ $t("commons.button.submit") }}
           </el-button>
         </div>
       </div>

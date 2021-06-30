@@ -72,6 +72,9 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		reverseProxy := httputil.NewSingleHostReverseProxy(apiUrl)
 		reverseProxy.Transport = ts
 		ctx.Request().URL.Path = proxyPath
+		if ctx.Method() == "PATCH" {
+			ctx.Request().Header.Set("Content-Type","application/merge-patch+json")
+		}
 		reverseProxy.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
 	}
 }

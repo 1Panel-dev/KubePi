@@ -31,7 +31,7 @@
           <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
           <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
           <el-button v-loading="loading" @click="onSubmit" type="primary">
-            {{ $t("commons.button.create") }}
+            {{ $t("commons.button.submit") }}
           </el-button>
         </div>
       </div>
@@ -44,7 +44,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
-import {editNamespace, getNamespace} from "@/api/namespaces"
+import {getNamespace, updateNamespace} from "@/api/namespaces"
 
 export default {
   name: "NamespaceEdit",
@@ -74,10 +74,10 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      editNamespace(this.cluster,this.item.metadata.name, data).then(() => {
+      updateNamespace(this.cluster,this.item.metadata.name, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({ name: "Namespaces" })
       }).finally(() => {

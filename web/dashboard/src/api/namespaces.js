@@ -31,6 +31,6 @@ export function deleteNamespace (cluster_name, namespace) {
   return del(`${namespaceUrl(cluster_name)}/${namespace}`)
 }
 
-export function editNamespace (cluster_name, namespace, data) {
+export function updateNamespace (cluster_name, namespace, data) {
   return patch(`${namespaceUrl(cluster_name)}/${namespace}`, data)
 }
