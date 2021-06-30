@@ -28,7 +28,8 @@ const message = {
       upload: "从文件读取",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
-      back_detail: "返回详情"
+      back_detail: "返回详情",
+      submit: "提交"
     },
     table: {
       name: "名称",
@@ -55,7 +56,7 @@ const message = {
     msg: {
       delete_success: "删除成功",
       create_success: "创建成功",
-      save_success: "保存成功",
+      update_success: "修改成功",
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",

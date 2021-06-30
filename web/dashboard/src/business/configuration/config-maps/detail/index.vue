@@ -100,7 +100,7 @@ export default {
       },
       loading: false,
       yamlShow: false,
-      cluster: {},
+      cluster: "",
       yaml: {}
     }
   },

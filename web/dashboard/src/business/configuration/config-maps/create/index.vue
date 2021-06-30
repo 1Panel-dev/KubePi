@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ConfigMaps'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
-        <div class="grid-content bg-purple-light" v-if="!showYaml">
+        <div v-if="!showYaml">
           <el-form label-position="top" :model="form">
             <el-col :span="6">
               <el-form-item :label="$t('commons.table.name')" required>
@@ -34,16 +34,16 @@
             </el-col>
           </el-form>
         </div>
-        <div class="grid-content bg-purple-light" v-if="showYaml">
+        <div v-if="showYaml">
           <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
         </div>
-        <div class="grid-content bg-purple-light">
+        <div>
           <div style="float: right;margin-top: 10px">
             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
             <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
             <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
             <el-button v-loading="loading" @click="onSubmit" type="primary">
-              {{ $t("commons.button.create") }}
+              {{ $t("commons.button.submit") }}
             </el-button>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default {
       namespaces: [],
       activeName: "",
       yaml: {},
-      clusterName: ""
+      cluster: ""
     }
   },
   methods: {
@@ -110,7 +110,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createConfigMap(this.clusterName, this.form.metadata.namespace, data).then(() => {
+      createConfigMap(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -132,8 +132,8 @@ export default {
     },
   },
   created () {
-    this.clusterName = this.$route.query.cluster
-    listNamespace(this.clusterName).then(res => {
+    this.cluster = this.$route.query.cluster
+    listNamespace(this.cluster).then(res => {
       this.namespaces = res.items
     })
   }
