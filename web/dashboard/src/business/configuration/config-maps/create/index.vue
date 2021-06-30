@@ -84,7 +84,8 @@ export default {
       },
       namespaces: [],
       activeName: "",
-      yaml: {}
+      yaml: {},
+      clusterName: ""
     }
   },
   methods: {
@@ -131,7 +132,8 @@ export default {
     },
   },
   created () {
-    listNamespace(this.$store.state.user.cluster).then(res => {
+    this.clusterName = this.$route.query.cluster
+    listNamespace(this.clusterName).then(res => {
       this.namespaces = res.items
     })
   }
