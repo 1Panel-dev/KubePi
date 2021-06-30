@@ -19,13 +19,16 @@ func GeneratePrivateKey() ([]byte, error) {
 
 }
 
-func CreateClientCertificateRequest(userName string, key []byte) ([]byte, error) {
+func CreateClientCertificateRequest(userName string, key []byte, org ...string) ([]byte, error) {
 	privateKey, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
 		return nil, err
 	}
 	subj := pkix.Name{
 		CommonName: userName,
+	}
+	for i := range org {
+		subj.Organization = append(subj.Organization, org[i])
 	}
 	rawSubj := subj.ToRDNSequence()
 	asn1Subj, err := asn1.Marshal(rawSubj)
