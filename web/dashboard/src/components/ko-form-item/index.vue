@@ -1,30 +1,38 @@
 <template>
   <div>
     <el-select v-if="itemType==='select'" filterable clearable style="width: 100%;" v-bind="$attrs" v-on="$listeners">
-      <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value" />
+      <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value"/>
     </el-select>
 
     <el-input v-if="itemType==='input'" clearable v-bind="$attrs" v-on="$listeners">
-      <template v-if="deviderName" slot="append">{{deviderName}}</template>
+      <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
     <el-input type="number" v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
-      <template v-if="deviderName" slot="append">{{deviderName}}</template>
+      <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
     <div v-if="itemType==='radio' && radioLayout === 'vertical'" style="display: block;">
       <el-radio-group v-bind="$attrs" v-on="$listeners">
-        <el-radio v-for="(item, index) in radios" :key="index" :disabled="item.disabledOption" :label="item.value" style="display: block; line-height: 25px">{{item.label}}</el-radio>
+        <el-radio v-for="(item, index) in radios" :key="index" :disabled="item.disabledOption" :label="item.value"
+                  style="display: block; line-height: 25px">{{ item.label }}
+        </el-radio>
       </el-radio-group>
     </div>
     <div v-if="itemType==='radio' && !radioLayout">
       <el-radio-group v-bind="$attrs" v-on="$listeners">
-        <el-radio v-for="(item, index) in radios" :key="index" :disabled="item.disabledOption" :label="item.value">{{item.label}}</el-radio>
+        <el-radio v-for="(item, index) in radios" :key="index" :disabled="item.disabledOption" :label="item.value">
+          {{ item.label }}
+        </el-radio>
       </el-radio-group>
     </div>
+    <el-input v-if="itemType==='textarea'" style="width:100%;" type="textarea" :rows="1" v-bind="$attrs"
+              v-on="$listeners" :autosize="{maxRows:10}">
+      <template v-if="deviderName" slot="append">{{ deviderName }}</template>
+    </el-input>
   </div>
 </template>
-          
+
 <script>
 export default {
   name: "KoFormItem",
@@ -38,6 +46,6 @@ export default {
   },
 }
 </script>
-          
+
 <style>
 </style>

@@ -151,7 +151,11 @@ const message = {
       configuration: "配置",
       data: "数据",
       no_data: "没有数据可显示",
-      type: "类型"
+      type: "类型",
+      basic_auth: "基本身份认证",
+      ssh_auth: "SSH 身份认证",
+      tls_auth: "TLS",
+      token_auth: "令牌"
     },
     access_control: {
       access_control: "访问控制"

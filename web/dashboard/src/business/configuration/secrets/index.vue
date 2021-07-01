@@ -27,13 +27,13 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
-        <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
-            {{ key }}={{ value }}
-          </el-tag>
-        </template>
-      </el-table-column>
+      <!--      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">-->
+      <!--        <template v-slot:default="{row}">-->
+      <!--          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">-->
+      <!--            {{ key }}={{ value }}-->
+      <!--          </el-tag>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | datetimeFormat }}
@@ -53,7 +53,7 @@ import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "Secrets",
-  components: { ComplexTable, LayoutContent,KoTableOperations },
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
@@ -71,7 +71,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              path: "/" + row.metadata.namespace + "/configmaps/edit/" + row.metadata.name,
               query: { yamlShow: false }
             })
           }
@@ -81,7 +81,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              path: "/" + row.metadata.namespace + "/configmaps/edit/" + row.metadata.name,
               query: { yamlShow: true }
             })
           }
@@ -119,12 +119,13 @@ export default {
       })
     },
     onCreate () {
+      this.$router.push({ name: "SecretCreate" })
     },
     onDelete () {
     },
     openDetail (row) {
       this.$router.push({
-        path: '/' +row.metadata.namespace+"/secrets/detail/" + row.metadata.name,
+        path: "/" + row.metadata.namespace + "/secrets/detail/" + row.metadata.name,
         query: { yamlShow: false }
       })
     }

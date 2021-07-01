@@ -67,6 +67,16 @@ const Configuration = {
       }
     },
     {
+      path: "/secrets/create",
+      component: () => import("@/business/configuration/secrets/create"),
+      name: "SecretCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/secrets"
+      }
+    },
+    {
       path: "/resourcequotas",
       component: () => import("@/business/configuration/resource-quotas"),
       name: "ResourceQuotas",
