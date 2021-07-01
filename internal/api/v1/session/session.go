@@ -51,12 +51,18 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		u, err := h.userService.Get(loginCredential.Username, common.DBOptions{})
+		u, err := h.userService.GetByNameOrEmail(loginCredential.Username, common.DBOptions{})
 		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("query user %s error: %s", loginCredential.Username, err.Error()))
+			if errors.Is(err, storm.ErrNotFound) {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", fmt.Sprintf("user %s: not Found", loginCredential.Username))
+				return
+			}
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("query user %s failed ,: %s", loginCredential.Username, err.Error()))
 			return
 		}
+
 		if err := bcrypt.CompareHashAndPassword([]byte(u.Spec.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", "username or password error")
@@ -72,8 +78,8 @@ func (h *Handler) Login() iris.Handler {
 		session := sessions.Get(ctx)
 		profile := UserProfile{
 			Name:                u.Name,
-			NickName:            u.Spec.Info.NickName,
-			Email:               u.Spec.Info.Email,
+			NickName:            u.NickName,
+			Email:               u.Email,
 			ResourcePermissions: permissions,
 		}
 		session.Set("profile", profile)

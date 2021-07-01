@@ -187,7 +187,7 @@ func (h *Handler) DeleteUser() iris.Handler {
 func (h *Handler) GetUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
-		u, err := h.userService.Get(userName, common.DBOptions{})
+		u, err := h.userService.GetByNameOrEmail(userName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

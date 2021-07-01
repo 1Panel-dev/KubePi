@@ -1,7 +1,7 @@
 <template>
     <layout-content :header="$t('business.user.user_list')">
         <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                       :pagination-config="paginationConfig">
+                       :pagination-config="paginationConfig" @search="search">
             <template #header>
                 <el-button-group>
                     <el-button v-has-permissions="[{resource:'users',verb:'create'}]" type="primary" size="small"
@@ -10,19 +10,19 @@
                     </el-button>
                 </el-button-group>
             </template>
-            <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    <el-link>{{ row.name }}</el-link>
+                    {{ row.name }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('business.user.nickname')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.spec.info.nickName }}
+                    {{ row.nickName }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('business.user.email')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.spec.info.email }}
+                    {{ row.email }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
@@ -79,12 +79,20 @@
                 searchConfig: {
                     quickPlaceholder: this.$t("commons.search.quickSearch"),
                     components: [
+                        {field: "name", label: "姓名", component: "FuComplexInput"},
                         {
-                            field: "name",
-                            label: this.$t("commons.table.name"),
-                            component: "FuComplexInput",
-                            defaultOperator: "eq"
+                            field: "status",
+                            label: "状态",
+                            component: "FuComplexSelect",
+                            options: [{label: "启用", value: "Enable"}, {label: "禁用", value: "Disable"}],
                         },
+                        // {
+                        //     field: "name",
+                        //     label: this.$t("commons.table.name"),
+                        //     component: "FuComplexInput",
+                        //     defaultOperator: "eq"
+                        // },
+
                     ],
                 },
                 data: [],

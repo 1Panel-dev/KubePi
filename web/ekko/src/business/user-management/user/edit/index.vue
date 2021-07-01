@@ -72,8 +72,8 @@
         methods: {
             onConfirm() {
                 this.user.name = this.form.name
-                this.user.spec.info.nickName = this.form.nickName
-                this.user.spec.info.email = this.form.email
+                this.user.nickName = this.form.nickName
+                this.user.email = this.form.email
                 this.user.roles = this.form.roles
                 updateUser(this.name, this.user).then(() => {
                     this.$message({
@@ -90,8 +90,8 @@
                 this.loading = true
                 getUser(this.name).then(data => {
                     this.form.name = data.data.name;
-                    this.form.nickName = data.data.spec.info.nickName;
-                    this.form.email = data.data.spec.info.email;
+                    this.form.nickName = data.data.nickName;
+                    this.form.email = data.data.email;
                     this.form.roles = data.data.roles;
                     this.user = data.data;
                     listRoles().then(d => {

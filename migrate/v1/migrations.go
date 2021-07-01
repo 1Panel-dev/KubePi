@@ -57,12 +57,10 @@ var CreateAdministrator = migrations.Migration{
 				Name: "admin",
 				UUID: uuid.New().String(),
 			},
+			NickName: "administrator",
+			Email:    "support@fit2cloud.com",
+			Language: "zh-CN",
 			Spec: v1User.Spec{
-				Info: v1User.Info{
-					NickName: "administrator",
-					Email:    "support@fit2cloud.com",
-					Language: "zh-CN",
-				},
 				Authenticate: v1User.Authenticate{
 					Password: string(hash),
 					Token:    "",

@@ -1,7 +1,15 @@
 <template xmlns:el-col="http://www.w3.org/1999/html">
-    <layout-content>
+    <layout-content :header="$t('business.cluster.cluster')">
 
-        <el-row :gutter="10">
+        <div style="float: right">
+            <el-switch
+                    v-model="hiddenUnAccessCluster"
+                    @change="onHiddenUnAccessClusterChange"
+                    active-text="隐藏不可访问集群">
+            </el-switch>
+        </div>
+        <br>
+        <el-row>
             <el-col :span="4" v-for="(item,index) in items" :key="index">
                 <el-card class="card_header box-card " style="margin-left:10px; margin-top:20px" shadow="hover">
                     <div>
@@ -73,6 +81,7 @@
         data() {
             return {
                 items: [],
+                hiddenUnAccessCluster: false
             }
         },
         methods: {
@@ -113,8 +122,11 @@
             onGotoDashboard(name) {
                 window.open(`/dashboard?cluster=${name}`, "_blank")
             },
+            onHiddenUnAccessClusterChange() {
+                this.onVueCreated()
+            },
             onVueCreated() {
-                listClusters().then(data => {
+                listClusters(!this.hiddenUnAccessCluster).then(data => {
                     this.items = data.data;
                 })
             }

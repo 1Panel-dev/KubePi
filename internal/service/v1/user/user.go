@@ -5,6 +5,7 @@ import (
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -13,8 +14,7 @@ import (
 type Service interface {
 	common.DBService
 	Create(u *v1User.User, options common.DBOptions) error
-	Get(name string, options common.DBOptions) (*v1User.User, error)
-	GetByEmail(email string, options common.DBOptions) (*v1User.User, error)
+	GetByNameOrEmail(el string, options common.DBOptions) (*v1User.User, error)
 	List(options common.DBOptions) ([]v1User.User, error)
 	Delete(name string, options common.DBOptions) error
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error)
@@ -31,7 +31,7 @@ type service struct {
 }
 
 func (u *service) Update(name string, us *v1User.User, options common.DBOptions) error {
-	cu, err := u.Get(name, options)
+	cu, err := u.GetByNameOrEmail(name, options)
 	if err != nil {
 		return err
 	}
@@ -62,19 +62,12 @@ func (u *service) Search(num, size int, conditions pkgV1.Conditions, options com
 	return users, count, nil
 }
 
-func (u *service) Get(name string, options common.DBOptions) (*v1User.User, error) {
+func (u *service) GetByNameOrEmail(el string, options common.DBOptions) (*v1User.User, error) {
 	db := u.GetDB(options)
 	var us v1User.User
-	if err := db.One("Name", name, &us); err != nil {
-		return nil, err
-	}
-	return &us, nil
-}
+	query := db.Select(q.Or(q.Eq("Name", el), q.Eq("Email", el)))
 
-func (u *service) GetByEmail(email string, options common.DBOptions) (*v1User.User, error) {
-	db := u.GetDB(options)
-	var us v1User.User
-	if err := db.One("Email", email, &us); err != nil {
+	if err := query.First(&us); err != nil {
 		return nil, err
 	}
 	return &us, nil
@@ -91,7 +84,7 @@ func (u *service) List(options common.DBOptions) ([]v1User.User, error) {
 
 func (u *service) Delete(name string, options common.DBOptions) error {
 	db := u.GetDB(options)
-	item, err := u.Get(name, options)
+	item, err := u.GetByNameOrEmail(name, options)
 	if err != nil {
 		return err
 	}

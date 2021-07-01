@@ -11,7 +11,7 @@ type BaseModel struct {
 }
 
 type Metadata struct {
-	Name        string `json:"name" storm:"index,unique" `
+	Name        string `json:"name" storm:"unique" `
 	Description string `json:"description"`
 	UUID        string `json:"uuid" storm:"id,index,unique"`
 }

@@ -56,7 +56,7 @@ const message = {
             save_success: "保存成功",
         },
         login: {
-            username: "用户名",
+            username_or_email: "用户名或邮箱",
             password: "密码",
             title: "登录 EKKO",
             welcome: "欢迎回来，请输入用户名和密码登录",
