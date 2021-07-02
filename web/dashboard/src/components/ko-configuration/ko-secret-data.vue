@@ -13,10 +13,12 @@
         </tr>
         <tr v-for="label in data" v-bind:key="label.index">
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"
+                          @change.native="transform"/>
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value"/>
+            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="textarea"
+                          v-model="label.value" @change.native="transform"/>
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
@@ -27,7 +29,7 @@
         <tr>
           <td align="left">
             <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-            <el-upload  :before-upload="readFile" action=""  style="display: inline-block;margin-left: 5px">
+            <el-upload :before-upload="readFile" action="" style="display: inline-block;margin-left: 5px">
               <el-button>{{ $t("commons.button.upload") }}</el-button>
             </el-upload>
           </td>
@@ -43,8 +45,10 @@ import KoFormItem from "@/components/ko-form-item"
 
 export default {
   name: "KoSecretData",
-  components: { KoCard ,KoFormItem},
-  props: {},
+  components: { KoCard, KoFormItem },
+  props: {
+    dataObj: Object,
+  },
   data () {
     return {
       data: []
@@ -57,6 +61,7 @@ export default {
           this.data.splice(i, 1)
         }
       }
+      this.transform()
     },
     handleAdd () {
       const item = {
@@ -65,8 +70,9 @@ export default {
         value: "",
       }
       this.data.push(item)
+      this.transform()
     },
-    readFile(file) {
+    readFile (file) {
       const reader = new FileReader()
       reader.readAsText(file)
       reader.onerror = e => {
@@ -82,25 +88,25 @@ export default {
       }
       return false
     },
-    transformation (parentFrom) {
-      if (this.data) {
+    transform () {
+      if (this.data && this.data.length > 0) {
         let obj = {}
         for (let i = 0; i < this.data.length; i++) {
           if (this.data[i].key !== "") {
             const { Base64 } = require("js-base64")
-            obj[this.data[i].key] = Base64.encode( this.data[i].value)
+            obj[this.data[i].key] = Base64.encode(this.data[i].value)
           }
         }
-        parentFrom.data = obj
+        this.$emit("update:dataObj", obj)
       }
-    },
+    }
   },
   mounted () {
-    if (this.dataObj && this.dataObj.data) {
-      for (const key in this.dataObj.data) {
-        if (Object.prototype.hasOwnProperty.call(this.dataObj.data, key)) {
+    if (this.dataObj) {
+      for (const key in this.dataObj) {
+        if (Object.prototype.hasOwnProperty.call(this.dataObj, key)) {
           const { Base64 } = require("js-base64")
-          const value = Base64.decode( this.data[i].value)
+          const value = Base64.decode(this.dataObj[key])
           this.data.push({
             index: Math.random(),
             key: key,

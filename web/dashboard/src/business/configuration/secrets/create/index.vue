@@ -39,18 +39,21 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data" v-if="form.type==='Opaque'">
-                  <ko-secret-data ref="ko_data" :labelParentObj="form.data"></ko-secret-data>
+                  <ko-secret-data :dataObj.sync="form.data"></ko-secret-data>
+                </el-tab-pane>
+                <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
+                  <ko-secret-docker-data ref="ko_data" :dataObj="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
+                  <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
           </el-form>
         </div>
         <div v-if="showYaml">
-          <yaml-editor :value="yaml"></yaml-editor>
+          <yaml-editor ref="yaml_editor" :value="yaml"></yaml-editor>
         </div>
         <div style="float: right;margin-top: 10px">
           <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
@@ -73,10 +76,11 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
+import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
 
 export default {
   name: "SecretCreate",
-  components: { YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
@@ -112,16 +116,18 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm () {
+      console.log(this.form)
       this.showYaml = false
     },
     transformYaml () {
+      console.log(this.form)
       let formData = {}
       formData = JSON.parse(JSON.stringify(this.form))
       // labels
       this.$refs.ko_labels.transformation(formData.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(formData.metadata)
-      this.$refs.ko_data.transformation(formData)
+      // this.$refs.ko_data.transformation(formData)
       return formData
     },
     onSubmit () {
