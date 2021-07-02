@@ -44,6 +44,9 @@
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
+                <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
+                  <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
+                </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
                   <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
@@ -77,10 +80,11 @@ import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
 import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
+import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
 
 export default {
   name: "SecretCreate",
-  components: { KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
