@@ -340,12 +340,20 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 		if ctx.URLParamExists("kind") {
 			kind = ctx.URLParam("kind")
 		}
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
+		if c.CreatedBy == profile.Name {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("can not delete cluster importer %s", profile.Name))
+			return
+		}
+
 		subject := v1Cluster.Subject{
 			Name: member,
 		}
@@ -362,7 +370,6 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 			}
 			subject.Kind = kind
 		}
-
 		binding, err := h.clusterBindingService.GetBindingByClusterNameAndSubject(c.Name, subject, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -374,7 +381,6 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
-
 		}
 		if err := h.clusterBindingService.Delete(binding.Name, common.DBOptions{DB: tx}); err != nil {
 			_ = tx.Rollback()

@@ -87,11 +87,9 @@
                     "kind": "User",
                     "name": this.form.name,
                     "roles": this.form.roles,
+                    "nickName": this.form.nickName,
+                    "email": this.form.email,
                     "spec": {
-                        "info": {
-                            "nickName": this.form.nickName,
-                            "email": this.form.email,
-                        },
                         "authenticate": {
                             "password": this.form.confirmPassword
                         }

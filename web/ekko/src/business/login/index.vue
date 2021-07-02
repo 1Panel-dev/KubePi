@@ -13,7 +13,7 @@
                         </div>
                         <div class="login-form">
                             <el-form-item prop="username">
-                                <el-input v-model="form.username" :placeholder="$t('commons.login.username')" autofocus/>
+                                <el-input v-model="form.username" :placeholder="$t('commons.login.username_or_email')" autofocus/>
                             </el-form-item>
                             <el-form-item prop="password">
                                 <el-input type="password" v-model="form.password" :placeholder="$t('commons.login.password')"
@@ -50,7 +50,7 @@
                     username: [
                         {
                             required: true,
-                            message: this.$tm("commons.validate.input", "login.username"),
+                            message: this.$tm("commons.validate.input", "commons.login.username_or_email"),
                             trigger: "blur"
                         },
                     ],
@@ -58,7 +58,7 @@
                         // 先去掉方便测试
                         {
                             required: true,
-                            message: this.$tm("commons.validate.input", "login.password"),
+                            message: this.$tm("commons.validate.input", "commons.login.password"),
                             trigger: "blur"
                         },
                     ],
@@ -94,14 +94,12 @@
                 let keyCode = e.keyCode
                 if (keyCode === 13) {
                     this.submit("form")
-                }
-            },
+                }            },
             submit(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
                         this.loading = true
                         this.$store.dispatch("user/login", this.form).then(() => {
-                            console.log("123")
                             this.$router.push({path: this.redirect || "/", query: this.otherQuery})
                             this.loading = false
                         }).catch(() => {

@@ -12,7 +12,7 @@
             </template>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    <el-link>{{ row.name }}</el-link>
+                    {{ row.name }}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>

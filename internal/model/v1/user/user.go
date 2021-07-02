@@ -5,13 +5,10 @@ import v1 "github.com/KubeOperator/ekko/internal/model/v1"
 type User struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
-	Spec         Spec `json:"spec" storm:"inline"`
-}
-
-type Info struct {
-	NickName string `json:"nickName" storm:"index"`
-	Email    string `json:"email" storm:"index,unique"`
-	Language string `json:"language"`
+	NickName     string `json:"nickName" storm:"index"`
+	Email        string `json:"email" storm:"unique"`
+	Language     string `json:"language"`
+	Spec         Spec   `json:"spec" storm:"inline"`
 }
 
 type Authenticate struct {
@@ -20,6 +17,5 @@ type Authenticate struct {
 }
 
 type Spec struct {
-	Info         Info         `json:"info" storm:"inline"`
 	Authenticate Authenticate `json:"authenticate" storm:"inline"`
 }

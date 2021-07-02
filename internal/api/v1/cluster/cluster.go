@@ -20,6 +20,7 @@ import (
 	authV1 "k8s.io/api/authorization/v1"
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 	"sync"
 )
 
@@ -190,6 +191,9 @@ func (h *Handler) CreateCluster() iris.Handler {
 		if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: fmt.Sprintf("ekko:cluster-admin-%s", profile.Name),
+				Annotations: map[string]string{
+					"created-by": profile.Name,
+				},
 			},
 			Subjects: []rbacV1.Subject{
 				{
@@ -238,14 +242,43 @@ func (h *Handler) SearchClusters() iris.Handler {
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
+		showAll := true
+		if ctx.URLParamExists("all") {
+			text := ctx.URLParam("all")
+			if strings.ToLower(text) == "false" || strings.ToLower(text) == "no" {
+				showAll = false
+			}
+		}
+
 		clusters, err := h.clusterService.List(common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
 			return
 		}
+		var resultClusters []v1Cluster.Cluster
+		if !showAll {
+			u := ctx.Values().Get("profile")
+			profile := u.(session.UserProfile)
+			for i := range clusters {
+				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+				if err != nil {
+					ctx.StatusCode(iris.StatusBadRequest)
+					ctx.Values().Set("message", err)
+					return
+				}
+				for j := range mbs {
+					if mbs[j].Subject.Kind == "User" && mbs[j].Subject.Name == profile.Name {
+						resultClusters = append(resultClusters, clusters[i])
+					}
+				}
+			}
+		} else {
+			resultClusters = clusters
+		}
+
 		ctx.StatusCode(iris.StatusOK)
-		ctx.Values().Set("data", clusters)
+		ctx.Values().Set("data", resultClusters)
 	}
 }
 

@@ -14,6 +14,8 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"reflect"
+	"sort"
 )
 
 func (h *Handler) GetGroupMembers() iris.Handler {
@@ -65,58 +67,13 @@ func (h *Handler) CreateGroupMember() iris.Handler {
 			UserRef:  req.Name,
 			GroupRef: groupName,
 		}
-		tx, _ := server.DB().Begin(true)
-		txOptions := common.DBOptions{DB: tx}
 
-		if err := h.groupBindingService.Create(&binding, txOptions); err != nil {
+		if err := h.groupBindingService.Create(&binding, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-
-		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{Kind: "User", Name: req.Name}, txOptions)
-		if err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-
-		for i := range cbs {
-			cert, err := certificate.ParseX509Certificate(cbs[i].Certificate)
-			if err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			var currentGroupNames []string
-			currentGroupNames = append(cert.Subject.Organization, groupName)
-
-			c, err := h.clusterService.Get(cbs[i].ClusterRef, txOptions)
-			if err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			client := kubernetes.NewKubernetes(*c)
-			userCert, err := client.CreateCommonUser(req.Name, currentGroupNames...)
-			if err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			cbs[i].Certificate = userCert
-			if err := h.clusterBindingService.UpdateClusterBinding(cbs[i].Name, &cbs[i], txOptions); err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-		_ = tx.Commit()
+		go h.modifyClusterUserCert(req.Name)
 		ctx.Values().Set("data", req)
 	}
 }
@@ -131,67 +88,70 @@ func (h *Handler) DeleteGroupMember() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		tx, _ := server.DB().Begin(true)
-		txOptions := common.DBOptions{DB: tx}
-
-		//重新签发证书
-
-		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{Kind: "User", Name: memberName}, txOptions)
-		if err != nil {
-			_ = tx.Rollback()
+		if err := h.groupBindingService.Delete(gb.Name, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		go h.modifyClusterUserCert(memberName)
+	}
+}
 
-		for i := range cbs {
-			cert, err := certificate.ParseX509Certificate(cbs[i].Certificate)
+func (h *Handler) modifyClusterUserCert(userName string) {
+	log := server.Logger()
+
+	log.Infof("modify user %s certificate", userName)
+	cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{Kind: "User", Name: userName}, common.DBOptions{})
+	if err != nil && !errors.Is(err, storm.ErrNotFound) {
+		log.Error(err)
+		return
+	}
+	if !(len(cbs) > 0) {
+		log.Infof("user %s not in any cluster,skip it", userName)
+		return
+	}
+	// 查询现在用户在哪些用户组中
+
+	gs, err := h.groupBindingService.ListByUserName(userName, common.DBOptions{})
+	if err != nil && !errors.Is(err, storm.ErrNotFound) {
+		log.Error(err)
+		return
+	}
+
+	var orgNames []string
+	for i := range gs {
+		orgNames = append(orgNames, gs[i].GroupRef)
+	}
+	sort.Strings(orgNames)
+
+	for i := range cbs {
+		log.Infof("redeploy user %s certificate at cluster %s started", userName, cbs[i].ClusterRef)
+		cert, err := certificate.ParseX509Certificate(cbs[i].Certificate)
+		if err != nil {
+			server.Logger().Error(err)
+			return
+		}
+		currentGroups := cert.Subject.Organization
+		sort.Strings(currentGroups)
+		if !reflect.DeepEqual(orgNames, currentGroups) {
+			c, err := h.clusterService.Get(cbs[i].ClusterRef, common.DBOptions{})
 			if err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
+				log.Error(err)
 				return
 			}
-			var currentGroupNames []string
-			exists := false
-			for j := range cert.Subject.Organization {
-				if cert.Subject.Organization[j] != groupName {
-					currentGroupNames = append(currentGroupNames, cert.Subject.Organization[j])
-				} else {
-					exists = true
-				}
+			client := kubernetes.NewKubernetes(*c)
+			userCert, err := client.CreateCommonUser(userName, orgNames...)
+			if err != nil {
+				log.Error(err)
+				return
 			}
-			if exists {
-				c, err := h.clusterService.Get(cbs[i].ClusterRef, txOptions)
-				if err != nil {
-					_ = tx.Rollback()
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err.Error())
-					return
-				}
-				client := kubernetes.NewKubernetes(*c)
-				userCert, err := client.CreateCommonUser(memberName, currentGroupNames...)
-				if err != nil {
-					_ = tx.Rollback()
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err.Error())
-					return
-				}
-				cbs[i].Certificate = userCert
-				if err := h.clusterBindingService.UpdateClusterBinding(cbs[i].Name, &cbs[i], txOptions); err != nil {
-					_ = tx.Rollback()
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err.Error())
-					return
-				}
+			cbs[i].Certificate = userCert
+			if err := h.clusterBindingService.UpdateClusterBinding(cbs[i].Name, &cbs[i], common.DBOptions{}); err != nil {
+				log.Error(err)
+				return
 			}
 		}
-		if err := h.groupBindingService.Delete(gb.Name, txOptions); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		_ = tx.Commit()
+		log.Infof(" redeploy user %s certificate at cluster %s finished", userName, cbs[i].ClusterRef)
 	}
+
 }
