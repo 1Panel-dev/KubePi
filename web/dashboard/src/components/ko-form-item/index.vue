@@ -8,6 +8,10 @@
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
+    <el-input v-if="itemType==='password'" type="password" clearable v-bind="$attrs" v-on="$listeners">
+      <template v-if="deviderName" slot="append">{{ deviderName }}</template>
+    </el-input>
+
     <el-input type="number" v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>

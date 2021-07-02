@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="3">
               <el-form-item :label="$t('business.configuration.type')" required>
-                <el-select v-model="form.type">
+                <el-select v-model="form.type" @change="changeType">
                   <el-option label="Opaque" value="Opaque"></el-option>
                   <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>
                   <el-option label="Docker Registry" value="kubernetes.io/dockerconfigjson"></el-option>
@@ -42,7 +42,7 @@
                   <ko-secret-data :dataObj.sync="form.data"></ko-secret-data>
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
-                  <ko-secret-docker-data ref="ko_data" :dataObj="form.data"></ko-secret-docker-data>
+                  <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
@@ -127,7 +127,6 @@ export default {
       this.$refs.ko_labels.transformation(formData.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(formData.metadata)
-      // this.$refs.ko_data.transformation(formData)
       return formData
     },
     onSubmit () {
@@ -148,6 +147,9 @@ export default {
         this.loading = false
       })
     },
+    changeType () {
+      this.form.data = {}
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster
