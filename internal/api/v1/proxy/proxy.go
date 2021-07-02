@@ -11,6 +11,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"k8s.io/client-go/rest"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 )
@@ -45,8 +46,8 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			Name: profile.Name,
 		}, common.DBOptions{})
 		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get cluster binding failed: %s", err.Error()))
+			ctx.StatusCode(iris.StatusForbidden)
+			ctx.Values().Set("message", fmt.Sprintf("user %s not cluster %s member ", profile.Name, name))
 			return
 		}
 		kubeConf := &rest.Config{
@@ -73,7 +74,13 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		reverseProxy.Transport = ts
 		ctx.Request().URL.Path = proxyPath
 		if ctx.Method() == "PATCH" {
-			ctx.Request().Header.Set("Content-Type","application/merge-patch+json")
+			ctx.Request().Header.Set("Content-Type", "application/merge-patch+json")
+		}
+		reverseProxy.ModifyResponse = func(response *http.Response) error {
+			if response.StatusCode == http.StatusForbidden {
+				response.StatusCode = http.StatusInternalServerError
+			}
+			return nil
 		}
 		reverseProxy.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
 	}
