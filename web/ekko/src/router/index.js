@@ -1,6 +1,7 @@
 import Vue from "vue"
 import Router from "vue-router"
 import Layout from "@/business/app-layout/horizontal-layout"
+import Error403 from "@/business/error-page/403"
 
 // 加载modules中的路由
 const modules = require.context("./modules", true, /\.js$/)
@@ -32,7 +33,7 @@ export const constantRoutes = [
     },
     {
         path: "/403",
-        component: () => import("@/business/403"),
+        component: Error403,
         hidden: true
     }
 ]
