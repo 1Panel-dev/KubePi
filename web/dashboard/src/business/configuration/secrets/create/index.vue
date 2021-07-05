@@ -24,14 +24,14 @@
               <el-form-item :label="$t('business.configuration.type')" required>
                 <el-select v-model="form.type" @change="changeType">
                   <el-option label="Opaque" value="Opaque"></el-option>
-                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>
+<!--                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>-->
                   <el-option label="Docker Registry" value="kubernetes.io/dockerconfigjson"></el-option>
                   <el-option :label="$t('business.configuration.basic_auth')"
                              value="kubernetes.io/basic-auth"></el-option>
                   <el-option :label="$t('business.configuration.ssh_auth')" value="kubernetes.io/ssh-auth"></el-option>
                   <el-option :label="$t('business.configuration.tls_auth')" value="kubernetes.io/tls"></el-option>
-                  <el-option :label="$t('business.configuration.token_auth')"
-                             value="bootstrap.kubernetes.io/token"></el-option>
+<!--                  <el-option :label="$t('business.configuration.token_auth')"-->
+<!--                             value="bootstrap.kubernetes.io/token"></el-option>-->
                 </el-select>
               </el-form-item>
             </el-col>

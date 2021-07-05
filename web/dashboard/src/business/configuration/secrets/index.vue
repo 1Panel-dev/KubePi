@@ -71,7 +71,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/configmaps/edit/" + row.metadata.name,
+              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
               query: { yamlShow: false }
             })
           }
@@ -81,7 +81,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/configmaps/edit/" + row.metadata.name,
+              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
               query: { yamlShow: true }
             })
           }
