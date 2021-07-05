@@ -47,6 +47,9 @@
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
                   <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
                 </el-tab-pane>
+                <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
+                  <ko-secret-authentication :authentication-obj.sync="form.data"></ko-secret-authentication>
+                </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
                   <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
@@ -81,10 +84,11 @@ import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
 import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
 import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
+import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
 
 export default {
   name: "SecretCreate",
-  components: { KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { KoSecretAuthentication, KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
@@ -120,7 +124,6 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm () {
-      console.log(this.form)
       this.showYaml = false
     },
     transformYaml () {
