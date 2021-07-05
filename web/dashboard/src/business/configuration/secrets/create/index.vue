@@ -50,6 +50,9 @@
                 <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
                   <ko-secret-authentication :authentication-obj.sync="form.data"></ko-secret-authentication>
                 </el-tab-pane>
+                <el-tab-pane label="Tls" v-if="form.type==='kubernetes.io/tls'">
+                  <ko-secret-certificate :certificate-obj.sync="form.data"></ko-secret-certificate>
+                </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
                   <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
@@ -85,10 +88,11 @@ import {createSecret} from "@/api/secrets"
 import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
 import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
 import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
+import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
 
 export default {
   name: "SecretCreate",
-  components: { KoSecretAuthentication, KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { KoSecretCertificate, KoSecretAuthentication, KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
