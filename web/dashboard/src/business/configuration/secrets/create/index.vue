@@ -24,14 +24,14 @@
               <el-form-item :label="$t('business.configuration.type')" required>
                 <el-select v-model="form.type" @change="changeType">
                   <el-option label="Opaque" value="Opaque"></el-option>
-                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>
+<!--                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>-->
                   <el-option label="Docker Registry" value="kubernetes.io/dockerconfigjson"></el-option>
                   <el-option :label="$t('business.configuration.basic_auth')"
                              value="kubernetes.io/basic-auth"></el-option>
                   <el-option :label="$t('business.configuration.ssh_auth')" value="kubernetes.io/ssh-auth"></el-option>
                   <el-option :label="$t('business.configuration.tls_auth')" value="kubernetes.io/tls"></el-option>
-                  <el-option :label="$t('business.configuration.token_auth')"
-                             value="bootstrap.kubernetes.io/token"></el-option>
+<!--                  <el-option :label="$t('business.configuration.token_auth')"-->
+<!--                             value="bootstrap.kubernetes.io/token"></el-option>-->
                 </el-select>
               </el-form-item>
             </el-col>
@@ -43,6 +43,15 @@
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
+                </el-tab-pane>
+                <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
+                  <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
+                </el-tab-pane>
+                <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
+                  <ko-secret-authentication :authentication-obj.sync="form.data"></ko-secret-authentication>
+                </el-tab-pane>
+                <el-tab-pane label="Tls" v-if="form.type==='kubernetes.io/tls'">
+                  <ko-secret-certificate :certificate-obj.sync="form.data"></ko-secret-certificate>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
@@ -77,10 +86,13 @@ import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
 import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
+import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
+import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
+import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
 
 export default {
   name: "SecretCreate",
-  components: { KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { KoSecretCertificate, KoSecretAuthentication, KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
@@ -116,7 +128,6 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm () {
-      console.log(this.form)
       this.showYaml = false
     },
     transformYaml () {

@@ -1,4 +1,4 @@
-import {del, get, post} from "@/plugins/request"
+import {del, get, patch, post} from "@/plugins/request"
 
 const secretUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/secrets`
@@ -34,8 +34,11 @@ export function getSecret (cluster_name, namespace, name) {
   return get(`${namespaceSecretUrl(cluster_name, namespace)}/${name}`)
 }
 
-export function createSecret(cluster_name, namespace,data) {
-  return post(`${namespaceSecretUrl(cluster_name, namespace)}`,data)
+export function createSecret (cluster_name, namespace, data) {
+  return post(`${namespaceSecretUrl(cluster_name, namespace)}`, data)
 }
 
+export function editSecret (cluster_name, namespace, data) {
+  return patch(`${namespaceSecretUrl(cluster_name, namespace)}`, data)
+}
 

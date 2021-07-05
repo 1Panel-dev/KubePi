@@ -46,20 +46,6 @@ export default {
     }
   },
   methods: {
-    // transformation (parentFrom) {
-    //   if (this.form.registry) {
-    //     const result = {
-    //       auths: {
-    //         [this.form.registry]: {
-    //           username: this.form.username,
-    //           password: this.form.password
-    //         }
-    //       }
-    //     }
-    //     const { Base64 } = require("js-base64")
-    //     parentFrom.data[".dockerconfigjson"] = Base64.encode(JSON.stringify(result))
-    //   }
-    // },
     transform() {
       if (this.form.registry) {
         const result = {
