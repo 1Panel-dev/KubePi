@@ -26,7 +26,7 @@ export function listSecretsWithNs (cluster_name, namespace) {
   return get(`${namespaceSecretUrl(cluster_name, namespace)}`)
 }
 
-export function delSecrets (cluster_name, namespace, name) {
+export function deleteSecrets (cluster_name, namespace, name) {
   return del(`${namespaceSecretUrl(cluster_name, namespace)}/${name}`)
 }
 

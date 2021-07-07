@@ -1,12 +1,98 @@
 <template>
-    <layout-content></layout-content>
+  <layout-content header="ResourceQuotas">
+    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" v-loading="loading">
+      <template #header>
+        <el-button-group>
+          <el-button type="primary" size="small" @click="onCreate">
+            {{ $t("commons.button.create") }}
+          </el-button>
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+            {{ $t("commons.button.delete") }}
+          </el-button>
+        </el-button-group>
+      </template>
+      <el-table-column type="selection" fix></el-table-column>
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+        <template v-slot:default="{row}">
+          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+        <template v-slot:default="{row}">
+          {{ row.metadata.namespace }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Request" min-width="100px">
+        <template v-slot:default="{row}">
+         <el-tag type="info" size="mini"> pods: {{row.status.used.pods}} / {{row.status.hard.pods}}</el-tag>
+         <el-tag type="info" size="mini"> cpu: {{row.status.used['requests.cpu']}} / {{row.status.hard['requests.cpu']}}</el-tag>
+         <el-tag type="info" size="mini"> memory: {{row.status.used['requests.memory']}} / {{row.status.hard['requests.memory']}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Limit" min-width="100px">
+        <template v-slot:default="{row}">
+          <el-tag type="info" size="mini"> cpu: {{row.status.used['limits.cpu']}} / {{row.status.hard['limits.cpu']}}</el-tag>
+          <el-tag type="info" size="mini"> memory: {{row.status.used['limits.memory']}} / {{row.status.hard['limits.memory']}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
+        <template v-slot:default="{row}">
+          {{ row.metadata.creationTimestamp | datetimeFormat }}
+        </template>
+      </el-table-column>
+    </complex-table>
+  </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
+import ComplexTable from "@/components/complex-table"
+import {listResourceQuotas} from "@/api/resourcequota"
+
 export default {
   name: "ResourceQuotas",
-  components: { LayoutContent }
+  components: { ComplexTable, LayoutContent },
+  data () {
+    return {
+      data: [],
+      page: {
+        pageSize: 10,
+        nextToken: ""
+      },
+      selects: [],
+      loading: false,
+      cluster: ""
+    }
+  },
+  methods: {
+    search (init) {
+      this.loading = true
+      if (init) {
+        this.page = {
+          pageSize: this.page.pageSize,
+          nextToken: ""
+        }
+      }
+      listResourceQuotas(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+        this.data = res.items
+        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
+        this.loading = false
+      })
+    },
+    onCreate () {
+
+    },
+    onDelete () {
+
+    },
+    openDetail () {
+
+    }
+  },
+  created () {
+    this.cluster = this.$route.query.cluster
+    this.search()
+  }
 }
 </script>
 

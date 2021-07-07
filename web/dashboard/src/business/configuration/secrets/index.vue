@@ -47,7 +47,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listSecrets} from "@/api/secrets"
+import {deleteSecrets, listSecrets} from "@/api/secrets"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 
@@ -121,7 +121,38 @@ export default {
     onCreate () {
       this.$router.push({ name: "SecretCreate" })
     },
-    onDelete () {
+    onDelete (row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteSecrets(this.cluster, row.metadata.namespace, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteSecrets(this.cluster, select.metadata.namespace, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
+        }
+      })
     },
     openDetail (row) {
       this.$router.push({

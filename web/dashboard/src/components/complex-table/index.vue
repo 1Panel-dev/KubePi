@@ -76,6 +76,7 @@ export default {
       @include flex-row(flex-start, center);
       line-height: 60px;
       font-size: 18px;
+      margin-bottom: 10px;
     }
 
     .complex-table__toolbar {
