@@ -53,6 +53,9 @@
                 </td>
               </tr>
             </table>
+            <div class="bottom-button">
+              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
+            </div>
           </el-card>
         </el-col>
         <el-col :span="24">
@@ -61,13 +64,13 @@
             <div class="card_title">
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>
-            <div v-for="(value,key) in item.data" v-bind:key="key" >
+            <div v-for="(value,key) in item.data" v-bind:key="key">
               <ko-data :title="key">
-                <json-viewer v-if="jsonV(value)" :value="getContent(value)"  :copyable=true
+                <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
                              theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
                 <el-card v-else style="background: #112234;border: 0;">
                   <div style="white-space: pre-line;">
-                   <span>{{ getValue(value) }} </span>
+                    <span>{{ getValue(value) }} </span>
                   </div>
                 </el-card>
               </ko-data>
@@ -76,7 +79,10 @@
         </el-col>
       </div>
       <div v-if="yamlShow">
-
+        <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+        <div class="bottom-button">
+          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
+        </div>
       </div>
     </el-row>
   </layout-content>
@@ -87,10 +93,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import {getSecret} from "@/api/secrets"
 import {isJSON} from "@/utils/data"
 import KoData from "@/components/ko-data"
+import YamlEditor from "@/components/yaml-editor"
 
 export default {
   name: "SecretDetail",
-  components: { KoData, LayoutContent },
+  components: { YamlEditor, KoData, LayoutContent },
   props: {
     name: String,
     namespace: String
@@ -103,7 +110,8 @@ export default {
       },
       cluster: "",
       yamlShow: false,
-      loading: false
+      loading: false,
+      yaml: {}
     }
   },
   methods: {
@@ -127,6 +135,18 @@ export default {
     getValue (value) {
       const { Base64 } = require("js-base64")
       return Base64.decode(value)
+    }
+  },
+  watch: {
+    yamlShow:function (newValue) {
+      if (newValue) {
+        this.yaml = JSON.parse(JSON.stringify(this.item))
+      }
+      this.$router.push({
+        path: "/" + this.namespace + "/secrets/detail/" + this.name,
+        query: { yamlShow: newValue }
+      })
+      this.getDetail()
     }
   },
   created () {

@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.edit')" :back-to="{name: 'Secrets'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Secrets'}" v-loading="loading">
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
@@ -122,6 +122,9 @@ export default {
       getSecret(this.cluster, this.namespace, this.name).then(res => {
         this.loading = false
         this.item = res
+        if (this.showYaml) {
+          this.yaml = JSON.parse(JSON.stringify(this.item))
+        }
       })
     },
     handleClick (tab) {
@@ -164,6 +167,18 @@ export default {
         this.loading = false
       })
     },
+  },
+  watch: {
+    yamlShow: function (newValue) {
+      if (newValue) {
+        this.yaml = this.transformYaml()
+      }
+      this.$router.push({
+        path: "/" + this.namespace + "/secrets/edit/" + this.name,
+        query: { yamlShow: newValue }
+      })
+      this.getDetail()
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster
