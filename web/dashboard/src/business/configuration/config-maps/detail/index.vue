@@ -111,8 +111,10 @@ export default {
   },
   methods: {
     getDetail () {
+      this.loading = true
       getConfigMap(this.cluster, this.namespace, this.name).then(res => {
         this.item = res
+        this.loading = false
       })
     },
     bystesLength (str) {

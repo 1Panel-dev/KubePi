@@ -68,7 +68,7 @@ export default {
         nextToken: "",
       },
       selects: [],
-      clusterName: "",
+      cluster: "",
       loading: false,
       conditions: "",
       namespaces: [],
@@ -119,7 +119,7 @@ export default {
           nextToken: "",
         }
       }
-      listConfigMaps(this.clusterName, this.page.pageSize, this.page.nextToken, this.conditions).then(res => {
+      listConfigMaps(this.cluster, this.page.pageSize, this.page.nextToken, this.conditions).then(res => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
@@ -128,7 +128,6 @@ export default {
     onCreate () {
       this.$router.push({
         name: "ConfigMapCreate",
-        params: { cluster: this.clusterName }
       })
     },
     onDelete (row) {
@@ -141,11 +140,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteConfigMap(this.clusterName, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deleteConfigMap(this.cluster, row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteConfigMap(this.clusterName, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteConfigMap(this.cluster, select.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -171,13 +170,13 @@ export default {
       })
     },
     listAllNameSpaces () {
-      listNamespace(this.clusterName).then(res => {
+      listNamespace(this.cluster).then(res => {
         this.namespaces = res.items
       })
     }
   },
   created () {
-    this.clusterName = this.$route.query.cluster
+    this.cluster = this.$route.query.cluster
     this.listAllNameSpaces()
     this.search()
   }
