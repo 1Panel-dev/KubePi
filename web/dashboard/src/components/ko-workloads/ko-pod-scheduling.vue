@@ -27,7 +27,7 @@
               </el-col>
               <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
                 <el-form-item label="Namespace">
-                  <ko-form-item itemType="select" v-model="item.namespaces" multiple :selections="namespace_list" />
+                  <ko-form-item itemType="select2" v-model="item.namespaces" multiple :selections="namespace_list" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -47,14 +47,14 @@
               </tr>
               <tr v-for="(row, index) in item.rules" v-bind:key="index">
                 <td>
-                  <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
+                  <ko-form-item itemType="input" v-model="row.key" />
                 </td>
                 <td>
-                  <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
+                  <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
                 </td>
                 <td>
-                  <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                  <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
+                  <ko-form-item v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                  <ko-form-item v-else itemType="input" v-model="row.value" />
                 </td>
                 <td>
                   <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
@@ -91,7 +91,16 @@ export default {
   name: "KoPodScheduling",
   components: { KoFormItem, KoCard },
   props: {
-    podScheduling: Object,
+    podSchedulingParentObj: Object,
+    namespaceList: Array,
+  },
+  watch: {
+    namespaceList: {
+      handler(newName) {
+        this.namespace_list = newName
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -115,12 +124,7 @@ export default {
         { label: "=", value: "In" },
         { label: "!=", value: "NotIn" },
       ],
-      namespace_list: [
-        { label: "kube-system", value: "kube-system" },
-        { label: "kube-public", value: "kube-public" },
-        { label: "kube-operator", value: "kube-operator" },
-        { label: "default", value: "default" },
-      ],
+      namespace_list: [],
       podSchedulings: [],
     }
   },
@@ -264,18 +268,19 @@ export default {
     },
   },
   mounted() {
+    this.namespace_list = this.namespaceList
     this.podSchedulings = []
-    if (this.podScheduling) {
-      if (this.podScheduling.affinity) {
-        if (this.podScheduling.affinity.podAffinity) {
-          if (this.podScheduling.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-            const schedulings = this.podScheduling.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution
+    if (this.podSchedulingParentObj) {
+      if (this.podSchedulingParentObj.affinity) {
+        if (this.podSchedulingParentObj.affinity.podAffinity) {
+          if (this.podSchedulingParentObj.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.podSchedulingParentObj.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution
             for (const s of schedulings) {
               this.valueTrans("Affinity", "Required", s)
             }
           }
-          if (this.podScheduling.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-            const schedulings = this.podScheduling.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution
+          if (this.podSchedulingParentObj.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.podSchedulingParentObj.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution
             for (const s of schedulings) {
               if (s.podAffinityTerm) {
                 this.valueTrans("Affinity", "Preferred", s.podAffinityTerm)
@@ -283,15 +288,15 @@ export default {
             }
           }
         }
-        if (this.podScheduling.affinity.podAntiAffinity) {
-          if (this.podScheduling.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-            const schedulings = this.podScheduling.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution
+        if (this.podSchedulingParentObj.affinity.podAntiAffinity) {
+          if (this.podSchedulingParentObj.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.podSchedulingParentObj.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution
             for (const s of schedulings) {
               this.valueTrans("Anti-Affinity", "Required", s)
             }
           }
-          if (this.podScheduling.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-            const schedulings = this.podScheduling.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution
+          if (this.podSchedulingParentObj.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.podSchedulingParentObj.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution
             for (const s of schedulings) {
               if (s.podAffinityTerm) {
                 this.valueTrans("Anti-Affinity", "Preferred", s.podAffinityTerm)

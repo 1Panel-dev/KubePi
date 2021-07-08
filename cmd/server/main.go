@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"github.com/KubeOperator/ekko/internal/route"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/spf13/cobra"
@@ -13,12 +12,6 @@ var (
 	serverBindPort int
 )
 
-//go:embed web/terminal
-var embedWebTerminal embed.FS
-
-//go:embed web/dashboard
-var embedWebDashboard embed.FS
-
 func init() {
 	RootCmd.Flags().StringVar(&serverBindHost, "server-bind-host", "", "ekko bind address")
 	RootCmd.Flags().IntVar(&serverBindPort, "server-bind-port", 0, "ekko bind port")
@@ -29,8 +22,8 @@ var RootCmd = &cobra.Command{
 	Use:   "ekko",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		server.EmbedWebDashboard = embedWebDashboard
-		server.EmbedWebTerminal = embedWebTerminal
+		// server.EmbedWebDashboard = embedWebDashboard
+		// server.EmbedWebTerminal = embedWebTerminal
 		return server.Listen(route.InitRoute)
 	},
 }

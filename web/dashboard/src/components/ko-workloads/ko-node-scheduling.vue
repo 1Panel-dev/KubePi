@@ -12,7 +12,7 @@
         <el-row v-if="scheduling_type === 'specific_node'">
           <el-col :span="24">
             <el-form-item label="Node Name">
-              <ko-form-item itemType="select" v-model="nodeName" :selections="node_list" />
+              <ko-form-item itemType="select2" v-model="nodeName" :selections="node_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -50,14 +50,14 @@
                 </tr>
                 <tr v-for="(row, index) in item.rules" v-bind:key="index">
                   <td>
-                    <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
+                    <ko-form-item itemType="input" v-model="row.key" />
                   </td>
                   <td>
-                    <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
+                    <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
                   </td>
                   <td>
-                    <ko-form-item :withoutLabel="true" v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
-                    <ko-form-item :withoutLabel="true" v-else itemType="input" v-model="row.value" />
+                    <ko-form-item v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                    <ko-form-item v-else itemType="input" v-model="row.value" />
                   </td>
                   <td>
                     <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
@@ -83,13 +83,25 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
-import { listNodes } from "@/api/nodes"
 
 export default {
   name: "KoNodeScheduling",
   components: { KoFormItem, KoCard },
   props: {
     nodeSchedulingParentObj: Object,
+    nodeList: Array,
+  },
+  watch: {
+    nodeList: {
+      handler(newName) {
+        this.node_list = []
+        for (const node of newName) {
+          this.node_list.push(node.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   data() {
     return {
@@ -117,14 +129,6 @@ export default {
     }
   },
   methods: {
-    loadNodes() {
-      listNodes(this.$route.params.cluster).then((res) => {
-        this.node_list = []
-        for (const node of res.items) {
-          this.node_list.push({ label: node.metadata.name, value: node.metadata.name })
-        }
-      })
-    },
     handleNodeRulesAdd() {
       var item = {
         priority: "Preferred",
@@ -212,7 +216,6 @@ export default {
     },
   },
   mounted() {
-    this.loadNodes()
     this.nodeSchedulings = []
     if (this.nodeSchedulingParentObj) {
       if (this.nodeSchedulingParentObj.affinity) {

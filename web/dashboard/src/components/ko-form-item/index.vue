@@ -4,6 +4,10 @@
       <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value"/>
     </el-select>
 
+    <el-select v-if="itemType==='select2'" filterable clearable style="width: 100%;" v-bind="$attrs" v-on="$listeners">
+      <el-option v-for="(item, index) in selections" :key="index" :label="item" :value="item" />
+    </el-select>
+
     <el-input v-if="itemType==='input'" clearable v-bind="$attrs" v-on="$listeners">
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
@@ -42,7 +46,6 @@ export default {
   name: "KoFormItem",
   props: {
     itemType: String, // input, select, radio
-    labelName: String,
     selections: Array, // 如果是 select
     deviderName: String, // 如果需要加上单位
     radios: Array, // 如果是 radio

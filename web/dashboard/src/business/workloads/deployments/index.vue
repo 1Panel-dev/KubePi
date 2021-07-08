@@ -12,12 +12,12 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable label="Name" prop="name">
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Status" prop="status">
+      <el-table-column sortable :label="$t('commons.table.status')" prop="status">
         <template v-slot:default="{row}">
           <el-button v-if="row.status ==='Active'" type="success" size="mini" plain round>
             {{row.status}}
@@ -27,7 +27,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column sortable label="Namespace" prop="namespace" />
+      <el-table-column sortable :label="$t('business.namespace.namespace')" prop="namespace" />
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.created_time | datetimeFormat }}
@@ -55,14 +55,14 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { cluster: "songliucs", namespace: row.namespace, name: row.name, yamlShow: false } })
+            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: false } })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { cluster: "songliucs", namespace: row.namespace, name: row.name, yamlShow: true } })
+            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: true } })
           },
         },
         {
@@ -87,14 +87,15 @@ export default {
         nextToken: "",
       },
       selects: [],
+      clusterName: "",
     }
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "DeploymentCreate", params: { cluster: "songliucs", yamlShow: false } })
+      this.$router.push({ name: "DeploymentCreate", query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { cluster: "songliucs", namespace: row.namespace, name: row.name } })
+      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.namespace, name: row.name } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -136,7 +137,7 @@ export default {
           nextToken: "",
         }
       }
-      listDeployments("songliucs")
+      listDeployments(this.clusterName)
         .then((res) => {
           for (const item of res.items) {
             this.data.push({
@@ -157,6 +158,7 @@ export default {
     },
   },
   mounted() {
+    this.clusterName = this.$route.query.cluster
     this.search()
   },
 }

@@ -5,17 +5,17 @@
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="5">
-            <el-form-item label="Namespace" prop="metadata.namespace">
-              <ko-form-item itemType="select" :selections="namespace_list" v-model="form.metadata.namespace" />
+            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+              <ko-form-item @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="Name" prop="metadata.name" :rules="requiredRules">
+            <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="requiredRules">
               <ko-form-item itemType="input" v-model="form.metadata.name" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Replicas" prop="spec.replicas" :rules="numberRules">
+            <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
               <ko-form-item placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model="form.spec.replicas" />
             </el-form-item>
           </el-col>
@@ -24,8 +24,8 @@
           <el-col :span="12">
             <el-row>
               <el-col :span="20">
-                <el-form-item label="Container">
-                  <ko-form-item @change="selectContainer" itemType="select" v-model="currentIndex" :selections="container_lists" />
+                <el-form-item :label="$t('business.workload.container')">
+                  <ko-form-item @change="selectContainer" itemType="select" v-model="currentContainerIndex" :selections="container_lists" />
                 </el-form-item>
               </el-col>
               <el-col :span="2">
@@ -46,9 +46,9 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
+            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns"/>
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
-            <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :namespace="form.metadata.namespace"/>
+            <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Resources" name="Resources">
@@ -56,9 +56,9 @@
         </el-tab-pane>
         <el-tab-pane label="Health Check" name="Health Check">
           <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Readiness Check" health_check_helper="Containers will be removed from service endpoints when this check is failing. Recommended." />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Liveness Check" health_check_helper="Containers will be restarted when this check is failing. Not recommended for most uses." />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Startup Check" health_check_helper="Containers will wait until this check succeeds before attempting other health checks." />
+            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Readiness Check" />
+            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Liveness Check" />
+            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Startup Check" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
@@ -69,8 +69,8 @@
         </el-tab-pane>
         <el-tab-pane label="Scheduling" name="Scheduling">
           <div :key="isRefresh">
-            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.template.spec" />
-            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec" />
+            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.template.spec" :namespaceList="namespace_list" />
+            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec" :nodeList="node_list" />
             <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.template.spec" />
           </div>
         </el-tab-pane>
@@ -79,12 +79,14 @@
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
           <div :key="isRefresh">
-            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" />
+            <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
+            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
+            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :containerIndex="currentIndex" />
+          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -96,7 +98,7 @@
         <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
         <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.edit_yaml") }}</el-button>
         <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-        <el-button v-loading="loading" @click="onSubmit()" type="primary">
+        <el-button v-loading="operationLoading" @click="onSubmit()" type="primary">
           {{ $t("commons.button.create") }}
         </el-button>
       </div>
@@ -123,8 +125,12 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
+
 import { createDeployment } from "@/api/workloads"
 import { listNamespace } from "@/api/namespaces"
+import { listNodes } from "@/api/nodes"
+import { listSecrets } from "@/api/secrets"
+import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
@@ -135,18 +141,15 @@ export default {
       showYaml: false,
       yaml: {},
       isRefresh: false,
-      operation: "",
       loading: false,
       namespace_list: [],
-      image_pull_policy_list: [
-        { label: "Always", value: "Always" },
-        { label: "ifNotPresent", value: "ifNotPresent" },
-        { label: "Never", value: "Never" },
-      ],
+      secret_list: [],
+      secret_list_of_ns: [],
+      config_map_list: [],
+      config_map_list_of_ns: [],
+      node_list: [],
       container_lists: [{ label: "Container-0", value: 0 }],
       activeName: "General",
-      description: "",
-      currentIndex: 0,
       currentContainerIndex: 0,
       isValid: true,
       unValidInfo: "",
@@ -175,26 +178,69 @@ export default {
         },
         type: "apps.deployment",
       },
+      clusterName: "",
+      operationLoading: false,
       numberRules: [Rule.NumberRule],
       requiredRules: [Rule.RequiredRule],
     }
   },
   methods: {
     loadNamespace() {
-      listNamespace(this.$route.params.cluster).then((res) => {
-        this.namespace_list = []
+      this.namespace_list = []
+      listNamespace(this.clusterName).then((res) => {
         for (const ns of res.items) {
           this.namespace_list.push({ label: ns.metadata.name, value: ns.metadata.name })
         }
       })
     },
+    loadSecrets() {
+      this.secret_list = []
+      listSecrets(this.clusterName).then((res) => {
+        this.secret_list = res.items
+        this.loadSecretsWithNs()
+      })
+    },
+    loadSecretsWithNs() {
+      this.secret_list_of_ns = []
+      for (const s of this.secret_list) {
+        if (s.metadata.namespace === this.form.metadata.namespace) {
+          this.secret_list_of_ns.push(s)
+        }
+      }
+    },
+    loadConfigMaps() {
+      this.config_map_list = []
+      listConfigMaps(this.clusterName).then((res) => {
+        this.config_map_list = res.items
+        this.loadConfigMapsWithNs()
+      })
+    },
+    loadConfigMapsWithNs() {
+      this.config_map_list_of_ns = []
+      for (const c of this.config_map_list) {
+        if (c.metadata.namespace === this.form.metadata.namespace) {
+          this.config_map_list_of_ns.push(c)
+        }
+      }
+    },
+    changeNs() {
+      this.loadSecretsWithNs()
+      this.loadConfigMapsWithNs()
+    },
+    loadNodes() {
+      this.node_list = []
+      listNodes(this.clusterName).then((res) => {
+        this.node_list = res.items
+      })
+    },
+
     selectContainer() {
-      this.form = this.gatherFormData()
+      this.gatherFormValid()
       if (!this.isValid) {
-        this.$notify({ title: "提示", message: this.unValidInfo })
+        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
         return
       }
-      this.currentContainerIndex = this.currentIndex
+      this.form = this.gatherFormData()
       this.isRefresh = !this.isRefresh
     },
     handleAddContainer() {
@@ -203,7 +249,7 @@ export default {
     },
     handleDeleteContainer() {
       this.currentContainerName = 0
-      if(this.container_lists.length <= 1) {
+      if (this.container_lists.length <= 1) {
         return
       }
       for (let i = 0; i < this.container_lists.length; i++) {
@@ -213,6 +259,11 @@ export default {
       }
     },
     gatherFormValid() {
+      this.$refs["form"].validate((valid) => {
+        if (!valid) {
+          return
+        }
+      })
       if (!this.$refs.ko_container.checkIsValid()) {
         this.isValid = false
         this.unValidInfo = "ko_container 参数不完整"
@@ -220,33 +271,21 @@ export default {
       }
     },
     gatherFormData() {
-      // general
       this.$refs.ko_container.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // ports
       this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // command
       this.$refs.ko_command.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // resource
       this.$refs.ko_resource.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // health_check
       this.$refs.ko_health_readiness_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
       this.$refs.ko_health_liveness_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
       this.$refs.ko_health_startup_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // security context
       this.$refs.ko_security_context.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
-      // networking
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
-      // scheduling
       this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_toleration.transformation(this.form.spec.template.spec)
-      // upgrade policy
       this.$refs.ko_upgrade_policy.transformation(this.form.spec)
-      // labels
       this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
-      // annotations
       this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
-      // storage
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },
@@ -257,7 +296,7 @@ export default {
       let data = {}
       this.gatherFormValid()
       if (!this.isValid) {
-        this.$notify({ title: "提示", message: this.unValidInfo })
+        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
         return
       }
       if (this.showYaml) {
@@ -287,10 +326,13 @@ export default {
     },
   },
   mounted() {
-    this.currentIndex = 0
     this.currentContainerIndex = 0
     this.showYaml = this.$route.params.showYaml
+    this.clusterName = this.$route.query.cluster
     this.loadNamespace()
+    this.loadSecrets()
+    this.loadConfigMaps()
+    this.loadNodes()
   },
 }
 </script>

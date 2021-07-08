@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Annotations">
+    <ko-card :title="annotationsTitle">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">
@@ -13,10 +13,10 @@
         </tr>
         <tr v-for="(row, index) in annotations" v-bind:key="index">
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
+            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -43,6 +43,7 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     annotationsParentObj: Object,
+    annotationsTitle: String,
   },
   data() {
     return {

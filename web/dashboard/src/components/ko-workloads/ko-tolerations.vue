@@ -22,19 +22,20 @@
         </tr>
         <tr v-for="(row, index) in tolerations" v-bind:key="index">
           <td>
-            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.key" />
+            <ko-form-item itemType="input" v-model="row.key" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.operator" :selections="operator_list" />
+            <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.value" />
+            <ko-form-item v-if="row.operator === 'Exists'" disabled placeholder="N/A" itemType="input" v-model="row.value" />
+            <ko-form-item v-if="row.operator !== 'Exists'" itemType="input" v-model="row.value" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.effect" :selections="effect_list" />
+            <ko-form-item itemType="select" v-model="row.effect" :selections="effect_list" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" :disabled="row.effect !== 'NoExecute'" itemType="number" v-model.number="row.tolerationSeconds" />
+            <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" deviderName="Seconds" v-model.number="row.tolerationSeconds" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">

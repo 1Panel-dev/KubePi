@@ -23,7 +23,7 @@
         </el-row>
         <el-row>
           <el-form-item label="Pull Secrets" prop="imagePullSecrets">
-            <ko-form-item itemType="select" multiple v-model="form.imagePullSecrets" :selections="secret_list" />
+            <ko-form-item itemType="select2" multiple v-model="form.imagePullSecrets" :selections="secret_list" />
           </el-form-item>
         </el-row>
       </el-form>
@@ -35,13 +35,25 @@
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
 import Rule from "@/utils/rules"
-import { listSecrets } from "@/api/secrets"
 
 export default {
   name: "KoContainer",
   components: { KoFormItem, KoCard },
   props: {
     containerParentObj: Object,
+    secretList: Array,
+  },
+  watch: {
+    secretList: {
+      handler(newName) {
+        this.secret_list = []
+        for (const s of newName) {
+          this.secret_list.push(s.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   data() {
     return {
@@ -62,14 +74,6 @@ export default {
     }
   },
   methods: {
-    loadSecrets() {
-      listSecrets(this.$route.params.cluster).then((res) => {
-        this.secret_list = []
-        for (const secret of res.items) {
-          this.secret_list.push({ label: secret.metadata.name, value: secret.metadata.name })
-        }
-      })
-    },
     checkIsValid() {
       let isValid = true
       this.$refs["form"].validate((valid) => {
@@ -90,7 +94,6 @@ export default {
     },
   },
   mounted() {
-    this.loadSecrets()
     if (this.containerParentObj) {
       if (this.containerParentObj.name) {
         this.form.name = this.containerParentObj.name

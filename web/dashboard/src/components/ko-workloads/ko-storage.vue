@@ -7,17 +7,17 @@
             <span>{{item._type}}</span>
             <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">删 除</el-button>
           </div>
-          <el-form label-position="top" ref="form">
+          <el-form label-position="top">
             <div v-if="item._type === 'persistentVolumeClaim'">
               <el-row :gutter="20">
                 <el-col :span="12">
-                  <el-form-item label="Volume Name">
-                    <ko-form-item itemType="input" v-model="item.name" />
+                  <el-form-item label="Volume Name" required>
+                    <ko-form-item itemType="input" v-model="item.metadata.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="Persistent Volume Claim">
-                    <ko-form-item itemType="select" v-model="item.weight" :selections="pvc_list" />
+                    <ko-form-item itemType="select2" v-model="item.metadata.weight" :selections="pvc_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -26,7 +26,7 @@
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="Volume Name">
-                    <ko-form-item itemType="input" v-model="item.name" />
+                    <ko-form-item itemType="input" v-model="item.metadata.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -38,12 +38,12 @@
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="ConfigMap">
-                    <ko-form-item itemType="select" v-model="item.configMap.name" :selections="config_map_name_list" />
+                    <ko-form-item itemType="select2" v-model="item.metadata.configMap.name" :selections="config_map_name_list" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="Optional">
-                    <ko-form-item itemType="radio" v-model="item.configMap.optional" :radios="optional_list" />
+                    <ko-form-item itemType="radio" v-model="item.metadata.configMap.optional" :radios="optional_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -52,24 +52,24 @@
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="Volume Name">
-                    <ko-form-item itemType="input" v-model="item.name" />
+                    <ko-form-item itemType="input" v-model="item.metadata.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="Default Mode">
-                    <ko-form-item itemType="input" v-model.number="item.defaultMode" />
+                    <ko-form-item itemType="input" v-model="item.defaultMode" />
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="Secret">
-                    <ko-form-item itemType="select" v-model="item.secret.name" :selections="secret_list" />
+                    <ko-form-item itemType="select2" v-model="item.metadata.secret.name" :selections="secret_list" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="Optional">
-                    <ko-form-item itemType="radio" v-model="item.secret.optional" :radios="optional_list" />
+                    <ko-form-item itemType="radio" v-model="item.metadata.secret.optional" :radios="optional_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -83,25 +83,25 @@
               <th scope="col" width="8%" align="left"><label>read only</label></th>
               <th align="left"></th>
             </tr>
-            <tr v-for="(row, index) in volumeMounts" v-bind:key="index">
+            <tr v-for="(row, index) in item.volumeMounts" v-bind:key="index">
               <td>
-                <ko-form-item :withoutLabel="true" itemType="input" v-model="row.mountPath" />
+                <ko-form-item itemType="input" v-model="row.mountPath" />
               </td>
               <td>
-                <ko-form-item :withoutLabel="true" itemType="input" v-model="row.subPath" />
+                <ko-form-item itemType="input" v-model="row.subPath" />
               </td>
               <td>
                 <el-checkbox v-model="row.readOnly" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleMountDelete(index)">
+                <el-button type="text" style="font-size: 10px" @click="handleMountDelete(item, index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
             </tr>
             <tr>
               <td align="left">
-                <el-button @click="handleMountAdd()">Add Mount</el-button>
+                <el-button @click="handleMountAdd(item)">Add Mount</el-button>
               </td>
             </tr>
           </table>
@@ -124,21 +124,50 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
-import { listSecrets } from "@/api/secrets"
-import { listConfigMaps } from "@/api/configmaps"
 
 export default {
   name: "KoStorage",
   components: { KoFormItem, KoCard },
   props: {
     storageParentObj: Object,
-    containerIndex: Number,
+    currentContainerIndex: Number,
+    configMapList: Array,
+    secretList: Array,
+  },
+  watch: {
+    currentContainerIndex: {
+      handler(newName) {
+        this.containerIndex = newName
+      },
+      immediate: true,
+    },
+    configMapList: {
+      handler(newName) {
+        this.config_map_name_list = []
+        for (const cm of newName) {
+          this.config_map_name_list.push(cm.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+    secretList: {
+      handler(newName) {
+        this.secret_list = []
+        for (const s of newName) {
+          this.secret_list.push(s.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   data() {
     return {
+      containerIndex: 0,
       volumes: [],
+      volumeAdd: [],
       pvc_list: [],
-      volumeMounts: [],
       secret_list: [],
       config_map_name_list: [],
       volume_type_list: [
@@ -153,91 +182,145 @@ export default {
     }
   },
   methods: {
-    loadSecrets() {
-      listSecrets(this.$route.params.cluster).then((res) => {
-        this.secret_list = []
-        for (const secret of res.items) {
-          this.secret_list.push({ label: secret.metadata.name, value: secret.metadata.name })
-        }
-      })
-    },
-    loadConfigMaps() {
-      listConfigMaps(this.$route.params.cluster).then((res) => {
-        this.config_map_name_list = []
-        for (const cm of res.items) {
-          this.config_map_name_list.push({ label: cm.metadata.name, value: cm.metadata.name })
-        }
-      })
-    },
     handleVolumeAdd(type) {
+      let item = {}
+      item._type = type
+      item.volumeMounts = []
+      item.defaultMode = 644
       switch (type) {
         case "configMap":
-          this.volumes.push({
-            _type: type,
+          item.metadata = {
             name: "",
             configMap: {
               name: "",
-              defaultMode: "",
+              defaultMode: 644,
               optional: true,
             },
-          })
+          }
           break
         case "secret":
-          this.volumes.push({
-            _type: type,
+          item.metadata = {
             name: "",
             secret: {
               name: "",
-              defaultMode: "",
+              defaultMode: 644,
               optional: true,
             },
-          })
+          }
           break
         case "persistentVolumeClaim":
-          this.volumes.push({
-            _type: type,
+          item.metadata = {
             name: "",
             persistentVolumeClaim: {
               claimName: "",
               readOnly: false,
             },
-          })
+          }
           break
       }
+      this.volumes.push(item)
+      this.volumeAdd.push(item)
     },
     handleVolumeDelete(index) {
+      for (const vo of this.volumes) {
+        for (let i = 0; i < this.volumeAdd; i++) {
+          if (vo.metadata.name == this.volumeAdd[i].metadata.name) {
+            this.volumeAdd.splice(i, 1)
+          }
+        }
+      }
       this.volumes.splice(index, 1)
     },
 
-    handleMountAdd() {
-      var item = {
+    handleMountAdd(item) {
+      item.volumeMounts.push({
         mountPath: "",
         subPath: "",
         readOnly: false,
-      }
-      this.volumeMounts.push(item)
+      })
     },
-    handleMountDelete(index) {
-      this.volumeMounts.splice(index, 1)
+    handleMountDelete(item, index) {
+      item.volumeMounts.splice(index, 1)
     },
 
+    checkIsValid() {
+      for (const vo of this.volumes) {
+        if (vo.metadata.name == "") {
+          return false
+        }
+        for (const mo of vo.volumeMounts) {
+          if (mo.mountPath != "") {
+            return false
+          }
+        }
+      }
+    },
     transformation(parentFrom) {
-      parentFrom.volume = this.volumes
-      parentFrom.containers[this.containerIndex].volumeMounts = this.volumeMounts
+      if (!parentFrom.volumes) {
+        parentFrom.volumes = []
+      }
+      parentFrom.containers[this.containerIndex].volumeMounts = []
+      for (const volume of this.volumeAdd) {
+        switch (volume._type) {
+          case "configMap":
+            if (volume.defaultMode) {
+              volume.configMap.defaultMode = parseInt(volume.defaultMode)
+            }
+            break
+          case "secret":
+            if (volume.defaultMode) {
+              volume.secret.defaultMode = parseInt(volume.defaultMode)
+            }
+            break
+        }
+        parentFrom.volumes.push(volume.metadata)
+      }
+      for (const volume of this.volumes) {
+        if (volume.volumeMounts.length !== 0) {
+          for (const mount of volume.volumeMounts) {
+            parentFrom.containers[this.containerIndex].volumeMounts.push({ mountPath: mount.mountPath, subPath: mount.subPath, readOnly: mount.readOnly })
+          }
+        }
+      }
     },
   },
   mounted() {
-    this.loadSecrets()
-    this.loadConfigMaps()
     this.volumes = []
-    this.volumeMounts = []
+    let volumeMounts = []
     if (this.storageParentObj.containers.length - 1 >= this.containerIndex) {
       if (this.storageParentObj.containers[this.containerIndex].volumeMounts) {
-        this.volumeMounts = this.storageParentObj.containers[this.containerIndex].volumeMounts
+        volumeMounts = this.storageParentObj.containers[this.containerIndex].volumeMounts
       }
     }
     if (this.storageParentObj.volumes) {
-      this.volumes = this.storageParentObj.volumes
+      for (const volume of this.storageParentObj.volumes) {
+        for (const mount of volumeMounts) {
+          if (mount.name === volume.name) {
+            let item = {}
+            item.volumeMounts = []
+            item.metadata = volume
+            item.volumeMounts.push(mount)
+            if (volume.configMap) {
+              if (volume.configMap.defaultMode) {
+                item.defaultMode = volume.configMap.defaultMode.toString(8)
+              }
+              item._type = "configMap"
+              this.volumes.push(item)
+            }
+            if (volume.secret) {
+              if (volume.secret.defaultMode) {
+                item.defaultMode = volume.secret.defaultMode.toString(8)
+              }
+              item._type = "secret"
+              this.volumes.push(item)
+            }
+            if (volume.persistentVolumeClaim) {
+              item._type = "persistentVolumeClaim"
+              this.volumes.push(item)
+            }
+          }
+        }
+      }
     }
   },
 }

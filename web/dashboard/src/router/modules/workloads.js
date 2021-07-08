@@ -27,7 +27,7 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/detail/:cluster/:namespace/:name",
+      path: "/deployments/detail/:namespace/:name",
       name: "DeploymentDetail",
       hidden: true,
       component: () => import("@/business/workloads/deployments/detail"),
@@ -36,7 +36,7 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/create/:cluster/:yamlShow",
+      path: "/deployments/create",
       name: "DeploymentCreate",
       hidden: true,
       component: () => import("@/business/workloads/deployments/create"),
@@ -45,7 +45,7 @@ const Workloads = {
       }
     },
     {
-      path: "/deployments/edit/:cluster/:namespace/:name/:yamlShow",
+      path: "/deployments/edit/:namespace/:name",
       name: "DeploymentEdit",
       hidden: true,
       component: () => import("@/business/workloads/deployments/edit"),
