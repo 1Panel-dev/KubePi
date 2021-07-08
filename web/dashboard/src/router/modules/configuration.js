@@ -95,6 +95,36 @@ const Configuration = {
       }
     },
     {
+      path: "/:namespace/resourcequotas/detail/:name",
+      component: () => import("@/business/configuration/resource-quotas/detail"),
+      name: "ResourceQuotaDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/resourcequotas"
+      }
+    },
+    {
+      path: "/resourcequotas/create",
+      component: () => import("@/business/configuration/resource-quotas/create"),
+      name: "ResourceQuotaCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/resourcequotas"
+      }
+    },
+    {
+      path: "/:namespace/resourcequotas/edit/:name",
+      component: () => import("@/business/configuration/resource-quotas/edit"),
+      name: "ResourceQuotaEdit",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/resourcequotas"
+      }
+    },
+    {
       path: "/limitranges",
       component: () => import("@/business/configuration/limit-ranges"),
       name: "LimitRanges",

@@ -40,6 +40,7 @@
           {{ row.metadata.creationTimestamp | datetimeFormat }}
         </template>
       </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </layout-content>
 </template>
@@ -47,11 +48,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listResourceQuotas} from "@/api/resourcequota"
+import {deleteResourceQuota, listResourceQuotas} from "@/api/resourcequota"
+import {downloadYaml} from "@/utils/actions"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "ResourceQuotas",
-  components: { ComplexTable, LayoutContent },
+  components: { ComplexTable, LayoutContent,KoTableOperations },
   data () {
     return {
       data: [],
@@ -61,7 +64,43 @@ export default {
       },
       selects: [],
       loading: false,
-      cluster: ""
+      cluster: "",
+      buttons: [
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name,
+              query: { yamlShow: false }
+            })
+          }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name,
+              query: { yamlShow: true }
+            })
+          }
+        },
+        {
+          label: this.$t("commons.button.download_yaml"),
+          icon: "el-icon-download",
+          click: (row) => {
+            downloadYaml(row.metadata.name + ".yml", row)
+          }
+        },
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.onDelete(row)
+          }
+        },
+      ],
     }
   },
   methods: {
@@ -80,13 +119,48 @@ export default {
       })
     },
     onCreate () {
-
+      this.$router.push({
+        name: "ResourceQuotaCreate",
+      })
     },
-    onDelete () {
-
+    onDelete (row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteResourceQuota(this.cluster, row.metadata.namespace, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteResourceQuota(this.cluster, select.metadata.namespace, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
+        }
+      })
     },
-    openDetail () {
-
+    openDetail (row) {
+      this.$router.push({
+        path: '/' +row.metadata.namespace+"/resourcequotas/detail/" + row.metadata.name,
+        query: { yamlShow: false }
+      })
     }
   },
   created () {
