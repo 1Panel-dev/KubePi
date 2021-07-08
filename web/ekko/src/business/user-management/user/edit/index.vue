@@ -4,15 +4,14 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="form" label-width="150px" label-position="left">
+                    <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
 
-                        <el-form-item :label="$t('commons.table.name')" prop="name" required>
-                            <el-input v-model="form.name"></el-input>
+                        <el-form-item :label="$t('business.user.username')" prop="name" required>
+                            <el-input v-model="form.name" disabled></el-input>
                         </el-form-item>
 
-
-                        <el-form-item :label="$t('business.user.nickname')" prop="nickName" required>
-                            <el-input v-model="form.nickName"></el-input>
+                        <el-form-item :label="$t('business.user.nickname')" prop="nickname" required>
+                            <el-input v-model="form.nickname"></el-input>
                         </el-form-item>
 
 
@@ -21,7 +20,8 @@
                         </el-form-item>
 
                         <el-form-item :label="$t('business.user.role')" prop="roles">
-                            <el-select v-model="form.roles" multiple placeholder="请选择">
+                            <el-select v-model="form.roles" multiple
+                                       :placeholder="$t('commons.form.select_placeholder')">
                                 <el-option
                                         v-for="item in roleOptions "
                                         :key="item.value"
@@ -51,6 +51,8 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import {updateUser, getUser} from "@/api/users"
     import {listRoles} from "@/api/roles"
+    import Rules from "@/utils/rules"
+
 
     export default {
         name: "UserEdit",
@@ -59,11 +61,24 @@
         data() {
             return {
                 loading: false,
+                isSubmitGoing: false,
                 user: {},
                 roleOptions: [],
+                rules: {
+                    name: [
+                        Rules.RequiredRule
+                    ],
+                    email: [
+                        Rules.RequiredRule,
+                        Rules.EmailRule
+                    ],
+                    nickname: [
+                        Rules.RequiredRule,
+                    ],
+                },
                 form: {
                     name: "",
-                    nickName: "",
+                    nickname: "",
                     email: "",
                     roles: []
                 },
@@ -71,8 +86,14 @@
         },
         methods: {
             onConfirm() {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
+                this.loading = true
+
                 this.user.name = this.form.name
-                this.user.nickName = this.form.nickName
+                this.user.nickName = this.form.nickname
                 this.user.email = this.form.email
                 this.user.roles = this.form.roles
                 updateUser(this.name, this.user).then(() => {
@@ -81,6 +102,9 @@
                         message: this.$t("commons.msg.update_success")
                     })
                     this.$router.push({name: "Users"})
+                }).finally(() => {
+                    this.isSubmitGoing = false
+                    this.loading = false
                 })
             },
             onCancel() {
@@ -90,7 +114,7 @@
                 this.loading = true
                 getUser(this.name).then(data => {
                     this.form.name = data.data.name;
-                    this.form.nickName = data.data.nickName;
+                    this.form.nickname = data.data.nickName;
                     this.form.email = data.data.email;
                     this.form.roles = data.data.roles;
                     this.user = data.data;
