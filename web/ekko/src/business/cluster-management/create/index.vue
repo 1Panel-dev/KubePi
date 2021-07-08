@@ -4,19 +4,23 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form :model="form" label-position="left" :rules="rules" label- width="60px">
-                        <el-form-item :label="$t('commons.table.name')" prop="name">
+                    <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
+
+                        <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="form.name" clearable></el-input>
                         </el-form-item>
-                        <el-divider content-position="center">连接设置</el-divider>
-                        <el-form-item label="连接方式">
-                            <el-radio v-model="form.direction" label="forward" @change="onDirectionChange">正向连接
+
+                        <el-divider content-position="center">{{$t('business.cluster.connect_setting')}}</el-divider>
+                        <el-form-item :label="$t('business.cluster.connect_direction')">
+                            <el-radio v-model="form.direction" label="forward" @change="onDirectionChange">
+                                {{$t('business.cluster.connect_forward')}}
                             </el-radio>
-                            <el-radio v-model="form.direction" label="backward" @change="onDirectionChange">反向连接
+                            <el-radio v-model="form.direction" disabled label="backward" @change="onDirectionChange">
+                                {{$t('business.cluster.connect_backward')}}({{$t("business.cluster.expect")}})
                             </el-radio>
                         </el-form-item>
                         <div v-if="form.direction==='forward'">
-                            <el-form-item label="API Server" prop="apiServer">
+                            <el-form-item label="API Server" prop="apiServer" required>
                                 <el-input v-model="form.apiServer" clearable></el-input>
                             </el-form-item>
 
@@ -24,51 +28,52 @@
                                 <el-switch v-model="form.apiServerInsecure"></el-switch>
                             </el-form-item>
                             <div v-if="!form.apiServerInsecure">
-                                <el-form-item label="Ca Certificate" prop="caDataStr">
+                                <el-form-item label="Ca Certificate" prop="caDataStr" required>
                                     <el-input type="textarea" v-model="form.caDataStr" clearable></el-input>
                                 </el-form-item>
                             </div>
 
 
-                            <el-form-item label="配置代理">
-                                <el-switch v-model="form.proxyEnable"></el-switch>
-                            </el-form-item>
-                            <div v-if="form.proxyEnable">
-                                <el-form-item label="Proxy Server" prop="proxyServer">
-                                    <el-input v-model="form.proxyServer" clearable></el-input>
-                                </el-form-item>
-                                <el-form-item label="代理认证">
-                                    <el-switch v-model="form.proxyAuthEnable"></el-switch>
-                                </el-form-item>
-                                <div v-if="form.proxyAuthEnable">
-                                    <el-form-item label="代理用户名" prop="proxyUsername">
-                                        <el-input v-model="form.proxyServer" clearable></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="代理密码" prop="proxyPassword">
-                                        <el-input v-model="form.proxyServer" clearable></el-input>
-                                    </el-form-item>
-                                </div>
+                            <!--                            <el-form-item label="配置代理">-->
+                            <!--                                <el-switch v-model="form.proxyEnable"></el-switch>-->
+                            <!--                            </el-form-item>-->
+                            <!--                            <div v-if="form.proxyEnable">-->
+                            <!--                                <el-form-item label="Proxy Server" prop="proxyServer">-->
+                            <!--                                    <el-input v-model="form.proxyServer" clearable></el-input>-->
+                            <!--                                </el-form-item>-->
+                            <!--                                <el-form-item label="代理认证">-->
+                            <!--                                    <el-switch v-model="form.proxyAuthEnable"></el-switch>-->
+                            <!--                                </el-form-item>-->
+                            <!--                                <div v-if="form.proxyAuthEnable">-->
+                            <!--                                    <el-form-item label="代理用户名" prop="proxyUsername">-->
+                            <!--                                        <el-input v-model="form.proxyServer" clearable></el-input>-->
+                            <!--                                    </el-form-item>-->
+                            <!--                                    <el-form-item label="代理密码" prop="proxyPassword">-->
+                            <!--                                        <el-input v-model="form.proxyServer" clearable></el-input>-->
+                            <!--                                    </el-form-item>-->
+                            <!--                                </div>-->
 
-                            </div>
-                            <el-divider content-position="center">认证设置</el-divider>
-                            <el-form-item label="认证方式">
+                            <!--                            </div>-->
+                            <el-divider content-position="center">{{$t('business.cluster.authenticate_setting')}}
+                            </el-divider>
+                            <el-form-item :label="$t('business.cluster.authenticate_mode')">
                                 <el-radio v-model="form.authenticationMode" label="bearer"
                                           @change="onAuthenticationModeChange">Bearer Token
                                 </el-radio>
                                 <el-radio v-model="form.authenticationMode" label="certificate"
-                                          @change="onAuthenticationModeChange">证书
+                                          @change="onAuthenticationModeChange">{{$t('business.cluster.certificate')}}
                                 </el-radio>
                             </el-form-item>
                             <div v-if="form.authenticationMode==='bearer'">
-                                <el-form-item label="Bearer Token" prop="token">
+                                <el-form-item label="Bearer Token" prop="token" required>
                                     <el-input type="textarea" v-model="form.token" clearable></el-input>
                                 </el-form-item>
                             </div>
                             <div v-if="form.authenticationMode==='certificate'">
-                                <el-form-item label="Certificate" prop="certDataStr">
+                                <el-form-item label="Certificate" prop="certDataStr" required>
                                     <el-input type="textarea" v-model="form.certDataStr" clearable></el-input>
                                 </el-form-item>
-                                <el-form-item label="Certificate Key" prop="keyDataStr">
+                                <el-form-item label="Certificate Key" prop="keyDataStr" required>
                                     <el-input type="textarea" v-model="form.keyDataStr" clearable></el-input>
                                 </el-form-item>
                             </div>
@@ -91,6 +96,7 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import {createCluster} from "@/api/clusters"
+    import Rule from "@/utils/rules"
 
     export default {
         name: "ClusterCreate",
@@ -113,7 +119,14 @@
                     keyDataStr: "",
                     caDataStr: ""
                 },
-                rules: {},
+                rules: {
+                    name: [Rule.RequiredRule],
+                    apiServer: [Rule.RequiredRule],
+                    token: [Rule.RequiredRule],
+                    certDataStr: [Rule.RequiredRule],
+                    keyDataStr: [Rule.RequiredRule],
+                    caDataStr: [Rule.RequiredRule]
+                },
                 loading: false,
                 isSubmitGoing: false,
             }
@@ -141,6 +154,7 @@
                     return
                 }
                 this.loading = true
+                this.isSubmitGoing = true
                 const req = {
                     apiVersion: "v1",
                     kind: "Cluster",
@@ -177,7 +191,6 @@
                         req.keyDataStr = this.form.keyDataStr
                         break
                 }
-                console.log(req)
                 createCluster(req).then(() => {
                     this.loading = false
                     this.isSubmitGoing = false
@@ -186,6 +199,9 @@
                         message: this.$t("commons.msg.create_success")
                     })
                     this.$router.push({"name": "Clusters"})
+                }).finally(() => {
+                    this.loading = false
+                    this.isSubmitGoing = false
                 })
             }
         },

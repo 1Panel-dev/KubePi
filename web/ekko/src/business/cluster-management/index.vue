@@ -17,14 +17,17 @@
                             <b style="font-size: 20px">{{item.name}}</b>
                             <div style="float: right">
                                 <el-dropdown trigger="click" @command="handleCommand">
-                                    <el-button type="text" size="large" class="bottom-button">More</el-button>
+                                    <el-button type="text" size="large" class="bottom-button"><i
+                                            class="el-icon-more"></i></el-button>
 
                                     <el-dropdown-menu slot="dropdown">
                                         <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'update'}"
-                                                          :command="{name:item.name,action:'manage'}">管理集群
+                                                          :command="{name:item.name,action:'manage'}">
+                                            {{$t('business.cluster.management')}}
                                         </el-dropdown-item>
                                         <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'delete'}"
-                                                          :command="{name:item.name,action:'delete'}">删除
+                                                          :command="{name:item.name,action:'delete'}">
+                                            {{$t('commons.button.delete')}}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>
@@ -39,7 +42,9 @@
                                 </el-col>
                                 <el-col :span="20">
                                     <ul>
-                                        <li style="list-style-type: none;margin: 5px">版本:{{item.status.version}}</li>
+                                        <li style="list-style-type: none;margin: 5px">
+                                            {{$t('business.cluster.cluster_version')}}:{{item.status.version}}
+                                        </li>
                                         <!--                                        <li style="list-style-type: none;margin: 5px">创建时间:{{item.createAt}}</li>-->
                                     </ul>
                                 </el-col>
@@ -48,7 +53,8 @@
                         <div class="bottom clearfix">
                             <el-button type="text" size="large" class="bottom-button"
                                        v-has-permissions="{resource:'clusters',verb:'get'}"
-                                       @click="onGotoDashboard(item.name)">Open
+                                       @click="onGotoDashboard(item.name)">
+                                {{$t('business.cluster.open_dashboard')}}>
                             </el-button>
                         </div>
 
