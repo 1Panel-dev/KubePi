@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Command">
+    <ko-card :key="reFresh" title="Command">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="Arguments" prop="args">
-              <ko-form-item placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="input" v-model="form.args" />
+              <ko-form-item placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="textarea" v-model="form.args" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -44,24 +44,24 @@
         </tr>
         <tr v-for="(row, index) in form.envResource" v-bind:key="index">
           <td>
-            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.type" :selections="type_list" />
+            <ko-form-item itemType="select2" v-model="row.type" :selections="type_list" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.prefix_or_alias" />
+            <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
           </td>
           <td>
-            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" :withoutLabel="true" itemType="input" disabled placeholder="N/A" />
-            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" :withoutLabel="true" itemType="input" v-model="row.source" />
-            <ko-form-item v-if="row.type === 'ConfigMap key'" :withoutLabel="true" itemType="select" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
-            <ko-form-item v-if="row.type === 'ConfigMap'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="config_map_name_list" />
-            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" :withoutLabel="true" itemType="select" v-model="row.source" :selections="secret_list" />
+            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
+            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
+            <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" itemType="select2" v-model="row.source" :selections="secret_list" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="input" v-model="row.value" />
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='Resource'" itemType="select" v-model="row.value" :selections="resource_value_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='ConfigMap key'" itemType="select" v-model="row.value" :selections="config_map_value_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type ==='Secret key'" itemType="select" v-model="row.value" :selections="secret_value_list" />
-            <ko-form-item :withoutLabel="true" v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+            <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
+            <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
+            <ko-form-item v-if="row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="config_map_value_list" />
+            <ko-form-item v-if="row.type ==='Secret key'" itemType="select2" v-model="row.value" :selections="secret_value_list" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -82,22 +82,44 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
-import { listSecrets } from "@/api/secrets"
-import { listConfigMaps } from "@/api/configmaps"
 
 export default {
   name: "KoCommand",
   components: { KoFormItem, KoCard },
   props: {
     commandParentObj: Object,
-    namespace: String,
+    currentNamespace: String,
+    configMapList: Array,
+    secretList: Array,
   },
   watch: {
-    namespace: {
+    currentNamespace: {
       handler(newName) {
         this.namespace = newName
       },
       immediate: true,
+    },
+    configMapList: {
+      handler(newName) {
+        this.config_map_name_list = []
+        this.config_map_list = []
+        for (const cm of newName) {
+          this.config_map_name_list.push(cm.metadata.name)
+          this.config_map_list.push(cm)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+    secretList: {
+      handler(newName) {
+        this.secret_list = []
+        for (const s of newName) {
+          this.secret_list.push(s.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
     },
   },
   data() {
@@ -106,36 +128,19 @@ export default {
         args: "",
         command: "",
         workingDir: "",
-        stdin: "",
+        stdin: "No",
         tty: false,
         envResource: [],
       },
+      reFresh: false,
+      namespace: "",
       config_map_name_list: [],
       config_map_list: [],
       config_map_value_list: [],
       secret_list: [],
-      resource_value_list: [
-        { label: "limits.cpu", value: "limits.cpu" },
-        { label: "limits.ephemeral-storage", value: "limits.ephemeral-storage" },
-        { label: "limits.memory", value: "limits.memory" },
-        { label: "requests.cpu", value: "requests.cpu" },
-        { label: "requests.ephemeral-storage", value: "requests.ephemeral-storage" },
-        { label: "requests.memory", value: "requests.memory" },
-      ],
-      secret_value_list: [
-        { label: "ca.crt", value: "ca.crt" },
-        { label: "namespace", value: "namespace" },
-        { label: "token", value: "token" },
-      ],
-      type_list: [
-        { label: "Key/Value Pair", value: "Key/Value Pair" },
-        { label: "Pod Field", value: "Pod Field" },
-        { label: "Resource", value: "Resource" },
-        { label: "ConfigMap key", value: "ConfigMap key" },
-        { label: "Secret key", value: "Secret key" },
-        { label: "Secret", value: "Secret" },
-        { label: "ConfigMap", value: "ConfigMap" },
-      ],
+      resource_value_list: ["limits.cpu", "limits.ephemeral-storage", "limits.memory", "requests.cpu", "requests.ephemeral-storage", "requests.memory"],
+      secret_value_list: ["ca.crt", "namespace", "token"],
+      type_list: ["Key/Value Pair", "Pod Field", "Resource", "ConfigMap key", "Secret key", "Secret", "ConfigMap"],
       stdin_list: [
         { label: "No", value: "No" },
         { label: "Ones", value: "Ones" },
@@ -144,30 +149,12 @@ export default {
     }
   },
   methods: {
-    loadSecrets() {
-      listSecrets(this.$route.params.cluster).then((res) => {
-        this.secret_list = []
-        for (const secret of res.items) {
-          this.secret_list.push({ label: secret.metadata.name, value: secret.metadata.name })
-        }
-      })
-    },
-    loadConfigMaps() {
-      listConfigMaps(this.$route.params.cluster).then((res) => {
-        this.config_map_name_list = []
-        for (const cm of res.items) {
-          this.config_map_name_list.push({ label: cm.metadata.name, value: cm.metadata.name })
-          this.config_map_list.push(cm)
-        }
-      })
-    },
     changeConfigMap(comfigmap) {
-      console.log(this.namespace)
       this.config_map_value_list = []
       for (const cm of this.config_map_list) {
         if (comfigmap === cm.metadata.name && cm.metadata.namespace === this.namespace) {
           for (const item of Object.keys(cm.data)) {
-            this.config_map_value_list.push({ label: item, value: item })
+            this.config_map_value_list.push(item)
           }
         }
       }
@@ -282,7 +269,7 @@ export default {
                 prefix: en.prefix_or_alias,
                 configMapRef: {
                   name: en.source,
-                  optional: false, // 这个false是什么意思不知道
+                  optional: false, 
                 },
               })
               break
@@ -298,8 +285,6 @@ export default {
     },
   },
   mounted() {
-    this.loadSecrets()
-    this.loadConfigMaps()
     if (this.commandParentObj) {
       if (this.commandParentObj.command) {
         this.form.command = this.commandParentObj.command.join(",")

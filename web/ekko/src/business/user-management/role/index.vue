@@ -81,11 +81,11 @@
                             component: "FuComplexInput",
                             defaultOperator: "eq"
                         },
-                        // { field: "created_at", label: this.$t("commons.table.create_time"), component: "FuComplexDateTime", valueFormat: "yyyy-MM-dd HH:mm:ss" },
                     ],
                 },
                 data: [],
-                selects: []
+                selects: [],
+                isSubmitGoing: false,
             }
         },
         methods: {
@@ -106,6 +106,10 @@
                 this.$router.push({name: "RoleEdit", params: {name: name}})
             },
             onDelete(name) {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = false
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
                     confirmButtonText: this.$t("commons.button.confirm"),
                     cancelButtonText: this.$t("commons.button.cancel"),
@@ -118,6 +122,8 @@
                         });
                         this.search()
                     })
+                }).finally(() => {
+                    this.isSubmitGoing = false
                 });
             }
         },

@@ -72,10 +72,10 @@
                 </tr>
                 <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
                   <td>
-                    <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.key" />
+                    <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
                   </td>
                   <td>
-                    <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+                    <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
                   </td>
                   <td>
                     <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">

@@ -24,6 +24,10 @@ export function listConfigMaps (cluster_name, limit, continueToken, search) {
   return get(url, param)
 }
 
+export function listConfigMapsWithNs (cluster_name, namespace) {
+  return get(`${namespaceMapUrl(cluster_name, namespace)}`);
+}
+
 export function getConfigMap (cluster_name, namespace, name) {
   return get(`${namespaceMapUrl(cluster_name, namespace)}/${name}`)
 }

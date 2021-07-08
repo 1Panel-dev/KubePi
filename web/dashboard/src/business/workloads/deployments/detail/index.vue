@@ -45,18 +45,6 @@
           </table>
         </el-card>
       </el-col>
-      <el-col :span="24">
-        <br>
-        <el-card>
-          <div class="card_title">
-            <h3>{{ $t("business.configuration.data") }}</h3>
-          </div>
-          <div>
-            <json-editor :value="form">
-            </json-editor>
-          </div>
-        </el-card>
-      </el-col>
     </el-row>
   </layout-content>
 </template>
@@ -64,29 +52,30 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import { getDeploymentByName } from "@/api/workloads"
-import JsonEditor from "@/components/json-editor"
 
 export default {
   name: "DeploymentDetail",
-  components: { JsonEditor, LayoutContent },
+  components: { LayoutContent },
   data() {
     return {
       form: {
         metadata: {},
       },
       loading: false,
+      clusterName: "",
     }
   },
   methods: {
     getDetail() {
       this.loading = true
-      getDeploymentByName(this.$route.params.cluster, this.$route.params.namespace, this.$route.params.name).then((res) => {
+      getDeploymentByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
         this.loading = false
       })
     },
   },
   created() {
+    this.clusterName = this.$route.query.cluster
     this.getDetail()
   },
 }

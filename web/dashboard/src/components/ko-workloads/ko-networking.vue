@@ -5,12 +5,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Network Mode" prop="hostNetwork">
-              <ko-form-item itemType="select" v-model="form.hostNetwork" :selections="network_mode_list" />
+              <ko-form-item itemType="radio" v-model="form.hostNetwork" :radios="network_mode_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="DNS Policy" prop="dnsPolicy">
-              <ko-form-item itemType="select" v-model="form.dnsPolicy" :selections="dns_policy_list" />
+              <ko-form-item itemType="radio" v-model="form.dnsPolicy" :radios="dns_policy_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -39,7 +39,7 @@
             </tr>
             <tr v-for="row in form.dnsConfig.nameservers" v-bind:key="row.index">
               <td>
-                <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
+                <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row.index)">
@@ -62,7 +62,7 @@
             </tr>
             <tr v-for="row in form.dnsConfig.searches" v-bind:key="row.index">
               <td>
-                <ko-form-item :withoutLabel="true" placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
+                <ko-form-item placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row.index)">
@@ -93,10 +93,10 @@
           </tr>
           <tr v-for="row in form.dnsConfig.options" v-bind:key="row.index">
             <td>
-              <ko-form-item :withoutLabel="true" placeholder="e.g. foo" itemType="input" v-model="row.name" />
+              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.name" />
             </td>
             <td>
-              <ko-form-item :withoutLabel="true" placeholder="e.g. bar" itemType="input" v-model="row.value" />
+              <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row.index)">
@@ -126,10 +126,10 @@
           </tr>
           <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
             <td>
-              <ko-form-item :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
+              <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
             </td>
             <td>
-              <ko-form-item :withoutLabel="true" placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
+              <ko-form-item placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
@@ -173,7 +173,7 @@ export default {
         subdomain: "",
         dnsPolicy: "",
         hostname: "",
-        hostNetwork: "",
+        hostNetwork: false,
         hostAliases: [],
         dnsConfig: {
           nameservers: [],

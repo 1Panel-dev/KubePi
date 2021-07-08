@@ -15,28 +15,28 @@
         </tr>
         <tr v-for="(row, index) in ports" v-bind:key="index">
           <td>
-            <ko-form-item :withoutLabel="true" itemType="select" v-model="row._serviceType" :selections="service_type_list" />
+            <ko-form-item itemType="select" v-model="row._serviceType" :selections="service_type_list" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="input" v-model="row.name" />
+            <ko-form-item itemType="input" v-model="row.name" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
+            <ko-form-item placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" itemType="select" v-model="row.protocol" :selections="protocol_list" />
+            <ko-form-item itemType="select" v-model="row.protocol" :selections="protocol_list" />
           </td>
           <td>
             <el-switch v-model="row.expose" />
           </td>
           <td>
-            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" :withoutLabel="true" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
+            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
           </td>
           <td>
-            <ko-form-item :disabled="row._serviceType === 'ClusterIP' || row._serviceType === '' || !row.expose" :withoutLabel="true" placeholder="e.g. 80" itemType="number" v-model.number="row._listeningPort" />
+            <ko-form-item :disabled="row._serviceType === 'ClusterIP' || row._serviceType === '' || !row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row._listeningPort" />
           </td>
           <td>
-            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" :withoutLabel="true" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.hostIP" />
+            <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.hostIP" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -72,7 +72,7 @@ export default {
         { label: "UDP", value: "UDP" },
       ],
       service_type_list: [
-        { label: "Do not create a service", value: "" },
+        { label: "Not create a service", value: "" },
         { label: "Cluster IP", value: "ClusterIP" },
         { label: "Node Port", value: "NodePort" },
         { label: "Load Balancer", value: "LoadBalancer" },
@@ -134,9 +134,9 @@ export default {
           itemPo.expose = po.expose
           itemPo.protocol = po.protocol
           itemPo.containerPort = po.containerPort
-          itemPo._serviceType = po._serviceType
+          itemPo._serviceType = po._serviceType ? po._serviceType : ""
           if (po.expose) {
-            switch (po._listeningPort) {
+            switch (po._serviceType) {
               case "":
               case "ClusterIP":
                 itemPo.hostPort = po.hostPort

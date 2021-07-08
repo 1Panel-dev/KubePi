@@ -85,14 +85,11 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
-import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
-import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
-import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
-import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
+// import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
 
 export default {
   name: "SecretCreate",
-  components: { KoSecretCertificate, KoSecretAuthentication, KoSecretKeys, KoSecretDockerData, YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: { YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
