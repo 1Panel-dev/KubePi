@@ -249,11 +249,12 @@ export default {
           return false
         }
         for (const mo of vo.volumeMounts) {
-          if (mo.mountPath != "") {
+          if (mo.mountPath == "") {
             return false
           }
         }
       }
+      return true
     },
     transformation(parentFrom) {
       if (!parentFrom.volumes) {

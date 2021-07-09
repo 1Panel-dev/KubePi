@@ -25,7 +25,9 @@
             <el-row>
               <el-col :span="20">
                 <el-form-item :label="$t('business.workload.container')">
-                  <ko-form-item @change="selectContainer" itemType="select" v-model="currentContainerIndex" :selections="container_lists" />
+                  <el-select @change="selectContainer" style="width:100%" itemType="select" v-model="selectContainerIndex">
+                    <el-option v-for="(item, index) in form.spec.template.spec.containers" :key="index" :label="item.name" :value="index" />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="2">
@@ -46,23 +48,25 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns"/>
+            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
             <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Resources" name="Resources">
-          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
-        </el-tab-pane>
         <el-tab-pane label="Health Check" name="Health Check">
           <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Readiness Check" />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Liveness Check" />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Startup Check" />
+            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Readiness Check" />
+            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Liveness Check" />
+            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Startup Check" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Security Context" name="Security Context">
-          <ko-security-context ref="ko_security_context" :securityContextParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
+        <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
+          <div :key="isRefresh">
+            <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
+            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
+            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+          </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
           <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.template.spec" />
@@ -74,19 +78,17 @@
             <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.template.spec" />
           </div>
         </el-tab-pane>
+        <el-tab-pane label="Resources" name="Resources">
+          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
+        </el-tab-pane>
         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
           <ko-upgrade-policy ref="ko_upgrade_policy" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
-        <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <div :key="isRefresh">
-            <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
-          </div>
+        <el-tab-pane label="Security Context" name="Security Context">
+          <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-storage :key="isRefresh" ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -135,7 +137,7 @@ import Rule from "@/utils/rules"
 
 export default {
   name: "DeploymentForm",
-  components: { LayoutContent, KoFormItem, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, YamlEditor, KoStorage },
+  components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
       showYaml: false,
@@ -148,8 +150,8 @@ export default {
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
-      container_lists: [{ label: "Container-0", value: 0 }],
       activeName: "General",
+      selectContainerIndex: 0,
       currentContainerIndex: 0,
       isValid: true,
       unValidInfo: "",
@@ -167,7 +169,7 @@ export default {
             spec: {
               containers: [
                 {
-                  name: "",
+                  name: "Container-0",
                   image: "",
                   imagePullPolicy: "ifNotPresent",
                 },
@@ -189,7 +191,7 @@ export default {
       this.namespace_list = []
       listNamespace(this.clusterName).then((res) => {
         for (const ns of res.items) {
-          this.namespace_list.push({ label: ns.metadata.name, value: ns.metadata.name })
+          this.namespace_list.push(ns.metadata.name)
         }
       })
     },
@@ -238,25 +240,26 @@ export default {
       this.gatherFormValid()
       if (!this.isValid) {
         this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
+        this.selectContainerIndex = this.currentContainerIndex
         return
       }
       this.form = this.gatherFormData()
+      this.currentContainerIndex = this.selectContainerIndex
       this.isRefresh = !this.isRefresh
     },
     handleAddContainer() {
-      this.container_lists.push({ label: "Container-" + this.container_lists.length.toString(), value: this.container_lists.length })
-      this.form.spec.template.spec.containers.push({ name: "containers1", image: "", imagePullPolicy: "ifNotPresent" })
+      this.form.spec.template.spec.containers.push({
+        name: "Container-" + this.form.spec.template.spec.containers.length.toString(),
+        image: "",
+        imagePullPolicy: "ifNotPresent",
+      })
     },
     handleDeleteContainer() {
-      this.currentContainerName = 0
-      if (this.container_lists.length <= 1) {
+      if (this.form.spec.template.spec.containers.length <= 1) {
         return
       }
-      for (let i = 0; i < this.container_lists.length; i++) {
-        if (this.container_lists[i].value === this.container_lists.length - 1) {
-          this.container_lists.splice(i, 1)
-        }
-      }
+      this.form.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
+      this.currentContainerIndex = 0
     },
     gatherFormValid() {
       this.$refs["form"].validate((valid) => {

@@ -5,7 +5,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Container Name" prop="name">
-              <ko-form-item itemType="input" v-model="form.name" />
+              <ko-form-item itemType="input"  @input="changeName" v-model="form.name" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -74,11 +74,15 @@ export default {
     }
   },
   methods: {
+    changeName(val) {
+      this.$emit('updateContanerList',val)
+    },
     checkIsValid() {
       let isValid = true
       this.$refs["form"].validate((valid) => {
         isValid = valid
       })
+      console.log(isValid)
       return isValid
     },
     transformation(parentFrom) {

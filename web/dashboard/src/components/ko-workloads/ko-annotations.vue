@@ -90,8 +90,4 @@ export default {
 </script>
 
 <style scoped>
-.tab-content {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 </style>

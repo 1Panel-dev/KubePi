@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :title="health_check_type" :description="health_check_helper">
+    <ko-card :title="health_check_type">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">

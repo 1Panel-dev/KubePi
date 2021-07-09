@@ -25,7 +25,9 @@
             <el-row>
               <el-col :span="20">
                 <el-form-item :label="$t('business.workload.container')">
-                  <ko-form-item @change="selectContainer" itemType="select" v-model="currentContainerIndex" :selections="container_lists" />
+                  <el-select @change="selectContainer" style="width:100%" itemType="select" v-model="selectContainerIndex">
+                    <el-option v-for="(item, index) in form.spec.template.spec.containers" :key="index" :label="item.name" :value="index" />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="2">
@@ -46,7 +48,7 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
+            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
             <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
@@ -79,7 +81,7 @@
         <el-tab-pane label="Resources" name="Resources">
           <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
         </el-tab-pane>
-         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
+        <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
           <ko-upgrade-policy ref="ko_upgrade_policy" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
@@ -147,10 +149,9 @@ export default {
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
-      container_lists: [],
       activeName: "General",
-      currentIndex: 0, // select框值
-      currentContainerIndex: 0, // 实际当前值
+      selectContainerIndex: 0,
+      currentContainerIndex: 0,
       isValid: true,
       unValidInfo: "",
       form: {
@@ -185,17 +186,12 @@ export default {
     }
   },
   methods: {
+    updateContainerList(val) {
+      this.form.spec.template.spec.containers[this.currentContainerIndex].name = val
+    },
     search() {
       getDeploymentByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
-        this.container_lists = []
-        if (this.form.spec.template.spec.containers) {
-          for (let i = 0; i < this.form.spec.template.spec.containers.length; i++) {
-            this.container_lists.push({ label: this.form.spec.template.spec.containers[i].name, value: i })
-          }
-        } else {
-          this.container_lists = [{ label: "Container-0", value: 0 }]
-        }
         this.isRefresh = !this.isRefresh
       })
     },
@@ -252,26 +248,26 @@ export default {
       this.gatherFormValid()
       if (!this.isValid) {
         this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
+        this.selectContainerIndex = this.currentContainerIndex
         return
       }
       this.form = this.gatherFormData()
-      this.currentContainerIndex = this.currentIndex
+      this.currentContainerIndex = this.selectContainerIndex
       this.isRefresh = !this.isRefresh
     },
     handleAddContainer() {
-      this.container_lists.push({ label: "Container-" + this.container_lists.length.toString(), value: this.container_lists.length })
-      this.form.spec.template.spec.containers.push({ name: "containers1", image: "", imagePullPolicy: "ifNotPresent" })
+      this.form.spec.template.spec.containers.push({
+        name: "Container-" + this.form.spec.template.spec.containers.length.toString(),
+        image: "",
+        imagePullPolicy: "ifNotPresent",
+      })
     },
     handleDeleteContainer() {
-      this.currentContainerName = 0
-      if (this.container_lists.length <= 1) {
+      if (this.form.spec.template.spec.containers.length <= 1) {
         return
       }
-      for (let i = 0; i < this.container_lists.length; i++) {
-        if (this.container_lists[i].value === this.container_lists.length - 1) {
-          this.container_lists.splice(i, 1)
-        }
-      }
+      this.form.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
+      this.currentContainerIndex = 0
     },
     gatherFormValid() {
       if (!this.$refs.ko_container.checkIsValid()) {
@@ -339,8 +335,7 @@ export default {
     },
   },
   mounted() {
-    this.currentIndex = 0
-    this.currentContainerIndex = 0
+    this.selectContainerIndex = 0
     this.clusterName = this.$route.query.cluster
     if (this.$route.params.name) {
       this.search()
