@@ -4,14 +4,18 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="form" label-width="150px" label-position="left">
+                    <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
 
                         <el-form-item :label="$t('business.user.role')" prop="roles">
-                            <el-select v-model="form.roles" multiple placeholder="请选择">
+                            <el-select
+                                    v-model="form.roles"
+                                    style="width: 100%"
+                                    multiple
+                                    :placeholder="$t('commons.form.select_placeholder')">
                                 <el-option
                                         v-for="item in roleOptions "
                                         :key="item.value"
@@ -40,7 +44,7 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import {createGroup} from "@/api/groups"
     import {listRoles} from "@/api/roles"
-
+    import Rules from "@/utils/rules"
 
     export default {
         name: "GroupCreate",
@@ -48,7 +52,11 @@
         data() {
             return {
                 loading: false,
+                isSubmitGoing: false,
                 roleOptions: [],
+                rules: {
+                    name: [Rules.RequiredRule],
+                },
                 form: {
                     name: "",
                     roles: [],
@@ -56,7 +64,12 @@
             }
         },
         methods: {
+
             onConfirm() {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
                 const req = {
                     "apiVersion": "v1",
                     "kind": "User",
@@ -69,6 +82,8 @@
                         message: this.$t("commons.msg.create_success")
                     })
                     this.$router.push({name: "Groups"})
+                }).finally(() => {
+                    this.isSubmitGoing = false
                 })
             },
             onCancel() {

@@ -269,7 +269,7 @@ export default {
                 prefix: en.prefix_or_alias,
                 configMapRef: {
                   name: en.source,
-                  optional: false, 
+                  optional: false,
                 },
               })
               break

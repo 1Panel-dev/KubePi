@@ -12,7 +12,8 @@
             </template>
             <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.name }}
+
+                    <el-link @click="onDetail(row.name)">{{ row.name }}</el-link>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
@@ -39,14 +40,6 @@
         data() {
             return {
                 buttons: [
-                    {
-                        label: "binding",
-                        icon: "el-icon-connection",
-                        click: (row) => {
-                            this.onBinding(row.name)
-                        },
-                        disabled: !checkPermissions({resource: "groups", verb: "update"})
-                    },
                     {
                         label: this.$t("commons.button.edit"),
                         icon: "el-icon-edit",
@@ -92,7 +85,7 @@
             onEdit(name) {
                 this.$router.push({name: "GroupEdit", params: {name: name}})
             },
-            onBinding(name) {
+            onDetail(name) {
                 this.$router.push({name: "GroupBinding", params: {name: name}})
             },
             onDelete(name) {

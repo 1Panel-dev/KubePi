@@ -16,7 +16,7 @@
             <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" itemType="textarea"  v-model="row.value" />
+            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -40,7 +40,7 @@ import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoLabels",
-  components: { KoFormItem,KoCard },
+  components: { KoFormItem, KoCard },
   props: {
     labelParentObj: Object,
     labelTitle: String,
