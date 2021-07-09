@@ -86,17 +86,11 @@
                             component: "FuComplexSelect",
                             options: [{label: "启用", value: "Enable"}, {label: "禁用", value: "Disable"}],
                         },
-                        // {
-                        //     field: "name",
-                        //     label: this.$t("commons.table.name"),
-                        //     component: "FuComplexInput",
-                        //     defaultOperator: "eq"
-                        // },
-
                     ],
                 },
                 data: [],
-                selects: []
+                selects: [],
+                isSubmitGoing: false
             }
         },
         methods: {
@@ -116,6 +110,10 @@
                 this.$router.push({name: "UserEdit", params: {name: name}})
             },
             onDelete(name) {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
                 this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
                     confirmButtonText: this.$t("commons.button.confirm"),
                     cancelButtonText: this.$t("commons.button.cancel"),
@@ -127,6 +125,8 @@
                             message: this.$t("commons.msg.delete_success"),
                         });
                         this.search()
+                    }).finally(() => {
+                        this.isSubmitGoing = false
                     })
                 });
             }

@@ -7,11 +7,12 @@
                     <el-form ref="form" :model="form" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
-                            <el-input v-model="form.name"></el-input>
+                            <el-input v-model="form.name" disabled></el-input>
                         </el-form-item>
 
                         <el-form-item :label="$t('business.user.role')" prop="roles">
-                            <el-select v-model="form.roles" multiple placeholder="请选择">
+                            <el-select v-model="form.roles" multiple
+                                       :placeholder="$t('commons.form.select_placeholder')">
                                 <el-option
                                         v-for="item in roleOptions "
                                         :key="item.value"
@@ -49,6 +50,7 @@
         data() {
             return {
                 loading: false,
+                isSubmitGoing: false,
                 user: {},
                 roleOptions: [],
                 group: {},
@@ -60,6 +62,11 @@
         },
         methods: {
             onConfirm() {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
+
                 this.group.name = this.form.name
                 this.group.roles = this.form.roles
                 updateGroup(this.name, this.group).then(() => {
@@ -68,6 +75,8 @@
                         message: this.$t("commons.msg.update_success")
                     })
                     this.$router.push({name: "Groups"})
+                }).finally(() => {
+                    this.isSubmitGoing = false
                 })
             },
             onCancel() {

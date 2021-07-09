@@ -4,7 +4,7 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="form" label-width="150px" label-position="left">
+                    <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
                             <el-input v-model="form.name"></el-input>
@@ -46,14 +46,20 @@
 <script>
     import LayoutContent from "@/components/layout/LayoutContent"
     import {listRoles, createRole} from "@/api/roles"
+    import Rule from "@/utils/rules"
 
     export default {
         name: "RoleCreate",
         components: {LayoutContent},
         data() {
             return {
+                loading: false,
+                isSubmitGoing: false,
                 roles: [],
                 useTemplate: false,
+                rules: {
+                    name: [Rule.RequiredRule],
+                },
                 form: {
                     name: "",
                     description: "",
@@ -63,6 +69,10 @@
         },
         methods: {
             onConfirm() {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
                 const req = {
                     "apiVersion": "v1",
                     "kind": "Role",
@@ -76,6 +86,8 @@
                         message: this.$t("commons.msg.create_success")
                     })
                     this.$router.push({name: "Roles"})
+                }).finally(() => {
+                    this.isSubmitGoing = false
                 })
             },
             onCancel() {

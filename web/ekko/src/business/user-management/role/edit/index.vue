@@ -5,10 +5,10 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="role" label-width="150px" label-position="left">
+                    <el-form ref="form" :model="role" :rules="rules" label-width="150px" label-position="left">
 
                         <el-form-item :label="$t('commons.table.name')" prop="name" required>
-                            <el-input v-model="role.name"></el-input>
+                            <el-input v-model="role.name" disabled></el-input>
                         </el-form-item>
 
                         <el-form-item :label="$t('commons.table.description')" prop="description">
@@ -64,6 +64,8 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import {listApiResource} from "@/api/apis"
     import {getRole, updateRole} from "@/api/roles"
+    import Rule from "@/utils/rules"
+
 
     export default {
         name: "RoleEdit",
@@ -78,6 +80,9 @@
                 role: {},
                 resources: [],
                 roles: [],
+                rules: {
+                    name: [Rule.RequiredRule]
+                },
             }
         },
         methods: {

@@ -1,10 +1,10 @@
 <template>
-    <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Groups' }">
+    <layout-content :header="$t('business.group.binding_management')" :back-to="{ name: 'Groups' }">
         <complex-table :data="data">
             <template #header>
                 <el-button-group>
                     <el-button type="primary" size="small" @click="onCreate">
-                        {{ $t("commons.button.create") }}
+                        {{ $t("commons.button.add") }}
                     </el-button>
                 </el-button-group>
                 <br/>
@@ -31,13 +31,13 @@
         </complex-table>
 
         <el-dialog
-                title="提示"
+                :title="$t('business.group.add_user')"
                 :visible.sync="createDialogOpened"
                 width="20%"
                 center z-index="20">
             <el-form :model="form" label-position="left" label- width="60px">
-                <el-form-item label="Username">
-                    <el-select v-model="form.username">
+                <el-form-item :label="$t('business.user.username')">
+                    <el-select v-model="form.username" style="width: 70%">
                         <el-option v-for="(item,index) in userOptions" :key="index"
                                    :value="item.name">
                             {{item.name}}
@@ -48,8 +48,8 @@
 
 
             <span slot="footer" class="dialog-footer">
-                <el-button @click="createDialogOpened=false">取 消</el-button>
-                <el-button type="primary" @click="onConfirm">确 定</el-button>
+                <el-button @click="createDialogOpened=false">{{$t("commons.button.cancel")}}</el-button>
+                <el-button type="primary" @click="onConfirm">{{$t("commons.button.confirm")}}</el-button>
             </span>
         </el-dialog>
 

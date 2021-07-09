@@ -4,15 +4,15 @@
             <el-col :span="4"><br/></el-col>
             <el-col :span="10">
                 <div class="grid-content bg-purple-light">
-                    <el-form ref="form" :model="form" label-width="150px" label-position="left">
+                    <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
 
-                        <el-form-item :label="$t('commons.table.name')" prop="name" required>
+                        <el-form-item :label="$t('business.user.username')" prop="name" required>
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
 
 
-                        <el-form-item :label="$t('business.user.nickname')" prop="nickName" required>
-                            <el-input v-model="form.nickName"></el-input>
+                        <el-form-item :label="$t('business.user.nickname')" prop="nickname" required>
+                            <el-input v-model="form.nickname"></el-input>
                         </el-form-item>
 
 
@@ -31,7 +31,9 @@
                         </el-form-item>
 
                         <el-form-item :label="$t('business.user.role')" prop="roles">
-                            <el-select v-model="form.roles" multiple placeholder="请选择">
+                            <el-select v-model="form.roles" multiple
+                                       style="width: 100%"
+                                       :placeholder="$t('commons.form.select_placeholder')">
                                 <el-option
                                         v-for="item in roleOptions "
                                         :key="item.value"
@@ -62,17 +64,56 @@
     import LayoutContent from "@/components/layout/LayoutContent"
     import {createUser} from "@/api/users"
     import {listRoles} from "@/api/roles"
+    import Rules from "@/utils/rules"
 
     export default {
         name: "UserCreate",
         components: {LayoutContent},
         data() {
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error(this.$t('business.user.please_input_password')));
+                } else {
+                    if (this.form.password !== '') {
+                        this.$refs.ruleForm.validateField('checkPass');
+                    }
+                    callback();
+                }
+            };
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error(this.$t('business.user.please_input_password')));
+                } else if (value !== this.form.password) {
+                    callback(new Error(this.$t('business.user.password_not_equal')));
+                } else {
+                    callback();
+                }
+            };
             return {
                 loading: false,
+                isSubmitGoing: false,
                 roleOptions: [],
+                rules: {
+                    name: [
+                        Rules.RequiredRule
+                    ],
+                    nickname: [
+                        Rules.RequiredRule
+                    ],
+                    email: [
+                        Rules.RequiredRule,
+                        Rules.EmailRule
+                    ],
+                    password: [
+                        {validator: validatePass, trigger: 'blur'},
+                    ],
+                    confirmPassword: [
+                        {validator: validatePass2, trigger: 'blur'}
+                    ],
+                },
                 form: {
                     name: "",
-                    nickName: "",
+                    nickname: "",
                     email: "",
                     password: "",
                     confirmPassword: "",
@@ -81,13 +122,19 @@
             }
         },
         methods: {
+
             onConfirm() {
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
+                this.loading = true
                 const req = {
                     "apiVersion": "v1",
                     "kind": "User",
                     "name": this.form.name,
                     "roles": this.form.roles,
-                    "nickName": this.form.nickName,
+                    "nickName": this.form.nickname,
                     "email": this.form.email,
                     "spec": {
                         "authenticate": {
@@ -101,7 +148,12 @@
                         message: this.$t("commons.msg.create_success")
                     })
                     this.$router.push({name: "Users"})
-                })
+                }).finally(
+                    () => {
+                        this.isSubmitGoing = false
+                        this.loading = false
+                    }
+                )
             },
             onCancel() {
                 this.$router.push({name: "Users"})
