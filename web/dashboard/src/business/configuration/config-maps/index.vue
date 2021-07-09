@@ -78,7 +78,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              name: "ConfigMapEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
           }
@@ -88,7 +89,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/configmaps/edit/" + row.metadata.name,
+              name: "ConfigMapEdit",
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })
           }
@@ -165,7 +167,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        path: '/' +row.metadata.namespace+"/configmaps/detail/" + row.metadata.name,
+        name: "ConfigMapDetail",
+        params: { name: row.metadata.name, namespace: row.metadata.namespace },
         query: { yamlShow: false }
       })
     },
