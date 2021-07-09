@@ -118,7 +118,7 @@ export default {
         { label: "TCP connection opens successfully", value: "tcpSocket" },
         { label: "Command run inside the container exits with status 0", value: "exec" },
       ],
-      check_type: "",
+      check_type: "None",
       form: {
         httpGet: {
           port: "",
@@ -259,19 +259,18 @@ export default {
           if (prodeForm.httpGet.path) {
             this.form.httpGet.path = prodeForm.httpGet.path
           }
-        }
-        if (prodeForm.tcpSocket) {
+        } else if (prodeForm.tcpSocket) {
           this.check_type = "tcpSocket"
           if (prodeForm.tcpSocket.port) {
             this.form.tcpSocket.port = prodeForm.tcpSocket.port
           }
-        }
-        if (prodeForm.exec) {
+        } else if (prodeForm.exec) {
           this.check_type = "exec"
           if (prodeForm.exec.command) {
             this.form.exec.command = prodeForm.exec.command
           }
         }
+
         if (prodeForm.initialDelaySeconds) {
           this.form.initialDelaySeconds = prodeForm.initialDelaySeconds
         }

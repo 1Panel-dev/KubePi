@@ -64,7 +64,7 @@
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="Secret">
-                    <ko-form-item itemType="select2" v-model="item.metadata.secret.name" :selections="secret_list" />
+                    <ko-form-item itemType="select2" v-model="item.metadata.secret.secretName" :selections="secret_list" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">

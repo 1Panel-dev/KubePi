@@ -12,23 +12,14 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name">
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('commons.table.status')" prop="status">
-        <template v-slot:default="{row}">
-          <el-button v-if="row.status ==='Active'" type="success" size="mini" plain round>
-            {{row.status}}
-          </el-button>
-          <el-button v-if="row.status ==='Terminating'" type="warning" size="mini" plain round>
-            {{row.status.phase}}
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" prop="namespace" />
-      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="namespace" />
+      <el-table-column sortable  :label="$t('commons.table.status')" min-width="40" prop="readyStatus" />
+      <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.created_time | datetimeFormat }}
         </template>
@@ -95,7 +86,7 @@ export default {
       this.$router.push({ name: "DeploymentCreate", query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.namespace, name: row.name } })
+      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: false } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -144,6 +135,7 @@ export default {
               status: item.status.conditions[0].status ? "Active" : "Pending",
               name: item.metadata.name,
               namespace: item.metadata.namespace,
+              readyStatus: item.status.readyReplicas + "/" + item.status.replicas,
               created_time: item.metadata.creationTimestamp,
             })
           }

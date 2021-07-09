@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Deployments' }" v-loading="loading">
     <br>
-    <div v-if="!showYaml">
+    <div v-if="showYaml === 'false'">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="5">
@@ -92,7 +92,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="grid-content bg-purple-light" v-if="showYaml">
+    <div class="grid-content bg-purple-light" v-if="showYaml === 'true'">
       <yaml-editor :value="yaml"></yaml-editor>
     </div>
     <div class="grid-content bg-purple-light">
@@ -192,6 +192,7 @@ export default {
     search() {
       getDeploymentByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
+        this.yaml = res
         this.isRefresh = !this.isRefresh
       })
     },
@@ -336,6 +337,7 @@ export default {
   },
   mounted() {
     this.selectContainerIndex = 0
+    this.showYaml = this.$route.query.yamlShow
     this.clusterName = this.$route.query.cluster
     if (this.$route.params.name) {
       this.search()

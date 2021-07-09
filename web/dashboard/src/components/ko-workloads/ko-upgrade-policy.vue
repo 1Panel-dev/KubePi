@@ -12,12 +12,20 @@
         <el-row :gutter="20" v-if="form.strategy.type === 'RollingUpdate'">
           <el-col :span="12">
             <el-form-item label="Max Surge" prop="strategy.rollingUpdate.maxSurge">
-              <ko-form-item deviderName="%" itemType="input" v-model="form.strategy.rollingUpdate.maxSurge" />
+              <el-input type="number" v-model.number="form.strategy.rollingUpdate.maxSurge">
+                <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxSurgeUnit">
+                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
+                </el-select>
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Max Unavailable" prop="strategy.rollingUpdate.maxUnavailable">
-              <ko-form-item deviderName="%" itemType="input" v-model="form.strategy.rollingUpdate.maxUnavailable" />
+              <el-input type="number" clearable v-model.number="form.strategy.rollingUpdate.maxUnavailable">
+                <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxUnavailableUnit">
+                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
+                </el-select>
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -66,12 +74,15 @@ export default {
         { label: "Rolling Updatate: Create new pods, then stop old", value: "RollingUpdate" },
         { label: "Recreate: Kill ALL pods, then start new", value: "Recreate" },
       ],
+      devider_list: ["Pods", "%"],
       form: {
         strategy: {
           type: "Recreate",
           rollingUpdate: {
-            maxUnavailable: "25%",
-            maxSurge: "25%",
+            maxUnavailable: "0",
+            maxUnavailableUnit: "%",
+            maxSurge: "0",
+            maxSurgeUnit: "%",
           },
         },
         minReadySeconds: 0,
@@ -92,9 +103,15 @@ export default {
           parentFrom.strategy.type = "RollingUpdate"
           parentFrom.strategy.rollingUpdate = {}
           if (this.form.strategy.rollingUpdate.maxUnavailable) {
+            if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
+              this.form.strategy.rollingUpdate.maxUnavailable += "%"
+            }
             parentFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
           }
           if (this.form.strategy.rollingUpdate.maxSurge) {
+            if (this.form.strategy.rollingUpdate.maxSurgeUnit === "%") {
+              this.form.strategy.rollingUpdate.maxSurge += "%"
+            }
             parentFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge
           }
           break
@@ -119,10 +136,22 @@ export default {
         }
         if (this.upgradePolicyParentObj.strategy.rollingUpdate) {
           if (this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable) {
-            this.form.strategy.rollingUpdate.maxUnavailable = this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable
+            if (this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable.toString().indexOf("%") !== -1) {
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = "%"
+              this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable.replace("%", ""))
+            } else {
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable)
+            }
           }
           if (this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge) {
-            this.form.strategy.rollingUpdate.maxSurge = this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge
+            if (this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge.toString().indexOf("%") !== -1) {
+              this.form.strategy.rollingUpdate.maxSurgeUnit = "%"
+              this.form.strategy.rollingUpdate.maxSurge = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge.replace("%", ""))
+            } else {
+              this.form.strategy.rollingUpdate.maxSurgeUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxSurge = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge)
+            }
           }
         }
       }

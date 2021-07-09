@@ -82,7 +82,6 @@ export default {
       this.$refs["form"].validate((valid) => {
         isValid = valid
       })
-      console.log(isValid)
       return isValid
     },
     transformation(parentFrom) {
