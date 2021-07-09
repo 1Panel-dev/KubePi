@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'resourcequotas'}"
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ResourceQuotas'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
     <div style="float: right;margin-top: 10px">
@@ -46,13 +46,13 @@ export default {
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({ name: "resourcequotas" })
+        this.$router.push({ name: "ResourceQuotas" })
       }).finally(() => {
         this.loading = false
       })
     },
     onCancel () {
-      this.$router.push({ name: "resourcequotas" })
+      this.$router.push({ name: "ResourceQuotas" })
     }
   },
   created () {

@@ -1,4 +1,4 @@
-import {del, get, post} from "@/plugins/request"
+import {del, get, patch, post} from "@/plugins/request"
 
 const resourceQuotaUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/resourcequotas`
@@ -33,4 +33,8 @@ export function getResourceQuota (cluster_name, namespace, name) {
 
 export function createResourceQuota (cluster_name, namespace, data) {
   return post(`${namespaceResourceQuotaUrl(cluster_name, namespace)}`, data)
+}
+
+export function updateResourceQuota (cluster_name, namespace,name, data) {
+  return patch(`${namespaceResourceQuotaUrl(cluster_name, namespace)}/${name}`, data)
 }

@@ -67,22 +67,11 @@ export default {
       cluster: "",
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name,
-              query: { yamlShow: false }
-            })
-          }
-        },
-        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name,
-              query: { yamlShow: true }
+              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name
             })
           }
         },
