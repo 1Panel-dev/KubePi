@@ -24,15 +24,15 @@
       </el-table-column>
       <el-table-column label="Request" min-width="100px">
         <template v-slot:default="{row}">
-         <el-tag type="info" size="mini"> pods: {{row.status.used.pods}} / {{row.status.hard.pods}}</el-tag>
-         <el-tag type="info" size="mini"> cpu: {{row.status.used['requests.cpu']}} / {{row.status.hard['requests.cpu']}}</el-tag>
-         <el-tag type="info" size="mini"> memory: {{row.status.used['requests.memory']}} / {{row.status.hard['requests.memory']}}</el-tag>
+         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> pods: {{row.status.used.pods}} / {{row.status.hard.pods}}</el-tag>
+         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu: {{row.status.used['requests.cpu']}} / {{row.status.hard['requests.cpu']}}</el-tag>
+         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory: {{row.status.used['requests.memory']}} / {{row.status.hard['requests.memory']}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Limit" min-width="100px">
         <template v-slot:default="{row}">
-          <el-tag type="info" size="mini"> cpu: {{row.status.used['limits.cpu']}} / {{row.status.hard['limits.cpu']}}</el-tag>
-          <el-tag type="info" size="mini"> memory: {{row.status.used['limits.memory']}} / {{row.status.hard['limits.memory']}}</el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu: {{row.status.used['limits.cpu']}} / {{row.status.hard['limits.cpu']}}</el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory: {{row.status.used['limits.memory']}} / {{row.status.hard['limits.memory']}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>

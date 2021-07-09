@@ -1,4 +1,4 @@
-import {del, get} from "@/plugins/request"
+import {del, get, post} from "@/plugins/request"
 
 const resourceQuotaUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/resourcequotas`
@@ -20,13 +20,17 @@ export function listResourceQuotas (cluster_name, limit, continueToken, search) 
   if (search && search !== "") {
     param.fieldSelector = "metadata.namespace=" + search
   }
-  return get(url,param)
+  return get(url, param)
 }
 
-export function deleteResourceQuota(cluster_name,namespace, name) {
+export function deleteResourceQuota (cluster_name, namespace, name) {
   return del(`${namespaceResourceQuotaUrl(cluster_name, namespace)}/${name}`)
 }
 
-export function getResourceQuota(cluster_name,namespace, name) {
+export function getResourceQuota (cluster_name, namespace, name) {
   return get(`${namespaceResourceQuotaUrl(cluster_name, namespace)}/${name}`)
+}
+
+export function createResourceQuota (cluster_name, namespace, data) {
+  return post(`${namespaceResourceQuotaUrl(cluster_name, namespace)}`, data)
 }
