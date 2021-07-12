@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Deployments'}" v-loading="loading">
+  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'CronJobs'}" v-loading="loading">
     <div v-if="!yamlShow">
       <el-card>
         <table style="width: 100%" class="myTable">
@@ -47,41 +47,45 @@
         </div>
       </el-card>
       <el-tabs style="margin-top:20px" v-model="activeName">
-        <el-tab-pane label="Pods" name="Pods">
-          <complex-table :data="pods">
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase" min-width="30">
+        <el-tab-pane label="Jobs" name="Jobs">
+          <complex-table :data="jobs">
+            <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
               <template v-slot:default="{row}">
-                <el-button v-if="row.status.phase ==='Running'" type="success" size="mini" plain round>
-                  {{row.status.phase}}
+                <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
+                  Succeeded
                 </el-button>
-                <el-button v-if="row.status.phase ==='Terminating'" type="warning" size="mini" plain round>
-                  {{row.status.phase}}
+                <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
+                  Failed
                 </el-button>
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90" />
-            <el-table-column sortable :label="$t('business.cluster.nodes')" prop="spec.nodeName" min-width="70" />
-            <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
+            <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
               <template v-slot:default="{row}">
-                <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ item.image }}
-                  </el-tag>
-                </div>
+                {{ row.spec.completions }} / {{ row.spec.parallelism }}
+              </template>
+            </el-table-column>
+            <el-table-column sortable :label="$t('business.workload.duration')" min-width="40">
+              <template v-slot:default="{row}">
+                {{ getDuration(row) }}S
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
+              <template v-slot:default="{row}">
+                {{ row.metadata.creationTimestamp | datetimeFormat }}
               </template>
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane label="Conditions" name="Conditions">
-          <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
-            <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
+        <el-tab-pane label="Events" name="Events">
+          <complex-table :data="events">
+            <el-table-column sortable :label="$t('commons.table.status')" prop="eventTime">
               <template v-slot:default="{row}">
-                {{ row.lastUpdateTime | datetimeFormat }}
+                <span v-if="row.eventTime">{{ row.eventTime | datetimeFormat }}</span>
+                <span v-if="!row.eventTime">{{ row.firstTimestamp | datetimeFormat }} - {{ row.lastTimestamp | datetimeFormat }}</span>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
+            <el-table-column sortable :label="$t('commons.table.message')" min-width=250>
               <template v-slot:default="{row}">
                 [{{ row.reason }} ]: {{ row.message }}
               </template>
@@ -101,49 +105,68 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getDeploymentByName } from "@/api/workloads"
-import { listPodsWithNsSelector } from "@/api/pods"
+import { getCronJobByName } from "@/api/workloads"
+import { listJobsWithNsSelector } from "@/api/jobs"
+import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
 
 export default {
-  name: "DeploymentDetail",
-  components: { LayoutContent, ComplexTable, YamlEditor },
+  name: "CronJobDetail",
+  components: { LayoutContent, YamlEditor, ComplexTable },
   data() {
     return {
       form: {
-        metadata: {},
-        status: {
-          conditions: [],
+        metadata: {
+          name: "",
+          namespace: "",
+          creationTimestamp: "",
+          labels: [],
+          annotations: [],
         },
       },
       yamlShow: false,
-      activeName: "Pods",
+      activeName: "Jobs",
       loading: false,
       clusterName: "",
-      pods: [],
+      jobs: [],
+      events: [],
     }
   },
   methods: {
     getDetail() {
       this.loading = true
-      getDeploymentByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
+      this.events = []
+      getCronJobByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
-        if (this.form.spec.selector.matchLabels) {
+        if (this.form.spec.jobTemplate.spec.template.metadata.labels) {
           let selectors = ""
-          for (const key in this.form.spec.selector.matchLabels) {
-            if (Object.prototype.hasOwnProperty.call(this.form.spec.selector.matchLabels, key)) {
-              selectors += key + "=" + this.form.spec.selector.matchLabels[key] + ","
+          for (const key in this.form.spec.jobTemplate.spec.template.metadata.labels) {
+            if (Object.prototype.hasOwnProperty.call(this.form.spec.jobTemplate.spec.template.metadata.labels, key)) {
+              selectors += key + "=" + this.form.spec.jobTemplate.spec.template.metadata.labels[key] + ","
             }
           }
           selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listPodsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
-            this.pods = res.items
+          listJobsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
+            this.jobs = res.items
+            for (const p of this.jobs) {
+              let eventSelectors = "involvedObject.name=" + p.metadata.name + ",involvedObject.namespace=" + p.metadata.namespace + ",involvedObject.uid=" + p.metadata.uid
+              listEventsWithNsSelector(this.clusterName, this.$route.params.namespace, eventSelectors).then((res) => {
+                for (const e of res.items) {
+                  this.events.unshift(e)
+                }
+              })
+            }
           })
         }
         this.loading = false
       })
+    },
+    getDuration(row) {
+      let startTime = new Date(row.status.startTime)
+      let endTime = new Date(row.status.completionTime)
+      return Math.floor((endTime - startTime) / 1000)
     },
   },
   created() {

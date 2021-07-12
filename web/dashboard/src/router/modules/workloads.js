@@ -1,4 +1,4 @@
-import Layout from "@/business/app-layout/horizontal-layout"
+import Layout from "@/business/app-layout/horizontal-layout";
 
 const Workloads = {
   path: "/workloads",
@@ -7,7 +7,7 @@ const Workloads = {
   name: "Workloads",
   meta: {
     title: "business.workload.workload",
-    icon: "iconfont iconworkload"
+    icon: "iconfont iconworkload",
   },
   children: [
     {
@@ -16,7 +16,7 @@ const Workloads = {
       name: "Pods",
       meta: {
         title: "Pods",
-      }
+      },
     },
     {
       path: "/deployments",
@@ -24,7 +24,7 @@ const Workloads = {
       name: "Deployments",
       meta: {
         title: "Deployments",
-      }
+      },
     },
     {
       path: "/deployments/detail/:namespace/:name",
@@ -33,7 +33,7 @@ const Workloads = {
       component: () => import("@/business/workloads/deployments/detail"),
       meta: {
         activeMenu: "/deployments",
-      }
+      },
     },
     {
       path: "/deployments/create",
@@ -42,7 +42,7 @@ const Workloads = {
       component: () => import("@/business/workloads/deployments/create"),
       meta: {
         activeMenu: "/deployments",
-      }
+      },
     },
     {
       path: "/deployments/edit/:namespace/:name",
@@ -51,9 +51,45 @@ const Workloads = {
       component: () => import("@/business/workloads/deployments/edit"),
       meta: {
         activeMenu: "/deployments",
-      }
+      },
     },
-  ]
-}
 
-export default Workloads
+    {
+      path: "/cronjobs",
+      component: () => import("@/business/workloads/cronjobs"),
+      name: "CronJobs",
+      meta: {
+        title: "CronJobs",
+      },
+    },
+    {
+      path: "/cronjobs/detail/:namespace/:name",
+      name: "CronJobDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/cronjobs/detail"),
+      meta: {
+        activeMenu: "/cronjobs",
+      },
+    },
+    {
+      path: "/cronjobs/create",
+      name: "CronJobCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/cronjobs/create"),
+      meta: {
+        activeMenu: "/cronjobs",
+      },
+    },
+    {
+      path: "/cronjobs/edit/:namespace/:name",
+      name: "CronJobEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/cronjobs/edit"),
+      meta: {
+        activeMenu: "/cronjobs",
+      },
+    },
+  ],
+};
+
+export default Workloads;
