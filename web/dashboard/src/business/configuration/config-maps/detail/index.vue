@@ -109,6 +109,9 @@ export default {
       getConfigMap(this.cluster, this.namespace, this.name).then((res) => {
         this.item = res
         this.loading = false
+        if (this.yamlShow) {
+          this.yaml = JSON.parse(JSON.stringify(this.item))
+        }
       })
     },
     bystesLength(str) {
@@ -125,12 +128,10 @@ export default {
   },
   watch: {
     yamlShow: function (newValue) {
-      if (newValue) {
-        this.yaml = JSON.parse(JSON.stringify(this.item))
-      }
       this.$router.push({
-        path: "/" + this.namespace + "/configmaps/detail/" + this.name,
-        query: { yamlShow: newValue },
+        name: "ConfigMapDetail",
+        params: { name: this.name, namespace: this.namespace },
+        query: { yamlShow: newValue }
       })
       this.getDetail()
     },
