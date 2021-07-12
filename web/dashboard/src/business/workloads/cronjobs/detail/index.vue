@@ -79,10 +79,9 @@
         </el-tab-pane>
         <el-tab-pane label="Events" name="Events">
           <complex-table :data="events">
-            <el-table-column sortable :label="$t('commons.table.status')" prop="eventTime">
+            <el-table-column sortable :label="$t('commons.table.status')">
               <template v-slot:default="{row}">
-                <span v-if="row.eventTime">{{ row.eventTime | datetimeFormat }}</span>
-                <span v-if="!row.eventTime">{{ row.firstTimestamp | datetimeFormat }} - {{ row.lastTimestamp | datetimeFormat }}</span>
+                <span>{{ row.firstTimestamp | datetimeFormat }} - {{ row.lastTimestamp | datetimeFormat }}</span>
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width=250>
@@ -150,14 +149,15 @@ export default {
           selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
           listJobsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
             this.jobs = res.items
-            for (const p of this.jobs) {
-              let eventSelectors = "involvedObject.name=" + p.metadata.name + ",involvedObject.namespace=" + p.metadata.namespace + ",involvedObject.uid=" + p.metadata.uid
-              listEventsWithNsSelector(this.clusterName, this.$route.params.namespace, eventSelectors).then((res) => {
-                for (const e of res.items) {
-                  this.events.unshift(e)
-                }
-              })
+          })
+          let eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
+          listEventsWithNsSelector(this.clusterName, this.$route.params.namespace, eventSelectors).then((res) => {
+            for (const e of res.items) {
+              this.events.unshift(e)
             }
+          })
+          this.events.sort(function (a, b) {
+            return Date.parse(b.firstTimestamp.replace(/-/g, "/")) - Date.parse(a.firstTimestamp.replace(/-/g, "/"))
           })
         }
         this.loading = false
