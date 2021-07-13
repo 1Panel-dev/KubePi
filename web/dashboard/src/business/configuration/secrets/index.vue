@@ -71,7 +71,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
+              name: "SecretEdit",
+              params: {namespace: row.metadata.namespace,name:row.metadata.name},
               query: { yamlShow: false }
             })
           }
@@ -81,7 +82,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
+              name: "SecretEdit",
+              params: {namespace: row.metadata.namespace,name:row.metadata.name},
               query: { yamlShow: true }
             })
           }
@@ -156,7 +158,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        path: "/" + row.metadata.namespace + "/secrets/detail/" + row.metadata.name,
+        name: "SecretDetail",
+        params: {namespace: row.metadata.namespace,name:row.metadata.name},
         query: { yamlShow: false }
       })
     }

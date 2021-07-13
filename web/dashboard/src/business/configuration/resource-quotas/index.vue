@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ResourceQuotas">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" v-loading="loading">
+    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" v-loading="loading" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -71,7 +71,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: '/' +row.metadata.namespace+"/resourcequotas/edit/" + row.metadata.name
+              name: "ResourceQuotaEdit",
+              params: {namespace:row.metadata.namespace,name:row.metadata.name}
             })
           }
         },
@@ -147,8 +148,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        path: '/' +row.metadata.namespace+"/resourcequotas/detail/" + row.metadata.name,
-        query: { yamlShow: false }
+        name: "ResourceQuotaDetail",
+        params: {namespace:row.metadata.namespace,name:row.metadata.name}
       })
     }
   },
