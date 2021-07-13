@@ -83,7 +83,8 @@
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
               <template v-slot:default="{row}">
-                [{{ row.reason }} ]: {{ row.message }}
+                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
+                <span v-if="!row.message">---</span>
               </template>
             </el-table-column>
           </complex-table>

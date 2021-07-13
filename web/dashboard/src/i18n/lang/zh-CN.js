@@ -150,6 +150,7 @@ const message = {
       suspend: "暂停",
       duration: "耗时",
       lastTransitionTime: "最后更新时间",
+      restarts: "重启",
     },
     network: {
       network: "网络"

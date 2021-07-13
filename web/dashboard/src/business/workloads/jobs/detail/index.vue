@@ -15,11 +15,11 @@
           </tr>
           <tr>
             <td>{{ $t("business.namespace.namespace") }}</td>
-            <td colspan="2">{{ form.metadata.namespace }}</td>
+            <td>{{ form.metadata.namespace }}</td>
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td colspan="2">{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -84,7 +84,7 @@
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width=120>
               <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.message }}</span>
+                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
                 <span v-if="!row.message">---</span>
               </template>
             </el-table-column>
@@ -99,7 +99,8 @@
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width=250>
               <template v-slot:default="{row}">
-                [{{ row.reason }} ]: {{ row.message }}
+                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
+                <span v-if="!row.message">---</span>
               </template>
             </el-table-column>
           </complex-table>

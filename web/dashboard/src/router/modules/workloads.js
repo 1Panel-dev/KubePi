@@ -11,14 +11,6 @@ const Workloads = {
   },
   children: [
     {
-      path: "/pods",
-      component: () => import("@/business/workloads/pods"),
-      name: "Pods",
-      meta: {
-        title: "Pods",
-      },
-    },
-    {
       path: "/deployments",
       component: () => import("@/business/workloads/deployments"),
       name: "Deployments",
@@ -123,6 +115,24 @@ const Workloads = {
       component: () => import("@/business/workloads/jobs/edit"),
       meta: {
         activeMenu: "/jobs",
+      },
+    },
+
+    {
+      path: "/pods",
+      component: () => import("@/business/workloads/pods"),
+      name: "Pods",
+      meta: {
+        title: "Pods",
+      },
+    },
+    {
+      path: "/pods/detail/:namespace/:name",
+      name: "PodDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/detail"),
+      meta: {
+        activeMenu: "/pods",
       },
     },
   ],

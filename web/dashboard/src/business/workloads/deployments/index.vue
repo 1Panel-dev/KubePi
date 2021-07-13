@@ -64,7 +64,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", row)
           },
         },
         {
@@ -126,13 +126,8 @@ export default {
     search(init) {
       this.loading = true
       this.data = []
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
-      listDeployments(this.clusterName)
+      this.page.nextToken = init ? "" : this.page.nextToken
+      listDeployments(this.clusterName, this.page.pageSize, this.page.nextToken)
         .then((res) => {
           this.data = res.items
           this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
