@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Deployments">
+  <layout-content header="Jobs">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
@@ -12,15 +12,30 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120">
+      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+        <template v-slot:default="{row}">
+          <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
+            Succeeded
+          </el-button>
+          <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
+            Failed
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="140">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
+      <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
-          {{ row.status.readyReplicas }} / {{ row.status.replicas }}
+          {{ row.spec.completions}} / {{ row.spec.parallelism }}
+        </template>
+      </el-table-column>
+      <el-table-column sortable :label="$t('business.workload.duration')" min-width="30">
+        <template v-slot:default="{row}">
+          {{ getDuration(row) }}S
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
@@ -35,29 +50,29 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listDeployments, deleteDeployment } from "@/api/deployments"
+import { listJobs, deleteJob } from "@/api/jobs"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 
 export default {
-  name: "Deployments",
+  name: "Jobs",
   components: { LayoutContent, ComplexTable, KoTableOperations },
   data() {
     return {
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
+          label: this.$t("commons.button.view_form"),
+          icon: "el-icon-view",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+            this.$router.push({ name: "JobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
+            this.$router.push({ name: "JobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
           },
         },
         {
@@ -87,10 +102,10 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "DeploymentCreate", query: { yamlShow: false } })
+      this.$router.push({ name: "JobCreate", query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+      this.$router.push({ name: "JobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -100,11 +115,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteDeployment(this.clusterName, row.metadata.name))
+          this.ps.push(deleteJob(this.clusterName, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteDeployment(this.clusterName, select.metadata.name))
+              this.ps.push(deleteJob(this.clusterName, select.metadata.name))
             }
           }
         }
@@ -123,6 +138,11 @@ export default {
         }
       })
     },
+    getDuration(row) {
+      let startTime = new Date(row.status.startTime)
+      let endTime = new Date(row.status.completionTime)
+      return Math.floor((endTime - startTime) / 1000)
+    },
     search(init) {
       this.loading = true
       this.data = []
@@ -132,7 +152,7 @@ export default {
           nextToken: "",
         }
       }
-      listDeployments(this.clusterName)
+      listJobs(this.clusterName)
         .then((res) => {
           this.data = res.items
           this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""

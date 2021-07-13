@@ -26,6 +26,7 @@ const message = {
       edit_yaml: "编辑 YAML",
       search: "搜索",
       upload: "从文件读取",
+      view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
       back_detail: "返回详情",
@@ -148,6 +149,7 @@ const message = {
       lastScheduleTime: "最后的调度",
       suspend: "暂停",
       duration: "耗时",
+      lastTransitionTime: "最后更新时间",
     },
     network: {
       network: "网络"

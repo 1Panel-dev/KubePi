@@ -48,7 +48,7 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
+            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
             <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
@@ -128,7 +128,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { createDeployment } from "@/api/workloads"
+import { createDeployment } from "@/api/deployments"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -187,6 +187,9 @@ export default {
     }
   },
   methods: {
+    updateContainerList(val) {
+      this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex].name = val
+    },
     loadNamespace() {
       this.namespace_list = []
       listNamespace(this.clusterName).then((res) => {
@@ -332,7 +335,7 @@ export default {
   },
   mounted() {
     this.currentContainerIndex = 0
-    this.showYaml = this.$route.params.showYaml
+    this.showYaml = this.$route.params.showYaml === "true"
     this.clusterName = this.$route.query.cluster
     this.loadNamespace()
     this.loadSecrets()

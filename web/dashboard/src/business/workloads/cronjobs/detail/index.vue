@@ -11,15 +11,15 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.name") }}</td>
-            <td>{{ form.metadata.name }}</td>
+            <td colspan="2">{{ form.metadata.name }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.namespace.namespace") }}</td>
-            <td>{{ form.metadata.namespace }}</td>
+            <td colspan="2">{{ form.metadata.namespace }}</td>
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td colspan="2">{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -104,7 +104,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getCronJobByName } from "@/api/workloads"
+import { getCronJobByName } from "@/api/cronjobs"
 import { listJobsWithNsSelector } from "@/api/jobs"
 import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Resources">
-      <el-form label-position="top" ref="form" :model="form">
+      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="CPU Reservation" prop="requests.cpu">
@@ -41,6 +41,7 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     resourceParentObj: Object,
+    isReadOnly: Boolean,
   },
   data() {
     return {

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Pod Scheduling">
-      <el-form label-position="top">
+      <el-form label-position="top" :disabled="isReadOnly">
         <div v-for="(item, index) in podSchedulings" :key="index">
           <el-card style="margin-top: 10px">
             <el-row>
@@ -77,8 +77,8 @@
             </el-row>
           </el-card>
         </div>
+        <el-button @click="handlePodRulesAdd()">Add Node Selector</el-button>
       </el-form>
-      <el-button @click="handlePodRulesAdd()">Add Node Selector</el-button>
     </ko-card>
   </div>
 </template>
@@ -93,6 +93,7 @@ export default {
   props: {
     podSchedulingParentObj: Object,
     namespaceList: Array,
+    isReadOnly: Boolean,
   },
   watch: {
     namespaceList: {

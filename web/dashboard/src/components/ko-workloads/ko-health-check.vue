@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :title="health_check_type">
-      <el-form label-position="top" ref="form" :model="form">
+      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-row>
@@ -107,6 +107,7 @@ export default {
     health_check_type: String,
     health_check_helper: String,
     healthCheckParentObj: Object,
+    isReadOnly: Boolean,
   },
   components: { KoFormItem, KoCard },
   data() {

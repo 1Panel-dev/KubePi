@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Node Scheduling">
-      <el-form label-position="top" ref="form">
+      <el-form label-position="top" ref="form" :disabled="isReadOnly">
         <el-row>
           <el-col :span="24">
             <el-form-item label="Scheduling Type">
@@ -74,8 +74,8 @@
             </el-card>
           </div>
         </div>
+        <el-button v-if="scheduling_type === 'matching_rules'" @click="handleNodeRulesAdd()">Add Node Selector</el-button>
       </el-form>
-      <el-button v-if="scheduling_type === 'matching_rules'" @click="handleNodeRulesAdd()">Add Node Selector</el-button>
     </ko-card>
   </div>
 </template>
@@ -90,6 +90,7 @@ export default {
   props: {
     nodeSchedulingParentObj: Object,
     nodeList: Array,
+    isReadOnly: Boolean,
   },
   watch: {
     nodeList: {

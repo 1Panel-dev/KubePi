@@ -1,6 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Ports">
+      <el-form :disabled="isReadOnly">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="16%" align="left"><label>service type</label></th>
@@ -50,6 +51,7 @@
           </td>
         </tr>
       </table>
+      </el-form>
     </ko-card>
   </div>
 </template>
@@ -63,6 +65,7 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     portParentObj: Object,
+    isReadOnly: Boolean,
   },
   data() {
     return {

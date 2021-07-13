@@ -1,13 +1,13 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Storage">
-      <div v-for="(item, index) in volumes" :key="index">
-        <el-card style="margin-top: 10px">
-          <div slot="header" class="clearfix">
-            <span>{{item._type}}</span>
-            <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">删 除</el-button>
-          </div>
-          <el-form label-position="top">
+      <el-form label-position="top" :disabled="isReadOnly">
+        <div v-for="(item, index) in volumes" :key="index">
+          <el-card style="margin-top: 10px">
+            <div slot="header" class="clearfix">
+              <span>{{item._type}}</span>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">删 除</el-button>
+            </div>
             <div v-if="item._type === 'persistentVolumeClaim'">
               <el-row :gutter="20">
                 <el-col :span="12">
@@ -74,49 +74,49 @@
                 </el-col>
               </el-row>
             </div>
-          </el-form>
-          <div><span>Valume Mount</span></div>
-          <table style="width: 98%;" class="tab-table">
-            <tr>
-              <th scope="col" width="43%" align="left"><label>mount point</label></th>
-              <th scope="col" width="43%" align="left"><label>sub path in volume</label></th>
-              <th scope="col" width="8%" align="left"><label>read only</label></th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="(row, index) in item.volumeMounts" v-bind:key="index">
-              <td>
-                <ko-form-item itemType="input" v-model="row.mountPath" />
-              </td>
-              <td>
-                <ko-form-item itemType="input" v-model="row.subPath" />
-              </td>
-              <td>
-                <el-checkbox v-model="row.readOnly" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleMountDelete(item, index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleMountAdd(item)">Add Mount</el-button>
-              </td>
-            </tr>
-          </table>
-        </el-card>
-      </div>
-      <el-row>
-        <el-col :span="12">
-          <el-dropdown split-button @command="handleVolumeAdd">
-            Add Volume
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </el-col>
-      </el-row>
+            <div><span>Valume Mount</span></div>
+            <table style="width: 98%;" class="tab-table">
+              <tr>
+                <th scope="col" width="43%" align="left"><label>mount point</label></th>
+                <th scope="col" width="43%" align="left"><label>sub path in volume</label></th>
+                <th scope="col" width="8%" align="left"><label>read only</label></th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="(row, index) in item.volumeMounts" v-bind:key="index">
+                <td>
+                  <ko-form-item itemType="input" v-model="row.mountPath" />
+                </td>
+                <td>
+                  <ko-form-item itemType="input" v-model="row.subPath" />
+                </td>
+                <td>
+                  <el-checkbox v-model="row.readOnly" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleMountDelete(item, index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleMountAdd(item)">Add Mount</el-button>
+                </td>
+              </tr>
+            </table>
+          </el-card>
+        </div>
+        <el-row>
+          <el-col :span="12">
+            <el-dropdown split-button @command="handleVolumeAdd">
+              Add Volume
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-col>
+        </el-row>
+      </el-form>
     </ko-card>
   </div>
 </template>
@@ -133,6 +133,7 @@ export default {
     currentContainerIndex: Number,
     configMapList: Array,
     secretList: Array,
+    isReadOnly: Boolean,
   },
   watch: {
     currentContainerIndex: {

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :key="reFresh" title="Command">
-      <el-form label-position="top" ref="form" :model="form">
+      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Entrypoint" prop="command">
@@ -26,55 +26,55 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div>
+          <label>Environment Variables
+            <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </label>
+        </div>
+        <table style="width: 98%" class="tab-table">
+          <tr>
+            <th scope="col" width="15%" align="left"><label>type</label></th>
+            <th scope="col" width="30%" align="left"><label>prefix/variable</label></th>
+            <th scope="col" width="20%" align="left"><label>source</label></th>
+            <th scope="col" width="28%" align="left"><label>value</label></th>
+            <th align="left"></th>
+          </tr>
+          <tr v-for="(row, index) in form.envResource" v-bind:key="index">
+            <td>
+              <ko-form-item itemType="select2" v-model="row.type" :selections="type_list" />
+            </td>
+            <td>
+              <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
+            </td>
+            <td>
+              <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
+              <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
+              <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
+              <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
+              <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" itemType="select2" v-model="row.source" :selections="secret_list" />
+            </td>
+            <td>
+              <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
+              <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
+              <ko-form-item v-if="row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="config_map_value_list" />
+              <ko-form-item v-if="row.type ==='Secret key'" itemType="select2" v-model="row.value" :selections="secret_value_list" />
+              <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+            </td>
+            <td>
+              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+                {{ $t("commons.button.delete") }}
+              </el-button>
+            </td>
+          </tr>
+          <tr>
+            <td align="left">
+              <el-button @click="handleAdd">Add Variable</el-button>
+            </td>
+          </tr>
+        </table>
       </el-form>
-      <div>
-        <label>Environment Variables
-          <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-            <i class="el-icon-question" />
-          </el-tooltip>
-        </label>
-      </div>
-      <table style="width: 98%" class="tab-table">
-        <tr>
-          <th scope="col" width="15%" align="left"><label>type</label></th>
-          <th scope="col" width="30%" align="left"><label>prefix/variable</label></th>
-          <th scope="col" width="20%" align="left"><label>source</label></th>
-          <th scope="col" width="28%" align="left"><label>value</label></th>
-          <th align="left"></th>
-        </tr>
-        <tr v-for="(row, index) in form.envResource" v-bind:key="index">
-          <td>
-            <ko-form-item itemType="select2" v-model="row.type" :selections="type_list" />
-          </td>
-          <td>
-            <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
-          </td>
-          <td>
-            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
-            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
-            <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
-            <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
-            <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" itemType="select2" v-model="row.source" :selections="secret_list" />
-          </td>
-          <td>
-            <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
-            <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
-            <ko-form-item v-if="row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="config_map_value_list" />
-            <ko-form-item v-if="row.type ==='Secret key'" itemType="select2" v-model="row.value" :selections="secret_value_list" />
-            <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
-          </td>
-          <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-              {{ $t("commons.button.delete") }}
-            </el-button>
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-            <el-button @click="handleAdd">Add Variable</el-button>
-          </td>
-        </tr>
-      </table>
     </ko-card>
   </div>
 </template>
@@ -91,6 +91,7 @@ export default {
     currentNamespace: String,
     configMapList: Array,
     secretList: Array,
+    isReadOnly: Boolean,
   },
   watch: {
     currentNamespace: {

@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Deployments' }" v-loading="loading">
     <br>
-    <div v-if="showYaml === 'false'">
+    <div v-if="!showYaml">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="5">
@@ -55,9 +55,9 @@
         </el-tab-pane>
         <el-tab-pane label="Health Check" name="Health Check">
           <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Readiness Check" />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Liveness Check" />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" style="margin-top=30px" health_check_type="Startup Check" />
+            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Readiness Check" />
+            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Liveness Check" />
+            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Startup Check" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
@@ -92,7 +92,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="grid-content bg-purple-light" v-if="showYaml === 'true'">
+    <div class="grid-content bg-purple-light" v-if="showYaml">
       <yaml-editor :value="yaml"></yaml-editor>
     </div>
     <div class="grid-content bg-purple-light">
@@ -126,7 +126,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { getDeploymentByName, createDeployment } from "@/api/workloads"
+import { getDeploymentByName, createDeployment } from "@/api/deployments"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -141,7 +141,6 @@ export default {
       showYaml: false,
       yaml: {},
       isRefresh: false,
-      operation: "",
       loading: false,
       namespace_list: [],
       secret_list: [],
@@ -333,7 +332,7 @@ export default {
   },
   mounted() {
     this.selectContainerIndex = 0
-    this.showYaml = this.$route.query.yamlShow
+    this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
     if (this.$route.params.name) {
       this.search()

@@ -89,6 +89,42 @@ const Workloads = {
         activeMenu: "/cronjobs",
       },
     },
+
+    {
+      path: "/jobs",
+      component: () => import("@/business/workloads/jobs"),
+      name: "Jobs",
+      meta: {
+        title: "Jobs",
+      },
+    },
+    {
+      path: "/jobs/detail/:namespace/:name",
+      name: "JobDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/jobs/detail"),
+      meta: {
+        activeMenu: "/jobs",
+      },
+    },
+    {
+      path: "/jobs/create",
+      name: "JobCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/jobs/create"),
+      meta: {
+        activeMenu: "/jobs",
+      },
+    },
+    {
+      path: "/jobs/edit/:namespace/:name",
+      name: "JobEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/jobs/edit"),
+      meta: {
+        activeMenu: "/jobs",
+      },
+    },
   ],
 };
 

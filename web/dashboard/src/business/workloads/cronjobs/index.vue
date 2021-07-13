@@ -41,7 +41,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listCronJobs, deleteCronJob } from "@/api/workloads"
+import { listCronJobs, deleteCronJob } from "@/api/cronjobs"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
