@@ -23,11 +23,11 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data">
-                  <ko-data ref="ko_data" :key="keyNum+1" :labelParentObj="item.data"></ko-data>
+                  <ko-data ref="ko_data" :labelParentObj.sync="item.data"></ko-data>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels"  :key="keyNum+2" :labelParentObj="item.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations"   :key="keyNum+3"  :labelParentObj="item.metadata"></ko-annotations>
+                  <ko-labels ref="ko_labels" :key="keyNum+2" :labelParentObj="item.metadata"></ko-labels>
+                  <ko-annotations ref="ko_annotations" :key="keyNum+3" :labelParentObj="item.metadata"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
