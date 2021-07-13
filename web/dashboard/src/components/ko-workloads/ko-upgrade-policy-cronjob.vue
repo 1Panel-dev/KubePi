@@ -56,6 +56,11 @@
               <ko-form-item deviderName="Seconds" itemType="input" v-model="form.startingDeadlineSeconds" />
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="Pod Active Deadline" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
+              <ko-form-item deviderName="Seconds" itemType="number" v-model="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </ko-card>
@@ -90,9 +95,13 @@ export default {
             backoffLimit: null,
             completions: null,
             parallelism: null,
+            template: {
+              spec: {
+                terminationGracePeriodSeconds: null,
+              },
+            }
           },
         },
-        activeDeadlineSeconds: null,
         successfulJobsHistoryLimit: null,
         failedJobsHistoryLimit: null,
         startingDeadlineSeconds: null,
@@ -102,7 +111,34 @@ export default {
   },
   methods: {
     transformation(parentFrom) {
-      parentFrom.strategy = {}
+      if (this.form.jobTemplate.spec.activeDeadlineSeconds) {
+        parentFrom.jobTemplate.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.activeDeadlineSeconds
+      }
+      if (this.form.jobTemplate.spec.backoffLimit) {
+        parentFrom.jobTemplate.spec.backoffLimit = this.form.jobTemplate.spec.backoffLimit
+      }
+      if (this.form.jobTemplate.spec.completions) {
+        parentFrom.jobTemplate.spec.completions = this.form.jobTemplate.spec.completions
+      }
+      if (this.form.jobTemplate.spec.parallelism) {
+        parentFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism
+      }
+      if (this.form.jobTemplate.spec.template.spec.activeDeadlineSeconds) {
+        parentFrom.jobTemplate.spec.template.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.template.spec.activeDeadlineSeconds
+      }
+
+      if (this.form.successfulJobsHistoryLimit) {
+        parentFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit
+      }
+      if (this.form.failedJobsHistoryLimit) {
+        parentFrom.failedJobsHistoryLimit = this.form.failedJobsHistoryLimit
+      }
+      if (this.form.startingDeadlineSeconds) {
+        parentFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds
+      }
+      if (this.form.suspend) {
+        parentFrom.suspend = this.form.suspend
+      }
     },
   },
   mounted() {
@@ -120,6 +156,9 @@ export default {
           }
           if (this.upgradePolicyParentObj.jobTemplate.spec.parallelism) {
             this.form.jobTemplate.spec.parallelism = this.upgradePolicyParentObj.jobTemplate.spec.parallelism
+          }
+          if(this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
+            this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
           }
         }
       }
