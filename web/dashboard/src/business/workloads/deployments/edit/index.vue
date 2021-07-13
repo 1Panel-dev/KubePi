@@ -64,8 +64,8 @@
           <div :key="isRefresh">
             <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
             <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
@@ -166,13 +166,7 @@ export default {
           template: {
             metadata: {},
             spec: {
-              containers: [
-                {
-                  name: "",
-                  image: "",
-                  imagePullPolicy: "ifNotPresent",
-                },
-              ],
+              containers: [],
               restartPolicy: "Always",
             },
           },
@@ -294,8 +288,10 @@ export default {
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_labels.transformation(this.form.metadata)
+      this.$refs.ko_annotations.transformation(this.form.metadata)
+      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },

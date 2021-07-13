@@ -64,8 +64,8 @@
           <div :key="isRefresh">
             <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
             <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
@@ -82,7 +82,7 @@
           <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
         </el-tab-pane>
         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-          <ko-upgrade-policy ref="ko_upgrade_policy" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
+          <ko-upgrade-policy-cronjob ref="ko_upgrade_policy_cronjob" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
           <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
@@ -121,7 +121,7 @@ import KoNetworking from "@/components/ko-workloads/ko-networking.vue"
 import KoPodScheduling from "@/components/ko-workloads/ko-pod-scheduling.vue"
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 import KoTolerations from "@/components/ko-workloads/ko-tolerations.vue"
-import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
+import KoUpgradePolicyCronjob from "@/components/ko-workloads/ko-upgrade-policy-cronjob.vue"
 import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
@@ -137,7 +137,7 @@ import Rule from "@/utils/rules"
 
 export default {
   name: "DeploymentForm",
-  components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, KoStorage },
+  components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyCronjob, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
       showYaml: false,
@@ -287,10 +287,8 @@ export default {
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_toleration.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.metadata)
-      this.$refs.ko_annotations.transformation(this.form.metadata)
-      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },

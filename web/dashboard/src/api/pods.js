@@ -22,7 +22,7 @@ export function listPods (cluster_name, limit, continueToken, search) {
   return get(url,param)
 }
 
-export function listPodsWithNs (cluster_name, namespace, selectors) {
+export function listPodsWithNsSelector (cluster_name, namespace, selectors) {
   let url = podUrlWithNs(cluster_name, namespace)
   const param = {}
   if (selectors && selectors !== "") {

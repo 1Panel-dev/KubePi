@@ -144,6 +144,10 @@ const message = {
       workload: "工作量",
       replicas: "副本数",
       container: "容器",
+      schedule: "调度",
+      lastScheduleTime: "最后的调度",
+      suspend: "暂停",
+      duration: "耗时",
     },
     network: {
       network: "网络"

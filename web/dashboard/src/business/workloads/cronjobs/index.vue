@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Deployments">
+  <layout-content header="CronJobs">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
@@ -17,10 +17,16 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace" />
+      <el-table-column sortable  :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
+      <el-table-column sortable  :label="$t('business.workload.lastScheduleTime')" min-width="60" prop="status.lastScheduleTime">
+         <template v-slot:default="{row}">
+          {{ row.status.lastScheduleTime | datetimeFormat }}
+        </template>
+      </el-table-column>
+      <el-table-column sortable  :label="$t('business.workload.suspend')" min-width="40" prop="spec.suspend">
         <template v-slot:default="{row}">
-          {{ row.status.readyReplicas }} / {{ row.status.replicas }}
+          {{ row.spec.suspend }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
@@ -35,13 +41,13 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listDeployments, deleteDeployment } from "@/api/workloads"
+import { listCronJobs, deleteCronJob } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 
 export default {
-  name: "Deployments",
+  name: "CronJobs",
   components: { LayoutContent, ComplexTable, KoTableOperations },
   data() {
     return {
@@ -50,14 +56,14 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+            this.$router.push({ name: "CronJobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
+            this.$router.push({ name: "CronJobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
           },
         },
         {
@@ -87,10 +93,10 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "DeploymentCreate", query: { yamlShow: false } })
+      this.$router.push({ name: "CronJobCreate", query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+      this.$router.push({ name: "CronJobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -100,11 +106,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteDeployment(this.clusterName, row.metadata.name))
+          this.ps.push(deleteCronJob(this.clusterName, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteDeployment(this.clusterName, select.metadata.name))
+              this.ps.push(deleteCronJob(this.clusterName, select.metadata.name))
             }
           }
         }
@@ -132,7 +138,7 @@ export default {
           nextToken: "",
         }
       }
-      listDeployments(this.clusterName)
+      listCronJobs(this.clusterName)
         .then((res) => {
           this.data = res.items
           this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
