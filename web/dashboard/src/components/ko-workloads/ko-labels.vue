@@ -1,35 +1,37 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :title="labelTitle">
-      <table style="width: 98%" class="tab-table">
-        <tr>
-          <th scope="col" width="48%" align="left">
-            <label>key</label>
-          </th>
-          <th scope="col" width="48%" align="left">
-            <label>value</label>
-          </th>
-          <th align="left"></th>
-        </tr>
-        <tr v-for="(row, index) in labels" v-bind:key="index">
-          <td>
-            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
-          </td>
-          <td>
-            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
-          </td>
-          <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-              {{ $t("commons.button.delete") }}
-            </el-button>
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-            <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-          </td>
-        </tr>
-      </table>
+      <el-form :disabled="isReadOnly">
+        <table style="width: 98%" class="tab-table">
+          <tr>
+            <th scope="col" width="48%" align="left">
+              <label>key</label>
+            </th>
+            <th scope="col" width="48%" align="left">
+              <label>value</label>
+            </th>
+            <th align="left"></th>
+          </tr>
+          <tr v-for="(row, index) in labels" v-bind:key="index">
+            <td>
+              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
+            </td>
+            <td>
+              <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
+            </td>
+            <td>
+              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+                {{ $t("commons.button.delete") }}
+              </el-button>
+            </td>
+          </tr>
+          <tr>
+            <td align="left">
+              <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+            </td>
+          </tr>
+        </table>
+      </el-form>
     </ko-card>
   </div>
 </template>
@@ -44,6 +46,7 @@ export default {
   props: {
     labelParentObj: Object,
     labelTitle: String,
+    isReadOnly: Boolean,
   },
   data() {
     return {

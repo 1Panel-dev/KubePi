@@ -48,7 +48,7 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
+            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
             <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
             <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
@@ -64,8 +64,8 @@
           <div :key="isRefresh">
             <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
             <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
@@ -128,7 +128,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { createDeployment } from "@/api/workloads"
+import { createDeployment } from "@/api/deployments"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -136,7 +136,7 @@ import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
-  name: "DeploymentForm",
+  name: "DeploymentCreate",
   components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
@@ -178,7 +178,6 @@ export default {
             },
           },
         },
-        type: "apps.deployment",
       },
       clusterName: "",
       operationLoading: false,
@@ -187,6 +186,9 @@ export default {
     }
   },
   methods: {
+    updateContainerList(val) {
+      this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex].name = val
+    },
     loadNamespace() {
       this.namespace_list = []
       listNamespace(this.clusterName).then((res) => {
@@ -287,8 +289,10 @@ export default {
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_toleration.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_annotations.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_labels.transformation(this.form.metadata)
+      this.$refs.ko_annotations.transformation(this.form.metadata)
+      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },
@@ -330,7 +334,7 @@ export default {
   },
   mounted() {
     this.currentContainerIndex = 0
-    this.showYaml = this.$route.params.showYaml
+    this.showYaml = this.$route.params.showYaml === "true"
     this.clusterName = this.$route.query.cluster
     this.loadNamespace()
     this.loadSecrets()

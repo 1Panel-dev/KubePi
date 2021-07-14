@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
           <template v-slot:default="{row}">
-            {{ row.eventTime | datetimeFormat }}
+            {{ row.eventTime | age }}
           </template>
         </el-table-column>
       </complex-table>
@@ -94,7 +94,7 @@ import KoCharts from "@/components/ko-charts"
 import {listNamespace} from "@/api/namespaces"
 import {listIngresses} from "@/api/ingress"
 import {listPvs} from "@/api/pv"
-import {listDeployments} from "@/api/workloads"
+import {listDeployments} from "@/api/deployments"
 import {listStatefulSets} from "@/api/statefulsets"
 import {listJobs} from "@/api/jobs"
 import {listDaemonSets} from "@/api/daemonsets"

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Networking">
-      <el-form label-position="top" :model="form">
+      <el-form label-position="top" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Network Mode" prop="hostNetwork">
@@ -26,124 +26,124 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span=12>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="93%" align="left">
+                  <label>nameservers</label>
+                </th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="row in form.dnsConfig.nameservers" v-bind:key="row.index">
+                <td>
+                  <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row.index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleNameserversAdd">Add Nameserver</el-button>
+                </td>
+              </tr>
+            </table>
+          </el-col>
+          <el-col :span=12>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="93%" align="left"><label>searches</label></th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="row in form.dnsConfig.searches" v-bind:key="row.index">
+                <td>
+                  <ko-form-item placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row.index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleSearchesAdd">Add Search Domains</el-button>
+                </td>
+              </tr>
+            </table>
+          </el-col>
+        </el-row>
+
+        <div style="margin-top: 20px">
+          <label>DNS Resolver Options
+            <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </label>
+          <table style="width: 98%" class="tab-table">
+            <tr>
+              <th scope="col" width="48%" align="left"><label>key</label></th>
+              <th scope="col" width="48%" align="left"><label>value</label></th>
+              <th align="left"></th>
+            </tr>
+            <tr v-for="row in form.dnsConfig.options" v-bind:key="row.index">
+              <td>
+                <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.name" />
+              </td>
+              <td>
+                <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
+              </td>
+              <td>
+                <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row.index)">
+                  {{ $t("commons.button.delete") }}
+                </el-button>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <el-button @click="handleOptionsAdd">Add Search Domains</el-button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="margin-top: 20px">
+          <label>Host Aliases
+            <el-tooltip class="item" effect="dark" content="Additional /etc/hosts entries to be injected in the container." placement="top-start">
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </label>
+          <table style="width: 98%" class="tab-table">
+            <tr>
+              <th scope="col" width="48%" align="left"><label>key</label></th>
+              <th scope="col" width="48%" align="left"><label>value</label></th>
+              <th align="left"></th>
+            </tr>
+            <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
+              <td>
+                <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
+              </td>
+              <td>
+                <ko-form-item placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
+              </td>
+              <td>
+                <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
+                  {{ $t("commons.button.delete") }}
+                </el-button>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <el-button @click="handleAliasAdd">Add Alians</el-button>
+              </td>
+            </tr>
+          </table>
+        </div>
       </el-form>
-
-      <el-row :gutter="20">
-        <el-col :span=12>
-          <table style="width: 98%" class="tab-table">
-            <tr>
-              <th scope="col" width="93%" align="left">
-                <label>nameservers</label>
-              </th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="row in form.dnsConfig.nameservers" v-bind:key="row.index">
-              <td>
-                <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row.index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleNameserversAdd">Add Nameserver</el-button>
-              </td>
-            </tr>
-          </table>
-        </el-col>
-        <el-col :span=12>
-          <table style="width: 98%" class="tab-table">
-            <tr>
-              <th scope="col" width="93%" align="left"><label>searches</label></th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="row in form.dnsConfig.searches" v-bind:key="row.index">
-              <td>
-                <ko-form-item placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row.index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleSearchesAdd">Add Search Domains</el-button>
-              </td>
-            </tr>
-          </table>
-        </el-col>
-      </el-row>
-
-      <div style="margin-top: 20px">
-        <label>DNS Resolver Options
-          <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-            <i class="el-icon-question" />
-          </el-tooltip>
-        </label>
-        <table style="width: 98%" class="tab-table">
-          <tr>
-            <th scope="col" width="48%" align="left"><label>key</label></th>
-            <th scope="col" width="48%" align="left"><label>value</label></th>
-            <th align="left"></th>
-          </tr>
-          <tr v-for="row in form.dnsConfig.options" v-bind:key="row.index">
-            <td>
-              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.name" />
-            </td>
-            <td>
-              <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
-            </td>
-            <td>
-              <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row.index)">
-                {{ $t("commons.button.delete") }}
-              </el-button>
-            </td>
-          </tr>
-          <tr>
-            <td align="left">
-              <el-button @click="handleOptionsAdd">Add Search Domains</el-button>
-            </td>
-          </tr>
-        </table>
-      </div>
-
-      <div style="margin-top: 20px">
-        <label>Host Aliases
-          <el-tooltip class="item" effect="dark" content="Additional /etc/hosts entries to be injected in the container." placement="top-start">
-            <i class="el-icon-question" />
-          </el-tooltip>
-        </label>
-        <table style="width: 98%" class="tab-table">
-          <tr>
-            <th scope="col" width="48%" align="left"><label>key</label></th>
-            <th scope="col" width="48%" align="left"><label>value</label></th>
-            <th align="left"></th>
-          </tr>
-          <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
-            <td>
-              <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
-            </td>
-            <td>
-              <ko-form-item placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
-            </td>
-            <td>
-              <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
-                {{ $t("commons.button.delete") }}
-              </el-button>
-            </td>
-          </tr>
-          <tr>
-            <td align="left">
-              <el-button @click="handleAliasAdd">Add Alians</el-button>
-            </td>
-          </tr>
-        </table>
-      </div>
     </ko-card>
   </div>
 </template>
@@ -157,6 +157,7 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     networkingParentObj: Object,
+    isReadOnly: Boolean,
   },
   data() {
     return {

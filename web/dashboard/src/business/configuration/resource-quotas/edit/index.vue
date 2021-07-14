@@ -1,7 +1,7 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'ResourceQuotas'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ResourceQuotas'}" v-loading="loading">
     <yaml-editor :value="item" ref="yaml_editor"></yaml-editor>
-    <div style="float: right;margin-top: 10px">
+    <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">
         {{ $t("commons.button.submit") }}
@@ -16,7 +16,7 @@ import YamlEditor from "@/components/yaml-editor"
 import {getResourceQuota, updateResourceQuota} from "@/api/resourcequota"
 
 export default {
-  name: "",
+  name: "ResourceQuotaCreate",
   components: { YamlEditor, LayoutContent },
   props: {
     name: String,
@@ -41,7 +41,6 @@ export default {
     onSubmit () {
       this.loading = true
       const data = this.$refs.yaml_editor.getValue()
-      console.log(data)
       updateResourceQuota(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
@@ -52,7 +51,7 @@ export default {
         this.loading = false
       })
     },
-    onCancel() {
+    onCancel () {
       this.$router.push({ name: "ResourceQuotas" })
     }
   },

@@ -19,7 +19,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -78,12 +78,13 @@
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
             <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
               <template v-slot:default="{row}">
-                {{ row.lastUpdateTime | datetimeFormat }}
+                {{ row.lastUpdateTime | age }}
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
               <template v-slot:default="{row}">
-                [{{ row.reason }} ]: {{ row.message }}
+                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
+                <span v-if="!row.message">---</span>
               </template>
             </el-table-column>
           </complex-table>
@@ -101,8 +102,8 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getDeploymentByName } from "@/api/workloads"
-import { listPodsWithNs } from "@/api/pods"
+import { getDeploymentByName } from "@/api/deployments"
+import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
@@ -138,7 +139,7 @@ export default {
             }
           }
           selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listPodsWithNs(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
+          listPodsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
             this.pods = res.items
           })
         }

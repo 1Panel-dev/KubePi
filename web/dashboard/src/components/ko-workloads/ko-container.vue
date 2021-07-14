@@ -1,11 +1,11 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Container">
-      <el-form label-position="top" ref="form" :rules="rules" :model="form">
+      <el-form label-position="top" ref="form" :rules="rules" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Container Name" prop="name">
-              <ko-form-item itemType="input"  @input="changeName" v-model="form.name" />
+              <ko-form-item itemType="input" @input="changeName" v-model="form.name" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -42,6 +42,7 @@ export default {
   props: {
     containerParentObj: Object,
     secretList: Array,
+    isReadOnly: Boolean,
   },
   watch: {
     secretList: {
@@ -75,7 +76,7 @@ export default {
   },
   methods: {
     changeName(val) {
-      this.$emit('updateContanerList',val)
+      this.$emit("updateContanerList", val)
     },
     checkIsValid() {
       let isValid = true

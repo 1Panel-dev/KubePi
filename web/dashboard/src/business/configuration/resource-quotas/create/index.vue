@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ResourceQuotas'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
-    <div style="float: right;margin-top: 10px">
+    <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">
         {{ $t("commons.button.submit") }}

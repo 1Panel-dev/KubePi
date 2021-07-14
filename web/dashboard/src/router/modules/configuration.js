@@ -57,7 +57,7 @@ const Configuration = {
       }
     },
     {
-      path: "/:namespace/secrets/detail/:name",
+      path: "/secrets/detail/:namespace/:name",
       component: () => import("@/business/configuration/secrets/detail"),
       name: "SecretDetail",
       props: true,
@@ -115,7 +115,7 @@ const Configuration = {
       }
     },
     {
-      path: "/:namespace/resourcequotas/edit/:name",
+      path: "/resourcequotas/edit/:namespace/:name",
       component: () => import("@/business/configuration/resource-quotas/edit"),
       name: "ResourceQuotaEdit",
       props: true,
@@ -133,11 +133,50 @@ const Configuration = {
       }
     },
     {
-      path: "/hpa",
+      path: "/limitranges/create",
+      component: () => import("@/business/configuration/limit-ranges/create"),
+      name: "LimitRangeCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/limitranges"
+      }
+    },
+    {
+      path: "/limitranges/detail/:namespace/:name",
+      component: () => import("@/business/configuration/limit-ranges/detail"),
+      name: "LimitRangeDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/limitranges"
+      }
+    },
+    {
+      path: "/limitranges/edit/:namespace/:name",
+      component: () => import("@/business/configuration/limit-ranges/edit"),
+      name: "LimitRangeEdit",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/limitranges"
+      }
+    },
+    {
+      path: "/horizontalpodautoscalers",
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
         title: "Horizontal Pod Autoscaler",
+      }
+    },
+    {
+      path: "/horizontalpodautoscalers/:namespace/:name/detail",
+      component: () => import("@/business/configuration/hpa/detail"),
+      name: "HPADetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/horizontalpodautoscalers"
       }
     }
   ]

@@ -1,54 +1,56 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card title="Tolerations">
-      <table style="width: 98%" class="tab-table">
-        <tr>
-          <th scope="col" width="25%" align="left">
-            <label>label Key</label>
-          </th>
-          <th scope="col" width="10%" align="left">
-            <label>operator</label>
-          </th>
-          <th scope="col" width="25%" align="left">
-            <label>value</label>
-          </th>
-          <th scope="col" width="16%" align="left">
-            <label>effect</label>
-          </th>
-          <th scope="col" width="15%" align="left">
-            <label>Toleration Seconds(s)</label>
-          </th>
-          <th align="left"></th>
-        </tr>
-        <tr v-for="(row, index) in tolerations" v-bind:key="index">
-          <td>
-            <ko-form-item itemType="input" v-model="row.key" />
-          </td>
-          <td>
-            <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
-          </td>
-          <td>
-            <ko-form-item v-if="row.operator === 'Exists'" disabled placeholder="N/A" itemType="input" v-model="row.value" />
-            <ko-form-item v-if="row.operator !== 'Exists'" itemType="input" v-model="row.value" />
-          </td>
-          <td>
-            <ko-form-item itemType="select" v-model="row.effect" :selections="effect_list" />
-          </td>
-          <td>
-            <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" deviderName="Seconds" v-model.number="row.tolerationSeconds" />
-          </td>
-          <td>
-            <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">
-              {{ $t("commons.button.delete") }}
-            </el-button>
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-            <el-button @click="handleTolerationsAdd">Add Toleration</el-button>
-          </td>
-        </tr>
-      </table>
+      <el-form :disabled="isReadOnly">
+        <table style="width: 98%" class="tab-table">
+          <tr>
+            <th scope="col" width="25%" align="left">
+              <label>label Key</label>
+            </th>
+            <th scope="col" width="10%" align="left">
+              <label>operator</label>
+            </th>
+            <th scope="col" width="25%" align="left">
+              <label>value</label>
+            </th>
+            <th scope="col" width="16%" align="left">
+              <label>effect</label>
+            </th>
+            <th scope="col" width="15%" align="left">
+              <label>Toleration Seconds(s)</label>
+            </th>
+            <th align="left"></th>
+          </tr>
+          <tr v-for="(row, index) in tolerations" v-bind:key="index">
+            <td>
+              <ko-form-item itemType="input" v-model="row.key" />
+            </td>
+            <td>
+              <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
+            </td>
+            <td>
+              <ko-form-item v-if="row.operator === 'Exists'" disabled placeholder="N/A" itemType="input" v-model="row.value" />
+              <ko-form-item v-if="row.operator !== 'Exists'" itemType="input" v-model="row.value" />
+            </td>
+            <td>
+              <ko-form-item itemType="select" v-model="row.effect" :selections="effect_list" />
+            </td>
+            <td>
+              <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" deviderName="Seconds" v-model.number="row.tolerationSeconds" />
+            </td>
+            <td>
+              <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">
+                {{ $t("commons.button.delete") }}
+              </el-button>
+            </td>
+          </tr>
+          <tr>
+            <td align="left">
+              <el-button @click="handleTolerationsAdd">Add Toleration</el-button>
+            </td>
+          </tr>
+        </table>
+      </el-form>
     </ko-card>
   </div>
 </template>
@@ -62,6 +64,7 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     tolerationsParentObj: Object,
+    isReadOnly: Boolean,
   },
   data() {
     return {

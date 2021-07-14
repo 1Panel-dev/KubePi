@@ -169,7 +169,7 @@ export default {
     },
   },
   watch: {
-    yamlShow: function (newValue) {
+    showYaml: function (newValue) {
       if (newValue) {
         this.yaml = this.transformYaml()
       }

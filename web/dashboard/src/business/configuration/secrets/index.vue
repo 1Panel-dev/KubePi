@@ -36,7 +36,7 @@
       <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.creationTimestamp | datetimeFormat }}
+          {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
@@ -71,7 +71,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
+              name: "SecretEdit",
+              params: {namespace: row.metadata.namespace,name:row.metadata.name},
               query: { yamlShow: false }
             })
           }
@@ -81,7 +82,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: "/" + row.metadata.namespace + "/secrets/edit/" + row.metadata.name,
+              name: "SecretEdit",
+              params: {namespace: row.metadata.namespace,name:row.metadata.name},
               query: { yamlShow: true }
             })
           }
@@ -156,7 +158,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        path: "/" + row.metadata.namespace + "/secrets/detail/" + row.metadata.name,
+        name: "SecretDetail",
+        params: {namespace: row.metadata.namespace,name:row.metadata.name},
         query: { yamlShow: false }
       })
     }

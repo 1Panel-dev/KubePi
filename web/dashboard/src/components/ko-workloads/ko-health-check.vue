@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :title="health_check_type">
-      <el-form label-position="top" ref="form" :model="form">
+      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-row>
@@ -107,6 +107,7 @@ export default {
     health_check_type: String,
     health_check_helper: String,
     healthCheckParentObj: Object,
+    isReadOnly: Boolean,
   },
   components: { KoFormItem, KoCard },
   data() {
@@ -209,7 +210,7 @@ export default {
         case "exec":
           childForm.exec = {}
           if (this.form.exec.command) {
-            childForm.exec.command = this.form.exec.command
+            childForm.exec.command = this.form.exec.command.split(",")
           }
           break
         default:
@@ -267,7 +268,7 @@ export default {
         } else if (prodeForm.exec) {
           this.check_type = "exec"
           if (prodeForm.exec.command) {
-            this.form.exec.command = prodeForm.exec.command
+            this.form.exec.command = prodeForm.exec.command.join(",")
           }
         }
 

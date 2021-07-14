@@ -126,3 +126,18 @@ a:hover {
     padding-left: 5px;
   }
 }
+
+.el-input.is-disabled .el-input__inner {
+  background-color: #31353a;
+  color: white;
+}
+.el-textarea.is-disabled .el-textarea__inner {
+  background-color: #31353a;
+  border-color: #909399;
+  color: white;
+  cursor: not-allowed;
+}
+.el-radio__input.is-disabled + span.el-radio__label {
+  color: white;
+  cursor: not-allowed;
+}

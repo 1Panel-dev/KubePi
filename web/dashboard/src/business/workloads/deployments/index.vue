@@ -14,14 +14,18 @@
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120">
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.name }}</el-link>
+          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="namespace" />
-      <el-table-column sortable  :label="$t('commons.table.status')" min-width="40" prop="readyStatus" />
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
+      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+        <template v-slot:default="{row}">
+          {{ row.status.readyReplicas }} / {{ row.status.replicas }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.created_time | datetimeFormat }}
+          {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
@@ -31,7 +35,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listDeployments, deleteDeployment } from "@/api/workloads"
+import { listDeployments, deleteDeployment } from "@/api/deployments"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -46,21 +50,21 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: false } })
+            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: true } })
+            this.$router.push({ name: "DeploymentEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
           },
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", row)
           },
         },
         {
@@ -86,7 +90,7 @@ export default {
       this.$router.push({ name: "DeploymentCreate", query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.namespace, name: row.name }, query: { yamlShow: false } })
+      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -122,23 +126,10 @@ export default {
     search(init) {
       this.loading = true
       this.data = []
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
-      listDeployments(this.clusterName)
+      this.page.nextToken = init ? "" : this.page.nextToken
+      listDeployments(this.clusterName, this.page.pageSize, this.page.nextToken)
         .then((res) => {
-          for (const item of res.items) {
-            this.data.push({
-              status: item.status.conditions[0].status ? "Active" : "Pending",
-              name: item.metadata.name,
-              namespace: item.metadata.namespace,
-              readyStatus: item.status.readyReplicas + "/" + item.status.replicas,
-              created_time: item.metadata.creationTimestamp,
-            })
-          }
+          this.data = res.items
           this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         })
         .catch((error) => {
