@@ -1,12 +1,12 @@
 <template>
   <layout-content>
-    <p>编辑pv</p>
+    <p>创建pv</p>
   </layout-content>
 </template>
 
 <script>
 export default {
-  name: "PvsEdit"
+name: "PersistentVolumeCreate"
 }
 </script>
 

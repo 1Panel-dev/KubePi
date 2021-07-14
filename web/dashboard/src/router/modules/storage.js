@@ -11,46 +11,46 @@ const Storage = {
   },
   children: [
     {
-      path: "/pv",
-      component: () => import("@/business/storage/pvs"),
-      name: "Pvs",
+      path: "/persistent-volumes",
+      component: () => import("@/business/storage/pv"),
+      name: "PersistentVolumes",
       meta: {
-        title: "Persistent Volume",
+        title: "Persistent Volumes",
       }
     },
     {
-      path: "/pv/create",
-      component: () => import("@/business/storage/pvs/create"),
-      name: "PvsCreate",
+      path: "/persistent-volumes/create",
+      component: () => import("@/business/storage/pv/create"),
+      name: "PersistentVolumeCreate",
       props: true,
       hidden: true,
       meta: {
-        title: "Persistent Volume",
+        title: "Persistent Volume Create",
       }
     },
     {
-      path: "/pv/edit",
-      component: () => import("@/business/storage/pvs/edit"),
-      name: "PvsEdit",
+      path: "/persistent-volumes/edit/:name",
+      component: () => import("@/business/storage/pv/edit"),
+      name: "PersistentVolumeEdit",
       props: true,
       hidden: true,
       meta: {
-        title: "Persistent Volume",
+        title: "Persistent Volume Edit",
       }
     },
     {
-      path: "/pv/detail",
-      component: () => import("@/business/storage/pvs/detail"),
-      name: "PvsDetail",
+      path: "/persistent-volumes/detail/:name",
+      component: () => import("@/business/storage/pv/detail"),
+      name: "PersistentVolumeDetail",
       props: true,
       hidden: true,
       meta: {
-        title: "Persistent Volume",
+        title: "Persistent Volume Detail",
       }
     },
     {
-      path: "/pvcs",
-      component: () => import("@/business/storage/pvcs"),
+      path: "/pvc",
+      component: () => import("@/business/storage/pvc"),
       name: "Pvcs",
       meta: {
         title: "Persistent Volume Claims",

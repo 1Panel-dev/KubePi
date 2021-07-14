@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="PersistentVolumes">
+  <layout-content header="Persistent Volumes">
     <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
@@ -29,19 +29,24 @@
       </el-table-column>
       <el-table-column label="状态" prop="metadata.namespace">
         <template v-slot:default="{row}">
-          {{ row.status.phase }}
+          <el-button v-if="row.status.phase ==='Bound'" type="success" size="mini" plain round>
+            {{ row.status.phase }}
+          </el-button>
+          <el-button v-else type="" size="mini" plain round>
+            {{ row.status.phase }}
+          </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="ACCESS MODES" prop="metadata.labels" min-width="200px">
+      <el-table-column label="ACCESS MODES" prop="metadata.labels" >
         <template v-slot:default="{row}">
           <div v-for="(name,index) in row.spec.accessModes " :key="index" style="display:inline-block">
             <el-tag>{{ name }}</el-tag>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="大小" prop="metadata.labels">
+      <el-table-column label="容量" prop="metadata.labels">
         <template v-slot:default="{row}">
-          {{ row.spec.capacity.storage }}
+          {{ row.spec.capacity['storage'] }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -59,12 +64,10 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deletePvs, listPvs} from "../../../api/pv";
-
-
+import {deletePvs, listPvs} from "@/api/pv";
 
 export default {
-  name: "Pvs",
+  name: "PersistentVolumes",
   components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
@@ -131,7 +134,6 @@ export default {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
-        console.log("打印数据",this.data)
       })
     },
     onCreate () {
@@ -149,11 +151,11 @@ export default {
           }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deletePvs(this.cluster, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deletePvs(this.cluster, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deletePvs(this.cluster, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deletePvs(this.cluster, select.metadata.name))
             }
           }
         }
@@ -174,8 +176,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "PvsDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
+        name: "PersistentVolumeDetail",
+        params: { name: row.metadata.name },
         query: { yamlShow: false }
       })
     },
