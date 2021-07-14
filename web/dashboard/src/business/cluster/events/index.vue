@@ -43,7 +43,9 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.eventTime | age }}
+          <span v-if="row.eventTime">{{ row.eventTime | age }}</span>
+          <span v-else-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>
+          <span v-else-if="row.firstTimestamp">{{ row.firstTimestamp | age }}</span>
         </template>
       </el-table-column>
     </complex-table>
