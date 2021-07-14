@@ -34,5 +34,5 @@ export function createDeployment(cluster_name, deployment) {
 }
 
 export function updateDeployment(cluster_name, deployment) {
-  return put(`${deploymentUrlWithNs(cluster_name)}/${deployment}`);
+  return put(`${deploymentWithNsUrl(cluster_name)}/${deployment}`);
 }

@@ -1,4 +1,4 @@
-import { get, del, post } from "@/plugins/request";
+import { get, del, post, put } from "@/plugins/request";
 
 const statefulsetUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/statefulsets`;

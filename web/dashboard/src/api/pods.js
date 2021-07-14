@@ -1,4 +1,4 @@
-import { get, del, post } from "@/plugins/request";
+import { get, del } from "@/plugins/request";
 
 const podUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/pods`;
