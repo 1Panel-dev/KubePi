@@ -46,9 +46,12 @@
               </tr>
               <tr>
                 <td>{{ $t("commons.table.created_time") }}</td>
-                <td>{{ item.metadata.creationTimestamp | datetimeFormat }}</td>
+                <td>{{ item.metadata.creationTimestamp | age }}</td>
               </tr>
             </table>
+            <div class="bottom-button">
+              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
+            </div>
           </el-card>
         </el-col>
         <el-col :span="9">
@@ -179,6 +182,12 @@
           </el-tabs>
         </el-col>
       </div>
+      <div v-if="yamlShow">
+        <yaml-editor :value="item" :read-only="true"></yaml-editor>
+        <div class="bottom-button">
+          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
+        </div>
+      </div>
     </el-row>
   </layout-content>
 </template>
@@ -188,10 +197,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import {getHpa} from "@/api/hpa"
 import ComplexTable from "@/components/complex-table"
 import {listEventsWithNsSelector} from "@/api/events"
+import YamlEditor from "@/components/yaml-editor"
 
 export default {
   name: "HPADetail",
-  components: { ComplexTable, LayoutContent },
+  components: { ComplexTable, LayoutContent, YamlEditor },
   props: {
     name: String,
     namespace: String,

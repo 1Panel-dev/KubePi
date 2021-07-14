@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.eventTime | datetimeFormat }}
+          {{ row.eventTime | age }}
         </template>
       </el-table-column>
     </complex-table>

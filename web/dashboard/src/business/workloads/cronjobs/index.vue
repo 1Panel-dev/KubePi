@@ -21,7 +21,7 @@
       <el-table-column sortable  :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
       <el-table-column sortable  :label="$t('business.workload.lastScheduleTime')" min-width="60" prop="status.lastScheduleTime">
          <template v-slot:default="{row}">
-          {{ row.status.lastScheduleTime | datetimeFormat }}
+          {{ row.status.lastScheduleTime | age }}
         </template>
       </el-table-column>
       <el-table-column sortable  :label="$t('business.workload.suspend')" min-width="40" prop="spec.suspend">
@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.creationTimestamp | datetimeFormat }}
+          {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>

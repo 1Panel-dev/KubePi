@@ -19,7 +19,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -78,7 +78,7 @@
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
             <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
               <template v-slot:default="{row}">
-                {{ row.lastUpdateTime | datetimeFormat }}
+                {{ row.lastUpdateTime | age }}
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
