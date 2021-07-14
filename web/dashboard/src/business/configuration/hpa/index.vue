@@ -55,14 +55,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {deleteLimitRange} from "@/api/limitranges"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {listHpas} from "@/api/hpa"
+import {deleteHpa, listHpas} from "@/api/hpa"
 
 export default {
   name: "HPA",
-  components: { ComplexTable, LayoutContent ,KoTableOperations},
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
@@ -80,7 +79,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "LimitRangeEdit",
-              params: {namespace:row.metadata.namespace,name:row.metadata.name}
+              params: { namespace: row.metadata.namespace, name: row.metadata.name }
             })
           }
         },
@@ -131,11 +130,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteLimitRange(this.cluster, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deleteHpa(this.cluster, row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteLimitRange(this.cluster, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteHpa(this.cluster, select.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -156,8 +155,9 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "HpaDetail",
-        params: {namespace:row.metadata.namespace,name:row.metadata.name}
+        name: "HPADetail",
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false }
       })
     }
   },
