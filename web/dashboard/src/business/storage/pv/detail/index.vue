@@ -28,7 +28,7 @@
               </tr>
               <tr>
                 <td>CAPACITY</td>
-                <td colspan="3">{{ item.spec.capacity['storage'] }}</td>
+                <td colspan="3">{{ item.spec.capacity.storage }}</td>
               </tr>
               <tr>
                 <td>ACCESS MODES</td>
@@ -147,7 +147,11 @@ export default {
     return {
       item: {
         metadata: {},
-        spec: {},
+        spec: {
+          capacity: {
+            storage: ''
+          }
+        },
         status: {}
       },
       cluster: "",
