@@ -210,7 +210,7 @@ export default {
         case "exec":
           childForm.exec = {}
           if (this.form.exec.command) {
-            childForm.exec.command = this.form.exec.command
+            childForm.exec.command = this.form.exec.command.split(",")
           }
           break
         default:
@@ -268,7 +268,7 @@ export default {
         } else if (prodeForm.exec) {
           this.check_type = "exec"
           if (prodeForm.exec.command) {
-            this.form.exec.command = prodeForm.exec.command
+            this.form.exec.command = prodeForm.exec.command.join(",")
           }
         }
 

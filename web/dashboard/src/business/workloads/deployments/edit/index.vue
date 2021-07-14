@@ -126,7 +126,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { getDeploymentByName, createDeployment } from "@/api/deployments"
+import { getDeploymentByName, updateDeployment } from "@/api/deployments"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -170,7 +170,6 @@ export default {
             },
           },
         },
-        type: "apps.deployment",
       },
       clusterName: "",
       operationLoading: false,
@@ -310,7 +309,7 @@ export default {
         data = this.gatherFormData()
       }
       this.loading = true
-      createDeployment(this.clusterName, data)
+      updateDeployment(this.clusterName, data)
         .then(() => {
           this.$message({
             type: "success",

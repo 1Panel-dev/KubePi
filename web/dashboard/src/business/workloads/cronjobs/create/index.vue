@@ -128,7 +128,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { createDeployment } from "@/api/deployments"
+import { createCronJob } from "@/api/cronjobs"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -136,7 +136,7 @@ import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
-  name: "DeploymentForm",
+  name: "CronJobCreate",
   components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyCronjob, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
@@ -310,7 +310,7 @@ export default {
         data = this.gatherFormData()
       }
       this.loading = true
-      createDeployment(this.clusterName, data)
+      createCronJob(this.clusterName, data)
         .then(() => {
           this.$message({
             type: "success",

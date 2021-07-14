@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'CronJobs' }" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'DaemonSets' }" v-loading="loading">
     <br>
     <div v-if="!showYaml">
       <el-form label-position="top" ref="form" :model="form">
@@ -15,18 +15,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.schedule')" prop="spec.schedule" :rules="requiredRules">
-              <ko-form-item placeholder="0 * * * *" clearable itemType="input" v-model="form.spec.schedule" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" style="margin-top: 10px">
-          <el-col :span="12">
             <el-row>
               <el-col :span="20">
                 <el-form-item :label="$t('business.workload.container')">
                   <el-select @change="selectContainer" style="width:100%" itemType="select" v-model="selectContainerIndex">
-                    <el-option v-for="(item, index) in form.spec.jobTemplate.spec.template.spec.containers" :key="index" :label="item.name" :value="index" />
+                    <el-option v-for="(item, index) in form.spec.template.spec.containers" :key="index" :label="item.name" :value="index" />
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -48,47 +41,47 @@
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
           <div :key="isRefresh">
-            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
-            <ko-ports ref="ko_ports" :portParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" />
-            <ko-command ref="ko_command" :commandParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="form.spec.template.spec.containers[currentContainerIndex]" :secretList="secret_list_of_ns" />
+            <ko-ports ref="ko_ports" :portParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
+            <ko-command ref="ko_command" :commandParentObj="form.spec.template.spec.containers[currentContainerIndex]" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Health Check" name="Health Check">
           <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" health_check_type="Readiness Check" />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" health_check_type="Liveness Check" />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" health_check_type="Startup Check" />
+            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Readiness Check" />
+            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Liveness Check" />
+            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="form.spec.template.spec.containers[currentContainerIndex]" health_check_type="Startup Check" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
           <div :key="isRefresh">
             <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
             <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.jobTemplate.spec.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.jobTemplate.spec.metadata" annotationsTitle="Pod Annotations" />
+            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
-          <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.jobTemplate.spec.template.spec" />
+          <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.template.spec" />
         </el-tab-pane>
         <el-tab-pane label="Scheduling" name="Scheduling">
           <div :key="isRefresh">
-            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :namespaceList="namespace_list" />
-            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :nodeList="node_list" />
-            <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.jobTemplate.spec.template.spec" />
+            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.template.spec" :namespaceList="namespace_list" />
+            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec" :nodeList="node_list" />
+            <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.template.spec" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Resources" name="Resources">
-          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" />
+          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
         </el-tab-pane>
         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-          <ko-upgrade-policy-cronjob ref="ko_upgrade_policy_cronjob" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
+          <ko-upgrade-policy-daemonset ref="ko_upgrade_policy_daemonset" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
-          <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="form.spec.jobTemplate.spec.template.spec.containers[currentContainerIndex]" />
+          <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="form.spec.template.spec.containers[currentContainerIndex]" />
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage :key="isRefresh" ref="ko_storage" :storageParentObj="form.spec.jobTemplate.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-storage :key="isRefresh" ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -100,7 +93,9 @@
         <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
         <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.edit_yaml") }}</el-button>
         <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-        <el-button v-loading="operationLoading" @click="onSubmit()" type="primary">{{ $t("commons.button.confirm") }}</el-button>
+        <el-button v-loading="operationLoading" @click="onSubmit()" type="primary">
+          {{ $t("commons.button.create") }}
+        </el-button>
       </div>
     </div>
   </layout-content>
@@ -119,14 +114,14 @@ import KoNetworking from "@/components/ko-workloads/ko-networking.vue"
 import KoPodScheduling from "@/components/ko-workloads/ko-pod-scheduling.vue"
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 import KoTolerations from "@/components/ko-workloads/ko-tolerations.vue"
-import KoUpgradePolicyCronjob from "@/components/ko-workloads/ko-upgrade-policy-cronjob.vue"
+import KoUpgradePolicyDaemonset from "@/components/ko-workloads/ko-upgrade-policy-daemonset.vue"
 import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { getCronJobByName, updateCronJob } from "@/api/cronjobs"
+import { createDaemonSet } from "@/api/daemonsets"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -134,8 +129,8 @@ import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
-  name: "CronJobEdit",
-  components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoLabels, KoUpgradePolicyCronjob, KoAnnotations, KoStorage },
+  name: "DaemonSetCreate",
+  components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyDaemonset, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
       showYaml: false,
@@ -155,27 +150,27 @@ export default {
       unValidInfo: "",
       form: {
         apiVersion: "apps/v1",
-        kind: "CronJob",
+        kind: "DaemonSet",
         metadata: {
-          name: "my-test-cronjob",
-          namespace: "",
+          name: "my-test-deployment",
+          namespace: "kube-operator",
         },
         spec: {
-          schedule: "",
-          jobTemplate: {
+          replicas: 1,
+          template: {
             metadata: {},
             spec: {
-              template: {
-                metadata: {},
-                spec: {
-                  containers: [],
-                  restartPolicy: "Always",
+              containers: [
+                {
+                  name: "Container-0",
+                  image: "",
+                  imagePullPolicy: "ifNotPresent",
                 },
-              },
+              ],
+              restartPolicy: "Always",
             },
           },
         },
-        type: "apps.cronjob",
       },
       clusterName: "",
       operationLoading: false,
@@ -186,13 +181,6 @@ export default {
   methods: {
     updateContainerList(val) {
       this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex].name = val
-    },
-    search() {
-      getCronJobByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
-        this.form = res
-        this.yaml = res
-        this.isRefresh = !this.isRefresh
-      })
     },
     loadNamespace() {
       this.namespace_list = []
@@ -255,52 +243,54 @@ export default {
       this.isRefresh = !this.isRefresh
     },
     handleAddContainer() {
-      this.form.spec.jobTemplate.spec.template.spec.containers.push({
-        name: "Container-" + this.form.spec.jobTemplate.spec.template.spec.containers.length.toString(),
+      this.form.spec.template.spec.containers.push({
+        name: "Container-" + this.form.spec.template.spec.containers.length.toString(),
         image: "",
         imagePullPolicy: "ifNotPresent",
       })
     },
     handleDeleteContainer() {
-      if (this.form.spec.jobTemplate.spec.template.spec.containers.length <= 1) {
+      if (this.form.spec.template.spec.containers.length <= 1) {
         return
       }
-      this.form.spec.jobTemplate.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
+      this.form.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
       this.currentContainerIndex = 0
     },
     gatherFormValid() {
+      this.$refs["form"].validate((valid) => {
+        if (!valid) {
+          return
+        }
+      })
       if (!this.$refs.ko_container.checkIsValid()) {
         this.isValid = false
         this.unValidInfo = "ko_container 参数不完整"
         return
       }
-      if (!this.$refs.ko_storage.checkIsValid()) {
-        this.isValid = false
-        this.unValidInfo = "ko_storage 参数不完整"
-        return
-      }
     },
     gatherFormData() {
-      this.$refs.ko_container.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_ports.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_command.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_resource.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_health_readiness_check.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_health_liveness_check.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_health_startup_check.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_security_context.transformation(this.form.spec.jobTemplate.spec.template.spec.containers[this.currentContainerIndex])
-      this.$refs.ko_networking.transformation(this.form.spec.jobTemplate.spec.template.spec)
-      this.$refs.ko_pod_scheduling.transformation(this.form.spec.jobTemplate.spec.template.spec)
-      this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec)
+      this.$refs.ko_container.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_ports.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_command.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_resource.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_health_readiness_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_health_liveness_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_health_startup_check.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_security_context.transformation(this.form.spec.template.spec.containers[this.currentContainerIndex])
+      this.$refs.ko_networking.transformation(this.form.spec.template.spec)
+      this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec)
+      this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
+      this.$refs.ko_toleration.transformation(this.form.spec.template.spec)
+      this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec)
       this.$refs.ko_labels.transformation(this.form.metadata)
       this.$refs.ko_annotations.transformation(this.form.metadata)
-      this.$refs.ko_pod_labels.transformation(this.form.spec.jobTemplate.spec.template.metadata)
-      this.$refs.ko_pod_annotations.transformation(this.form.spec.jobTemplate.spec.template.metadata)
-      this.$refs.ko_storage.transformation(this.form.spec.jobTemplate.spec.template.spec)
+      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
+      this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       return this.form
     },
     onCancel() {
-      this.$router.push({ name: "CronJobs" })
+      this.$router.push({ name: "DaemonSets" })
     },
     onSubmit() {
       let data = {}
@@ -315,13 +305,13 @@ export default {
         data = this.gatherFormData()
       }
       this.loading = true
-      updateCronJob(this.clusterName, data)
+      createDaemonSet(this.clusterName, data)
         .then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
-          this.$router.push({ name: "CronJobs" })
+          this.$router.push({ name: "DaemonSets" })
         })
         .finally(() => {
           this.loading = false
@@ -336,12 +326,9 @@ export default {
     },
   },
   mounted() {
-    this.selectContainerIndex = 0
-    this.showYaml = this.$route.query.yamlShow === "true"
+    this.currentContainerIndex = 0
+    this.showYaml = this.$route.params.showYaml === "true"
     this.clusterName = this.$route.query.cluster
-    if (this.$route.params.name) {
-      this.search()
-    }
     this.loadNamespace()
     this.loadSecrets()
     this.loadConfigMaps()

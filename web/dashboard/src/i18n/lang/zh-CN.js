@@ -151,6 +151,8 @@ const message = {
       duration: "耗时",
       lastTransitionTime: "最后更新时间",
       restarts: "重启",
+      current: "当前调度",
+      desired: "期望期望",
     },
     network: {
       network: "网络"

@@ -97,11 +97,12 @@ export default {
             parallelism: null,
             template: {
               spec: {
-                terminationGracePeriodSeconds: null,
+                terminationGracePeriodSeconds: 30,
               },
-            }
+            },
           },
         },
+        concurrencyPolicy: null,
         successfulJobsHistoryLimit: null,
         failedJobsHistoryLimit: null,
         startingDeadlineSeconds: null,
@@ -123,10 +124,13 @@ export default {
       if (this.form.jobTemplate.spec.parallelism) {
         parentFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism
       }
-      if (this.form.jobTemplate.spec.template.spec.activeDeadlineSeconds) {
-        parentFrom.jobTemplate.spec.template.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.template.spec.activeDeadlineSeconds
+      if (this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
+        parentFrom.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
       }
 
+      if (this.form.concurrencyPolicy) {
+        parentFrom.concurrencyPolicy = this.form.concurrencyPolicy
+      }
       if (this.form.successfulJobsHistoryLimit) {
         parentFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit
       }
@@ -136,7 +140,7 @@ export default {
       if (this.form.startingDeadlineSeconds) {
         parentFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds
       }
-      if (this.form.suspend) {
+      if (this.form.suspend !== undefined) {
         parentFrom.suspend = this.form.suspend
       }
     },
@@ -157,16 +161,17 @@ export default {
           if (this.upgradePolicyParentObj.jobTemplate.spec.parallelism) {
             this.form.jobTemplate.spec.parallelism = this.upgradePolicyParentObj.jobTemplate.spec.parallelism
           }
-          if(this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
-            this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+          if (this.upgradePolicyParentObj.jobTemplate.spec.template) {
+            if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec) {
+              if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
+                this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+              }
+            }
           }
         }
       }
       if (this.upgradePolicyParentObj.concurrencyPolicy) {
         this.form.concurrencyPolicy = this.upgradePolicyParentObj.concurrencyPolicy
-      }
-      if (this.upgradePolicyParentObj.activeDeadlineSeconds) {
-        this.form.activeDeadlineSeconds = this.upgradePolicyParentObj.activeDeadlineSeconds
       }
       if (this.upgradePolicyParentObj.successfulJobsHistoryLimit) {
         this.form.successfulJobsHistoryLimit = this.upgradePolicyParentObj.successfulJobsHistoryLimit

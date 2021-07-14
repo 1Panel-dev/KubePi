@@ -166,8 +166,10 @@ export default {
         namespaceOperation = "podNamespace"
       }
       let rules = []
-      for (const express of s.matchExpressions) {
-        rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+      if (s.labelSelector.matchExpressions) {
+        for (const express of s.matchExpressions) {
+          rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+        }
       }
       const topologyKey = s.topologyKey ? s.topologyKey : ""
       this.podSchedulings.push({

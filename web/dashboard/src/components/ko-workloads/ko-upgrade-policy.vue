@@ -48,8 +48,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Termination Grace Period" prop="terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.terminationGracePeriodSeconds" />
+            <el-form-item label="Termination Grace Period" prop="template.spec.terminationGracePeriodSeconds">
+              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -85,10 +85,14 @@ export default {
             maxSurgeUnit: "%",
           },
         },
+        template: {
+          spec: {
+            terminationGracePeriodSeconds: 30,
+          },
+        },
         minReadySeconds: 0,
         progressDeadlineSeconds: 600,
         revisionHistoryLimit: 10,
-        terminationGracePeriodSeconds: 30,
       },
     }
   },
@@ -122,17 +126,18 @@ export default {
       if (this.form.progressDeadlineSeconds) {
         parentFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds
       }
+      if (this.form.template.spec.terminationGracePeriodSeconds) {
+        parentFrom.template = {}
+        parentFrom.template.spec = {}
+        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
+      }
     },
   },
   mounted() {
     if (this.upgradePolicyParentObj) {
       if (this.upgradePolicyParentObj.strategy) {
         if (this.upgradePolicyParentObj.strategy.type) {
-          if (this.upgradePolicyParentObj.strategy.type === "Recreate") {
-            this.form.strategy.type = "Recreate"
-          } else {
-            this.form.strategy.type = "RollingUpdate"
-          }
+          this.form.strategy.type = this.upgradePolicyParentObj.strategy.type
         }
         if (this.upgradePolicyParentObj.strategy.rollingUpdate) {
           if (this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable) {
@@ -152,6 +157,13 @@ export default {
               this.form.strategy.rollingUpdate.maxSurgeUnit = "Pods"
               this.form.strategy.rollingUpdate.maxSurge = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge)
             }
+          }
+        }
+      }
+      if (this.upgradePolicyParentObj.template) {
+        if (this.upgradePolicyParentObj.template.spec) {
+          if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
+            this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
           }
         }
       }

@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Deployments' }" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Jobs' }" v-loading="loading">
     <br>
     <div v-if="!showYaml">
       <el-form label-position="top" ref="form" :model="form">
@@ -121,7 +121,7 @@ import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 
-import { createDeployment } from "@/api/deployments"
+import { createJob } from "@/api/jobs"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
@@ -129,7 +129,7 @@ import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
-  name: "DeploymentForm",
+  name: "JobCreate",
   components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyJob, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
@@ -149,7 +149,7 @@ export default {
       isValid: true,
       unValidInfo: "",
       form: {
-        kind: "Deployment",
+        kind: "Job",
         apiVersion: "batch/v1",
         metadata: {
           name: "my-test-deployment",
@@ -288,7 +288,7 @@ export default {
       return this.form
     },
     onCancel() {
-      this.$router.push({ name: "Deployments" })
+      this.$router.push({ name: "Jobs" })
     },
     onSubmit() {
       let data = {}
@@ -303,13 +303,13 @@ export default {
         data = this.gatherFormData()
       }
       this.loading = true
-      createDeployment(this.clusterName, data)
+      createJob(this.clusterName, data)
         .then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
-          this.$router.push({ name: "Deployments" })
+          this.$router.push({ name: "Jobs" })
         })
         .finally(() => {
           this.loading = false

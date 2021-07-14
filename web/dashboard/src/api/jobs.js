@@ -1,4 +1,4 @@
-import { get, post, del } from "@/plugins/request";
+import { get, post, del, put } from "@/plugins/request";
 
 const jobUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/jobs`;
@@ -21,7 +21,6 @@ export function listJobs(cluster_name, limit, continueToken, search) {
   return get(url);
 }
 
-//https://127.0.0.1:8443/apis/batch/v1/namespaces/kube-operator/jobs?labelSelector=apprepositories.kubeapps.com%2Frepo-name%3Dkubeoperator%2Capprepositories.kubeapps.com%2Frepo-namespace%3Dkube-operator&limit=500
 export function listJobsWithNsSelector(cluster_name, namespace, selectors) {
   let url = jobUrlWithNs(cluster_name, namespace);
   const param = {};
@@ -41,4 +40,8 @@ export function deleteJob(cluster_name, job) {
 
 export function createJob(cluster_name, job) {
   return post(`${jobUrl(cluster_name)}/${job}`);
+}
+
+export function updateJob(cluster_name, job) {
+  return put(`${jobUrlWithNs(cluster_name)}/${job}`);
 }

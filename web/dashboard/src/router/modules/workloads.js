@@ -119,6 +119,78 @@ const Workloads = {
     },
 
     {
+      path: "/daemonsets",
+      component: () => import("@/business/workloads/daemonsets"),
+      name: "DaemonSets",
+      meta: {
+        title: "DaemonSets",
+      },
+    },
+    {
+      path: "/daemonsets/detail/:namespace/:name",
+      name: "DaemonSetDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/daemonsets/detail"),
+      meta: {
+        activeMenu: "/daemonsets",
+      },
+    },
+    {
+      path: "/daemonsets/create",
+      name: "DaemonSetCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/daemonsets/create"),
+      meta: {
+        activeMenu: "/daemonsets",
+      },
+    },
+    {
+      path: "/daemonsets/edit/:namespace/:name",
+      name: "DaemonSetEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/daemonsets/edit"),
+      meta: {
+        activeMenu: "/daemonsets",
+      },
+    },
+
+    {
+      path: "/statefulsets",
+      component: () => import("@/business/workloads/statefulsets"),
+      name: "StatefulSets",
+      meta: {
+        title: "StatefulSets",
+      },
+    },
+    {
+      path: "/statefulsets/detail/:namespace/:name",
+      name: "StatefulSetDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/statefulsets/detail"),
+      meta: {
+        activeMenu: "/statefulsets",
+      },
+    },
+    {
+      path: "/statefulsets/create",
+      name: "StatefulSetCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/statefulsets/create"),
+      meta: {
+        activeMenu: "/statefulsets",
+      },
+    },
+    {
+      path: "/statefulsets/edit/:namespace/:name",
+      name: "StatefulSetEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/statefulsets/edit"),
+      meta: {
+        activeMenu: "/statefulsets",
+      },
+    },
+
+    {
       path: "/pods",
       component: () => import("@/business/workloads/pods"),
       name: "Pods",

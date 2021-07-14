@@ -38,7 +38,3 @@ export function getPodByName(cluster_name, namespace, cornjob) {
 export function deletePod(cluster_name, cornjob) {
   return del(`${podUrl(cluster_name)}/${cornjob}`);
 }
-
-export function createPod(cluster_name, cornjob) {
-  return post(`${podUrl(cluster_name)}/${cornjob}`);
-}

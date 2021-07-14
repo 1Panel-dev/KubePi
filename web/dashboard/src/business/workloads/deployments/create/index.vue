@@ -136,7 +136,7 @@ import { listConfigMaps } from "@/api/configmaps"
 import Rule from "@/utils/rules"
 
 export default {
-  name: "DeploymentForm",
+  name: "DeploymentCreate",
   components: { LayoutContent, KoFormItem, YamlEditor, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicy, KoLabels, KoAnnotations, KoStorage },
   data() {
     return {
@@ -178,7 +178,6 @@ export default {
             },
           },
         },
-        type: "apps.deployment",
       },
       clusterName: "",
       operationLoading: false,

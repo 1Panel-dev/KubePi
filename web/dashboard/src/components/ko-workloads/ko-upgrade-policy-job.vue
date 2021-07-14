@@ -58,7 +58,7 @@ export default {
         parallelism: null,
         template: {
           spec: {
-            terminationGracePeriodSeconds: null,
+            terminationGracePeriodSeconds: 30,
           },
         },
       },
@@ -78,8 +78,8 @@ export default {
       if (this.form.parallelism) {
         parentFrom.parallelism = this.form.parallelism
       }
-      if (this.form.template.spec.activeDeadlineSeconds) {
-        parentFrom.template.spec.activeDeadlineSeconds = this.form.template.spec.activeDeadlineSeconds
+      if (this.form.template.spec.terminationGracePeriodSeconds) {
+        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
   },
@@ -97,8 +97,12 @@ export default {
       if (this.upgradePolicyParentObj.parallelism) {
         this.form.parallelism = this.upgradePolicyParentObj.parallelism
       }
-      if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
-        this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
+      if (this.upgradePolicyParentObj.template) {
+        if (this.upgradePolicyParentObj.template.spec) {
+          if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
+            this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
+          }
+        }
       }
     }
   },
