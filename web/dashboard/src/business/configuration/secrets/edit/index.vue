@@ -51,8 +51,8 @@
                   <ko-secret-certificate :certificate-obj.sync="item.data"></ko-secret-certificate>
                 </el-tab-pane>
                 <el-tab-pane name="1" label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="item.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :annotationsParentObj="item.metadata"></ko-annotations>
+                  <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
+                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -123,7 +123,7 @@ export default {
         this.loading = false
         this.item = res
         if (this.showYaml) {
-          this.yaml = JSON.parse(JSON.stringify(this.item))
+          this.yaml = this.transformYaml()
         }
       })
     },
@@ -141,13 +141,7 @@ export default {
       this.showYaml = false
     },
     transformYaml () {
-      let formData = {}
-      formData = JSON.parse(JSON.stringify(this.item))
-      // labels
-      this.$refs.ko_labels.transformation(formData.metadata)
-      // annotations
-      this.$refs.ko_annotations.transformation(formData.metadata)
-      return formData
+      return JSON.parse(JSON.stringify(this.item))
     },
     onSubmit () {
       let data = {}

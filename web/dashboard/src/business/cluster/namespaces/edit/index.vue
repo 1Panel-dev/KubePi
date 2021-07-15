@@ -13,11 +13,10 @@
         <el-col :span="24">
           <br>
           <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
-            <el-tab-pane label="Labels">
-              <ko-labels ref="ko_labels" :key="loading" :labelParentObj="item.metadata"></ko-labels>
-            </el-tab-pane>
-            <el-tab-pane label="Annotations">
-              <ko-annotations ref="ko_annotations"  :key="loading" :annotationsParentObj="item.metadata.annotations"></ko-annotations>
+            <el-tab-pane label="Labels/Annotations">
+              <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
+              <ko-annotations annotations-title="Annotations"
+                              :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -48,15 +47,14 @@ import {getNamespace, updateNamespace} from "@/api/namespaces"
 
 export default {
   name: "NamespaceEdit",
-  components: { LayoutContent,KoAnnotations, KoLabels ,YamlEditor},
+  components: { LayoutContent, KoAnnotations, KoLabels, YamlEditor },
   props: {
     name: String,
   },
   data () {
     return {
       item: {
-        metadata: {
-        },
+        metadata: {},
         status: {}
       },
       showYaml: false,
@@ -66,7 +64,7 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       let data = {}
       if (this.showYaml) {
         data = this.$refs.yaml_editor.getValue()
@@ -74,7 +72,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      updateNamespace(this.cluster,this.item.metadata.name, data).then(() => {
+      updateNamespace(this.cluster, this.item.metadata.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),
@@ -84,11 +82,11 @@ export default {
         this.loading = false
       })
     },
-    onEditYaml() {
+    onEditYaml () {
       this.yaml = this.transformYaml()
       this.showYaml = true
     },
-    backToForm() {
+    backToForm () {
       this.showYaml = false
     },
     getNamespaceByName () {
@@ -96,38 +94,32 @@ export default {
       getNamespace(this.cluster, this.name).then(res => {
         this.item = res
         this.loading = false
-        if(this.showYaml) {
-          this.yaml = JSON.parse(JSON.stringify(this.item))
+        if (this.showYaml) {
+          this.yaml = this.transformYaml()
         }
       })
     },
-    onCancel(){
+    onCancel () {
       this.$router.push({ name: "Namespaces" })
     },
-    handleClick(tab) {
+    handleClick (tab) {
       this.activeName = tab.index
     },
     transformYaml () {
-      let formData = {}
-      formData = JSON.parse(JSON.stringify(this.item))
-      // labels
-      this.$refs.ko_labels.transformation(formData.metadata)
-      // annotations
-      this.$refs.ko_annotations.transformation(formData.metadata)
-      return formData
+      return JSON.parse(JSON.stringify(this.item))
     },
   },
   watch: {
-    showYaml:function (newValue) {
+    showYaml: function (newValue) {
       this.$router.push({
-        path: "/namespaces/edit/"+this.name ,
+        path: "/namespaces/edit/" + this.name,
         query: { yamlShow: newValue }
       })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.showYaml = this.$route.query.yamlShow  === "true"
+    this.showYaml = this.$route.query.yamlShow === "true"
     this.getNamespaceByName()
   }
 }

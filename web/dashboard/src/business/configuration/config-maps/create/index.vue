@@ -24,11 +24,11 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data">
-                  <ko-data ref="ko_data" :labelParentObj="form.data"></ko-data>
+                  <ko-data :data-obj.sync="form.data"></ko-data>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
+                  <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
+                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -119,14 +119,7 @@ export default {
       })
     },
     transformYaml () {
-      let formData = {}
-      formData = JSON.parse(JSON.stringify(this.form))
-      // labels
-      this.$refs.ko_labels.transformation(formData.metadata)
-      // annotations
-      this.$refs.ko_annotations.transformation(formData.metadata)
-      this.$refs.ko_data.transformation(formData)
-      return formData
+      return JSON.parse(JSON.stringify(this.form))
     },
   },
   created () {

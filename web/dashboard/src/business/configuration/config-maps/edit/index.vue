@@ -23,11 +23,12 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data">
-                  <ko-data ref="ko_data" :labelParentObj.sync="item.data"></ko-data>
+                  <ko-data :data-obj.sync="item.data"></ko-data>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :key="keyNum+2" :labelParentObj="item.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :key="keyNum+3" :labelParentObj="item.metadata"></ko-annotations>
+                  <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
+                  <ko-annotations annotations-title="Annotations"
+                                  :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -37,7 +38,7 @@
           <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
         </div>
         <div>
-          <div style="float: right;margin-top: 10px">
+          <div class="bottom-button">
             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
             <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
             <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
@@ -76,7 +77,6 @@ export default {
       yaml: {},
       yamlShow: false,
       activeName: "",
-      keyNum: 0,
       cluster: ""
     }
   },
@@ -84,7 +84,6 @@ export default {
     getDetail () {
       this.loading = true
       getConfigMap(this.cluster, this.namespace, this.name).then(res => {
-        this.keyNum++
         this.loading = false
         this.item = res
       })
@@ -121,14 +120,7 @@ export default {
       this.activeName = tab.index
     },
     transformYaml () {
-      let formData = {}
-      formData = JSON.parse(JSON.stringify(this.item))
-      // labels
-      this.$refs.ko_labels.transformation(formData.metadata)
-      // annotations
-      this.$refs.ko_annotations.transformation(formData.metadata)
-      this.$refs.ko_data.transformation(formData)
-      return formData
+      return JSON.parse(JSON.stringify(this.item))
     },
   },
   created () {
