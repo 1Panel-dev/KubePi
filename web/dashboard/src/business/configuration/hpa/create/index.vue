@@ -98,7 +98,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createHpa(this.cluster, data).then(res => {
+      createHpa(this.cluster, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
