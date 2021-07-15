@@ -117,7 +117,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "LimitRangeCreate",
+        name: "HPACreate",
       })
     },
     onDelete (row) {

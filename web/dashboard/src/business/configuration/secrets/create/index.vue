@@ -139,7 +139,7 @@ export default {
       this.$router.push({ name: "Secrets" })
     },
     onEditYaml () {
-      // this.showYaml = true
+      this.showYaml = true
       this.yaml = this.transformYaml()
     },
     backToForm () {
@@ -152,10 +152,8 @@ export default {
       this.$refs.ko_labels.transformation(formData.metadata)
       // annotations
       this.$refs.ko_annotations.transformation(formData.metadata)
-
       const result = this.$refs["secret_config"].checkIsValid()
       this.messages = this.messages.concat(result.messages)
-      console.log(result)
       return formData
     },
     onSubmit () {
