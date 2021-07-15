@@ -27,7 +27,7 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="metadata.namespace">
+      <el-table-column :label="$t('commons.table.status')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase ==='Bound'" type="success" size="mini" plain round>
             {{ row.status.phase }}
@@ -37,14 +37,14 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="ACCESS MODES" prop="metadata.labels" >
+      <el-table-column :label="$t('business.storage.accessModes')" prop="metadata.labels" >
         <template v-slot:default="{row}">
           <div v-for="(name,index) in row.spec.accessModes " :key="index" style="display:inline-block">
             <el-tag>{{ name }}</el-tag>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="容量" prop="metadata.labels">
+      <el-table-column :label="$t('business.storage.capacity')" prop="metadata.labels">
         <template v-slot:default="{row}">
           {{ row.spec.capacity['storage'] }}
         </template>

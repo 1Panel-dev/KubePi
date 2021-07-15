@@ -27,11 +27,11 @@
                   </td>
               </tr>
               <tr>
-                <td>CAPACITY</td>
+                <td>{{ this.$t('business.storage.capacity') }}</td>
                 <td colspan="3">{{ item.spec.capacity.storage }}</td>
               </tr>
               <tr>
-                <td>ACCESS MODES</td>
+                <td>{{ this.$t('business.storage.accessModes') }}</td>
                 <td colspan="3">
                   <div v-for="(value,index) in item.spec.accessModes" v-bind:key="index" class="myTag">
                     <el-tag type="info" size="small">
@@ -40,11 +40,11 @@
                   </div></td>
               </tr>
               <tr>
-                <td>STORAGE CLASS</td>
+                <td>{{ this.$t('business.storage.storageClass') }}</td>
                 <td colspan="3">{{ item.spec.storageClassName }}</td>
               </tr>
               <tr>
-                <td>RECLAIM POLICY</td>
+                <td>{{ this.$t('business.storage.reclaimPolicy') }}</td>
                 <td colspan="3">{{ item.spec.persistentVolumeReclaimPolicy }}</td>
               </tr>
               <tr>
@@ -99,19 +99,19 @@
           <br>
           <el-card v-if="item.spec.claimRef !== undefined">
             <div class="card_title">
-              <h3>Claim</h3>
+              <h3>{{ this.$t('business.storage.claim') }}</h3>
             </div>
             <table style="width: 50%" class="myTable">
               <tr>
-                <td>Type</td>
+                <td>{{ this.$t('business.configuration.type') }}</td>
                 <td colspan="3">{{ item.spec.claimRef.kind }}</td>
               </tr>
               <tr>
-                <td>Name</td>
+                <td>{{ this.$t('commons.table.name') }}</td>
                 <td colspan="3">{{ item.spec.claimRef.name }}</td>
               </tr>
               <tr>
-                <td>NameSpace</td>
+                <td>{{ this.$t('business.namespace.namespace') }}</td>
                 <td colspan="3">{{ item.spec.claimRef.namespace }}</td>
               </tr>
             </table>

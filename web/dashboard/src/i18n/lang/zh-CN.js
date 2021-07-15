@@ -159,7 +159,12 @@ const message = {
       network: "网络"
     },
     storage: {
-      storage: "存储"
+      storage: "存储",
+      accessModes: "访问模式",
+      capacity: "容量",
+      reclaimPolicy: "回收策略",
+      storageClass: "存储类",
+      claim: "要求"
     },
     configuration: {
       configuration: "配置",
