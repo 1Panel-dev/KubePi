@@ -63,6 +63,7 @@ const message = {
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
+      add_init_container: "当前 initContainers 为空，是否现在添加?",
     },
     login: {
       username: "用户名",
@@ -145,6 +146,7 @@ const message = {
       workload: "工作量",
       replicas: "副本数",
       container: "容器",
+      initContainer: "初始化容器",
       schedule: "调度",
       lastScheduleTime: "最后的调度",
       suspend: "暂停",

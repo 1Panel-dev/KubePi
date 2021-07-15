@@ -127,8 +127,6 @@ export default {
         parentFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template = {}
-        parentFrom.template.spec = {}
         parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
