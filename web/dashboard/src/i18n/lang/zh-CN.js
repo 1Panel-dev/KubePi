@@ -91,6 +91,7 @@ const message = {
       expand:"展开",
       pack_up: "收起",
       system: "系统信息",
+      config: "配置信息"
     },
     dashboard: {
       dashboard: "概览"

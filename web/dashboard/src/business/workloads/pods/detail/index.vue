@@ -27,7 +27,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -86,8 +86,8 @@
             <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30" />
             <el-table-column sortable :label="$t('commons.table.created_time')" min-width="70">
               <template v-slot:default="{row}">
-                <span v-if="row.started">{{ row.state.running.startedAt | datetimeFormat }}</span>
-                <span v-if="!row.started">{{ row.state.terminated.startedAt | datetimeFormat }}</span>
+                <span v-if="row.started">{{ row.state.running.startedAt | age }}</span>
+                <span v-if="!row.started">{{ row.state.terminated.startedAt | age }}</span>
               </template>
             </el-table-column>
           </complex-table>
@@ -98,7 +98,7 @@
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
             <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
               <template v-slot:default="{row}">
-                {{ row.lastTransitionTime | datetimeFormat }}
+                {{ row.lastTransitionTime | age }}
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width="200">

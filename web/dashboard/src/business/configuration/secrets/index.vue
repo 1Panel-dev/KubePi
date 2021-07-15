@@ -36,7 +36,7 @@
       <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.creationTimestamp | datetimeFormat }}
+          {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>

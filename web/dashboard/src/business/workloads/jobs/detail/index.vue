@@ -19,7 +19,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -46,7 +46,7 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
         </div>
       </el-card>
-      
+
       <el-tabs style="margin-top:20px" v-model="activeName">
         <el-tab-pane label="Pods" name="Pods">
           <complex-table :data="jobs">
@@ -79,7 +79,7 @@
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" min-width=20 />
             <el-table-column sortable :label="$t('business.workload.lastTransitionTime')" prop="lastTransitionTime" min-width=30>
               <template v-slot:default="{row}">
-                {{ row.lastTransitionTime | datetimeFormat }}
+                {{ row.lastTransitionTime | age }}
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width=120>

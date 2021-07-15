@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ConfigMaps'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'HPA'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
@@ -23,12 +23,13 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Data">
-                  <ko-data :data-obj.sync="form.data"></ko-data>
+                <el-tab-pane label="Target">
+                  <ko-hpa-target :namespace="form.metadata.namespace" :cluster="cluster"
+                                 :spec-obj.sync="form.spec"></ko-hpa-target>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+                  <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
+                  <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -41,7 +42,7 @@
           <div class="bottom-button">
             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
             <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-            <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+            <el-button v-if="showYaml" @click="showYaml=false">{{ $t("commons.button.back_form") }}</el-button>
             <el-button v-loading="loading" @click="onSubmit" type="primary">
               {{ $t("commons.button.submit") }}
             </el-button>
@@ -54,51 +55,40 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
-import KoData from "@/components/ko-workloads/ko-data"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
-import {createConfigMap} from "@/api/configmaps"
+import KoHpaTarget from "@/components/ko-configuration/ko-hpa-target"
+import {listNamespace} from "@/api/namespaces"
+import {createHpa} from "@/api/hpa"
 
 export default {
-  name: "ConfigMapCreate",
-  components: { YamlEditor, KoAnnotations, KoLabels, KoData, LayoutContent },
+  name: "HPACreate",
+  components: { KoHpaTarget, LayoutContent, YamlEditor, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
+      form: {
+        metadata: {
+          namespace: "default"
+        },
+        spec: {}
+      },
       loading: false,
       showYaml: false,
-      form: {
-        apiVersion: "v1",
-        kind: "ConfigMap",
-        metadata: {
-          name: "",
-          namespace: "default",
-          labels: {},
-          annotations: {},
-        },
-        data: {}
-      },
+      cluster: "",
       namespaces: [],
       activeName: "",
-      yaml: {},
-      cluster: ""
+      yaml: {}
     }
   },
   methods: {
-    handleClick (tab) {
-      this.activeName = tab.index
-    },
     onCancel () {
-      this.$router.push({ name: "ConfigMaps" })
+      this.$router.push({ name: "HPA" })
     },
     onEditYaml () {
       this.showYaml = true
       this.yaml = this.transformYaml()
-    },
-    backToForm () {
-      this.showYaml = false
     },
     onSubmit () {
       let data = {}
@@ -108,19 +98,22 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createConfigMap(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createHpa(this.cluster, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({ name: "ConfigMaps" })
+        this.$router.push({ name: "HPA" })
       }).finally(() => {
         this.loading = false
       })
     },
+    handleClick (tab) {
+      this.activeName = tab.index
+    },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.form))
-    },
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster

@@ -19,7 +19,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ item.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ item.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>

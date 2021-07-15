@@ -19,7 +19,7 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | datetimeFormat }}</td>
+            <td>{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -72,7 +72,7 @@
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
               <template v-slot:default="{row}">
-                {{ row.metadata.creationTimestamp | datetimeFormat }}
+                {{ row.metadata.creationTimestamp | age }}
               </template>
             </el-table-column>
           </complex-table>
@@ -81,7 +81,7 @@
           <complex-table :data="events">
             <el-table-column sortable :label="$t('commons.table.status')">
               <template v-slot:default="{row}">
-                <span>{{ row.firstTimestamp | datetimeFormat }} - {{ row.lastTimestamp | datetimeFormat }}</span>
+                <span>{{ row.firstTimestamp | age }} - {{ row.lastTimestamp | age }}</span>
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.message')" min-width=250>

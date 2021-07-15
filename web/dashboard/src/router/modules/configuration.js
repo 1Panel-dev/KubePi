@@ -162,11 +162,30 @@ const Configuration = {
       }
     },
     {
-      path: "/hpa",
+      path: "/horizontalpodautoscalers",
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
         title: "Horizontal Pod Autoscaler",
+      }
+    },
+    {
+      path: "/horizontalpodautoscalers/:namespace/:name/detail",
+      component: () => import("@/business/configuration/hpa/detail"),
+      name: "HPADetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/horizontalpodautoscalers"
+      }
+    },
+    {
+      path: "/horizontalpodautoscalers/create",
+      component: () => import("@/business/configuration/hpa/create"),
+      name: "HPACreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/horizontalpodautoscalers"
       }
     }
   ]

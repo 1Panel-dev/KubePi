@@ -14,10 +14,11 @@
           </tr>
           <tr v-for="(row, index) in labels" v-bind:key="index">
             <td>
-              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
+              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation"/>
             </td>
             <td>
-              <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
+              <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value"
+                            @change.native="transformation"/>
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -44,17 +45,17 @@ export default {
   name: "KoLabels",
   components: { KoFormItem, KoCard },
   props: {
-    labelParentObj: Object,
+    labelObj: Object,
     labelTitle: String,
     isReadOnly: Boolean,
   },
-  data() {
+  data () {
     return {
       labels: [],
     }
   },
   methods: {
-    handleAdd() {
+    handleAdd () {
       const item = {
         index: Math.random(),
         key: "",
@@ -62,35 +63,31 @@ export default {
       }
       this.labels.push(item)
     },
-    handleDelete(index) {
+    handleDelete (index) {
       this.labels.splice(index, 1)
+      this.transformation()
     },
-    transformation(parentFrom) {
+    transformation () {
       if (this.labels) {
         let obj = {}
-        if (parentFrom.labels === undefined) {
-          parentFrom.labels = {}
-        }
         for (let i = 0; i < this.labels.length; i++) {
           if (this.labels[i].key !== "") {
             obj[this.labels[i].key] = this.labels[i].value
           }
         }
-        parentFrom.labels = obj
+        this.$emit("update:labelObj", obj)
       }
     },
   },
-  mounted() {
-    if (this.labelParentObj) {
-      if (this.labelParentObj.labels) {
-        for (const key in this.labelParentObj.labels) {
-          if (Object.prototype.hasOwnProperty.call(this.labelParentObj.labels, key)) {
-            this.labels.push({
-              index: Math.random(),
-              key: key,
-              value: this.labelParentObj.labels[key],
-            })
-          }
+  mounted () {
+    if (this.labelObj) {
+      for (const key in this.labelObj) {
+        if (Object.prototype.hasOwnProperty.call(this.labelObj, key)) {
+          this.labels.push({
+            index: Math.random(),
+            key: key,
+            value: this.labelObj[key],
+          })
         }
       }
     }
