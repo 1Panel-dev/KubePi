@@ -325,7 +325,7 @@ export default {
           this.currentContainer = this.form.spec.template.spec.initContainers[0]
         }
       } else {
-        if (this.form.spec.template.spec.containers.length <= this.currentContainerIndex) {
+        if (this.form.spec.template.spec.containers.length - 1 <= this.currentContainerIndex) {
           return
         } else {
           this.form.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
