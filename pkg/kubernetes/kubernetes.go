@@ -22,7 +22,7 @@ type Interface interface {
 	Version() (*version.Info, error)
 	Client() (*kubernetes.Clientset, error)
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
-	CreateCommonUser(commonName string, org ...string) ([]byte, error)
+	CreateCommonUser(commonName string) ([]byte, error)
 	CreateDefaultClusterRoles() error
 }
 
@@ -111,9 +111,9 @@ func (k *Kubernetes) CreateDefaultClusterRoles() error {
 	return nil
 }
 
-func (k *Kubernetes) CreateCommonUser(commonName string, org ...string) ([]byte, error) {
+func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	// 生成用户证书申请
-	cert, err := certificate.CreateClientCertificateRequest(commonName, k.PrivateKey, org...)
+	cert, err := certificate.CreateClientCertificateRequest(commonName, k.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
