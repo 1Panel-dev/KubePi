@@ -1,6 +1,6 @@
 <template>
   <div v-if="messages.length > 0">
-    <div v-for="m in messages">
+    <div  v-for="(row, index) in messages" v-bind:key="index">
       <el-alert type="error" :title="m"></el-alert>
     </div>
   </div>
