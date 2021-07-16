@@ -63,7 +63,7 @@ func (h *Handler) Login() iris.Handler {
 			return
 		}
 
-		if err := bcrypt.CompareHashAndPassword([]byte(u.Spec.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", "username or password error")
 			return

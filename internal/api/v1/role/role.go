@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
+	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/role"
@@ -66,7 +67,7 @@ func (h *Handler) ListRoles() iris.Handler {
 
 func (h *Handler) CreateRole() iris.Handler {
 	return func(ctx *context.Context) {
-		var req Role
+		var req v1Role.Role
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
@@ -75,20 +76,12 @@ func (h *Handler) CreateRole() iris.Handler {
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		req.CreatedBy = profile.Name
-		if req.TemplateRef != "" {
-			if err := h.roleService.CreateWithTemplate(&req.Role, req.TemplateRef, common.DBOptions{}); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		} else {
-			if err := h.roleService.Create(&req.Role, common.DBOptions{}); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
+		if err := h.roleService.Create(&req, common.DBOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
 		}
-		ctx.Values().Set("data", req.Role)
+		ctx.Values().Set("data", &req)
 	}
 }
 
@@ -130,13 +123,13 @@ func (h *Handler) UpdateRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("invalid resource name %s", roleName))
 			return
 		}
-		var req Role
+		var req v1Role.Role
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		if err := h.roleService.Update(roleName, &req.Role, common.DBOptions{}); err != nil {
+		if err := h.roleService.Update(roleName, &req, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return

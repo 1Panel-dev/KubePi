@@ -132,8 +132,9 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		txOptions := common.DBOptions{DB: tx}
-
 		req.CreatedBy = profile.Name
+
+
 		if err := client.CreateDefaultClusterRoles(); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

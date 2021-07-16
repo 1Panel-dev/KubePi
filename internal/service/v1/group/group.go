@@ -35,7 +35,7 @@ func (s *service) Update(name string, g *v1Group.Group, options common.DBOptions
 	if err != nil {
 		return err
 	}
-	if cu.CreatedBy == "system" {
+	if cu.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	db := s.GetDB(options)
@@ -60,7 +60,7 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	if item.CreatedBy == "system" {
+	if item.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(item)
