@@ -3,7 +3,7 @@
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
-          <el-form label-position="top" :model="form">
+          <el-form label-position="top" :model="form" :rules="rules" ref="form">
             <el-col :span="6">
               <el-form-item :label="$t('commons.table.name')" required>
                 <el-input clearable v-model="form.metadata.name"></el-input>
@@ -60,6 +60,7 @@ import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import {createConfigMap} from "@/api/configmaps"
+import Rule from "@/utils/rules"
 
 export default {
   name: "ConfigMapCreate",
@@ -83,7 +84,13 @@ export default {
       namespaces: [],
       activeName: "",
       yaml: {},
-      cluster: ""
+      cluster: "",
+      rules: {
+        metadata:{
+          name: [Rule.RequiredRule],
+          namespace: [Rule.RequiredRule],
+        }
+      }
     }
   },
   methods: {
@@ -101,12 +108,17 @@ export default {
       this.showYaml = false
     },
     onSubmit () {
-      let data = {}
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
-        data = this.transformYaml()
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.onCreate(this.transformYaml())
+          }
+        })
       }
+    },
+    onCreate(data){
       this.loading = true
       createConfigMap(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
