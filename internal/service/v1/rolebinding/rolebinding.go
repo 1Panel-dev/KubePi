@@ -59,7 +59,7 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	if err := db.One("Name", name, &binding); err != nil {
 		return err
 	}
-	if binding.CreatedBy == "system" {
+	if binding.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(&binding)

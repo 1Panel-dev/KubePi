@@ -14,36 +14,8 @@
               <ko-form-item itemType="input" v-model="form.metadata.name" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-row>
-              <el-col :span="8">
-                <el-select style="margin-top: 33px;width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
-                  <el-option v-for="(item, index) in type_list" :key="index" :label="item.label" :value="item.value" />
-                </el-select>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item :label="$t('business.workload.container')">
-                  <el-select v-if="selectContainerType === 'standardContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
-                    <el-option v-for="(item, index) in form.spec.template.spec.containers" :key="index" :label="item.name" :value="index" />
-                  </el-select>
-                  <el-select v-if="selectContainerType === 'initContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
-                    <el-option v-for="(item, index) in form.spec.template.spec.initContainers" :key="index" :label="item.name" :value="index" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="2">
-                <div style="margin-top: 33px">
-                  <el-button style="width:100%" @click="handleAddContainer">+</el-button>
-                </div>
-              </el-col>
-              <el-col :span="2">
-                <div style="margin-top: 33px">
-                  <el-button style="width:100%" @click="handleDeleteContainer">-</el-button>
-                </div>
-              </el-col>
-            </el-row>
-          </el-col>
         </el-row>
+        <ko-base :baseParentObj="form.spec.template.spec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
       </el-form>
 
       <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
@@ -110,6 +82,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import KoFormItem from "@/components/ko-form-item/index"
+import KoBase from "@/components/ko-workloads/ko-base.vue"
 import KoContainer from "@/components/ko-workloads/ko-container.vue"
 import KoPorts from "@/components/ko-workloads/ko-ports.vue"
 import KoCommand from "@/components/ko-workloads/ko-command.vue"
@@ -126,39 +99,34 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
+import Rule from "@/utils/rules"
 
 import { getDaemonSetByName, updateDaemonSet } from "@/api/daemonsets"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
-import Rule from "@/utils/rules"
 
 export default {
   name: "DaemonSetEdit",
-  components: { LayoutContent, KoFormItem, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyDaemonset, KoLabels, KoAnnotations, KoStorage, YamlEditor },
+  components: { LayoutContent, KoBase, KoFormItem, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyDaemonset, KoLabels, KoAnnotations, KoStorage, YamlEditor },
   data() {
     return {
+      // yaml
       showYaml: false,
-      type_list: [
-        { label: "Init Container", value: "initContainers" },
-        { label: "Standard Container", value: "standardContainers" },
-      ],
-      selectContainerIndex: 0,
-      currentContainerIndex: 0,
-      selectContainerType: "standardContainers",
-      currentContainerType: "standardContainers",
-      currentContainer: {},
       yaml: {},
-      isRefresh: false,
-      loading: false,
+      // containers
+      currentContainerIndex: 0,
+      currentContainerType: "",
+      currentContainer: {},
+      // resources
       namespace_list: [],
       secret_list: [],
       secret_list_of_ns: [],
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
-      containersList: [],
+      // base form
       activeName: "General",
       isValid: true,
       unValidInfo: "",
@@ -175,14 +143,16 @@ export default {
             metadata: {},
             spec: {
               containers: [],
+              initContainers: [],
               restartPolicy: "Always",
             },
           },
         },
       },
       clusterName: "",
+      isRefresh: false,
+      loading: false,
       operationLoading: false,
-      numberRules: [Rule.NumberRule],
       requiredRules: [Rule.RequiredRule],
     }
   },
@@ -197,7 +167,6 @@ export default {
     search() {
       getDaemonSetByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
-        this.currentContainerIndex = 0
         this.currentContainer = this.form.spec.template.spec.containers[0]
         this.yaml = res
         this.isRefresh = !this.isRefresh
@@ -252,89 +221,28 @@ export default {
       })
     },
 
-    selectContainer(isChangeType) {
-      this.gatherFormValid()
-      if (!this.isValid) {
-        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
-        this.selectContainerIndex = this.currentContainerIndex
-        this.selectContainerType = this.currentContainerType
-        return
-      }
-      this.form = this.gatherFormData()
-      this.selectContainerIndex = isChangeType ? 0 : this.selectContainerIndex
-      if (this.selectContainerType === "initContainers") {
-        if (!this.form.spec.template.spec.initContainers) {
-          this.$confirm(this.$t("commons.confirm_message.add_init_container"), this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          })
-            .then(() => {
-              this.form.spec.template.spec.initContainers = [{ name: "Container-0", image: "", imagePullPolicy: "ifNotPresent" }]
-              this.currentContainerType = this.selectContainerType
-              this.currentContainerIndex = isChangeType ? 0 : this.selectContainerIndex
-              this.currentContainer = this.form.spec.template.spec.initContainers[this.currentContainerIndex]
-              this.isRefresh = !this.isRefresh
-            })
-            .catch(() => {
-              this.selectContainerType = this.currentContainerType
-              this.selectContainerIndex = this.currentContainerIndex
-            })
-        } else {
-          this.currentContainerType = this.selectContainerType
-          this.currentContainerIndex = this.selectContainerIndex
-          this.currentContainer = this.form.spec.template.spec.initContainers[this.currentContainerIndex]
-          this.isRefresh = !this.isRefresh
-        }
-      } else {
-        this.currentContainerType = this.selectContainerType
-        this.currentContainerIndex = this.selectContainerIndex
-        this.currentContainer = this.form.spec.template.spec.containers[this.currentContainerIndex]
-        this.isRefresh = !this.isRefresh
-      }
-    },
-    handleAddContainer() {
-      this.dialogContainerVisible = false
-      let itemContainer = {}
-      itemContainer.image = ""
-      itemContainer.imagePullPolicy = "ifNotPresent"
-      if (this.selectContainerType === "initContainers") {
-        if (this.form.spec.template.spec.initContainers) {
-          itemContainer.name = "initContainer-" + this.form.spec.template.spec.initContainers.length.toString()
-        } else {
-          this.form.spec.template.spec.initContainers = []
-          itemContainer.name = "initContainer-0"
-        }
-        this.form.spec.template.spec.initContainers.push(itemContainer)
-      } else {
-        itemContainer.name = "Container-" + this.form.spec.template.spec.containers.length.toString()
-        this.form.spec.template.spec.containers.push(itemContainer)
-      }
-    },
-    handleDeleteContainer() {
-      if (this.selectContainerType === "initContainers") {
-        if (this.form.spec.template.spec.initContainers.length <= this.currentContainerIndex) {
-          return
-        } else if (this.form.spec.template.spec.initContainers.length - 1 === this.currentContainerIndex) {
-          delete this.form.spec.template.spec.initContainers
-          this.selectContainerType = "standardContainers"
-          this.currentContainerType = "standardContainers"
-          this.currentContainer = this.form.spec.template.spec.containers[0]
-        } else {
-          this.form.spec.template.spec.initContainers.splice(this.currentContainerIndex, 1)
-          this.currentContainer = this.form.spec.template.spec.initContainers[0]
-        }
-      } else {
-        if (this.form.spec.template.spec.containers.length - 1 <= this.currentContainerIndex) {
-          return
-        } else {
-          this.form.spec.template.spec.containers.splice(this.currentContainerIndex, 1)
-          this.currentContainer = this.form.spec.template.spec.containers[0]
-        }
-      }
-      this.currentContainerIndex = 0
-      this.selectContainerIndex = 0
+    refreshContainer(type, index, item) {
+      this.currentContainerIndex = index
+      this.currentContainerType = type
+      this.currentContainer = item
       this.isRefresh = !this.isRefresh
+    },
+    addContainer(type, item) {
+      if (type === "initContainers") {
+        if(!this.form.spec.template.spec.initContainers) {
+          this.form.spec.template.spec.initContainers = []
+        }
+        this.form.spec.template.spec.initContainers.push(item)
+      } else {
+        this.form.spec.template.spec.containers.push(item)
+      }
+    },
+    deleteContainer(type, index) {
+      if (type === "initContainers") {
+        this.form.spec.template.spec.initContainers.splice(index, 1)
+      } else {
+        this.form.spec.template.spec.containers.splice(index, 1)
+      }
     },
     gatherFormValid() {
       this.isValid = true
@@ -365,7 +273,7 @@ export default {
       this.$refs.ko_annotations.transformation(this.form.metadata)
       this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
       this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_storage.transformation(this.form.spec.template.spec)
+      // this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       if (this.currentContainerType === "initContainers") {
         this.form.spec.template.spec.initContainers[this.currentContainerIndex] = this.currentContainer
       } else {
@@ -410,7 +318,6 @@ export default {
     },
   },
   mounted() {
-    this.selectContainerIndex = 0
     this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
     if (this.$route.params.name) {

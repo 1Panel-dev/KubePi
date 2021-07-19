@@ -36,7 +36,7 @@ func (s *service) Update(name string, role *v1Role.Role, options common.DBOption
 	if err != nil {
 		return err
 	}
-	if r.CreatedBy == "system" {
+	if r.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	role.UUID = r.UUID
@@ -89,7 +89,7 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	if item.CreatedBy == "system" {
+	if item.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(item)
@@ -104,7 +104,7 @@ func (s *service) Search(num, size int, conditions pkgV1.Conditions, options com
 			ms = append(ms, m)
 		}
 	}
-	query := db.Select(ms...)
+	query := db.Select(ms...).OrderBy( "CreateAt")
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}

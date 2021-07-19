@@ -17,15 +17,9 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ $t(row.description) }}
-                </template>
-            </el-table-column>
-
-            <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
-                <template v-slot:default="{row}">
-                    {{ row.createdBy}}
+                    {{ $t("commons.bool."+row.builtIn)}}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
@@ -56,7 +50,9 @@
                         click: (row) => {
                             this.onEdit(row.name)
                         },
-                        disabled: !checkPermissions([{resource: 'roles', verb: 'update'}])
+                        disabled: (row) => {
+                            return row.builtIn || !checkPermissions([{resource: 'roles', verb: 'update'}])
+                        }
                     },
                     {
                         label: this.$t("commons.button.delete"),
@@ -64,7 +60,9 @@
                         click: (row) => {
                             this.onDelete(row.name)
                         },
-                        disabled: !checkPermissions([{resource: 'roles', verb: 'delete'}])
+                        disabled: (row) => {
+                            return row.builtIn || !checkPermissions([{resource: 'roles', verb: 'delete'}])
+                        }
                     },
                 ],
                 paginationConfig: {

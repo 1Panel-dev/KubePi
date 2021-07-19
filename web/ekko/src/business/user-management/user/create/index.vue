@@ -136,10 +136,8 @@
                     "roles": this.form.roles,
                     "nickName": this.form.nickname,
                     "email": this.form.email,
-                    "spec": {
-                        "authenticate": {
-                            "password": this.form.confirmPassword
-                        }
+                    "authenticate": {
+                        "password": this.form.confirmPassword
                     }
                 }
                 createUser(req).then(() => {

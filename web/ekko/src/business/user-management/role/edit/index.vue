@@ -87,6 +87,11 @@
         },
         methods: {
             onConfirm() {
+                this.loading = true
+                if (this.isSubmitGoing) {
+                    return
+                }
+                this.isSubmitGoing = true
                 const policyRules = []
                 this.resources.forEach((r) => {
                     const rule = {resource: [r.name], verbs: []}
@@ -98,16 +103,12 @@
                     policyRules.push(rule)
                     this.role.rules = policyRules
                 })
-                this.loading = true
-                if (this.isSubmitGoing) {
-                    return
-                }
-                this.isSubmitGoing = true
                 updateRole(this.name, this.role).then(data => {
                     this.$message.success(this.$t("commons.msg.update_success"))
                     this.$router.push({name: "RoleEdit", params: {name: data.data.name}})
                     this.loading = false
                     this.isSubmitGoing = false
+                    this.$router.push({name: "Roles"})
                 })
             },
             onCancel() {

@@ -35,7 +35,7 @@ func (s *service) UpdateClusterBinding(name string, binding *v1Cluster.Binding, 
 	if err := db.One("Name", name, &b); err != nil {
 		return err
 	}
-	if b.CreatedBy == "system" {
+	if b.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	binding.UUID = b.UUID
@@ -89,7 +89,7 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	if err := db.One("Name", name, &binding); err != nil {
 		return err
 	}
-	if binding.CreatedBy == "system" {
+	if binding.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(&binding)
