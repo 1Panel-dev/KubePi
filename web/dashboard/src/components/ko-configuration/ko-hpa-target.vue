@@ -6,7 +6,7 @@
           <el-col :span="12">
             <el-form-item label="Target Reference">
               <el-select filterable clearable v-model="form.scaleTargetRef" value-key="name" style="width:100%"
-                         @change.native="transform" required>
+                         @change="transform" required>
                 <el-option v-for="d in deploymentItem.items"
                            :key="d.metadata.name"
                            :label="d.metadata.name"
