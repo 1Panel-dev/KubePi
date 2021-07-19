@@ -10,11 +10,11 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="Quantity" v-if="row.pods.target.type === 'AverageValue'">
-          <el-input type="number" v-model.number="row.pods.target.averageValue">
+          <el-input type="number" v-model.number="row.pods.target.averageValue" required>
           </el-input>
         </el-form-item>
         <el-form-item label="Quantity" v-if="row.pods.target.type === 'Value'">
-          <el-input type="number" v-model.number="row.pods.target.value">
+          <el-input type="number" v-model.number="row.pods.target.value" required>
           </el-input>
         </el-form-item>
       </el-col>
@@ -22,7 +22,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-form-item label="Metric Name">
-          <el-input v-model="row.pods.metric.name"></el-input>
+          <el-input v-model="row.pods.metric.name" required></el-input>
         </el-form-item>
       </el-col>
     </el-row>

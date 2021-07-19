@@ -6,7 +6,7 @@
           <el-col :span="12">
             <el-form-item label="Target Reference">
               <el-select filterable clearable v-model="form.scaleTargetRef" value-key="name" style="width:100%"
-                         @change.native="transform">
+                         @change.native="transform" required>
                 <el-option v-for="d in deploymentItem.items"
                            :key="d.metadata.name"
                            :label="d.metadata.name"
@@ -36,12 +36,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Minimum Replicas">
-              <el-input type="number"  v-model.number="form.minReplicas"></el-input>
+              <el-input type="number"  v-model.number="form.minReplicas" required></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Maximum Replicas">
-              <el-input type="number"  v-model.number="form.maxReplicas"></el-input>
+              <el-input type="number"  v-model.number="form.maxReplicas" required></el-input>
             </el-form-item>
           </el-col>
         </el-row>
