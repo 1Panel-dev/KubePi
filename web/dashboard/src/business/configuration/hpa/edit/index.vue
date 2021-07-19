@@ -91,12 +91,12 @@ export default {
     getDetail () {
       this.loading = true
       getHpa(this.cluster, this.namespace, this.name).then(res => {
-        this.loading = false
         this.item = res
         if (this.showYaml) {
           this.yaml = this.transformYaml()
         }
       }).finally(() => {
+        this.loading = false
       })
     },
     onCancel () {
@@ -131,6 +131,18 @@ export default {
     transformYaml () {
       return JSON.parse(JSON.stringify(this.item))
     },
+  },
+  watch: {
+    showYaml: function (newValue) {
+      this.$router.push({
+        name: "HPAEdit",
+        params: {
+          name: this.name,
+          namespace: this.namespace,
+        },
+        query: { yamlShow: newValue }
+      })
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster
