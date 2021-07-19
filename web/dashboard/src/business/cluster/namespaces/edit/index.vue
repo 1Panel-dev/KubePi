@@ -12,7 +12,8 @@
         </el-form>
         <el-col :span="24">
           <br>
-          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
+          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick"
+                   v-if="Object.keys(item.metadata).length!==0">
             <el-tab-pane label="Labels/Annotations">
               <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
               <ko-annotations annotations-title="Annotations"
@@ -112,7 +113,10 @@ export default {
   watch: {
     showYaml: function (newValue) {
       this.$router.push({
-        path: "/namespaces/edit/" + this.name,
+        name: "NamespaceEdit",
+        params: {
+          name: this.name
+        },
         query: { yamlShow: newValue }
       })
     }
