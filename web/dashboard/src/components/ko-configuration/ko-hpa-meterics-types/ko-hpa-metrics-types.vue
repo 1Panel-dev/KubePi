@@ -13,6 +13,8 @@ export default {
           return KoHpaMetricResource
         case "External":
           return KoHpaMetricExternal
+        case "Pods":
+          return KoHpaMetricExternal
       }
     }
 

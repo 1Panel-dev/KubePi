@@ -10,8 +10,8 @@
                   <el-select v-model="row.type" style="width: 100%" value-key="type" @change="change(row,index)">
                     <el-option label="Resource" value="Resource"></el-option>
                     <el-option label="External" value="External"></el-option>
-                    <el-option label="Object" value=""></el-option>
-                    <el-option label="Pods" value=""></el-option>
+                    <el-option label="Object" value="Object"></el-option>
+                    <el-option label="Pods" value="Pods"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -56,6 +56,22 @@ export default {
           }
         }
       },
+      pods: {
+        type: "Pods",
+        external: {
+          type: "io.k8s.api.autoscaling.v2beta2.externalmetricsource",
+          metric: {
+            name: "",
+            selector: {
+              matchExpressions: []
+            }
+          },
+          target: {
+            type: "AverageValue",
+            averageValue: 80
+          }
+        }
+      },
       resource: {
         type: "Resource",
         resource: {
@@ -76,6 +92,9 @@ export default {
       }
       if (row.type === "External") {
         row = this.external
+      }
+      if (row.type === "Pods") {
+        row = this.pods
       }
       this.form.metrics[index] = row
       this.$emit("update:metricsObj", this.form.metrics)
