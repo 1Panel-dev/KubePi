@@ -11,11 +11,11 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="Quantity" v-if="row.external.target.type === 'AverageValue'">
-          <el-input type="number" v-model="row.external.target.averageValue">
+          <el-input type="number" v-model.number="row.external.target.averageValue">
           </el-input>
         </el-form-item>
         <el-form-item label="Quantity" v-if="row.external.target.type === 'Value'">
-          <el-input type="number" v-model="row.external.target.value">
+          <el-input type="number" v-model.number="row.external.target.value">
           </el-input>
         </el-form-item>
       </el-col>

@@ -74,6 +74,8 @@ export default {
   data () {
     return {
       form: {
+        apiVersion: "autoscaling/v2beta2",
+        kind: "HorizontalPodAutoscaler",
         metadata: {
           namespace: "default"
         },

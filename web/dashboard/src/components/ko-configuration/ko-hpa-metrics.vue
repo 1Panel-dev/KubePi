@@ -116,6 +116,9 @@ export default {
       if (row.type === "Pods") {
         row = this.pods
       }
+      if (row.type === "Object") {
+        row = this.object
+      }
       this.form.metrics[index] = row
       this.$emit("update:metricsObj", this.form.metrics)
     },

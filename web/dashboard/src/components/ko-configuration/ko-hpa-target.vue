@@ -36,12 +36,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Minimum Replicas">
-              <ko-form-item itemType="number" v-model="form.minReplicas"></ko-form-item>
+              <el-input type="number"  v-model.number="form.minReplicas"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Maximum Replicas">
-              <ko-form-item itemType="number" v-model="form.maxReplicas"></ko-form-item>
+              <el-input type="number"  v-model.number="form.maxReplicas"></el-input>
             </el-form-item>
           </el-col>
         </el-row>

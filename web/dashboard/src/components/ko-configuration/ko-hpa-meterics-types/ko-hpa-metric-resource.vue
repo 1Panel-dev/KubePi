@@ -21,12 +21,12 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="Quantity" v-if="row.resource.target.type === 'AverageValue'" :key="3">
-          <el-input type="number" v-model="row.resource.target.averageValue">
+          <el-input type="number" v-model.number="row.resource.target.averageValue">
             <template slot="append">mCpus</template>
           </el-input>
         </el-form-item>
         <el-form-item label="Quantity" v-if="row.resource.target.type === 'Utilization'" :key="4">
-          <el-input type="number" v-model="row.resource.target.averageUtilization">
+          <el-input type="number" v-mode.numberl="row.resource.target.averageUtilization">
             <template slot="append">%</template>
           </el-input>
         </el-form-item>
