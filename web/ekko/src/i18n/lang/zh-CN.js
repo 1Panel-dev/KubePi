@@ -32,7 +32,12 @@ const message = {
             status: "状态",
             action: "操作",
             creat_by: "创建者",
+            built_in: "内置",
             description: "描述",
+        },
+        bool: {
+            true: "是",
+            false: "否"
         },
         search: {
             quickSearch: "搜索"

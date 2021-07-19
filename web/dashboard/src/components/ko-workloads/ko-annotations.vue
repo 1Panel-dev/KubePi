@@ -13,10 +13,11 @@
         </tr>
         <tr v-for="(row, index) in annotations" v-bind:key="index">
           <td>
-            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
+            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation"/>
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" />
+            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value"
+                          @change.native="transformation"/>
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -42,26 +43,27 @@ export default {
   name: "KoAnnotations",
   components: { KoFormItem, KoCard },
   props: {
-    annotationsParentObj: Object,
+    annotationsObj: Object,
     annotationsTitle: String,
   },
-  data() {
+  data () {
     return {
       annotations: [],
     }
   },
   methods: {
-    handleAdd() {
+    handleAdd () {
       const item = {
         key: "",
         value: "",
       }
       this.annotations.push(item)
     },
-    handleDelete(index) {
+    handleDelete (index) {
       this.annotations.splice(index, 1)
+      this.transformation()
     },
-    transformation(parentFrom) {
+    transformation () {
       if (this.annotations) {
         let obj = {}
         for (let i = 0; i < this.annotations.length; i++) {
@@ -69,18 +71,18 @@ export default {
             obj[this.annotations[i].key] = this.annotations[i].value
           }
         }
-        parentFrom.annotations = obj
+        this.$emit("update:annotationsObj", obj)
       }
     },
   },
-  mounted() {
-    if (this.annotationsParentObj && this.annotationsParentObj.annotations) {
-      for (const key in this.annotationsParentObj.annotations) {
-        if (Object.prototype.hasOwnProperty.call(this.annotationsParentObj.annotations, key)) {
+  mounted () {
+    if (this.annotationsObj) {
+      for (const key in this.annotationsObj) {
+        if (Object.prototype.hasOwnProperty.call(this.annotationsObj, key)) {
           this.annotations.push({
             index: Math.random(),
             key: key,
-            value: this.annotationsParentObj.annotations[key],
+            value: this.annotationsObj[key],
           })
         }
       }

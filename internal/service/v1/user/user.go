@@ -35,7 +35,7 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	if err != nil {
 		return err
 	}
-	if cu.CreatedBy == "system" {
+	if cu.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	db := u.GetDB(options)
@@ -47,7 +47,7 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 
 func (u *service) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error) {
 	db := u.GetDB(options)
-	query := db.Select()
+	query := db.Select().OrderBy("CreateAt")
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}
@@ -88,7 +88,7 @@ func (u *service) Delete(name string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	if item.CreatedBy == "system" {
+	if item.BuiltIn {
 		return errors.New("can not delete this resource,because it created by system")
 	}
 	return db.DeleteStruct(item)
@@ -99,9 +99,9 @@ func (u *service) Create(us *v1User.User, options common.DBOptions) error {
 	us.UUID = uuid.New().String()
 	us.CreateAt = time.Now()
 	us.UpdateAt = time.Now()
-	if us.Spec.Authenticate.Password != "" {
-		hash, _ := bcrypt.GenerateFromPassword([]byte(us.Spec.Authenticate.Password), bcrypt.DefaultCost) //加密处理
-		us.Spec.Authenticate.Password = string(hash)
+	if us.Authenticate.Password != "" {
+		hash, _ := bcrypt.GenerateFromPassword([]byte(us.Authenticate.Password), bcrypt.DefaultCost) //加密处理
+		us.Authenticate.Password = string(hash)
 	}
 	return db.Save(us)
 }

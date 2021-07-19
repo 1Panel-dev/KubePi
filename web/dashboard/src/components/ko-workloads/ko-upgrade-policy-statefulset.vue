@@ -78,8 +78,6 @@ export default {
         parentFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template = {}
-        parentFrom.template.spec = {}
         parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },

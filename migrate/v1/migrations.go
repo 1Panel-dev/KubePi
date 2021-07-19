@@ -16,24 +16,27 @@ var Migrations = []migrations.Migration{
 	CreateAdministrator,
 }
 
-// 创建默认角色: administrator/authenticated/anonymous/viewer
-// 创建默认用户：admin
-// 关联: admin 和 administrator
+// 创建默认系统角色: Admin |Manage Cluster| Manage User|Read only|Common User
+// 创建用户
+// 创建用户和角色的关联
+
 var CreateAdministrator = migrations.Migration{
 	Version: 1,
-	Message: "CreateAdministrator",
+	Message: "Create default user and cluster",
 	Handler: func(db storm.Node) error {
-		roleAdministrator := v1Role.Role{
+		//
+
+		roleAdmin := v1Role.Role{
 			BaseModel: v1.BaseModel{
 				ApiVersion: "v1",
 				Kind:       "Role",
-				CreatedBy:  "system",
+				BuiltIn:    true,
 				CreateAt:   time.Now(),
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name:        "administrator",
-				Description: "_administrator",
+				Name:        "Administrator",
+				Description: "",
 				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
@@ -43,13 +46,91 @@ var CreateAdministrator = migrations.Migration{
 				},
 			},
 		}
-		defaultPass := "admin123"
-		hash, _ := bcrypt.GenerateFromPassword([]byte(defaultPass), bcrypt.DefaultCost)
+
+		roleManageClusters := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name: "Manage Clusters",
+				UUID: uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"clusters"},
+					Verbs:    []string{"*"},
+				},
+			},
+		}
+		roleManageRBAC := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name: "Manage RBAC",
+				UUID: uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"users", "roles"},
+					Verbs:    []string{"*"},
+				},
+			},
+		}
+		roleReadOnly := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name: "ReadOnly",
+				UUID: uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"*"},
+					Verbs:    []string{"get", "list"},
+				},
+			},
+		}
+		roleCommonUser := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name: "Common User",
+				UUID: uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"clusters"},
+					Verbs:    []string{"get", "list"},
+				},
+			},
+		}
+		// 创建管理员用户
+		defaultUserPass := "admin123"
+		hash, _ := bcrypt.GenerateFromPassword([]byte(defaultUserPass), bcrypt.DefaultCost)
 		userAdmin := v1User.User{
 			BaseModel: v1.BaseModel{
 				ApiVersion: "v1",
 				Kind:       "User",
-				CreatedBy:  "system",
+				BuiltIn:    true,
 				CreateAt:   time.Now(),
 				UpdateAt:   time.Now(),
 			},
@@ -57,42 +138,41 @@ var CreateAdministrator = migrations.Migration{
 				Name: "admin",
 				UUID: uuid.New().String(),
 			},
-			NickName: "administrator",
+			IsAdmin:  true,
+			NickName: "Administrator",
 			Email:    "support@fit2cloud.com",
 			Language: "zh-CN",
-			Spec: v1User.Spec{
-				Authenticate: v1User.Authenticate{
-					Password: string(hash),
-					Token:    "",
-				},
+			Authenticate: v1User.Authenticate{
+				Password: string(hash),
 			},
 		}
-
+		// 创建绑定关系
 		binding := v1Role.Binding{
 			BaseModel: v1.BaseModel{
 				ApiVersion: "v1",
 				Kind:       "RoleBinding",
-				CreatedBy:  "system",
+				BuiltIn:    true,
 				CreateAt:   time.Now(),
 				UpdateAt:   time.Now()},
 			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("role-binding-%s-%s", roleAdministrator.Name, userAdmin.Name),
+				Name: fmt.Sprintf("ekko:role-binding:%s-%s", roleAdmin.Name, userAdmin.Name),
 				UUID: uuid.New().String(),
 			},
 			Subject: v1Role.Subject{
 				Kind: "User",
 				Name: userAdmin.Name,
 			},
-			RoleRef: roleAdministrator.Name,
+			RoleRef: roleAdmin.Name,
 		}
-		if err := db.Save(&roleAdministrator); err != nil {
-			return err
+		dbObjects := []interface{}{
+			&roleAdmin, &roleManageClusters, &roleCommonUser, &roleManageRBAC, &roleReadOnly,
+			&userAdmin,
+			&binding,
 		}
-		if err := db.Save(&userAdmin); err != nil {
-			return err
-		}
-		if err := db.Save(&binding); err != nil {
-			return err
+		for i := range dbObjects {
+			if err := db.Save(dbObjects[i]); err != nil {
+				return err
+			}
 		}
 		return nil
 	},

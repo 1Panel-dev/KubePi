@@ -13,11 +13,11 @@
         </tr>
         <tr v-for="label in data" v-bind:key="label.index">
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. foo" clearable itemType="input" v-model="label.key"
+            <ko-form-item  placeholder="e.g. foo" clearable itemType="input" v-model="label.key"
                           @change.native="transform"/>
           </td>
           <td>
-            <ko-form-item :withoutLabel="true" placeholder="e.g. bar" clearable itemType="textarea"
+            <ko-form-item  placeholder="e.g. bar" clearable itemType="textarea"
                           v-model="label.value" @change.native="transform"/>
           </td>
           <td>

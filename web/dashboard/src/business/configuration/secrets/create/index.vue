@@ -3,14 +3,14 @@
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
-          <el-form label-position="top" :model="form">
+          <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
-              <el-form-item :label="$t('commons.table.name')" required>
+              <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
                 <el-input clearable v-model="form.metadata.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item :label="$t('business.namespace.namespace')" required>
+              <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
                              :key="namespace.metadata.name"
@@ -24,14 +24,14 @@
               <el-form-item :label="$t('business.configuration.type')" required>
                 <el-select v-model="form.type" @change="changeType">
                   <el-option label="Opaque" value="Opaque"></el-option>
-<!--                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>-->
+                  <!--                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>-->
                   <el-option label="Docker Registry" value="kubernetes.io/dockerconfigjson"></el-option>
                   <el-option :label="$t('business.configuration.basic_auth')"
                              value="kubernetes.io/basic-auth"></el-option>
                   <el-option :label="$t('business.configuration.ssh_auth')" value="kubernetes.io/ssh-auth"></el-option>
                   <el-option :label="$t('business.configuration.tls_auth')" value="kubernetes.io/tls"></el-option>
-<!--                  <el-option :label="$t('business.configuration.token_auth')"-->
-<!--                             value="bootstrap.kubernetes.io/token"></el-option>-->
+                  <!--                  <el-option :label="$t('business.configuration.token_auth')"-->
+                  <!--                             value="bootstrap.kubernetes.io/token"></el-option>-->
                 </el-select>
               </el-form-item>
             </el-col>
@@ -39,23 +39,25 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data" v-if="form.type==='Opaque'">
-                  <ko-secret-data :dataObj.sync="form.data"></ko-secret-data>
+                  <ko-secret-data ref="secret_config" :dataObj.sync="form.data"></ko-secret-data>
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
-                  <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
+                  <ko-secret-docker-data ref="secret_config" :dataObj.sync="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
-                  <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
+                  <ko-secret-keys ref="secret_config" :data-obj.sync="form.data"></ko-secret-keys>
                 </el-tab-pane>
                 <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
-                  <ko-secret-authentication :authentication-obj.sync="form.data"></ko-secret-authentication>
+                  <ko-secret-authentication ref="secret_config"
+                                            :authentication-obj.sync="form.data"></ko-secret-authentication>
                 </el-tab-pane>
                 <el-tab-pane label="Tls" v-if="form.type==='kubernetes.io/tls'">
-                  <ko-secret-certificate :certificate-obj.sync="form.data"></ko-secret-certificate>
+                  <ko-secret-certificate ref="secret_config" :certificate-obj.sync="form.data"></ko-secret-certificate>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata"></ko-annotations>
+                  <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
+                  <ko-annotations annotations-title="Annotations"
+                                  :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -64,7 +66,7 @@
         <div v-if="showYaml">
           <yaml-editor ref="yaml_editor" :value="yaml"></yaml-editor>
         </div>
-        <div style="float: right;margin-top: 10px">
+        <div class="bottom-button">
           <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
           <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
           <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
@@ -72,6 +74,7 @@
             {{ $t("commons.button.submit") }}
           </el-button>
         </div>
+        <ko-alert :messages="messages"></ko-alert>
       </el-row>
     </div>
   </layout-content>
@@ -85,11 +88,27 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
-// import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
+import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
+import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
+import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
+import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
+import KoAlert from "@/components/ko-alert"
+import Rule from "@/utils/rules"
 
 export default {
   name: "SecretCreate",
-  components: { YamlEditor, KoSecretData, LayoutContent, KoAnnotations, KoLabels },
+  components: {
+    KoAlert,
+    KoSecretCertificate,
+    KoSecretAuthentication,
+    KoSecretKeys,
+    YamlEditor,
+    KoSecretData,
+    LayoutContent,
+    KoAnnotations,
+    KoLabels,
+    KoSecretDockerData,
+  },
   props: {},
   data () {
     return {
@@ -110,7 +129,14 @@ export default {
       },
       showYaml: false,
       yaml: {},
-      activeName: ""
+      activeName: "",
+      messages: [],
+      rules: {
+        metadata: {
+          name: [Rule.RequiredRule],
+          namespace: [Rule.RequiredRule],
+        }
+      }
     }
   },
   methods: {
@@ -128,22 +154,20 @@ export default {
       this.showYaml = false
     },
     transformYaml () {
-      console.log(this.form)
-      let formData = {}
-      formData = JSON.parse(JSON.stringify(this.form))
-      // labels
-      this.$refs.ko_labels.transformation(formData.metadata)
-      // annotations
-      this.$refs.ko_annotations.transformation(formData.metadata)
-      return formData
+      return JSON.parse(JSON.stringify(this.form))
     },
     onSubmit () {
-      let data = {}
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
-        data = this.transformYaml()
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.onCreate(this.transformYaml())
+          }
+        })
       }
+    },
+    onCreate (data) {
       this.loading = true
       createSecret(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({

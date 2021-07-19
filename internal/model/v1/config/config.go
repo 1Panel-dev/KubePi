@@ -11,6 +11,7 @@ type Spec struct {
 	Server ServerConfig `json:"server"`
 	DB     DBConfig     `json:"db"`
 	Logger LoggerConfig `json:"logger"`
+	AppId  string       `json:"appId"`
 }
 
 type ServerConfig struct {

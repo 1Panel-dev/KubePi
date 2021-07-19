@@ -11,15 +11,17 @@
           </th>
           <th align="left"></th>
         </tr>
-        <tr v-for="label in data" v-bind:key="label.index">
+        <tr v-for="(label,index) in data" v-bind:key="label.index">
           <td>
-            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="label.key"/>
+            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="label.key"
+                          @change.native="transformation"/>
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value"/>
+            <ko-form-item placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value"
+                          @change.native="transformation"/>
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>
@@ -27,14 +29,14 @@
         <tr>
           <td align="left">
             <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-            <el-upload  :before-upload="readFile" action=""  style="display: inline-block;margin-left: 5px">
+            <el-upload :before-upload="readFile" action="" style="display: inline-block;margin-left: 5px">
               <el-button>{{ $t("commons.button.upload") }}</el-button>
             </el-upload>
           </td>
         </tr>
       </table>
     </ko-card>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -53,12 +55,9 @@ export default {
     }
   },
   methods: {
-    handleDelete (row) {
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i] === row) {
-          this.data.splice(i, 1)
-        }
-      }
+    handleDelete (index) {
+      this.data.splice(index, 1)
+      this.transformation()
     },
     handleAdd () {
       const item = {
@@ -68,7 +67,7 @@ export default {
       }
       this.data.push(item)
     },
-    readFile(file) {
+    readFile (file) {
       const reader = new FileReader()
       reader.readAsText(file)
       reader.onerror = e => {
@@ -81,10 +80,11 @@ export default {
           value: reader.result,
         }
         this.data.push(item)
+        this.transformation()
       }
       return false
     },
-    transformation (parentFrom) {
+    transformation () {
       if (this.data) {
         let obj = {}
         for (let i = 0; i < this.data.length; i++) {
@@ -92,18 +92,18 @@ export default {
             obj[this.data[i].key] = this.data[i].value
           }
         }
-        parentFrom.data = obj
+        this.$emit("update:dataObj", obj)
       }
     },
   },
   mounted () {
-    if (this.dataObj && this.dataObj.data) {
-      for (const key in this.dataObj.data) {
-        if (Object.prototype.hasOwnProperty.call(this.dataObj.data, key)) {
+    if (this.dataObj && this.dataObj) {
+      for (const key in this.dataObj) {
+        if (Object.prototype.hasOwnProperty.call(this.dataObj, key)) {
           this.data.push({
             index: Math.random(),
             key: key,
-            value: this.dataObj.data[key],
+            value: this.dataObj[key],
           })
         }
       }
