@@ -30,7 +30,7 @@ const message = {
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
       back_detail: "返回详情",
-      submit: "提交"
+      submit: "提交",
     },
     table: {
       name: "名称",

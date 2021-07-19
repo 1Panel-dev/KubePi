@@ -5,7 +5,8 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Target Reference">
-              <el-select filterable clearable v-model="form.scaleTargetRef" value-key="name" style="width:100%" @change.native="transform">
+              <el-select filterable clearable v-model="form.scaleTargetRef" value-key="name" style="width:100%"
+                         @change.native="transform">
                 <el-option v-for="d in deploymentItem.items"
                            :key="d.metadata.name"
                            :label="d.metadata.name"
@@ -35,12 +36,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Minimum Replicas">
-              <ko-form-item itemType="number" v-model="form.minReplicas" @change.native="transform"></ko-form-item>
+              <ko-form-item itemType="number" v-model="form.minReplicas"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Maximum Replicas">
-              <ko-form-item itemType="number" v-model="form.maxReplicas" @change.native="transform"></ko-form-item>
+              <ko-form-item itemType="number" v-model="form.maxReplicas"></ko-form-item>
             </el-form-item>
           </el-col>
         </el-row>
@@ -84,7 +85,12 @@ export default {
     }
   },
   watch: {
-    namespace () {
+    namespace (oldValue, newValue) {
+      if (oldValue !== newValue) {
+        this.form = {
+          scaleTargetRef: {}
+        }
+      }
       this.getReferences()
     }
   },
@@ -106,7 +112,7 @@ export default {
       })
     },
     transform () {
-      this.$emit("specObj", this.form)
+      this.$emit("update:specObj", this.form)
     }
   },
   mounted () {

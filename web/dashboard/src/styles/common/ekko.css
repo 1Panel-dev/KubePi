@@ -98,7 +98,8 @@
 .tab-table td {
     height: 23px;
     word-wrap: break-word;
-    padding: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
 }
 
 .tab-table th {
