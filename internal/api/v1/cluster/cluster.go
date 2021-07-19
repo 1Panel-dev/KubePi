@@ -10,7 +10,6 @@ import (
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
@@ -27,14 +26,12 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
-	groupBindingService   groupbinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
-		groupBindingService:   groupbinding.NewService(),
 	}
 }
 
@@ -132,8 +129,9 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		txOptions := common.DBOptions{DB: tx}
-
 		req.CreatedBy = profile.Name
+
+
 		if err := client.CreateDefaultClusterRoles(); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

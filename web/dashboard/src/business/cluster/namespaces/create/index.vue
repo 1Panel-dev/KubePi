@@ -3,9 +3,9 @@
     <br>
     <el-row :gutter="20">
       <div class="grid-content bg-purple-light" v-if="!showYaml">
-        <el-form label-position="top" :model="form">
+        <el-form label-position="top" :model="form" :rules="rules" ref="form">
           <el-col :span="12">
-            <el-form-item :label="$t('commons.table.name')">
+            <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
               <el-input clearable v-model="form.metadata.name"></el-input>
             </el-form-item>
           </el-col>
@@ -15,7 +15,8 @@
           <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
             <el-tab-pane label="Labels/Annotations">
               <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-              <ko-annotations annotations-title="Annotations" :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+              <ko-annotations annotations-title="Annotations"
+                              :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -43,6 +44,7 @@ import YamlEditor from "@/components/yaml-editor"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import {createNamespace} from "@/api/namespaces"
+import Rule from "@/utils/rules"
 
 export default {
   name: "NamespaceCreate",
@@ -54,12 +56,15 @@ export default {
         kind: "Namespace",
         metadata: {
           name: "",
-          annotations: {
-          },
+          annotations: {},
           labels: {}
         },
       },
-      rules: {},
+      rules: {
+        metadata: {
+          name: [Rule.RequiredRule]
+        }
+      },
       loading: false,
       showYaml: false,
       yaml: {},
@@ -71,6 +76,7 @@ export default {
       },
       activeName: "",
       annotations: {},
+      cluster: ""
     }
   },
   methods: {
@@ -78,14 +84,19 @@ export default {
       this.$router.push({ name: "Namespaces" })
     },
     onSubmit () {
-      let data = {}
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
-        data = this.transformYaml()
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.onCreate(this.transformYaml())
+          }
+        })
       }
+    },
+    onCreate (data) {
       this.loading = true
-      createNamespace(this.clusterName, data).then(() => {
+      createNamespace(this.cluster, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -108,6 +119,9 @@ export default {
     handleClick (tab) {
       this.activeName = tab.index
     }
+  },
+  created () {
+    this.cluster = this.$route.query.cluster
   }
 }
 </script>

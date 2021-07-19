@@ -4,14 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/api/v1/group"
 	"github.com/KubeOperator/ekko/internal/api/v1/proxy"
 	"github.com/KubeOperator/ekko/internal/api/v1/role"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	v1GroupBindingService "github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	v1RoleService "github.com/KubeOperator/ekko/internal/service/v1/role"
 	v1RoleBindingService "github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -89,39 +87,10 @@ func roleHandler() iris.Handler {
 				return
 			}
 		}
-		// 查询绑定了那些用户组
-		groupBindingService := v1GroupBindingService.NewService()
-		gps, err := groupBindingService.ListByUserName(u.Name, common.DBOptions{})
-		if err != nil {
-			if !errors.As(err, &storm.ErrNotFound) {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-
 		roleNameHash := map[string]struct{}{}
 		for i := range rbs {
 			roleName := rbs[i].RoleRef
 			roleNameHash[roleName] = struct{}{}
-		}
-
-		for i := range gps {
-			b, err := roleBindingService.GetRoleBindingBySubject(v1Role.Subject{
-				Kind: "Group",
-				Name: gps[i].GroupRef,
-			}, common.DBOptions{})
-			if err != nil {
-				if !errors.As(err, &storm.ErrNotFound) {
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err.Error())
-					return
-				}
-			}
-			for j := range b {
-				roleNameHash[b[j].RoleRef] = struct{}{}
-			}
-
 		}
 		var roleNames []string
 		for key := range roleNameHash {
@@ -295,7 +264,6 @@ func AddV1Route(app iris.Party) {
 	authParty.Get("/", apiResourceHandler(authParty))
 	user.Install(authParty)
 	cluster.Install(authParty)
-	group.Install(authParty)
 	role.Install(authParty)
 	proxy.Install(authParty)
 }

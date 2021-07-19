@@ -10,7 +10,6 @@ import (
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
@@ -23,7 +22,6 @@ import (
 type Handler struct {
 	userService           user.Service
 	roleBindingService    rolebinding.Service
-	groupBindingService   groupbinding.Service
 	clusterBindingService clusterbinding.Service
 }
 
@@ -31,7 +29,6 @@ func NewHandler() *Handler {
 	return &Handler{
 		userService:           user.NewService(),
 		roleBindingService:    rolebinding.NewService(),
-		groupBindingService:   groupbinding.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
 	}
 }
@@ -139,22 +136,6 @@ func (h *Handler) DeleteUser() iris.Handler {
 				return
 			}
 		}
-		gbs, err := h.groupBindingService.ListByUserName(userName, txOptions)
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		for i := range gbs {
-			if err := h.groupBindingService.Delete(gbs[i].Name, txOptions); err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-
 		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{
 			Kind: "User",
 			Name: userName,

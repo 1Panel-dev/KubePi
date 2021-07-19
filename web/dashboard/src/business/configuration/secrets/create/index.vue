@@ -3,14 +3,14 @@
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
-          <el-form label-position="top" :model="form">
+          <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
-              <el-form-item :label="$t('commons.table.name')" required>
+              <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
                 <el-input clearable v-model="form.metadata.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item :label="$t('business.namespace.namespace')" required>
+              <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
                              :key="namespace.metadata.name"
@@ -56,7 +56,8 @@
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+                  <ko-annotations annotations-title="Annotations"
+                                  :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -92,6 +93,7 @@ import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
 import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
 import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
 import KoAlert from "@/components/ko-alert"
+import Rule from "@/utils/rules"
 
 export default {
   name: "SecretCreate",
@@ -128,7 +130,13 @@ export default {
       showYaml: false,
       yaml: {},
       activeName: "",
-      messages: []
+      messages: [],
+      rules: {
+        metadata: {
+          name: [Rule.RequiredRule],
+          namespace: [Rule.RequiredRule],
+        }
+      }
     }
   },
   methods: {
@@ -146,15 +154,20 @@ export default {
       this.showYaml = false
     },
     transformYaml () {
-      return  JSON.parse(JSON.stringify(this.form))
+      return JSON.parse(JSON.stringify(this.form))
     },
     onSubmit () {
-      let data = {}
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
-        data = this.transformYaml()
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.onCreate(this.transformYaml())
+          }
+        })
       }
+    },
+    onCreate (data) {
       this.loading = true
       createSecret(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({

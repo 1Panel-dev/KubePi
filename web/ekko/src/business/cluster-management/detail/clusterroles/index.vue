@@ -33,13 +33,13 @@
         </complex-table>
 
         <el-dialog
-                title="提示"
+                title="创建规则"
                 :visible.sync="ruleDialogOpened"
                 width="40%"
                 center z-index="20">
-            <el-form :model="ruleForm" label-position="left" label- width="60px">
+            <el-form :model="ruleForm" label-position="top" label- width="60px">
                 <el-form-item label="API Group">
-                    <el-select v-model="ruleForm.groupVersion" @change="onAPIGroupChange">
+                    <el-select v-model="ruleForm.groupVersion" style="width:100%" @change="onAPIGroupChange">
                         <el-option v-for="(item,index) in apiGroupsOptions" :key="index"
                                    :value="item.preferredVersion.groupVersion">
                             {{item.preferredVersion.groupVersion}}
@@ -48,7 +48,7 @@
                 </el-form-item>
 
                 <el-form-item label="API Resource">
-                    <el-select multiple v-model="ruleForm.resources" :disabled="resourcesDisable"
+                    <el-select multiple v-model="ruleForm.resources" style="width:100%" :disabled="resourcesDisable"
                                @change="onResourcesChange">
                         <el-option v-for="(item,index) in apiResourceOptions"
                                    :key="index"
@@ -59,7 +59,8 @@
                 </el-form-item>
 
                 <el-form-item label="Verbs">
-                    <el-select multiple v-model="ruleForm.verbs" :disabled="verbsDisable" @change="onVerbsChange">
+                    <el-select multiple v-model="ruleForm.verbs" style="width:100%" :disabled="verbsDisable"
+                               @change="onVerbsChange">
                         <el-option v-for="(item,index) in verbOptions"
                                    :key="index"
                                    :value="item">
@@ -77,7 +78,7 @@
         </el-dialog>
 
         <el-dialog
-                title="提示"
+                title="创建角色"
                 :visible.sync="createDialogOpened"
                 width="60%"
                 center z-index="10">

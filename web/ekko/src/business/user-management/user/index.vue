@@ -25,9 +25,9 @@
                     {{ row.email }}
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('commons.table.creat_by')" min-width="100" fix>
+            <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
                 <template v-slot:default="{row}">
-                    {{ row.createdBy}}
+                    {{ $t("commons.bool."+row.builtIn)}}
                 </template>
             </el-table-column>
             <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
@@ -48,6 +48,7 @@
     import {searchUsers, deleteUser} from "@/api/users"
     import {checkPermissions} from "@/utils/permission";
 
+
     export default {
         name: "ClusterList",
         components: {ComplexTable, LayoutContent},
@@ -60,7 +61,9 @@
                         click: (row) => {
                             this.onEdit(row.name)
                         },
-                        disabled: !checkPermissions({resource: "users", verb: "update"})
+                        disabled: (row) => {
+                            return row.builtIn || !checkPermissions({resource: "users", verb: "update"})
+                        }
                     },
                     {
                         label: this.$t("commons.button.delete"),
@@ -68,7 +71,9 @@
                         click: (row) => {
                             this.onDelete(row.name)
                         },
-                        disabled: !checkPermissions({resource: "users", verb: "delete"})
+                        disabled: (row) => {
+                            return row.builtIn || !checkPermissions({resource: "users", verb: "delete"})
+                        }
                     },
                 ],
                 paginationConfig: {

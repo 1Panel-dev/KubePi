@@ -5,7 +5,6 @@ import (
 	"fmt"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/groupbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
@@ -22,7 +21,6 @@ type Handler struct {
 	userService         user.Service
 	roleService         role.Service
 	rolebindingService  rolebinding.Service
-	groupbindingService groupbinding.Service
 }
 
 func NewHandler() *Handler {
@@ -30,7 +28,6 @@ func NewHandler() *Handler {
 		userService:         user.NewService(),
 		roleService:         role.NewService(),
 		rolebindingService:  rolebinding.NewService(),
-		groupbindingService: groupbinding.NewService(),
 	}
 }
 
@@ -63,7 +60,7 @@ func (h *Handler) Login() iris.Handler {
 			return
 		}
 
-		if err := bcrypt.CompareHashAndPassword([]byte(u.Spec.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", "username or password error")
 			return
@@ -89,11 +86,6 @@ func (h *Handler) Login() iris.Handler {
 }
 
 func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string, error) {
-	// 查询user 绑定的role
-	// 查询user 绑定的group
-	// 查询group 绑定的role
-	// 查询 roles 下的资源 进行merge
-
 	userRoleBindings, err := h.rolebindingService.GetRoleBindingBySubject(v1Role.Subject{
 		Kind: "User",
 		Name: name,
@@ -101,22 +93,8 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 	if err != nil && !errors.As(err, &storm.ErrNotFound) {
 		return nil, err
 	}
-	groups, err := h.groupbindingService.ListByUserName(name, common.DBOptions{})
-	if err != nil && !errors.As(err, &storm.ErrNotFound) {
-		return nil, err
-	}
-	var groupRoleBinds []v1Role.Binding
-	for i := range groups {
-		bindings, err := h.rolebindingService.GetRoleBindingBySubject(v1Role.Subject{
-			Kind: "Group",
-			Name: groups[i].GroupRef,
-		}, common.DBOptions{})
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
-			return nil, err
-		}
-		groupRoleBinds = append(groupRoleBinds, bindings...)
-	}
-	allRoleBindings := append(userRoleBindings, groupRoleBinds...)
+
+	allRoleBindings := append(userRoleBindings)
 	var roleNames []string
 	for i := range allRoleBindings {
 		roleNames = append(roleNames, allRoleBindings[i].RoleRef)
