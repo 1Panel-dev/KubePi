@@ -59,7 +59,7 @@ export default {
       pods: {
         type: "Pods",
         external: {
-          type: "io.k8s.api.autoscaling.v2beta2.externalmetricsource",
+          type: "io.k8s.api.autoscaling.v2beta2.podsmetricsource",
           metric: {
             name: "",
             selector: {
@@ -82,7 +82,27 @@ export default {
           }
         }
       },
-      refresh: false
+      object: {
+        type: "Object",
+        object: {
+          type: "io.k8s.api.autoscaling.v2beta2.objectmetricsource",
+          metric: {
+            name: "",
+            selector: {
+              matchExpressions: []
+            }
+          },
+          target: {
+            type: "AverageValue",
+            averageValue: 80
+          },
+          describedObject: {
+            apiVersion: "",
+            kind: "",
+            name: ""
+          }
+        }
+      },
     }
   },
   methods: {
@@ -99,14 +119,14 @@ export default {
       this.form.metrics[index] = row
       this.$emit("update:metricsObj", this.form.metrics)
     },
-    addMetrics() {
+    addMetrics () {
       this.form.metrics.push(this.resource)
     }
   },
   mounted () {
     if (this.metricsObj) {
       this.form.metrics = this.metricsObj
-    }else {
+    } else {
       this.form.metrics.push(this.resource)
       this.$emit("update:metricsObj", this.form.metrics)
     }

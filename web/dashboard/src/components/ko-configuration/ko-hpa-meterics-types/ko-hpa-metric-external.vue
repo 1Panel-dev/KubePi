@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-form-item label="Type" key="external">
           <el-select v-model="row.external.target.type" style="width: 100%" @change="changeExternalType(row)">
-            <el-option value="Value" v-if="row.type==='External'" label="Value"></el-option>
+            <el-option value="Value" label="Value"></el-option>
             <el-option value="AverageValue" label="Average Value"></el-option>
           </el-select>
         </el-form-item>
