@@ -1,4 +1,4 @@
-import {del, get, post,} from "@/plugins/request"
+import {del, get, patch, post,} from "@/plugins/request"
 
 const hpaUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2beta2/horizontalpodautoscalers`
@@ -32,4 +32,8 @@ export function getHpa (cluster_name, namespace, name) {
 
 export function createHpa (cluster_name, namespace, data) {
   return post(`${namespaceHpaUrl(cluster_name,namespace)}`, data)
+}
+
+export function updateHpa (cluster_name, namespace,name, data) {
+  return patch(`${namespaceHpaUrl(cluster_name,namespace)}/${name}`, data)
 }

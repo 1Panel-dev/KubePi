@@ -74,12 +74,24 @@ export default {
       cluster: "",
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "HPAEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "LimitRangeEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              name: "HPAEdit",
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true }
             })
           }
         },
