@@ -1,8 +1,14 @@
 <template>
-  <div style="margin-top: 20px">
+  <div>
     <ko-card title="Metrics">
       <el-form label-position="top" ref="form" :model="form">
-        <el-card v-for="(row,index) in form.metrics" v-bind:key="index" style="background-color: #292a2e">
+        <el-card v-for="(row,index) in form.metrics" v-bind:key="index"
+                 style="background-color: #292a2e;margin-top: 10px;position: relative">
+          <div style="float: right; padding: 3px 0;position: relative;z-index: 1">
+            <el-button  type="text" v-if="form.metrics.length > 1"
+                        @click="removeMetrics(index)">Remove
+            </el-button>
+          </div>
           <div>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -20,7 +26,7 @@
           </div>
         </el-card>
       </el-form>
-      <el-button @click="addMetrics"></el-button>
+      <el-button @click="addMetrics" style="margin-top: 10px">Add</el-button>
     </ko-card>
   </div>
 </template>
@@ -124,6 +130,10 @@ export default {
     },
     addMetrics () {
       this.form.metrics.push(this.resource)
+    },
+    removeMetrics (index) {
+      console.log(index)
+      this.form.metrics.splice(index, 1)
     }
   },
   mounted () {
