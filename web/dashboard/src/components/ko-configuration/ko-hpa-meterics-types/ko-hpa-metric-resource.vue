@@ -26,7 +26,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="Quantity" v-if="row.resource.target.type === 'Utilization'" :key="4">
-          <el-input type="number" v-mode.numberl="row.resource.target.averageUtilization">
+          <el-input type="number" v-model.numberl="row.resource.target.averageUtilization">
             <template slot="append">%</template>
           </el-input>
         </el-form-item>

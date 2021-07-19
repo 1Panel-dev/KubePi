@@ -30,6 +30,6 @@ export function getHpa (cluster_name, namespace, name) {
   return get(`${namespaceHpaUrl(cluster_name, namespace)}/${name}/status`)
 }
 
-export function createHpa (cluster_name, data) {
-  return post(`${namespaceHpaUrl(cluster_name)}`, data)
+export function createHpa (cluster_name, namespace, data) {
+  return post(`${namespaceHpaUrl(cluster_name,namespace)}`, data)
 }
