@@ -33,8 +33,8 @@
                                   v-if="Object.keys(item.spec).length!==0"></ko-hpa-metrics>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="item.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :labelParentObj="item.metadata"></ko-annotations>
+                  <ko-labels ref="ko_labels" :labelObj.sync="item.metadata"></ko-labels>
+                  <ko-annotations ref="ko_annotations" :annotationsObj.sync="item.metadata"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -118,7 +118,7 @@ export default {
       updateHpa(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({ name: "HPA" })
       }).finally(() => {
