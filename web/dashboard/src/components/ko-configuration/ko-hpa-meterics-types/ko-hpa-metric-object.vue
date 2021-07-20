@@ -11,7 +11,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="Quantity" v-if="row.object.target.type === 'AverageValue'">
-          <el-input type="number" v-mode.numberl="row.object.target.averageValue" required>
+          <el-input type="number" v-model.number="row.object.target.averageValue" required>
           </el-input>
         </el-form-item>
         <el-form-item label="Quantity" v-if="row.object.target.type === 'Value'">
