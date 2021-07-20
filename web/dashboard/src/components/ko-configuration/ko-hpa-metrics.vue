@@ -64,7 +64,7 @@ export default {
       },
       pods: {
         type: "Pods",
-        external: {
+        pods: {
           type: "io.k8s.api.autoscaling.v2beta2.podsmetricsource",
           metric: {
             name: "",
