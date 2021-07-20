@@ -52,13 +52,13 @@
 
 <script>
 import KoCard from "@/components/ko-card"
-import KoFormItem from "@/components/ko-form-item"
+// import KoFormItem from "@/components/ko-form-item"
 import {listDeploymentsByNs} from "@/api/deployments"
 import {listNsReplicaSets} from "@/api/replicasets"
 
 export default {
   name: "KoHpaTarget",
-  components: { KoFormItem, KoCard },
+  components: { KoCard },
   props: {
     namespace: String,
     cluster: String,

@@ -164,7 +164,7 @@ export default {
           if (this.upgradePolicyParentObj.jobTemplate.spec.template) {
             if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec) {
               if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
-                this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+                this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
               }
             }
           }
