@@ -96,7 +96,7 @@ export default {
     },
   },
   mounted () {
-    this.initData(this.labelObj.labels)
+    this.initData(this.labelObj)
   },
 }
 </script>

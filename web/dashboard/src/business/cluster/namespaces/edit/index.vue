@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
     <br>
     <el-row :gutter="20">
-      <div class="grid-content bg-purple-light" v-if="!showYaml">
+      <div v-if="!showYaml">
         <el-form label-position="top" :model="item">
           <el-col :span="12">
             <el-form-item :label="$t('commons.table.name')">
@@ -22,18 +22,16 @@
           </el-tabs>
         </el-col>
       </div>
-      <div class="grid-content bg-purple-light" v-if="showYaml">
+      <div v-if="showYaml">
         <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
       </div>
-      <div class="grid-content bg-purple-light">
-        <div style="float: right;margin-top: 10px">
-          <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-          <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-          <el-button v-loading="loading" @click="onSubmit" type="primary">
-            {{ $t("commons.button.submit") }}
-          </el-button>
-        </div>
+      <div class="bottom-button">
+        <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
+        <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+        <el-button v-loading="loading" @click="onSubmit" type="primary">
+          {{ $t("commons.button.submit") }}
+        </el-button>
       </div>
     </el-row>
   </layout-content>
