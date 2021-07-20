@@ -7,7 +7,7 @@ import KoHpaMetricObject from "@/components/ko-configuration/ko-hpa-meterics-typ
 export default {
   name: "KoHpaMetricsTypes",
   functional: true,
-  render (createElement, { props, data, children }) {
+  render (createElement, { props, children }) {
     function changeType () {
       const type = props.row.type
       switch (type) {

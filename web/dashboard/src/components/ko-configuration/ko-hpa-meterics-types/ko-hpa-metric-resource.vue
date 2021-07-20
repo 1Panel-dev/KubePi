@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Resource Name" :key="1">
+        <el-form-item label="Resource Name" >
           <el-select v-model="row.resource.name" style="width: 100%">
             <el-option value="cpu" label="CPU"></el-option>
             <el-option value="memory" label="Memory"></el-option>
@@ -12,7 +12,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Type" key="resource" :key="2">
+        <el-form-item label="Type" key="resource" >
           <el-select v-model="row.resource.target.type" style="width: 100%" @change="changeResourceType(row)">
             <el-option value="Utilization" label="Average Utilization"></el-option>
             <el-option value="AverageValue" label="Average Value"></el-option>
@@ -20,13 +20,13 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="Quantity" v-if="row.resource.target.type === 'AverageValue'" :key="3">
+        <el-form-item label="Quantity" v-if="row.resource.target.type === 'AverageValue'" >
           <el-input type="number" v-model.number="row.resource.target.averageValue" required>
             <template slot="append">mCpus</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="Quantity" v-if="row.resource.target.type === 'Utilization'" :key="4">
-          <el-input type="number" v-model.numberl="row.resource.target.averageUtilization" required>
+        <el-form-item label="Quantity" v-if="row.resource.target.type === 'Utilization'" >
+          <el-input type="number" v-model.number="row.resource.target.averageUtilization" required>
             <template slot="append">%</template>
           </el-input>
         </el-form-item>
