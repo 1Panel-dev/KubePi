@@ -79,15 +79,17 @@ export default {
       }
     },
   },
-  mounted () {
-    if (this.labelObj) {
-      for (const key in this.labelObj) {
-        if (Object.prototype.hasOwnProperty.call(this.labelObj, key)) {
-          this.labels.push({
-            index: Math.random(),
-            key: key,
-            value: this.labelObj[key],
-          })
+  watch: {
+    labelObj(newValue) {
+      if (newValue) {
+        for (const key in newValue) {
+          if (Object.prototype.hasOwnProperty.call(newValue, key)) {
+            this.labels.push({
+              index: Math.random(),
+              key: key,
+              value: this.labelObj[key],
+            })
+          }
         }
       }
     }

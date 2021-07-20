@@ -150,14 +150,16 @@ export default {
         }
       }
       this.form.metrics.push(this.resource)
-    }
+    },
   },
-  mounted () {
-    if (this.metricsObj) {
-      this.form.metrics = this.metricsObj
-    } else {
-      this.addResource()
-      this.$emit("update:metricsObj", this.form.metrics)
+  watch: {
+    metricsObj:function (newValue) {
+      if (newValue) {
+        this.form.metrics = newValue
+      } else {
+        this.addResource()
+        this.$emit("update:metricsObj", this.form.metrics)
+      }
     }
   }
 }

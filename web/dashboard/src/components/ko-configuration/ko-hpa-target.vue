@@ -52,13 +52,12 @@
 
 <script>
 import KoCard from "@/components/ko-card"
-import KoFormItem from "@/components/ko-form-item"
 import {listDeploymentsByNs} from "@/api/deployments"
 import {listNsReplicaSets} from "@/api/replicasets"
 
 export default {
   name: "KoHpaTarget",
-  components: { KoFormItem, KoCard },
+  components: { KoCard },
   props: {
     namespace: String,
     cluster: String,
@@ -92,6 +91,12 @@ export default {
         }
       }
       this.getReferences()
+    },
+    specObj:function (newValue) {
+      this.getReferences()
+      if (newValue) {
+        this.form = newValue
+      }
     }
   },
   methods: {
@@ -115,12 +120,6 @@ export default {
       this.$emit("update:specObj", this.form)
     }
   },
-  mounted () {
-    this.getReferences()
-    if (this.specObj) {
-      this.form = this.specObj
-    }
-  }
 }
 </script>
 
