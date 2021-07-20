@@ -74,12 +74,10 @@ export default {
         this.$emit("update:annotationsObj", obj)
       }
     },
-  },
-  watch: {
-    annotationsObj(newValue){
-      if (newValue) {
-        for (const key in newValue) {
-          if (Object.prototype.hasOwnProperty.call(newValue, key)) {
+    initData (obj) {
+      if (obj) {
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
             this.annotations.push({
               index: Math.random(),
               key: key,
@@ -89,6 +87,9 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    this.initData(this.annotationsObj)
   },
 }
 </script>

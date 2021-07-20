@@ -18,7 +18,8 @@
             </td>
             <td>
               <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value"
-                            @change.native="transformation"/>
+                            @change.native="transformation"
+              />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -52,6 +53,7 @@ export default {
   data () {
     return {
       labels: [],
+      test: ""
     }
   },
   methods: {
@@ -78,21 +80,23 @@ export default {
         this.$emit("update:labelObj", obj)
       }
     },
-  },
-  watch: {
-    labelObj(newValue) {
-      if (newValue) {
-        for (const key in newValue) {
-          if (Object.prototype.hasOwnProperty.call(newValue, key)) {
+    initData (obj) {
+      if (obj) {
+        this.labels = []
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
             this.labels.push({
               index: Math.random(),
               key: key,
-              value: this.labelObj[key],
+              value: obj[key],
             })
           }
         }
       }
-    }
+    },
+  },
+  mounted () {
+    this.initData(this.labelObj.labels)
   },
 }
 </script>
