@@ -27,7 +27,7 @@ export function deleteHpa (cluster_name, namespace, name) {
 }
 
 export function getHpa (cluster_name, namespace, name) {
-  return get(`${namespaceHpaUrl(cluster_name, namespace)}/${name}/status`)
+  return get(`${namespaceHpaUrl(cluster_name, namespace)}/${name}`)
 }
 
 export function createHpa (cluster_name, namespace, data) {

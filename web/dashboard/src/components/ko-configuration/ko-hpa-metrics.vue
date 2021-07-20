@@ -46,39 +46,100 @@ export default {
       form: {
         metrics: [],
       },
-      external: {
-        type: "External",
-        external: {
-          type: "io.k8s.api.autoscaling.v2beta2.externalmetricsource",
-          metric: {
-            name: "",
-            selector: {
-              matchExpressions: []
+      external: {},
+      pods: {},
+      resource: {},
+      object: {},
+    }
+  },
+  methods: {
+    change (row, index) {
+      if (row.type === "Resource") {
+        this.resource = {
+          type: "Resource",
+          resource: {
+            name: "cpu",
+            target: {
+              type: "Utilization",
+              averageUtilization: 80
             }
-          },
-          target: {
-            type: "AverageValue",
-            averageValue: 80
           }
         }
-      },
-      pods: {
-        type: "Pods",
-        external: {
-          type: "io.k8s.api.autoscaling.v2beta2.podsmetricsource",
-          metric: {
-            name: "",
-            selector: {
-              matchExpressions: []
+        row = this.resource
+      }
+      if (row.type === "External") {
+        this.external = {
+          type: "External",
+          external: {
+            type: "io.k8s.api.autoscaling.v2beta2.externalmetricsource",
+            metric: {
+              name: "",
+              selector: {
+                matchExpressions: []
+              }
+            },
+            target: {
+              type: "AverageValue",
+              averageValue: 80
             }
-          },
-          target: {
-            type: "AverageValue",
-            averageValue: 80
           }
         }
-      },
-      resource: {
+        row = this.external
+      }
+      if (row.type === "Pods") {
+        this.pods =  {
+          type: "Pods",
+          pods: {
+            type: "io.k8s.api.autoscaling.v2beta2.podsmetricsource",
+            metric: {
+              name: "",
+              selector: {
+                matchExpressions: []
+              }
+            },
+            target: {
+              type: "AverageValue",
+              averageValue: 80
+            }
+          }
+        }
+        row = this.pods
+      }
+      if (row.type === "Object") {
+        this.object = {
+          type: "Object",
+          object: {
+            type: "io.k8s.api.autoscaling.v2beta2.objectmetricsource",
+            metric: {
+              name: "",
+              selector: {
+                matchExpressions: []
+              }
+            },
+            target: {
+              type: "AverageValue",
+              averageValue: 80
+            },
+            describedObject: {
+              apiVersion: "",
+              kind: "",
+              name: ""
+            }
+          }
+        }
+        row = this.object
+      }
+      this.form.metrics[index] = row
+      this.$emit("update:metricsObj", this.form.metrics)
+    },
+    addMetrics () {
+      this.addResource()
+    },
+    removeMetrics (index) {
+      this.form.metrics.splice(index, 1)
+    },
+    addResource() {
+      this.resource = {
         type: "Resource",
         resource: {
           name: "cpu",
@@ -87,61 +148,18 @@ export default {
             averageUtilization: 80
           }
         }
-      },
-      object: {
-        type: "Object",
-        object: {
-          type: "io.k8s.api.autoscaling.v2beta2.objectmetricsource",
-          metric: {
-            name: "",
-            selector: {
-              matchExpressions: []
-            }
-          },
-          target: {
-            type: "AverageValue",
-            averageValue: 80
-          },
-          describedObject: {
-            apiVersion: "",
-            kind: "",
-            name: ""
-          }
-        }
-      },
-    }
-  },
-  methods: {
-    change (row, index) {
-      if (row.type === "Resource") {
-        row = this.resource
       }
-      if (row.type === "External") {
-        row = this.external
-      }
-      if (row.type === "Pods") {
-        row = this.pods
-      }
-      if (row.type === "Object") {
-        row = this.object
-      }
-      this.form.metrics[index] = row
-      this.$emit("update:metricsObj", this.form.metrics)
-    },
-    addMetrics () {
       this.form.metrics.push(this.resource)
     },
-    removeMetrics (index) {
-      console.log(index)
-      this.form.metrics.splice(index, 1)
-    }
   },
-  mounted () {
-    if (this.metricsObj) {
-      this.form.metrics = this.metricsObj
-    } else {
-      this.form.metrics.push(this.resource)
-      this.$emit("update:metricsObj", this.form.metrics)
+  watch: {
+    metricsObj:function (newValue) {
+      if (newValue) {
+        this.form.metrics = newValue
+      } else {
+        this.addResource()
+        this.$emit("update:metricsObj", this.form.metrics)
+      }
     }
   }
 }

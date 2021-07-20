@@ -25,16 +25,14 @@
                        @tab-click="handleClick">
                 <el-tab-pane label="Target">
                   <ko-hpa-target :namespace="item.metadata.namespace" :cluster="cluster"
-                                 v-if="Object.keys(item.spec).length!==0"
                                  :spec-obj.sync="item.spec"></ko-hpa-target>
                 </el-tab-pane>
                 <el-tab-pane label="Metrics">
-                  <ko-hpa-metrics :metrics-obj.sync="item.spec.metrics"
-                                  v-if="Object.keys(item.spec).length!==0"></ko-hpa-metrics>
+                  <ko-hpa-metrics :metrics-obj.sync="item.spec.metrics"></ko-hpa-metrics>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="item.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :labelParentObj="item.metadata"></ko-annotations>
+                  <ko-labels  labelTitle="Labels" ref="ko_labels" :labelObj.sync="item.metadata.labels"></ko-labels>
+                  <ko-annotations annotations-title="Annotations" ref="ko_annotations" :annotationsObj.sync="item.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -118,7 +116,7 @@ export default {
       updateHpa(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({ name: "HPA" })
       }).finally(() => {
