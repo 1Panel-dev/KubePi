@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Services">
+  <layout-content header="Ingresses">
     <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
