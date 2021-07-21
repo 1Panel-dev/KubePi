@@ -32,23 +32,23 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick">
-                <el-tab-pane label="External Name" v-if="form.spec.type==='ExternalName'">
+                       @tab-click="handleClick" ref=tabs>
+                <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
-                <el-tab-pane label="Service Ports" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="ServicePorts" label="Service Ports" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
-                <el-tab-pane label="Selectors" v-if="form.spec.type!=='ExternalName' ">
+                <el-tab-pane name="Selectors" label="Selectors" v-if="form.spec.type!=='ExternalName' ">
                   <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
-                <el-tab-pane label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="SessionAffinity" label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
-                <el-tab-pane  name="first" :key="'first'" label="IP Addresses">
+                <el-tab-pane name="IPAddresses" label="IP Addresses">
                   <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
-                <el-tab-pane name="second" :key="'second'"  label="Labels/Annotations">
+                <el-tab-pane name="Labels" label="Labels/Annotations">
                   <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
                   <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
@@ -116,7 +116,7 @@ export default {
       },
       showYaml: false,
       yaml: {},
-      activeName: "",
+      activeName: "ServicePorts",
       rules: {
         metadata: {
           name: [Rule.RequiredRule],
@@ -127,7 +127,7 @@ export default {
   },
   methods: {
     handleClick (tab) {
-      this.activeName = tab.index
+      this.activeName = tab.name
     },
     onCancel () {
       this.$router.push({ name: "Secrets" })
@@ -168,6 +168,11 @@ export default {
     changeType (type) {
       this.form.spec = {
         type: type
+      }
+      if (type === 'ExternalName') {
+        this.activeName = "ExternalName"
+      }else {
+        this.activeName = "ServicePorts"
       }
     }
   },
