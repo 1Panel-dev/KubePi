@@ -34,10 +34,10 @@
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
           <div :key="isRefresh">
-            <ko-labels ref="ko_labels" :isReadOnly="true" :labelParentObj="form.metadata" labelTitle="Labels" />
-            <ko-annotations ref="ko_annotations" :isReadOnly="true" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_labels" :isReadOnly="true" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_annotations" :isReadOnly="true" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+            <ko-labels ref="ko_labels" :isReadOnly="true" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
+            <ko-annotations ref="ko_annotations" :isReadOnly="true" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+            <ko-labels ref="ko_pod_labels" :isReadOnly="true" :label-obj.sync="form.spec.template.metadata.labels" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_pod_annotations" :isReadOnly="true" :annotations-obj.sync="form.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" :isReadOnly="true" name="Networking">

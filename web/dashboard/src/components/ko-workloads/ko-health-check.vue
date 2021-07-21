@@ -36,29 +36,29 @@
             <el-row :gutter="10">
               <el-col :span="8">
                 <el-form-item label="Check Interval" prop="periodSeconds">
-                  <ko-form-item placeholder="Default: 10" deviderName="sec" itemType="input" v-model="form.periodSeconds" />
+                  <ko-form-item placeholder="Default: 10" deviderName="sec" itemType="number" v-model.number="form.periodSeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="Initial Delay" prop="initialDelaySeconds">
-                  <ko-form-item placeholder="Default: 0" deviderName="sec" itemType="input" v-model="form.initialDelaySeconds" />
+                  <ko-form-item placeholder="Default: 0" deviderName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="Timeout" prop="timeoutSeconds">
-                  <ko-form-item placeholder="Default: 3" deviderName="sec" itemType="input" v-model="form.timeoutSeconds" />
+                  <ko-form-item placeholder="Default: 3" deviderName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">
                 <el-form-item label="Seccess Threshold" prop="successThreshold">
-                  <ko-form-item placeholder="Default: 1" itemType="input" v-model="form.successThreshold" />
+                  <ko-form-item placeholder="Default: 1" itemType="number" v-model.number="form.successThreshold" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="Failure Threshold" prop="failureThreshold">
-                  <ko-form-item placeholder="Default: 3" itemType="input" v-model="form.failureThreshold" />
+                  <ko-form-item placeholder="Default: 3" itemType="number" v-model.number="form.failureThreshold" />
                 </el-form-item>
               </el-col>
             </el-row>

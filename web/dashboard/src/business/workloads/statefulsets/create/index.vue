@@ -23,50 +23,45 @@
         <ko-base :baseParentObj="form.spec.template.spec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
       </el-form>
 
-      <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
+      <el-tabs :key="isRefresh" style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
-          <div :key="isRefresh">
-            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
-            <ko-ports ref="ko_ports" :portParentObj="currentContainer" />
-            <ko-command ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
-          </div>
+          <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
+          <ko-ports ref="ko_ports" :portParentObj="currentContainer" />
+          <ko-command ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
         <el-tab-pane label="Health Check" name="Health Check">
-          <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" health_check_type="Readiness Check" />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" health_check_type="Liveness Check" />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
-          </div>
+          <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" health_check_type="Readiness Check" />
+          <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" health_check_type="Liveness Check" />
+          <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <div :key="isRefresh">
-            <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
-          </div>
+          <ko-labels ref="ko_labels" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
+          <ko-annotations ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+          <ko-labels ref="ko_pod_labels" :label-obj.sync="form.spec.template.metadata.labels" labelTitle="Pod Labels" />
+          <ko-annotations ref="ko_pod_annotations" :annotations-obj.sync="form.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
-          <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.template.spec" />
+          <ko-networking ref="ko_networking" :networkingParentObj="form.spec.template.spec" />
         </el-tab-pane>
         <el-tab-pane label="Scheduling" name="Scheduling">
-          <div :key="isRefresh">
-            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.template.spec" :namespaceList="namespace_list" />
-            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec" :nodeList="node_list" />
-            <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.template.spec" />
-          </div>
+          <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.template.spec" :namespaceList="namespace_list" />
+          <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.template.spec" :nodeList="node_list" />
+          <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.template.spec" />
         </el-tab-pane>
         <el-tab-pane label="Resources" name="Resources">
-          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="currentContainer" />
+          <ko-resources ref="ko_resource" :resourceParentObj="currentContainer" />
         </el-tab-pane>
         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-          <ko-upgrade-policy-statefulset ref="ko_upgrade_policy_statefulset" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
+          <ko-upgrade-policy-statefulset ref="ko_upgrade_policy_statefulset" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
-          <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="currentContainer" />
+          <ko-security-context ref="ko_security_context" :securityContextParentObj="currentContainer" />
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage :key="isRefresh" ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+        </el-tab-pane>
+        <el-tab-pane label="Volume Claim Templates" name="Volume Claim Templates">
+          <ko-volume-claim ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :scList="sc_list" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -106,13 +101,14 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
+import Rule from "@/utils/rules"
 
 import { createStatefulSet } from "@/api/statefulsets"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
-import Rule from "@/utils/rules"
+import { listStorageClass } from "@/api/storageclass"
 
 export default {
   name: "StatefulSetCreate",
@@ -133,6 +129,7 @@ export default {
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
+      sc_list: [],
       // base form
       activeName: "General",
       isValid: true,
@@ -186,10 +183,14 @@ export default {
       })
     },
     loadSecrets() {
-      this.secret_list = []
       listSecrets(this.clusterName).then((res) => {
         this.secret_list = res.items
         this.loadSecretsWithNs()
+      })
+    },
+    loadStorageClass() {
+      listStorageClass(this.clusterName).then((res) => {
+        this.sc_list = res.items
       })
     },
     loadSecretsWithNs() {
@@ -267,19 +268,17 @@ export default {
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_resource.transformation(this.currentContainer)
-      this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
-      this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
-      this.$refs.ko_health_startup_check.transformation(this.currentContainer)
+      if (this.currentContainerType === "standardContainers") {
+        this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_startup_check.transformation(this.currentContainer)
+      }
       this.$refs.ko_security_context.transformation(this.currentContainer)
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
       this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_toleration.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.metadata)
-      this.$refs.ko_annotations.transformation(this.form.metadata)
-      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       if (this.currentContainerType === "initContainers") {
         this.form.spec.template.spec.initContainers[this.currentContainerIndex] = this.currentContainer
@@ -303,7 +302,7 @@ export default {
       } else {
         data = this.gatherFormData()
       }
-      this.loading = true
+      this.operationLoading = true
       createStatefulSet(this.clusterName, data)
         .then(() => {
           this.$message({
@@ -313,7 +312,7 @@ export default {
           this.$router.push({ name: "StatefulSets" })
         })
         .finally(() => {
-          this.loading = false
+          this.operationLoading = false
         })
     },
     onEditYaml() {
@@ -334,6 +333,7 @@ export default {
     this.loadSecrets()
     this.loadConfigMaps()
     this.loadNodes()
+    this.loadStorageClass()
     this.isRefresh = !this.isRefresh
   },
 }

@@ -23,50 +23,42 @@
         <ko-base :baseParentObj="form.spec.jobTemplate.spec.template.spec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
       </el-form>
 
-      <el-tabs style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
+      <el-tabs :key="isRefresh" style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
         <el-tab-pane label="General" name="General">
-          <div :key="isRefresh">
-            <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
-            <ko-ports ref="ko_ports" :portParentObj="currentContainer" />
-            <ko-command ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
-          </div>
+          <ko-container ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
+          <ko-ports ref="ko_ports" :portParentObj="currentContainer" />
+          <ko-command ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
-        <el-tab-pane label="Health Check" name="Health Check">
-          <div :key="isRefresh">
-            <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" health_check_type="Readiness Check" />
-            <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" health_check_type="Liveness Check" />
-            <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
-          </div>
+        <el-tab-pane label="Health Check" v-if="currentContainerType === 'standardContainers'" name="Health Check">
+          <ko-health-check ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" health_check_type="Readiness Check" />
+          <ko-health-check ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" health_check_type="Liveness Check" />
+          <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <div :key="isRefresh">
-            <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
-            <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-            <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.jobTemplate.spec.metadata" labelTitle="Pod Labels" />
-            <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.jobTemplate.spec.metadata" annotationsTitle="Pod Annotations" />
-          </div>
+          <ko-labels ref="ko_labels" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
+          <ko-annotations ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+          <ko-labels ref="ko_pod_labels" :label-obj.sync="form.spec.jobTemplate.spec.template.metadata.labels" labelTitle="Pod Labels" />
+          <ko-annotations ref="ko_pod_annotations" :annotations-obj.sync="form.spec.jobTemplate.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
-          <ko-networking ref="ko_networking" :key="isRefresh" :networkingParentObj="form.spec.jobTemplate.spec.template.spec" />
+          <ko-networking ref="ko_networking" :networkingParentObj="form.spec.jobTemplate.spec.template.spec" />
         </el-tab-pane>
         <el-tab-pane label="Scheduling" name="Scheduling">
-          <div :key="isRefresh">
-            <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :namespaceList="namespace_list" />
-            <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :nodeList="node_list" />
-            <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.jobTemplate.spec.template.spec" />
-          </div>
+          <ko-pod-scheduling ref="ko_pod_scheduling" :podSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :namespaceList="namespace_list" />
+          <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingParentObj="form.spec.jobTemplate.spec.template.spec" :nodeList="node_list" />
+          <ko-tolerations ref="ko_toleration" :tolerationsParentObj="form.spec.jobTemplate.spec.template.spec" />
         </el-tab-pane>
         <el-tab-pane label="Resources" name="Resources">
-          <ko-resources ref="ko_resource" :key="isRefresh" :resourceParentObj="currentContainer" />
+          <ko-resources ref="ko_resource" :resourceParentObj="currentContainer" />
         </el-tab-pane>
         <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
-          <ko-upgrade-policy-cronjob ref="ko_upgrade_policy_cronjob" :key="isRefresh" :upgradePolicyParentObj="form.spec" />
+          <ko-upgrade-policy-cronjob ref="ko_upgrade_policy_cronjob" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
         <el-tab-pane label="Security Context" name="Security Context">
-          <ko-security-context ref="ko_security_context" :key="isRefresh" :securityContextParentObj="currentContainer" />
+          <ko-security-context ref="ko_security_context" :securityContextParentObj="currentContainer" />
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
-          <ko-storage :key="isRefresh" ref="ko_storage" :storageParentObj="form.spec.jobTemplate.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-storage ref="ko_storage" :storageParentObj="form.spec.jobTemplate.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -272,17 +264,15 @@ export default {
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_resource.transformation(this.currentContainer)
-      this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
-      this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
-      this.$refs.ko_health_startup_check.transformation(this.currentContainer)
+      if (this.currentContainerType === "standardContainers") {
+        this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_startup_check.transformation(this.currentContainer)
+      }
       this.$refs.ko_security_context.transformation(this.currentContainer)
       this.$refs.ko_networking.transformation(this.form.spec.jobTemplate.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.jobTemplate.spec.template.spec)
       this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.metadata)
-      this.$refs.ko_annotations.transformation(this.form.metadata)
-      this.$refs.ko_pod_labels.transformation(this.form.spec.jobTemplate.spec.template.metadata)
-      this.$refs.ko_pod_annotations.transformation(this.form.spec.jobTemplate.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.jobTemplate.spec.template.spec)
       if (this.currentContainerType === "initContainers") {
         this.form.spec.jobTemplate.spec.template.spec.initContainers[this.currentContainerIndex] = this.currentContainer
