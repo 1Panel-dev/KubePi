@@ -33,16 +33,20 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Service Ports">
+                <el-tab-pane label="External Name" v-if="form.spec.type==='ExternalName'">
+                  <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
+                </el-tab-pane>
+                <el-tab-pane label="Service Ports" v-if="form.spec.type==='ClusterIP'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
-                <el-tab-pane label="Selectors">
+                <el-tab-pane label="Selectors" v-if="form.spec.type==='ClusterIP' ">
                   <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
-                <el-tab-pane label="IP Addresses">
+                <el-tab-pane label="IP Addresses"
+                             v-if="form.spec.type==='ClusterIP' || form.spec.type==='ExternalName'">
                   <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
-                <el-tab-pane label="Session Affinity">
+                <el-tab-pane label="Session Affinity" v-if="form.spec.type==='ClusterIP'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
@@ -79,10 +83,12 @@ import KoServicePorts from "@/components/ko-network/service-ports"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 import KoServiceIpAddresses from "@/components/ko-network/service-ip-addresses"
 import KoServiceSessionAffinity from "@/components/ko-network/service-session-affinity"
+import KoServiceExternalName from "@/components/ko-network/service-external-name"
 
 export default {
   name: "ServiceCreate",
   components: {
+    KoServiceExternalName,
     KoServiceSessionAffinity,
     KoServiceIpAddresses,
     KoKeyValue,

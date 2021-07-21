@@ -2,13 +2,13 @@
   <div style="margin-top: 20px">
     <ko-card title="IP Addresses">
       <el-form ref="form" label-position="top" :model="spec">
-        <el-row>
+        <el-row v-if="spec.type === 'ClusterIP'">
           <el-col :span="12">
             <ko-form-item placeholder="e.g. foo" itemType="input" v-model="spec.clusterIP"
-                          @change.native="transformation"/>
+                          @change.native="transformation" @clear="transformation"/>
           </el-col>
         </el-row>
-        <h2>External IPs</h2>
+        <h2 v-if="spec.type === 'ClusterIP'">External IPs</h2>
         <div v-for="(row, index) in spec.externalIPs" v-bind:key="index" style="margin-top: 5px">
           <span v-if="false">{{ row }}</span>
           <el-row :gutter="20">
@@ -61,8 +61,10 @@ export default {
   },
   created () {
     if (this.specObj) {
-      this.spec.clusterIP = this.specObj.clusterIP ?  this.specObj.clusterIP :  this.specObj.clusterIP = ""
-      this.spec.externalIPs = this.specObj.externalIPs ?  this.specObj.externalIPs :  this.specObj.externalIPs = []
+      if (this.specObj.type === 'ClusterIP') {
+        this.spec.clusterIP = this.specObj.clusterIP ? this.specObj.clusterIP : this.specObj.clusterIP = ""
+      }
+      this.spec.externalIPs = this.specObj.externalIPs ? this.specObj.externalIPs : this.specObj.externalIPs = []
     }
   }
 }
