@@ -36,6 +36,15 @@
                 <el-tab-pane label="Service Ports">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
+                <el-tab-pane label="Selectors">
+                  <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
+                </el-tab-pane>
+                <el-tab-pane label="IP Addresses">
+                  <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
+                </el-tab-pane>
+                <el-tab-pane label="Session Affinity">
+                  <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
+                </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
                   <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
@@ -68,10 +77,14 @@ import Rule from "@/utils/rules"
 import {createService} from "@/api/services"
 import KoServicePorts from "@/components/ko-network/service-ports"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
+import KoServiceIpAddresses from "@/components/ko-network/service-ip-addresses"
+import KoServiceSessionAffinity from "@/components/ko-network/service-session-affinity"
 
 export default {
   name: "ServiceCreate",
   components: {
+    KoServiceSessionAffinity,
+    KoServiceIpAddresses,
     KoKeyValue,
     KoServicePorts,
     YamlEditor,
