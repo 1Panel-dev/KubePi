@@ -48,7 +48,7 @@ export default {
     }
   },
   mounted () {
-    if (this.certificateObj) {
+    if (Object.keys(this.certificateObj).length !== 0) {
       const { Base64 } = require("js-base64")
       this.form = {
         crt: Base64.decode(this.certificateObj["tls.crt"]),
