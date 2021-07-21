@@ -41,9 +41,9 @@
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
           <div>
             <ko-labels ref="ko_labels" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
-          <ko-annotations ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
-          <ko-labels ref="ko_pod_labels" :label-obj.sync="form.spec.template.metadata.labels" labelTitle="Pod Labels" />
-          <ko-annotations ref="ko_pod_annotations" :annotations-obj.sync="form.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
+            <ko-annotations ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+            <ko-labels ref="ko_pod_labels" :label-obj.sync="form.spec.template.metadata.labels" labelTitle="Pod Labels" />
+            <ko-annotations ref="ko_pod_annotations" :annotations-obj.sync="form.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
@@ -67,6 +67,9 @@
         </el-tab-pane>
         <el-tab-pane label="Storage" name="Storage">
           <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+        </el-tab-pane>
+        <el-tab-pane label="Volume Claim Templates" name="Volume Claim Templates">
+          <ko-volume-claim ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :scList="sc_list" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -102,6 +105,7 @@ import KoUpgradePolicyStatefulset from "@/components/ko-workloads/ko-upgrade-pol
 import KoLabels from "@/components/ko-workloads/ko-labels.vue"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
+import KoVolumeClaim from "@/components/ko-workloads/ko-volume-claim.vue"
 
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
@@ -111,10 +115,11 @@ import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
+import { listStorageClass } from "@/api/storageclass"
 
 export default {
   name: "StatefulSetEdit",
-  components: { LayoutContent, KoFormItem, KoBase, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyStatefulset, KoLabels, KoAnnotations, KoStorage, YamlEditor },
+  components: { LayoutContent, KoFormItem, KoBase, KoContainer, KoPorts, KoCommand, KoResources, KoHealthCheck, KoSecurityContext, KoNetworking, KoPodScheduling, KoNodeScheduling, KoTolerations, KoUpgradePolicyStatefulset, KoLabels, KoAnnotations, KoStorage, KoVolumeClaim, YamlEditor },
   data() {
     return {
       // yaml
@@ -131,6 +136,7 @@ export default {
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
+      sc_list: [],
       // base form
       activeName: "General",
       isValid: true,
@@ -177,6 +183,7 @@ export default {
         this.currentContainer = this.form.spec.template.spec.containers[0]
         this.yaml = res
         this.isRefresh = !this.isRefresh
+        this.loading = false
       })
     },
     loadNamespace() {
@@ -188,10 +195,14 @@ export default {
       })
     },
     loadSecrets() {
-      this.secret_list = []
       listSecrets(this.clusterName).then((res) => {
         this.secret_list = res.items
         this.loadSecretsWithNs()
+      })
+    },
+    loadStorageClass() {
+      listStorageClass(this.clusterName).then((res) => {
+        this.sc_list = res.items
       })
     },
     loadSecretsWithNs() {
@@ -279,6 +290,7 @@ export default {
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
+      this.$refs.ko_volume_claim.transformation(this.form.spec)
       if (this.currentContainerType === "initContainers") {
         this.form.spec.template.spec.initContainers[this.currentContainerIndex] = this.currentContainer
       } else {
@@ -301,7 +313,7 @@ export default {
       } else {
         data = this.gatherFormData()
       }
-      this.loading = true
+      this.operationLoading = true
       updateStatefulSet(this.clusterName, data)
         .then(() => {
           this.$message({
@@ -311,7 +323,7 @@ export default {
           this.$router.push({ name: "StatefulSets" })
         })
         .finally(() => {
-          this.loading = false
+          this.operationLoading = false
         })
     },
     onEditYaml() {
@@ -323,6 +335,7 @@ export default {
     },
   },
   mounted() {
+    this.loading = true
     this.selectContainerIndex = 0
     this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
@@ -333,6 +346,7 @@ export default {
     this.loadSecrets()
     this.loadConfigMaps()
     this.loadNodes()
+    this.loadStorageClass()
   },
 }
 </script>

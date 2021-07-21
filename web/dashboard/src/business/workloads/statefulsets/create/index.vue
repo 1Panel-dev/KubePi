@@ -60,6 +60,9 @@
         <el-tab-pane label="Storage" name="Storage">
           <ko-storage ref="ko_storage" :storageParentObj="form.spec.template.spec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
+        <el-tab-pane label="Volume Claim Templates" name="Volume Claim Templates">
+          <ko-volume-claim ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :scList="sc_list" />
+        </el-tab-pane>
       </el-tabs>
     </div>
     <div class="grid-content bg-purple-light" v-if="showYaml">
@@ -98,13 +101,14 @@ import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoStorage from "@/components/ko-workloads/ko-storage.vue"
 
 import YamlEditor from "@/components/yaml-editor"
+import Rule from "@/utils/rules"
 
 import { createStatefulSet } from "@/api/statefulsets"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
-import Rule from "@/utils/rules"
+import { listStorageClass } from "@/api/storageclass"
 
 export default {
   name: "StatefulSetCreate",
@@ -125,6 +129,7 @@ export default {
       config_map_list: [],
       config_map_list_of_ns: [],
       node_list: [],
+      sc_list: [],
       // base form
       activeName: "General",
       isValid: true,
@@ -178,10 +183,14 @@ export default {
       })
     },
     loadSecrets() {
-      this.secret_list = []
       listSecrets(this.clusterName).then((res) => {
         this.secret_list = res.items
         this.loadSecretsWithNs()
+      })
+    },
+    loadStorageClass() {
+      listStorageClass(this.clusterName).then((res) => {
+        this.sc_list = res.items
       })
     },
     loadSecretsWithNs() {
@@ -293,7 +302,7 @@ export default {
       } else {
         data = this.gatherFormData()
       }
-      this.loading = true
+      this.operationLoading = true
       createStatefulSet(this.clusterName, data)
         .then(() => {
           this.$message({
@@ -303,7 +312,7 @@ export default {
           this.$router.push({ name: "StatefulSets" })
         })
         .finally(() => {
-          this.loading = false
+          this.operationLoading = false
         })
     },
     onEditYaml() {
@@ -324,6 +333,7 @@ export default {
     this.loadSecrets()
     this.loadConfigMaps()
     this.loadNodes()
+    this.loadStorageClass()
     this.isRefresh = !this.isRefresh
   },
 }
