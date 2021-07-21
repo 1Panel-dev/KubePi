@@ -36,17 +36,16 @@
                 <el-tab-pane label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
-                <el-tab-pane label="Service Ports" v-if="form.spec.type==='ClusterIP'">
+                <el-tab-pane label="Service Ports" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
-                <el-tab-pane label="Selectors" v-if="form.spec.type==='ClusterIP' ">
+                <el-tab-pane label="Selectors" v-if="form.spec.type!=='ExternalName' ">
                   <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
-                <el-tab-pane label="IP Addresses"
-                             v-if="form.spec.type==='ClusterIP' || form.spec.type==='ExternalName'">
+                <el-tab-pane label="IP Addresses">
                   <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
-                <el-tab-pane label="Session Affinity" v-if="form.spec.type==='ClusterIP'">
+                <el-tab-pane label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
