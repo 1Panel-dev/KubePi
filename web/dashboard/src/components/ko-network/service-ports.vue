@@ -31,7 +31,7 @@
             </el-select>
           </td>
           <td>
-            <el-input v-model="row.targetPort" @change="transformation"></el-input>
+            <el-input type="text" v-model="row.targetPort" @change="transformation(index)"></el-input>
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -67,7 +67,7 @@ export default {
     handleAdd () {
       const item = {
         name: "",
-        port: 0,
+        port: 8080,
         protocol: "TCP",
         targetPort: ""
       }
@@ -77,8 +77,10 @@ export default {
       this.servicePorts.splice(index, 1)
       this.transformation()
     },
-    transformation () {
-      console.log("1111")
+    transformation (index) {
+      if (index !== undefined && !Number.isNaN(Number(this.servicePorts[index].targetPort))) {
+        this.servicePorts[index].targetPort = parseInt(this.servicePorts[index].targetPort)
+      }
       this.$emit("update:ports", this.servicePorts)
     }
   },
@@ -86,7 +88,7 @@ export default {
     if (!this.ports) {
       this.servicePorts.push({
         name: "",
-        port: 0,
+        port: 8080,
         protocol: "TCP",
         targetPort: ""
       })
