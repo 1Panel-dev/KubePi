@@ -30,10 +30,10 @@
           <ko-health-check ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
         </el-tab-pane>
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <ko-labels ref="ko_labels" :labelParentObj="form.metadata" labelTitle="Labels" />
-          <ko-annotations ref="ko_annotations" :annotationsParentObj="form.metadata" annotationsTitle="Annotations" />
-          <ko-labels ref="ko_pod_labels" :labelParentObj="form.spec.template.metadata" labelTitle="Pod Labels" />
-          <ko-annotations ref="ko_pod_annotations" :annotationsParentObj="form.spec.template.metadata" annotationsTitle="Pod Annotations" />
+          <ko-labels ref="ko_labels" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
+          <ko-annotations ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+          <ko-labels ref="ko_pod_labels" :label-obj.sync="form.spec.template.metadata.labels" labelTitle="Pod Labels" />
+          <ko-annotations ref="ko_pod_annotations" :annotations-obj.sync="form.spec.template.metadata.annotations" annotationsTitle="Pod Annotations" />
         </el-tab-pane>
         <el-tab-pane label="Networking" name="Networking">
           <ko-networking ref="ko_networking" :networkingParentObj="form.spec.template.spec" />
@@ -263,10 +263,6 @@ export default {
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec)
-      this.$refs.ko_labels.transformation(this.form.metadata)
-      this.$refs.ko_annotations.transformation(this.form.metadata)
-      this.$refs.ko_pod_labels.transformation(this.form.spec.template.metadata)
-      this.$refs.ko_pod_annotations.transformation(this.form.spec.template.metadata)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       if (this.currentContainerType === "initContainers") {
         this.form.spec.template.spec.initContainers[this.currentContainerIndex] = this.currentContainer

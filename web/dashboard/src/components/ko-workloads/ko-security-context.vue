@@ -36,12 +36,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Add Capabilities" prop="capabilities.add">
-              <ko-form-item multiple itemType="select2" v-model="form.capabilities.add" :selections="capability_list" />
+              <ko-form-item multiple itemType="select2" filterable allow-create v-model="form.capabilities.add" :selections="capability_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Drop Capabilities" prop="capabilities.drop">
-              <ko-form-item multiple itemType="select2" v-model="form.capabilities.drop" :selections="capability_list" />
+              <ko-form-item multiple itemType="select2" filterable allow-create v-model="form.capabilities.drop" :selections="capability_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -79,7 +79,7 @@ export default {
         { label: "No", value: false },
         { label: "Yes: container has a read-only root filesystem", value: true },
       ],
-      capability_list: ["CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER", "FSETID", "KILL", "SETGID", "SETUID", "SETPCAP", "LINUX_IMMUTABLE", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_ADMIN", "NET_RAW", "IPC_LOCK", "IPC_OWNER", "SYS_MODULE", "SYS_RAWIO", "SYS_CHROOT", "SYS_PTRACE", "SYS_PACCT", "SYS_ADMIN", "SYS_BOOT", "SYS_NICE", "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "MKNOD", "LEASE", "AUDIT_WRITE", "AUDIT_CONTROL", "SETFCAP", "MAC_OVERRIDE", "MAC_ADMIN", "SYSLOG", "WAKE_ALARM", "BLOCK_SUSPEND", "AUDIT_READ", "PERFMON", "BPF", "CHECKPOINT_RESTORE"],
+      capability_list: ["ALL", "AUDIT_CONTROL", "AUDIT_WRITE", "BLOCK_SUSPEND", "CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER", "FSETID", "IPC_LOCK", "IPC_OWNER", "KILL", "LEASE", "LINUX_IMMUTABLE", "MAC_ADMIN", "MAC_OVERRIDE", "MKNOD", "NET_ADMIN", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_RAW", "SETFCAP", "SETGID", "SETPCAP", "SETUID", "SYSLOGSYS_ADMIN", "SYS_BOOT", "SYS_CHROOT", "SYS_MODULE", "SYS_NICE", "SYS_PACCT", "SYS_PTRACE", "SYS_RAWIO", "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "WAKE_ALARM"],
       form: {
         privileged: false,
         allowPrivilegeEscalation: true,

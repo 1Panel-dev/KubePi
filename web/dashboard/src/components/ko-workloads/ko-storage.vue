@@ -195,7 +195,6 @@ export default {
             configMap: {
               name: "",
               defaultMode: 644,
-              optional: true,
             },
           }
           break
@@ -203,9 +202,9 @@ export default {
           item.metadata = {
             name: "",
             secret: {
-              name: "",
               defaultMode: 644,
               optional: true,
+              secretName: "",
             },
           }
           break
@@ -261,29 +260,29 @@ export default {
       if (!parentFrom.volumes) {
         parentFrom.volumes = []
       }
-      parentFrom.containers[this.containerIndex].volumeMounts = []
       for (const volume of this.volumeAdd) {
         switch (volume._type) {
           case "configMap":
             if (volume.defaultMode) {
-              volume.configMap.defaultMode = parseInt(volume.defaultMode)
+              volume.metadata.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
             }
             break
           case "secret":
             if (volume.defaultMode) {
-              volume.secret.defaultMode = parseInt(volume.defaultMode)
+              volume.metadata.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
             }
             break
         }
         parentFrom.volumes.push(volume.metadata)
-      }
-      for (const volume of this.volumes) {
         if (volume.volumeMounts.length !== 0) {
           for (const mount of volume.volumeMounts) {
-            parentFrom.containers[this.containerIndex].volumeMounts.push({ mountPath: mount.mountPath, subPath: mount.subPath, readOnly: mount.readOnly })
+            parentFrom.containers[this.containerIndex].volumeMounts.push({ name: volume.metadata.name, mountPath: mount.mountPath, subPath: mount.subPath, readOnly: mount.readOnly })
           }
+        } else {
+          parentFrom.containers[this.containerIndex].volumeMounts.push({ name: volume.metadata.name })
         }
       }
+      this.volumeAdd = []
     },
   },
   mounted() {
