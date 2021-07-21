@@ -42,13 +42,13 @@
                 <el-tab-pane label="Selectors" v-if="form.spec.type!=='ExternalName' ">
                   <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
-                <el-tab-pane label="IP Addresses">
-                  <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
-                </el-tab-pane>
                 <el-tab-pane label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
+                <el-tab-pane  name="first" :key="'first'" label="IP Addresses">
+                  <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
+                </el-tab-pane>
+                <el-tab-pane name="second" :key="'second'"  label="Labels/Annotations">
                   <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
                   <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
