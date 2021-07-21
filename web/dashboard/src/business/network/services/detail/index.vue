@@ -114,7 +114,6 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import JsonEditor from "@/components/json-editor"
 import YamlEditor from "@/components/yaml-editor"
 import {getService} from "@/api/services"
 import ResourcePod from "@/components/resources/resource-pod"
@@ -122,7 +121,7 @@ import ResourcePorts from "@/components/resources/resource-ports"
 
 export default {
   name: "ServiceDetail",
-  components: { ResourcePorts, ResourcePod, YamlEditor, JsonEditor, LayoutContent },
+  components: { ResourcePorts, ResourcePod, YamlEditor, LayoutContent },
   props: {
     name: String,
     namespace: String,
