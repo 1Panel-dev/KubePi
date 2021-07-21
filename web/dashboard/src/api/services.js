@@ -26,3 +26,7 @@ export function listServices (cluster_name, limit, continueToken, search) {
 export function deleteService (cluster_name, namespace, name) {
   return del(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`)
 }
+
+export function getService(cluster_name, namespace, name) {
+  return get(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`)
+}

@@ -77,7 +77,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "IngressEdit",
+              name: "NetworkPolicyEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
@@ -88,7 +88,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "IngressEdit",
+              name: "NetworkPolicyEdit",
               params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })
@@ -128,7 +128,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "IngressCreate",
+        name: "NetworkPolicyCreate",
       })
     },
     onDelete (row) {
@@ -166,7 +166,7 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "IngressDetail",
+        name: "NetworkPolicyDetail",
         params: { name: row.metadata.name, namespace: row.metadata.namespace },
         query: { yamlShow: false }
       })
