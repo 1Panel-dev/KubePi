@@ -29,6 +29,15 @@ const Network = {
       }
     },
     {
+      path: "/services/create",
+      component: () => import("@/business/network/services/create"),
+      name: "ServiceCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
       path: "/ingresses",
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",

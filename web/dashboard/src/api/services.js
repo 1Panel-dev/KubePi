@@ -1,4 +1,4 @@
-import {del, get} from "@/plugins/request"
+import {del, get, post} from "@/plugins/request"
 
 const serviceUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/services`
@@ -27,6 +27,10 @@ export function deleteService (cluster_name, namespace, name) {
   return del(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`)
 }
 
-export function getService(cluster_name, namespace, name) {
+export function getService (cluster_name, namespace, name) {
   return get(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`)
+}
+
+export function createService (cluster_name, namespace, data) {
+  return post(`${namespaceServiceUrl(cluster_name, namespace)}`, data)
 }

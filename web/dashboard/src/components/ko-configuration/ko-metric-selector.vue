@@ -6,8 +6,8 @@
         <th scope="col" width="30%" align="left">
           <label>key</label>
         </th>
-        <th scope="Operator" width="30%" align="left">
-          <label>key</label>
+        <th scope="col" width="30%" align="left">
+          <label>Operator</label>
         </th>
         <th scope="col" width="30%" align="left">
           <label>value</label>
