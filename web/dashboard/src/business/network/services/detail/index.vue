@@ -117,8 +117,8 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getService} from "@/api/services"
-import ResourcePod from "@/components/resources/resource-pod"
-import ResourcePorts from "@/components/resources/resource-ports"
+import ResourcePod from "@/components/detail/detail-pod"
+import ResourcePorts from "@/components/detail/detail-ports"
 
 export default {
   name: "ServiceDetail",

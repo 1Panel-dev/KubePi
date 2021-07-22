@@ -79,7 +79,7 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getIngress} from "@/api/ingress"
 import YamlEditor from "@/components/yaml-editor"
-import KoResourceRule from "@/components/resources/resource-rules"
+import KoResourceRule from "@/components/detail/detail-rules"
 
 export default {
   name: "IngressDetail",

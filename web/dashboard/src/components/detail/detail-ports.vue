@@ -19,7 +19,7 @@
 import ComplexTable from "@/components/complex-table"
 
 export default {
-  name: "ResourcePorts",
+  name: "KoDetailPorts",
   components: { ComplexTable },
   props: {
     data: Array

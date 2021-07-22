@@ -1,7 +1,7 @@
 <template>
   <div>
     <complex-table :data="pods" v-loading="loading" @search="search()">
-      <el-table-column  :label="$t('commons.table.status')" min-width="45">
+      <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
                      size="mini" plain round>
@@ -13,24 +13,24 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column  :label="$t('commons.table.name')" prop="name" min-width="100">
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column  :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
-      <el-table-column  :label="$t('business.pod.ready')" min-width="30">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
+      <el-table-column :label="$t('business.pod.ready')" min-width="30">
         <template v-slot:default="{row}">
           {{ getPodStatus(row) }}
         </template>
       </el-table-column>
-      <el-table-column  :label="$t('business.workload.restarts')" min-width="30">
+      <el-table-column :label="$t('business.workload.restarts')" min-width="30">
         <template v-slot:default="{row}">
           {{ getRestartTimes(row) }}
         </template>
       </el-table-column>
-      <el-table-column  label="IP" min-width="45" prop="status.podIP"/>
-      <el-table-column  :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName"/>
+      <el-table-column label="IP" min-width="45" prop="status.podIP"/>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName"/>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -45,7 +45,7 @@ import ComplexTable from "@/components/complex-table"
 import {listPodsWithNsSelector} from "@/api/pods"
 
 export default {
-  name: "ResourcePod",
+  name: "KoDetailPod",
   components: { ComplexTable },
   props: {
     cluster: String,
@@ -73,7 +73,7 @@ export default {
         query: { yamlShow: false }
       })
     },
-    getPodStatus(row) {
+    getPodStatus (row) {
       if (row.status.containerStatuses) {
         let readyCount = 0
         for (const c of row.status.containerStatuses) {
@@ -84,7 +84,7 @@ export default {
         return readyCount + "/" + row.status.containerStatuses.length
       }
     },
-    getRestartTimes(row) {
+    getRestartTimes (row) {
       if (row.status.containerStatuses) {
         let restartCount = 0
         for (const c of row.status.containerStatuses) {
@@ -96,7 +96,7 @@ export default {
     },
   },
   created () {
-    if (this.selector !== ""){
+    if (this.selector !== "") {
       this.search()
     }
   }

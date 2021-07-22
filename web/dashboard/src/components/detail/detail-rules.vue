@@ -17,7 +17,7 @@
 import ComplexTable from "@/components/complex-table"
 
 export default {
-  name: "KoResourceRule",
+  name: "KoDetailRule",
   components: { ComplexTable },
   props: {
     data: Array
