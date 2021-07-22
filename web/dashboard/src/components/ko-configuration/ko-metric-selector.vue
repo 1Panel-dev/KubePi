@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <h5>Metric Selector</h5>
-    <table style="width: 100%;padding: 0" class="tab-table" v-if="matchExpressions.length > 0">
+    <table style="width: 100%;padding: 0" class="tab-table" v-if="matchExpressions && matchExpressions.length > 0">
       <tr>
         <th scope="col" width="30%" align="left">
           <label>key</label>

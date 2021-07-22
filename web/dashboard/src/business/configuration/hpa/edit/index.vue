@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick">
+                       @tab-click="handleClick" v-if="Object.keys(item.metadata).length!==0">
                 <el-tab-pane label="Target">
                   <ko-hpa-target :namespace="item.metadata.namespace" :cluster="cluster"
                                  :spec-obj.sync="item.spec"></ko-hpa-target>
