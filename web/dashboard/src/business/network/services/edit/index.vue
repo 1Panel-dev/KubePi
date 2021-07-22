@@ -6,23 +6,21 @@
           <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
               <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
-                <el-input clearable v-model="form.metadata.name"></el-input>
+                <el-input clearable v-model="form.metadata.name" disabled></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="3">
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
-                <el-select v-model="form.metadata.namespace">
-                  <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                <el-select v-model="form.metadata.namespace" disabled>
+                  <el-option :label="form.metadata.namespace"
+                             :value="form.metadata.namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="3">
               <el-form-item :label="$t('business.configuration.type')" required>
-                <el-select v-model="form.spec.type" @change="changeType">
+                <el-select v-model="form.spec.type" @change="changeType" disabled>
                   <el-option label="Cluster IP" value="ClusterIP"></el-option>
                   <el-option label="External Name" value="ExternalName"></el-option>
                   <el-option label="Load Balancer" value="LoadBalancer"></el-option>
@@ -32,7 +30,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick" ref=tabs>
+                       @tab-click="handleClick" v-if="Object.keys(form.spec).length!==0">
                 <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
@@ -74,10 +72,9 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
-import {createService} from "@/api/services"
+import {getService, updateService} from "@/api/services"
 import KoServicePorts from "@/components/ko-network/service-ports"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 import KoServiceIpAddresses from "@/components/ko-network/service-ip-addresses"
@@ -85,7 +82,7 @@ import KoServiceSessionAffinity from "@/components/ko-network/service-session-af
 import KoServiceExternalName from "@/components/ko-network/service-external-name"
 
 export default {
-  name: "ServiceCreate",
+  name: "ServiceEdit",
   components: {
     KoServiceExternalName,
     KoServiceSessionAffinity,
@@ -95,24 +92,17 @@ export default {
     YamlEditor,
     LayoutContent,
   },
-  props: {},
+  props: {
+    name: String,
+    namespace: String,
+  },
   data () {
     return {
       cluster: "",
-      namespaces: [],
       loading: false,
       form: {
-        apiVersion: "v1",
-        kind: "Service",
-        metadata: {
-          name: "",
-          namespace: "default",
-          labels: {},
-          annotations: {},
-        },
-        spec: {
-          type: "ClusterIP"
-        },
+        metadata: {},
+        spec: {}
       },
       showYaml: false,
       yaml: {},
@@ -126,6 +116,17 @@ export default {
     }
   },
   methods: {
+    getDetail () {
+      this.loading = true
+      getService(this.cluster, this.namespace, this.name).then(res => {
+        this.form = res
+        if (this.showYaml) {
+          this.yaml = this.transformYaml()
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
     handleClick (tab) {
       this.activeName = tab.name
     },
@@ -144,21 +145,21 @@ export default {
     },
     onSubmit () {
       if (this.showYaml) {
-        this.onCreate(this.$refs.yaml_editor.getValue())
+        this.onUpdate(this.$refs.yaml_editor.getValue())
       } else {
         this.$refs["form"].validate((valid) => {
           if (valid) {
-            this.onCreate(this.transformYaml())
+            this.onUpdate(this.transformYaml())
           }
         })
       }
     },
-    onCreate (data) {
+    onUpdate (data) {
       this.loading = true
-      createService(this.cluster, this.form.metadata.namespace, data).then(() => {
+      updateService(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({ name: "Services" })
       }).finally(() => {
@@ -169,18 +170,17 @@ export default {
       this.form.spec = {
         type: type
       }
-      if (type === 'ExternalName') {
+      if (type === "ExternalName") {
         this.activeName = "ExternalName"
-      }else {
+      } else {
         this.activeName = "ServicePorts"
       }
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
-    })
+    this.showYaml = this.$route.query.yamlShow === "true"
+    this.getDetail()
   }
 }
 </script>

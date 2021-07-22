@@ -1,4 +1,4 @@
-import {del, get, post} from "@/plugins/request"
+import {del, get, patch, post} from "@/plugins/request"
 
 const serviceUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/services`
@@ -33,4 +33,8 @@ export function getService (cluster_name, namespace, name) {
 
 export function createService (cluster_name, namespace, data) {
   return post(`${namespaceServiceUrl(cluster_name, namespace)}`, data)
+}
+
+export function updateService (cluster_name, namespace, name, data) {
+  return patch(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`, data)
 }

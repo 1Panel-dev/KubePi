@@ -38,6 +38,16 @@ const Network = {
       }
     },
     {
+      path: "/services/:namespace/:name/edit",
+      component: () => import("@/business/network/services/edit"),
+      name: "ServiceEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
       path: "/ingresses",
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",

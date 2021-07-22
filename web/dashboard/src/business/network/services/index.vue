@@ -77,7 +77,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
+              name: "ServiceEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
@@ -88,7 +88,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
+              name: "ServiceEdit",
               params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })
