@@ -56,6 +56,16 @@ const Network = {
       }
     },
     {
+      path: "/ingresses/:namespace/:name/detail",
+      component: () => import("@/business/network/ingresses/detail"),
+      name: "IngressDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
       path: "/endpoints",
       component: () => import("@/business/network/endpoints"),
       name: "Endpoints",

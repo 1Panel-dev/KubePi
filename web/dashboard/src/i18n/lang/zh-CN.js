@@ -161,7 +161,14 @@ const message = {
     network: {
       network: "网络",
       port: "端口",
-      protocol: "协议"
+      protocol: "协议",
+      rule: "规则",
+      host: "主机",
+      path: "路径",
+      path_type: "路径类型",
+      service_name: "Service 名称",
+      service_port: "Service 端口",
+      target: "目标"
     },
     storage: {
       storage: "存储"
