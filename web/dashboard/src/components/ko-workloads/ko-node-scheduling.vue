@@ -2,9 +2,9 @@
   <div style="margin-top: 20px">
     <ko-card title="Node Scheduling">
       <el-form label-position="top" ref="form" :disabled="isReadOnly">
-        <el-row>
+        <el-row >
           <el-col :span="24">
-            <el-form-item label="Scheduling Type">
+            <el-form-item label="Scheduling Type" v-if="enableschedulingList">
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
             </el-form-item>
           </el-col>
@@ -91,6 +91,7 @@ export default {
     nodeSchedulingParentObj: Object,
     nodeList: Array,
     isReadOnly: Boolean,
+    nodeSchedulingType: String,
   },
   watch: {
     nodeList: {
@@ -127,6 +128,7 @@ export default {
       nodeName: "",
       node_list: [],
       nodeSchedulings: [],
+      enableschedulingList: true
     }
   },
   methods: {
@@ -247,6 +249,10 @@ export default {
           }
         }
       }
+    }
+      if (this.nodeSchedulingType !== '' && typeof this.nodeSchedulingType !== 'undefined'){
+        this.scheduling_type = this.nodeSchedulingType
+        this.enableschedulingList = false
     }
   },
 }
