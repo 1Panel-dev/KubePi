@@ -26,9 +26,15 @@
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
             <div v-for="(path,index) in rule.http.paths" :key="index">
-              <el-link  :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">{{ "http://" + rule.host + (path.path ? path.path : "") }}</el-link>
+              <el-link :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+                {{ "http://" + rule.host + (path.path ? path.path : "") }}
+              </el-link>
               >
-              <span>{{ path.backend.service ? path.backend.service.name : "" }}</span>
+              <el-link @click="toResource('Service',row.metadata.namespace,path.backend.service.name)">
+                {{
+                  path.backend.service ? path.backend.service.name : ""
+                }}
+              </el-link>
             </div>
           </div>
         </template>
@@ -50,10 +56,12 @@ import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteIngress, listIngresses} from "@/api/ingress"
+import {mixin} from "@/utils/resourceRoutes"
 
 export default {
   name: "Ingresses",
   components: { LayoutContent, ComplexTable, KoTableOperations },
+  mixins: [mixin],
   data () {
     return {
       data: [],
