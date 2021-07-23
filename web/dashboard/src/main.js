@@ -19,6 +19,8 @@ import "./permission"
 import "@/styles/common/ekko.css"
 import filters from "./filters";
 import JsonViewer from 'vue-json-viewer'
+import directives from "./directive";
+
 
 Vue.config.productionTip = false
 
@@ -34,6 +36,7 @@ library.add(fas, far, fab)
 
 Vue.use(icons);
 Vue.use(filters);
+Vue.use(directives)
 Vue.use(JsonViewer)
 
 new Vue({

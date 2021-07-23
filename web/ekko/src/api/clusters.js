@@ -39,8 +39,8 @@ export function updateClusterMember(name, memberName, member) {
 }
 
 
-export function getClusterMember(name, memberName, kind) {
-    return get(`${baseUrl}/${name}/members/${memberName}?kind=${kind}`)
+export function getClusterMember(name, memberName) {
+    return get(`${baseUrl}/${name}/members/${memberName}`)
 }
 
 export function deleteClusterMember(name, memberName, kind) {
@@ -69,4 +69,16 @@ export function listClusterResourceByGroupVersion(name, groupVersion) {
 
 export function deleteClusterRole(name, clusterRoleName) {
     return del(`${baseUrl}/${name}/clusterroles/${clusterRoleName}`)
+}
+
+export function listNamespaces(name) {
+    return get(`${baseUrl}/${name}/namespaces`)
+}
+
+export function listProjects(name) {
+    return get(`${baseUrl}/${name}/projects`)
+}
+
+export function createProject(name, project) {
+    return post(`${baseUrl}/${name}/projects`, project)
 }

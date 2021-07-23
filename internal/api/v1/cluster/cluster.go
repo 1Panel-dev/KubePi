@@ -10,6 +10,7 @@ import (
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/ekko/internal/service/v1/project"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
@@ -26,12 +27,14 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
+	projectService        project.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
+		projectService:        project.NewService(),
 	}
 }
 
@@ -131,7 +134,6 @@ func (h *Handler) CreateCluster() iris.Handler {
 		txOptions := common.DBOptions{DB: tx}
 		req.CreatedBy = profile.Name
 
-
 		if err := client.CreateDefaultClusterRoles(); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -152,12 +154,9 @@ func (h *Handler) CreateCluster() iris.Handler {
 				CreatedBy: profile.Name,
 			},
 			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("%s-%s-cluster-binding-", req.Name, profile.Name),
+				Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
 			},
-			Subject: v1Cluster.Subject{
-				Name: profile.Name,
-				Kind: "User",
-			},
+			UserRef:    profile.Name,
 			ClusterRef: req.Name,
 		}
 
@@ -186,31 +185,44 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 
-		if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("ekko:cluster-admin-%s", profile.Name),
-				Annotations: map[string]string{
-					"created-by": profile.Name,
+		roleBindingName := "ekko:admin-cluster"
+		obj, err := kc.RbacV1().ClusterRoleBindings().Get(goContext.TODO(), roleBindingName, metav1.GetOptions{})
+		if err != nil {
+			if !strings.Contains(strings.ToLower(err.Error()), "not found") {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+			}
+		}
+		if obj == nil || obj.Name == "" {
+			if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: roleBindingName,
+					Annotations: map[string]string{
+						"builtin": "true",
+					},
+					Labels: map[string]string{
+						"user-name": profile.Name,
+					},
 				},
-			},
-			Subjects: []rbacV1.Subject{
-				{
-					Kind: "User",
-					Name: profile.Name,
+				Subjects: []rbacV1.Subject{
+					{
+						Kind: "User",
+						Name: profile.Name,
+					},
 				},
-			},
-			RoleRef: rbacV1.RoleRef{
-				Name: "cluster-admin",
-				Kind: "ClusterRole",
-			},
-		}, metav1.CreateOptions{}); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
+				RoleRef: rbacV1.RoleRef{
+					Name: "Admin Cluster",
+					Kind: "ClusterRole",
+				},
+			}, metav1.CreateOptions{}); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
 		}
 		_ = tx.Commit()
-
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -234,6 +246,18 @@ func (h *Handler) SearchClusters() iris.Handler {
 			return
 		}
 		ctx.Values().Set("data", pkgV1.Page{Items: clusters, Total: total})
+	}
+}
+func (h *Handler) GetCluster() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		c, err := h.clusterService.Get(name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
+			return
+		}
+		ctx.Values().Set("data", c)
 	}
 }
 
@@ -266,7 +290,7 @@ func (h *Handler) ListClusters() iris.Handler {
 					return
 				}
 				for j := range mbs {
-					if mbs[j].Subject.Kind == "User" && mbs[j].Subject.Name == profile.Name {
+					if mbs[j].UserRef == profile.Name {
 						resultClusters = append(resultClusters, clusters[i])
 					}
 				}
@@ -323,18 +347,19 @@ func Install(parent iris.Party) {
 	sp := parent.Party("/clusters")
 	sp.Post("", handler.CreateCluster())
 	sp.Get("", handler.ListClusters())
+	sp.Get("/:name", handler.GetCluster())
 	sp.Delete("/:name", handler.DeleteCluster())
 	sp.Post("/search", handler.SearchClusters())
-	sp.Get("/:name/members", handler.GetClusterMembers())
+	sp.Get("/:name/members", handler.ListClusterMembers())
 	sp.Post("/:name/members", handler.CreateClusterMember())
 	sp.Delete("/:name/members/:member", handler.DeleteClusterMember())
 	sp.Put("/:name/members/:member", handler.UpdateClusterMember())
 	sp.Get("/:name/members/:member", handler.GetClusterMember())
-	sp.Get("/:name/clusterroles", handler.GetClusterRoles())
+	sp.Get("/:name/clusterroles", handler.ListClusterRoles())
 	sp.Post("/:name/clusterroles", handler.CreateClusterRole())
 	sp.Put("/:name/clusterroles/:clusterrole", handler.UpdateClusterRole())
 	sp.Delete("/:name/clusterroles/:clusterrole", handler.DeleteClusterRole())
 	sp.Get("/:name/apigroups", handler.ListApiGroups())
 	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
-
+	sp.Get("/:name/namespaces", handler.ListNamespace())
 }

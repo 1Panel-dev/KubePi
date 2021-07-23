@@ -48,7 +48,6 @@
             },
         },
         created() {
-            console.log(this.permission_routes)
         }
     }
 </script>

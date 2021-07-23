@@ -3,10 +3,10 @@
     <complex-table :selects.sync="selects" :data="data" :pagination-config="page" @search="search()">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'create'}" type="primary" size="small" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'delete'}" type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -58,6 +58,8 @@ import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
 import {downloadYaml} from "@/utils/actions"
+import {checkPermissions} from "@/utils/permission"
+
 
 export default {
   name: "NamespaceList",
@@ -73,21 +75,31 @@ export default {
               path: "/namespaces/edit/"+row.metadata.name ,
               query: { yamlShow: false }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"namespaces",verb:"update"})
           }
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"namespaces",verb:"update"})
+          },
           click: (row) => {
             this.$router.push({
               path: "/namespaces/edit/"+row.metadata.name ,
               query: { yamlShow: true }
             })
+
           }
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"namespaces",verb:"get"})
+          },
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", row)
           }
@@ -95,6 +107,9 @@ export default {
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"namespaces",verb:"delete"})
+          },
           click: (row) => {
             this.onDelete(row)
           }

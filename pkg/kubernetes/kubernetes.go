@@ -8,7 +8,6 @@ import (
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
-	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
@@ -40,69 +39,20 @@ func NewKubernetes(cluster v1Cluster.Cluster) Interface {
 }
 
 func (k *Kubernetes) CreateDefaultClusterRoles() error {
-	defaultRoles := []rbacV1.ClusterRole{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: "ekko-admin",
-				Annotations: map[string]string{
-					"ekko-i18n":  "cluster_administrator",
-					"created-by": "system",
-					"created-at": time.Now().Format("2006-01-02 15:04:05"),
-				},
-				Labels: map[string]string{
-					"manage": "ekko",
-				},
-			},
-			Rules: []rbacV1.PolicyRule{
-				{
-					APIGroups: []string{"*"},
-					Resources: []string{"*"},
-					Verbs:     []string{"*"},
-				},
-				{
-					NonResourceURLs: []string{"*"},
-					Verbs:           []string{"*"},
-				},
-			},
-		},
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: "ekko-viewer",
-				Annotations: map[string]string{
-					"ekko-i18n":  "cluster_viewer",
-					"created-by": "system",
-					"created-at": time.Now().Format("2006-01-02 15:04:05"),
-				},
-				Labels: map[string]string{
-					"manage": "ekko",
-				},
-			},
-			Rules: []rbacV1.PolicyRule{
-				{
-					APIGroups: []string{"*"},
-					Resources: []string{"*"},
-					Verbs:     []string{"list", "get"},
-				},
-				{
-					NonResourceURLs: []string{"*"},
-					Verbs:           []string{"list", "get"},
-				},
-			},
-		},
-	}
+
 	client, err := k.Client()
 	if err != nil {
 		return err
 	}
-	for i := range defaultRoles {
-		instance, err := client.RbacV1().ClusterRoles().Get(context.TODO(), defaultRoles[i].Name, metav1.GetOptions{})
+	for i := range initClusterRoles {
+		instance, err := client.RbacV1().ClusterRoles().Get(context.TODO(), initClusterRoles[i].Name, metav1.GetOptions{})
 		if err != nil {
 			if !strings.Contains(strings.ToLower(err.Error()), "not found") {
 				return err
 			}
 		}
-		if instance == nil {
-			_, err = client.RbacV1().ClusterRoles().Create(context.TODO(), &defaultRoles[i], metav1.CreateOptions{})
+		if instance == nil || instance.Name == "" {
+			_, err = client.RbacV1().ClusterRoles().Create(context.TODO(), &initClusterRoles[i], metav1.CreateOptions{})
 			if err != nil {
 				return err
 			}

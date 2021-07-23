@@ -3,7 +3,6 @@ package cluster
 import (
 	goContext "context"
 	"fmt"
-	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
@@ -23,6 +22,13 @@ func (h *Handler) UpdateClusterRole() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
+		}
+		for i := range req.Rules {
+			for j := range req.Rules[i].APIGroups {
+				if req.Rules[i].APIGroups[j] == "core" {
+					req.Rules[i].APIGroups[j] = ""
+				}
+			}
 		}
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
@@ -63,6 +69,15 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
+
+		for i := range req.Rules {
+			for j := range req.Rules[i].APIGroups {
+				if req.Rules[i].APIGroups[j] == "core" {
+					req.Rules[i].APIGroups[j] = ""
+				}
+			}
+		}
+
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -76,16 +91,11 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		u := ctx.Values().Get("profile")
-		profile := u.(session.UserProfile)
 		req.Annotations = map[string]string{
-			"ekko-i18n":  "none",
-			"created-by": profile.Name,
+			"builtin":    "false",
 			"created-at": time.Now().Format("2006-01-02 15:04:05"),
 		}
-		req.Labels = map[string]string{
-			"manage": "ekko",
-		}
+		req.Labels[kubernetes.LabelManageKey] = "ekko"
 		resp, err := client.RbacV1().ClusterRoles().Create(goContext.TODO(), &req, metav1.CreateOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -134,7 +144,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 	}
 }
 
-func (h *Handler) GetClusterRoles() iris.Handler {
+func (h *Handler) ListClusterRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		c, err := h.clusterService.Get(name, common.DBOptions{})
@@ -150,7 +160,7 @@ func (h *Handler) GetClusterRoles() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get kubernetes client failed: %s", err.Error()))
 			return
 		}
-		items, err := client.RbacV1().ClusterRoles().List(goContext.TODO(), metav1.ListOptions{LabelSelector: "manage=ekko"})
+		items, err := client.RbacV1().ClusterRoles().List(goContext.TODO(), metav1.ListOptions{LabelSelector: "kubeoperator.io/manage=ekko"})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster roles failed: %s", err.Error()))
