@@ -52,7 +52,6 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
-import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteIngress, listIngresses} from "@/api/ingress"
@@ -72,7 +71,6 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
-      namespaces: [],
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -173,15 +171,9 @@ export default {
         query: { yamlShow: false }
       })
     },
-    listAllNameSpaces () {
-      listNamespace(this.cluster).then(res => {
-        this.namespaces = res.items
-      })
-    }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listAllNameSpaces()
     this.search()
   }
 }
