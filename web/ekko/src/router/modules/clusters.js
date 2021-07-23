@@ -61,9 +61,8 @@ const Clusters = {
                     meta: {
                         activeMenu: "/clusters",
                     },
-                }
+                },
             ]
-
         }
     ]
 }

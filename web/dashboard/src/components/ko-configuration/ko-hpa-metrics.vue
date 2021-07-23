@@ -152,16 +152,6 @@ export default {
       this.form.metrics.push(this.resource)
     },
   },
-  // watch: {
-  //   metricsObj:function (newValue) {
-  //     if (newValue) {
-  //       this.form.metrics = newValue
-  //     } else {
-  //       this.addResource()
-  //       this.$emit("update:metricsObj", this.form.metrics)
-  //     }
-  //   }
-  // },
   mounted () {
     if (this.metricsObj) {
       this.form.metrics = this.metricsObj

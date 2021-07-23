@@ -23,6 +23,11 @@ export function listServices (cluster_name, limit, continueToken, search) {
   return get(url)
 }
 
+export function listNsServices (cluster_name, namespace) {
+  let url = namespaceServiceUrl(cluster_name, namespace)
+  return get(url)
+}
+
 export function deleteService (cluster_name, namespace, name) {
   return del(`${namespaceServiceUrl(cluster_name, namespace)}/${name}`)
 }

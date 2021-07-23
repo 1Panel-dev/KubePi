@@ -1,33 +1,40 @@
 package session
 
 import (
+	goContext "context"
 	"errors"
 	"fmt"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
+	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	"github.com/KubeOperator/ekko/internal/service/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/collectons"
+	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
 	"golang.org/x/crypto/bcrypt"
+	v1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Handler struct {
-	userService         user.Service
-	roleService         role.Service
-	rolebindingService  rolebinding.Service
+	userService        user.Service
+	roleService        role.Service
+	clusterService     cluster.Service
+	rolebindingService rolebinding.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		userService:         user.NewService(),
-		roleService:         role.NewService(),
-		rolebindingService:  rolebinding.NewService(),
+		clusterService:     cluster.NewService(),
+		userService:        user.NewService(),
+		roleService:        role.NewService(),
+		rolebindingService: rolebinding.NewService(),
 	}
 }
 
@@ -184,11 +191,106 @@ func (h *Handler) GetProfile() iris.Handler {
 	}
 }
 
+func (h *Handler) ListUserNamespace() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("cluster_name")
+		c, err := h.clusterService.Get(name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
+			return
+		}
+		session := sessions.Get(ctx)
+		u := session.Get("profile")
+		profile := u.(UserProfile)
+
+		k := kubernetes.NewKubernetes(*c)
+		client, err := k.Client()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
+			return
+		}
+
+		rbs, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
+			return
+		}
+		namespaceSet := collectons.NewStringSet()
+		for i := range rbs.Items {
+			for j := range rbs.Items[i].Subjects {
+				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == profile.Name {
+					namespaceSet.Add(rbs.Items[i].Namespace)
+				}
+			}
+		}
+		ctx.Values().Set("data", namespaceSet.ToSlice())
+	}
+}
+
+func (h *Handler) GetClusterProfile() iris.Handler {
+	return func(ctx *context.Context) {
+		session := sessions.Get(ctx)
+		clusterName := ctx.Params().GetString("cluster_name")
+		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		k := kubernetes.NewKubernetes(*c)
+		client, err := k.Client()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
+			return
+		}
+		u := session.Get("profile")
+		profile := u.(UserProfile)
+		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
+		})
+
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get cluster-role-binding failed: %s", err.Error()))
+			return
+		}
+		roleSet := map[string]struct{}{}
+		for i := range clusterRoleBindings.Items {
+			for j := range clusterRoleBindings.Items[i].Subjects {
+				if clusterRoleBindings.Items[i].Subjects[j].Kind == "User" {
+					roleSet[clusterRoleBindings.Items[i].RoleRef.Name] = struct{}{}
+				}
+			}
+		}
+		var roles []v1.ClusterRole
+		for key := range roleSet {
+			r, err := client.RbacV1().ClusterRoles().Get(goContext.TODO(), key, metav1.GetOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("get cluster-role failed: %s", err.Error()))
+				return
+			}
+			roles = append(roles, *r)
+		}
+		crp := ClusterUserProfile{
+			UserProfile:  profile,
+			ClusterRoles: roles,
+		}
+		ctx.Values().Set("data", &crp)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/sessions")
 	sp.Post("", handler.Login())
 	sp.Delete("", handler.Logout())
 	sp.Get("", handler.GetProfile())
+	sp.Get("/:cluster_name", handler.GetClusterProfile())
 	sp.Get("/status", handler.IsLogin())
+	sp.Get("/:cluster_name/namespaces", handler.ListUserNamespace())
 }

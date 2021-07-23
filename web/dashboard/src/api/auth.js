@@ -14,6 +14,15 @@ export function getCurrentUser() {
     return get(authUrl)
 }
 
+export function getCurrentClusterUser(clusterName) {
+    return get(`${authUrl}/${clusterName}`)
+}
+
 export function isLogin() {
     return get(`${authUrl}/status`)
+}
+
+
+export function getNamespaces(clusterName) {
+    return get(`${authUrl}/${clusterName}/namespaces`)
 }
