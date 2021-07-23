@@ -40,7 +40,8 @@ const message = {
       creat_by: "创建者",
       time: "时间",
       message: "消息",
-      lastUpdateTime: "更新时间"
+      lastUpdateTime: "更新时间",
+      type: "类型"
     },
     search: {
       quickSearch: "搜索"
@@ -173,10 +174,11 @@ const message = {
     storage: {
       storage: "存储",
       accessModes: "访问模式",
-      capacity: "容量",
+      capacity: "容量 Gib",
       reclaimPolicy: "回收策略",
       storageClass: "存储类",
-      claim: "要求"
+      claim: "要求",
+      assignSc: "绑定 StorageClass"
     },
     configuration: {
       configuration: "配置",

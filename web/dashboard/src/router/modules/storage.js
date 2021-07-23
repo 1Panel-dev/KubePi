@@ -22,7 +22,6 @@ const Storage = {
       path: "/persistent-volumes/create",
       component: () => import("@/business/storage/pv/create"),
       name: "PersistentVolumeCreate",
-      props: true,
       hidden: true,
       meta: {
         title: "Persistent Volume Create",

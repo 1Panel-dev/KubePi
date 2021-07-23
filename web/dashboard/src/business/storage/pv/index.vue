@@ -87,7 +87,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "PvsEdit",
+              name: "PersistentVolumeEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
@@ -138,7 +138,8 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "PvsCreate",
+        name: "PersistentVolumeCreate",
+        query: { yamlShow: false }
       })
     },
     onDelete (row) {
