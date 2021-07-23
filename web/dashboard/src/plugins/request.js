@@ -76,11 +76,6 @@ const promise = (request, loading = {}) => {
   return new Promise((resolve, reject) => {
     loading.status = true
     request.then(response => {
-      // if (response.data.success) {
-      //     resolve(response.data)
-      // } else {
-      //     reject(response.message)
-      // }
       resolve(response.data)
       loading.status = false
     }).catch(error => {

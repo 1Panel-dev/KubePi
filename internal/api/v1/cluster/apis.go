@@ -6,12 +6,14 @@ import (
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 func (h *Handler) ListApiGroups() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		c, err := h.clusterService.Get(name,common.DBOptions{})
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
@@ -37,8 +39,8 @@ func (h *Handler) ListApiGroups() iris.Handler {
 func (h *Handler) ListApiGroupResources() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		groupVersion := ctx.Params().GetString("group")
-		c, err := h.clusterService.Get(name,common.DBOptions{})
+		groupName := ctx.Params().GetString("group")
+		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
@@ -51,13 +53,39 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		apiResources, err := client.ServerResourcesForGroupVersion(groupVersion)
+		gss, rss, err := client.ServerGroupsAndResources()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		ctx.Values().Set("data", apiResources.APIResources)
+		var groupVersions []v1.GroupVersionForDiscovery
+		resourceSet := map[string]struct{}{}
+
+		if groupName == "core" {
+			groupName = ""
+		}
+		for i := range gss {
+			if gss[i].Name == groupName {
+				groupVersions = append(groupVersions, gss[i].Versions...)
+			}
+		}
+		for i := range rss {
+			for j := range groupVersions {
+				if groupVersions[j].GroupVersion == rss[i].GroupVersion {
+					for k := range rss[i].APIResources {
+						if !strings.Contains(rss[i].APIResources[k].Name, "/") {
+							resourceSet[rss[i].APIResources[k].Name] = struct{}{}
+						}
+					}
+				}
+			}
+		}
+		var resources []string
+		for k := range resourceSet {
+			resources = append(resources, k)
+		}
+		ctx.Values().Set("data", resources)
 
 	}
 }

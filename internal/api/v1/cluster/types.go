@@ -12,10 +12,15 @@ type Cluster struct {
 	CaDataStr   string `json:"caDataStr"`
 }
 
+type NamespaceRoles struct {
+	Namespace string   `json:"namespace"`
+	Roles     []string `json:"roles"`
+}
+
 type Member struct {
-	Name         string    `json:"name"`
-	Kind         string    `json:"kind"`
-	ClusterRoles []string  `json:"clusterRoles"`
-	CreateAt     time.Time `json:"createAt"`
-	BindingName  string    `json:"bindingName"`
+	Name           string           `json:"name"`
+	ClusterRoles   []string         `json:"clusterRoles"`
+	BindingName    string           `json:"bindingName"`
+	CreateAt       time.Time        `json:"createAt"`
+	NamespaceRoles []NamespaceRoles `json:"namespaceRoles"`
 }

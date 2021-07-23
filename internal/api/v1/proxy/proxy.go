@@ -4,7 +4,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
@@ -41,10 +40,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
-		binding, err := h.clusterBindingService.GetBindingByClusterNameAndSubject(name, v1Cluster.Subject{
-			Kind: "User",
-			Name: profile.Name,
-		}, common.DBOptions{})
+		binding, err := h.clusterBindingService.GetBindingByClusterNameAndUserName(name, profile.Name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusForbidden)
 			ctx.Values().Set("message", fmt.Sprintf("user %s not cluster %s member ", profile.Name, name))

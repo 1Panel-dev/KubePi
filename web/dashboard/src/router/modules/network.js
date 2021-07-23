@@ -12,6 +12,11 @@ const Network = {
   children: [
     {
       path: "/services",
+      requirePermission: {
+        apiGroup: "",
+        resource: "services",
+        verb: "list",
+      },
       component: () => import("@/business/network/services"),
       name: "Services",
       meta: {
@@ -49,6 +54,11 @@ const Network = {
     },
     {
       path: "/ingresses",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "list",
+      },
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",
       meta: {
@@ -67,6 +77,11 @@ const Network = {
     },
     {
       path: "/endpoints",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "list",
+      },
       component: () => import("@/business/network/endpoints"),
       name: "Endpoints",
       meta: {
@@ -75,6 +90,11 @@ const Network = {
     },
     {
       path: "/networkpolicies",
+      requirePermission: {
+        apiGroup: "",
+        resource: "networkpolicies",
+        verb: "list",
+      },
       component: () => import("@/business/network/network-policies"),
       name: "NetworkPolicies",
       meta: {
