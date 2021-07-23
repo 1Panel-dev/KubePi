@@ -34,7 +34,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick">
+                       @tab-click="handleClick" v-if="Object.keys(item.data).length!==0">
                 <el-tab-pane key="data" label="Data" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
@@ -52,7 +52,8 @@
                 </el-tab-pane>
                 <el-tab-pane name="1" label="Labels/Annotations">
                   <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
+                  <ko-annotations annotations-title="Annotations"
+                                  :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -107,7 +108,8 @@ export default {
     return {
       item: {
         metadata: {},
-        type: ""
+        type: "",
+        data: {}
       },
       loading: false,
       cluster: "",
@@ -154,7 +156,7 @@ export default {
       editSecret(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({ name: "Secrets" })
       }).finally(() => {
@@ -164,14 +166,14 @@ export default {
   },
   watch: {
     showYaml: function (newValue) {
-      if (newValue) {
-        this.yaml = this.transformYaml()
-      }
       this.$router.push({
-        path: "/" + this.namespace + "/secrets/edit/" + this.name,
+        name: "SecretEdit",
+        params: {
+          name: this.name,
+          namespace: this.namespace,
+        },
         query: { yamlShow: newValue }
       })
-      this.getDetail()
     }
   },
   created () {

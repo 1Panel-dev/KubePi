@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick">
+                       @tab-click="handleClick" v-if="Object.keys(item.metadata).length!==0">
                 <el-tab-pane label="Data">
                   <ko-data :data-obj.sync="item.data"></ko-data>
                 </el-tab-pane>
@@ -86,6 +86,9 @@ export default {
       getConfigMap(this.cluster, this.namespace, this.name).then(res => {
         this.loading = false
         this.item = res
+        if (this.yamlShow) {
+          this.yaml = this.transformYaml()
+        }
       })
     },
     onSubmit () {
@@ -121,6 +124,18 @@ export default {
     },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.item))
+    },
+  },
+  watch: {
+    yamlShow: function (newValue) {
+      this.$router.push({
+        name: "ConfigMapEdit",
+        params: {
+          namespace: this.namespace,
+          name: this.name
+        },
+        query: { yamlShow: newValue }
+      })
     },
   },
   created () {

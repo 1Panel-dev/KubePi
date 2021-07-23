@@ -3,14 +3,14 @@
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
-          <el-form label-position="top" :model="form">
+          <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
-              <el-form-item :label="$t('commons.table.name')" required>
+              <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
                 <el-input clearable v-model="form.metadata.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item :label="$t('business.namespace.namespace')" required>
+              <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
                              :key="namespace.metadata.name"
@@ -26,6 +26,9 @@
                 <el-tab-pane label="Target">
                   <ko-hpa-target :namespace="form.metadata.namespace" :cluster="cluster"
                                  :spec-obj.sync="form.spec"></ko-hpa-target>
+                </el-tab-pane>
+                <el-tab-pane label="Metrics">
+                  <ko-hpa-metrics :metrics-obj.sync="form.spec.metrics"></ko-hpa-metrics>
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
@@ -61,14 +64,18 @@ import YamlEditor from "@/components/yaml-editor"
 import KoHpaTarget from "@/components/ko-configuration/ko-hpa-target"
 import {listNamespace} from "@/api/namespaces"
 import {createHpa} from "@/api/hpa"
+import Rule from "@/utils/rules"
+import KoHpaMetrics from "@/components/ko-configuration/ko-hpa-metrics"
 
 export default {
   name: "HPACreate",
-  components: { KoHpaTarget, LayoutContent, YamlEditor, KoAnnotations, KoLabels },
+  components: { KoHpaMetrics, KoHpaTarget, LayoutContent, YamlEditor, KoAnnotations, KoLabels },
   props: {},
   data () {
     return {
       form: {
+        apiVersion: "autoscaling/v2beta2",
+        kind: "HorizontalPodAutoscaler",
         metadata: {
           namespace: "default"
         },
@@ -79,7 +86,13 @@ export default {
       cluster: "",
       namespaces: [],
       activeName: "",
-      yaml: {}
+      yaml: {},
+      rules: {
+        metadata: {
+          name: [Rule.RequiredRule],
+          namespace: [Rule.RequiredRule],
+        }
+      }
     }
   },
   methods: {
@@ -91,14 +104,19 @@ export default {
       this.yaml = this.transformYaml()
     },
     onSubmit () {
-      let data = {}
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
-        data = this.transformYaml()
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.onCreate(this.transformYaml())
+          }
+        })
       }
+    },
+    onCreate (data) {
       this.loading = true
-      createHpa(this.cluster, data).then(() => {
+      createHpa(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),

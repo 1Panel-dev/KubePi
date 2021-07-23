@@ -85,49 +85,60 @@
         <el-col :span="24">
           <br>
           <el-tabs type="border-card">
-            <el-tab-pane label="Metrics">
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <table style="width: 100%" class="myTable">
-                    <tr>
-                      <th scope="col" width="30%" align="left">
-                        <h3>Resource Metric</h3>
-                      </th>
-                      <th scope="col"></th>
-                    </tr>
-                    <tr>
-                      <td>Target Name</td>
-                      <td>{{ item.spec.metrics[0].resource.target.type }}</td>
-                    </tr>
-                    <tr>
-                      <td>Value</td>
-                      <td>{{ item.spec.metrics[0].resource.target.averageUtilization }}</td>
-                    </tr>
-                    <tr>
-                      <td>Resource Name</td>
-                      <td>{{ item.spec.metrics[0].resource.name }}</td>
-                    </tr>
-                  </table>
-                </el-col>
-                <el-col :span="12">
-                  <table style="width: 100%" class="myTable">
-                    <tr>
-                      <th scope="col" width="30%" align="left">
-                        <h3>Current Metrics</h3>
-                      </th>
-                      <th scope="col"></th>
-                    </tr>
-                    <tr>
-                      <td>Average Utilization</td>
-                      <td>{{ item.status.currentMetrics[0].resource.current.averageUtilization }}</td>
-                    </tr>
-                    <tr>
-                      <td>Average Value</td>
-                      <td>{{ item.status.currentMetrics[0].resource.current.averageValue }}</td>
-                    </tr>
-                  </table>
-                </el-col>
-              </el-row>
+            <el-tab-pane label="Metrics" v-if="item.spec.metrics.length > 0">
+              <div v-for="(metric,index) in item.spec.metrics" v-bind:key="index"  style="border:1px solid #383c42;margin-top: 5px">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <table style="width: 100%" class="myTable" v-if="metric.type">
+                      <tr>
+                        <th scope="col" width="30%" align="left">
+                          <h3>{{ metric.type }} Metric</h3>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                      <tr>
+                        <td>Target Name</td>
+                        <td>{{ metric[metric.type.toLowerCase()].target.type }}</td>
+                      </tr>
+                      <tr>
+                        <td>Value</td>
+                        <td>{{ getTargetValue(metric[metric.type.toLowerCase()].target) }}</td>
+                      </tr>
+                      <tr v-if="metric[metric.type.toLowerCase()].name">
+                        <td>Resource Name</td>
+                        <td>{{ metric[metric.type.toLowerCase()].name }}</td>
+                      </tr>
+                      <tr v-if="metric[metric.type.toLowerCase()].metric">
+                        <td>Name</td>
+                        <td>{{ metric[metric.type.toLowerCase()].metric.name }}</td>
+                      </tr>
+                    </table>
+                  </el-col>
+                  <el-col :span="12">
+                    <table style="width: 100%" class="myTable">
+                      <tr>
+                        <th scope="col" width="30%" align="left">
+                          <h3>Current Metrics</h3>
+                        </th>
+                        <th scope="col"></th>
+                      </tr>
+                      <tr v-if="item.status.currentMetrics[index].type !== '' ">
+                        <td>Average Utilization</td>
+                        <td v-if="metric.type">
+                          {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageUtilization }}
+                        </td>
+                      </tr>
+                      <tr v-if="item.status.currentMetrics[index].type !== '' ">
+                        <td>Average Value</td>
+                        <td v-if="metric.type">
+                          {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageValue }}
+                        </td>
+                      </tr>
+                      <span v-if="item.status.currentMetrics[index].type === '' ">No Current Metrics</span>
+                    </table>
+                  </el-col>
+                </el-row>
+              </div>
             </el-tab-pane>
             <el-tab-pane label="Conditions">
               <complex-table :data="item.status.conditions">
@@ -244,6 +255,15 @@ export default {
       listEventsWithNsSelector(this.cluster, this.namespace, selectors).then(res => {
         this.events = res.items
       })
+    },
+    getTargetValue (target) {
+      let type = target.type
+      if (type === "Utilization") {
+        return target.averageUtilization
+      } else {
+        const resourceName = type.charAt(0).toLowerCase() + type.slice(1)
+        return target[resourceName]
+      }
     }
   },
   created () {

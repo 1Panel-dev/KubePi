@@ -42,6 +42,16 @@
           {{ row.status.currentReplicas }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
+        <template v-slot:default="{row}">
+          <el-button v-if="row.status.currentReplicas ===row.status.desiredReplicas" type="success" size="mini" plain round>
+            Active
+          </el-button>
+          <el-button v-if="row.status.currentReplicas !==row.status.desiredReplicas"  type="danger" size="mini" plain round>
+            Pending
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -74,12 +84,24 @@ export default {
       cluster: "",
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "HPAEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "LimitRangeEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              name: "HPAEdit",
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true }
             })
           }
         },

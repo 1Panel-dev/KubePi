@@ -187,6 +187,16 @@ const Configuration = {
       meta: {
         activeMenu: "/horizontalpodautoscalers"
       }
+    },
+    {
+      path: "/horizontalpodautoscalers/:namespace/:name/edit",
+      component: () => import("@/business/configuration/hpa/edit"),
+      name: "HPAEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/horizontalpodautoscalers"
+      }
     }
   ]
 }

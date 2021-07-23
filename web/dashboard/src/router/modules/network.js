@@ -19,11 +19,50 @@ const Network = {
       }
     },
     {
+      path: "/services/:namespace/:name/detail",
+      component: () => import("@/business/network/services/detail"),
+      name: "ServiceDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
+      path: "/services/create",
+      component: () => import("@/business/network/services/create"),
+      name: "ServiceCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
+      path: "/services/:namespace/:name/edit",
+      component: () => import("@/business/network/services/edit"),
+      name: "ServiceEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
       path: "/ingresses",
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",
       meta: {
         title: "Ingresses",
+      }
+    },
+    {
+      path: "/ingresses/:namespace/:name/detail",
+      component: () => import("@/business/network/ingresses/detail"),
+      name: "IngressDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
       }
     },
     {

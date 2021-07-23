@@ -16,7 +16,7 @@
             </el-row>
             <el-row>
               <el-form-item label="Back Off Limit" prop="backoffLimit">
-                <ko-form-item deviderName="Times" itemType="number" v-model="form.backoffLimit" />
+                <ko-form-item deviderName="Times" itemType="number" v-model.number="form.backoffLimit" />
               </el-form-item>
             </el-row>
           </el-col>
@@ -24,12 +24,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Active Deadline" prop="activeDeadlineSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model="form.activeDeadlineSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.activeDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Pod Active Deadline" prop="template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model="form.template.spec.terminationGracePeriodSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>

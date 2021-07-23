@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
     <br>
     <el-row :gutter="20">
-      <div class="grid-content bg-purple-light" v-if="!showYaml">
+      <div v-if="!showYaml">
         <el-form label-position="top" :model="item">
           <el-col :span="12">
             <el-form-item :label="$t('commons.table.name')">
@@ -12,7 +12,8 @@
         </el-form>
         <el-col :span="24">
           <br>
-          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
+          <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick"
+                   v-if="Object.keys(item.metadata).length!==0">
             <el-tab-pane label="Labels/Annotations">
               <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
               <ko-annotations annotations-title="Annotations"
@@ -21,18 +22,16 @@
           </el-tabs>
         </el-col>
       </div>
-      <div class="grid-content bg-purple-light" v-if="showYaml">
+      <div v-if="showYaml">
         <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
       </div>
-      <div class="grid-content bg-purple-light">
-        <div style="float: right;margin-top: 10px">
-          <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-          <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-          <el-button v-loading="loading" @click="onSubmit" type="primary">
-            {{ $t("commons.button.submit") }}
-          </el-button>
-        </div>
+      <div class="bottom-button">
+        <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
+        <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+        <el-button v-loading="loading" @click="onSubmit" type="primary">
+          {{ $t("commons.button.submit") }}
+        </el-button>
       </div>
     </el-row>
   </layout-content>
@@ -112,7 +111,10 @@ export default {
   watch: {
     showYaml: function (newValue) {
       this.$router.push({
-        path: "/namespaces/edit/" + this.name,
+        name: "NamespaceEdit",
+        params: {
+          name: this.name
+        },
         query: { yamlShow: newValue }
       })
     }

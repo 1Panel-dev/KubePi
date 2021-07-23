@@ -29,36 +29,36 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Back Off Limit" prop="jobTemplate.spec.backoffLimit">
-              <ko-form-item deviderName="Times" itemType="number" v-model="form.jobTemplate.spec.backoffLimit" />
+              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.backoffLimit" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Active Deadline" prop="jobTemplate.spec.activeDeadlineSeconds">
-              <ko-form-item deviderName="Times" itemType="number" v-model="form.jobTemplate.spec.activeDeadlineSeconds" />
+              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.activeDeadlineSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Successful Job History Limit" prop="successfulJobsHistoryLimit">
-              <ko-form-item itemType="number" v-model="form.successfulJobsHistoryLimit" />
+              <ko-form-item itemType="number" v-model.number="form.successfulJobsHistoryLimit" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Failed Job History Limit" prop="failedJobsHistoryLimit">
-              <ko-form-item itemType="number" v-model="form.failedJobsHistoryLimit" />
+              <ko-form-item itemType="number" v-model.number="form.failedJobsHistoryLimit" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Starting Deadline Seconds" prop="startingDeadlineSeconds">
-              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.startingDeadlineSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.startingDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Pod Active Deadline" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -164,7 +164,7 @@ export default {
           if (this.upgradePolicyParentObj.jobTemplate.spec.template) {
             if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec) {
               if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
-                this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+                this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
               }
             }
           }

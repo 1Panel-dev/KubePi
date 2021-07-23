@@ -32,24 +32,24 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Minimum Ready Time" prop="minReadySeconds">
-              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.minReadySeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.minReadySeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Revision History Limit" prop="revisionHistoryLimit">
-              <ko-form-item deviderName="Revision" itemType="input" v-model="form.revisionHistoryLimit" />
+              <ko-form-item deviderName="Revision" itemType="number" v-model.number="form.revisionHistoryLimit" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Progress Deadline" prop="progressDeadlineSeconds">
-              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.progressDeadlineSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.progressDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Termination Grace Period" prop="template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="input" v-model="form.template.spec.terminationGracePeriodSeconds" />
+              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>

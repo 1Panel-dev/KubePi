@@ -74,19 +74,22 @@ export default {
         this.$emit("update:annotationsObj", obj)
       }
     },
-  },
-  mounted () {
-    if (this.annotationsObj) {
-      for (const key in this.annotationsObj) {
-        if (Object.prototype.hasOwnProperty.call(this.annotationsObj, key)) {
-          this.annotations.push({
-            index: Math.random(),
-            key: key,
-            value: this.annotationsObj[key],
-          })
+    initData (obj) {
+      if (obj) {
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            this.annotations.push({
+              index: Math.random(),
+              key: key,
+              value: this.annotationsObj[key],
+            })
+          }
         }
       }
     }
+  },
+  mounted () {
+    this.initData(this.annotationsObj)
   },
 }
 </script>
