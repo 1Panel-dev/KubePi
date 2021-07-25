@@ -31,10 +31,14 @@ export function listPodsWithNsSelector(cluster_name, namespace, selectors) {
   return get(url, param);
 }
 
-export function getPodByName(cluster_name, namespace, cornjob) {
-  return get(`${podUrlWithNs(cluster_name, namespace)}/${cornjob}`);
+export function getPodByName(cluster_name, namespace, pod) {
+  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}`);
 }
 
-export function deletePod(cluster_name, cornjob) {
-  return del(`${podUrl(cluster_name)}/${cornjob}`);
+export function deletePod(cluster_name, pod) {
+  return del(`${podUrl(cluster_name)}/${pod}`);
+}
+
+export function getPodLogsByName(cluster_name, namespace, pod, paramInfo) {
+  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log` + paramInfo);
 }

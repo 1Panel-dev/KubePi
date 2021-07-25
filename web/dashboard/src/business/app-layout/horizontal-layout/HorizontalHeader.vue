@@ -1,11 +1,13 @@
 <template>
-  <div class="horizontal-header">
-    <div class="header-left">
-      <sidebar-toggle-button/>
-      <home></home>
-    </div>
-    <div class="header-right">
-      <user-setting></user-setting>
+  <div>
+    <div class="horizontal-header">
+      <div class="header-left">
+        <sidebar-toggle-button />
+        <home></home>
+      </div>
+      <div class="header-right">
+        <user-setting></user-setting>
+      </div>
     </div>
   </div>
 </template>
@@ -16,39 +18,39 @@ import UserSetting from "@/business/app-layout/header-components/UserSetting"
 import Home from "@/business/app-layout/header-components/Home"
 export default {
   name: "HorizontalHeader",
-  components: { Home, UserSetting, SidebarToggleButton }
+  components: { Home, UserSetting, SidebarToggleButton },
 }
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/styles/common/mixins";
+@import "~@/styles/common/mixins";
 
-  .horizontal-header {
+.horizontal-header {
+  @include flex-row(flex-start, center);
+  position: relative;
+  height: 100%;
+
+  .header-left {
     @include flex-row(flex-start, center);
     position: relative;
     height: 100%;
+  }
 
-    .header-left {
-      @include flex-row(flex-start, center);
-      position: relative;
-      height: 100%;
+  .header-right {
+    @include flex-row(flex-end, center);
+    flex: auto;
+    height: 100%;
+
+    .navbar-item {
+      color: #2e2e2e;
+      line-height: 50px;
+      display: inline-block;
+      padding-right: 20px;
     }
 
-    .header-right {
-      @include flex-row(flex-end, center);
-      flex: auto;
-      height: 100%;
-
-      .navbar-item {
-        color: #2E2E2E;
-        line-height: 50px;
-        display: inline-block;
-        padding-right: 20px;
-      }
-
-      .navbar-item + .navbar-item {
-        margin-left: 20px;
-      }
+    .navbar-item + .navbar-item {
+      margin-left: 20px;
     }
   }
+}
 </style>
