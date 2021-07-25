@@ -11,16 +11,6 @@
           </el-button>
         </el-button-group>
       </template>
-      <!--      <template #toolbar>-->
-      <!--        <el-select v-model="conditions" @change="search(true)">-->
-      <!--          <el-option label="All Namespaces" value=""></el-option>-->
-      <!--          <el-option v-for="namespace in namespaces"-->
-      <!--                     :key="namespace.metadata.name"-->
-      <!--                     :label="namespace.metadata.name"-->
-      <!--                     :value="namespace.metadata.name">-->
-      <!--          </el-option>-->
-      <!--        </el-select>-->
-      <!--      </template>-->
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
@@ -32,9 +22,19 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
+      <el-table-column :label="$t('business.configuration.type')" prop="spec.type">
         <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
+          {{ row.spec.type }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.configuration.cluster_ip')" prop="spec.clusterIP">
+        <template v-slot:default="{row}">
+          {{ row.spec.clusterIP }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.configuration.selector')" prop="spec.selector" min-width="200px">
+        <template v-slot:default="{row}">
+          <el-tag v-for="(value,key,index) in row.spec.selector" v-bind:key="index" type="info" size="mini">
             {{ key }}={{ value }}
           </el-tag>
         </template>
@@ -77,7 +77,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
+              name: "ServiceEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
@@ -88,7 +88,7 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ConfigMapEdit",
+              name: "ServiceEdit",
               params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })

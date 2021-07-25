@@ -86,13 +86,13 @@ const message = {
         },
         cluster: {
             cluster: "集群",
+            namespace: "命名空间",
+            scope: "作用域",
             version: "版本",
             list: "集群列表",
             import: "导入集群",
             edit: "编辑",
             nodes: "节点",
-            api_server_help: "例如: https://172.16.10.100:8443",
-            router_help: "装有 kube-proxy 的任意节点的且可以被访问到的 IP 地址",
             label: "标签",
             description: "描述",
             cluster_detail: "集群详情",
@@ -106,7 +106,7 @@ const message = {
             expect: "敬请期待",
             management: "管理",
             open_dashboard: "控制台",
-            cluster_version: "版本"
+            cluster_version: "版本",
 
         },
         namespace: {

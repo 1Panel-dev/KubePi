@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
@@ -136,10 +135,7 @@ func (h *Handler) DeleteUser() iris.Handler {
 				return
 			}
 		}
-		cbs, err := h.clusterBindingService.GetBindingsBySubject(v1Cluster.Subject{
-			Kind: "User",
-			Name: userName,
-		}, txOptions)
+		cbs, err := h.clusterBindingService.GetBindingsByUserName(userName, txOptions)
 		if err != nil && !errors.As(err, &storm.ErrNotFound) {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

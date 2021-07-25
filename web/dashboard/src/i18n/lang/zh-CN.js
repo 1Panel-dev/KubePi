@@ -40,7 +40,8 @@ const message = {
       creat_by: "创建者",
       time: "时间",
       message: "消息",
-      lastUpdateTime: "更新时间"
+      lastUpdateTime: "更新时间",
+      type: "类型"
     },
     search: {
       quickSearch: "搜索"
@@ -91,7 +92,8 @@ const message = {
       expand:"展开",
       pack_up: "收起",
       system: "系统信息",
-      config: "配置信息"
+      config: "配置信息",
+      resource: "资源信息"
     },
     dashboard: {
       dashboard: "概览"
@@ -158,10 +160,25 @@ const message = {
       desired: "期望期望",
     },
     network: {
-      network: "网络"
+      network: "网络",
+      port: "端口",
+      protocol: "协议",
+      rule: "规则",
+      host: "主机",
+      path: "路径",
+      path_type: "路径类型",
+      service_name: "Service 名称",
+      service_port: "Service 端口",
+      target: "目标"
     },
     storage: {
-      storage: "存储"
+      storage: "存储",
+      accessModes: "访问模式",
+      capacity: "容量 Gib",
+      reclaimPolicy: "回收策略",
+      storageClass: "存储类",
+      claim: "要求",
+      assignSc: "绑定 StorageClass"
     },
     configuration: {
       configuration: "配置",
@@ -171,7 +188,9 @@ const message = {
       basic_auth: "基本身份认证",
       ssh_auth: "SSH 身份认证",
       tls_auth: "TLS",
-      token_auth: "令牌"
+      token_auth: "令牌",
+      cluster_ip: "集群 IP",
+      selector: "选择"
     },
     access_control: {
       access_control: "访问控制"

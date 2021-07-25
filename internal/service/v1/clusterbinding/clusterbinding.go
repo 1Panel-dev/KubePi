@@ -14,10 +14,9 @@ type Service interface {
 	GetClusterBindingByClusterName(clusterName string, options common.DBOptions) ([]v1Cluster.Binding, error)
 	CreateClusterBinding(binding *v1Cluster.Binding, options common.DBOptions) error
 	UpdateClusterBinding(name string, binding *v1Cluster.Binding, options common.DBOptions) error
-
+	GetBindingByClusterNameAndUserName(clusterName string, userName string, options common.DBOptions) (*v1Cluster.Binding, error)
+	GetBindingsByUserName(userName string, options common.DBOptions) ([]v1Cluster.Binding, error)
 	Delete(name string, options common.DBOptions) error
-	GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error)
-	GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error)
 }
 
 func NewService() Service {
@@ -45,9 +44,9 @@ func (s *service) UpdateClusterBinding(name string, binding *v1Cluster.Binding, 
 	return db.Update(binding)
 }
 
-func (s *service) GetBindingsBySubject(subject v1Cluster.Subject, options common.DBOptions) ([]v1Cluster.Binding, error) {
+func (s *service) GetBindingsByUserName(userName string, options common.DBOptions) ([]v1Cluster.Binding, error) {
 	db := s.GetDB(options)
-	query := db.Select(q.Eq("Subject", subject))
+	query := db.Select(q.Eq("UserRef", userName))
 	var rbs []v1Cluster.Binding
 	if err := query.Find(&rbs); err != nil {
 		return rbs, err
@@ -55,9 +54,9 @@ func (s *service) GetBindingsBySubject(subject v1Cluster.Subject, options common
 	return rbs, nil
 }
 
-func (s *service) GetBindingByClusterNameAndSubject(clusterName string, subject v1Cluster.Subject, options common.DBOptions) (*v1Cluster.Binding, error) {
+func (s *service) GetBindingByClusterNameAndUserName(clusterName string, userName string, options common.DBOptions) (*v1Cluster.Binding, error) {
 	db := s.GetDB(options)
-	query := db.Select(q.And(q.Eq("ClusterRef", clusterName), q.Eq("Subject", subject)))
+	query := db.Select(q.And(q.Eq("ClusterRef", clusterName), q.Eq("UserRef", userName)))
 	var rb v1Cluster.Binding
 	if err := query.First(&rb); err != nil {
 		return nil, err

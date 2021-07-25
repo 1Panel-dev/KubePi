@@ -101,7 +101,6 @@
                     if (valid) {
                         this.loading = true
                         this.$store.dispatch("user/login", this.form).then(() => {
-                            console.log("123")
                             this.$router.push({path: this.redirect || "/", query: this.otherQuery})
                             this.loading = false
                         }).catch(() => {

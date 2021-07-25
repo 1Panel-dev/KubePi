@@ -11,16 +11,6 @@
           </el-button>
         </el-button-group>
       </template>
-      <!--      <template #toolbar>-->
-      <!--        <el-select v-model="conditions" @change="search(true)">-->
-      <!--          <el-option label="All Namespaces" value=""></el-option>-->
-      <!--          <el-option v-for="namespace in namespaces"-->
-      <!--                     :key="namespace.metadata.name"-->
-      <!--                     :label="namespace.metadata.name"-->
-      <!--                     :value="namespace.metadata.name">-->
-      <!--          </el-option>-->
-      <!--        </el-select>-->
-      <!--      </template>-->
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
@@ -32,11 +22,21 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
+      <el-table-column :label="$t('business.network.target')" prop="metadata.rules">
         <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
-            {{ key }}={{ value }}
-          </el-tag>
+          <div v-for="(rule,index) in row.spec.rules" :key="index">
+            <div v-for="(path,index) in rule.http.paths" :key="index">
+              <el-link :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+                {{ "http://" + rule.host + (path.path ? path.path : "") }}
+              </el-link>
+              >
+              <el-link @click="toResource('Service',row.metadata.namespace,path.backend.service.name)">
+                {{
+                  path.backend.service ? path.backend.service.name : ""
+                }}
+              </el-link>
+            </div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -52,14 +52,15 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
-import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteIngress, listIngresses} from "@/api/ingress"
+import {mixin} from "@/utils/resourceRoutes"
 
 export default {
   name: "Ingresses",
   components: { LayoutContent, ComplexTable, KoTableOperations },
+  mixins: [mixin],
   data () {
     return {
       data: [],
@@ -70,7 +71,6 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
-      namespaces: [],
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -171,15 +171,9 @@ export default {
         query: { yamlShow: false }
       })
     },
-    listAllNameSpaces () {
-      listNamespace(this.cluster).then(res => {
-        this.namespaces = res.items
-      })
-    }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listAllNameSpaces()
     this.search()
   }
 }

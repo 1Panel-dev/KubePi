@@ -5,21 +5,34 @@ const state = {
     addRoutes: []
 }
 
-function hasPermission(user, route) {
-  if (user && route){
-    console.log("")
-  }
-  return true
+function hasPermission(clusterRoles, route) {
+    if (route.requirePermission) {
+        for (const clusterRole of clusterRoles) {
+            if (clusterRole.rules.length > 0) {
+                for (const rule of clusterRole.rules) {
+                    if (rule.apiGroups.includes("*") || rule.apiGroups.includes(route.requirePermission.apiGroup)) {
+                        if (rule.resources.includes("*") || rule.resources.includes(route.requirePermission.resource)) {
+                            if (rule.verbs.includes("*") || rule.verbs.includes(route.requirePermission.verb)) {
+                                return true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+    return true
 }
 
 
-export function filterRolesRoutes(routes, user) {
+export function filterRolesRoutes(routes, clusterRoles) {
     const res = []
     routes.forEach(route => {
         const tmp = {...route}
-        if (hasPermission(user, tmp)) {
+        if (hasPermission(clusterRoles, tmp)) {
             if (tmp.children) {
-                tmp.children = filterRolesRoutes(tmp.children, user)
+                tmp.children = filterRolesRoutes(tmp.children, clusterRoles)
             }
             res.push(tmp)
         }
@@ -37,16 +50,32 @@ const mutations = {
 
 const actions = {
     generateRoutes({commit}, p) {
-        return new Promise((resolve,reject)=> {
-            const user = p
+        return new Promise((resolve, reject) => {
+            const clusterRoles = p
             let accessedRoutes
-          try {
-            accessedRoutes = filterRolesRoutes(rolesRoutes, user)
-            commit("SET_ROUTES", accessedRoutes)
-            resolve(accessedRoutes)
-          }catch (error){
-            reject(error)
-          }
+            try {
+                accessedRoutes = filterRolesRoutes(rolesRoutes, clusterRoles)
+                for (const route of accessedRoutes) {
+                    if (route.parent) {
+                        let hidden = true
+                        if (route.children.length > 0) {
+                            for (const childRoute of route.children) {
+                                hidden = hidden && childRoute.hidden
+                            }
+                            if (hidden) {
+                                route.hidden = true
+                            }
+                        } else {
+                            route.hidden = true
+                        }
+                    }
+                }
+
+                commit("SET_ROUTES", accessedRoutes)
+                resolve(accessedRoutes)
+            } catch (error) {
+                reject(error)
+            }
         })
     }
 }

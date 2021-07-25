@@ -3,6 +3,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 const Network = {
   path: "/network",
   sort: 3,
+  parent: true,
   component: Layout,
   name: "Network",
   meta: {
@@ -12,6 +13,11 @@ const Network = {
   children: [
     {
       path: "/services",
+      requirePermission: {
+        apiGroup: "",
+        resource: "services",
+        verb: "list",
+      },
       component: () => import("@/business/network/services"),
       name: "Services",
       meta: {
@@ -19,7 +25,41 @@ const Network = {
       }
     },
     {
+      path: "/services/:namespace/:name/detail",
+      component: () => import("@/business/network/services/detail"),
+      name: "ServiceDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
+      path: "/services/create",
+      component: () => import("@/business/network/services/create"),
+      name: "ServiceCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
+      path: "/services/:namespace/:name/edit",
+      component: () => import("@/business/network/services/edit"),
+      name: "ServiceEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/services"
+      }
+    },
+    {
       path: "/ingresses",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "list",
+      },
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",
       meta: {
@@ -27,7 +67,22 @@ const Network = {
       }
     },
     {
+      path: "/ingresses/:namespace/:name/detail",
+      component: () => import("@/business/network/ingresses/detail"),
+      name: "IngressDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
       path: "/endpoints",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "list",
+      },
       component: () => import("@/business/network/endpoints"),
       name: "Endpoints",
       meta: {
@@ -36,6 +91,11 @@ const Network = {
     },
     {
       path: "/networkpolicies",
+      requirePermission: {
+        apiGroup: "",
+        resource: "networkpolicies",
+        verb: "list",
+      },
       component: () => import("@/business/network/network-policies"),
       name: "NetworkPolicies",
       meta: {

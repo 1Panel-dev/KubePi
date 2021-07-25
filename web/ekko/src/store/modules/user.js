@@ -5,9 +5,7 @@ import {getLanguage, setLanguage} from "@/i18n"
 const state = {
     login: false,
     name: "",
-    currentProject: "",
     language: getLanguage(),
-    roles: [],
     permissions: {}
 }
 

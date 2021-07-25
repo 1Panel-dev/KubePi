@@ -1,13 +1,12 @@
 <template>
-  <div>
-    <div class="horizontal-header">
-      <div class="header-left">
-        <sidebar-toggle-button />
-        <home></home>
-      </div>
-      <div class="header-right">
-        <user-setting></user-setting>
-      </div>
+  <div class="horizontal-header">
+    <div class="header-left">
+      <sidebar-toggle-button/>
+      <home></home>
+    </div>
+    <div class="header-right">
+      <project-switch></project-switch>
+      <user-setting style="margin-left: 20px"></user-setting>
     </div>
   </div>
 </template>
@@ -16,9 +15,11 @@
 import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton"
 import UserSetting from "@/business/app-layout/header-components/UserSetting"
 import Home from "@/business/app-layout/header-components/Home"
+import ProjectSwitch from "@/business/app-layout/header-components/ProjectSwitch";
+
 export default {
   name: "HorizontalHeader",
-  components: { Home, UserSetting, SidebarToggleButton },
+  components: {ProjectSwitch, Home, UserSetting, SidebarToggleButton}
 }
 </script>
 
@@ -42,7 +43,7 @@ export default {
     height: 100%;
 
     .navbar-item {
-      color: #2e2e2e;
+      color: #2E2E2E;
       line-height: 50px;
       display: inline-block;
       padding-right: 20px;

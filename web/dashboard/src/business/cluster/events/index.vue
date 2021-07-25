@@ -38,7 +38,8 @@
       <el-table-column :label="$t('business.event.resource')" prop="resource" fix min-width="200px"
                        show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link>{{ row.involvedObject.kind }} / {{ row.involvedObject.name }}</el-link>
+          <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.metadata.name)">{{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
@@ -57,10 +58,12 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listEvents} from "@/api/events"
 import {listNamespace} from "@/api/namespaces"
+import {mixin} from "@/utils/resourceRoutes"
 
 export default {
   name: "Events",
   components: { ComplexTable, LayoutContent },
+  mixins: [mixin],
   data () {
     return {
       page: {
@@ -71,7 +74,7 @@ export default {
       loading: false,
       clusterName: "",
       searchName: "",
-      namespaces: []
+      namespaces: [],
     }
   },
   methods: {

@@ -39,22 +39,22 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
                 <el-tab-pane label="Data" v-if="form.type==='Opaque'">
-                  <ko-secret-data ref="secret_config" :dataObj.sync="form.data"></ko-secret-data>
+                  <ko-secret-data :dataObj.sync="form.data"></ko-secret-data>
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
-                  <ko-secret-docker-data ref="secret_config" :dataObj.sync="form.data"></ko-secret-docker-data>
+                  <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
                 <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
-                  <ko-secret-keys ref="secret_config" :data-obj.sync="form.data"></ko-secret-keys>
+                  <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
                 </el-tab-pane>
                 <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
-                  <ko-secret-authentication ref="secret_config"
-                                            :authentication-obj.sync="form.data"></ko-secret-authentication>
+                  <ko-secret-authentication
+                          :authentication-obj.sync="form.data"></ko-secret-authentication>
                 </el-tab-pane>
                 <el-tab-pane label="Tls" v-if="form.type==='kubernetes.io/tls'">
-                  <ko-secret-certificate ref="secret_config" :certificate-obj.sync="form.data"></ko-secret-certificate>
+                  <ko-secret-certificate :certificate-obj.sync="form.data"></ko-secret-certificate>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
+                <el-tab-pane  name="1" label="Labels/Annotations">
                   <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
                   <ko-annotations annotations-title="Annotations"
                                   :annotations-obj.sync="form.metadata.annotations"></ko-annotations>

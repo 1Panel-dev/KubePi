@@ -120,6 +120,7 @@ export default {
       getSecret(this.cluster, this.namespace, this.name).then(res => {
         this.loading = false
         this.item = res
+        this.yaml = JSON.parse(JSON.stringify(this.item))
       })
     },
     getContent (value) {
@@ -138,15 +139,12 @@ export default {
     }
   },
   watch: {
-    yamlShow:function (newValue) {
-      if (newValue) {
-        this.yaml = JSON.parse(JSON.stringify(this.item))
-      }
+    yamlShow: function (newValue) {
       this.$router.push({
-        path: "/" + this.namespace + "/secrets/detail/" + this.name,
+        name: "SecretDetail",
+        params: { name: this.name, namespace: this.namespace },
         query: { yamlShow: newValue }
       })
-      this.getDetail()
     }
   },
   created () {

@@ -6,6 +6,8 @@ const getters = {
   permission_routes: state => state.permission.routes,
   menu: state => state.user.menu,
   roles: state => state.user.roles,
+  cluster: state => state.user.cluster,
+  clusterRoles: state => state.user.clusterRoles,
   buttom_height: state => state.app.buttomHeight
 }
 export default getters

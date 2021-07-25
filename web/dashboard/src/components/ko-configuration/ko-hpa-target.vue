@@ -92,12 +92,6 @@ export default {
       }
       this.getReferences()
     },
-    specObj:function (newValue) {
-      this.getReferences()
-      if (newValue) {
-        this.form = newValue
-      }
-    }
   },
   methods: {
     getReferences () {
@@ -120,6 +114,12 @@ export default {
       this.$emit("update:specObj", this.form)
     }
   },
+  mounted () {
+    this.getReferences()
+    if (this.specObj) {
+      this.form = this.specObj
+    }
+  }
 }
 </script>
 
