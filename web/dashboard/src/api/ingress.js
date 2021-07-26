@@ -35,6 +35,6 @@ export function createIngress (cluster_name, namespace, data) {
   return post(`${namespaceIngressUrl(cluster_name, namespace)}`, data)
 }
 
-export function updateIngress (cluster_name, namespace, data) {
-  return patch(`${namespaceIngressUrl(cluster_name, namespace)}`, data)
+export function updateIngress (cluster_name, namespace, name, data) {
+  return patch(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`, data)
 }

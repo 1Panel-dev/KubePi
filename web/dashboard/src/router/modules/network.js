@@ -77,6 +77,16 @@ const Network = {
       }
     },
     {
+      path: "/ingresses/:namespace/:name/edit",
+      component: () => import("@/business/network/ingresses/edit"),
+      name: "IngressEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
       path: "/ingresses/create",
       component: () => import("@/business/network/ingresses/create"),
       name: "IngressCreate",

@@ -32,12 +32,16 @@
                         <el-input v-model="row.hosts[index]" style="margin-top: 5px"></el-input>
                       </el-col>
                       <el-col :span="2">
-                        <el-button type="text" @click="removeHost(row,index)">{{ $t("commons.button.delete") }}</el-button>
+                        <el-button type="text" @click="removeHost(row,index)">{{
+                            $t("commons.button.delete")
+                          }}
+                        </el-button>
                       </el-col>
                     </div>
                     <div>
                       <el-col :span="24">
-                        <el-button style="margin-top: 10px" @click="addHost(row)">{{ $t("commons.button.add") }} Host</el-button>
+                        <el-button style="margin-top: 10px" @click="addHost(row)">{{ $t("commons.button.add") }} Host
+                        </el-button>
                       </el-col>
                     </div>
                   </div>
@@ -64,7 +68,7 @@ export default {
   props: {
     cluster: String,
     namespace: String,
-    tlsArray: []
+    tlsArray: Array
   },
   data () {
     return {
