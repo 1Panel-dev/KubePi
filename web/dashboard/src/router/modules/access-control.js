@@ -83,6 +83,53 @@ const AccessControl = {
       }
     },
     {
+      path: "/serviceaccounts/create",
+      // requirePermission: {
+      //   apiGroup: "",
+      //   resource: "serviceaccounts",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/service-accounts/create"),
+      name: "ServiceAccountCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/serviceaccounts",
+        global: false
+      }
+    },
+    {
+      path: "/serviceaccounts/:namespace/:name/detail",
+      // requirePermission: {
+      //   apiGroup: "",
+      //   resource: "serviceaccounts",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/service-accounts/detail"),
+      name: "ServiceAccountDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/serviceaccounts",
+        global: false
+      }
+    },
+    {
+      path: "/serviceaccounts/:namespace/:name/edit",
+      // requirePermission: {
+      //   apiGroup: "",
+      //   resource: "serviceaccounts",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/service-accounts/edit"),
+      name: "ServiceAccountEdit",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/serviceaccounts",
+        global: false
+      }
+    },
+    {
       path: "/podsecuritypolicy",
       requirePermission: {
         apiGroup: "policy",

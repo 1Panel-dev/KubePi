@@ -38,7 +38,7 @@ export function createServiceAccount (cluster_name, namespace, data) {
   return post(`${namespaceServiceAccountUrl(cluster_name, namespace)}`, data)
 }
 
-export function editServiceAccount (cluster_name, namespace, data) {
-  return patch(`${namespaceServiceAccountUrl(cluster_name, namespace)}`, data)
+export function updateServiceAccount (cluster_name, namespace, name, data) {
+  return patch(`${namespaceServiceAccountUrl(cluster_name, namespace)}/${name}`, data)
 }
 
