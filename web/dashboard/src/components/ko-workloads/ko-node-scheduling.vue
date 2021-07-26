@@ -4,7 +4,7 @@
       <el-form label-position="top" ref="form" :disabled="isReadOnly">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="Scheduling Type" v-if="enableschedulingList">
+            <el-form-item label="Scheduling Type" v-if="enableSchedulingList">
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
             </el-form-item>
           </el-col>
@@ -24,7 +24,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="Priority">
+                  <el-form-item label="Priority" v-if="enablePrioritySelect">
                     <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
                   </el-form-item>
                 </el-col>
@@ -128,7 +128,8 @@ export default {
       nodeName: "",
       node_list: [],
       nodeSchedulings: [],
-      enableschedulingList: true,
+      enableSchedulingList: true,
+      enablePrioritySelect: true
     }
   },
   methods: {
@@ -213,6 +214,13 @@ export default {
                   itemAdd.preference.matchExpressions = matchs
                   parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
                   break
+                case "None":
+                  if (!parentFrom.nodeAffinity) {
+                    parentFrom.nodeAffinity = {}
+                  }
+                  itemAdd.matchExpressions = matchs
+                  parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
+                  break
               }
             }
           }
@@ -248,11 +256,22 @@ export default {
             this.nodeSchedulings.push({ type: "Node", priority: "Preferred", weight: weight, rules: rules })
           }
         }
+        if (this.nodeSchedulingParentObj.nodeAffinity.required) {
+          const scheduling = this.nodeSchedulingParentObj.nodeAffinity.required.nodeSelectorTerms
+          for (const s of scheduling) {
+            let rules = []
+            for (const express of s.matchExpressions) {
+              rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+            }
+            this.nodeSchedulings.push({ type: "Node", priority: "None", rules: rules })
+          }
+        }
       }
     }
     if (this.nodeSchedulingType !== "" && typeof this.nodeSchedulingType !== "undefined") {
       this.scheduling_type = this.nodeSchedulingType
-      this.enableschedulingList = false
+      this.enableSchedulingList = false
+      this.enablePrioritySelect = false
     }
   },
 }

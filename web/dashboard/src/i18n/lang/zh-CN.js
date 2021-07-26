@@ -169,7 +169,8 @@ const message = {
       path_type: "路径类型",
       service_name: "Service 名称",
       service_port: "Service 端口",
-      target: "目标"
+      target: "目标",
+      pod_selector: "Pod 选择器"
     },
     storage: {
       storage: "存储",
