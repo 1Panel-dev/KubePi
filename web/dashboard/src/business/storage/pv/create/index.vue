@@ -272,7 +272,6 @@ export default {
     },
     loadStorageClasses () {
       this.storageClasses = []
-      // let sc = ''
       listStorageClasses(this.cluster).then((res) => {
           this.storageClasses.push('None')
           for (const sc of res.items){
