@@ -108,7 +108,7 @@ import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
-import { listStorageClass } from "@/api/storageclass"
+import { listStorageClasses } from "@/api/storageclass"
 
 export default {
   name: "StatefulSetCreate",
@@ -189,7 +189,7 @@ export default {
       })
     },
     loadStorageClass() {
-      listStorageClass(this.clusterName).then((res) => {
+      listStorageClasses(this.clusterName).then((res) => {
         this.sc_list = res.items
       })
     },

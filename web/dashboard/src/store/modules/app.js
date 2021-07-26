@@ -8,7 +8,8 @@ const state = {
   sidebar: {
     opened: get() ? !!+get() : true
   },
-  device: 'desktop'
+  device: 'desktop',
+  buttomHeight: localStorage.getItem('buttom-height') || '30px'
 }
 
 const mutations = {
@@ -27,6 +28,10 @@ const mutations = {
   CLOSE_SIDEBAR: (state) => {
     set('sidebarStatus', 0)
     state.sidebar.opened = false
+  },
+  CHANGE_BOTTOM_HEIGHT: (state, value) => {
+    localStorage.setItem('buttom-height', value)
+    state.buttomHeight = value
   }
 }
 

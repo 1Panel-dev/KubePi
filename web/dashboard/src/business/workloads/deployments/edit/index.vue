@@ -268,6 +268,7 @@ export default {
       this.$refs.ko_security_context.transformation(this.currentContainer)
       this.$refs.ko_networking.transformation(this.form.spec.template.spec)
       this.$refs.ko_pod_scheduling.transformation(this.form.spec.template.spec)
+      this.$refs.ko_node_scheduling.transformation(this.form.spec.template.spec)
       this.$refs.ko_upgrade_policy.transformation(this.form.spec)
       this.$refs.ko_storage.transformation(this.form.spec.template.spec)
       if (this.currentContainerType === "initContainers") {
@@ -288,7 +289,7 @@ export default {
         return
       }
       if (this.showYaml) {
-        data = this.$refs.yaml_editor.getValue()
+        data = this.yaml
       } else {
         data = this.gatherFormData()
       }

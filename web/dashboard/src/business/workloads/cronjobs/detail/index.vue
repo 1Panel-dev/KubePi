@@ -59,7 +59,11 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90" />
+            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
+              <template v-slot:default="{row}">
+                <el-link @click="goJobDetail(row)">{{ row.metadata.name }}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
               <template v-slot:default="{row}">
                 {{ row.spec.completions }} / {{ row.spec.parallelism }}
@@ -135,6 +139,9 @@ export default {
     }
   },
   methods: {
+    goJobDetail(row) {
+      this.$router.push({ name: "JobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    },
     getDetail() {
       this.loading = true
       this.events = []

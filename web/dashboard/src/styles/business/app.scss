@@ -61,29 +61,6 @@ a:hover {
   background-color: transparent;
 }
 
-.input-help {
-  font-size: 12px;
-  word-break: break-all;
-  color: #4A4B4D;
-  transform: scale(0.9);
-  transform-origin: left;
-  width: 110%;
-  display: inline-block;
-}
-
-.input-help-blod {
-  font-size: 6px;
-  font-weight: bold;
-  word-break:break-all;
-  color: #4A4B4D;
-}
-
-.input-error {
-  font-size: 4px;
-  word-break:break-all;
-  color:red;
-}
-
 .el-message__content {
   padding: 0;
   font-size: 14px;
@@ -140,4 +117,7 @@ a:hover {
 .el-radio__input.is-disabled + span.el-radio__label {
   color: white;
   cursor: not-allowed;
+}
+.el-radio-button__inner {
+  width: 100%;
 }

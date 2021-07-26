@@ -69,7 +69,11 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90" />
+            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90" >
+              <template v-slot:default="{row}">
+                <el-link @click="goPodDetail(row)">{{ row.metadata.name }}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column sortable :label="$t('business.cluster.nodes')" prop="spec.nodeName" min-width="70" />
             <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
               <template v-slot:default="{row}">
@@ -144,6 +148,9 @@ export default {
     }
   },
   methods: {
+    goPodDetail(row) {
+      this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    },
     getDetail() {
       this.loading = true
       getDaemonSetByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {

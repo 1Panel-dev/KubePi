@@ -16,7 +16,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
-              <ko-form-item placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model="form.spec.replicas" />
+              <ko-form-item placeholder="Any text you want that better describes this resource" clearable itemType="number" v-model.number="form.spec.replicas" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -115,7 +115,7 @@ import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecrets } from "@/api/secrets"
 import { listConfigMaps } from "@/api/configmaps"
-import { listStorageClass } from "@/api/storageclass"
+import { listStorageClasses } from "@/api/storageclass"
 
 export default {
   name: "StatefulSetEdit",
@@ -201,7 +201,7 @@ export default {
       })
     },
     loadStorageClass() {
-      listStorageClass(this.clusterName).then((res) => {
+      listStorageClasses(this.clusterName).then((res) => {
         this.sc_list = res.items
       })
     },

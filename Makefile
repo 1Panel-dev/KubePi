@@ -3,8 +3,8 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 BASEPATH := $(shell pwd)
 BUILDDIR=$(BASEPATH)/dist/bin
-UIDIR=$(BASEPATH)/ui
-TERMINALDIR=$(BASEPATH)/terminal
+UIDIR=$(BASEPATH)/web/dashboard
+TERMINALDIR=$(BASEPATH)/web/terminal
 
 MAIN= $(BASEPATH)/cmd/server/main.go
 

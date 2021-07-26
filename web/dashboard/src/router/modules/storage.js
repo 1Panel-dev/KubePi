@@ -18,10 +18,54 @@ const Storage = {
                 resource: "persistentvolumes",
                 verb: "list",
             },
-            component: () => import("@/business/storage/pvs"),
-            name: "Pvs",
+            component: () => import("@/business/storage/pv"),
+            name: "PersistentVolumes",
             meta: {
                 title: "Persistent Volume",
+            }
+        },
+        {
+            path: "/persistentvolumes/create",
+            requirePermission: {
+              apiGroup: "",
+              resource: "persistentvolumes",
+              verb: "list",
+            },
+            component: () => import("@/business/storage/pv/create"),
+            name: "PersistentVolumeCreate",
+            hidden: true,
+            meta: {
+              title: "Persistent Volume Create",
+            }
+        },
+        {
+            path: "/persistentvolumes/edit/:name",
+            requirePermission: {
+              apiGroup: "",
+              resource: "persistentvolumes",
+              verb: "list",
+            },
+            component: () => import("@/business/storage/pv/edit"),
+            name: "PersistentVolumeEdit",
+            props: true,
+            hidden: true,
+            meta: {
+              title: "Persistent Volume Edit",
+            }
+        },
+        {
+            path: "/persistentvolumes/detail/:name",
+            requirePermission: {
+              apiGroup: "",
+              resource: "persistentvolumes",
+              verb: "list",
+            },
+            component: () => import("@/business/storage/pv/detail"),
+            name: "PersistentVolumeDetail",
+            props: true,
+            hidden: true,
+            meta: {
+              title: "Persistent Volume Detail",
             }
         },
         {
@@ -31,7 +75,7 @@ const Storage = {
                 resource: "persistentvolumeclaims",
                 verb: "list",
             },
-            component: () => import("@/business/storage/pvcs"),
+            component: () => import("@/business/storage/pvc"),
             name: "Pvcs",
             meta: {
                 title: "Persistent Volume Claims",
@@ -44,7 +88,7 @@ const Storage = {
                 resource: "storageclasses",
                 verb: "list",
             },
-            component: () => import("@/business/storage/storage-classes"),
+            component: () => import("@/business/storage/sc"),
             name: "StorageClasses",
             meta: {
                 title: "Storage Classes",

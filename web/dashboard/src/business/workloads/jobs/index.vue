@@ -12,16 +12,6 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
-        <template v-slot:default="{row}">
-          <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
-            Succeeded
-          </el-button>
-          <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
-            Failed
-          </el-button>
-        </template>
-      </el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="140">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>

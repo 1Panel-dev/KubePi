@@ -2,12 +2,12 @@
   <el-row :gutter="20">
     <el-col :span="12">
       <el-row>
-        <el-col :span="8">
-          <el-select style="margin-top: 33px;width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
-            <el-option v-for="(item, index) in type_list" :key="index" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-col :span="6">
+          <el-radio-group style="margin-top: 33px;width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
+            <el-radio-button style="width: 50%" v-for="(item, index) in type_list" :key="index" :label="item.value">{{item.label}}</el-radio-button>
+          </el-radio-group>
         </el-col>
-        <el-col :span="12" :key="isRefresh">
+        <el-col :span="14" :key="isRefresh">
           <el-form-item :label="$t('business.workload.container')">
             <el-select v-if="selectContainerType === 'standardContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
               <el-option v-for="(item, index) in containers" :key="index" :label="item.name" :value="index" />
@@ -61,8 +61,8 @@ export default {
       initContainers: null,
       containers: [],
       type_list: [
-        { label: "Init Container", value: "initContainers" },
-        { label: "Standard Container", value: "standardContainers" },
+        { label: "Init", value: "initContainers" },
+        { label: "Standard", value: "standardContainers" },
       ],
       selectContainerIndex: 0,
       currentContainerIndex: 0,

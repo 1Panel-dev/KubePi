@@ -35,5 +35,3 @@ func (h *Handler) ListNamespace() iris.Handler {
 		ctx.Values().Set("data", ns.Items)
 	}
 }
-
-
