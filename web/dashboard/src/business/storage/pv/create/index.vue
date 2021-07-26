@@ -233,7 +233,7 @@ export default {
           label: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 "
       }],
       currentStorageType: "Local",
-      currentAccessModes: "",
+      currentAccessModes: "ReadWriteOnce",
       currentStorageCapacity: 1,
       storageClasses: []
     }
@@ -282,20 +282,27 @@ export default {
     },
     transformYaml () {
       let formData = {}
-      if(this.form.spec.nfs.path == ''){
-          delete this.form.spec.nfs
+      switch (this.currentStorageType) {
+        case "Local":
+          delete this.form.spec["hostPath"]
+          delete this.form.spec["nfs"]
+          break
+        case "Host":
+          delete this.form.spec["local"]
+          delete this.form.spec["nfs"]
+          delete this.form.spec["storageClassName"]
+          break
+        case "NFS":
+          delete this.form.spec["hostPath"]
+          delete this.form.spec["local"]
+          if (this.form.spec.nfs.readOnly) {
+            delete this.form.spec.nfs["readOnly"]
+          }
+          break
       }
-      if(this.form.spec.local.path == ''){
-          delete this.form.spec.local
-      }
-      if(this.form.spec.hostPath.path == ''){
-          delete this.form.spec.hostPath
-      }
-      if(this.form.spec.storageClassName == 'None'){
-          delete this.form.spec.storageClassName
-      }
-      formData = JSON.parse(JSON.stringify(this.form))
+
       this.$refs.ko_node_scheduling.transformation(this.form.spec)
+      formData = JSON.parse(JSON.stringify(this.form))
       return formData
     },
     setFormAccessModel() {
