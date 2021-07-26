@@ -11,16 +11,6 @@
           </el-button>
         </el-button-group>
       </template>
-      <!--      <template #toolbar>-->
-      <!--        <el-select v-model="conditions" @change="search(true)">-->
-      <!--          <el-option label="All Namespaces" value=""></el-option>-->
-      <!--          <el-option v-for="namespace in namespaces"-->
-      <!--                     :key="namespace.metadata.name"-->
-      <!--                     :label="namespace.metadata.name"-->
-      <!--                     :value="namespace.metadata.name">-->
-      <!--          </el-option>-->
-      <!--        </el-select>-->
-      <!--      </template>-->
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
@@ -32,12 +22,8 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
-        <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
-            {{ key }}={{ value }}
-          </el-tag>
-        </template>
+      <el-table-column :label="$t('business.network.pod_selector')" prop="spec.pod_selector">
+
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
