@@ -11,16 +11,6 @@
           </el-button>
         </el-button-group>
       </template>
-      <!--      <template #toolbar>-->
-      <!--        <el-select v-model="conditions" @change="search(true)">-->
-      <!--          <el-option label="All Namespaces" value=""></el-option>-->
-      <!--          <el-option v-for="namespace in namespaces"-->
-      <!--                     :key="namespace.metadata.name"-->
-      <!--                     :label="namespace.metadata.name"-->
-      <!--                     :value="namespace.metadata.name">-->
-      <!--          </el-option>-->
-      <!--        </el-select>-->
-      <!--      </template>-->
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
@@ -32,9 +22,9 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
+      <el-table-column :label="$t('business.network.pod_selector')" prop="spec.pod_selector">
         <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
+          <el-tag v-for="(value,key,index) in row.spec.podSelector.matchLabels" v-bind:key="index" type="info" size="mini">
             {{ key }}={{ value }}
           </el-tag>
         </template>
@@ -79,18 +69,6 @@ export default {
             this.$router.push({
               name: "NetworkPolicyEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
-            })
-          }
-        },
-        {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "NetworkPolicyEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
             })
           }
         },
@@ -167,8 +145,7 @@ export default {
     openDetail (row) {
       this.$router.push({
         name: "NetworkPolicyDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
-        query: { yamlShow: false }
+        params: { name: row.metadata.name, namespace: row.metadata.namespace }
       })
     },
     listAllNameSpaces () {

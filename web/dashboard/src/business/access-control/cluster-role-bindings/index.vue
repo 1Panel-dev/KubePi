@@ -1,6 +1,6 @@
 <template>
-  <layout-content header="Endpoints">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+  <layout-content header="ClusterRoleBindings">
+    <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -17,20 +17,6 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Endpoints" prop="subsets" min-width="200px">
-        <template v-slot:default="{row}">
-          <div v-for="(subset,index) in row.subsets" v-bind:key="index">
-            <div v-for="(address,index) in subset.addresses" v-bind:key="index" style="display:inline-block">
-              <el-tag v-for="(port,index) in subset.ports" v-bind:key="index" type="info" size="mini">{{ address.ip }}:{{ port.port }}</el-tag>
-            </div>
-          </div>
-        </template>
-      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -43,34 +29,32 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {downloadYaml} from "@/utils/actions"
-import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
+import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteEndPoint, listEndPoints} from "@/api/endpoints"
+import {deleteClusterRoleBinding, listClusterRoleBindings} from "@/api/clusterrolebindings"
 
 export default {
-  name: "Endpoints",
-  components: { LayoutContent, ComplexTable, KoTableOperations },
+  name: "ClusterRoleBindings",
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
       page: {
         pageSize: 10,
-        nextToken: "",
+        nextToken: ""
       },
       selects: [],
-      cluster: "",
       loading: false,
-      namespaces: [],
+      cluster: "",
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
+          label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "EndpointEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              name: "ClusterRoleBindingEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name }
             })
           }
         },
@@ -97,10 +81,10 @@ export default {
       if (init) {
         this.page = {
           pageSize: this.page.pageSize,
-          nextToken: "",
+          nextToken: ""
         }
       }
-      listEndPoints(this.cluster, this.page.pageSize, this.page.nextToken, this.conditions).then(res => {
+      listClusterRoleBindings(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
@@ -108,7 +92,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "EndpointCreate",
+        name: "ClusterRoleBindingCreate",
       })
     },
     onDelete (row) {
@@ -121,11 +105,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteEndPoint(this.cluster, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deleteClusterRoleBinding(this.cluster, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteEndPoint(this.cluster, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteClusterRoleBinding(this.cluster, select.metadata.name))
             }
           }
         }
@@ -146,19 +130,13 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "EndpointDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace }
-      })
-    },
-    listAllNameSpaces () {
-      listNamespace(this.cluster).then(res => {
-        this.namespaces = res.items
+        name: "ClusterRoleBindingDetail",
+        params: { name: row.metadata.name }
       })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listAllNameSpaces()
     this.search()
   }
 }

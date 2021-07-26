@@ -205,28 +205,13 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 		profile := u.(UserProfile)
 
 		k := kubernetes.NewKubernetes(*c)
-		client, err := k.Client()
+		ns, err := k.GetUserNamespaceNames(profile.Name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
 			return
 		}
-
-		rbs, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{})
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
-			return
-		}
-		namespaceSet := collectons.NewStringSet()
-		for i := range rbs.Items {
-			for j := range rbs.Items[i].Subjects {
-				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == profile.Name {
-					namespaceSet.Add(rbs.Items[i].Namespace)
-				}
-			}
-		}
-		ctx.Values().Set("data", namespaceSet.ToSlice())
+		ctx.Values().Set("data", ns)
 	}
 }
 
@@ -252,10 +237,17 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
 		})
-
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster-role-binding failed: %s", err.Error()))
+			return
+		}
+		rolebindings, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
+		})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get role-binding failed: %s", err.Error()))
 			return
 		}
 		roleSet := map[string]struct{}{}
@@ -263,6 +255,13 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			for j := range clusterRoleBindings.Items[i].Subjects {
 				if clusterRoleBindings.Items[i].Subjects[j].Kind == "User" {
 					roleSet[clusterRoleBindings.Items[i].RoleRef.Name] = struct{}{}
+				}
+			}
+		}
+		for i := range rolebindings.Items {
+			for j := range rolebindings.Items[i].Subjects {
+				if rolebindings.Items[i].Subjects[j].Kind == "User" {
+					roleSet[rolebindings.Items[i].RoleRef.Name] = struct{}{}
 				}
 			}
 		}

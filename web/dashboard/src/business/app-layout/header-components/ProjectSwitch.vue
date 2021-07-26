@@ -2,7 +2,7 @@
   <el-dropdown trigger="click" @command="handleProjectSwitch">
     <span class="el-dropdown-link">
               <i class="iconfont iconnamesapce" style="color: #3884c5;margin-right: 3px" :icon="['fas', 'globe']"/>
-      <span>{{ getProjectName }}</span>
+      <span>{{ getNamespaceName }}</span>
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
@@ -26,17 +26,17 @@ export default {
     }
   },
   computed: {
-    getProjectName() {
-      const p = sessionStorage.getItem("project")
-      return (p === null) ? "Global" : p
+    getNamespaceName() {
+      const p = sessionStorage.getItem("namespace")
+      return (p === null) ? "全部" : p
     }
   },
   methods: {
     handleProjectSwitch(command) {
       if (!command) {
-        sessionStorage.removeItem("project")
+        sessionStorage.removeItem("namespace")
       } else {
-        sessionStorage.setItem("project", command)
+        sessionStorage.setItem("namespace", command)
       }
       location.reload()
     }

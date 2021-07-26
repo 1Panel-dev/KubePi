@@ -212,7 +212,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"configmaps,secrets,resourcequotas,limitranges"},
+				Resources: []string{"configmaps","secrets","resourcequotas","limitranges"},
 				Verbs:     []string{"*"},
 			},
 			{
@@ -236,7 +236,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"configmaps,secrets,resourcequotas,limitranges"},
+				Resources: []string{"configmaps","secrets","resourcequotas","limitranges"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{

@@ -164,6 +164,12 @@ export default {
   watch: {
     namespace: function (old, newValue) {
       if (old !== newValue) {
+        for (let i = 0; i < this.form.rules.length; i++) {
+          for (let j = 0; j < this.form.rules[i].http.paths.length; j++) {
+            this.form.rules[i].http.paths[j].backend.service.name = ""
+            this.form.rules[i].http.paths[j].backend.service.port.number = 0
+          }
+        }
         this.getServices()
       }
     }
