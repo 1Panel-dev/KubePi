@@ -13,6 +13,11 @@ const Configuration = {
     children: [
         {
             path: "/configmaps",
+            requirePermission: {
+                apiGroup: "",
+                resource: "configmaps",
+                verb: "list",
+            },
             component: () => import("@/business/configuration/config-maps"),
             name: "ConfigMaps",
             meta: {
@@ -51,6 +56,11 @@ const Configuration = {
         },
         {
             path: "/secrets",
+            requirePermission: {
+                apiGroup: "",
+                resource: "secrets",
+                verb: "list",
+            },
             component: () => import("@/business/configuration/secrets"),
             name: "Secrets",
             meta: {
@@ -89,6 +99,11 @@ const Configuration = {
         },
         {
             path: "/resourcequotas",
+            requirePermission: {
+                apiGroup: "",
+                resource: "resourcequotas",
+                verb: "list",
+            },
             component: () => import("@/business/configuration/resource-quotas"),
             name: "ResourceQuotas",
             meta: {
@@ -127,6 +142,11 @@ const Configuration = {
         },
         {
             path: "/limitranges",
+            requirePermission: {
+                apiGroup: "",
+                resource: "limitranges",
+                verb: "list",
+            },
             component: () => import("@/business/configuration/limit-ranges"),
             name: "LimitRanges",
             meta: {
@@ -164,6 +184,11 @@ const Configuration = {
         },
         {
             path: "/horizontalpodautoscalers",
+            requirePermission: {
+                apiGroup: "autoscaling",
+                resource: "horizontalpodautoscalers",
+                verb: "list",
+            },
             component: () => import("@/business/configuration/hpa"),
             name: "HPA",
             meta: {
