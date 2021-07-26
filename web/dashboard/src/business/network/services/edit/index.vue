@@ -177,6 +177,18 @@ export default {
       }
     }
   },
+  watch: {
+    showYaml: function (newValue) {
+      this.$router.push({
+        name: "ServiceEdit",
+        params: {
+          name: this.name,
+          namespace: this.namespace,
+        },
+        query: { yamlShow: newValue }
+      })
+    }
+  },
   created () {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"

@@ -11,16 +11,6 @@
           </el-button>
         </el-button-group>
       </template>
-      <!--      <template #toolbar>-->
-      <!--        <el-select v-model="conditions" @change="search(true)">-->
-      <!--          <el-option label="All Namespaces" value=""></el-option>-->
-      <!--          <el-option v-for="namespace in namespaces"-->
-      <!--                     :key="namespace.metadata.name"-->
-      <!--                     :label="namespace.metadata.name"-->
-      <!--                     :value="namespace.metadata.name">-->
-      <!--          </el-option>-->
-      <!--        </el-select>-->
-      <!--      </template>-->
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
         <template v-slot:default="{row}">
@@ -32,11 +22,13 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
+      <el-table-column label="Endpoints" prop="subsets" min-width="200px">
         <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">
-            {{ key }}={{ value }}
-          </el-tag>
+          <div v-for="(subset,index) in row.subsets" v-bind:key="index">
+            <div v-for="(address,index) in subset.addresses" v-bind:key="index" style="display:inline-block">
+              <el-tag v-for="(port,index) in subset.ports" v-bind:key="index" type="info" size="mini">{{ address.ip }}:{{ port.port }}</el-tag>
+            </div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -58,7 +50,7 @@ import KoTableOperations from "@/components/ko-table-operations"
 import {deleteEndPoint, listEndPoints} from "@/api/endpoints"
 
 export default {
-  name: "Endpoint",
+  name: "Endpoints",
   components: { LayoutContent, ComplexTable, KoTableOperations },
   data () {
     return {
@@ -79,18 +71,6 @@ export default {
             this.$router.push({
               name: "EndpointEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
-            })
-          }
-        },
-        {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "EndpointEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
             })
           }
         },
@@ -167,8 +147,7 @@ export default {
     openDetail (row) {
       this.$router.push({
         name: "EndpointDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
-        query: { yamlShow: false }
+        params: { name: row.metadata.name, namespace: row.metadata.namespace }
       })
     },
     listAllNameSpaces () {

@@ -37,6 +37,10 @@
               </el-link>
             </div>
           </div>
+          <div v-if="row.spec.defaultBackend">
+            <span>Default</span> >
+            <el-link>{{row.spec.defaultBackend.service.name}}</el-link>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>

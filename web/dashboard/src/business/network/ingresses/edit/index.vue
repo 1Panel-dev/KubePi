@@ -5,23 +5,22 @@
         <el-form label-position="top" :model="form" ref="form" :rules="rules">
           <el-col :span="6">
             <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
-              <el-input clearable v-model="form.metadata.name"></el-input>
+              <el-input clearable v-model="form.metadata.name" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
-              <el-select v-model="form.metadata.namespace">
-                <el-option v-for="namespace in namespaces"
-                           :key="namespace.metadata.name"
-                           :label="namespace.metadata.name"
-                           :value="namespace.metadata.name">
+              <el-select v-model="form.metadata.namespace" disabled>
+                <el-option :key="form.metadata.namespace"
+                           :label="form.metadata.namespace"
+                           :value="form.metadata.namespace">
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                     @tab-click="handleClick" ref=tabs>
+                     @tab-click="handleClick" ref=tabs v-if="Object.keys(form.spec).length!==0">
               <el-tab-pane label="Rules">
                 <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace"
                                  :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
@@ -59,17 +58,16 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import KoIngressRule from "@/components/ko-network/ingress-rules"
 import YamlEditor from "@/components/yaml-editor"
 import KoIngressDefaultBackend from "@/components/ko-network/ingress-defaultbackend"
 import KoIngressTls from "@/components/ko-network/ingress-tls"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
-import {createIngress} from "@/api/ingress"
+import {getIngress, updateIngress} from "@/api/ingress"
 
 export default {
-  name: "IngressCreate",
+  name: "IngressEdit",
   components: {
     KoIngressTls,
     KoIngressDefaultBackend,
@@ -79,11 +77,13 @@ export default {
     KoLabels,
     KoAnnotations
   },
-  props: {},
+  props: {
+    name: String,
+    namespace: String
+  },
   data () {
     return {
       cluster: "",
-      namespaces: [],
       loading: false,
       form: {
         apiVersion: "networking.k8s.io/v1",
@@ -129,7 +129,7 @@ export default {
     },
     onCreate (data) {
       this.loading = true
-      createIngress(this.cluster, this.form.metadata.namespace, data).then(() => {
+      updateIngress(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -139,12 +139,32 @@ export default {
         this.loading = false
       })
     },
+    getDetail () {
+      this.loading = true
+      getIngress(this.cluster, this.namespace, this.name).then(res => {
+        this.form = res
+        this.yaml = this.transformYaml()
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  },
+  watch: {
+    showYaml: function (newValue) {
+      this.$router.push({
+        name: "IngressEdit",
+        params: {
+          name: this.name,
+          namespace: this.namespace,
+        },
+        query: { yamlShow: newValue }
+      })
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
-    })
+    this.showYaml = this.$route.query.yamlShow === "true"
+    this.getDetail()
   }
 }
 </script>

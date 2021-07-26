@@ -1,4 +1,4 @@
-import {del, get} from "@/plugins/request"
+import {del, get, patch, post} from "@/plugins/request"
 
 
 const endpointUrl = (cluster_name) => {
@@ -23,6 +23,18 @@ export function listEndPoints (cluster_name, limit, continueToken, search) {
   return get(url)
 }
 
-export function deleteEndPoint (cluster_name, name) {
-  return del(`${namespaceEndpointUrl(cluster_name)}/${name}`)
+export function deleteEndPoint (cluster_name, namespace, name) {
+  return del(`${namespaceEndpointUrl(cluster_name, namespace)}/${name}`)
+}
+
+export function createEndPoint(cluster_name, namespace, data) {
+  return post(`${namespaceEndpointUrl(cluster_name, namespace)}`, data)
+}
+
+export function getEndPoint (cluster_name, namespace, name) {
+  return get(`${namespaceEndpointUrl(cluster_name, namespace)}/${name}`)
+}
+
+export function updateEndPoint (cluster_name, namespace, name, data) {
+  return patch(`${namespaceEndpointUrl(cluster_name, namespace)}/${name}`, data)
 }

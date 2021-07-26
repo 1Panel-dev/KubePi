@@ -77,6 +77,26 @@ const Network = {
       }
     },
     {
+      path: "/ingresses/:namespace/:name/edit",
+      component: () => import("@/business/network/ingresses/edit"),
+      name: "IngressEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
+      path: "/ingresses/create",
+      component: () => import("@/business/network/ingresses/create"),
+      name: "IngressCreate",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
       path: "/endpoints",
       requirePermission: {
         apiGroup: "",
@@ -87,6 +107,35 @@ const Network = {
       name: "Endpoints",
       meta: {
         title: "Endpoints",
+      }
+    },
+    {
+      path: "/endpoints/:namespace/:name/detail",
+      component: () => import("@/business/network/endpoints/detail"),
+      name: "EndpointDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+    {
+      path: "/endpoints/create",
+      component: () => import("@/business/network/endpoints/create"),
+      name: "EndpointCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
+      path: "/endpoints/:namespace/:name/edit",
+      component: () => import("@/business/network/endpoints/edit"),
+      name: "EndpointEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
       }
     },
     {
@@ -101,7 +150,36 @@ const Network = {
       meta: {
         title: "Network Policies",
       }
-    }
+    },
+    {
+      path: "/networkpolicies/create",
+      component: () => import("@/business/network/network-policies/create"),
+      name: "NetworkPolicyCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
+    {
+      path: "/networkpolicies/:namespace/:name/detail",
+      component: () => import("@/business/network/network-policies/detail"),
+      name: "NetworkPolicyDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
+    {
+      path: "/networkpolicies/:namespace/:name/edit",
+      component: () => import("@/business/network/network-policies/edit"),
+      name: "NetworkPolicyEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
   ]
 }
 
