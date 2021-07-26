@@ -9,16 +9,6 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="45">
-        <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success" size="mini" plain round>
-            {{row.status.phase}}
-          </el-button>
-          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning" size="mini" plain round>
-            {{row.status.phase}}
-          </el-button>
-        </template>
-      </el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="100">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
