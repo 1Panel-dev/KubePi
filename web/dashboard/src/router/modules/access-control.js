@@ -22,7 +22,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/cluster-role-bindings"),
       name: "ClusterRoleBindings",
       meta: {
-        title: "ClusterRole Bindings",
+        title: "ClusterRoleBindings",
         global: false
       }
     },

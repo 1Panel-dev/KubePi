@@ -92,7 +92,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "LimitRangeCreate",
+        name: "ClusterRoleBindingCreate",
       })
     },
     onDelete (row) {
