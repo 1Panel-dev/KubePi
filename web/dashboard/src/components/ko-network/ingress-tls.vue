@@ -26,7 +26,7 @@
                     <el-col :span="24">
                       <span>Hosts</span>
                     </el-col>
-                    <div v-for="(host,index) in row.hosts">
+                    <div v-for="(host,index) in row.hosts" v-bind:key="index">
                       <el-col :span="20">
                         <span v-if="false">{{ host }}</span>
                         <el-input v-model="row.hosts[index]" style="margin-top: 5px"></el-input>
