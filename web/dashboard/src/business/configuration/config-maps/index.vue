@@ -59,8 +59,8 @@ import {listNamespace} from "@/api/namespaces"
 
 export default {
   name: "ConfigMaps",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       page: {
@@ -79,8 +79,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ConfigMapEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: false}
             })
           }
         },
@@ -90,8 +90,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ConfigMapEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
+              params: {name: row.metadata.name, namespace: row.metadata.namespace},
+              query: {yamlShow: true}
             })
           }
         },
@@ -113,7 +113,7 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search(init) {
       this.loading = true
       if (init) {
         this.page = {
@@ -127,19 +127,19 @@ export default {
         this.loading = false
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "ConfigMapCreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteConfigMap(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -152,35 +152,34 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "ConfigMapDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
-        query: { yamlShow: false }
+        params: {name: row.metadata.name, namespace: row.metadata.namespace},
+        query: {yamlShow: false}
       })
     },
-    listAllNameSpaces () {
+    listAllNameSpaces() {
       listNamespace(this.cluster).then(res => {
         this.namespaces = res.items
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
-    this.listAllNameSpaces()
     this.search()
   }
 }

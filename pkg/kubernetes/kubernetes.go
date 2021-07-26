@@ -6,6 +6,7 @@ import (
 	"fmt"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/pkg/certificate"
+	"github.com/KubeOperator/ekko/pkg/collectons"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,10 +24,95 @@ type Interface interface {
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
 	CreateCommonUser(commonName string) ([]byte, error)
 	CreateDefaultClusterRoles() error
+	GetUserNamespaceNames(username string) ([]string, error)
+	CanVisitAllNamespace(username string) (bool, error)
+	IsNamespacedResource(resourceName string) (bool, error)
 }
 
 type Kubernetes struct {
 	*v1Cluster.Cluster
+}
+
+func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
+	client, err := k.Client()
+	if err != nil {
+		return false, err
+	}
+	roleSet := collectons.NewStringSet()
+	clusterrolebindings, err := client.RbacV1().ClusterRoleBindings().List(context.TODO(), metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("user-name=%s", username),
+	})
+	if err != nil {
+		return false, err
+	}
+	for i := range clusterrolebindings.Items {
+		roleSet.Add(clusterrolebindings.Items[i].RoleRef.Name)
+	}
+	for _, roleName := range roleSet.ToSlice() {
+		role, err := client.RbacV1().ClusterRoles().Get(context.TODO(), roleName, metav1.GetOptions{})
+		if err != nil {
+			return false, err
+		}
+		for i := range role.Rules {
+			if collectons.IndexOfStringSlice(role.Rules[i].APIGroups, "*") != -1 && collectons.IndexOfStringSlice(role.Rules[i].Resources, "*") != -1 {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
+}
+func (k *Kubernetes) GetUserNamespaceNames(username string) ([]string, error) {
+	client, err := k.Client()
+	if err != nil {
+		return nil, err
+	}
+	all, err := k.CanVisitAllNamespace(username)
+	if err != nil {
+		return nil, err
+	}
+	namespaceSet := collectons.NewStringSet()
+	if all {
+		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return nil, err
+		}
+		for i := range ns.Items {
+			namespaceSet.Add(ns.Items[i].Name)
+		}
+	} else {
+		rbs, err := client.RbacV1().RoleBindings("").List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return nil, err
+		}
+		for i := range rbs.Items {
+			for j := range rbs.Items[i].Subjects {
+				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == username {
+					namespaceSet.Add(rbs.Items[i].Namespace)
+				}
+			}
+		}
+	}
+
+	return namespaceSet.ToSlice(), nil
+}
+
+func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
+	client, err := k.Client()
+	if err != nil {
+		return false, err
+	}
+	apiList, err := client.ServerPreferredNamespacedResources()
+	if err != nil {
+		return false, err
+	}
+	for i := range apiList {
+		for j := range apiList[i].APIResources {
+			if apiList[i].APIResources[j].Name == resourceName {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
 }
 
 type PermissionCheckResult struct {
@@ -171,7 +257,6 @@ func (k *Kubernetes) Version() (*version.Info, error) {
 		return nil, err
 	}
 	return client.ServerVersion()
-
 }
 
 func (k *Kubernetes) Ping() error {
