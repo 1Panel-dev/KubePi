@@ -110,6 +110,35 @@ const Network = {
       }
     },
     {
+      path: "/endpoints/:namespace/:name/detail",
+      component: () => import("@/business/network/endpoints/detail"),
+      name: "EndpointDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+    {
+      path: "/endpoints/create",
+      component: () => import("@/business/network/endpoints/create"),
+      name: "EndpointCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
+      path: "/endpoints/:namespace/:name/edit",
+      component: () => import("@/business/network/endpoints/edit"),
+      name: "EndpointEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+    {
       path: "/networkpolicies",
       requirePermission: {
         apiGroup: "",
