@@ -78,7 +78,6 @@ export default {
         for (const s of newName) {
           this.sc_list.push(s.provisioner)
         }
-        console.log(this.sc_list)
       },
       immediate: true,
     },

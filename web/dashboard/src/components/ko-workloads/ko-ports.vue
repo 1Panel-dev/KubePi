@@ -88,7 +88,7 @@ export default {
         name: "",
         expose: false,
         protocol: "TCP",
-        containerPort: "",
+        containerPort: 80,
         hostPort: "",
         hostIP: "",
         _serviceType: "",
@@ -104,11 +104,21 @@ export default {
         parentFrom.ports = []
         for (const po of this.ports) {
           var itemPo = {}
-          itemPo.name = po.name
-          itemPo.expose = po.expose
-          itemPo.protocol = po.protocol
-          itemPo.containerPort = po.containerPort
-          itemPo._serviceType = po._serviceType
+          if (po.name) {
+            itemPo.name = po.name
+          }
+          if (po.expose) {
+            itemPo.expose = po.expose
+          }
+          if (po.protocol) {
+            itemPo.protocol = po.protocol
+          }
+          if (po.containerPort) {
+            itemPo.containerPort = po.containerPort
+          }
+          if (po._serviceType) {
+            itemPo._serviceType = po._serviceType
+          }
           if (po.expose) {
             switch (po._serviceType) {
               case "":

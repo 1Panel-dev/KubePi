@@ -56,14 +56,22 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "CronJobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+            this.$router.push({
+              name: "CronJobEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false },
+            })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "CronJobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
+            this.$router.push({
+              name: "CronJobEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true },
+            })
           },
         },
         {
@@ -93,7 +101,7 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "CronJobCreate", query: { yamlShow: false } })
+      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({ name: "CronJobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })

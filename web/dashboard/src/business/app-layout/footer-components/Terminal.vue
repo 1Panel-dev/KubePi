@@ -52,7 +52,6 @@ export default {
     shrinkTabs() {
       this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "50")
       this.expand = false
-      console.log(this.terminalTabs)
     },
     expandTabs() {
       this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "600")

@@ -191,9 +191,7 @@ export default {
                   if (!parentFrom.nodeAffinity) {
                     parentFrom.nodeAffinity = {}
                   }
-                  if (!parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-                    parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-                  }
+                  parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
                   itemAdd.weight = 1
                   itemAdd.preference = {}
                   itemAdd.preference.matchExpressions = matchs
@@ -206,11 +204,8 @@ export default {
                   if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
                     parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
                   }
-                  if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
-                    parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
-                  }
-                  itemAdd.preference = {}
-                  itemAdd.preference.matchExpressions = matchs
+                  parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                  itemAdd.matchExpressions = matchs
                   parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
                   break
               }
@@ -230,7 +225,7 @@ export default {
             const schedulings = this.nodeSchedulingParentObj.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
             for (const s of schedulings) {
               let rules = []
-              for (const express of s.preference.matchExpressions) {
+              for (const express of s.matchExpressions) {
                 rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
               }
               this.nodeSchedulings.push({ type: "Node", priority: "Required", rules: rules })

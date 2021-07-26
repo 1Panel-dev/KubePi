@@ -48,14 +48,22 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DaemonSetEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+            this.$router.push({
+              name: "DaemonSetEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false },
+            })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "DaemonSetEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
+            this.$router.push({
+              name: "DaemonSetEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true },
+            })
           },
         },
         {
@@ -85,7 +93,7 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "DaemonSetCreate", query: { yamlShow: false } })
+      this.$router.push({ name: "DaemonSetCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({ name: "DaemonSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })

@@ -68,7 +68,7 @@ export default {
       },
       image_pull_policy_list: [
         { label: "Always", value: "Always" },
-        { label: "ifNotPresent", value: "ifNotPresent" },
+        { label: "IfNotPresent", value: "IfNotPresent" },
         { label: "Never", value: "Never" },
       ],
       secret_list: [],

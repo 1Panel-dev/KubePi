@@ -14,12 +14,10 @@
           </tr>
           <tr v-for="(row, index) in labels" v-bind:key="index">
             <td>
-              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation"/>
+              <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation" />
             </td>
             <td>
-              <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value"
-                            @change.native="transformation"
-              />
+              <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" @change.native="transformation" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -50,14 +48,14 @@ export default {
     labelTitle: String,
     isReadOnly: Boolean,
   },
-  data () {
+  data() {
     return {
       labels: [],
-      test: ""
+      test: "",
     }
   },
   methods: {
-    handleAdd () {
+    handleAdd() {
       const item = {
         index: Math.random(),
         key: "",
@@ -65,11 +63,11 @@ export default {
       }
       this.labels.push(item)
     },
-    handleDelete (index) {
+    handleDelete(index) {
       this.labels.splice(index, 1)
       this.transformation()
     },
-    transformation () {
+    transformation() {
       if (this.labels) {
         let obj = {}
         for (let i = 0; i < this.labels.length; i++) {
@@ -80,7 +78,7 @@ export default {
         this.$emit("update:labelObj", obj)
       }
     },
-    initData (obj) {
+    initData(obj) {
       if (obj) {
         this.labels = []
         for (const key in obj) {
@@ -95,7 +93,7 @@ export default {
       }
     },
   },
-  created () {
+  created() {
     this.initData(this.labelObj)
   },
 }

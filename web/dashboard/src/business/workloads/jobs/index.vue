@@ -55,14 +55,22 @@ export default {
           label: this.$t("commons.button.view_form"),
           icon: "el-icon-view",
           click: (row) => {
-            this.$router.push({ name: "JobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+            this.$router.push({
+              name: "JobEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false, readOnly: true },
+            })
           },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({ name: "JobEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: true } })
+            this.$router.push({
+              name: "JobEdit",
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true },
+            })
           },
         },
         {
@@ -92,7 +100,7 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "JobCreate", query: { yamlShow: false } })
+      this.$router.push({ name: "JobCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({ name: "JobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
