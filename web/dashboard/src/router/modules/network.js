@@ -121,7 +121,36 @@ const Network = {
       meta: {
         title: "Network Policies",
       }
-    }
+    },
+    {
+      path: "/networkpolicies/create",
+      component: () => import("@/business/network/network-policies/create"),
+      name: "NetworkPolicyCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
+    {
+      path: "/networkpolicies/:namespace/:name/detail",
+      component: () => import("@/business/network/network-policies/detail"),
+      name: "NetworkPolicyDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
+    {
+      path: "/networkpolicies/:namespace/:name/edit",
+      component: () => import("@/business/network/network-policies/edit"),
+      name: "NetworkPolicyEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/networkpolicies"
+      }
+    },
   ]
 }
 

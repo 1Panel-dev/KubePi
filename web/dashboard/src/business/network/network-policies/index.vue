@@ -23,7 +23,11 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.network.pod_selector')" prop="spec.pod_selector">
-
+        <template v-slot:default="{row}">
+          <el-tag v-for="(value,key,index) in row.spec.podSelector.matchLabels" v-bind:key="index" type="info" size="mini">
+            {{ key }}={{ value }}
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
@@ -65,18 +69,6 @@ export default {
             this.$router.push({
               name: "NetworkPolicyEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
-            })
-          }
-        },
-        {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "NetworkPolicyEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
             })
           }
         },
@@ -153,8 +145,7 @@ export default {
     openDetail (row) {
       this.$router.push({
         name: "NetworkPolicyDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
-        query: { yamlShow: false }
+        params: { name: row.metadata.name, namespace: row.metadata.namespace }
       })
     },
     listAllNameSpaces () {
