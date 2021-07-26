@@ -77,6 +77,16 @@ const Network = {
       }
     },
     {
+      path: "/ingresses/create",
+      component: () => import("@/business/network/ingresses/create"),
+      name: "IngressCreate",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/ingresses"
+      }
+    },
+    {
       path: "/endpoints",
       requirePermission: {
         apiGroup: "",

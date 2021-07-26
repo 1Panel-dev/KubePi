@@ -23,7 +23,20 @@
             <el-tabs v-model="activeName" tab-position="top" type="border-card"
                      @tab-click="handleClick" ref=tabs>
               <el-tab-pane label="Rules">
-                <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace" :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
+                <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace"
+                                 :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
+              </el-tab-pane>
+              <el-tab-pane label="Default Backend">
+                <ko-ingress-default-backend :cluster="cluster" :namespace="form.metadata.namespace"
+                                            :defaultBackendObj.sync="form.spec.defaultBackend"></ko-ingress-default-backend>
+              </el-tab-pane>
+              <el-tab-pane label="Certificates">
+                <ko-ingress-tls :cluster="cluster" :namespace="form.metadata.namespace"
+                                :tlsArray.sync="form.spec.tls"></ko-ingress-tls>
+              </el-tab-pane>
+              <el-tab-pane label="Labels/Annotations">
+                <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
+                <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
               </el-tab-pane>
             </el-tabs>
           </el-col>
@@ -46,14 +59,26 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createService} from "@/api/services"
 import {listNamespace} from "@/api/namespaces"
 import KoIngressRule from "@/components/ko-network/ingress-rules"
 import YamlEditor from "@/components/yaml-editor"
+import KoIngressDefaultBackend from "@/components/ko-network/ingress-defaultbackend"
+import KoIngressTls from "@/components/ko-network/ingress-tls"
+import KoLabels from "@/components/ko-workloads/ko-labels"
+import KoAnnotations from "@/components/ko-workloads/ko-annotations"
+import {createIngress} from "@/api/ingress"
 
 export default {
   name: "IngressCreate",
-  components: { YamlEditor, KoIngressRule, LayoutContent },
+  components: {
+    KoIngressTls,
+    KoIngressDefaultBackend,
+    YamlEditor,
+    KoIngressRule,
+    LayoutContent,
+    KoLabels,
+    KoAnnotations
+  },
   props: {},
   data () {
     return {
@@ -76,7 +101,7 @@ export default {
   },
   methods: {
     handleClick (tab) {
-      this.activeName = tab.name
+      this.activeName = tab.index
     },
     onCancel () {
       this.$router.push({ name: "Ingresses" })
@@ -104,12 +129,12 @@ export default {
     },
     onCreate (data) {
       this.loading = true
-      createService(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createIngress(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({ name: "Services" })
+        this.$router.push({ name: "Ingresses" })
       }).finally(() => {
         this.loading = false
       })
