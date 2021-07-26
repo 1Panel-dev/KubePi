@@ -13,20 +13,6 @@ const AccessControl = {
   },
   children: [
     {
-      path: "/serviceaccounts",
-      requirePermission: {
-        apiGroup: "",
-        resource: "serviceaccounts",
-        verb: "list",
-      },
-      component: () => import("@/business/access-control/service-accounts"),
-      name: "ServiceAccounts",
-      meta: {
-        title: "Service Accounts",
-        global: false
-      }
-    },
-    {
       path: "/clusterrolebindings",
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
@@ -83,6 +69,20 @@ const AccessControl = {
       }
     },
     {
+      path: "/serviceaccounts",
+      // requirePermission: {
+      //   apiGroup: "",
+      //   resource: "serviceaccounts",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/service-accounts"),
+      name: "ServiceAccounts",
+      meta: {
+        title: "Service Accounts",
+        global: false
+      }
+    },
+    {
       path: "/podsecuritypolicy",
       requirePermission: {
         apiGroup: "policy",
@@ -95,7 +95,7 @@ const AccessControl = {
         title: "Pod Security Policy",
         global: false
       }
-    }
+    },
   ]
 }
 
