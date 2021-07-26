@@ -14,15 +14,62 @@ const AccessControl = {
   children: [
     {
       path: "/clusterrolebindings",
-      requirePermission: {
-        apiGroup: "rbac.authorization.k8s.io",
-        resource: "clusterrolebindings",
-        verb: "list",
-      },
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
       component: () => import("@/business/access-control/cluster-role-bindings"),
-      name: "RoleBindings",
+      name: "ClusterRoleBindings",
       meta: {
         title: "ClusterRole Bindings",
+        global: false
+      }
+    },
+    {
+      path: "/clusterrolebindings/create",
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/cluster-role-bindings/create"),
+      name: "ClusterRoleBindingCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/clusterrolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/clusterrolebindings/:name/detail",
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/cluster-role-bindings/detail"),
+      name: "ClusterRoleBindingDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/clusterrolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/clusterrolebindings/:name/edit",
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/cluster-role-bindings/edit"),
+      name: "ClusterRoleBindingEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/clusterrolebindings",
         global: false
       }
     },
