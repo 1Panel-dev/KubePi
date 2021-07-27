@@ -194,7 +194,8 @@ const message = {
       selector: "选择"
     },
     access_control: {
-      access_control: "访问控制"
+      access_control: "访问控制",
+      resource_helper: "多个resource请用,分隔"
     },
     user: {
       user_management: "用户与权限",

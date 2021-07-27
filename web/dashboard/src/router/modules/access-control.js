@@ -104,6 +104,22 @@ const AccessControl = {
       }
     },
     {
+      path: "/clusterroles/create",
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/cluster-roles/create"),
+      name: "ClusterRoleCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/clusterroles",
+        global: false
+      }
+    },
+    {
       path: "/rolebindings",
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
