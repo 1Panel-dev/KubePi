@@ -9,15 +9,9 @@ const namespaceMapUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/configmaps`
 }
 
-export function listConfigMaps (cluster_name, limit, continueToken, search) {
+export function listConfigMaps (cluster_name, search) {
   let url = configMapUrl(cluster_name)
   const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
-  }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
   if (search && search !== "") {
     param.fieldSelector = "metadata.namespace=" + search
   }

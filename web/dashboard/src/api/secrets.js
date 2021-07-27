@@ -10,12 +10,6 @@ const namespaceSecretUrl = (cluster_name, namespace) => {
 export function listSecrets (cluster_name, limit, continueToken, search) {
   let url = secretUrl(cluster_name)
   const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
-  }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
   if (search && search !== "") {
     param.fieldSelector = "metadata.namespace=" + search
   }

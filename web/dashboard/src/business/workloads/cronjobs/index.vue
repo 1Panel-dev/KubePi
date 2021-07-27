@@ -1,6 +1,6 @@
 <template>
   <layout-content header="CronJobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="page" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -17,14 +17,15 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace" />
-      <el-table-column sortable  :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
-      <el-table-column sortable  :label="$t('business.workload.lastScheduleTime')" min-width="60" prop="status.lastScheduleTime">
-         <template v-slot:default="{row}">
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace"/>
+      <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule"/>
+      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="60"
+                       prop="status.lastScheduleTime">
+        <template v-slot:default="{row}">
           {{ row.status.lastScheduleTime | age }}
         </template>
       </el-table-column>
-      <el-table-column sortable  :label="$t('business.workload.suspend')" min-width="40" prop="spec.suspend">
+      <el-table-column sortable :label="$t('business.workload.suspend')" min-width="40" prop="spec.suspend">
         <template v-slot:default="{row}">
           {{ row.spec.suspend }}
         </template>
@@ -41,14 +42,14 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listCronJobs, deleteCronJob } from "@/api/cronjobs"
-import { downloadYaml } from "@/utils/actions"
+import {listCronJobs, deleteCronJob} from "@/api/cronjobs"
+import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "CronJobs",
-  components: { LayoutContent, ComplexTable, KoTableOperations },
+  components: {LayoutContent, ComplexTable, KoTableOperations},
   data() {
     return {
       buttons: [
@@ -58,8 +59,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "CronJobEdit",
-              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false },
+              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: false},
             })
           },
         },
@@ -69,8 +70,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "CronJobEdit",
-              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: true },
+              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: true},
             })
           },
         },
@@ -91,20 +92,20 @@ export default {
       ],
       loading: false,
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: "",
-      },
       selects: [],
       clusterName: "",
     }
   },
   methods: {
     onCreate() {
-      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: false } })
+      this.$router.push({name: "CronJobCreate", params: {operation: "create"}, query: {yamlShow: false}})
     },
     openDetail(row) {
-      this.$router.push({ name: "CronJobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+      this.$router.push({
+        name: "CronJobDetail",
+        params: {namespace: row.metadata.namespace, name: row.metadata.name},
+        query: {yamlShow: false}
+      })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -124,34 +125,32 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    search(init) {
+    search() {
       this.loading = true
       this.data = []
-      this.page.nextToken = init ? "" : this.page.nextToken
-      listCronJobs(this.clusterName, this.page.pageSize, this.page.nextToken)
-        .then((res) => {
-          this.data = res.items
-          this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      listCronJobs(this.clusterName)
+          .then((res) => {
+            this.data = res.items
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+          .finally(() => {
+            this.loading = false
+          })
     },
   },
   mounted() {

@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ServiceAccounts">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -41,14 +41,10 @@ import {deleteServiceAccount, listServiceAccounts} from "@/api/serviceaccounts"
 
 export default {
   name: "ServiceAccounts",
-  components: { ComplexTable, LayoutContent ,KoTableOperations},
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -59,7 +55,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ServiceAccountEdit",
-              params: {namespace:row.metadata.namespace,name:row.metadata.name},
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
             })
           }
         },
@@ -81,7 +77,7 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search(init) {
       this.loading = true
       if (init) {
         this.page = {
@@ -89,25 +85,24 @@ export default {
           nextToken: ""
         }
       }
-      listServiceAccounts(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listServiceAccounts(this.cluster).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "ServiceAccountCreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteServiceAccount(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -120,27 +115,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "ServiceAccountDetail",
-        params: {namespace:row.metadata.namespace,name:row.metadata.name}
+        params: {namespace: row.metadata.namespace, name: row.metadata.name}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }

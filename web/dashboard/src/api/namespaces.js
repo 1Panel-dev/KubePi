@@ -5,14 +5,8 @@ const namespaceUrl = (cluster_name) => {
 }
 
 
-export function listNamespace (cluster_name, limit, continueToken, search) {
+export function listNamespace (cluster_name,search) {
   let url = namespaceUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
   }

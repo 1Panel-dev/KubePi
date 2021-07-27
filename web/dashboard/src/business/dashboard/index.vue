@@ -52,7 +52,7 @@
 <!--        <el-row :gutter="24">-->
 
             <h3>Events</h3>
-            <complex-table :pagination-config="page" :data="events" @search="search()" v-loading="loading">
+            <complex-table :data="events" @search="search()" v-loading="loading">
                 <el-table-column label="Reason" prop="reason" fix max-width="50px">
                     <template v-slot:default="{row}">
                         {{ row.reason }}
@@ -225,10 +225,9 @@
             search() {
                 this.loading = true
                 if (checkPermissions({apiGroup: "", resource: "events", verb: "list"})) {
-                    listEvents(this.clusterName, this.page.pageSize, this.page.nextToken).then(res => {
+                    listEvents(this.clusterName).then(res => {
                         this.loading = false
                         this.events = res.items
-                        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
                     })
                 }
             },
