@@ -14,11 +14,11 @@ const AccessControl = {
   children: [
     {
       path: "/clusterrolebindings",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings"),
       name: "ClusterRoleBindings",
       meta: {
@@ -28,11 +28,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/create",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/create"),
       name: "ClusterRoleBindingCreate",
       hidden: true,
@@ -43,11 +43,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/detail"),
       name: "ClusterRoleBindingDetail",
       hidden: true,
@@ -59,11 +59,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/:name/edit",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/edit"),
       name: "ClusterRoleBindingEdit",
       hidden: true,
@@ -75,11 +75,11 @@ const AccessControl = {
     },
     {
       path: "/clusterroles",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterroles",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterroles",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-roles"),
       name: "ClusterRoles",
       meta: {
@@ -89,11 +89,11 @@ const AccessControl = {
     },
     {
       path: "/clusterroles/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-roles/detail"),
       name: "ClusterRoleDetail",
       hidden: true,
@@ -105,11 +105,11 @@ const AccessControl = {
     },
     {
       path: "/clusterroles/create",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-roles/create"),
       name: "ClusterRoleCreate",
       props: true,
@@ -149,11 +149,11 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/service-accounts"),
       name: "ServiceAccounts",
       meta: {
