@@ -79,55 +79,58 @@ export default {
         strategy: {
           type: "Recreate",
           rollingUpdate: {
-            maxUnavailable: "0",
+            maxUnavailable: null,
             maxUnavailableUnit: "%",
-            maxSurge: "0",
+            maxSurge: null,
             maxSurgeUnit: "%",
           },
         },
         template: {
           spec: {
-            terminationGracePeriodSeconds: 30,
+            terminationGracePeriodSeconds: null,
           },
         },
-        minReadySeconds: 0,
-        progressDeadlineSeconds: 600,
-        revisionHistoryLimit: 10,
+        minReadySeconds: null,
+        progressDeadlineSeconds: null,
+        revisionHistoryLimit: null,
       },
     }
   },
   methods: {
-    transformation(parentFrom) {
-      parentFrom.strategy = {}
+    transformation(grandFrom, parentFrom) {
+      grandFrom.strategy = {}
       switch (this.form.strategy.type) {
         case "Recreate":
-          parentFrom.strategy.type = "Recreate"
+          grandFrom.strategy.type = "Recreate"
           break
         case "RollingUpdate":
-          parentFrom.strategy.type = "RollingUpdate"
-          parentFrom.strategy.rollingUpdate = {}
+          grandFrom.strategy.type = "RollingUpdate"
+          grandFrom.strategy.rollingUpdate = {}
           if (this.form.strategy.rollingUpdate.maxUnavailable) {
             if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
               this.form.strategy.rollingUpdate.maxUnavailable += "%"
             }
-            parentFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
+            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
           }
           if (this.form.strategy.rollingUpdate.maxSurge) {
             if (this.form.strategy.rollingUpdate.maxSurgeUnit === "%") {
               this.form.strategy.rollingUpdate.maxSurge += "%"
             }
-            parentFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge
+            grandFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge
           }
           break
       }
       if (this.form.minReadySeconds) {
-        parentFrom.minReadySeconds = this.form.minReadySeconds
+        grandFrom.minReadySeconds = this.form.minReadySeconds
+      }
+      if (this.form.revisionHistoryLimit) {
+        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
       }
       if (this.form.progressDeadlineSeconds) {
-        parentFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds
+        grandFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
+        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
   },
@@ -167,6 +170,9 @@ export default {
       }
       if (this.upgradePolicyParentObj.minReadySeconds) {
         this.form.minReadySeconds = this.upgradePolicyParentObj.minReadySeconds
+      }
+      if (this.upgradePolicyParentObj.revisionHistoryLimit) {
+        this.form.revisionHistoryLimit = this.upgradePolicyParentObj.revisionHistoryLimit
       }
       if (this.upgradePolicyParentObj.progressDeadlineSeconds) {
         this.form.progressDeadlineSeconds = this.upgradePolicyParentObj.progressDeadlineSeconds

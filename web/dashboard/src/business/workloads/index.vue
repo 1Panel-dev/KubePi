@@ -51,10 +51,10 @@
         </el-tab-pane>
 
         <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <ko-labels :isReadOnly="readOnly" ref="ko_labels" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
-          <ko-annotations :isReadOnly="readOnly" ref="ko_annotations" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
-          <ko-labels :isReadOnly="readOnly" ref="ko_pod_labels" :label-obj.sync="podMetadata.labels" labelTitle="Pod Labels" />
-          <ko-annotations :isReadOnly="readOnly" ref="ko_pod_annotations" :annotations-obj.sync="podMetadata.annotations" annotationsTitle="Pod Annotations" />
+          <ko-labels :isReadOnly="readOnly" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
+          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
+          <ko-labels :isReadOnly="readOnly" :label-obj.sync="podMetadata.labels" labelTitle="Pod Labels" />
+          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="podMetadata.annotations" annotationsTitle="Pod Annotations" />
         </el-tab-pane>
 
         <el-tab-pane label="Networking" name="Networking">
@@ -347,19 +347,19 @@ export default {
       this.$refs.ko_node_scheduling.transformation(this.podSpec)
       switch (this.type) {
         case "deployments":
-          this.$refs.ko_upgrade_policy.transformation(this.form.spec)
+          this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
           break
         case "statefulsets":
-          this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec)
+          this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
           break
         case "cronjobs":
-          this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec)
+          this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
           break
         case "jobs":
-          this.$refs.ko_upgrade_policy_job.transformation(this.form.spec)
+          this.$refs.ko_upgrade_policy_job.transformation(this.form.spec, this.podSpec)
           break
         case "daemonsets":
-          this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec)
+          this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec, this.podSpec)
           break
       }
       this.$refs.ko_storage.transformation(this.podSpec)
@@ -383,7 +383,7 @@ export default {
         this.form.spec.template.metadata = this.podMetadata
       }
       this.form.spec.selector = {}
-      this.form.spec.selector.matchLabels = this.form.spec.template?.metadata?.labels || {}
+      this.form.spec.selector.matchLabels = this.podMetadata.labels
       return this.form
     },
     isReplicasShow() {
@@ -396,7 +396,7 @@ export default {
       return this.type === "statefulsets"
     },
     onCancel() {
-      this.$router.push({ name: "Deployments" })
+      this.$router.push({ name: (this.toggleCase(this.type) + "s") })
     },
     onSubmit() {
       let data = {}
@@ -418,7 +418,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.create_success"),
             })
-            this.$router.push({ name: "Deployments" })
+            this.$router.push({ name: (this.toggleCase(this.type) + "s") })
           })
           .finally(() => {
             this.loading = false
@@ -430,7 +430,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.edit_success"),
             })
-            this.$router.push({ name: "Deployments" })
+            this.$router.push({ name: (this.toggleCase(this.type) + "s") })
           })
           .finally(() => {
             this.loading = false
@@ -444,6 +444,20 @@ export default {
     backToForm() {
       this.showYaml = false
     },
+    toggleCase() {
+      switch (this.type) {
+        case "deployments":
+          return "Deployment"
+        case "deamonsets":
+          return "DaemonSet"
+        case "statefulsets":
+          return "StatefulSet"
+        case "cornjobs":
+          return "CronJob"
+        case "jobs":
+          return "Job"
+      }
+    },
   },
   mounted() {
     if (this.isStatefulSet) {
@@ -456,7 +470,7 @@ export default {
     this.readOnly = this.$route.query.readOnly && this.$route.query.readOnly === "true"
     this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
-    this.type = this.$route.path.split('/')[2]
+    this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
     if (this.operation === "edit") {
       this.name = this.$route.params.name
@@ -476,28 +490,7 @@ export default {
       this.currentContainer = this.podSpec.containers[0]
       this.isRefresh = !this.isRefresh
     }
-    switch (this.type) {
-      case "deployments":
-        this.form.apiVersion = "apps/v1"
-        this.form.kind = "Deployment"
-        break
-      case "deamonsets":
-        this.form.apiVersion = "apps/v1"
-        this.form.kind = "DaemonSet"
-        break
-      case "statefulsets":
-        this.form.apiVersion = "apps/v1"
-        this.form.kind = "StatefulSet"
-        break
-      case "cornjobs":
-        this.form.apiVersion = "apps/v1"
-        this.form.kind = "CronJob"
-        break
-      case "jobs":
-        this.form.apiVersion = "apps/v1"
-        this.form.kind = "Job"
-        break
-    }
+    this.form.kind = this.toggleCase(this.type)
   },
 }
 </script>
