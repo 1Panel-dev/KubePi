@@ -1,6 +1,6 @@
 <template>
   <layout-content header="StatefulSets">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="page" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -131,14 +131,12 @@ export default {
         }
       })
     },
-    search(init) {
+    search() {
       this.loading = true
       this.data = []
-      this.page.nextToken = init ? "" : this.page.nextToken
-      listStatefulSets(this.clusterName, this.page.pageSize, this.page.nextToken)
+      listStatefulSets(this.clusterName)
         .then((res) => {
           this.data = res.items
-          this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         })
         .catch((error) => {
           console.log(error)

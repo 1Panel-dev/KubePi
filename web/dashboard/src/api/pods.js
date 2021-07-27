@@ -7,15 +7,9 @@ const podUrlWithNs = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/pods`;
 };
 
-export function listPods(cluster_name, limit, continueToken, search) {
+export function listPods(cluster_name,  search) {
   let url = podUrl(cluster_name);
   const param = {};
-  if (limit && limit !== 0) {
-    param.limit = limit;
-  }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken;
-  }
   if (search && search !== "") {
     param.fieldSelector = "spec.nodeName=" + search;
   }

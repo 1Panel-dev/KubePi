@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Nodes">
-    <complex-table :pagination-config="page" :data="data" v-loading="loading" @search="search()">
+    <complex-table  :data="data" v-loading="loading" @search="search()">
       <template #toolbar>
         <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"
                   @change="search(true)" @clear="search(true)"></el-input>
@@ -50,10 +50,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: "",
-      },
       loading: false,
       searchName: "",
       clusterName: "",
@@ -77,7 +73,7 @@ export default {
           nextToken: "",
         }
       }
-      listNodes(this.clusterName, this.page.pageSize, this.page.nextToken, this.searchName).then(res => {
+      listNodes(this.clusterName, this.searchName).then(res => {
         this.loading = false
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""

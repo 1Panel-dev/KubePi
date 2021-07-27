@@ -7,14 +7,8 @@ const statefulsetUrlWithNs = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/statefulsets`;
 };
 
-export function listStatefulSets(cluster_name, limit, continueToken, search) {
+export function listStatefulSets(cluster_name,  search) {
   let url = statefulsetUrl(cluster_name);
-  if (limit) {
-    url += "?limit=" + limit;
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken;
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search;
   }

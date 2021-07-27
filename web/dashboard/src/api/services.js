@@ -9,14 +9,8 @@ const namespaceServiceUrl = (cluster_name, namespace) => {
 }
 
 
-export function listServices (cluster_name, limit, continueToken, search) {
+export function listServices (cluster_name, search) {
   let url = serviceUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
   }

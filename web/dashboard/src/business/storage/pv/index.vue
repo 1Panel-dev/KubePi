@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Persistent Volumes">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -72,10 +72,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: "",
-      },
       selects: [],
       cluster: "",
       loading: false,
@@ -130,9 +126,8 @@ export default {
           nextToken: "",
         }
       }
-      listPvs(this.cluster, this.page.pageSize, this.page.nextToken, this.conditions).then(res => {
+      listPvs(this.cluster, this.conditions).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },

@@ -59,26 +59,26 @@ export default {
         },
         template: {
           spec: {
-            terminationGracePeriodSeconds: 30,
+            terminationGracePeriodSeconds: null,
           },
         },
         podManagementPolicy: "OrderedReady",
-        revisionHistoryLimit: 10,
+        revisionHistoryLimit: null,
       },
     }
   },
   methods: {
-    transformation(parentFrom) {
-      parentFrom.updateStrategy = {}
-      parentFrom.updateStrategy.type = this.form.updateStrategy.type
+    transformation(grandFrom, parentFrom) {
+      grandFrom.updateStrategy = {}
+      grandFrom.updateStrategy.type = this.form.updateStrategy.type
       if (this.form.podManagementPolicy) {
-        parentFrom.podManagementPolicy = this.form.podManagementPolicy
+        grandFrom.podManagementPolicy = this.form.podManagementPolicy
       }
       if (this.form.revisionHistoryLimit) {
-        parentFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
+        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
+        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
   },
@@ -93,7 +93,7 @@ export default {
         this.form.podManagementPolicy = this.upgradePolicyParentObj.podManagementPolicy
       }
       if (this.upgradePolicyParentObj.revisionHistoryLimit) {
-        this.form.minReadySeconds = this.upgradePolicyParentObj.revisionHistoryLimit
+        this.form.revisionHistoryLimit = this.upgradePolicyParentObj.revisionHistoryLimit
       }
       if (this.upgradePolicyParentObj.template) {
         if (this.upgradePolicyParentObj.template.spec) {

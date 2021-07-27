@@ -129,7 +129,7 @@ export default {
         args: "",
         command: "",
         workingDir: "",
-        stdin: "No",
+        stdin: null,
         tty: false,
         envResource: [],
       },

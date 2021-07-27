@@ -171,7 +171,7 @@ export default {
       if (this.form.failureThreshold) {
         childForm.failureThreshold = this.form.failureThreshold
       }
-      if (this.form.httpHeaders) {
+      if (this.form.httpHeaders.length !== 0) {
         let obj = {}
         for (let i = 0; i < this.form.httpHeaders.length; i++) {
           if (this.form.httpHeaders[i].key !== "") {

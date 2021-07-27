@@ -58,28 +58,28 @@ export default {
         parallelism: null,
         template: {
           spec: {
-            terminationGracePeriodSeconds: 30,
+            terminationGracePeriodSeconds: null,
           },
         },
       },
     }
   },
   methods: {
-    transformation(parentFrom) {
+    transformation(grandFrom, parentFrom) {
       if (this.form.activeDeadlineSeconds) {
-        parentFrom.activeDeadlineSeconds = this.form.activeDeadlineSeconds
+        grandFrom.activeDeadlineSeconds = this.form.activeDeadlineSeconds
       }
       if (this.form.backoffLimit) {
-        parentFrom.backoffLimit = this.form.backoffLimit
+        grandFrom.backoffLimit = this.form.backoffLimit
       }
       if (this.form.completions) {
-        parentFrom.completions = this.form.completions
+        grandFrom.completions = this.form.completions
       }
       if (this.form.parallelism) {
-        parentFrom.parallelism = this.form.parallelism
+        grandFrom.parallelism = this.form.parallelism
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
+        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
   },

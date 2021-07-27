@@ -1,6 +1,6 @@
 <template>
   <layout-content header="LimitRanges">
-    <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
+    <complex-table  :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -45,10 +45,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -89,9 +85,8 @@ export default {
           nextToken: ""
         }
       }
-      listLimitRanges(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listLimitRanges(this.cluster).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },

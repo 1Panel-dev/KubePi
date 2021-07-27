@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ResourceQuotas">
-    <complex-table :pagination-config="page" :data="data" :selects.sync="selects" v-loading="loading" @search="search">
+    <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -24,15 +24,25 @@
       </el-table-column>
       <el-table-column label="Request" min-width="100px">
         <template v-slot:default="{row}">
-         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> pods: {{row.status.used.pods}} / {{row.status.hard.pods}}</el-tag>
-         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu: {{row.status.used['requests.cpu']}} / {{row.status.hard['requests.cpu']}}</el-tag>
-         <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory: {{row.status.used['requests.memory']}} / {{row.status.hard['requests.memory']}}</el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> pods: {{ row.status.used.pods }} /
+            {{ row.status.hard.pods }}
+          </el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu:
+            {{ row.status.used['requests.cpu'] }} / {{ row.status.hard['requests.cpu'] }}
+          </el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory:
+            {{ row.status.used['requests.memory'] }} / {{ row.status.hard['requests.memory'] }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Limit" min-width="100px">
         <template v-slot:default="{row}">
-          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu: {{row.status.used['limits.cpu']}} / {{row.status.hard['limits.cpu']}}</el-tag>
-          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory: {{row.status.used['limits.memory']}} / {{row.status.hard['limits.memory']}}</el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu:
+            {{ row.status.used['limits.cpu'] }} / {{ row.status.hard['limits.cpu'] }}
+          </el-tag>
+          <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory:
+            {{ row.status.used['limits.memory'] }} / {{ row.status.hard['limits.memory'] }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -54,14 +64,10 @@ import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "ResourceQuotas",
-  components: { ComplexTable, LayoutContent,KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -72,7 +78,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ResourceQuotaEdit",
-              params: {namespace:row.metadata.namespace,name:row.metadata.name}
+              params: {namespace: row.metadata.namespace, name: row.metadata.name}
             })
           }
         },
@@ -94,7 +100,7 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search(init) {
       this.loading = true
       if (init) {
         this.page = {
@@ -102,25 +108,24 @@ export default {
           nextToken: ""
         }
       }
-      listResourceQuotas(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listResourceQuotas(this.cluster).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "ResourceQuotaCreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteResourceQuota(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -133,27 +138,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "ResourceQuotaDetail",
-        params: {namespace:row.metadata.namespace,name:row.metadata.name}
+        params: {namespace: row.metadata.namespace, name: row.metadata.name}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }

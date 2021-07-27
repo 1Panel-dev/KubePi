@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Pods">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="page" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
@@ -67,10 +67,6 @@ export default {
       ],
       loading: false,
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: "",
-      },
       selects: [],
       clusterName: "",
     }
@@ -132,14 +128,12 @@ export default {
       }
       return 0
     },
-    search(init) {
+    search() {
       this.loading = true
       this.data = []
-      this.page.nextToken = init ? "" : this.page.nextToken
-      listPods(this.clusterName, this.page.pageSize, this.page.nextToken)
+      listPods(this.clusterName)
         .then((res) => {
           this.data = res.items
-          this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         })
         .catch((error) => {
           console.log(error)

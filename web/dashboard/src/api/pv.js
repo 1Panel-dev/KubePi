@@ -7,12 +7,6 @@ const pvUrl = (cluster_name) => {
 
 export function listPvs (cluster_name, limit, continueToken, search) {
   let url = pvUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
   }

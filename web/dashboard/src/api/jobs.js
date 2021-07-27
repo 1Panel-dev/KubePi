@@ -7,14 +7,8 @@ const jobUrlWithNs = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/namespaces/${namespace}/jobs`;
 };
 
-export function listJobs(cluster_name, limit, continueToken, search) {
+export function listJobs(cluster_name,  search) {
   let url = jobUrl(cluster_name);
-  if (limit) {
-    url += "?limit=" + limit;
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken;
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search;
   }
