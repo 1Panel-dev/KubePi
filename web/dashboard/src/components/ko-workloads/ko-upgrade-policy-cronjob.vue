@@ -97,7 +97,7 @@ export default {
             parallelism: null,
             template: {
               spec: {
-                terminationGracePeriodSeconds: 30,
+                terminationGracePeriodSeconds: null,
               },
             },
           },
@@ -111,37 +111,37 @@ export default {
     }
   },
   methods: {
-    transformation(parentFrom) {
+    transformation(grandFrom, parentFrom) {
       if (this.form.jobTemplate.spec.activeDeadlineSeconds) {
-        parentFrom.jobTemplate.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.activeDeadlineSeconds
+        grandFrom.jobTemplate.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.activeDeadlineSeconds
       }
       if (this.form.jobTemplate.spec.backoffLimit) {
-        parentFrom.jobTemplate.spec.backoffLimit = this.form.jobTemplate.spec.backoffLimit
+        grandFrom.jobTemplate.spec.backoffLimit = this.form.jobTemplate.spec.backoffLimit
       }
       if (this.form.jobTemplate.spec.completions) {
-        parentFrom.jobTemplate.spec.completions = this.form.jobTemplate.spec.completions
+        grandFrom.jobTemplate.spec.completions = this.form.jobTemplate.spec.completions
       }
       if (this.form.jobTemplate.spec.parallelism) {
-        parentFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism
+        grandFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism
       }
       if (this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+        parentFrom.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
       }
 
       if (this.form.concurrencyPolicy) {
-        parentFrom.concurrencyPolicy = this.form.concurrencyPolicy
+        grandFrom.concurrencyPolicy = this.form.concurrencyPolicy
       }
       if (this.form.successfulJobsHistoryLimit) {
-        parentFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit
+        grandFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit
       }
       if (this.form.failedJobsHistoryLimit) {
-        parentFrom.failedJobsHistoryLimit = this.form.failedJobsHistoryLimit
+        grandFrom.failedJobsHistoryLimit = this.form.failedJobsHistoryLimit
       }
       if (this.form.startingDeadlineSeconds) {
-        parentFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds
+        grandFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds
       }
       if (this.form.suspend !== undefined) {
-        parentFrom.suspend = this.form.suspend
+        grandFrom.suspend = this.form.suspend
       }
     },
   },

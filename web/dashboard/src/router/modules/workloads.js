@@ -12,6 +12,28 @@ const Workloads = {
   },
   children: [
     {
+      path: "/pods",
+      requirePermission: {
+        apiGroup: "",
+        resource: "pods",
+        verb: "list",
+      },
+      component: () => import("@/business/workloads/pods"),
+      name: "Pods",
+      meta: {
+        title: "Pods",
+      },
+    },
+    {
+      path: "/pods/detail/:namespace/:name",
+      name: "PodDetail",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/detail"),
+      meta: {
+        activeMenu: "/pods",
+      },
+    },
+    {
       path: "/deployments",
       requirePermission: {
         apiGroup: "apps",
@@ -135,47 +157,6 @@ const Workloads = {
     },
 
     {
-      path: "/cronjobs",
-      requirePermission: {
-        apiGroup: "batch",
-        resource: "cronjobs",
-        verb: "list",
-      },
-      component: () => import("@/business/workloads/cronjobs"),
-      name: "CronJobs",
-      meta: {
-        title: "CronJobs",
-      },
-    },
-    {
-      path: "/cronjobs/detail/:namespace/:name",
-      name: "CronJobDetail",
-      hidden: true,
-      component: () => import("@/business/workloads/cronjobs/detail"),
-      meta: {
-        activeMenu: "/cronjobs",
-      },
-    },
-    {
-      path: "cronjobs/:operation",
-      name: "CronJobCreate",
-      hidden: true,
-      component: () => import("@/business/workloads/index"),
-      meta: {
-        activeMenu: "/cronjobs",
-      },
-    },
-    {
-      path: "cronjobs/:operation/:namespace/:name",
-      name: "CronJobEdit",
-      hidden: true,
-      component: () => import("@/business/workloads/index"),
-      meta: {
-        activeMenu: "/cronjobs",
-      },
-    },
-
-    {
       path: "/jobs",
       requirePermission: {
         apiGroup: "batch",
@@ -217,25 +198,43 @@ const Workloads = {
     },
 
     {
-      path: "/pods",
+      path: "/cronjobs",
       requirePermission: {
-        apiGroup: "",
-        resource: "pods",
+        apiGroup: "batch",
+        resource: "cronjobs",
         verb: "list",
       },
-      component: () => import("@/business/workloads/pods"),
-      name: "Pods",
+      component: () => import("@/business/workloads/cronjobs"),
+      name: "CronJobs",
       meta: {
-        title: "Pods",
+        title: "CronJobs",
       },
     },
     {
-      path: "/pods/detail/:namespace/:name",
-      name: "PodDetail",
+      path: "/cronjobs/detail/:namespace/:name",
+      name: "CronJobDetail",
       hidden: true,
-      component: () => import("@/business/workloads/pods/detail"),
+      component: () => import("@/business/workloads/cronjobs/detail"),
       meta: {
-        activeMenu: "/pods",
+        activeMenu: "/cronjobs",
+      },
+    },
+    {
+      path: "cronjobs/:operation",
+      name: "CronJobCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/index"),
+      meta: {
+        activeMenu: "/cronjobs",
+      },
+    },
+    {
+      path: "cronjobs/:operation/:namespace/:name",
+      name: "CronJobEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/index"),
+      meta: {
+        activeMenu: "/cronjobs",
       },
     },
   ],

@@ -75,15 +75,31 @@ const AccessControl = {
     },
     {
       path: "/clusterroles",
-      requirePermission: {
-        apiGroup: "rbac.authorization.k8s.io",
-        resource: "clusterroles",
-        verb: "list",
-      },
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterroles",
+      //   verb: "list",
+      // },
       component: () => import("@/business/access-control/cluster-roles"),
       name: "ClusterRoles",
       meta: {
         title: "ClusterRoles",
+        global: false
+      }
+    },
+    {
+      path: "/clusterroles/:name/detail",
+      // requirePermission: {
+      //   apiGroup: "rbac.authorization.k8s.io",
+      //   resource: "clusterrolebindings",
+      //   verb: "list",
+      // },
+      component: () => import("@/business/access-control/cluster-roles/detail"),
+      name: "ClusterRoleDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/clusterroles",
         global: false
       }
     },

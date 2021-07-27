@@ -65,46 +65,46 @@ export default {
         updateStrategy: {
           type: "Recreate",
           rollingUpdate: {
-            maxUnavailable: "0",
+            maxUnavailable: null,
             maxUnavailableUnit: "%",
           },
         },
         template: {
           spec: {
-            terminationGracePeriodSeconds: 30,
+            terminationGracePeriodSeconds: null,
           },
         },
-        minReadySeconds: 0,
-        revisionHistoryLimit: 10,
+        minReadySeconds: null,
+        revisionHistoryLimit: null,
       },
     }
   },
   methods: {
-    transformation(parentFrom) {
-      parentFrom.updateStrategy = {}
+    transformation(grandFrom, parentFrom) {
+      grandFrom.updateStrategy = {}
       switch (this.form.updateStrategy.type) {
         case "Recreate":
-          parentFrom.updateStrategy.type = "Recreate"
+          grandFrom.updateStrategy.type = "Recreate"
           break
         case "RollingUpdate":
-          parentFrom.updateStrategy.type = "RollingUpdate"
-          parentFrom.updateStrategy.rollingUpdate = {}
+          grandFrom.updateStrategy.type = "RollingUpdate"
+          grandFrom.updateStrategy.rollingUpdate = {}
           if (this.form.updateStrategy.rollingUpdate.maxUnavailable) {
             if (this.form.updateStrategy.rollingUpdate.maxUnavailableUnit === "%") {
               this.form.updateStrategy.rollingUpdate.maxUnavailable += "%"
             }
-            parentFrom.updateStrategy.rollingUpdate.maxUnavailable = this.form.updateStrategy.rollingUpdate.maxUnavailable
+            grandFrom.updateStrategy.rollingUpdate.maxUnavailable = this.form.updateStrategy.rollingUpdate.maxUnavailable
           }
           break
       }
       if (this.form.minReadySeconds) {
-        parentFrom.minReadySeconds = this.form.minReadySeconds
+        grandFrom.minReadySeconds = this.form.minReadySeconds
       }
       if (this.form.revisionHistoryLimit) {
-        parentFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
+        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
       }
       if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.template.spec.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
+        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
     },
   },
