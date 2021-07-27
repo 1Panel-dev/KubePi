@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Events">
-    <complex-table :pagination-config="page" :data="data" @search="search()" v-loading="loading">
+    <complex-table :data="data" @search="search()" v-loading="loading">
       <template #toolbar>
         <!--        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"-->
         <!--                  @change="search(true)" @clear="search(true)"></el-input>-->
@@ -66,10 +66,6 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      page: {
-        pageSize: 20,
-        nextToken: "",
-      },
       data: [],
       loading: false,
       clusterName: "",
@@ -86,7 +82,7 @@ export default {
           nextToken: "",
         }
       }
-      listEvents(this.clusterName, this.page.pageSize, this.page.nextToken, this.searchName).then(res => {
+      listEvents(this.clusterName, this.searchName).then(res => {
         this.loading = false
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""

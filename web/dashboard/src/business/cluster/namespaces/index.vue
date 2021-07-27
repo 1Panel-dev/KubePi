@@ -118,10 +118,6 @@ export default {
       data: [],
       selects: [],
       loading: false,
-      page: {
-        pageSize: 10,
-        nextToken: "",
-      },
       clusterName: "",
       searchName: ""
     }
@@ -138,9 +134,8 @@ export default {
           nextToken: "",
         }
       }
-      listNamespace(this.clusterName, this.page.pageSize, this.page.nextToken, this.searchName).then((res) => {
+      listNamespace(this.clusterName, this.searchName).then((res) => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
       }).catch(error => {
         console.log(error)
       }).finally(() => {

@@ -7,12 +7,6 @@ const nodeUrl = (cluster_name) => {
 
 export function listNodes (cluster_name, limit, continueToken, search) {
   let url = nodeUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
   }
