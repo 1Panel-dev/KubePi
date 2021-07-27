@@ -121,11 +121,6 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		//调用普通代理逻辑
-		if requestMethod == http.MethodPatch {
-
-		}
-
 		resp, err := httpClient.Do(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -173,6 +168,8 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 
 	}
 	wg.Wait()
+	var forbidden int
+	var forbiddenMessage []string
 	for i := range responses {
 		r := responses[i]
 		body, err := ioutil.ReadAll(r.Body)
@@ -180,7 +177,13 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 			return nil, err
 		}
 		if r.StatusCode != http.StatusOK {
-			return nil, errors.New(string(body))
+			if r.StatusCode == http.StatusForbidden {
+				forbidden++
+				forbiddenMessage = append(forbiddenMessage, string(body))
+				continue
+			} else {
+				return nil, errors.New(string(body))
+			}
 		}
 		var nc NamespaceResourceContainer
 		if err := json.Unmarshal(body, &nc); err != nil {
@@ -189,6 +192,9 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 		mergedContainer.TypeMeta = nc.TypeMeta
 		mergedContainer.ListMeta = nc.ListMeta
 		mergedContainer.Items = append(mergedContainer.Items, nc.Items...)
+	}
+	if len(namespaces) == 1 && forbidden == 1 {
+		return nil, errors.New(strings.Join(forbiddenMessage, ""))
 	}
 	return &mergedContainer, nil
 }

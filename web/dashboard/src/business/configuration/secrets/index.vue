@@ -1,6 +1,7 @@
 <template>
   <layout-content header="Secrets">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :pagination-config="paginationConfig" :data="data" :selects.sync="selects" @search="search"
+                   v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -53,14 +54,19 @@ import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "Secrets",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       selects: [],
       cluster: "",
       loading: false,
       namespaces: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -68,8 +74,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "SecretEdit",
-              params: {namespace: row.metadata.namespace,name:row.metadata.name},
-              query: { yamlShow: false }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: false}
             })
           }
         },
@@ -79,8 +85,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "SecretEdit",
-              params: {namespace: row.metadata.namespace,name:row.metadata.name},
-              query: { yamlShow: true }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: true}
             })
           }
         },
@@ -102,7 +108,7 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search(init) {
       this.loading = true
       if (init) {
         this.page = {
@@ -115,17 +121,17 @@ export default {
         this.loading = false
       })
     },
-    onCreate () {
-      this.$router.push({ name: "SecretCreate" })
+    onCreate() {
+      this.$router.push({name: "SecretCreate"})
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteSecrets(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -138,28 +144,28 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "SecretDetail",
-        params: {namespace: row.metadata.namespace,name:row.metadata.name},
-        query: { yamlShow: false }
+        params: {namespace: row.metadata.namespace, name: row.metadata.name},
+        query: {yamlShow: false}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }
