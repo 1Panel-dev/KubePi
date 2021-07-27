@@ -1,14 +1,17 @@
 <template>
   <div>
-
   </div>
 </template>
 
 <script>
+import ComplexTable from "@/components/complex-table"
+
 export default {
   name: "KoGrantResource",
-  components: {},
-  props: {},
+  components: { ComplexTable },
+  props: {
+    rules: Array
+  },
   data () {
     return {}
   },
