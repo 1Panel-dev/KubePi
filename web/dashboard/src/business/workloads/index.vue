@@ -384,7 +384,7 @@ export default {
       }
       this.form.spec.selector = {}
       this.form.spec.selector.matchLabels = this.podMetadata.labels
-      return this.form
+      return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow() {
       return this.type === "deployments" || this.type === "statefulsets"
