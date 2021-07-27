@@ -1,6 +1,6 @@
 <template>
   <layout-content header="HorizontalPodAutoscalers">
-    <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
@@ -131,9 +131,8 @@ export default {
           nextToken: ""
         }
       }
-      listHpas(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listHpas(this.cluster).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },

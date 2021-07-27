@@ -9,14 +9,8 @@ const namespaceNetworkPolicyUrlUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/networking.k8s.io/v1/namespaces/${namespace}/networkpolicies`
 }
 
-export function listNetworkPolicies (cluster_name, limit, continueToken, search) {
+export function listNetworkPolicies (cluster_name,search) {
   let url = networkPolicyUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
   }
