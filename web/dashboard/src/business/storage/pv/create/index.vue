@@ -212,25 +212,25 @@ export default {
       }],
       hostPathTypes: [{
           value: "DirectoryOrCreate",
-          label: "DirectoryOrCreate: 如果路径不存在则创建空目录，默认权限为0755 "
+          label: this.$t('business.storage.DirectoryOrCreateLabel')
       },{
           value: "Directory",
-          label: "Directory: 路径必须存在"
+          label: this.$t('business.storage.DirectoryLabel')
       },{
           value: "FileOrCreate",
-          label: "FileOrCreate: 如果路径上什么都不存在，则创建空文件，默认权限为：0644"
+          label: this.$t('business.storage.FileOrCreateLabel')
       },{
           value: "File",
-          label: "File: 路径上必须存在的文件 "
+          label: this.$t('business.storage.FileLabel')
       },{
           value: "Socket",
-          label: "Socket: 路径上必须存在的 UNIX 套接字 "
+          label: this.$t('business.storage.SocketLabel')
       },{
           value: "CharDevice",
-          label: "CharDevice: 路径上必须存在的字符设备 "
+          label: this.$t('business.storage.CharDeviceLabel')
       },{
           value: "BlockDevice",
-          label: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 "
+          label: this.$t('business.storage.BlockDeviceLabel')
       }],
       currentStorageType: "Local",
       currentAccessModes: "ReadWriteOnce",

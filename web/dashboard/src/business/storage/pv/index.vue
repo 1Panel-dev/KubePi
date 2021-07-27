@@ -88,7 +88,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PersistentVolumeEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              params: { name: row.metadata.name },
               query: { yamlShow: false }
             })
           }
@@ -98,8 +98,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "PvsEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              name: "PersistentVolumeEdit",
+              params: { name: row.metadata.name },
               query: { yamlShow: true }
             })
           }
