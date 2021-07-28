@@ -3,10 +3,10 @@
     <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'core',resource:'persistentvolumes',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'core',resource:'persistentvolumes',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
