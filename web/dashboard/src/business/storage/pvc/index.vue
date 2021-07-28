@@ -57,7 +57,7 @@
   import {listPvcs, deletePvcs} from "@/api/pvc";
 
   export default {
-    name: "Pvcs",
+    name: "PersistentVolumeClaim",
     components: { ComplexTable, LayoutContent, KoTableOperations },
     data () {
       return {
@@ -72,7 +72,7 @@
             icon: "el-icon-edit",
             click: (row) => {
               this.$router.push({
-                name: "PvcEdit",
+                name: "PersistentVolumeClaimEdit",
                 params: { name: row.metadata.name },
                 query: { yamlShow: false }
               })
@@ -83,7 +83,7 @@
             icon: "el-icon-edit",
             click: (row) => {
               this.$router.push({
-                name: "PvcEdit",
+                name: "PersistentVolumeClaimEdit",
                 params: { name: row.metadata.name },
                 query: { yamlShow: true }
               })
@@ -122,7 +122,7 @@
       },
       onCreate () {
         this.$router.push({
-          name: "PvcCreate",
+          name: "PersistentVolumeClaimCreate",
           query: { yamlShow: false }
         })
       },
@@ -161,7 +161,7 @@
       },
       openDetail (row) {
         this.$router.push({
-          name: "PvcDetail",
+          name: "PersistentVolumeClaimDetail",
           params: { name: row.metadata.name },
           query: { yamlShow: false }
         })
