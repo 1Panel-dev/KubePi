@@ -80,7 +80,7 @@
           <el-form-item>
             <el-select v-model="memberForm.customClusterRoles" multiple style="width: 80%">
               <el-option
-                  v-for="(item,index) in clusterRolesOptions"
+                  v-for="(item,index) in getClusterRolesOptions"
                   :key="index"
                   :value="item.metadata.name">
                 {{ item.metadata.name }}
@@ -200,6 +200,14 @@ export default {
         }
         return !exists
       })
+    },
+    getClusterRolesOptions() {
+      return this.clusterRolesOptions.filter((cr) => {
+        if (this.memberForm.roleType === 'custom') {
+          return !["admin-cluster", "view-cluster"].includes(cr.metadata.name)
+        }
+        return true
+      })
     }
   },
   methods: {
@@ -303,10 +311,10 @@ export default {
       }
       switch (this.memberForm.roleType) {
         case "admin":
-          req.clusterRoles = ["Admin Cluster"]
+          req.clusterRoles = ["admin-cluster"]
           break
         case "viewer":
-          req.clusterRoles = ["View Cluster"]
+          req.clusterRoles = ["view-cluster"]
           break
         case "custom":
           req.clusterRoles = this.memberForm.customClusterRoles
