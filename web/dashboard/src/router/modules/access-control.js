@@ -275,11 +275,11 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/create",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "create",
+      },
       component: () => import("@/business/access-control/service-accounts/create"),
       name: "ServiceAccountCreate",
       hidden: true,
@@ -290,11 +290,11 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/:namespace/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "get",
+      },
       component: () => import("@/business/access-control/service-accounts/detail"),
       name: "ServiceAccountDetail",
       props: true,
@@ -306,31 +306,17 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/:namespace/:name/edit",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "update",
+      },
       component: () => import("@/business/access-control/service-accounts/edit"),
       name: "ServiceAccountEdit",
       props: true,
       hidden: true,
       meta: {
         activeMenu: "/serviceaccounts",
-        global: false
-      }
-    },
-    {
-      path: "/podsecuritypolicy",
-      requirePermission: {
-        apiGroup: "policy",
-        resource: "podsecuritypolicies",
-        verb: "list",
-      },
-      component: () => import("@/business/access-control/pod-security-policies"),
-      name: "PodSecurityPolicy",
-      meta: {
-        title: "Pod Security Policy",
         global: false
       }
     },

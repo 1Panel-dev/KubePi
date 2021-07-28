@@ -197,6 +197,11 @@ const message = {
       access_control: "访问控制",
       resource_helper: "多个resource请用,分隔"
     },
+    custom_resource: {
+      custom_resource: "自定义资源",
+      full_name: "全名",
+      namespaced: "有命名空间的"
+    },
     user: {
       user_management: "用户与权限",
       user_group: "用户组",
