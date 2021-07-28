@@ -123,7 +123,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			return
 		}
 		if ctx.Method() == "PATCH" {
-			req.Header.Set("Content-Type","application/merge-patch+json")
+			req.Header.Set("Content-Type", "application/merge-patch+json")
 		}
 
 		resp, err := httpClient.Do(req)
@@ -133,19 +133,9 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			return
 		}
 		rawResp, _ := ioutil.ReadAll(resp.Body)
-		//if resp.StatusCode != http.StatusNoContent {
-		//	if resp.StatusCode == http.StatusForbidden {
-		//		resp.StatusCode = http.StatusInternalServerError
-		//	}
-		//	ctx.StatusCode(iris.StatusInternalServerError)
-		//	ctx.Values().Set("message", rawResp)
-		//	return
-		//}
-		//if err != nil {
-		//	ctx.StatusCode(iris.StatusInternalServerError)
-		//	ctx.Values().Set("message", err)
-		//	return
-		//}
+		if resp.StatusCode == http.StatusForbidden {
+			resp.StatusCode = http.StatusInternalServerError
+		}
 		ctx.StatusCode(resp.StatusCode)
 		ctx.Values().Set("message", string(rawResp))
 
