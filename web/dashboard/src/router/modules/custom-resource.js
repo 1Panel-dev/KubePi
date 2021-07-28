@@ -17,6 +17,17 @@ const CustomResource = {
         global: false
       },
     },
+    {
+      path: "/customResources/:name/detail",
+      component: () => import("@/business/custom-resource/detail"),
+      hidden: true,
+      props: true,
+      name: "CustomResourceDefinitionDetail",
+      meta: {
+        activeMenu: "/customResources",
+        global: false
+      },
+    },
   ]
 }
 

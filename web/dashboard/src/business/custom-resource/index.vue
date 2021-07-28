@@ -146,7 +146,7 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "ClusterRoleDetail",
+        name: "CustomResourceDefinitionDetail",
         params: { name: row.metadata.name },
         query: { yamlShow: false }
       })
