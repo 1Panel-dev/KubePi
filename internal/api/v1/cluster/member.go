@@ -47,27 +47,15 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
 			return
 		}
-		if err := client.RbacV1().ClusterRoleBindings().DeleteCollection(goContext.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: fmt.Sprintf("user-name=%s", req.Name)});
-			err != nil {
+		if err := k.CleanManagedClusterRoleBinding(req.Name); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
 		}
-
-		namespaces, err := client.CoreV1().Namespaces().List(goContext.TODO(), metav1.ListOptions{})
-		if err != nil {
+		if err := k.CleanManagedRoleBinding(req.Name); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
-		}
-		for i := range namespaces.Items {
-			if err := client.RbacV1().RoleBindings(namespaces.Items[i].Name).DeleteCollection(goContext.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("user-name=%s", req.Name),
-			}); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Sprintf("delete role failed: %s", err.Error()))
-				return
-			}
 		}
 		// 删除重建
 		for i := range req.NamespaceRoles {
@@ -241,6 +229,12 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("create cluster member failed: %s", err.Error()))
 			return
 		}
+		if req.Name == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Errorf("invalid username %s", req.Name))
+			return
+		}
+
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		binding := v1Cluster.Binding{
@@ -388,35 +382,17 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 			return
 		}
 		k := kubernetes.NewKubernetes(*c)
-		client, err := k.Client()
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
-			return
-		}
-		if err = client.RbacV1().ClusterRoleBindings().DeleteCollection(goContext.TODO(),
-			metav1.DeleteOptions{},
-			metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("user-name=%s", memberName),
-			}); err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("delete cluster role failed: %s", err.Error()))
-			return
-		}
-		namespaces, err := client.CoreV1().Namespaces().List(goContext.TODO(), metav1.ListOptions{})
-		if err != nil {
+		if err := k.CleanManagedClusterRoleBinding(memberName); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
 		}
-		for i := range namespaces.Items {
-			if err := client.RbacV1().RoleBindings(namespaces.Items[i].Name).DeleteCollection(goContext.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("user-name=%s", memberName),
-			}); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Sprintf("delete role failed: %s", err.Error()))
-				return
-			}
+		if err := k.CleanManagedRoleBinding(memberName); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err)
+			return
 		}
 		_ = tx.Commit()
 	}

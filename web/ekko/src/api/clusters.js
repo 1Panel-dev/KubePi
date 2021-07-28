@@ -63,8 +63,8 @@ export function listClusterApiGroups(name) {
     return get(`${baseUrl}/${name}/apigroups`)
 }
 
-export function listClusterResourceByGroupVersion(name, groupVersion) {
-    return get(`${baseUrl}/${name}/apigroups/${groupVersion}`)
+export function listClusterResourceByGroupVersion(name, groupVersion, scope) {
+    return get(`${baseUrl}/${name}/apigroups/${groupVersion}?scope=${scope}`)
 }
 
 export function deleteClusterRole(name, clusterRoleName) {
@@ -73,12 +73,4 @@ export function deleteClusterRole(name, clusterRoleName) {
 
 export function listNamespaces(name) {
     return get(`${baseUrl}/${name}/namespaces`)
-}
-
-export function listProjects(name) {
-    return get(`${baseUrl}/${name}/projects`)
-}
-
-export function createProject(name, project) {
-    return post(`${baseUrl}/${name}/projects`, project)
 }
