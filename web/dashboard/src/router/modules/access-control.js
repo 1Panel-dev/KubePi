@@ -212,6 +212,54 @@ const AccessControl = {
       }
     },
     {
+      path: "/roles/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "get",
+      },
+      component: () => import("@/business/access-control/roles/detail"),
+      name: "RoleDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
+      path: "/roles/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/roles/edit"),
+      name: "RoleEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
+      path: "/roles/create",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "create",
+      },
+      component: () => import("@/business/access-control/roles/create"),
+      name: "RoleCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
       path: "/serviceaccounts",
       requirePermission: {
         apiGroup: "",

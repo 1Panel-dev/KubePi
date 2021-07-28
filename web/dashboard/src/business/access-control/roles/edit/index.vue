@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'ClusterRoles'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Roles'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
@@ -45,15 +45,16 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
-import {getClusterRole, updateClusterRole} from "@/api/clusterroles"
+import {getRole, updateRole} from "@/api/roles"
 import KoGrantResource from "@/components/ko-rbac/grant-resource"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
-  name: "ClusterRoleEdit",
+  name: "RoleEdit",
   components: { KoKeyValue, KoGrantResource, LayoutContent, YamlEditor },
   props: {
-    name: String
+    name: String,
+    namespace: String
   },
   data () {
     return {
@@ -74,7 +75,7 @@ export default {
   },
   methods: {
     onCancel () {
-      this.$router.push({ name: "ClusterRoles" })
+      this.$router.push({ name: "Roles" })
     },
     onEditYaml () {
       this.showYaml = true
@@ -93,12 +94,12 @@ export default {
     },
     onUpdate (data) {
       this.loading = true
-      updateClusterRole(this.cluster,this.name, data).then(() => {
+      updateRole(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),
         })
-        this.$router.push({ name: "ClusterRoles" })
+        this.$router.push({ name: "Roles" })
       }).finally(() => {
         this.loading = false
       })
@@ -111,7 +112,7 @@ export default {
     },
     getDetail () {
       this.loading = true
-      getClusterRole(this.cluster, this.name).then(res => {
+      getRole(this.cluster, this.namespace, this.name).then(res => {
         this.form = res
         this.loading = false
       })
