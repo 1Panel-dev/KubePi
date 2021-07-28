@@ -92,8 +92,10 @@
           <el-input v-model="clusterRoleForm.name" style="width: 80%"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.cluster.scope')">
-          <el-radio v-model="clusterRoleForm.type" label="cluster">{{ $t('business.cluster.cluster') }}</el-radio>
-          <el-radio v-model="clusterRoleForm.type" label="namespace">{{ $t('business.cluster.namespace') }}</el-radio>
+          <el-radio-group v-model="clusterRoleForm.type" @change="onClusterRoleTypeChange">
+            <el-radio label="cluster">{{ $t('business.cluster.cluster') }}</el-radio>
+            <el-radio label="namespace">{{ $t('business.cluster.namespace') }}</el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item :label="$t('business.cluster.rule')">
@@ -200,7 +202,7 @@
 
       <span slot="footer" class="dialog-footer">
                 <el-button @click="editDialogOpened = false">{{ $t('commons.button.cancel') }}</el-button>
-                <el-button type="primary" @click="onConfirm">{{ $t('commons.button.confirm') }}</el-button>
+                <el-button type="primary" @click="onEditConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
   </layout-content>
@@ -281,6 +283,10 @@ export default {
         this.data = data.data
       })
     },
+
+    onClusterRoleTypeChange() {
+      this.clusterRoleForm.rules = []
+    },
     onCreate() {
       this.operation = "create"
       this.clusterRoleForm = {
@@ -355,9 +361,12 @@ export default {
         this.resourcesDisable = true
         return
       }
-      listClusterResourceByGroupVersion(this.name, this.ruleForm.apiGroup).then(data => {
+      let scope = this.createDialogOpened ? this.clusterRoleForm.type : this.editForm.type
+      listClusterResourceByGroupVersion(this.name, this.ruleForm.apiGroup, scope).then(data => {
         this.apiResourceOptions.push("*")
-        this.apiResourceOptions = this.apiResourceOptions.concat(data.data);
+        if (data.data) {
+          this.apiResourceOptions = this.apiResourceOptions.concat(data.data);
+        }
       })
     },
     onResourcesChange() {
