@@ -41,7 +41,7 @@ export default {
     return {
       data: [],
       page: {
-        pageSize: 100,
+        pageSize: 200,
         nextToken: ""
       },
       selects: [],
@@ -54,7 +54,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ClusterRoleEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              params: {name: row.metadata.name },
               query: { yamlShow: true }
             })
           }

@@ -31,7 +31,7 @@ const AccessControl = {
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
         resource: "clusterrolebindings",
-        verb: "list",
+        verb: "create",
       },
       component: () => import("@/business/access-control/cluster-role-bindings/create"),
       name: "ClusterRoleBindingCreate",
@@ -46,7 +46,7 @@ const AccessControl = {
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
         resource: "clusterrolebindings",
-        verb: "list",
+        verb: "get",
       },
       component: () => import("@/business/access-control/cluster-role-bindings/detail"),
       name: "ClusterRoleBindingDetail",
@@ -62,7 +62,7 @@ const AccessControl = {
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
         resource: "clusterrolebindings",
-        verb: "list",
+        verb: "update",
       },
       component: () => import("@/business/access-control/cluster-role-bindings/edit"),
       name: "ClusterRoleBindingEdit",
@@ -92,10 +92,26 @@ const AccessControl = {
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
         resource: "clusterrolebindings",
-        verb: "list",
+        verb: "get",
       },
       component: () => import("@/business/access-control/cluster-roles/detail"),
       name: "ClusterRoleDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/clusterroles",
+        global: false
+      }
+    },
+    {
+      path: "/clusterroles/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/cluster-roles/edit"),
+      name: "ClusterRoleEdit",
       hidden: true,
       props: true,
       meta: {
@@ -108,7 +124,7 @@ const AccessControl = {
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
         resource: "clusterrolebindings",
-        verb: "list",
+        verb: "create",
       },
       component: () => import("@/business/access-control/cluster-roles/create"),
       name: "ClusterRoleCreate",
