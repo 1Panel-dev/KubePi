@@ -150,6 +150,54 @@ const AccessControl = {
       }
     },
     {
+      path: "/rolebindings/create",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "create",
+      },
+      component: () => import("@/business/access-control/role-bindings/create"),
+      name: "RoleBindingCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/rolebindings/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/role-bindings/edit"),
+      name: "RoleBindingEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/rolebindings/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "get",
+      },
+      component: () => import("@/business/access-control/role-bindings/"),
+      name: "RoleBindingDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
       path: "/roles",
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
