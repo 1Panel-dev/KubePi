@@ -35,11 +35,11 @@
     </complex-table>
 
     <el-dialog
-        title="创建规则"
+        :title="$t('commons.button.create')+$t('business.cluster.rule')"
         :visible.sync="ruleDialogOpened"
         width="40%"
         center z-index="20">
-      <el-form :model="ruleForm" label-position="top" label- width="60px">
+      <el-form :model="ruleForm" label-position="left" label- width="144px">
         <el-form-item label="API Group">
           <el-select v-model="ruleForm.apiGroup" style="width:100%" @change="onAPIGroupChange">
             <el-option v-for="(item,index) in apiGroupsOptions" :key="index"
@@ -76,15 +76,15 @@
 
 
       <span slot="footer" class="dialog-footer">
-                <el-button @click="ruleDialogOpened=false">取 消</el-button>
-                <el-button type="primary" @click="onRuleConfirm">确 定</el-button>
+                <el-button @click="ruleDialogOpened=false">{{ $t('commons.button.cancel') }}</el-button>
+                <el-button type="primary" @click="onRuleConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
 
     <el-dialog
-        title="创建角色"
+        :title="$t('commons.button.create')+$t('business.cluster.role')"
         :visible.sync="createDialogOpened"
-        width="60%"
+        width="50%"
         center z-index="10">
 
       <el-form :model="clusterRoleForm" label-position="left" label-width="144px">
@@ -92,11 +92,13 @@
           <el-input v-model="clusterRoleForm.name" style="width: 80%"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.cluster.scope')">
-          <el-radio v-model="clusterRoleForm.type" label="cluster">{{ $t('business.cluster.cluster') }}</el-radio>
-          <el-radio v-model="clusterRoleForm.type" label="namespace">{{ $t('business.cluster.namespace') }}</el-radio>
+          <el-radio-group v-model="clusterRoleForm.type" @change="onClusterRoleTypeChange">
+            <el-radio label="cluster">{{ $t('business.cluster.cluster') }}</el-radio>
+            <el-radio label="namespace">{{ $t('business.cluster.namespace') }}</el-radio>
+          </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="规则" label-width="144px">
+        <el-form-item :label="$t('business.cluster.rule')">
           <el-button @click="onRuleCreate"><i class="el-icon-plus "></i></el-button>
           <el-table
               :data="clusterRoleForm.rules"
@@ -137,27 +139,33 @@
 
 
       <span slot="footer" class="dialog-footer">
-                <el-button @click="createDialogOpened = false">取 消</el-button>
-                <el-button type="primary" @click="onConfirm">确 定</el-button>
+                <el-button @click="createDialogOpened = false">{{ $t('commons.button.cancel') }}</el-button>
+                <el-button type="primary" @click="onConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
 
+
     <el-dialog
-        title="提示"
+        :title="$t('commons.button.edit')+$t('business.cluster.role')"
         :visible.sync="editDialogOpened"
-        width="60%"
+        width="50%"
         center z-index="10">
 
-      <el-form :model="editForm" label-position="left" label- width="60px">
-        <el-form-item label="名称">
-          <el-input v-model="editForm.name" disabled></el-input>
+      <el-form :model="editForm" label-position="left" label-width="144px">
+        <el-form-item :label="$t('commons.table.name')">
+          <el-input v-model="editForm.name" style="width: 80%" disabled></el-input>
         </el-form-item>
-        <el-form-item label="规则">
+        <el-form-item :label="$t('business.cluster.scope')" disabled>
+          <el-radio v-model="editForm.type" label="cluster">{{ $t('business.cluster.cluster') }}</el-radio>
+          <el-radio v-model="editForm.type" label="namespace">{{ $t('business.cluster.namespace') }}</el-radio>
+        </el-form-item>
+
+        <el-form-item :label="$t('business.cluster.rule')">
           <el-button @click="onRuleCreate"><i class="el-icon-plus "></i></el-button>
           <el-table
               :data="editForm.rules"
               border
-              style="width: 100%">
+              style="width: 80%">
             <el-table-column
                 prop="apiGroup"
                 label="API Group"
@@ -193,11 +201,10 @@
 
 
       <span slot="footer" class="dialog-footer">
-                <el-button @click="editDialogOpened = false">取 消</el-button>
-                <el-button type="primary" @click="onEditConfirm">确 定</el-button>
+                <el-button @click="editDialogOpened = false">{{ $t('commons.button.cancel') }}</el-button>
+                <el-button type="primary" @click="onEditConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
-
   </layout-content>
 </template>
 
@@ -227,7 +234,6 @@ export default {
       apiResourceOptions: [],
       operation: "",
       verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
-      memberOptions: [],
       clusterRoleForm: {
         name: "",
         type: "cluster",
@@ -277,6 +283,10 @@ export default {
         this.data = data.data
       })
     },
+
+    onClusterRoleTypeChange() {
+      this.clusterRoleForm.rules = []
+    },
     onCreate() {
       this.operation = "create"
       this.clusterRoleForm = {
@@ -300,6 +310,7 @@ export default {
       this.operation = "update"
       this.editForm.name = row.metadata.name
       this.editForm.rules = []
+      this.editForm.type = row.metadata.labels["kubeoperator.io/role-type"]
       for (const rule of row.rules) {
         if (rule.apiGroups) {
           const r = {
@@ -350,9 +361,12 @@ export default {
         this.resourcesDisable = true
         return
       }
-      listClusterResourceByGroupVersion(this.name, this.ruleForm.apiGroup).then(data => {
+      let scope = this.createDialogOpened ? this.clusterRoleForm.type : this.editForm.type
+      listClusterResourceByGroupVersion(this.name, this.ruleForm.apiGroup, scope).then(data => {
         this.apiResourceOptions.push("*")
-        this.apiResourceOptions = this.apiResourceOptions.concat(data.data);
+        if (data.data) {
+          this.apiResourceOptions = this.apiResourceOptions.concat(data.data);
+        }
       })
     },
     onResourcesChange() {

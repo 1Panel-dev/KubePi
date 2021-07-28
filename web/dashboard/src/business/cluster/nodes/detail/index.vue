@@ -218,38 +218,7 @@
               </complex-table>
             </el-tab-pane>
             <el-tab-pane :label="$t('commons.table.status')">
-              <complex-table :data="item.status.conditions">
-                <el-table-column :label="$t('business.pod.type')" prop="type">
-                  <template v-slot:default="{row}">
-                    {{ row.type }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('commons.table.status')" prop="status">
-                  <template v-slot:default="{row}">
-                    {{ row.status }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.reason')" prop="reason">
-                  <template v-slot:default="{row}">
-                    {{ row.reason }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.message')" prop="reason">
-                  <template v-slot:default="{row}">
-                    {{ row.message }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.lastHeartbeatTime')" prop="reason">
-                  <template v-slot:default="{row}">
-                    {{ row.lastHeartbeatTime }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.lastTransitionTime')" prop="reason">
-                  <template v-slot:default="{row}">
-                    {{ row.lastTransitionTime }}
-                  </template>
-                </el-table-column>
-              </complex-table>
+              <ko-detail-conditions :conditions="item.status.condition"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane :label="$t('business.pod.image')">
               <table style="width: 90%" class="myTable">
@@ -298,10 +267,11 @@ import {getNode} from "@/api/nodes"
 import {listPods} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import YamlEditor from "@/components/yaml-editor"
+import KoDetailConditions from "@/components/detail/detail-conditions"
 
 export default {
   name: "NodeDetail",
-  components: { YamlEditor, ComplexTable, LayoutContent },
+  components: { KoDetailConditions, YamlEditor, ComplexTable, LayoutContent },
   props: {
     name: String,
   },

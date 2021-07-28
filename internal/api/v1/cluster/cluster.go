@@ -202,7 +202,8 @@ func (h *Handler) CreateCluster() iris.Handler {
 						"builtin": "true",
 					},
 					Labels: map[string]string{
-						"user-name": profile.Name,
+						"user-name":               profile.Name,
+						kubernetes.LabelManageKey: "ekko",
 					},
 				},
 				Subjects: []rbacV1.Subject{
@@ -212,7 +213,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 					},
 				},
 				RoleRef: rbacV1.RoleRef{
-					Name: "Admin Cluster",
+					Name: "admin-cluster",
 					Kind: "ClusterRole",
 				},
 			}, metav1.CreateOptions{}); err != nil {
@@ -307,7 +308,12 @@ func (h *Handler) ListClusters() iris.Handler {
 func (h *Handler) DeleteCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-
+		c, err := h.clusterService.Get(name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
+			return
+		}
 		tx, err := server.DB().Begin(true)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -336,6 +342,13 @@ func (h *Handler) DeleteCluster() iris.Handler {
 				ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 				return
 			}
+		}
+		k := kubernetes.NewKubernetes(*c)
+		if err := k.CleanAllRBACResource(); err != nil {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err)
+			return
 		}
 		_ = tx.Commit()
 		ctx.StatusCode(iris.StatusOK)

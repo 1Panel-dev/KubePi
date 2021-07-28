@@ -27,10 +27,75 @@ type Interface interface {
 	GetUserNamespaceNames(username string) ([]string, error)
 	CanVisitAllNamespace(username string) (bool, error)
 	IsNamespacedResource(resourceName string) (bool, error)
+	CleanManagedClusterRole() error
+	CleanManagedClusterRoleBinding(username string) error
+	CleanManagedRoleBinding(username string) error
+	CleanAllRBACResource() error
 }
 
 type Kubernetes struct {
 	*v1Cluster.Cluster
+}
+
+func (k *Kubernetes) CleanManagedClusterRole() error {
+	client, err := k.Client()
+	if err != nil {
+		return err
+	}
+	return client.RbacV1().ClusterRoles().DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+	})
+}
+
+func (k *Kubernetes) CleanManagedClusterRoleBinding(username string) error {
+	client, err := k.Client()
+	if err != nil {
+		return err
+	}
+	labels := []string{fmt.Sprintf("%s=%s", LabelManageKey, "ekko")}
+	if username != "" {
+		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
+	}
+	return client.RbacV1().ClusterRoleBindings().DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
+		LabelSelector: strings.Join(labels, ","),
+	})
+}
+
+func (k *Kubernetes) CleanManagedRoleBinding(username string) error {
+	client, err := k.Client()
+	if err != nil {
+		return err
+	}
+	nss, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+	labels := []string{fmt.Sprintf("%s=%s", LabelManageKey, "ekko")}
+	if username != "" {
+		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
+	}
+	for i := range nss.Items {
+		if err := client.RbacV1().RoleBindings(nss.Items[i].Name).DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
+			LabelSelector: strings.Join(labels, ","),
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (k *Kubernetes) CleanAllRBACResource() error {
+	if err := k.CleanManagedClusterRole(); err != nil {
+		return err
+	}
+	if err := k.CleanManagedClusterRoleBinding(""); err != nil {
+		return err
+	}
+
+	if err := k.CleanManagedRoleBinding(""); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {

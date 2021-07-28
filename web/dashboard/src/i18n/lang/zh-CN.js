@@ -201,7 +201,21 @@ const message = {
       selector: "选择"
     },
     access_control: {
-      access_control: "访问控制"
+      access_control: "访问控制",
+      resource_helper: "多个resource请用,分隔"
+    },
+    custom_resource: {
+      custom_resource: "自定义资源",
+      full_name: "全名",
+      namespaced: "有命名空间的",
+      version: "版本",
+      scope: "范围",
+      names: "允许的名称",
+      singular: "单数",
+      plural: "复数",
+      served: "服务",
+      storage: "存储",
+      status: "状态"
     },
     user: {
       user_management: "用户与权限",

@@ -40,6 +40,7 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		groupName := ctx.Params().GetString("group")
+		scope := ctx.URLParam("scope")
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -75,7 +76,18 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 				if groupVersions[j].GroupVersion == rss[i].GroupVersion {
 					for k := range rss[i].APIResources {
 						if !strings.Contains(rss[i].APIResources[k].Name, "/") {
-							resourceSet[rss[i].APIResources[k].Name] = struct{}{}
+							switch scope {
+							case "cluster":
+								if !rss[i].APIResources[k].Namespaced {
+									resourceSet[rss[i].APIResources[k].Name] = struct{}{}
+								}
+							case "namespace":
+								if rss[i].APIResources[k].Namespaced {
+									resourceSet[rss[i].APIResources[k].Name] = struct{}{}
+								}
+							default:
+								resourceSet[rss[i].APIResources[k].Name] = struct{}{}
+							}
 						}
 					}
 				}

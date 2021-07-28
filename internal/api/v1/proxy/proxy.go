@@ -115,15 +115,15 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if http.MethodGet == requestMethod && namespaced && namespace != "" {
 			apiUrl.Path = addUrlNamespace(apiUrl.Path, namespace)
 		}
+
 		req, err := http.NewRequest(ctx.Request().Method, apiUrl.String(), ctx.Request().Body)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
 		}
-		//调用普通代理逻辑
-		if requestMethod == http.MethodPatch {
-
+		if ctx.Method() == "PATCH" {
+			req.Header.Set("Content-Type", "application/merge-patch+json")
 		}
 
 		resp, err := httpClient.Do(req)
@@ -132,20 +132,13 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		if resp.StatusCode != http.StatusOK {
-			if resp.StatusCode == http.StatusForbidden {
-				resp.StatusCode = http.StatusInternalServerError
-			}
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
+		rawResp, _ := ioutil.ReadAll(resp.Body)
+		if resp.StatusCode == http.StatusForbidden {
+			resp.StatusCode = http.StatusInternalServerError
 		}
-		rawResp, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
-		}
+		ctx.StatusCode(resp.StatusCode)
+		ctx.Values().Set("message", string(rawResp))
+
 		_, _ = ctx.Write(rawResp)
 	}
 }
@@ -173,6 +166,8 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 
 	}
 	wg.Wait()
+	var forbidden int
+	var forbiddenMessage []string
 	for i := range responses {
 		r := responses[i]
 		body, err := ioutil.ReadAll(r.Body)
@@ -180,7 +175,13 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 			return nil, err
 		}
 		if r.StatusCode != http.StatusOK {
-			return nil, errors.New(string(body))
+			if r.StatusCode == http.StatusForbidden {
+				forbidden++
+				forbiddenMessage = append(forbiddenMessage, string(body))
+				continue
+			} else {
+				return nil, errors.New(string(body))
+			}
 		}
 		var nc NamespaceResourceContainer
 		if err := json.Unmarshal(body, &nc); err != nil {
@@ -189,6 +190,9 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 		mergedContainer.TypeMeta = nc.TypeMeta
 		mergedContainer.ListMeta = nc.ListMeta
 		mergedContainer.Items = append(mergedContainer.Items, nc.Items...)
+	}
+	if len(namespaces) == 1 && forbidden == 1 {
+		return nil, errors.New(strings.Join(forbiddenMessage, ""))
 	}
 	return &mergedContainer, nil
 }

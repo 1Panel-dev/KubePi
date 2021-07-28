@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Roles">
+  <layout-content header="CustomResourceDefinitions">
     <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
@@ -12,14 +12,24 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')">
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <el-link @click="openDetail(row)">{{ row.spec.names.kind }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+      <el-table-column label="Group" prop="spec.group">
         <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
+          {{ row.spec.group }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.custom_resource.full_name')" prop="metadata.name">
+        <template v-slot:default="{row}">
+          {{ row.metadata.name }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.custom_resource.namespaced')" prop="metadata.name">
+        <template v-slot:default="{row}">
+          {{ row.spec.scope === "Namespaced" ? "True" : "False" }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -37,10 +47,10 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteRole, listRoles} from "@/api/roles"
+import {deleteCustomResource, listCustomResources} from "@/api/customresourcedefinitions"
 
 export default {
-  name: "Roles",
+  name: "CustomResourceDefinitions",
   components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
@@ -54,23 +64,12 @@ export default {
       cluster: "",
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "RoleEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
-            })
-          }
-        },
-        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "RoleEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              name: "ClusterRoleEdit",
+              params: { name: row.metadata.name },
               query: { yamlShow: true }
             })
           }
@@ -101,7 +100,7 @@ export default {
           nextToken: ""
         }
       }
-      listRoles(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listCustomResources(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
         this.data = res.items
         this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
@@ -109,7 +108,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "RoleCreate",
+        name: "ClusterRoleCreate",
       })
     },
     onDelete (row) {
@@ -122,11 +121,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteRole(this.cluster, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deleteCustomResource(this.cluster, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteRole(this.cluster, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteCustomResource(this.cluster, select.metadata.name))
             }
           }
         }
@@ -147,8 +146,8 @@ export default {
     },
     openDetail (row) {
       this.$router.push({
-        name: "RoleDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace },
+        name: "CustomResourceDefinitionDetail",
+        params: { name: row.metadata.name },
         query: { yamlShow: false }
       })
     }

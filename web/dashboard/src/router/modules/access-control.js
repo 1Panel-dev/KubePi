@@ -14,11 +14,11 @@ const AccessControl = {
   children: [
     {
       path: "/clusterrolebindings",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings"),
       name: "ClusterRoleBindings",
       meta: {
@@ -28,11 +28,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/create",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "create",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/create"),
       name: "ClusterRoleBindingCreate",
       hidden: true,
@@ -43,11 +43,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "get",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/detail"),
       name: "ClusterRoleBindingDetail",
       hidden: true,
@@ -59,11 +59,11 @@ const AccessControl = {
     },
     {
       path: "/clusterrolebindings/:name/edit",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "update",
+      },
       component: () => import("@/business/access-control/cluster-role-bindings/edit"),
       name: "ClusterRoleBindingEdit",
       hidden: true,
@@ -75,11 +75,11 @@ const AccessControl = {
     },
     {
       path: "/clusterroles",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterroles",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterroles",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/cluster-roles"),
       name: "ClusterRoles",
       meta: {
@@ -89,15 +89,47 @@ const AccessControl = {
     },
     {
       path: "/clusterroles/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "rbac.authorization.k8s.io",
-      //   resource: "clusterrolebindings",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "get",
+      },
       component: () => import("@/business/access-control/cluster-roles/detail"),
       name: "ClusterRoleDetail",
       hidden: true,
       props: true,
+      meta: {
+        activeMenu: "/clusterroles",
+        global: false
+      }
+    },
+    {
+      path: "/clusterroles/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/cluster-roles/edit"),
+      name: "ClusterRoleEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/clusterroles",
+        global: false
+      }
+    },
+    {
+      path: "/clusterroles/create",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "clusterrolebindings",
+        verb: "create",
+      },
+      component: () => import("@/business/access-control/cluster-roles/create"),
+      name: "ClusterRoleCreate",
+      props: true,
+      hidden: true,
       meta: {
         activeMenu: "/clusterroles",
         global: false
@@ -118,6 +150,54 @@ const AccessControl = {
       }
     },
     {
+      path: "/rolebindings/create",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "create",
+      },
+      component: () => import("@/business/access-control/role-bindings/create"),
+      name: "RoleBindingCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/rolebindings/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/role-bindings/edit"),
+      name: "RoleBindingEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
+      path: "/rolebindings/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "rolebindings",
+        verb: "get",
+      },
+      component: () => import("@/business/access-control/role-bindings/"),
+      name: "RoleBindingDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/rolebindings",
+        global: false
+      }
+    },
+    {
       path: "/roles",
       requirePermission: {
         apiGroup: "rbac.authorization.k8s.io",
@@ -132,12 +212,60 @@ const AccessControl = {
       }
     },
     {
+      path: "/roles/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "get",
+      },
+      component: () => import("@/business/access-control/roles/detail"),
+      name: "RoleDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
+      path: "/roles/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "update",
+      },
+      component: () => import("@/business/access-control/roles/edit"),
+      name: "RoleEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
+      path: "/roles/create",
+      requirePermission: {
+        apiGroup: "rbac.authorization.k8s.io",
+        resource: "roles",
+        verb: "create",
+      },
+      component: () => import("@/business/access-control/roles/create"),
+      name: "RoleCreate",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/roles",
+        global: false
+      }
+    },
+    {
       path: "/serviceaccounts",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "list",
+      },
       component: () => import("@/business/access-control/service-accounts"),
       name: "ServiceAccounts",
       meta: {
@@ -147,11 +275,11 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/create",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "create",
+      },
       component: () => import("@/business/access-control/service-accounts/create"),
       name: "ServiceAccountCreate",
       hidden: true,
@@ -162,11 +290,11 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/:namespace/:name/detail",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "get",
+      },
       component: () => import("@/business/access-control/service-accounts/detail"),
       name: "ServiceAccountDetail",
       props: true,
@@ -178,31 +306,17 @@ const AccessControl = {
     },
     {
       path: "/serviceaccounts/:namespace/:name/edit",
-      // requirePermission: {
-      //   apiGroup: "",
-      //   resource: "serviceaccounts",
-      //   verb: "list",
-      // },
+      requirePermission: {
+        apiGroup: "",
+        resource: "serviceaccounts",
+        verb: "update",
+      },
       component: () => import("@/business/access-control/service-accounts/edit"),
       name: "ServiceAccountEdit",
       props: true,
       hidden: true,
       meta: {
         activeMenu: "/serviceaccounts",
-        global: false
-      }
-    },
-    {
-      path: "/podsecuritypolicy",
-      requirePermission: {
-        apiGroup: "policy",
-        resource: "podsecuritypolicies",
-        verb: "list",
-      },
-      component: () => import("@/business/access-control/pod-security-policies"),
-      name: "PodSecurityPolicy",
-      meta: {
-        title: "Pod Security Policy",
         global: false
       }
     },
