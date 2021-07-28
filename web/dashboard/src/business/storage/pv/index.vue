@@ -11,23 +11,13 @@
           </el-button>
         </el-button-group>
       </template>
-      <template #toolbar>
-        <el-select v-model="conditions" @change="search(true)">
-          <el-option label="All Namespaces" value=""></el-option>
-          <el-option v-for="namespace in namespaces"
-                     :key="namespace.metadata.name"
-                     :label="namespace.metadata.name"
-                     :value="namespace.metadata.name">
-          </el-option>
-        </el-select>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" min-width="200px" prop="metadata.name">
+      <el-table-column sortable :label="$t('commons.table.name')" min-width="200px" prop="metadata.name">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.status')" prop="metadata.namespace">
+      <el-table-column  :label="$t('commons.table.status')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase ==='Bound'" type="success" size="mini" plain round>
             {{ row.status.phase }}
@@ -44,14 +34,14 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.storage.capacity')" prop="metadata.labels">
+      <el-table-column  :label="$t('business.storage.capacity')" prop="metadata.labels">
         <template v-slot:default="{row}">
           {{ row.spec.capacity['storage'] }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.creationTimestamp | datetimeFormat }}
+          {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>

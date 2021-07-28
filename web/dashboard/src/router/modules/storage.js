@@ -93,6 +93,48 @@ const Storage = {
             meta: {
                 title: "Storage Classes",
             }
+        },
+        {
+            path: "/storageclasses/create",
+            requirePermission: {
+                apiGroup: "storage.k8s.io",
+                resource: "storageclasses",
+                verb: "list",
+            },
+            component: () => import("@/business/storage/sc/create"),
+            name: "StorageClassCreate",
+            hidden: true,
+            meta: {
+                title: "Storage Classes Create",
+            }
+        },
+        {
+            path: "/storageclasses/edit/:name",
+            requirePermission: {
+                apiGroup: "storage.k8s.io",
+                resource: "storageclasses",
+                verb: "list",
+            },
+            component: () => import("@/business/storage/sc/edit"),
+            name: "StorageClassEdit",
+            hidden: true,
+            meta: {
+                title: "Storage Classes Edit",
+            }
+        },
+        {
+            path: "/storageclasses/detail/:name",
+            requirePermission: {
+                apiGroup: "storage.k8s.io",
+                resource: "storageclasses",
+                verb: "list",
+            },
+            component: () => import("@/business/storage/sc/detail"),
+            name: "StorageClassDetail",
+            hidden: true,
+            meta: {
+                title: "Storage Classes Detail",
+            }
         }
     ]
 }
