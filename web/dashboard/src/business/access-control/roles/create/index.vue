@@ -1,17 +1,28 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'ClusterRoles'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'Roles'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
           <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
               <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
-                <el-input clearable v-model="form.metadata.name" disabled></el-input>
+                <el-input clearable v-model="form.metadata.name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
+                <el-select v-model="form.metadata.namespace">
+                  <el-option v-for="namespace in namespaces"
+                             :key="namespace.metadata.name"
+                             :label="namespace.metadata.name"
+                             :value="namespace.metadata.name">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick" v-if="form.rules">
+                       @tab-click="handleClick">
                 <el-tab-pane label="Grant Resources">
                   <ko-grant-resource :rulesArray.sync="form.rules"></ko-grant-resource>
                 </el-tab-pane>
@@ -45,20 +56,25 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
-import {getClusterRole, updateClusterRole} from "@/api/clusterroles"
+import {createRole} from "@/api/roles"
 import KoGrantResource from "@/components/ko-rbac/grant-resource"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
+import {listNamespace} from "@/api/namespaces"
 
 export default {
-  name: "ClusterRoleEdit",
+  name: "RoleCreate",
   components: { KoKeyValue, KoGrantResource, LayoutContent, YamlEditor },
-  props: {
-    name: String
-  },
+  props: {},
   data () {
     return {
       form: {
-        metadata: {},
+        apiVersion: "rbac.authorization.k8s.io/v1",
+        kind: "Role",
+        metadata: {
+          name: "",
+          namespace: "default"
+        },
+        rules: []
       },
       loading: false,
       showYaml: false,
@@ -68,13 +84,15 @@ export default {
       rules: {
         metadata: {
           name: [Rule.RequiredRule],
+          namespace: [Rule.RequiredRule]
         }
-      }
+      },
+      namespaces: []
     }
   },
   methods: {
     onCancel () {
-      this.$router.push({ name: "ClusterRoles" })
+      this.$router.push({ name: "Roles" })
     },
     onEditYaml () {
       this.showYaml = true
@@ -82,23 +100,23 @@ export default {
     },
     onSubmit () {
       if (this.showYaml) {
-        this.onUpdate(this.$refs.yaml_editor.getValue())
+        this.onCreate(this.$refs.yaml_editor.getValue())
       } else {
         this.$refs["form"].validate((valid) => {
           if (valid) {
-            this.onUpdate(this.transformYaml())
+            this.onCreate(this.transformYaml())
           }
         })
       }
     },
-    onUpdate (data) {
+    onCreate (data) {
       this.loading = true
-      updateClusterRole(this.cluster,this.name, data).then(() => {
+      createRole(this.cluster, data.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.update_success"),
+          message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({ name: "ClusterRoles" })
+        this.$router.push({ name: "Roles" })
       }).finally(() => {
         this.loading = false
       })
@@ -108,18 +126,13 @@ export default {
     },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.form))
-    },
-    getDetail () {
-      this.loading = true
-      getClusterRole(this.cluster, this.name).then(res => {
-        this.form = res
-        this.loading = false
-      })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.getDetail()
+    listNamespace(this.cluster).then(res => {
+      this.namespaces = res.items
+    })
   }
 }
 </script>
