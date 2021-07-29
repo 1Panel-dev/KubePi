@@ -94,8 +94,8 @@
           <br>
           <el-tabs type="border-card">
             <el-tab-pane label="Pods" v-if="Object.keys(item.metadata).length!==0">
-              <resource-pods :cluster="cluster" :namespace="item.metadata.namespace"
-                            :selector="getSelector(item.spec.selector)"></resource-pods>
+              <resource-pod :cluster="cluster" :namespace="item.metadata.namespace"
+                            :selector="getSelector(item.spec.selector)"></resource-pod>
             </el-tab-pane>
             <el-tab-pane label="Ports" v-if="Object.keys(item.spec).length!==0">
               <resource-ports :data="item.spec.ports"></resource-ports>
