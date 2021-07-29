@@ -69,11 +69,11 @@
             </el-table-column>
             <el-table-column sortable :label="$t('business.pod.ready')" prop="ready" min-width="40">
               <template v-slot:default="{row}">
-                <i class="el-icon-check" v-if="row.ready" />
-                <i class="el-icon-close" v-if="!row.ready" />
+                <i class="el-icon-check" v-if="row.ready"/>
+                <i class="el-icon-close" v-if="!row.ready"/>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50" />
+            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50"/>
             <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
               <template v-slot:default="{row}">
                 <div class="myTag">
@@ -83,19 +83,20 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30" />
+            <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30"/>
             <el-table-column sortable :label="$t('commons.table.created_time')" min-width="70">
               <template v-slot:default="{row}">
                 <span v-if="row.started">{{ row.state.running.startedAt | age }}</span>
                 <span v-if="!row.started">-</span>
               </template>
             </el-table-column>
+            <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
           </complex-table>
         </el-tab-pane>
         <el-tab-pane label="Conditions" name="Conditions">
           <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
+            <el-table-column sortable label="Condition" prop="type"/>
+            <el-table-column sortable :label="$t('commons.table.status')" prop="status"/>
             <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
               <template v-slot:default="{row}">
                 {{ row.lastTransitionTime | age }}
@@ -122,17 +123,31 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getPodByName } from "@/api/pods"
-// import { listPodsWithNsSelector } from "@/api/pods"
+import {getPodByName} from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
+import KoTableOperations from "@/components/ko-table-operations";
 
 export default {
   name: "PodDetail",
-  components: { LayoutContent, ComplexTable, YamlEditor },
+  components: {LayoutContent, ComplexTable, YamlEditor, KoTableOperations},
   data() {
     return {
+      buttons: [
+        {
+          label: this.$t("commons.button.open_shell"),
+          icon: "iconfont iconcommand-line",
+          click: (row) => {
+            const namespace = this.form.metadata.namespace
+            const podName = this.form.metadata.name
+            const containerName = row.name
+            const clusterName = this.$route.query["cluster"]
+            const terminalUrl = `/terminal/app?cluster=${clusterName}&pod=${podName}&namespace=${namespace}&container=${containerName}`
+            window.open(terminalUrl,"_blank")
+          },
+        },
+      ],
       form: {
         metadata: {},
         spec: {

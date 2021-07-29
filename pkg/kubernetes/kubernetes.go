@@ -20,6 +20,7 @@ import (
 type Interface interface {
 	Ping() error
 	Version() (*version.Info, error)
+	Config() *rest.Config
 	Client() (*kubernetes.Clientset, error)
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
 	CreateCommonUser(commonName string) ([]byte, error)
@@ -292,8 +293,7 @@ func (k *Kubernetes) HasPermission(attributes v1.ResourceAttributes) (Permission
 	}, nil
 
 }
-
-func (k *Kubernetes) Client() (*kubernetes.Clientset, error) {
+func (k *Kubernetes) Config() *rest.Config {
 	if k.Spec.Connect.Direction == "forward" {
 		kubeConf := &rest.Config{
 			Host: k.Spec.Connect.Forward.ApiServer,
@@ -310,10 +310,13 @@ func (k *Kubernetes) Client() (*kubernetes.Clientset, error) {
 			kubeConf.TLSClientConfig.CertData = k.Spec.Authentication.Certificate.CertData
 			kubeConf.TLSClientConfig.KeyData = k.Spec.Authentication.Certificate.KeyData
 		}
-		return kubernetes.NewForConfig(kubeConf)
-
+		return kubeConf
 	}
-	return nil, errors.New("")
+	return nil
+}
+
+func (k *Kubernetes) Client() (*kubernetes.Clientset, error) {
+	return kubernetes.NewForConfig(k.Config())
 }
 
 func (k *Kubernetes) Version() (*version.Info, error) {

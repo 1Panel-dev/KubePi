@@ -17,15 +17,19 @@ module.exports = {
         proxy: {
             '/proxy': {
                 target: 'http://0.0.0.0:2019',
-                ws: true,
-                secure: false,
             },
             '/api': {
                 target: 'http://0.0.0.0:2019',
+                ws: true,
+                secure: false,
             },
             '/dashboard': {
                 target: 'http://0.0.0.0:4400',
+            },
+            '/terminal': {
+                target: 'http://0.0.0.0:4200',
             }
+
         }
     },
     configureWebpack: {

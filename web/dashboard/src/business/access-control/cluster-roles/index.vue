@@ -3,10 +3,10 @@
     <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -33,6 +33,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteClusterRole, listClusterRoles} from "@/api/clusterroles"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ClusterRoles",
@@ -57,6 +58,9 @@ export default {
               params: {name: row.metadata.name },
               query: { yamlShow: true }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -71,6 +75,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
           }
         },
       ],

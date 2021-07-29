@@ -1,12 +1,12 @@
 <template>
   <layout-content header="CustomResourceDefinitions">
-    <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -48,6 +48,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteCustomResource, listCustomResources} from "@/api/customresourcedefinitions"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "CustomResourceDefinitions",
@@ -55,10 +56,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 200,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -72,6 +69,9 @@ export default {
               params: { name: row.metadata.name },
               query: { yamlShow: true }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
           }
         },
         {
@@ -86,23 +86,19 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
           }
         },
       ],
     }
   },
   methods: {
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
-      }
-      listCustomResources(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listCustomResources(this.cluster).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
       })
     },
@@ -132,14 +128,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search(true)
+              this.search()
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search(true)
+              this.search()
             })
         }
       })

@@ -6,6 +6,13 @@
   "description": "KubeOperator UI",
   "glyphs": [
     {
+      "icon_id": "10330790",
+      "name": "command-line",
+      "font_class": "command-line",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
       "icon_id": "14560260",
       "name": "网络",
       "font_class": "network",

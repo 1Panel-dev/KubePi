@@ -1,4 +1,4 @@
-package shell
+package terminal
 
 import (
 	"crypto/rand"
@@ -29,10 +29,10 @@ type PtyHandler interface {
 
 // TerminalSession implements PtyHandler (using a SockJS connection)
 type TerminalSession struct {
-	id            string
-	bound         chan error
+	Id            string
+	Bound         chan error
 	sockJSSession sockjs.Session
-	sizeChan      chan remotecommand.TerminalSize
+	SizeChan      chan remotecommand.TerminalSize
 	doneChan      chan struct{}
 }
 
@@ -54,7 +54,7 @@ type TerminalMessage struct {
 // Called in a loop from remotecommand as long as the process is running
 func (t TerminalSession) Next() *remotecommand.TerminalSize {
 	select {
-	case size := <-t.sizeChan:
+	case size := <-t.SizeChan:
 		return &size
 	case <-t.doneChan:
 		return nil
@@ -79,7 +79,7 @@ func (t TerminalSession) Read(p []byte) (int, error) {
 	case "stdin":
 		return copy(p, msg.Data), nil
 	case "resize":
-		t.sizeChan <- remotecommand.TerminalSize{Width: msg.Cols, Height: msg.Rows}
+		t.SizeChan <- remotecommand.TerminalSize{Width: msg.Cols, Height: msg.Rows}
 		return 0, nil
 	default:
 		return copy(p, END_OF_TRANSMISSION), fmt.Errorf("unknown message type '%s'", msg.Op)
@@ -154,7 +154,7 @@ func (sm *SessionMap) Close(sessionId string, status uint32, reason string) {
 	delete(sm.Sessions, sessionId)
 }
 
-var terminalSessions = SessionMap{Sessions: make(map[string]TerminalSession)}
+var TerminalSessions = SessionMap{Sessions: make(map[string]TerminalSession)}
 
 // handleTerminalSession is Called by net/http for any new /api/sockjs connections
 func handleTerminalSession(session sockjs.Session) {
@@ -180,14 +180,14 @@ func handleTerminalSession(session sockjs.Session) {
 		return
 	}
 
-	if terminalSession = terminalSessions.Get(msg.SessionID); terminalSession.id == "" {
+	if terminalSession = TerminalSessions.Get(msg.SessionID); terminalSession.Id == "" {
 		log.Printf("handleTerminalSession: can't find session '%s'", msg.SessionID)
 		return
 	}
 
 	terminalSession.sockJSSession = session
-	terminalSessions.Set(msg.SessionID, terminalSession)
-	terminalSession.bound <- nil
+	TerminalSessions.Set(msg.SessionID, terminalSession)
+	terminalSession.Bound <- nil
 }
 
 // CreateAttachHandler is called from main for /api/sockjs
@@ -252,36 +252,36 @@ func isValidShell(validShells []string, shell string) bool {
 }
 
 // WaitForTerminal is called from apihandler.handleAttach as a goroutine
-// Waits for the SockJS connection to be opened by the client the session to be bound in handleTerminalSession
+// Waits for the SockJS connection to be opened by the client the session to be Bound in handleTerminalSession
 func WaitForTerminal(k8sClient kubernetes.Interface, cfg *rest.Config, namespace string, podName string, containerName string, sessionId string) {
 	shell := "sh"
 
 	select {
-	case <-terminalSessions.Get(sessionId).bound:
-		close(terminalSessions.Get(sessionId).bound)
+	case <-TerminalSessions.Get(sessionId).Bound:
+		close(TerminalSessions.Get(sessionId).Bound)
 
 		var err error
 		validShells := []string{"bash", "sh", "powershell", "cmd"}
 
 		if isValidShell(validShells, shell) {
 			cmd := []string{shell}
-			err = startProcess(k8sClient, cfg, cmd, namespace, podName, containerName, terminalSessions.Get(sessionId))
+			err = startProcess(k8sClient, cfg, cmd, namespace, podName, containerName, TerminalSessions.Get(sessionId))
 		} else {
 			// No shell given or it was not valid: try some shells until one succeeds or all fail
 			// FIXME: if the first shell fails then the first keyboard event is lost
 			for _, testShell := range validShells {
 				cmd := []string{testShell}
-				if err = startProcess(k8sClient, cfg, cmd, namespace, podName, containerName, terminalSessions.Get(sessionId)); err == nil {
+				if err = startProcess(k8sClient, cfg, cmd, namespace, podName, containerName, TerminalSessions.Get(sessionId)); err == nil {
 					break
 				}
 			}
 		}
 
 		if err != nil {
-			terminalSessions.Close(sessionId, 2, err.Error())
+			TerminalSessions.Close(sessionId, 2, err.Error())
 			return
 		}
 
-		terminalSessions.Close(sessionId, 1, "Process exited")
+		TerminalSessions.Close(sessionId, 1, "Process exited")
 	}
 }

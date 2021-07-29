@@ -4,54 +4,7 @@
       <el-row :gutter="20">
         <el-col :span="15">
           <el-card>
-            <table style="width: 100%" class="myTable">
-              <tr>
-                <th scope="col" width="30%" align="left">
-                  <h3>{{ $t("business.common.basic") }}</h3></th>
-                <th scope="col"></th>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.name") }}</td>
-                <td>{{ item.metadata.name }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.created_time") }}</td>
-                <td>{{ item.metadata.creationTimestamp | age }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.label") }}</td>
-                <td>
-                  <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
-                    <el-tag type="info" size="small">
-                      {{ key }} = {{ value }}
-                    </el-tag>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.annotation") }}</td>
-                <td>
-                  <el-link @click="showItem=!showItem">
-                    {{ showItem ? $t("business.common.pack_up") : $t("business.common.expand") }}
-                  </el-link>
-                  <div v-if="showItem">
-                    <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                      <el-tag type="info" size="small" v-if="value.length < 100">
-                        {{ key }} = {{value}}
-                      </el-tag>
-                      <el-tooltip  v-if="value.length > 100" :content="value" placement="top">
-                        <el-tag type="info" size="small" v-if="value.length >= 100" >
-                          {{ key }} = {{value.substring(0, 100) + "..." }}
-                        </el-tag>
-                      </el-tooltip>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </table>
-            <div class="bottom-button">
-              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-            </div>
+            <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
@@ -172,53 +125,12 @@
         </el-col>
         <el-col :span="24">
           <br>
-          <el-tabs type="border-card">
+          <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
             <el-tab-pane label="Pods">
-              <complex-table :pagination-config="page" :data="pods" :search="pageNodes">
-                <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100px">
-                  <template v-slot:default="{row}">
-                    <el-link> {{ row.metadata.name }}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.namespace.namespace')" prop="namespace" fix max-width="30px">
-                  <template v-slot:default="{row}">
-                    {{ row.metadata.namespace }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.image')" prop="image" min-width="200px" show-overflow-tooltip>
-                  <template v-slot:default="{row}">
-                    <span v-if=" row.spec.containers.length >0 ">{{ row.spec.containers[0].image }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.pod.ready')" prop="ready" fix max-width="10px">
-                  <template v-slot:default="{row}">
-                    <span v-show="false">{{ readPod = 0 }}</span>
-                    <div v-for="(c,index) in row.status.containerStatuses" v-bind:key="index">
-                      <span v-show="false" v-if="c.ready">{{ readPod++ }}</span>
-                    </div>
-                    <span>{{ readPod }}/{{ row.status.containerStatuses.length }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('commons.table.status')" prop="status" fix max-width="30px">
-                  <template v-slot:default="{row}">
-                    {{ row.status.phase }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="IP" prop="ip" fix max-width="50px">
-                  <template v-slot:default="{row}">
-                    {{ row.status.podIP }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix
-                                 max-width="30px">
-                  <template v-slot:default="{row}">
-                    {{ row.metadata.creationTimestamp | age }}
-                  </template>
-                </el-table-column>
-              </complex-table>
+              <ko-detail-pods :cluster="cluster" :selector="item.metadata.name"></ko-detail-pods>
             </el-tab-pane>
             <el-tab-pane :label="$t('commons.table.status')">
-              <ko-detail-conditions :conditions="item.status.condition"></ko-detail-conditions>
+              <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane :label="$t('business.pod.image')">
               <table style="width: 90%" class="myTable">
@@ -265,13 +177,20 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getNode} from "@/api/nodes"
 import {listPods} from "@/api/pods"
-import ComplexTable from "@/components/complex-table"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailConditions from "@/components/detail/detail-conditions"
+import KoDetailPods from "@/components/detail/detail-pods"
+import KoDetailBasic from "@/components/detail/detail-basic"
 
 export default {
   name: "NodeDetail",
-  components: { KoDetailConditions, YamlEditor, ComplexTable, LayoutContent },
+  components: {
+    KoDetailBasic,
+    KoDetailPods,
+    KoDetailConditions,
+    YamlEditor,
+    LayoutContent
+  },
   props: {
     name: String,
   },
@@ -311,7 +230,8 @@ export default {
         nextToken: "",
       },
       yaml: {},
-      yamlShow: false
+      yamlShow: false,
+      cluster: ""
     }
   },
   methods: {
@@ -324,14 +244,13 @@ export default {
           this.yaml = JSON.parse(JSON.stringify(this.item))
         }
         this.listPodsByNodeName()
-        this.pageNodes()
         this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
         this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
         this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
     },
     listPodsByNodeName () {
-      listPods(this.cluster, null, null, this.item.metadata.name).then(res => {
+      listPods(this.cluster, this.item.metadata.name).then(res => {
         this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
         this.podsData.podsCount = res.items.length
 
@@ -381,11 +300,6 @@ export default {
     memFormat () {
       return this.memResource.limitsUsage + "%"
     },
-    pageNodes () {
-      listPods(this.cluster, this.page.pageSize, this.page.nextToken, this.item.metadata.name).then(res => {
-        this.pods = res.items
-      })
-    }
   },
   watch: {
     yamlShow: function (newValue) {

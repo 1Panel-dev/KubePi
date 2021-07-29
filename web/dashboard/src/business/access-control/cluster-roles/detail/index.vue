@@ -2,50 +2,7 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ClusterRoles'}" v-loading="loading">
     <div v-if="!yamlShow">
       <el-card>
-        <table style="width: 100%" class="myTable">
-          <tr>
-            <th scope="col" align="left">
-              <h3>{{ $t("business.common.basic") }}</h3>
-            </th>
-            <th scope="col"></th>
-          </tr>
-          <tr>
-            <td>{{ $t("commons.table.name") }}</td>
-            <td>{{ item.metadata.name }}</td>
-          </tr>
-          <tr>
-            <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ item.metadata.creationTimestamp | age }}</td>
-          </tr>
-          <tr>
-            <td>{{ $t("business.common.label") }}</td>
-            <td colspan="4">
-              <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
-                <el-tag type="info" size="small">
-                  {{ key }} = {{ value }}
-                </el-tag>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ $t("business.common.annotation") }}</td>
-            <td colspan="4">
-              <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                <el-tag type="info" size="small" v-if="value.length < 100">
-                  {{ key }} = {{ value }}
-                </el-tag>
-                <el-tooltip v-if="value.length > 100" :content="value" placement="top">
-                  <el-tag type="info" size="small" v-if="value.length >= 100">
-                    {{ key }} = {{ value.substring(0, 100) + "..." }}
-                  </el-tag>
-                </el-tooltip>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-        </div>
+        <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
       </el-card>
       <el-row>
         <el-col :span="24">
@@ -72,10 +29,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getClusterRole} from "@/api/clusterroles"
 import KoDetailRoles from "@/components/detail/detail-roles"
+import KoDetailBasic from "@/components/detail/detail-basic"
 
 export default {
   name: "ClusterRoleDetail",
-  components: { LayoutContent, YamlEditor, KoDetailRoles },
+  components: { KoDetailBasic, LayoutContent, YamlEditor, KoDetailRoles },
   props: {
     name: String
   },
