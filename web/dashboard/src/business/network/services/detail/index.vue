@@ -94,8 +94,8 @@
           <br>
           <el-tabs type="border-card">
             <el-tab-pane label="Pods" v-if="Object.keys(item.metadata).length!==0">
-              <resource-pod :cluster="cluster" :namespace="item.metadata.namespace"
-                            :selector="getSelector(item.spec.selector)"></resource-pod>
+              <resource-pods :cluster="cluster" :namespace="item.metadata.namespace"
+                            :selector="getSelector(item.spec.selector)"></resource-pods>
             </el-tab-pane>
             <el-tab-pane label="Ports" v-if="Object.keys(item.spec).length!==0">
               <resource-ports :data="item.spec.ports"></resource-ports>
@@ -117,7 +117,7 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getService} from "@/api/services"
-import ResourcePod from "@/components/detail/detail-pod"
+import ResourcePod from "@/components/detail/detail-pods"
 import ResourcePorts from "@/components/detail/detail-ports"
 
 export default {
