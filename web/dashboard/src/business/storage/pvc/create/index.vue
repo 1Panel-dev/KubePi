@@ -18,10 +18,10 @@
 			<el-col :span="8">
 			  <el-form-item :label="$t('commons.table.type')" required>
 				<el-select v-model="currentStorageType">
-				  <el-option v-for="storage in storageTypes"
-							 :key="storage.value"
-							 :label="storage.label"
-							 :value="storage.value">
+				  <el-option v-for="ns in namespaces"
+							 :key="ns"
+							 :label="ns"
+							 :value="ns">
 				  </el-option>
 				</el-select>
 			  </el-form-item>
@@ -110,10 +110,13 @@
 					  </el-col>
 					</el-row>
 				  </el-form>
+
 				</ko-card>
 			  </div>
 			</el-tab-pane>
+
 		  </el-tabs>
+
 		</el-form>
 	  </div>
 	  <div v-if="showYaml">
@@ -131,7 +134,6 @@
 	  </div>
 	</div>
   </layout-content>
-
 </template>
 
 <script>
@@ -141,6 +143,7 @@
   import KoCard from "@/components/ko-card/index";
   import {listStorageClasses} from "@/api/storageclass";
   import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
+  import {listNamespace} from "@/api/namespaces"
 
   export default {
     name: "PersistentVolumeCreate",
@@ -199,40 +202,6 @@
         activeName: "",
         yaml: {},
         cluster: "",
-        storageTypes: [{
-          value: "NFS",
-          label: "NFS Share"
-        }, {
-          value: "Local",
-          label: "Local Volume"
-        }, {
-          value: "Host",
-          label: "Host Path"
-        }],
-        hostPathTypes: [{
-          value: "DirectoryOrCreate",
-          label: this.$t('business.storage.DirectoryOrCreateLabel')
-        }, {
-          value: "Directory",
-          label: this.$t('business.storage.DirectoryLabel')
-        }, {
-          value: "FileOrCreate",
-          label: this.$t('business.storage.FileOrCreateLabel')
-        }, {
-          value: "File",
-          label: this.$t('business.storage.FileLabel')
-        }, {
-          value: "Socket",
-          label: this.$t('business.storage.SocketLabel')
-        }, {
-          value: "CharDevice",
-          label: this.$t('business.storage.CharDeviceLabel')
-        }, {
-          value: "BlockDevice",
-          label: this.$t('business.storage.BlockDeviceLabel')
-        }],
-        currentStorageType: "Local",
-        currentAccessModes: "ReadWriteOnce",
         currentStorageCapacity: 1,
         storageClasses: []
       }
@@ -250,6 +219,14 @@
       },
       backToForm() {
         this.showYaml = false
+      },
+      loadNamespace() {
+        this.namespaces = []
+        listNamespace(this.clusterName).then((res) => {
+          for (const ns of res.items) {
+            this.namespace_list.push(ns.metadata.name)
+          }
+        })
       },
       onSubmit() {
         let data = {}
