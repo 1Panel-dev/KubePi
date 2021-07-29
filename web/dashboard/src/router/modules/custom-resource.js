@@ -9,6 +9,11 @@ const CustomResource = {
   children: [
     {
       path: "/customResources",
+      requirePermission: {
+        apiGroup: "apiextensions.k8s.io",
+        resource: "customresourcedefinitions",
+        verb: "list",
+      },
       component: () => import("@/business/custom-resource"),
       name: "CustomResources",
       meta: {

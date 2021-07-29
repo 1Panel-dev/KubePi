@@ -3,10 +3,10 @@
     <complex-table :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -68,6 +68,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteHpa, listHpas} from "@/api/hpa"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "HPA",
@@ -92,6 +93,9 @@ export default {
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"update"})
           }
         },
         {
@@ -103,6 +107,9 @@ export default {
               params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"update"})
           }
         },
         {
@@ -117,6 +124,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"delete"})
           }
         },
       ],

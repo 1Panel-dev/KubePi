@@ -3,10 +3,10 @@
     <complex-table :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -38,6 +38,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteRoleBinding, listRoleBindings} from "@/api/rolebings"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "RoleBindings",
@@ -61,6 +62,9 @@ export default {
               name: "RoleBindingEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -75,6 +79,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
           }
         },
       ],
