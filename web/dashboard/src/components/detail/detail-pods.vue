@@ -61,7 +61,6 @@ export default {
   methods: {
     search () {
       this.loading = true
-
       if (this.namespace && this.namespace !== "") {
         listPodsWithNsSelector(this.cluster, this.namespace, this.selector).then(res => {
           this.pods = res.items
