@@ -47,7 +47,6 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listEvents} from "@/api/events"
-import {listNamespace} from "@/api/namespaces"
 import {mixin} from "@/utils/resourceRoutes"
 
 export default {
