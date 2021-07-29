@@ -68,7 +68,7 @@ const Configuration = {
       }
     },
     {
-      path: "/secrets/detail/:namespace/:name",
+      path: "/secrets/:namespace/:name/detail",
       component: () => import("@/business/configuration/secrets/detail"),
       name: "SecretDetail",
       props: true,
@@ -88,7 +88,7 @@ const Configuration = {
       }
     },
     {
-      path: "/:namespace/secrets/edit/:name",
+      path: "/secrets/:namespace/:name/edit",
       component: () => import("@/business/configuration/secrets/edit"),
       name: "SecretEdit",
       props: true,

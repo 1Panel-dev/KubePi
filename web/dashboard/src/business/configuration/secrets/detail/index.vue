@@ -4,58 +4,7 @@
       <div v-if="!yamlShow">
         <el-col :span="24">
           <el-card>
-            <table style="width: 100%" class="myTable">
-              <tr>
-                <th scope="col" align="left">
-                  <h3>{{ $t("business.common.basic") }}</h3>
-                </th>
-                <th scope="col"></th>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.name") }}</td>
-                <td>{{ item.metadata.name }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.configuration.type") }}</td>
-                <td>{{ item.type }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.namespace.namespace") }}</td>
-                <td>{{ item.metadata.namespace }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.created_time") }}</td>
-                <td>{{ item.metadata.creationTimestamp | age }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.label") }}</td>
-                <td colspan="4">
-                  <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
-                    <el-tag type="info" size="small">
-                      {{ key }} = {{ value }}
-                    </el-tag>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.annotation") }}</td>
-                <td colspan="4">
-                  <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                    <el-tag type="info" size="small" v-if="value.length < 100">
-                      {{ key }} = {{ value }}
-                    </el-tag>
-                    <el-tooltip v-if="value.length > 100" :content="value" placement="top">
-                      <el-tag type="info" size="small" v-if="value.length >= 100">
-                        {{ key }} = {{ value.substring(0, 100) + "..." }}
-                      </el-tag>
-                    </el-tooltip>
-                  </div>
-                </td>
-              </tr>
-            </table>
-            <div class="bottom-button">
-              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-            </div>
+            <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="24">
@@ -94,10 +43,11 @@ import {getSecret} from "@/api/secrets"
 import {isJSON} from "@/utils/data"
 import KoData from "@/components/ko-data"
 import YamlEditor from "@/components/yaml-editor"
+import KoDetailBasic from "@/components/detail/detail-basic"
 
 export default {
   name: "SecretDetail",
-  components: { YamlEditor, KoData, LayoutContent },
+  components: { KoDetailBasic, YamlEditor, KoData, LayoutContent },
   props: {
     name: String,
     namespace: String
