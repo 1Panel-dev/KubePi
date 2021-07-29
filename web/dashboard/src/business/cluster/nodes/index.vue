@@ -65,18 +65,11 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
       listNodes(this.clusterName, this.searchName).then(res => {
         this.loading = false
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
       })
     },
     onDetail (row) {

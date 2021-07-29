@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!loading">
     <complex-table :data="pods" v-loading="loading" @search="search()">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
@@ -42,10 +42,10 @@
 
 <script>
 import ComplexTable from "@/components/complex-table"
-import {listPodsWithNsSelector} from "@/api/pods"
+import {listPods, listPodsWithNsSelector} from "@/api/pods"
 
 export default {
-  name: "KoDetailPod",
+  name: "KoDetailPods",
   components: { ComplexTable },
   props: {
     cluster: String,
@@ -61,10 +61,18 @@ export default {
   methods: {
     search () {
       this.loading = true
-      listPodsWithNsSelector(this.cluster, this.namespace, this.selector).then(res => {
-        this.pods = res.items
-        this.loading = false
-      })
+
+      if (this.namespace && this.namespace !== "") {
+        listPodsWithNsSelector(this.cluster, this.namespace, this.selector).then(res => {
+          this.pods = res.items
+          this.loading = false
+        })
+      } else {
+        listPods(this.cluster, this.selector).then(res => {
+          this.pods = res.items
+          this.loading = false
+        })
+      }
     },
     openDetail (row) {
       this.$router.push({
