@@ -1,12 +1,16 @@
 <template>
   <layout-content header="Persistent Volume Claims">
-    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small"
+                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'create'}"
+                     @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small"
+                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'delete'}"
+                     :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -40,9 +44,9 @@
       <el-table-column :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
-      <template v-slot:default="{row}">
-        {{ row.metadata.creationTimestamp | age }}
-      </template>
+        <template v-slot:default="{row}">
+          {{ row.metadata.creationTimestamp | age }}
+        </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
@@ -54,12 +58,12 @@
   import ComplexTable from "@/components/complex-table/index"
   import {downloadYaml} from "@/utils/actions"
   import KoTableOperations from "@/components/ko-table-operations"
-  import {listPvcs, deletePvcs} from "@/api/pvc";
+  import {deletePvcs, listPvcs} from "@/api/pvc";
 
   export default {
     name: "PersistentVolumeClaim",
-    components: { ComplexTable, LayoutContent, KoTableOperations },
-    data () {
+    components: {ComplexTable, LayoutContent, KoTableOperations},
+    data() {
       return {
         data: [],
         selects: [],
@@ -73,8 +77,8 @@
             click: (row) => {
               this.$router.push({
                 name: "PersistentVolumeClaimEdit",
-                params: { name: row.metadata.name },
-                query: { yamlShow: false }
+                params: {name: row.metadata.name},
+                query: {yamlShow: false}
               })
             }
           },
@@ -84,8 +88,8 @@
             click: (row) => {
               this.$router.push({
                 name: "PersistentVolumeClaimEdit",
-                params: { name: row.metadata.name },
-                query: { yamlShow: true }
+                params: {name: row.metadata.name},
+                query: {yamlShow: true}
               })
             }
           },
@@ -107,7 +111,7 @@
       }
     },
     methods: {
-      search (init) {
+      search(init) {
         this.loading = true
         if (init) {
           this.page = {
@@ -120,20 +124,20 @@
           this.loading = false
         })
       },
-      onCreate () {
+      onCreate() {
         this.$router.push({
           name: "PersistentVolumeClaimCreate",
-          query: { yamlShow: false }
+          query: {yamlShow: false}
         })
       },
-      onDelete (row) {
+      onDelete(row) {
         this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+            this.$t("commons.confirm_message.delete"),
+            this.$t("commons.message_box.prompt"), {
+              confirmButtonText: this.$t("commons.button.confirm"),
+              cancelButtonText: this.$t("commons.button.cancel"),
+              type: "warning",
+            }).then(() => {
           this.ps = []
           if (row) {
             this.ps.push(deletePvcs(this.cluster, row.metadata.name))
@@ -146,28 +150,28 @@
           }
           if (this.ps.length !== 0) {
             Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
+                .then(() => {
+                  this.search(true)
+                  this.$message({
+                    type: "success",
+                    message: this.$t("commons.msg.delete_success"),
+                  })
                 })
-              })
-              .catch(() => {
-                this.search(true)
-              })
+                .catch(() => {
+                  this.search(true)
+                })
           }
         })
       },
-      openDetail (row) {
+      openDetail(row) {
         this.$router.push({
           name: "PersistentVolumeClaimDetail",
-          params: { name: row.metadata.name },
-          query: { yamlShow: false }
+          params: {name: row.metadata.name},
+          query: {yamlShow: false}
         })
       },
     },
-    created () {
+    created() {
       this.cluster = this.$route.query.cluster
       this.search()
     }

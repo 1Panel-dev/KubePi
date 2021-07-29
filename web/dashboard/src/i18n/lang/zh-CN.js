@@ -48,7 +48,8 @@ const message = {
     },
     form: {
       name: "名称",
-      detail: "详情"
+      detail: "详情",
+      setting: "设置"
     },
     validate: {
       limit: "长度在 {0} 到 {1} 个字符",
@@ -179,7 +180,9 @@ const message = {
       reclaimPolicy: "回收策略",
       storageClass: "存储类",
       claim: "要求",
+      pvSource: "VolumeClaim Source",
       assignSc: "绑定 StorageClass",
+      assignPv: "绑定 PersistentVolume",
       DirectoryOrCreateLabel: "DirectoryOrCreate: 如果路径不存在则创建空目录，默认权限为0755 ",
       DirectoryLabel: "Directory: 路径必须存在",
       FileOrCreateLabel: "FileOrCreate: 如果路径上什么都不存在，则创建空文件，默认权限为：0644",

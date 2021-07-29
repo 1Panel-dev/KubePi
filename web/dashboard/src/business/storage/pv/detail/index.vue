@@ -24,7 +24,7 @@
                   <el-button v-else type="" size="mini" plain round>
                     {{ item.status.phase }}
                   </el-button>
-                  </td>
+                </td>
               </tr>
               <tr>
                 <td>{{ this.$t('business.storage.capacity') }}</td>
@@ -37,7 +37,8 @@
                     <el-tag type="info" size="small">
                       {{ value }}
                     </el-tag>
-                  </div></td>
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>{{ this.$t('business.storage.storageClass') }}</td>
@@ -131,77 +132,77 @@
 </template>
 
 <script>
-import LayoutContent from "@/components/layout/LayoutContent";
-import {isJSON} from "@/utils/data"
-import {getPv} from "@/api/pv"
-import YamlEditor from "@/components/yaml-editor"
+  import LayoutContent from "@/components/layout/LayoutContent";
+  import {isJSON} from "@/utils/data"
+  import {getPv} from "@/api/pv"
+  import YamlEditor from "@/components/yaml-editor"
 
-export default {
-  name: "PersistentVolumeDetail",
-  components: { YamlEditor, LayoutContent },
-  props: {
-    name: String,
-    namespace: String,
-  },
-  data () {
-    return {
-      item: {
-        metadata: {},
-        spec: {
-          capacity: {
-            storage: ''
-          }
+  export default {
+    name: "PersistentVolumeDetail",
+    components: {YamlEditor, LayoutContent},
+    props: {
+      name: String,
+      namespace: String,
+    },
+    data() {
+      return {
+        item: {
+          metadata: {},
+          spec: {
+            capacity: {
+              storage: ''
+            }
+          },
+          status: {}
         },
-        status: {}
+        cluster: "",
+        yamlShow: false,
+        loading: false,
+        yaml: {}
+      }
+    },
+    methods: {
+      getDetail() {
+        this.loading = true
+        getPv(this.cluster, this.name).then(res => {
+          this.loading = false
+          this.item = res
+          if (this.yamlShow) {
+            this.yaml = JSON.parse(JSON.stringify(this.item))
+          }
+        })
       },
-      cluster: "",
-      yamlShow: false,
-      loading: false,
-      yaml: {}
-    }
-  },
-  methods: {
-    getDetail () {
-      this.loading = true
-      getPv(this.cluster, this.name).then(res => {
-        this.loading = false
-        this.item = res
-        if (this.yamlShow) {
-          this.yaml = JSON.parse(JSON.stringify(this.item))
-        }
-      })
+      getContent(value) {
+        const {Base64} = require("js-base64")
+        const content = Base64.decode(value)
+        return JSON.parse(content)
+      },
+      jsonV(str) {
+        const {Base64} = require("js-base64")
+        const content = Base64.decode(str)
+        return isJSON(content)
+      },
+      getValue(value) {
+        const {Base64} = require("js-base64")
+        return Base64.decode(value)
+      }
     },
-    getContent (value) {
-      const { Base64 } = require("js-base64")
-      const content = Base64.decode(value)
-      return JSON.parse(content)
+    watch: {
+      yamlShow: function (newValue) {
+        this.$router.push({
+          name: "PersistentVolumeDetail",
+          params: {name: this.name, namespace: this.namespace},
+          query: {yamlShow: newValue}
+        })
+        this.getDetail()
+      }
     },
-    jsonV (str) {
-      const { Base64 } = require("js-base64")
-      const content = Base64.decode(str)
-      return isJSON(content)
-    },
-    getValue (value) {
-      const { Base64 } = require("js-base64")
-      return Base64.decode(value)
-    }
-  },
-  watch: {
-    yamlShow:function (newValue) {
-      this.$router.push({
-        name: "PersistentVolumeDetail",
-        params: { name: this.name, namespace: this.namespace },
-        query: { yamlShow: newValue }
-      })
+    created() {
+      this.cluster = this.$route.query.cluster
+      this.yamlShow = this.$route.query.yamlShow === "true"
       this.getDetail()
     }
-  },
-  created () {
-    this.cluster = this.$route.query.cluster
-    this.yamlShow = this.$route.query.yamlShow === "true"
-    this.getDetail()
   }
-}
 </script>
 
 <style scoped>

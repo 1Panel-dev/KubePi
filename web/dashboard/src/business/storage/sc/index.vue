@@ -1,12 +1,16 @@
 <template>
   <layout-content header="Storage Class">
-    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small"
+                     v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}"
+                     @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small"
+                     v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}"
+                     :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -37,12 +41,12 @@
   import ComplexTable from "@/components/complex-table/index"
   import {downloadYaml} from "@/utils/actions"
   import KoTableOperations from "@/components/ko-table-operations"
-  import {listStorageClasses, deleteStorageClasses} from "@/api/storageclass";
+  import {deleteStorageClasses, listStorageClasses} from "@/api/storageclass";
 
   export default {
     name: "StorageClasses",
-    components: { ComplexTable, LayoutContent, KoTableOperations },
-    data () {
+    components: {ComplexTable, LayoutContent, KoTableOperations},
+    data() {
       return {
         data: [],
         selects: [],
@@ -56,8 +60,8 @@
             click: (row) => {
               this.$router.push({
                 name: "StorageClassEdit",
-                params: { name: row.metadata.name },
-                query: { yamlShow: false }
+                params: {name: row.metadata.name},
+                query: {yamlShow: false}
               })
             }
           },
@@ -67,8 +71,8 @@
             click: (row) => {
               this.$router.push({
                 name: "StorageClassEdit",
-                params: { name: row.metadata.name },
-                query: { yamlShow: true }
+                params: {name: row.metadata.name},
+                query: {yamlShow: true}
               })
             }
           },
@@ -90,7 +94,7 @@
       }
     },
     methods: {
-      search (init) {
+      search(init) {
         this.loading = true
         if (init) {
           this.page = {
@@ -103,20 +107,20 @@
           this.loading = false
         })
       },
-      onCreate () {
+      onCreate() {
         this.$router.push({
           name: "StorageClassCreate",
-          query: { yamlShow: false }
+          query: {yamlShow: false}
         })
       },
-      onDelete (row) {
+      onDelete(row) {
         this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+            this.$t("commons.confirm_message.delete"),
+            this.$t("commons.message_box.prompt"), {
+              confirmButtonText: this.$t("commons.button.confirm"),
+              cancelButtonText: this.$t("commons.button.cancel"),
+              type: "warning",
+            }).then(() => {
           this.ps = []
           if (row) {
             this.ps.push(deleteStorageClasses(this.cluster, row.metadata.name))
@@ -129,28 +133,28 @@
           }
           if (this.ps.length !== 0) {
             Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
+                .then(() => {
+                  this.search(true)
+                  this.$message({
+                    type: "success",
+                    message: this.$t("commons.msg.delete_success"),
+                  })
                 })
-              })
-              .catch(() => {
-                this.search(true)
-              })
+                .catch(() => {
+                  this.search(true)
+                })
           }
         })
       },
-      openDetail (row) {
+      openDetail(row) {
         this.$router.push({
           name: "StorageClassDetail",
-          params: { name: row.metadata.name },
-          query: { yamlShow: false }
+          params: {name: row.metadata.name},
+          query: {yamlShow: false}
         })
       },
     },
-    created () {
+    created() {
       this.cluster = this.$route.query.cluster
       this.search()
     }
