@@ -1,13 +1,13 @@
 <template>
   <layout-content header="Secrets">
-    <complex-table :pagination-config="paginationConfig" :data="data" :selects.sync="selects" @search="search"
+    <complex-table :data="data" :selects.sync="selects" @search="search"
                    v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate"  v-has-permissions="{apiGroup:'',resource:'secrets',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'secrets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -19,22 +19,9 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.configuration.type')" prop="type">
-        <template v-slot:default="{row}">
-          {{ row.type }}
-        </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
-        </template>
       </el-table-column>
-      <!--      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">-->
-      <!--        <template v-slot:default="{row}">-->
-      <!--          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">-->
-      <!--            {{ key }}={{ value }}-->
-      <!--          </el-tag>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -51,6 +38,7 @@ import ComplexTable from "@/components/complex-table"
 import {deleteSecrets, listSecrets} from "@/api/secrets"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "Secrets",
@@ -62,11 +50,6 @@ export default {
       cluster: "",
       loading: false,
       namespaces: [],
-      paginationConfig: {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-      },
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -77,6 +60,9 @@ export default {
               params: {namespace: row.metadata.namespace, name: row.metadata.name},
               query: {yamlShow: false}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"update"})
           }
         },
         {
@@ -88,6 +74,9 @@ export default {
               params: {namespace: row.metadata.namespace, name: row.metadata.name},
               query: {yamlShow: true}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"update"})
           }
         },
         {
@@ -102,20 +91,17 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"delete"})
           }
         },
       ]
     }
   },
   methods: {
-    search(init) {
+    search() {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
-      }
       listSecrets(this.cluster).then(res => {
         this.data = res.items
         this.loading = false

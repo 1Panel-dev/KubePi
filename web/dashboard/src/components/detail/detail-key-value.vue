@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-link @click="showItem=!showItem">
+    <el-link @click="showItem=!showItem" v-if="showExpand">
       {{ showItem ? $t("business.common.pack_up") : $t("business.common.expand") }}
     </el-link>
     <div v-if="showItem">
@@ -24,16 +24,19 @@ export default {
   components: {},
   props: {
     valueObj: Object,
-    show: Boolean
   },
   data () {
     return {
-      showItem: false
+      showItem: true,
+      showExpand: false
     }
   },
   methods: {},
   created () {
-    this.showItem = this.show ? true : this.showItem
+    if (this.valueObj) {
+      this.showExpand = Object.keys(this.valueObj).length > 5
+      this.showItem = !this.showExpand
+    }
   }
 }
 </script>

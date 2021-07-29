@@ -3,10 +3,10 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate"   v-has-permissions="{apiGroup:'',resource:'serviceaccounts',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -38,6 +38,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteServiceAccount, listServiceAccounts} from "@/api/serviceaccounts"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ServiceAccounts",
@@ -57,6 +58,9 @@ export default {
               name: "ServiceAccountEdit",
               params: {namespace: row.metadata.namespace, name: row.metadata.name},
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"serviceaccounts",verb:"update"})
           }
         },
         {
@@ -71,6 +75,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"serviceaccounts",verb:"delete"})
           }
         },
       ],

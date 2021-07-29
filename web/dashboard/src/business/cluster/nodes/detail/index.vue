@@ -4,36 +4,7 @@
       <el-row :gutter="20">
         <el-col :span="15">
           <el-card>
-            <table style="width: 100%" class="myTable">
-              <tr>
-                <th scope="col" width="30%" align="left">
-                  <h3>{{ $t("business.common.basic") }}</h3></th>
-                <th scope="col"></th>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.name") }}</td>
-                <td>{{ item.metadata.name }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.created_time") }}</td>
-                <td>{{ item.metadata.creationTimestamp | age }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.label") }}</td>
-                <td>
-                  <ko-detail-key-value :show="true" :valueObj="item.metadata.labels"></ko-detail-key-value>
-                </td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.annotation") }}</td>
-                <td>
-                  <ko-detail-key-value :valueObj="item.metadata.annotations"></ko-detail-key-value>
-                </td>
-              </tr>
-            </table>
-            <div class="bottom-button">
-              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-            </div>
+            <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
@@ -206,22 +177,18 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getNode} from "@/api/nodes"
 import {listPods} from "@/api/pods"
-import ComplexTable from "@/components/complex-table"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailConditions from "@/components/detail/detail-conditions"
-import KoKeyValue from "@/components/ko-configuration/ko-key-value"
-import KoDetailKeyValue from "@/components/detail/detail-key-value"
 import KoDetailPods from "@/components/detail/detail-pods"
+import KoDetailBasic from "@/components/detail/detail-basic"
 
 export default {
   name: "NodeDetail",
   components: {
+    KoDetailBasic,
     KoDetailPods,
-    KoDetailKeyValue,
-    KoKeyValue,
     KoDetailConditions,
     YamlEditor,
-    ComplexTable,
     LayoutContent
   },
   props: {

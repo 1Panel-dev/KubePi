@@ -6,7 +6,7 @@
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item command="">全部</el-dropdown-item>
+      <el-dropdown-item command="">All Namespaces</el-dropdown-item>
       <el-dropdown-item disabled divided></el-dropdown-item>
       <el-dropdown-item v-for="(value,key) in namespaceOptions" :key="key" :command="value">{{ value }}
       </el-dropdown-item>
@@ -28,7 +28,7 @@ export default {
   computed: {
     getNamespaceName() {
       const p = sessionStorage.getItem("namespace")
-      return (p === null) ? "全部" : p
+      return (p === null) ? "All Namespaces" : p
     }
   },
   methods: {

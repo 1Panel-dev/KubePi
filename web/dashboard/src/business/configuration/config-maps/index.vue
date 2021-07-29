@@ -3,23 +3,13 @@
     <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
-      </template>
-      <template #toolbar>
-        <el-select v-model="conditions" @change="search(true)">
-          <el-option label="All Namespaces" value=""></el-option>
-          <el-option v-for="namespace in namespaces"
-                     :key="namespace.metadata.name"
-                     :label="namespace.metadata.name"
-                     :value="namespace.metadata.name">
-          </el-option>
-        </el-select>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
@@ -28,9 +18,6 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
-        </template>
       </el-table-column>
       <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
         <template v-slot:default="{row}">
@@ -55,7 +42,7 @@ import {deleteConfigMap, listConfigMaps} from "@/api/configmaps"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {downloadYaml} from "@/utils/actions"
-import {listNamespace} from "@/api/namespaces"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ConfigMaps",
@@ -67,7 +54,6 @@ export default {
       cluster: "",
       loading: false,
       conditions: "",
-      namespaces: [],
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -78,6 +64,9 @@ export default {
               params: {namespace: row.metadata.namespace, name: row.metadata.name},
               query: {yamlShow: false}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"update"})
           }
         },
         {
@@ -89,6 +78,9 @@ export default {
               params: {name: row.metadata.name, namespace: row.metadata.namespace},
               query: {yamlShow: true}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"update"})
           }
         },
         {
@@ -103,6 +95,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"delete"})
           }
         },
       ],
@@ -167,11 +162,6 @@ export default {
         query: {yamlShow: false}
       })
     },
-    listAllNameSpaces() {
-      listNamespace(this.cluster).then(res => {
-        this.namespaces = res.items
-      })
-    }
   },
   created() {
     this.cluster = this.$route.query.cluster

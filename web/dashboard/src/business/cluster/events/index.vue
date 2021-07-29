@@ -2,16 +2,6 @@
   <layout-content header="Events">
     <complex-table :data="data" @search="search()" v-loading="loading">
       <template #toolbar>
-        <!--        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"-->
-        <!--                  @change="search(true)" @clear="search(true)"></el-input>-->
-        <el-select v-model="searchName" @change="search(true)">
-          <el-option label="All Namespaces" value=""></el-option>
-          <el-option v-for="namespace in namespaces"
-                     :key="namespace.metadata.name"
-                     :label="namespace.metadata.name"
-                     :value="namespace.metadata.name">
-          </el-option>
-        </el-select>
       </template>
       <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
         <template v-slot:default="{row}">
@@ -74,30 +64,17 @@ export default {
     }
   },
   methods: {
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
       listEvents(this.clusterName, this.searchName).then(res => {
         this.loading = false
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
       })
     },
-    listAllNameSpaces () {
-      listNamespace(this.clusterName).then(res => {
-        this.namespaces = res.items
-      })
-    }
   },
   created () {
     this.clusterName = this.$route.query.cluster
     this.search()
-    this.listAllNameSpaces()
   }
 }
 </script>
