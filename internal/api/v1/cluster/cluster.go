@@ -14,6 +14,7 @@ import (
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	"github.com/KubeOperator/ekko/pkg/terminal"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -375,4 +376,11 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/apigroups", handler.ListApiGroups())
 	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
 	sp.Get("/:name/namespaces", handler.ListNamespace())
+	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
+
+	wsParty := parent.Party("/ws")
+	h := terminal.CreateAttachHandler("/ws/sockjs")
+	wsParty.Any("/sockjs/{p:path}", func(ctx *context.Context) {
+		h.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
+	})
 }

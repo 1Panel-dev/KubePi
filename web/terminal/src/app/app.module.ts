@@ -16,7 +16,7 @@ import {routes} from "./app.routing";
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes, {
-      useHash: true,
+      useHash: false,
       onSameUrlNavigation: 'reload'
     })
   ],

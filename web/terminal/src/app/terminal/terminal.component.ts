@@ -24,6 +24,7 @@ export class TerminalComponent implements AfterViewInit {
   container: string;
 
   private readonly namespace_: string
+  clusterName: string;
   private connecting_: boolean
   private connectionClosed_: boolean
   private conn_: WebSocket
@@ -41,6 +42,7 @@ export class TerminalComponent implements AfterViewInit {
               private _router: Router,
               private terminalService: TerminalService
   ) {
+    this.clusterName = this.activatedRoute_.snapshot.queryParams["cluster"]
     this.namespace_ = this.activatedRoute_.snapshot.queryParams["namespace"]
     this.podName = this.activatedRoute_.snapshot.queryParams["pod"]
     this.container = this.activatedRoute_.snapshot.queryParams["container"]
@@ -161,14 +163,18 @@ export class TerminalComponent implements AfterViewInit {
     this.connecting_ = true;
     this.connectionClosed_ = false;
 
-    const {id} = await this.terminalService.createTerminalSession(this.namespace_, this.podName, this.container).toPromise()
+    try {
+      const {data} = await this.terminalService.createTerminalSession(this.clusterName, this.namespace_, this.podName, this.container).toPromise()
+      const id = data.id
+      this.conn_ = new SockJS(`/api/v1/ws/sockjs?${id}`);
+      this.conn_.onopen = this.onConnectionOpen.bind(this, id);
+      this.conn_.onmessage = this.onConnectionMessage.bind(this);
+      this.conn_.onclose = this.onConnectionClose.bind(this);
 
-    this.conn_ = new SockJS(`/api/ws/sockjs?${id}`);
-    this.conn_.onopen = this.onConnectionOpen.bind(this, id);
-    this.conn_.onmessage = this.onConnectionMessage.bind(this);
-    this.conn_.onclose = this.onConnectionClose.bind(this);
-
-    this.cdr_.markForCheck();
+      this.cdr_.markForCheck();
+    } catch (e) {
+      alert(e.error.message)
+    }
   }
 
   private handleConnectionMessage(frame: ShellFrame): void {

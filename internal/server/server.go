@@ -82,7 +82,7 @@ func (e *EkkoSerer) setResultHandler() {
 			ss := strings.Split(p, "/")
 			if len(ss) >= 3 {
 				for i := range ss {
-					if ss[i] == "proxy" {
+					if ss[i] == "proxy" || ss[i] == "ws" {
 						return true
 					}
 				}
