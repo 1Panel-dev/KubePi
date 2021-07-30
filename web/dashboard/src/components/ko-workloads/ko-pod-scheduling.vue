@@ -1,27 +1,27 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Pod Scheduling">
+    <ko-card :title="'Pod ' + $t('business.workload.schedule')">
       <el-form label-position="top" :disabled="isReadOnly">
         <div v-for="(item, index) in podSchedulings" :key="index">
           <el-card style="margin-top: 10px">
             <el-row>
-              <el-button style="float: right;" type="text" @click="handlePodRulesDelete(index)">删 除</el-button>
+              <el-button style="float: right;" type="text" @click="handlePodRulesDelete(index)">{{$t("commons.button.delete")}}</el-button>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Type">
+                <el-form-item :label="$t('business.workload.type')">
                   <ko-form-item itemType="radio" v-model="item.type" :radios="type_list" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="Priority">
+                <el-form-item :label="$t('business.workload.priority')">
                   <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Namespace Operation">
+                <el-form-item :label="$t('business.workload.namespace_operation')">
                   <ko-form-item itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
                 </el-form-item>
               </el-col>
@@ -35,13 +35,13 @@
             <table style="width: 98%" class="tab-table">
               <tr>
                 <th scope="col" width="40%" align="left">
-                  <label>key</label>
+                  <label>{{$t('business.workload.key')}}</label>
                 </th>
                 <th scope="col" width="15%" align="left">
-                  <label>operator</label>
+                  <label>{{$t('business.workload.operator')}}</label>
                 </th>
                 <th scope="col" width="40%" align="left">
-                  <label>value</label>
+                  <label>{{$t('business.workload.value')}}</label>
                 </th>
                 <th align="left"></th>
               </tr>
@@ -70,14 +70,14 @@
             </table>
             <el-row style="margin-top: 10px">
               <el-col :span=24>
-                <el-form-item label="Topology Key">
+                <el-form-item :label="$t('business.workload.topology_key')">
                   <ko-form-item itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
                 </el-form-item>
               </el-col>
             </el-row>
           </el-card>
         </div>
-        <el-button @click="handlePodRulesAdd()">Add Node Selector</el-button>
+        <el-button @click="handlePodRulesAdd()">{{$t('business.workload.add')}}{{$t('business.workload.node_selector')}}</el-button>
       </el-form>
     </ko-card>
   </div>
@@ -106,16 +106,16 @@ export default {
   data() {
     return {
       type_list: [
-        { label: "Affinity", value: "Affinity" },
-        { label: "Anti-Affinity", value: "Anti-Affinity" },
+        { label: this.$t("business.workload.affinity"), value: "Affinity" },
+        { label: this.$t("business.workload.anti_affinity"), value: "Anti-Affinity" },
       ],
       priority_list: [
-        { label: "Preferred", value: "Preferred" },
-        { label: "Required", value: "Required" },
+        { label: this.$t("business.workload.preferred"), value: "Preferred" },
+        { label: this.$t("business.workload.required"), value: "Required" },
       ],
       namespace_operation_list: [
-        { label: "This pod's namespace", value: "podNamespace" },
-        { label: "Pods in these namespaces", value: "selectNamespace" },
+        { label: this.$t("business.workload.this_namespace"), value: "podNamespace" },
+        { label: this.$t("business.workload.these_namespace"), value: "selectNamespace" },
       ],
       operator_list: [
         { label: "<", value: "Lt" },

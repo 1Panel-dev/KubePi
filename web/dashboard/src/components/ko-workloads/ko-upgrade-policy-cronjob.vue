@@ -1,64 +1,64 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Update Policy">
+    <ko-card :title="$t('business.workload.upgrade_policy')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Concurrency" prop="concurrencyPolicy">
+            <el-form-item :label="$t('business.workload.concurrency')" prop="concurrencyPolicy">
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.concurrencyPolicy" :radios="concurrency_policy_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Suspend" prop="suspend">
+            <el-form-item :label="$t('business.workload.suspend')" prop="suspend">
               <ko-form-item itemType="radio" v-model="form.suspend" :radios="suspend_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Completions" prop="jobTemplate.spec.completions">
-              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.completions" />
+            <el-form-item :label="$t('business.workload.completions')" prop="jobTemplate.spec.completions">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.jobTemplate.spec.completions" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Parallelism" prop="jobTemplate.spec.parallelism">
-              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.parallelism" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Back Off Limit" prop="jobTemplate.spec.backoffLimit">
-              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.backoffLimit" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="Active Deadline" prop="jobTemplate.spec.activeDeadlineSeconds">
-              <ko-form-item deviderName="Times" itemType="number" v-model.number="form.jobTemplate.spec.activeDeadlineSeconds" />
+            <el-form-item :label="$t('business.workload.parallelism')" prop="jobTemplate.spec.parallelism">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.jobTemplate.spec.parallelism" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Successful Job History Limit" prop="successfulJobsHistoryLimit">
+            <el-form-item :label="$t('business.workload.back_off_limit')" prop="jobTemplate.spec.backoffLimit">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.jobTemplate.spec.backoffLimit" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.active_deadline')" prop="jobTemplate.spec.activeDeadlineSeconds">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.jobTemplate.spec.activeDeadlineSeconds" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.successful_job_history_limit')" prop="successfulJobsHistoryLimit">
               <ko-form-item itemType="number" v-model.number="form.successfulJobsHistoryLimit" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Failed Job History Limit" prop="failedJobsHistoryLimit">
+            <el-form-item :label="$t('business.workload.failed_job_history_limit')" prop="failedJobsHistoryLimit">
               <ko-form-item itemType="number" v-model.number="form.failedJobsHistoryLimit" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Starting Deadline Seconds" prop="startingDeadlineSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.startingDeadlineSeconds" />
+            <el-form-item :label="$t('business.workload.allow_run')" prop="startingDeadlineSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.startingDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Pod Active Deadline" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
+            <el-form-item :label="$t('business.workload.allow_run')" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -80,13 +80,13 @@ export default {
   data() {
     return {
       concurrency_policy_list: [
-        { label: "Allow CronJobs to run Concurrently", value: "Allow" },
-        { label: "Skip next if current run hasn't finished", value: "Forbid" },
-        { label: "Replace run if current run hasn't finished", value: "Replace" },
+        { label: this.$t("business.workload.allow_run"), value: "Allow" },
+        { label: this.$t("business.workload.skip_if_not_finish"), value: "Forbid" },
+        { label: this.$t("business.workload.replace_if_not_finish"), value: "Replace" },
       ],
       suspend_list: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
+        { label: this.$t("business.workload.yes"), value: true },
+        { label: this.$t("business.workload.no"), value: false },
       ],
       form: {
         jobTemplate: {

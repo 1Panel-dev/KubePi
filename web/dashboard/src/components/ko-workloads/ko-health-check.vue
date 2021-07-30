@@ -5,29 +5,29 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-row>
-              <el-form-item label="Type">
+              <el-form-item :label="$t('business.workload.check_type')">
                 <ko-form-item itemType="select" v-model="check_type" :selections="type_list" />
               </el-form-item>
             </el-row>
             <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
               <el-row>
-                <el-form-item label="Check Port" prop="httpGet.port">
+                <el-form-item :label="$t('business.workload.check_port')" prop="httpGet.port">
                   <ko-form-item itemType="number" v-model.number="form.httpGet.port" />
                 </el-form-item>
               </el-row>
               <el-row>
-                <el-form-item label="Request Path" prop="httpGet.path">
+                <el-form-item :label="$t('business.workload.check_path')" prop="httpGet.path">
                   <ko-form-item itemType="input" v-model="form.httpGet.path" />
                 </el-form-item>
               </el-row>
             </div>
             <el-row v-if="check_type === 'tcpSocket'">
-              <el-form-item label="Check Port" prop="tcpSocket.port">
+              <el-form-item :label="$t('business.workload.check_port')" prop="tcpSocket.port">
                 <ko-form-item itemType="number" v-model.number="form.tcpSocket.port" />
               </el-form-item>
             </el-row>
             <el-row v-if="check_type === 'exec'">
-              <el-form-item label="Command to run" prop="exec.command">
+              <el-form-item :label="$t('business.workload.check_cmd')" prop="exec.command">
                 <ko-form-item placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
               </el-form-item>
             </el-row>
@@ -35,39 +35,39 @@
           <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
             <el-row :gutter="10">
               <el-col :span="8">
-                <el-form-item label="Check Interval" prop="periodSeconds">
+                <el-form-item :label="$t('business.workload.check_interval')" prop="periodSeconds">
                   <ko-form-item placeholder="Default: 10" deviderName="sec" itemType="number" v-model.number="form.periodSeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="Initial Delay" prop="initialDelaySeconds">
+                <el-form-item :label="$t('business.workload.initial_delay')" prop="initialDelaySeconds">
                   <ko-form-item placeholder="Default: 0" deviderName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="Timeout" prop="timeoutSeconds">
+                <el-form-item :label="$t('business.workload.timeout')" prop="timeoutSeconds">
                   <ko-form-item placeholder="Default: 3" deviderName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">
-                <el-form-item label="Seccess Threshold" prop="successThreshold">
+                <el-form-item :label="$t('business.workload.seccess_threshold')" prop="successThreshold">
                   <ko-form-item placeholder="Default: 1" itemType="number" v-model.number="form.successThreshold" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="Failure Threshold" prop="failureThreshold">
+                <el-form-item :label="$t('business.workload.failure_threshold')" prop="failureThreshold">
                   <ko-form-item placeholder="Default: 3" itemType="number" v-model.number="form.failureThreshold" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <div><label>Header</label></div>
+              <div><label>{{$t('business.workload.header')}}</label></div>
               <table style="width: 98%" class="tab-table">
                 <tr>
-                  <th scope="col" width="45%" align="left"><label>key</label></th>
-                  <th scope="col" width="45%" align="left"><label>value</label></th>
+                  <th scope="col" width="45%" align="left"><label>{{$t('business.workload.key')}}</label></th>
+                  <th scope="col" width="45%" align="left"><label>{{$t('business.workload.value')}}</label></th>
                   <th align="left"></th>
                 </tr>
                 <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
@@ -113,11 +113,11 @@ export default {
   data() {
     return {
       type_list: [
-        { label: "None", value: "None" },
-        { label: "HTTP request returns a successful status (200-399)", value: "httpGet" },
-        { label: "HTTPS request returns a successful status", value: "httpsGet" },
-        { label: "TCP connection opens successfully", value: "tcpSocket" },
-        { label: "Command run inside the container exits with status 0", value: "exec" },
+        { label: this.$t("business.workload.none"), value: "None" },
+        { label: this.$t("business.workload.http_option"), value: "httpGet" },
+        { label: this.$t("business.workload.https_option"), value: "httpsGet" },
+        { label: this.$t("business.workload.tcp_option"), value: "tcpSocket" },
+        { label: this.$t("business.workload.cmd_option"), value: "exec" },
       ],
       check_type: "None",
       form: {

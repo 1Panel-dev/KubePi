@@ -1,28 +1,28 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Container">
+    <ko-card :title="$t('business.workload.container')">
       <el-form label-position="top" ref="form" :rules="rules" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Container Name" prop="name">
+            <el-form-item :label="$t('business.workload.container_name')" prop="name">
               <ko-form-item itemType="input" @input="changeName" v-model="form.name" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Container Image" prop="image">
+            <el-form-item :label="$t('business.workload.container_image')" prop="image">
               <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Pull Policy" prop="imagePullPolicy">
+            <el-form-item :label="$t('business.workload.pull_policy')" prop="imagePullPolicy">
               <ko-form-item itemType="select" v-model="form.imagePullPolicy" :selections="image_pull_policy_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="Pull Secrets" prop="imagePullSecrets">
+          <el-form-item :label="$t('business.workload.pull_secrets')" prop="imagePullSecrets">
             <ko-form-item itemType="select2" multiple v-model="form.imagePullSecrets" :selections="secret_list" />
           </el-form-item>
         </el-row>

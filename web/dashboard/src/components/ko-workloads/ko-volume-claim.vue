@@ -1,50 +1,48 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Volume Claim Templates">
+    <ko-card :title="$t('business.workload.volume_claim_template')">
       <el-form label-position="top" :disabled="isReadOnly">
         <div v-for="(item, index) in volumeClaimTemplates" :key="index">
           <el-card style="margin-top: 10px">
             <div slot="header" class="clearfix">
-              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">删 除</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
             </div>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Persistent Volume Name">
+                <el-form-item :label="$t('business.workload.pv_name')">
                   <ko-form-item itemType="input" v-model="item.name" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Type">
+                <el-form-item :label="$t('business.workload.type')">
                   <ko-form-item itemType="radio" v-model="item.type" :radios="type_list" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Storage Class">
+                <el-form-item :label="$t('business.workload.storage_class')">
                   <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
                 </el-form-item>
               </el-col>
               <el-col :span="12" v-if="item.type === 'new'">
-                <el-form-item label="Storage Class">
+                <el-form-item :label="$t('business.workload.size')">
                   <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="Access Modes">
-                  <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
-                </el-form-item>
-              </el-col>
+              <el-form-item :label="$t('business.workload.access_modes')">
+                <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
+              </el-form-item>
             </el-row>
           </el-card>
         </div>
         <el-row>
           <el-col :span="12">
-            <el-button @click="handleVolumeAdd">Add Claim Templates</el-button>
+            <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}{{$t('business.workload.volume_claim_template')}}</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -88,13 +86,13 @@ export default {
       volumeClaimTemplates: [],
       sc_list: [],
       type_list: [
-        { label: "Use a Storage Class to provision a new Persistent Volume", value: "new" },
-        { label: "Use an existing Persistent Volume", value: "existing" },
+        { label: this.$t("business.workload.new_pv"), value: "new" },
+        { label: this.$t("business.workload.existing_pv"), value: "existing" },
       ],
       access_mode_list: [
-        { label: "Single-Node(Read/Wrete)", value: "ReadWriteOnce" },
-        { label: "Many-Node(Read-Only)", value: "ReadOnlyMany" },
-        { label: "Many-Node(Read/Wrete)", value: "ReadWriteMany" },
+        { label: this.$t("business.workload.single_read_write"), value: "ReadWriteOnce" },
+        { label: this.$t("business.workload.many_read_only"), value: "ReadOnlyMany" },
+        { label: this.$t("business.workload.many_read_write"), value: "ReadWriteMany" },
       ],
     }
   },

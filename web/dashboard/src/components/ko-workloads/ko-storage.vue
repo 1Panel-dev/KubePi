@@ -1,37 +1,37 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Storage">
+    <ko-card :title="$t('business.workload.storage')">
       <el-form label-position="top" :disabled="isReadOnly">
         <div v-for="(item, index) in volumes" :key="index">
           <el-card style="margin-top: 10px">
             <div slot="header" class="clearfix">
               <span>{{item.type}}</span>
-              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">删 除</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
             </div>
-            <div v-if="item.type === 'persistentVolumeClaim'">
+            <div v-if="item.type === 'PVC'">
               <el-row :gutter="20">
                 <el-col :span="12">
-                  <el-form-item label="Volume Name" required>
+                  <el-form-item :label="$t('business.workload.volume_name')" required>
                     <ko-form-item itemType="input" v-model="item.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="Persistent Volume Claim">
+                  <el-form-item :label="$t('business.workload.pvc')">
                     <ko-form-item itemType="select2" v-model="item.resource" :selections="pvc_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-checkbox style="margin-bottom: 20px" v-model="item.readOnly" >Read Only</el-checkbox>
+              <el-checkbox style="margin-bottom: 20px" v-model="item.readOnly">{{$t('business.workload.read_only')}}</el-checkbox>
             </div>
-            <div v-if="item.type === 'configMap'">
+            <div v-if="item.type === 'ConfigMap'">
               <el-row :gutter="20">
                 <el-col :span="12">
-                  <el-form-item label="Volume Name">
+                  <el-form-item :label="$t('business.workload.volume_name')">
                     <ko-form-item itemType="input" v-model="item.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="Default Mode">
+                  <el-form-item :label="$t('business.workload.default_mode')">
                     <ko-form-item itemType="number" v-model.number="item.defaultMode" />
                   </el-form-item>
                 </el-col>
@@ -43,21 +43,21 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="Optional">
+                  <el-form-item :label="$t('business.workload.optional')">
                     <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
-            <div v-if="item.type === 'secret'">
+            <div v-if="item.type === 'Secret'">
               <el-row :gutter="20">
                 <el-col :span="12">
-                  <el-form-item label="Volume Name">
+                  <el-form-item :label="$t('business.workload.volume_name')">
                     <ko-form-item itemType="input" v-model="item.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="Default Mode">
+                  <el-form-item :label="$t('business.workload.default_mode')">
                     <ko-form-item itemType="input" v-model="item.defaultMode" />
                   </el-form-item>
                 </el-col>
@@ -69,18 +69,18 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="Optional">
+                  <el-form-item :label="$t('business.workload.optional')">
                     <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
-            <div><span>Valume Mount</span></div>
+            <div><span>{{$t('business.workload.volume_mount')}}</span></div>
             <table style="width: 98%;" class="tab-table">
               <tr>
-                <th scope="col" width="43%" align="left"><label>mount point</label></th>
-                <th scope="col" width="43%" align="left"><label>sub path in volume</label></th>
-                <th scope="col" width="8%" align="left"><label>read only</label></th>
+                <th scope="col" width="43%" align="left"><label>{{$t('business.workload.mount_point')}}</label></th>
+                <th scope="col" width="43%" align="left"><label>{{$t('business.workload.sub_path_in_volume')}}</label></th>
+                <th scope="col" width="8%" align="left"><label>{{$t('business.workload.read_only')}}</label></th>
                 <th align="left"></th>
               </tr>
               <tr v-for="(row, index) in item.volumeMounts" v-bind:key="index">
@@ -101,7 +101,7 @@
               </tr>
               <tr>
                 <td align="left">
-                  <el-button @click="handleMountAdd(item)">Add Mount</el-button>
+                  <el-button @click="handleMountAdd(item)">{{$t('business.workload.add')}}{{$t('business.workload.mount')}}</el-button>
                 </td>
               </tr>
             </table>
@@ -110,7 +110,7 @@
         <el-row>
           <el-col :span="12">
             <el-dropdown split-button @command="handleVolumeAdd">
-              Add Volume
+              {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -172,13 +172,13 @@ export default {
       secret_list: [],
       config_map_name_list: [],
       volume_type_list: [
-        { label: "Persistent Volume Claim", value: "persistentVolumeClaim" },
-        { label: "ConfigMap", value: "configMap" },
-        { label: "Secret", value: "secret" },
+        { label: "PVC", value: "PVC" },
+        { label: "ConfigMap", value: "ConfigMap" },
+        { label: "Secret", value: "Secret" },
       ],
       optional_list: [
-        { label: "yes", value: true },
-        { label: "no", value: false },
+        { label: this.$t("business.workload.yes"), value: true },
+        { label: this.$t("business.workload.no"), value: false },
       ],
     }
   },
@@ -237,7 +237,7 @@ export default {
           item.name = volume.name
         }
         switch (volume.type) {
-          case "configMap":
+          case "ConfigMap":
             item.configMap = {}
             if (volume.defaultMode) {
               item.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
@@ -249,7 +249,7 @@ export default {
               item.configMap.optional = volume.optional
             }
             break
-          case "secret":
+          case "Secret":
             item.secret = {}
             if (volume.defaultMode) {
               item.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
@@ -261,7 +261,7 @@ export default {
               item.secret.optional = volume.optional
             }
             break
-          case "persistentVolumeClaim":
+          case "PVC":
             item.persistentVolumeClaim = {}
             if (volume.resource) {
               item.persistentVolumeClaim.name = volume.resource
@@ -303,7 +303,7 @@ export default {
               item.name = volume.name
             }
             if (volume.configMap) {
-              item.type = "configMap"
+              item.type = "ConfigMap"
               if (volume.configMap.defaultMode) {
                 item.defaultMode = volume.configMap.defaultMode.toString(8)
               }
@@ -315,7 +315,7 @@ export default {
               }
             }
             if (volume.secret) {
-              item.type = "secret"
+              item.type = "Secret"
               if (volume.secret.defaultMode) {
                 item.defaultMode = volume.secret.defaultMode.toString(8)
               }
@@ -327,7 +327,7 @@ export default {
               }
             }
             if (volume.persistentVolumeClaim) {
-              item.type = "persistentVolumeClaim"
+              item.type = "PVC"
               if (volume.persistentVolumeClaim.name) {
                 item.resource = volume.persistentVolumeClaim.name
               }
