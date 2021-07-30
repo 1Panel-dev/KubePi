@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Certificates">
+    <ko-card :title="$t('business.configuration.certificate')">
       <el-form label-position="top" ref="form" :model="form">
         <el-card v-for="(row,ind) in form.tls" v-bind:key="ind"
                  style="background-color: #292a2e;margin-top: 10px;position: relative">
@@ -12,7 +12,7 @@
           <div style="margin-top: 20px">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Certificate - Secret Name">
+                <el-form-item :label="$t('business.configuration.certificate') + '- Secret Name'">
                   <el-select v-model="row.secretName" style="width: 100%">
                     <el-option label="Default Ingress Controller Certificate" value=""></el-option>
                     <el-option v-for="(secret,index) in secrets" :label="secret.metadata.name"
@@ -52,7 +52,7 @@
         </el-card>
       </el-form>
       <div style="margin-top: 10px">
-        <el-button @click="addTls">{{ $t("commons.button.add") }} Certificate</el-button>
+        <el-button @click="addTls">{{ $t("commons.button.add") }}{{$t('business.configuration.certificate')}}</el-button>
       </div>
     </ko-card>
   </div>

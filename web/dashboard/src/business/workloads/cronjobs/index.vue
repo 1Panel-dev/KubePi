@@ -3,10 +3,10 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'cronjobs',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'cronjobs',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -17,10 +17,9 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace"/>
-      <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule"/>
-      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="60"
-                       prop="status.lastScheduleTime">
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace" />
+      <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
+      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="60" prop="status.lastScheduleTime">
         <template v-slot:default="{row}">
           {{ row.status.lastScheduleTime | age }}
         </template>
@@ -42,14 +41,15 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listCronJobs, deleteCronJob} from "@/api/cronjobs"
-import {downloadYaml} from "@/utils/actions"
+import { listCronJobs, deleteCronJob } from "@/api/cronjobs"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "CronJobs",
-  components: {LayoutContent, ComplexTable, KoTableOperations},
+  components: { LayoutContent, ComplexTable, KoTableOperations },
   data() {
     return {
       buttons: [
@@ -59,9 +59,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "CronJobEdit",
-              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: false},
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "cronjobs", verb: "update" })
           },
         },
         {
@@ -70,9 +73,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "CronJobEdit",
-              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: true},
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "cronjobs", verb: "update" })
           },
         },
         {
@@ -88,6 +94,9 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "cronjobs", verb: "delete" })
+          },
         },
       ],
       loading: false,
@@ -98,13 +107,13 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({name: "CronJobCreate", params: {operation: "create"}, query: {yamlShow: false}})
+      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({
         name: "CronJobDetail",
-        params: {namespace: row.metadata.namespace, name: row.metadata.name},
-        query: {yamlShow: false}
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false },
       })
     },
     onDelete(row) {
@@ -125,16 +134,16 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search(true)
-              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
         }
       })
     },
@@ -142,15 +151,15 @@ export default {
       this.loading = true
       this.data = []
       listCronJobs(this.clusterName)
-          .then((res) => {
-            this.data = res.items
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        .then((res) => {
+          this.data = res.items
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
   mounted() {

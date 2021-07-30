@@ -1,24 +1,22 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Data">
+    <ko-card :title="$t('business.configuration.data')">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">
-            <label>key</label>
+            <label>{{$t('business.workload.key')}}</label>
           </th>
           <th scope="col" width="48%" align="left">
-            <label>value</label>
+            <label>{{$t('business.workload.value')}}</label>
           </th>
           <th align="left"></th>
         </tr>
         <tr v-for="(label,index) in data" v-bind:key="label.index">
           <td>
-            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="label.key"
-                          @change.native="transformation"/>
+            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="label.key" @change.native="transformation" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value"
-                          @change.native="transformation"/>
+            <ko-form-item placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value" @change.native="transformation" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -47,19 +45,19 @@ export default {
   name: "KoData",
   components: { KoCard, KoFormItem },
   props: {
-    dataObj: Object
+    dataObj: Object,
   },
-  data () {
+  data() {
     return {
-      data: []
+      data: [],
     }
   },
   methods: {
-    handleDelete (index) {
+    handleDelete(index) {
       this.data.splice(index, 1)
       this.transformation()
     },
-    handleAdd () {
+    handleAdd() {
       const item = {
         index: Math.random(),
         key: "",
@@ -67,10 +65,10 @@ export default {
       }
       this.data.push(item)
     },
-    readFile (file) {
+    readFile(file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onerror = e => {
+      reader.onerror = (e) => {
         console.log("error" + e)
       }
       reader.onload = () => {
@@ -84,7 +82,7 @@ export default {
       }
       return false
     },
-    transformation () {
+    transformation() {
       if (this.data) {
         let obj = {}
         for (let i = 0; i < this.data.length; i++) {
@@ -96,7 +94,7 @@ export default {
       }
     },
   },
-  mounted () {
+  mounted() {
     if (this.dataObj && this.dataObj) {
       for (const key in this.dataObj) {
         if (Object.prototype.hasOwnProperty.call(this.dataObj, key)) {
@@ -108,7 +106,7 @@ export default {
         }
       }
     }
-  }
+  },
 }
 </script>
 

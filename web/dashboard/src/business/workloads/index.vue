@@ -38,40 +38,40 @@
       </el-form>
 
       <el-tabs :key="isRefresh" style="margin-top: 30px;background-color: #141418;" type="border-card" v-model="activeName">
-        <el-tab-pane label="General" name="General">
+        <el-tab-pane :label="$t('business.workload.general')" name="General">
           <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
           <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer" />
           <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
 
-        <el-tab-pane label="Health Check" name="Health Check">
-          <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" health_check_type="Readiness Check" />
-          <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" health_check_type="Liveness Check" />
-          <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" health_check_type="Startup Check" />
+        <el-tab-pane :label="$t('business.workload.health_check')" name="Health Check">
+          <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
+          <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
+          <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
         </el-tab-pane>
 
-        <el-tab-pane label="Labels/Annotations" name="Labels/Annotations">
-          <ko-labels :isReadOnly="readOnly" :label-obj.sync="form.metadata.labels" labelTitle="Labels" />
-          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="form.metadata.annotations" annotationsTitle="Annotations" />
-          <ko-labels :isReadOnly="readOnly" :label-obj.sync="podMetadata.labels" labelTitle="Pod Labels" />
-          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="podMetadata.annotations" annotationsTitle="Pod Annotations" />
+        <el-tab-pane :label="$t('business.workload.labels_annotations')" name="Labels/Annotations">
+          <ko-labels :isReadOnly="readOnly" :label-obj.sync="form.metadata.labels" :labelTitle="$t('business.workload.label')" />
+          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="form.metadata.annotations" :annotationsTitle="$t('business.workload.annotations')" />
+          <ko-labels :isReadOnly="readOnly" :label-obj.sync="podMetadata.labels" :labelTitle="'Pod ' + $t('business.workload.label')" />
+          <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="podMetadata.annotations" :annotationsTitle="'Pod ' + $t('business.workload.annotations')" />
         </el-tab-pane>
 
-        <el-tab-pane label="Networking" name="Networking">
+        <el-tab-pane :label="$t('business.workload.network')" name="Networking">
           <ko-networking :isReadOnly="readOnly" ref="ko_networking" :networkingParentObj="podSpec" />
         </el-tab-pane>
 
-        <el-tab-pane label="Scheduling" name="Scheduling">
+        <el-tab-pane :label="$t('business.workload.schedule')" name="Scheduling">
           <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec" :namespaceList="namespace_list" />
           <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" :nodeList="node_list" />
           <ko-tolerations ref="ko_toleration" :tolerationsParentObj="podSpec" />
         </el-tab-pane>
 
-        <el-tab-pane label="Resources" name="Resources">
+        <el-tab-pane :label="$t('business.workload.resource')" name="Resources">
           <ko-resources :isReadOnly="readOnly" ref="ko_resource" :resourceParentObj="currentContainer" />
         </el-tab-pane>
 
-        <el-tab-pane label="Scaling/Upgrade Policy" name="Scaling/Upgrade Policy">
+        <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
           <ko-upgrade-policy :isReadOnly="readOnly" v-if="type === 'deployments'" ref="ko_upgrade_policy" :upgradePolicyParentObj="form.spec" />
           <ko-upgrade-policy-statefulset :isReadOnly="readOnly" v-if="type === 'statefulsets'" ref="ko_upgrade_policy_statefulset" :upgradePolicyParentObj="form.spec" />
           <ko-upgrade-policy-cronjob :isReadOnly="readOnly" v-if="type === 'cronjobs'" ref="ko_upgrade_policy_cronjob" :upgradePolicyParentObj="form.spec" />
@@ -79,15 +79,15 @@
           <ko-upgrade-policy-daemonset :isReadOnly="readOnly" v-if="type === 'daemonsets'" ref="ko_upgrade_policy_daemonset" :upgradePolicyParentObj="form.spec" />
         </el-tab-pane>
 
-        <el-tab-pane label="Security Context" name="Security Context">
+        <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
           <ko-security-context :isReadOnly="readOnly" ref="ko_security_context" :securityContextParentObj="currentContainer" />
         </el-tab-pane>
 
-        <el-tab-pane label="Storage" name="Storage">
+        <el-tab-pane :label="$t('business.workload.storage')" name="Storage">
           <ko-storage :isReadOnly="readOnly" ref="ko_storage" :storageParentObj="podSpec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
 
-        <el-tab-pane v-if="isStatefulSet()" label="Volume Claim Templates" name="Volume Claim Templates">
+        <el-tab-pane v-if="isStatefulSet()" :label="$t('business.workload.volume_claim_template')" name="Volume Claim Templates">
           <ko-volume-claim :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :scList="sc_list" />
         </el-tab-pane>
       </el-tabs>
@@ -396,7 +396,7 @@ export default {
       return this.type === "statefulsets"
     },
     onCancel() {
-      this.$router.push({ name: (this.toggleCase(this.type) + "s") })
+      this.$router.push({ name: this.toggleCase(this.type) + "s" })
     },
     onSubmit() {
       let data = {}
@@ -418,7 +418,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.create_success"),
             })
-            this.$router.push({ name: (this.toggleCase(this.type) + "s") })
+            this.$router.push({ name: this.toggleCase(this.type) + "s" })
           })
           .finally(() => {
             this.loading = false
@@ -430,7 +430,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.edit_success"),
             })
-            this.$router.push({ name: (this.toggleCase(this.type) + "s") })
+            this.$router.push({ name: this.toggleCase(this.type) + "s" })
           })
           .finally(() => {
             this.loading = false

@@ -1,17 +1,17 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Update Policy">
+    <ko-card :title="$t('business.workload.upgrade_policy')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Strategy" prop="updateStrategy.type">
-              <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="update_strategy_list" />
+            <el-form-item :label="$t('business.workload.strategy')" prop="updateStrategy.type">
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Max Unavailable" prop="updateStrategy.rollingUpdate.maxUnavailable">
+            <el-form-item :label="$t('business.workload.max_unavaliable')" prop="updateStrategy.rollingUpdate.maxUnavailable">
               <el-input type="number" v-model.number="form.updateStrategy.rollingUpdate.maxUnavailable">
                 <el-select slot="append" style="width: 80px" v-model="form.updateStrategy.rollingUpdate.maxUnavailableUnit">
                   <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
@@ -22,20 +22,20 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Minimum Ready Time" prop="minReadySeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.minReadySeconds" />
+            <el-form-item :label="$t('business.workload.min_ready_time')" prop="minReadySeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.minReadySeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Revision History Limit" prop="revisionHistoryLimit">
-              <ko-form-item deviderName="Revision" itemType="number" v-model.number="form.revisionHistoryLimit" />
+            <el-form-item :label="$t('business.workload.revision_history_limit')" prop="revisionHistoryLimit">
+              <ko-form-item :deviderName="$t('business.workload.revision')" itemType="number" v-model.number="form.revisionHistoryLimit" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Termination Grace Period" prop="template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
+            <el-form-item :label="$t('business.workload.termination_grace_period')" prop="template.spec.terminationGracePeriodSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -56,9 +56,9 @@ export default {
   },
   data() {
     return {
-      update_strategy_list: [
-        { label: "Rolling Update: Create new pods, until max surge is reached, before deleting old pods. Don't stop more pods than max unavailable.", value: "RollingUpdate" },
-        { label: "On Delete: New pods are only created when old pods are manually deleted.", value: "Recreate" },
+      strategy_list: [
+        { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
+        { label: this.$t("business.workload.recreate"), value: "Recreate" },
       ],
       devider_list: ["Pods", "%"],
       form: {

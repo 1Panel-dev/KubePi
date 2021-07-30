@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -38,26 +38,27 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Data" v-if="form.type==='Opaque'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="form.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="form.data"></ko-secret-data>
                 </el-tab-pane>
-                <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/dockerconfigjson'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="form.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="form.data"></ko-secret-docker-data>
                 </el-tab-pane>
-                <el-tab-pane label="Data" v-if="form.type==='kubernetes.io/ssh-auth'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="form.type==='kubernetes.io/ssh-auth'">
                   <ko-secret-keys :data-obj.sync="form.data"></ko-secret-keys>
                 </el-tab-pane>
-                <el-tab-pane label="Authentication" v-if="form.type==='kubernetes.io/basic-auth'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="form.type==='kubernetes.io/basic-auth'">
                   <ko-secret-authentication
                           :authentication-obj.sync="form.data"></ko-secret-authentication>
                 </el-tab-pane>
-                <el-tab-pane label="Tls" v-if="form.type==='kubernetes.io/tls'">
+                <el-tab-pane label="TLS" v-if="form.type==='kubernetes.io/tls'">
                   <ko-secret-certificate :certificate-obj.sync="form.data"></ko-secret-certificate>
                 </el-tab-pane>
-                <el-tab-pane  name="1" label="Labels/Annotations">
-                  <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations"
-                                  :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+                <el-tab-pane  name="1" :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -82,9 +83,6 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createSecret} from "@/api/secrets"
@@ -94,10 +92,13 @@ import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-auth
 import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
 import KoAlert from "@/components/ko-alert"
 import Rule from "@/utils/rules"
+import {getNamespaces} from "@/api/auth"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "SecretCreate",
   components: {
+    KoKeyValue,
     KoAlert,
     KoSecretCertificate,
     KoSecretAuthentication,
@@ -105,8 +106,6 @@ export default {
     YamlEditor,
     KoSecretData,
     LayoutContent,
-    KoAnnotations,
-    KoLabels,
     KoSecretDockerData,
   },
   props: {},
@@ -185,8 +184,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

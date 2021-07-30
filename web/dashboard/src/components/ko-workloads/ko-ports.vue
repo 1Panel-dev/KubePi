@@ -1,17 +1,17 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Ports">
+    <ko-card :title="$t('business.workload.port')">
       <el-form :disabled="isReadOnly">
         <table style="width: 98%" class="tab-table">
           <tr>
-            <th scope="col" width="16%" align="left"><label>service type</label></th>
-            <th scope="col" width="16%" align="left"><label>name</label></th>
-            <th scope="col" width="10%" align="left"><label>private port</label></th>
-            <th scope="col" width="8%" align="left"><label>protocol</label></th>
-            <th scope="col" width="5%" align="left"><label>expose</label></th>
-            <th scope="col" width="10%" align="left"><label>public port</label></th>
-            <th scope="col" width="10%" align="left"><label>listening port</label></th>
-            <th scope="col" width="15%" align="left"><label>host ip</label></th>
+            <th scope="col" width="16%" align="left"><label>{{$t('business.workload.service_type')}}</label></th>
+            <th scope="col" width="16%" align="left"><label>{{$t('business.workload.name')}}</label></th>
+            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
+            <th scope="col" width="8%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
+            <th scope="col" width="5%" align="left"><label>{{$t('business.workload.expose')}}</label></th>
+            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
+            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.listening_port')}}</label></th>
+            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.host_ip')}}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in ports" v-bind:key="index">
@@ -75,10 +75,10 @@ export default {
         { label: "UDP", value: "UDP" },
       ],
       service_type_list: [
-        { label: "Not create a service", value: "" },
-        { label: "Cluster IP", value: "ClusterIP" },
-        { label: "Node Port", value: "NodePort" },
-        { label: "Load Balancer", value: "LoadBalancer" },
+        { label: this.$t("business.workload.not_create"), value: "" },
+        { label: this.$t("business.workload.cluster_ip"), value: "ClusterIP" },
+        { label: this.$t("business.workload.node_port"), value: "NodePort" },
+        { label: this.$t("business.workload.load_balancer"), value: "LoadBalancer" },
       ],
     }
   },

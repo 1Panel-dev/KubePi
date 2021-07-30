@@ -1,23 +1,23 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Tolerations">
+    <ko-card :title="$t('business.workload.toleration')">
       <el-form :disabled="isReadOnly">
         <table style="width: 98%" class="tab-table">
           <tr>
             <th scope="col" width="25%" align="left">
-              <label>label Key</label>
+              <label>{{$t('business.workload.key')}}</label>
             </th>
             <th scope="col" width="10%" align="left">
-              <label>operator</label>
+              <label>{{$t('business.workload.operator')}}</label>
             </th>
             <th scope="col" width="25%" align="left">
-              <label>value</label>
+              <label>{{$t('business.workload.value')}}</label>
             </th>
             <th scope="col" width="16%" align="left">
-              <label>effect</label>
+              <label>{{$t('business.workload.effect')}}</label>
             </th>
             <th scope="col" width="15%" align="left">
-              <label>Toleration Seconds(s)</label>
+              <label>{{$t('business.workload.toleration_seconds')}}</label>
             </th>
             <th align="left"></th>
           </tr>
@@ -36,7 +36,7 @@
               <ko-form-item itemType="select" v-model="row.effect" :selections="effect_list" />
             </td>
             <td>
-              <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" deviderName="Seconds" v-model.number="row.tolerationSeconds" />
+              <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" :deviderName="$t('business.workload.seconds')" v-model.number="row.tolerationSeconds" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">
@@ -46,7 +46,7 @@
           </tr>
           <tr>
             <td align="left">
-              <el-button @click="handleTolerationsAdd">Add Toleration</el-button>
+              <el-button @click="handleTolerationsAdd">{{$t('business.workload.add')}}{{$t('business.workload.toleration')}}</el-button>
             </td>
           </tr>
         </table>
@@ -73,16 +73,10 @@ export default {
         { label: "=", value: "Equal" },
       ],
       effect_list: [
-        { label: "All", value: "All" },
-        { label: "NoSchedule", value: "NoSchedule" },
-        { label: "PreferNoSchedule", value: "PreferNoSchedule" },
-        { label: "NoExecute", value: "NoExecute" },
-      ],
-      namespace_list: [
-        { label: "kube-system", value: "kube-system" },
-        { label: "kube-public", value: "kube-public" },
-        { label: "kube-operator", value: "kube-operator" },
-        { label: "default", value: "default" },
+        { label: this.$t("business.workload.all"), value: "All" },
+        { label: this.$t("business.workload.no_schedule"), value: "NoSchedule" },
+        { label: this.$t("business.workload.prefer_no_schedule"), value: "PreferNoSchedule" },
+        { label: this.$t("business.workload.no_execute"), value: "NoExecute" },
       ],
       tolerations: [],
     }

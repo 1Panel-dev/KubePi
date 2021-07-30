@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -23,12 +23,14 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Grant Resources">
-                  <ko-grant-resource :rulesArray.sync="form.rules"></ko-grant-resource>
+                <el-tab-pane :label="$t('business.workload.resource')">
+                  <ko-grant-resource :cluster="cluster" :rulesArray.sync="form.rules"></ko-grant-resource>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
-                  <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
-                  <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
+                <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -59,7 +61,7 @@ import Rule from "@/utils/rules"
 import {createRole} from "@/api/roles"
 import KoGrantResource from "@/components/ko-rbac/grant-resource"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
-import {listNamespace} from "@/api/namespaces"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "RoleCreate",
@@ -72,7 +74,7 @@ export default {
         kind: "Role",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
         rules: []
       },
@@ -130,8 +132,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

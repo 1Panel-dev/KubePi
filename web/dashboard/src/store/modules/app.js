@@ -9,7 +9,7 @@ const state = {
     opened: get() ? !!+get() : true
   },
   device: 'desktop',
-  buttomHeight: localStorage.getItem('buttom-height') || '30px'
+  buttomHeight: localStorage.getItem('buttom-height') || '35px'
 }
 
 const mutations = {

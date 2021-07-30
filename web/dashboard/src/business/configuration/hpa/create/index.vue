@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -23,16 +23,18 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Target">
+                <el-tab-pane :label="$t('business.configuration.target')">
                   <ko-hpa-target :namespace="form.metadata.namespace" :cluster="cluster"
                                  :spec-obj.sync="form.spec"></ko-hpa-target>
                 </el-tab-pane>
-                <el-tab-pane label="Metrics">
+                <el-tab-pane :label="$t('business.configuration.metrics')">
                   <ko-hpa-metrics :metrics-obj.sync="form.spec.metrics"></ko-hpa-metrics>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
-                  <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                  <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
+                <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -58,18 +60,17 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import KoHpaTarget from "@/components/ko-configuration/ko-hpa-target"
-import {listNamespace} from "@/api/namespaces"
 import {createHpa} from "@/api/hpa"
 import Rule from "@/utils/rules"
 import KoHpaMetrics from "@/components/ko-configuration/ko-hpa-metrics"
+import {getNamespaces} from "@/api/auth"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "HPACreate",
-  components: { KoHpaMetrics, KoHpaTarget, LayoutContent, YamlEditor, KoAnnotations, KoLabels },
+  components: { KoKeyValue, KoHpaMetrics, KoHpaTarget, LayoutContent, YamlEditor },
   props: {},
   data () {
     return {
@@ -77,7 +78,7 @@ export default {
         apiVersion: "autoscaling/v2beta2",
         kind: "HorizontalPodAutoscaler",
         metadata: {
-          namespace: "default"
+          namespace: ""
         },
         spec: {}
       },
@@ -135,8 +136,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Default Backend">
+    <ko-card :title="$t('business.network.default_backend')">
       <el-form-item label-position="top" ref="form" :model="defaultBackend">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Target Service">
+            <el-form-item :label="$t('business.network.target')+'Service'">
               <el-select v-model="defaultBackend.service.name"
                          @change="changeService(defaultBackend.service.name)"
                          style="width: 100%">
@@ -15,7 +15,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Port">
+            <el-form-item :label="$t('business.network.port')">
               <el-select v-model="defaultBackend.service.port.number">
                 <el-option v-for="port in servicePorts" :key="port.name"
                            :label="port.port" :value="port.port">

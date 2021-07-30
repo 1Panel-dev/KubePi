@@ -1,14 +1,14 @@
 <template>
-	<layout-content>
-		<div style="color: #99a9bf">
-			Detail  PVC
-		</div>
-	</layout-content>
+  <layout-content>
+    <div style="color: #99a9bf">
+      Detail PVC
+    </div>
+  </layout-content>
 </template>
 
 <script>
   export default {
-	name: "PersistentVolumeDetail",
+    name: "PersistentVolumeDetail",
   }
 </script>
 

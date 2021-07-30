@@ -1,15 +1,14 @@
 <template>
   <div>
     <div style="position: relative;">
-      <el-tabs style="min-height: 50px;backgroud: white" v-model="currentTab" @tab-click="handleClick" closable @tab-remove="removeTab">
-        <el-tab-pane v-for="item in terminalTabs" :key="item.name" :label="item.title" :name="item.title">
-          <el-card :style="`height: ${expand ? '330px' : 0 }`" style="width: 100%;box-sizing: border-box;" />
+      <el-tabs style="min-height: 35px;background-color: #1f2224" type="border-card" v-model="currentTab" @tab-click="handleClick" closable @tab-remove="removeTab">
+        <el-tab-pane v-for="item in terminalTabs" :key="item.name" :name="item.title">
+          <span slot="label"><i class="el-icon-date"></i>{{item.title}}</span>
           <!-- <iframe :src="item.url"></iframe> -->
         </el-tab-pane>
       </el-tabs>
       <div class="tabButton">
         <el-button size="mini" @click="addTabs" icon="el-icon-plus" circle />
-        <!-- <el-button v-if="terminalTabs.length !== 0" size="mini" @click="expandTabs" icon="el-icon-full-screen" circle /> -->
         <el-button v-if="terminalTabs.length !== 0" size="mini" @click="shrinkTabs" icon="el-icon-arrow-down" circle />
       </div>
     </div>
@@ -32,9 +31,11 @@ export default {
         title: newTabName,
         name: this.tabIndex,
         url: "www.douyu.com",
+        token: "",
       })
       this.tabIndex++
       this.currentTab = newTabName
+      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "400")
     },
     removeTab(targetName) {
       for (let i = 0; i < this.terminalTabs.length; i++) {
@@ -43,24 +44,31 @@ export default {
         }
       }
       if (this.terminalTabs.length === 0) {
-        this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "50")
+        this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
         this.expand = false
       } else {
         this.currentTab = this.terminalTabs[this.terminalTabs.length - 1].title
       }
     },
     shrinkTabs() {
-      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "50")
+      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
       this.expand = false
-    },
-    expandTabs() {
-      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "600")
-      this.expand = true
     },
     handleClick() {
       this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "400")
       this.expand = true
     },
+    // 这里将连接的 tablist 存到 localstorage 里面，刷新后，保证仍然存在
+    beforeunloadHandler() {
+      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
+      this.expand = false
+    },
+  },
+  mounted() {
+    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e))
+  },
+  destroyed() {
+    window.removeEventListener("beforeunload", (e) => this.beforeunloadHandler(e))
   },
 }
 </script>
@@ -70,8 +78,9 @@ export default {
   position: absolute;
   right: 20px;
   top: 5px;
-  color: #e6a23c;
-  font-weight: 600;
-  font-size: 14px;
+}
+.divBorder {
+  border-top: 8px solid #2f3236;
+  border-bottom: 2px solid #2f3236;
 }
 </style>

@@ -35,25 +35,26 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" v-if="Object.keys(item.data).length!==0">
-                <el-tab-pane key="data" label="Data" v-if="item.type==='Opaque'">
+                <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
-                <el-tab-pane key="data" label="Data" v-if="item.type==='kubernetes.io/dockerconfigjson'">
+                <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="item.data"></ko-secret-docker-data>
                 </el-tab-pane>
-                <el-tab-pane label="Data" v-if="item.type==='kubernetes.io/ssh-auth'">
+                <el-tab-pane  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/ssh-auth'">
                   <ko-secret-keys :data-obj.sync="item.data"></ko-secret-keys>
                 </el-tab-pane>
-                <el-tab-pane label="Authentication" v-if="item.type==='kubernetes.io/basic-auth'">
+                <el-tab-pane  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/basic-auth'">
                   <ko-secret-authentication :authentication-obj.sync="item.data"></ko-secret-authentication>
                 </el-tab-pane>
-                <el-tab-pane label="Tls" v-if="item.type==='kubernetes.io/tls'">
+                <el-tab-pane label="TLS" v-if="item.type==='kubernetes.io/tls'">
                   <ko-secret-certificate :certificate-obj.sync="item.data"></ko-secret-certificate>
                 </el-tab-pane>
-                <el-tab-pane name="1" label="Labels/Annotations">
-                  <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations"
-                                  :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
+                <el-tab-pane name="1" :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="item.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                                :value.sync="item.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -78,18 +79,18 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {editSecret, getSecret} from "@/api/secrets"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
 import YamlEditor from "@/components/yaml-editor"
 import KoSecretDockerData from "@/components/ko-configuration/ko-secret-docker-data"
 import KoSecretKeys from "@/components/ko-configuration/ko-secret-keys"
 import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-authentication"
 import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "SecretEdit",
   components: {
+    KoKeyValue,
     KoSecretCertificate,
     KoSecretAuthentication,
     KoSecretKeys,
@@ -97,8 +98,6 @@ export default {
     YamlEditor,
     KoSecretData,
     LayoutContent,
-    KoAnnotations,
-    KoLabels
   },
   props: {
     name: String,

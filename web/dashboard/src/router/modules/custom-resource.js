@@ -15,7 +15,7 @@ const CustomResource = {
         verb: "list",
       },
       component: () => import("@/business/custom-resource"),
-      name: "CustomResources",
+      name: "CustomResourceDefinitions",
       meta: {
         title: "business.custom_resource.custom_resource",
         icon: "iconfont iconcustom",
@@ -28,6 +28,27 @@ const CustomResource = {
       hidden: true,
       props: true,
       name: "CustomResourceDefinitionDetail",
+      meta: {
+        activeMenu: "/customResources",
+        global: false
+      },
+    },
+    {
+      path: "/customResources/create",
+      component: () => import("@/business/custom-resource/create"),
+      hidden: true,
+      name: "CustomResourceDefinitionCreate",
+      meta: {
+        activeMenu: "/customResources",
+        global: false
+      },
+    },
+    {
+      path: "/customResources/:name/edit",
+      component: () => import("@/business/custom-resource/edit"),
+      hidden: true,
+      props: true,
+      name: "CustomResourceDefinitionEdit",
       meta: {
         activeMenu: "/customResources",
         global: false

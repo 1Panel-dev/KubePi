@@ -58,8 +58,8 @@ export default {
       initContainers: null,
       containers: [],
       type_list: [
-        { label: "Init", value: "initContainers" },
-        { label: "Standard", value: "standardContainers" },
+        { label: this.$t("business.workload.init"), value: "initContainers" },
+        { label: this.$t("business.workload.standard"), value: "standardContainers" },
       ],
       selectContainerIndex: 0,
       currentContainerIndex: 0,
@@ -70,12 +70,6 @@ export default {
   },
   methods: {
     selectContainer(isChangeType) {
-      // if (!this.isValid) {
-      //   this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
-      //   this.selectContainerIndex = this.currentContainerIndex
-      //   this.selectContainerType = this.currentContainerType
-      //   return
-      // }
       this.$emit("gatherFormData")
       this.selectContainerIndex = isChangeType ? 0 : this.selectContainerIndex
       if (this.selectContainerType === "initContainers") {

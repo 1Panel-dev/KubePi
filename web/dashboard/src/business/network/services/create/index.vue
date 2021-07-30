@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -36,21 +36,23 @@
                 <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
-                <el-tab-pane name="ServicePorts" label="Service Ports" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="ServicePorts"  :label="$t('business.network.service_ports')" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
-                <el-tab-pane name="Selectors" label="Selectors" v-if="form.spec.type!=='ExternalName' ">
-                  <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
+                <el-tab-pane name="Selectors" :label="$t('business.network.selector')" v-if="form.spec.type!=='ExternalName' ">
+                  <ko-key-value :title="$t('business.network.selector')" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
                 <el-tab-pane name="SessionAffinity" label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
-                <el-tab-pane name="IPAddresses" label="IP Addresses">
+                <el-tab-pane name="IPAddresses" :label="$t('business.network.ip_address')">
                   <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
-                <el-tab-pane name="Labels" label="Labels/Annotations">
-                  <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
-                  <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
+                <el-tab-pane name="Labels" :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -74,7 +76,6 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
 import {createService} from "@/api/services"
@@ -83,6 +84,7 @@ import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 import KoServiceIpAddresses from "@/components/ko-network/service-ip-addresses"
 import KoServiceSessionAffinity from "@/components/ko-network/service-session-affinity"
 import KoServiceExternalName from "@/components/ko-network/service-external-name"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "ServiceCreate",
@@ -106,7 +108,7 @@ export default {
         kind: "Service",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
           labels: {},
           annotations: {},
         },
@@ -169,17 +171,18 @@ export default {
       this.form.spec = {
         type: type
       }
-      if (type === 'ExternalName') {
+      if (type === "ExternalName") {
         this.activeName = "ExternalName"
-      }else {
+      } else {
         this.activeName = "ServicePorts"
       }
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

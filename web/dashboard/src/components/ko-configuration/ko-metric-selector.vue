@@ -1,16 +1,16 @@
 <template>
   <div style="margin-top: 20px">
-    <h5>Metric Selector</h5>
+    <h5>{{$t('business.configuration.metrics_selector')}}</h5>
     <table style="width: 100%;padding: 0" class="tab-table" v-if="matchExpressions && matchExpressions.length > 0">
       <tr>
         <th scope="col" width="30%" align="left">
-          <label>key</label>
+          <label>{{$t('business.workload.key')}}</label>
         </th>
         <th scope="col" width="30%" align="left">
-          <label>Operator</label>
+          <label>{{$t('business.workload.operator')}}</label>
         </th>
         <th scope="col" width="30%" align="left">
-          <label>value</label>
+          <label>{{$t('business.workload.value')}}</label>
         </th>
         <th align="left"></th>
       </tr>
@@ -38,7 +38,7 @@
         </td>
       </tr>
     </table>
-    <el-button style="margin-top: 5px" @click="addRule()">Add Rule</el-button>
+    <el-button style="margin-top: 5px" @click="addRule()">{{ $t("commons.button.add") }}{{$t('business.workload.rule')}}</el-button>
   </div>
 </template>
 

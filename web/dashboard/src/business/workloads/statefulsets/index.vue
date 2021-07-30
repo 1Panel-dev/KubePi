@@ -1,12 +1,12 @@
 <template>
   <layout-content header="StatefulSets">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()" v-has-permissions="{apiGroup:'',resource:'statefulsets',verb:'create'}">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'statefulsets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -39,6 +39,7 @@ import { listStatefulSets, deleteStatefulSet } from "@/api/statefulsets"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "StatefulSets",
@@ -56,6 +57,9 @@ export default {
               query: { yamlShow: false },
             })
           },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "statefulsets", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -66,6 +70,9 @@ export default {
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: true },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "statefulsets", verb: "update" })
           },
         },
         {
@@ -80,6 +87,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "statefulsets", verb: "delete" })
           },
         },
       ],

@@ -14,10 +14,11 @@
           <br>
           <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick"
                    v-if="Object.keys(item.metadata).length!==0">
-            <el-tab-pane label="Labels/Annotations">
-              <ko-labels labelTitle="Labels" :label-obj.sync="item.metadata.labels"></ko-labels>
-              <ko-annotations annotations-title="Annotations"
-                              :annotations-obj.sync="item.metadata.annotations"></ko-annotations>
+            <el-tab-pane  :label="$t('business.workload.labels_annotations')">
+              <ko-key-value :title="$t('business.workload.label')"
+                            :value.sync="item.metadata.labels"></ko-key-value>
+              <ko-key-value :title="$t('business.workload.annotations')"
+                            :value.sync="item.metadata.annotations"></ko-key-value>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -39,14 +40,13 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import {getNamespace, updateNamespace} from "@/api/namespaces"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "NamespaceEdit",
-  components: { LayoutContent, KoAnnotations, KoLabels, YamlEditor },
+  components: { KoKeyValue, LayoutContent, YamlEditor },
   props: {
     name: String,
   },

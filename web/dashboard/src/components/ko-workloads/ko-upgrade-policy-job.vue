@@ -1,35 +1,35 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Update Policy">
+    <ko-card :title="$t('business.workload.upgrade_policy')">
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-row>
-              <el-form-item label="Completions" prop="completions">
-                <ko-form-item deviderName="Times" itemType="number" v-model.number="form.completions" />
+              <el-form-item :label="$t('business.workload.completions')" prop="completions">
+                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.completions" />
               </el-form-item>
             </el-row>
             <el-row>
-              <el-form-item label="Parallelism" prop="parallelism">
-                <ko-form-item deviderName="Times" itemType="number" v-model.number="form.parallelism" />
+              <el-form-item :label="$t('business.workload.parallelism')" prop="parallelism">
+                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.parallelism" />
               </el-form-item>
             </el-row>
             <el-row>
-              <el-form-item label="Back Off Limit" prop="backoffLimit">
-                <ko-form-item deviderName="Times" itemType="number" v-model.number="form.backoffLimit" />
+              <el-form-item :label="$t('business.workload.back_off_limit')" prop="backoffLimit">
+                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.backoffLimit" />
               </el-form-item>
             </el-row>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Active Deadline" prop="activeDeadlineSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.activeDeadlineSeconds" />
+            <el-form-item :label="$t('business.workload.active_deadline')" prop="activeDeadlineSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.activeDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Pod Active Deadline" prop="template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
+            <el-form-item :label="$t('business.workload.termination_grace_period')" prop="template.spec.terminationGracePeriodSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>

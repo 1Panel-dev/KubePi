@@ -1,46 +1,46 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Security Context">
+    <ko-card :title="$t('business.workload.security_context')">
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Privileged" prop="privileged">
+            <el-form-item :label="$t('business.workload.privileged')" prop="privileged">
               <ko-form-item @change="privilegedChanged" itemType="radio" v-model="form.privileged" :radios="privileged_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Privilege Escalation" prop="allowPrivilegeEscalation">
+            <el-form-item :label="$t('business.workload.privilege_escalation')" prop="allowPrivilegeEscalation">
               <ko-form-item itemType="radio" v-model="form.allowPrivilegeEscalation" :radios="privileged_escalation_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Run as Non-Root" prop="runAsNonRoot">
+            <el-form-item :label="$t('business.workload.run_as_non_root')" prop="runAsNonRoot">
               <ko-form-item itemType="radio" v-model="form.runAsNonRoot" :radios="non_root_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Read-Only Root Filesystem" prop="readOnlyRootFilesystem">
+            <el-form-item :label="$t('business.workload.read_only_root_filesystem')" prop="readOnlyRootFilesystem">
               <ko-form-item itemType="radio" v-model="form.readOnlyRootFilesystem" :radios="ready_only_root_files_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Run as User ID" prop="runAsUser">
+            <el-form-item :label="$t('business.workload.run_as_user_id')" prop="runAsUser">
               <ko-form-item itemType="input" v-model="form.runAsUser" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Add Capabilities" prop="capabilities.add">
+            <el-form-item :label="$t('business.workload.add_capabilities')" prop="capabilities.add">
               <ko-form-item multiple itemType="select2" filterable allow-create v-model="form.capabilities.add" :selections="capability_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Drop Capabilities" prop="capabilities.drop">
+            <el-form-item :label="$t('business.workload.drop_capabilities')" prop="capabilities.drop">
               <ko-form-item multiple itemType="select2" filterable allow-create v-model="form.capabilities.drop" :selections="capability_list" />
             </el-form-item>
           </el-col>
@@ -64,20 +64,20 @@ export default {
   data() {
     return {
       privileged_list: [
-        { label: "No", value: false },
-        { label: "Yes: container has full access to the host", value: true },
+        { label: this.$t("business.workload.no"), value: false },
+        { label: this.$t("business.workload.full_access"), value: true },
       ],
       privileged_escalation_list: [
-        { label: "No", value: false, disabledOption: false },
-        { label: "Yes: container can gain more privileges than its parent process", value: true },
+        { label: this.$t("business.workload.no"), value: false, disabledOption: false },
+        { label: this.$t("business.workload.gain_more_privileges"), value: true },
       ],
       non_root_list: [
-        { label: "No", value: false },
-        { label: "Yes: container must run as a non-root user", value: true },
+        { label: this.$t("business.workload.no"), value: false },
+        { label: this.$t("business.workload.non_root"), value: true },
       ],
       ready_only_root_files_list: [
-        { label: "No", value: false },
-        { label: "Yes: container has a read-only root filesystem", value: true },
+        { label: this.$t("business.workload.no"), value: false },
+        { label: this.$t("business.workload.filesystem_read_only"), value: true },
       ],
       capability_list: ["ALL", "AUDIT_CONTROL", "AUDIT_WRITE", "BLOCK_SUSPEND", "CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER", "FSETID", "IPC_LOCK", "IPC_OWNER", "KILL", "LEASE", "LINUX_IMMUTABLE", "MAC_ADMIN", "MAC_OVERRIDE", "MKNOD", "NET_ADMIN", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_RAW", "SETFCAP", "SETGID", "SETPCAP", "SETUID", "SYSLOGSYS_ADMIN", "SYS_BOOT", "SYS_CHROOT", "SYS_MODULE", "SYS_NICE", "SYS_PACCT", "SYS_PTRACE", "SYS_RAWIO", "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "WAKE_ALARM"],
       form: {

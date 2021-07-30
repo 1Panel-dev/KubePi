@@ -3,10 +3,10 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'jobs',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'jobs',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -44,6 +44,7 @@ import { listJobs, deleteJob } from "@/api/jobs"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "Jobs",
@@ -61,6 +62,9 @@ export default {
               query: { yamlShow: false, readOnly: true },
             })
           },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "jobs", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -71,6 +75,9 @@ export default {
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: true },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "jobs", verb: "update" })
           },
         },
         {
@@ -85,6 +92,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
           },
         },
       ],

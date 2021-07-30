@@ -34,21 +34,21 @@
                 <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
-                <el-tab-pane name="ServicePorts" label="Service Ports" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="ServicePorts" :label="$t('business.network.service_ports')" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
-                <el-tab-pane name="Selectors" label="Selectors" v-if="form.spec.type!=='ExternalName' ">
-                  <ko-key-value title="Selectors" :value.sync="form.spec.selector"></ko-key-value>
+                <el-tab-pane name="Selectors" :label="$t('business.network.selector')" v-if="form.spec.type!=='ExternalName'">
+                  <ko-key-value :title="$t('business.network.selector')" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
                 <el-tab-pane name="SessionAffinity" label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
-                <el-tab-pane name="IPAddresses" label="IP Addresses">
+                <el-tab-pane name="IPAddresses" :label="$t('business.network.ip_address')">
                   <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
-                <el-tab-pane name="Labels" label="Labels/Annotations">
-                  <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
-                  <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
+                <el-tab-pane name="Labels" :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')" :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')" :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>

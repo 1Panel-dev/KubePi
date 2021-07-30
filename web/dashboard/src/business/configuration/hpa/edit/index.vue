@@ -23,16 +23,18 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" v-if="Object.keys(item.metadata).length!==0">
-                <el-tab-pane label="Target">
+                <el-tab-pane :label="$t('business.configuration.target')">
                   <ko-hpa-target :namespace="item.metadata.namespace" :cluster="cluster"
                                  :spec-obj.sync="item.spec"></ko-hpa-target>
                 </el-tab-pane>
-                <el-tab-pane label="Metrics">
+                <el-tab-pane :label="$t('business.configuration.metrics')">
                   <ko-hpa-metrics :metrics-obj.sync="item.spec.metrics"></ko-hpa-metrics>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
-                  <ko-labels  labelTitle="Labels" ref="ko_labels" :labelObj.sync="item.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations" ref="ko_annotations" :annotationsObj.sync="item.metadata.annotations"></ko-annotations>
+                <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="item.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                                :value.sync="item.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -58,16 +60,15 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import KoHpaTarget from "@/components/ko-configuration/ko-hpa-target"
 import {getHpa, updateHpa} from "@/api/hpa"
 import KoHpaMetrics from "@/components/ko-configuration/ko-hpa-metrics"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "HPAEdit",
-  components: { KoHpaMetrics, KoHpaTarget, LayoutContent, YamlEditor, KoAnnotations, KoLabels },
+  components: { KoKeyValue, KoHpaMetrics, KoHpaTarget, LayoutContent, YamlEditor },
   props: {
     namespace: String,
     name: String

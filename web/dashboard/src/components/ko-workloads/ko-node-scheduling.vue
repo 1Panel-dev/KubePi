@@ -1,17 +1,17 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Node Scheduling">
+    <ko-card :title="$t('business.workload.node_schedule')">
       <el-form label-position="top" ref="form" :disabled="isReadOnly">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="Scheduling Type" v-if="enableSchedulingList">
+            <el-form-item :label="$t('business.workload.schedule_type')" v-if="enableSchedulingList">
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="scheduling_type === 'specific_node'">
           <el-col :span="24">
-            <el-form-item label="Node Name">
+            <el-form-item :label="$t('business.workload.node_name')">
               <ko-form-item itemType="select2" v-model="nodeName" :selections="node_list" />
             </el-form-item>
           </el-col>
@@ -20,16 +20,16 @@
           <div v-for="(item, index) in nodeSchedulings" :key="index">
             <el-card style="margin-top: 10px">
               <el-row>
-                <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">删 除</el-button>
+                <el-button style="float: right; padding: 3px 0" type="text" @click="handleNodeRulesDelete(index)">{{ $t("commons.button.delete") }}</el-button>
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="Priority" v-if="enablePrioritySelect">
+                  <el-form-item :label="$t('business.workload.priority')" v-if="enablePrioritySelect">
                     <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
-                  <el-form-item label="Weight">
+                  <el-form-item :label="$t('business.workload.weight')">
                     <ko-form-item itemType="number" v-model="item.weight" />
                   </el-form-item>
                 </el-col>
@@ -38,13 +38,13 @@
               <table style="width: 98%" class="tab-table">
                 <tr>
                   <th scope="col" width="40%" align="left">
-                    <label>key</label>
+                    <label>{{$t('business.workload.key')}}</label>
                   </th>
                   <th scope="col" width="15%" align="left">
-                    <label>operator</label>
+                    <label>{{$t('business.workload.operator')}}</label>
                   </th>
                   <th scope="col" width="40%" align="left">
-                    <label>value</label>
+                    <label>{{$t('business.workload.value')}}</label>
                   </th>
                   <th align="left"></th>
                 </tr>
@@ -67,14 +67,14 @@
                 </tr>
                 <tr>
                   <td align="left">
-                    <el-button @click="handleMatchAdd(item)">Add Rule</el-button>
+                    <el-button @click="handleMatchAdd(item)">{{$t('business.workload.add')}}{{$t('business.workload.rule')}}</el-button>
                   </td>
                 </tr>
               </table>
             </el-card>
           </div>
         </div>
-        <el-button v-if="scheduling_type === 'matching_rules'" @click="handleNodeRulesAdd()">Add Node Selector</el-button>
+        <el-button v-if="scheduling_type === 'matching_rules'" @click="handleNodeRulesAdd()">{{$t('business.workload.add')}}{{$t('business.workload.node_selector')}}</el-button>
       </el-form>
     </ko-card>
   </div>
@@ -108,13 +108,13 @@ export default {
   data() {
     return {
       scheduling_type_list: [
-        { label: "Run pods on any avaliable node", value: "any_node" },
-        { label: "Run pods on specific node(s)", value: "specific_node" },
-        { label: "Run pods on node(s) matching scheduling rules", value: "matching_rules" },
+        { label: this.$t("business.workload.any_node"), value: "any_node" },
+        { label: this.$t("business.workload.specific_node"), value: "specific_node" },
+        { label: this.$t("business.workload.match_rules"), value: "matching_rules" },
       ],
       priority_list: [
-        { label: "Preferred", value: "Preferred" },
-        { label: "Required", value: "Required" },
+        { label: this.$t("business.workload.preferred"), value: "Preferred" },
+        { label: this.$t("business.workload.required"), value: "Required" },
       ],
       operator_list: [
         { label: "<", value: "Lt" },
@@ -129,7 +129,7 @@ export default {
       node_list: [],
       nodeSchedulings: [],
       enableSchedulingList: true,
-      enablePrioritySelect: true
+      enablePrioritySelect: true,
     }
   },
   methods: {

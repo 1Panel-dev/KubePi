@@ -3,10 +3,10 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'deployments',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'deployments',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -39,6 +39,7 @@ import { listDeployments, deleteDeployment } from "@/api/deployments"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "Deployments",
@@ -56,6 +57,9 @@ export default {
               query: { yamlShow: false },
             })
           },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -66,6 +70,9 @@ export default {
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: true },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "update" })
           },
         },
         {
@@ -80,6 +87,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "delete" })
           },
         },
       ],
