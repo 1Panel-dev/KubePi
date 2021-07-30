@@ -1,10 +1,10 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Target">
+    <ko-card :title="$t('business.configuration.target')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Target Reference">
+            <el-form-item :label="$t('business.configuration.target_reference')">
               <el-select filterable clearable v-model="form.scaleTargetRef" value-key="name" style="width:100%"
                          @change="transform" required>
                 <el-option v-for="d in deploymentItem.items"
@@ -35,13 +35,13 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Minimum Replicas">
-              <el-input type="number"  v-model.number="form.minReplicas" required></el-input>
+            <el-form-item :label="$t('business.configuration.min_replicas')">
+              <el-input type="number" v-model.number="form.minReplicas" required></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Maximum Replicas">
-              <el-input type="number"  v-model.number="form.maxReplicas" required></el-input>
+            <el-form-item :label="$t('business.configuration.max_replicas')">
+              <el-input type="number" v-model.number="form.maxReplicas" required></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -84,7 +84,7 @@ export default {
     }
   },
   watch: {
-    namespace (oldValue, newValue) {
+    namespace (newValue, oldValue) {
       if (oldValue !== newValue) {
         this.form = {
           scaleTargetRef: {}
@@ -115,9 +115,11 @@ export default {
     }
   },
   mounted () {
-    this.getReferences()
     if (this.specObj) {
       this.form = this.specObj
+    }
+    if (this.namespace !== "") {
+      this.getReferences()
     }
   }
 }

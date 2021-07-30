@@ -1,18 +1,18 @@
 <template>
   <div>
-    <ko-card title="Metrics">
+    <ko-card :title="$t('business.configuration.metrics')">
       <el-form label-position="top" ref="form" :model="form">
         <el-card v-for="(row,index) in form.metrics" v-bind:key="index"
                  style="background-color: #292a2e;margin-top: 10px;position: relative">
           <div style="float: right; padding: 3px 0;position: relative;z-index: 1">
             <el-button  type="text" v-if="form.metrics.length > 1"
-                        @click="removeMetrics(index)">Remove
+                        @click="removeMetrics(index)">{{ $t("commons.button.delete") }}
             </el-button>
           </div>
           <div>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Source">
+                <el-form-item :label="$t('business.configuration.source')">
                   <el-select v-model="row.type" style="width: 100%" value-key="type" @change="change(row,index)">
                     <el-option label="Resource" value="Resource"></el-option>
                     <el-option label="External" value="External"></el-option>
@@ -26,7 +26,7 @@
           </div>
         </el-card>
       </el-form>
-      <el-button @click="addMetrics" style="margin-top: 10px">Add</el-button>
+      <el-button @click="addMetrics" style="margin-top: 10px">{{ $t("commons.button.add") }}</el-button>
     </ko-card>
   </div>
 </template>

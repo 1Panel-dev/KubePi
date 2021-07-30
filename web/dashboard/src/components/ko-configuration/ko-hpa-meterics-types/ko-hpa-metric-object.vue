@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Type" key="external">
+        <el-form-item :label="$t('business.configuration.type')" key="external">
           <el-select v-model="row.object.target.type" style="width: 100%" @change="changeExternalType(row)">
             <el-option value="Value" label="Value"></el-option>
             <el-option value="AverageValue" label="Average Value"></el-option>
@@ -10,11 +10,11 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="Quantity" v-if="row.object.target.type === 'AverageValue'">
+        <el-form-item :label="$t('business.configuration.quantity')" v-if="row.object.target.type === 'AverageValue'">
           <el-input type="number" v-model.number="row.object.target.averageValue" required>
           </el-input>
         </el-form-item>
-        <el-form-item label="Quantity" v-if="row.object.target.type === 'Value'">
+        <el-form-item :label="$t('business.configuration.quantity')" v-if="row.object.target.type === 'Value'">
           <el-input type="number" v-model.number="row.object.target.value" required>
           </el-input>
         </el-form-item>
@@ -22,26 +22,26 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Referent API Version">
+        <el-form-item :label="$t('business.configuration.api_version')">
           <el-input v-model="row.object.describedObject.apiVersion" required></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="Referent Kind">
+        <el-form-item :label="$t('business.configuration.kind')">
           <el-input v-model="row.object.describedObject.kind" required></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Referent Name">
+        <el-form-item :label="$t('business.configuration.name')">
           <el-input v-model="row.object.describedObject.name" required></el-input>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="Metric Name">
+        <el-form-item :label="$t('business.configuration.metrics_name')">
           <el-input v-model="row.object.metric.name" required></el-input>
         </el-form-item>
       </el-col>

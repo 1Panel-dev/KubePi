@@ -9,8 +9,8 @@ const message = {
       confirm: "确认",
       prompt: "提示",
     },
-    personal:{
-      exit:"退出"
+    personal: {
+      exit: "退出"
     },
     button: {
       delete: "删除",
@@ -29,7 +29,7 @@ const message = {
       view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
-      open_shell:"打开 SHELL",
+      open_shell: "打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
     },
@@ -89,9 +89,9 @@ const message = {
   business: {
     common: {
       label: "标签",
-      annotation:"注释",
+      annotation: "注释",
       basic: "基本信息",
-      expand:"展开",
+      expand: "展开",
       pack_up: "收起",
       system: "系统信息",
       config: "配置信息",
@@ -119,7 +119,7 @@ const message = {
       message: "消息"
     },
     node: {
-      ready:"准备就绪",
+      ready: "准备就绪",
       role: "角色",
       os: "操作系统",
       arch: "系统架构",
@@ -138,7 +138,7 @@ const message = {
       reason: "原因",
       message: "信息",
       lastHeartbeatTime: "最后检测时间",
-      lastTransitionTime:  "最后迁移时间",
+      lastTransitionTime: "最后迁移时间",
       size: "大小",
       resource: "资源信息",
       address: "地址"
@@ -381,7 +381,20 @@ const message = {
       authentication: "基本身份认证",
       certificate: "证书",
       publicKey: "公钥",
-      privateKey: "私钥"
+      privateKey: "私钥",
+      target: "目标",
+      metrics: "指标",
+      min_replicas: "最小副本数",
+      max_replicas: "最大副本数",
+      target_reference: "目标引用",
+      source: "来源",
+      resource_name: "资源名称",
+      quantity: "数量",
+      metrics_name: "指标名称",
+      metrics_selector: "指标选择器",
+      api_version: "API 版本",
+      kind: "类型",
+      name: "名称"
     },
     access_control: {
       access_control: "访问控制",
