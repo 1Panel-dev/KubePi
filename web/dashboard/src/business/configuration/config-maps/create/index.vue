@@ -23,13 +23,14 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick">
-                <el-tab-pane label="Data">
+                <el-tab-pane :label="$t('business.configuration.data')">
                   <ko-data :data-obj.sync="form.data"></ko-data>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
-                  <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations"
-                                  :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+                <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -56,16 +57,15 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import KoData from "@/components/ko-workloads/ko-data"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import {createConfigMap} from "@/api/configmaps"
 import Rule from "@/utils/rules"
 import {getNamespaces} from "@/api/auth"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "ConfigMapCreate",
-  components: { YamlEditor, KoAnnotations, KoLabels, KoData, LayoutContent },
+  components: { KoKeyValue, YamlEditor, KoData, LayoutContent },
   props: {},
   data () {
     return {

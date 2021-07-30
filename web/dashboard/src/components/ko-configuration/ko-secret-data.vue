@@ -1,13 +1,13 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Data">
+    <ko-card :title="$t('business.configuration.data')">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">
-            <label>key</label>
+            <label>{{$t('business.workload.key')}}</label>
           </th>
           <th scope="col" width="48%" align="left">
-            <label>value</label>
+            <label>{{$t('business.workload.value')}}</label>
           </th>
           <th align="left"></th>
         </tr>

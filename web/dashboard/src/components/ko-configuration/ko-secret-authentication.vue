@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Authentication">
+    <ko-card :title="$t('business.configuration.authentication')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Username" prop="username" required>
+            <el-form-item  :label="$t('business.configuration.username')" prop="username" required>
               <ko-form-item itemType="input" v-model="form.username" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Password" prop="password">
+            <el-form-item  :label="$t('business.configuration.password')" prop="password">
               <ko-form-item itemType="password" v-model="form.password" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
