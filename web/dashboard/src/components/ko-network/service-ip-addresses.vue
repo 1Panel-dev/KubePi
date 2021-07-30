@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="IP Addresses">
+    <ko-card :title="$t('business.network.ip_address')">
       <el-form ref="form" label-position="top" :model="spec">
         <el-row v-if="spec.type === 'ClusterIP'">
           <el-col :span="12">
@@ -8,7 +8,7 @@
                           @change.native="transformation" @clear="transformation"/>
           </el-col>
         </el-row>
-        <h2 v-if="spec.type === 'ClusterIP'">External IPs</h2>
+        <h2 v-if="spec.type === 'ClusterIP'">{{$t('business.network.external_ip')}}</h2>
         <div v-for="(row, index) in spec.externalIPs" v-bind:key="index" style="margin-top: 5px">
           <span v-if="false">{{ row }}</span>
           <el-row :gutter="20">

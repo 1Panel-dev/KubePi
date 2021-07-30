@@ -56,13 +56,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import {updateConfigMap, getConfigMap} from "@/api/configmaps"
 import YamlEditor from "@/components/yaml-editor"
 import KoData from "@/components/ko-workloads/ko-data"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "ConfigMapEdit",
-  components: { KoKeyValue, LayoutContent, YamlEditor, KoAnnotations, KoLabels, KoData },
+  components: { KoKeyValue, LayoutContent, YamlEditor, KoData },
   props: {
     name: String,
     namespace: String,

@@ -21,21 +21,23 @@
           <el-col :span="24">
             <el-tabs v-model="activeName" tab-position="top" type="border-card"
                      @tab-click="handleClick" ref=tabs v-if="Object.keys(form.spec).length!==0">
-              <el-tab-pane label="Rules">
+              <el-tab-pane :label="$t('business.network.rule')">
                 <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace"
                                  :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
               </el-tab-pane>
-              <el-tab-pane label="Default Backend">
+              <el-tab-pane :label="$t('business.network.default_backend')">
                 <ko-ingress-default-backend :cluster="cluster" :namespace="form.metadata.namespace"
                                             :defaultBackendObj.sync="form.spec.defaultBackend"></ko-ingress-default-backend>
               </el-tab-pane>
-              <el-tab-pane label="Certificates">
+              <el-tab-pane :label="$t('business.configuration.certificate')">
                 <ko-ingress-tls :cluster="cluster" :namespace="form.metadata.namespace"
                                 :tlsArray.sync="form.spec.tls"></ko-ingress-tls>
               </el-tab-pane>
-              <el-tab-pane label="Labels/Annotations">
-                <ko-labels ref="ko_labels" :labelParentObj="form.metadata"></ko-labels>
-                <ko-annotations ref="ko_annotations" :labelParentObj="form.metadata"></ko-annotations>
+              <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                <ko-key-value :title="$t('business.workload.label')"
+                              :value.sync="form.metadata.labels"></ko-key-value>
+                <ko-key-value :title="$t('business.workload.annotations')"
+                              :value.sync="form.metadata.annotations"></ko-key-value>
               </el-tab-pane>
             </el-tabs>
           </el-col>
@@ -62,20 +64,18 @@ import KoIngressRule from "@/components/ko-network/ingress-rules"
 import YamlEditor from "@/components/yaml-editor"
 import KoIngressDefaultBackend from "@/components/ko-network/ingress-defaultbackend"
 import KoIngressTls from "@/components/ko-network/ingress-tls"
-import KoLabels from "@/components/ko-workloads/ko-labels"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import {getIngress, updateIngress} from "@/api/ingress"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "IngressEdit",
   components: {
+    KoKeyValue,
     KoIngressTls,
     KoIngressDefaultBackend,
     YamlEditor,
     KoIngressRule,
     LayoutContent,
-    KoLabels,
-    KoAnnotations
   },
   props: {
     name: String,

@@ -1,19 +1,19 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Service Ports">
+    <ko-card :title="$t('business.network.service_ports')">
       <table style="width: 100%;padding: 0" class="tab-table">
         <tr>
           <th scope="col" width="30%" align="left">
-            <label>Port Name</label>
+            <label>{{$t('business.network.port_name')}}</label>
           </th>
           <th scope="col" width="20%" align="left">
-            <label>Listening Port</label>
+            <label>{{$t('business.network.listening_port')}}</label>
           </th>
           <th scope="col" width="20%" align="left">
-            <label>Protocol</label>
+            <label>{{$t('business.network.protocol')}}</label>
           </th>
           <th scope="col" width="20%" align="left">
-            <label>Target Port</label>
+            <label>{{$t('business.network.target_port')}}</label>
           </th>
           <th></th>
         </tr>

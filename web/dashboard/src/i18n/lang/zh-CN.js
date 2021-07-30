@@ -9,8 +9,8 @@ const message = {
       confirm: "确认",
       prompt: "提示",
     },
-    personal:{
-      exit:"退出"
+    personal: {
+      exit: "退出"
     },
     button: {
       delete: "删除",
@@ -29,7 +29,7 @@ const message = {
       view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
-      open_shell:"打开 SHELL",
+      open_shell: "打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
     },
@@ -89,9 +89,9 @@ const message = {
   business: {
     common: {
       label: "标签",
-      annotation:"注释",
+      annotation: "注释",
       basic: "基本信息",
-      expand:"展开",
+      expand: "展开",
       pack_up: "收起",
       system: "系统信息",
       config: "配置信息",
@@ -119,7 +119,7 @@ const message = {
       message: "消息"
     },
     node: {
-      ready:"准备就绪",
+      ready: "准备就绪",
       role: "角色",
       os: "操作系统",
       arch: "系统架构",
@@ -138,7 +138,7 @@ const message = {
       reason: "原因",
       message: "信息",
       lastHeartbeatTime: "最后检测时间",
-      lastTransitionTime:  "最后迁移时间",
+      lastTransitionTime: "最后迁移时间",
       size: "大小",
       resource: "资源信息",
       address: "地址"
@@ -335,8 +335,8 @@ const message = {
     },
     network: {
       network: "网络",
-      port: "端口",
       protocol: "协议",
+      port: "端口",
       rule: "规则",
       host: "主机",
       path: "路径",
@@ -344,7 +344,18 @@ const message = {
       service_name: "Service 名称",
       service_port: "Service 端口",
       target: "目标",
-      pod_selector: "Pod 选择器"
+      pod_selector: "Pod 选择器",
+      service_ports: "服务端口",
+      port_name: "端口名称",
+      listening_port: "监听端口",
+      target_port: "目标端口",
+      ip_address: "IP 地址",
+      external_ip: "外部IP",
+      selector: "选择器",
+      default_backend: "默认后端",
+      verbs: "动作",
+      non_resource_url: "非资源URL",
+      api_group: "API 组"
     },
     storage: {
       storage: "存储",
@@ -381,11 +392,24 @@ const message = {
       authentication: "基本身份认证",
       certificate: "证书",
       publicKey: "公钥",
-      privateKey: "私钥"
+      privateKey: "私钥",
+      target: "目标",
+      metrics: "指标",
+      min_replicas: "最小副本数",
+      max_replicas: "最大副本数",
+      target_reference: "目标引用",
+      source: "来源",
+      resource_name: "资源名称",
+      quantity: "数量",
+      metrics_name: "指标名称",
+      metrics_selector: "指标选择器",
+      api_version: "API 版本",
+      kind: "类型",
+      name: "名称"
     },
     access_control: {
       access_control: "访问控制",
-      resource_helper: "多个resource请用,分隔"
+      resource_helper: "多个项目请用,分隔"
     },
     custom_resource: {
       custom_resource: "自定义资源",

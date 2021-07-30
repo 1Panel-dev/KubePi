@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Rules">
+    <ko-card :title="$t('business.network.rule')">
       <el-form label-position="top" ref="form" :model="form">
         <el-card v-for="(row,ind) in form.rules" v-bind:key="ind"
                  style="background-color: #292a2e;margin-top: 10px;position: relative">
@@ -12,7 +12,7 @@
           <div>
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="Request Host" prop="host">
+                <el-form-item :label="$t('business.network.host')" prop="host">
                   <el-input placeholder="e.g. example.com" v-model="row.host"></el-input>
                 </el-form-item>
               </el-col>
@@ -22,14 +22,14 @@
                 <table style="width: 100%;padding: 0" class="tab-table">
                   <tr>
                     <th scope="col" width="10%" align="left">
-                      <label>Path</label>
+                      <label>{{ $t("business.network.path") }}</label>
                     </th>
                     <th scope="col" width="38.5%" align="left"></th>
                     <th scope="col" width="20%" align="left">
-                      <label>Target Service</label>
+                      <label>{{ $t("business.network.target") }} Service</label>
                     </th>
                     <th scope="col" width="10%" align="left">
-                      <label>Port</label>
+                      <label>{{ $t("business.network.port") }}</label>
                     </th>
                     <th></th>
                   </tr>
@@ -68,7 +68,10 @@
                   </tr>
                   <tr>
                     <td align="left">
-                      <el-button @click="addPath(row)">{{ $t("commons.button.add") }} Path</el-button>
+                      <el-button @click="addPath(row)">{{
+                          $t("commons.button.add")
+                        }}{{ $t("business.network.path") }}
+                      </el-button>
                     </td>
                   </tr>
                 </table>
@@ -77,7 +80,10 @@
           </div>
         </el-card>
       </el-form>
-      <el-button @click="addRule" style="margin-top: 10px">{{ $t("commons.button.add") }} Rule</el-button>
+      <el-button @click="addRule" style="margin-top: 10px">{{
+          $t("commons.button.add")
+        }}{{ $t("business.network.rule") }}
+      </el-button>
     </ko-card>
   </div>
 </template>
