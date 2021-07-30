@@ -374,7 +374,14 @@ const message = {
       tls_auth: "TLS",
       token_auth: "令牌",
       cluster_ip: "集群 IP",
-      selector: "选择"
+      selector: "选择",
+      registry_domain_name: "注册域名",
+      username: "用户名",
+      password: "密码",
+      authentication: "基本身份认证",
+      certificate: "证书",
+      publicKey: "公钥",
+      privateKey: "私钥"
     },
     access_control: {
       access_control: "访问控制",

@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Data">
+    <ko-card :title="$t('business.configuration.data')">
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">

@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Certificate" ref="form" :model="form">
+    <ko-card :title="$t('business.configuration.certificate')" ref="form" :model="form">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Private Key" prop="crt" required>
+            <el-form-item  :label="$t('business.configuration.privateKey')" prop="crt" required>
               <ko-form-item itemType="textarea" v-model="form.crt" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Certificate" prop="key" required>
+            <el-form-item  :label="$t('business.configuration.certificate')" prop="key" required>
               <ko-form-item itemType="textarea" v-model="form.key" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>

@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Keys">
+    <ko-card :title="$t('business.configuration.certificate')">
       <el-form label-position="top" ref="form" :model="form" :rules="rules">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Public Key" prop="publicKey" required>
+            <el-form-item  :label="$t('business.configuration.publicKey')" prop="publicKey" required>
               <ko-form-item itemType="textarea" v-model="form.publicKey" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Private Key" prop="privateKey" required>
+            <el-form-item  :label="$t('business.configuration.privateKey')" prop="privateKey" required>
               <ko-form-item itemType="textarea" v-model="form.privateKey" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>

@@ -1,22 +1,22 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Data">
+    <ko-card :title="$t('business.configuration.data')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Registry Domain Name" prop="registry">
+            <el-form-item :label="$t('business.configuration.registry_domain_name')" prop="registry">
               <ko-form-item itemType="input" v-model="form.registry" placeholder="e.g. some.docker.io" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Username" prop="username">
+            <el-form-item  :label="$t('business.configuration.username')" prop="username">
               <ko-form-item itemType="input" v-model="form.username" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Password" prop="password">
+            <el-form-item :label="$t('business.configuration.password')" prop="password">
               <ko-form-item itemType="input" type="password" v-model="form.password" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
