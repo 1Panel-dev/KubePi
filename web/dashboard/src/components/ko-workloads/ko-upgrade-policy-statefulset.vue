@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Update Policy">
+    <ko-card :title="$t('business.workload.upgrade_policy')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-row>
-              <el-form-item label="Strategy" prop="updateStrategy.type">
-                <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="update_strategy_list" />
+              <el-form-item :label="$t('business.workload.strategy')" prop="updateStrategy.type">
+                <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
               </el-form-item>
             </el-row>
-            <el-form-item label="Pod Management policy" prop="podManagementPolicy">
+            <el-form-item :label="$t('business.workload.pod_manage_policy')" prop="podManagementPolicy">
               <ko-form-item itemType="radio" v-model="form.podManagementPolicy" :radios="pod_management_policy_list" />
             </el-form-item>
             <el-row>
@@ -18,13 +18,13 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Revision History Limit" prop="revisionHistoryLimit">
-              <ko-form-item deviderName="Revision" itemType="number" v-model.number="form.revisionHistoryLimit" />
+            <el-form-item :label="$t('business.workload.revision_history_limit')" prop="revisionHistoryLimit">
+              <ko-form-item :deviderName="$t('business.workload.revision')" itemType="number" v-model.number="form.revisionHistoryLimit" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Termination Grace Period" prop="template.spec.terminationGracePeriodSeconds">
-              <ko-form-item deviderName="Seconds" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
+            <el-form-item :label="$t('business.workload.termination_grace_period')" prop="template.spec.terminationGracePeriodSeconds">
+              <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -45,9 +45,9 @@ export default {
   },
   data() {
     return {
-      update_strategy_list: [
-        { label: "Rolling Update: Create new pods, until max surge is reached, before deleting old pods. Don't stop more pods than max unavailable.", value: "RollingUpdate" },
-        { label: "On Delete: New pods are only created when old pods are manually deleted.", value: "Recreate" },
+      strategy_list: [
+        { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
+        { label: this.$t("business.workload.recreate"), value: "Recreate" },
       ],
       pod_management_policy_list: [
         { label: "OrderedReady", value: "OrderedReady" },

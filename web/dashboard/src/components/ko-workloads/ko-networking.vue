@@ -4,24 +4,24 @@
       <el-form label-position="top" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Network Mode" prop="hostNetwork">
+            <el-form-item :label="$t('business.workload.network_mode')" prop="hostNetwork">
               <ko-form-item itemType="radio" v-model="form.hostNetwork" :radios="network_mode_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="DNS Policy" prop="dnsPolicy">
+            <el-form-item :label="$t('business.workload.dns_policy')" prop="dnsPolicy">
               <ko-form-item itemType="radio" v-model="form.dnsPolicy" :radios="dns_policy_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Hostname" prop="hostname">
+            <el-form-item :label="$t('business.workload.hostname')" prop="hostname">
               <ko-form-item placeholder="e.g. web" itemType="input" v-model="form.hostname" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Subdomain" prop="subdomain">
+            <el-form-item :label="$t('business.workload.sub_domain')" prop="subdomain">
               <ko-form-item placeholder="e.g. web" itemType="input" v-model="form.subdomain" />
             </el-form-item>
           </el-col>
@@ -32,7 +32,7 @@
             <table style="width: 98%" class="tab-table">
               <tr>
                 <th scope="col" width="93%" align="left">
-                  <label>nameservers</label>
+                  <label>{{$t('business.workload.nameservers')}}</label>
                 </th>
                 <th align="left"></th>
               </tr>
@@ -48,7 +48,7 @@
               </tr>
               <tr>
                 <td align="left">
-                  <el-button @click="handleNameserversAdd">Add Nameserver</el-button>
+                  <el-button @click="handleNameserversAdd">{{$t('business.workload.add')}}{{$t('business.workload.nameservers')}}</el-button>
                 </td>
               </tr>
             </table>
@@ -56,7 +56,7 @@
           <el-col :span=12>
             <table style="width: 98%" class="tab-table">
               <tr>
-                <th scope="col" width="93%" align="left"><label>searches</label></th>
+                <th scope="col" width="93%" align="left"><label>{{$t('business.workload.searches')}}</label></th>
                 <th align="left"></th>
               </tr>
               <tr v-for="row in form.dnsConfig.searches" v-bind:key="row.index">
@@ -71,7 +71,7 @@
               </tr>
               <tr>
                 <td align="left">
-                  <el-button @click="handleSearchesAdd">Add Search Domains</el-button>
+                  <el-button @click="handleSearchesAdd">{{$t('business.workload.add')}}{{$t('business.workload.searches')}}</el-button>
                 </td>
               </tr>
             </table>
@@ -79,15 +79,11 @@
         </el-row>
 
         <div style="margin-top: 20px">
-          <label>DNS Resolver Options
-            <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-              <i class="el-icon-question" />
-            </el-tooltip>
-          </label>
+          <label>{{$t('business.workload.dns_resolver')}}</label>
           <table style="width: 98%" class="tab-table">
             <tr>
-              <th scope="col" width="48%" align="left"><label>key</label></th>
-              <th scope="col" width="48%" align="left"><label>value</label></th>
+              <th scope="col" width="48%" align="left"><label>{{$t('business.workload.key')}}</label></th>
+              <th scope="col" width="48%" align="left"><label>{{$t('business.workload.value')}}</label></th>
               <th align="left"></th>
             </tr>
             <tr v-for="row in form.dnsConfig.options" v-bind:key="row.index">
@@ -105,22 +101,18 @@
             </tr>
             <tr>
               <td align="left">
-                <el-button @click="handleOptionsAdd">Add Search Domains</el-button>
+                <el-button @click="handleOptionsAdd">{{$t('business.workload.add')}} {{$t('business.workload.dns_resolver')}}</el-button>
               </td>
             </tr>
           </table>
         </div>
 
         <div style="margin-top: 20px">
-          <label>Host Aliases
-            <el-tooltip class="item" effect="dark" content="Additional /etc/hosts entries to be injected in the container." placement="top-start">
-              <i class="el-icon-question" />
-            </el-tooltip>
-          </label>
+          <label>{{$t('business.workload.host_aliases')}}</label>
           <table style="width: 98%" class="tab-table">
             <tr>
-              <th scope="col" width="48%" align="left"><label>key</label></th>
-              <th scope="col" width="48%" align="left"><label>value</label></th>
+              <th scope="col" width="48%" align="left"><label>{{$t('business.workload.key')}}</label></th>
+              <th scope="col" width="48%" align="left"><label>{{$t('business.workload.value')}}</label></th>
               <th align="left"></th>
             </tr>
             <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
@@ -138,7 +130,7 @@
             </tr>
             <tr>
               <td align="left">
-                <el-button @click="handleAliasAdd">Add Alians</el-button>
+                <el-button @click="handleAliasAdd">{{$t('business.workload.add')}}{{$t('business.workload.host_aliases')}}</el-button>
               </td>
             </tr>
           </table>
@@ -162,8 +154,8 @@ export default {
   data() {
     return {
       network_mode_list: [
-        { label: "Normal", value: false },
-        { label: "Host Network", value: true },
+        { label: this.$t("business.workload.normal"), value: false },
+        { label: this.$t("business.workload.host_network"), value: true },
       ],
       dns_policy_list: [
         { label: "Default", value: "Default" },

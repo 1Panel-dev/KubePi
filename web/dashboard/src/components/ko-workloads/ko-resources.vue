@@ -1,27 +1,27 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Resources">
+    <ko-card :title="$t('business.workload.resource')">
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="CPU Reservation" prop="requests.cpu">
+            <el-form-item :label="'CPU ' + $t('business.workload.reservation')" prop="requests.cpu">
               <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.requests.cpu" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Memory Reservation" prop="requests.memory">
+            <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')" prop="requests.memory">
               <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.requests.memory" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="CPU Limit" prop="limits.cpu">
+            <el-form-item :label="'CPU ' + $t('business.workload.limit')" prop="limits.cpu">
               <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.limits.cpu" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Memory Limit" prop="limits.memory">
+            <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')" prop="limits.memory">
               <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.limits.memory" />
             </el-form-item>
           </el-col>

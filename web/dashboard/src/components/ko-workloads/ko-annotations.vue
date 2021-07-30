@@ -4,20 +4,19 @@
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="48%" align="left">
-            <label>key</label>
+            <label>{{$t('business.workload.key')}}</label>
           </th>
           <th scope="col" width="48%" align="left">
-            <label>value</label>
+            <label>{{$t('business.workload.value')}}</label>
           </th>
           <th align="left"></th>
         </tr>
         <tr v-for="(row, index) in annotations" v-bind:key="index">
           <td>
-            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation"/>
+            <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" @change.native="transformation" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value"
-                          @change.native="transformation"/>
+            <ko-form-item placeholder="e.g. bar" itemType="textarea" v-model="row.value" @change.native="transformation" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -46,24 +45,24 @@ export default {
     annotationsObj: Object,
     annotationsTitle: String,
   },
-  data () {
+  data() {
     return {
       annotations: [],
     }
   },
   methods: {
-    handleAdd () {
+    handleAdd() {
       const item = {
         key: "",
         value: "",
       }
       this.annotations.push(item)
     },
-    handleDelete (index) {
+    handleDelete(index) {
       this.annotations.splice(index, 1)
       this.transformation()
     },
-    transformation () {
+    transformation() {
       if (this.annotations) {
         let obj = {}
         for (let i = 0; i < this.annotations.length; i++) {
@@ -74,7 +73,7 @@ export default {
         this.$emit("update:annotationsObj", obj)
       }
     },
-    initData (obj) {
+    initData(obj) {
       if (obj) {
         for (const key in obj) {
           if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -86,9 +85,9 @@ export default {
           }
         }
       }
-    }
+    },
   },
-  mounted () {
+  mounted() {
     this.initData(this.annotationsObj)
   },
 }

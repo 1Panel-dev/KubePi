@@ -1,44 +1,40 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :key="reFresh" title="Command">
+    <ko-card :key="reFresh" :title="$t('business.workload.command')">
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="Entrypoint" prop="command">
+            <el-form-item :label="$t('business.workload.entry_point')" prop="command">
               <ko-form-item placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Arguments" prop="args">
+            <el-form-item :label="$t('business.workload.arguments')" prop="args">
               <ko-form-item placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="textarea" v-model="form.args" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="WorkingDir" prop="workingDir">
+            <el-form-item :label="$t('business.workload.working_dir')" prop="workingDir">
               <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Stdin" prop="stdin">
+            <el-form-item :label="$t('business.workload.stdin')" prop="stdin">
               <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <div>
-          <label>Environment Variables
-            <el-tooltip class="item" effect="dark" content="ProTip: Paste lines of key=value or key: value into any key field for easy bulk entry" placement="top-start">
-              <i class="el-icon-question" />
-            </el-tooltip>
-          </label>
+          <label>{{$t('business.workload.environment_variable')}}</label>
         </div>
         <table style="width: 98%" class="tab-table">
           <tr>
-            <th scope="col" width="15%" align="left"><label>type</label></th>
-            <th scope="col" width="30%" align="left"><label>prefix/variable</label></th>
-            <th scope="col" width="20%" align="left"><label>source</label></th>
-            <th scope="col" width="28%" align="left"><label>value</label></th>
+            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.type')}}</label></th>
+            <th scope="col" width="30%" align="left"><label>{{$t('business.workload.prefix_variable')}}</label></th>
+            <th scope="col" width="20%" align="left"><label>{{$t('business.workload.source')}}</label></th>
+            <th scope="col" width="28%" align="left"><label>{{$t('business.workload.value')}}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in form.envResource" v-bind:key="index">
@@ -70,7 +66,7 @@
           </tr>
           <tr>
             <td align="left">
-              <el-button @click="handleAdd">Add Variable</el-button>
+              <el-button @click="handleAdd">{{$t("commons.button.add")}}{{$t("business.workload.variable")}}</el-button>
             </td>
           </tr>
         </table>
@@ -143,9 +139,9 @@ export default {
       secret_value_list: ["ca.crt", "namespace", "token"],
       type_list: ["Key/Value Pair", "Pod Field", "Resource", "ConfigMap key", "Secret key", "Secret", "ConfigMap"],
       stdin_list: [
-        { label: "No", value: "No" },
-        { label: "Ones", value: "Ones" },
-        { label: "Yes", value: "Yes" },
+        { label: this.$t("business.workload.no"), value: this.$t("business.workload.no") },
+        { label: this.$t("business.workload.once"), value: "Ones" },
+        { label: this.$t("business.workload.yes"), value: "Yes" },
       ],
     }
   },
@@ -186,7 +182,7 @@ export default {
       }
       if (this.form.stdin) {
         switch (this.form.stdin) {
-          case "No":
+          case this.$t("business.workload.no"):
             parentFrom.stdin = false
             break
           case "Yes":
@@ -301,7 +297,7 @@ export default {
         this.form.stdin = "Ones"
       }
       if (this.commandParentObj.stdin != undefined) {
-        this.form.stdin = this.commandParentObj.stdin ? "Yes" : "No"
+        this.form.stdin = this.commandParentObj.stdin ? "Yes" : this.$t("business.workload.no")
       }
       if (this.commandParentObj.tty) {
         this.form.tty = this.commandParentObj.tty
