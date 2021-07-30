@@ -13,11 +13,13 @@
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" v-if="form.rules">
                 <el-tab-pane label="Grant Resources">
-                  <ko-grant-resource :rulesArray.sync="form.rules"></ko-grant-resource>
+                  <ko-grant-resource :cluster="cluster"  :rulesArray.sync="form.rules"></ko-grant-resource>
                 </el-tab-pane>
-                <el-tab-pane label="Labels/Annotations">
-                  <ko-key-value title="Labels" :value.sync="form.metadata.labels"></ko-key-value>
-                  <ko-key-value title="Annotations" :value.sync="form.metadata.annotations"></ko-key-value>
+                <el-tab-pane :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -93,7 +95,7 @@ export default {
     },
     onUpdate (data) {
       this.loading = true
-      updateClusterRole(this.cluster,this.name, data).then(() => {
+      updateClusterRole(this.cluster, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),

@@ -352,7 +352,10 @@ const message = {
       ip_address: "IP 地址",
       external_ip: "外部IP",
       selector: "选择器",
-      default_backend: "默认后端"
+      default_backend: "默认后端",
+      verbs: "动作",
+      non_resource_url: "非资源URL",
+      api_group: "API 组"
     },
     storage: {
       storage: "存储",
@@ -406,7 +409,7 @@ const message = {
     },
     access_control: {
       access_control: "访问控制",
-      resource_helper: "多个resource请用,分隔"
+      resource_helper: "多个项目请用,分隔"
     },
     custom_resource: {
       custom_resource: "自定义资源",
