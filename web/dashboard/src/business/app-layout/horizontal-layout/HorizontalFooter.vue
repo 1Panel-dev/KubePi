@@ -1,13 +1,14 @@
 <template>
-    <div>
-      <terminal />
-    </div>
+  <div>
+    <terminal></terminal>
+  </div>
 </template>
 
 <script>
 import Terminal from "@/business/app-layout/footer-components/Terminal"
+
 export default {
   name: "HorizontalFooter",
-  components: { Terminal },
+  components: {Terminal},
 }
 </script>

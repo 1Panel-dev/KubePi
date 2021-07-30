@@ -54,8 +54,8 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
         </div>
       </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName">
-        <el-tab-pane label="Containers" name="Containers">
+      <el-tabs style="margin-top:20px" v-model="activeName" @tab-click="onTabChange">
+        <el-tab-pane lazy label="Containers" name="Containers">
           <complex-table :data="form.status.containerStatuses">
             <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
               <template v-slot:default="{row}">
@@ -90,10 +90,9 @@
                 <span v-if="!row.started">-</span>
               </template>
             </el-table-column>
-            <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane label="Conditions" name="Conditions">
+        <el-tab-pane lazy label="Conditions" name="Conditions">
           <complex-table :data="form.status.conditions">
             <el-table-column sortable label="Condition" prop="type"/>
             <el-table-column sortable :label="$t('commons.table.status')" prop="status"/>
@@ -109,6 +108,33 @@
               </template>
             </el-table-column>
           </complex-table>
+        </el-tab-pane>
+        <el-tab-pane lazy label="Shell" name="Shell">
+          <el-select v-model="selectedContainer" @change="onSelectedContainerChange" placeholder="选择容器">
+            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name"
+                       :value="item.name"/>
+          </el-select>
+
+          <div v-if="terminalOpened" style="margin-top: 5px">
+            <iframe :src=getTerminalUrl style="width: 100%;min-height: 600px;border: 0"></iframe>
+          </div>
+
+        </el-tab-pane>
+        <el-tab-pane lazy label="Logging" name="Logging">
+          <el-select v-model="selectedContainer" @change="onSelectedContainerChange" placeholder="选择容器">
+            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name"
+                       :value="item.name"/>
+          </el-select>
+          <el-select v-model="selectedContainer" @change="onSelectedContainerChange" placeholder="显示条数">
+            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name"
+                       :value="item.name"/>
+          </el-select>
+
+          <el-switch
+              v-model="autoRefresh"
+              active-text="自动刷新">
+          </el-switch>
+
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -127,27 +153,12 @@ import {getPodByName} from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
-import KoTableOperations from "@/components/ko-table-operations";
 
 export default {
   name: "PodDetail",
-  components: {LayoutContent, ComplexTable, YamlEditor, KoTableOperations},
+  components: {LayoutContent, ComplexTable, YamlEditor},
   data() {
     return {
-      buttons: [
-        {
-          label: this.$t("commons.button.open_shell"),
-          icon: "iconfont iconcommand-line",
-          click: (row) => {
-            const namespace = this.form.metadata.namespace
-            const podName = this.form.metadata.name
-            const containerName = row.name
-            const clusterName = this.$route.query["cluster"]
-            const terminalUrl = `/terminal/app?cluster=${clusterName}&pod=${podName}&namespace=${namespace}&container=${containerName}`
-            window.open(terminalUrl,"_blank")
-          },
-        },
-      ],
       form: {
         metadata: {},
         spec: {
@@ -157,11 +168,25 @@ export default {
           containerStatuses: [],
         },
       },
+      terminalOpened: false,
       yamlShow: false,
       activeName: "Containers",
       loading: false,
       clusterName: "",
+      terminalUrl: "",
+      terminalContainer: "",
+      selectedContainer: "",
+      autoRefresh: true,
       pods: [],
+    }
+  },
+  computed: {
+    getTerminalUrl() {
+      const namespace = this.form.metadata.namespace
+      const podName = this.form.metadata.name
+      const containerName = this.terminalContainer
+      const clusterName = this.$route.query["cluster"]
+      return `/terminal/app?cluster=${clusterName}&pod=${podName}&namespace=${namespace}&container=${containerName}`
     }
   },
   methods: {
@@ -169,21 +194,38 @@ export default {
       this.loading = true
       getPodByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
         this.form = res
-        // if (this.form.spec.selector.matchLabels) {
-        //   let selectors = ""
-        //   for (const key in this.form.spec.selector.matchLabels) {
-        //     if (Object.prototype.hasOwnProperty.call(this.form.spec.selector.matchLabels, key)) {
-        //       selectors += key + "=" + this.form.spec.selector.matchLabels[key] + ","
-        //     }
-        //   }
-        //   selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-        //   listPodsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
-        //     this.pods = res.items
-        //   })
-        // }
         this.loading = false
       })
     },
+    // 通过删除dom 刷新 ifram
+    onSelectedContainerChange() {
+      this.terminalOpened = false
+      this.terminalContainer = this.selectedContainer
+      this.terminalOpened = true
+    },
+    onTabChange(tab) {
+      if (this.terminalOpened) {
+        this.terminalOpened = false
+      }
+      if (tab.label === "Shell") {
+        this.selectedContainer = ""
+        this.terminalContainer = ""
+        let firstReadyContainer = ""
+        for (const container of this.form.status.containerStatuses) {
+          if (container.ready) {
+            firstReadyContainer = container.name
+            break
+          }
+        }
+        if (!firstReadyContainer) {
+          this.$message.error("暂无正在运行的容器")
+        } else {
+          this.selectedContainer = firstReadyContainer
+          this.terminalContainer = firstReadyContainer
+          this.terminalOpened = true
+        }
+      }
+    }
   },
   created() {
     this.clusterName = this.$route.query.cluster

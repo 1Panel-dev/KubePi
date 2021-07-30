@@ -6,11 +6,13 @@ import {TerminalComponent} from './terminal/terminal.component';
 import {HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
 import {routes} from "./app.routing";
+import { LoggingComponent } from './logging/logging.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TerminalComponent
+    TerminalComponent,
+    LoggingComponent
   ],
   imports: [
     BrowserModule,

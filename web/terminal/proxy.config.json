@@ -7,5 +7,10 @@
     "target": "http://localhost:2019",
     "changeOrigin": true,
     "ws": true
+  },
+  "/echo": {
+    "target": "http://localhost:8080",
+    "changeOrigin": true,
+    "ws": true
   }
 }

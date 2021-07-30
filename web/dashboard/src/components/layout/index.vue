@@ -1,24 +1,15 @@
 <template>
   <el-container class="layout-container">
     <slot>
-      <layout-sidebar />
+      <layout-sidebar/>
       <layout-main>
         <layout-header>
           <slot name="header"></slot>
         </layout-header>
-        <layout-view />
-        <!-- <div style="width:100%;height:100%;">
-          <fu-split-pane :bottom="buttomHeight" direction="vertical" resizer-type="line" :resizer-style="{background:'#ffffff',height:'5px'}">
-            <div slot="top">
-              <layout-view />
-            </div>
-            <div slot="bottom">
-              <layout-footer>
-                <slot name="footer"></slot>
-              </layout-footer>
-            </div>
-          </fu-split-pane>
-        </div> -->
+        <layout-view/>
+        <!--        <layout-footer>-->
+        <!--          <slot name="footer"></slot>-->
+        <!--        </layout-footer>-->
       </layout-main>
     </slot>
   </el-container>
@@ -34,7 +25,7 @@ import LayoutView from "./LayoutView"
 
 export default {
   name: "Layout",
-  components: { LayoutView, LayoutHeader, LayoutMain, LayoutSidebar },
+  components: {LayoutView, LayoutHeader, LayoutMain, LayoutSidebar},
   // components: { LayoutView, LayoutFooter, LayoutHeader, LayoutMain, LayoutSidebar, FuSplitPane },
   data() {
     return {
