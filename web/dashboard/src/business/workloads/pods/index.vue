@@ -3,7 +3,7 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -43,6 +43,7 @@ import { listPods, deletePod } from "@/api/pods"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "Pods",
@@ -62,6 +63,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
           },
         },
       ],
