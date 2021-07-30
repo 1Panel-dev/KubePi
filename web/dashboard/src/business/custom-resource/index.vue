@@ -65,9 +65,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "ClusterRoleEdit",
-              params: { name: row.metadata.name },
-              query: { yamlShow: true }
+              name: "CustomResourceDefinitionEdit",
+              params: { name: row.metadata.name }
             })
           },
           disabled:()=>{
@@ -104,7 +103,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "ClusterRoleCreate",
+        name: "CustomResourceDefinitionCreate",
       })
     },
     onDelete (row) {
