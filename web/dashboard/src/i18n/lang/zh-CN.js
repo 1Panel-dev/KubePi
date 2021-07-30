@@ -335,8 +335,8 @@ const message = {
     },
     network: {
       network: "网络",
-      port: "端口",
       protocol: "协议",
+      port: "端口",
       rule: "规则",
       host: "主机",
       path: "路径",
@@ -344,7 +344,15 @@ const message = {
       service_name: "Service 名称",
       service_port: "Service 端口",
       target: "目标",
-      pod_selector: "Pod 选择器"
+      pod_selector: "Pod 选择器",
+      service_ports: "服务端口",
+      port_name: "端口名称",
+      listening_port: "监听端口",
+      target_port: "目标端口",
+      ip_address: "IP 地址",
+      external_ip: "外部IP",
+      selector: "选择器",
+      default_backend: "默认后端"
     },
     storage: {
       storage: "存储",

@@ -38,7 +38,7 @@
                 <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
-                <el-tab-pane key="data"  :label="$t('business.configuration.data')"v-if="item.type==='kubernetes.io/dockerconfigjson'">
+                <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="item.data"></ko-secret-docker-data>
                 </el-tab-pane>
                 <el-tab-pane  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/ssh-auth'">
