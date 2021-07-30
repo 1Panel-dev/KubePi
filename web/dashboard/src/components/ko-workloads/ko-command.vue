@@ -20,9 +20,14 @@
               <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item :label="$t('business.workload.stdin')" prop="stdin">
               <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="TTY" prop="tty">
+              <el-checkbox :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
@@ -139,7 +144,7 @@ export default {
       secret_value_list: ["ca.crt", "namespace", "token"],
       type_list: ["Key/Value Pair", "Pod Field", "Resource", "ConfigMap key", "Secret key", "Secret", "ConfigMap"],
       stdin_list: [
-        { label: this.$t("business.workload.no"), value: this.$t("business.workload.no") },
+        { label: this.$t("business.workload.no"), value: "No" },
         { label: this.$t("business.workload.once"), value: "Ones" },
         { label: this.$t("business.workload.yes"), value: "Yes" },
       ],
@@ -297,7 +302,7 @@ export default {
         this.form.stdin = "Ones"
       }
       if (this.commandParentObj.stdin != undefined) {
-        this.form.stdin = this.commandParentObj.stdin ? "Yes" : this.$t("business.workload.no")
+        this.form.stdin = this.commandParentObj.stdin ? "Yes" : "No"
       }
       if (this.commandParentObj.tty) {
         this.form.tty = this.commandParentObj.tty
