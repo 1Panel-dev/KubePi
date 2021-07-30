@@ -165,7 +165,7 @@ const Network = {
       name: "EndpointCreate",
       hidden: true,
       meta: {
-        activeMenu: "/ingresses"
+        activeMenu: "/endpoints"
       }
     },
     {

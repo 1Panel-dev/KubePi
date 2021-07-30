@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -82,7 +82,6 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import KoSecretData from "@/components/ko-configuration/ko-secret-data"
@@ -94,6 +93,7 @@ import KoSecretAuthentication from "@/components/ko-configuration/ko-secret-auth
 import KoSecretCertificate from "@/components/ko-configuration/ko-secret-certificate"
 import KoAlert from "@/components/ko-alert"
 import Rule from "@/utils/rules"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "SecretCreate",
@@ -185,8 +185,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

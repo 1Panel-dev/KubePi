@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required>
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -28,7 +28,8 @@
                 </el-tab-pane>
                 <el-tab-pane label="Labels/Annotations">
                   <ko-labels labelTitle="Labels" :label-obj.sync="form.metadata.labels"></ko-labels>
-                  <ko-annotations annotations-title="Annotations" :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
+                  <ko-annotations annotations-title="Annotations"
+                                  :annotations-obj.sync="form.metadata.annotations"></ko-annotations>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -54,13 +55,13 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import KoData from "@/components/ko-workloads/ko-data"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import {createConfigMap} from "@/api/configmaps"
 import Rule from "@/utils/rules"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "ConfigMapCreate",
@@ -75,7 +76,7 @@ export default {
         kind: "ConfigMap",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
           labels: {},
           annotations: {},
         },
@@ -86,7 +87,7 @@ export default {
       yaml: {},
       cluster: "",
       rules: {
-        metadata:{
+        metadata: {
           name: [Rule.RequiredRule],
           namespace: [Rule.RequiredRule],
         }
@@ -118,7 +119,7 @@ export default {
         })
       }
     },
-    onCreate(data){
+    onCreate (data) {
       this.loading = true
       createConfigMap(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
@@ -136,8 +137,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

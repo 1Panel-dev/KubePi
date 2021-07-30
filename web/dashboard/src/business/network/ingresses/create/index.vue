@@ -12,9 +12,9 @@
             <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
               <el-select v-model="form.metadata.namespace">
                 <el-option v-for="namespace in namespaces"
-                           :key="namespace.metadata.name"
-                           :label="namespace.metadata.name"
-                           :value="namespace.metadata.name">
+                           :key="namespace"
+                           :label="namespace"
+                           :value="namespace">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -59,7 +59,6 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listNamespace} from "@/api/namespaces"
 import KoIngressRule from "@/components/ko-network/ingress-rules"
 import YamlEditor from "@/components/yaml-editor"
 import KoIngressDefaultBackend from "@/components/ko-network/ingress-defaultbackend"
@@ -67,6 +66,7 @@ import KoIngressTls from "@/components/ko-network/ingress-tls"
 import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import {createIngress} from "@/api/ingress"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "IngressCreate",
@@ -142,8 +142,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }
