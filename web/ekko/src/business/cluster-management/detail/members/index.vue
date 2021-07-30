@@ -24,12 +24,12 @@
 
 
     <el-dialog
-        title="创建命名空间角色"
+        :title="$t('commons.button.create')+$t('business.cluster.namespace')+$t('business.cluster.role')"
         :visible.sync="namespaceRoleDialogOpened"
         width="40%"
         center z-index="20">
       <el-form label-position="left" label-width="144px" :model="namespaceRoleForm">
-        <el-form-item label="命名空间">
+        <el-form-item :label="$t('business.cluster.namespace')">
           <el-select v-model="namespaceRoleForm.namespace" style="width:100%">
             <el-option v-for="(item,index) in getNamespaceOptions"
                        :key="index"
@@ -39,7 +39,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="角色">
+        <el-form-item :label="$t('business.cluster.role')">
           <el-select multiple v-model="namespaceRoleForm.roles" style="width:100%">
             <el-option v-for="(item,index) in namespaceRoleOptions"
                        :key="index"
@@ -50,38 +50,37 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-                <el-button @click="namespaceRoleDialogOpened=false">取 消</el-button>
-                <el-button type="primary" @click="onNamespaceRoleConfirm">确 定</el-button>
+                <el-button @click="namespaceRoleDialogOpened=false">{{ $t('commons.button.cancel') }}</el-button>
+                <el-button type="primary" @click="onNamespaceRoleConfirm">{{ $t('commons.button.confirm') }}</el-button>
         </span>
     </el-dialog>
 
     <el-dialog
-        title="添加成员"
-        :visible.sync="createDialogOpened"
+        :title="$t('commons.button.'+operation)+$t('business.cluster.member')"
+        :visible.sync="formDialogOpened"
         z-index="10"
         width="60%"
         center>
       <el-form :model="memberForm" label-position="left" label-width="144px">
-        <el-form-item label="用户名称">
-          <el-select v-model="memberForm.userName" style="width: 80%">
-            <el-option v-for="(item, index) in userOptions" :key="index" :value="item.name">
+        <el-form-item :label="$t('business.user.user')+$t('commons.table.name')">
+          <el-select v-model="memberForm.userName" style="width: 80%" :disabled="operation==='edit'">
+            <el-option v-for="(item, index) in getUserOptions" :key="index" :value="item.name">
               {{ item.name }}
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="集群角色">
-          <el-radio-group v-model="memberForm.roleType">
-            <el-radio label="admin">管理者</el-radio>
-            <el-radio label="viewer">只读者</el-radio>
-            <el-radio label="custom">自定义</el-radio>
+        <el-form-item :label="$t('business.cluster.cluster')+$t('business.cluster.role')">
+          <el-radio-group v-model="memberForm.roleType" @change="onRoleTypeChange">
+            <el-radio label="admin">{{ $t('business.cluster.administrator') }}</el-radio>
+            <el-radio label="viewer">{{ $t('business.cluster.viewer') }}</el-radio>
+            <el-radio label="custom">{{ $t('business.cluster.custom') }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <div v-if="memberForm.roleType==='custom'">
           <el-form-item>
-            <el-select v-model="memberForm.customClusterRoles" multiple style="width: 80%"
-                       placeholder="请选择">
+            <el-select v-model="memberForm.customClusterRoles" multiple style="width: 80%">
               <el-option
-                  v-for="(item,index) in clusterRolesOptions"
+                  v-for="(item,index) in getClusterRolesOptions"
                   :key="index"
                   :value="item.metadata.name">
                 {{ item.metadata.name }}
@@ -89,7 +88,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="命名空间角色">
+          <el-form-item :label="$t('business.cluster.namespace')+$t('business.cluster.role')">
             <el-button @click="onNamespaceRoleCreate"><i class="el-icon-plus "></i></el-button>
             <el-table
                 :data="memberForm.namespaceRoles"
@@ -97,11 +96,11 @@
                 style="width: 80%">
               <el-table-column
                   prop="namespace"
-                  label="命名空间"
+                  :label="$t('business.cluster.namespace')"
               >
               </el-table-column>
               <el-table-column
-                  label="角色"
+                  :label="$t('business.cluster.role')"
               >
                 <template v-slot:default="{row}">
                   <span v-for="v in row.roles" :key="v">{{ v }}<br/></span>
@@ -120,48 +119,8 @@
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-                <el-button @click="createDialogOpened = false">取 消</el-button>
-                <el-button type="primary" @click="onConfirm">确 定</el-button>
-            </span>
-    </el-dialog>
-
-    <el-dialog
-        title="编辑成员"
-        :visible.sync="editDialogOpened"
-        width="60%"
-        center>
-      <el-form :model="editForm" label-position="left" label-width="144px">
-        <el-form-item label="用户名称">
-          <el-select v-model="editForm.userName" style="width: 80%" disabled="disabled">
-            <el-option v-for="(item, index) in userOptions" :key="index" :value="item.name">
-              {{ item.name }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="集群角色">
-          <el-radio-group v-model="editForm.roleType">
-            <el-radio label="admin">管理者</el-radio>
-            <el-radio label="viewer">只读者</el-radio>
-            <el-radio label="custom">自定义</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <div v-if="editForm.roleType==='custom'">
-          <el-form-item>
-            <el-select v-model="editForm.customClusterRoles" multiple style="width: 80%"
-                       placeholder="请选择">
-              <el-option
-                  v-for="(item,index) in clusterRolesOptions"
-                  :key="index"
-                  :value="item.metadata.name">
-                {{ item.metadata.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-                <el-button @click="editDialogOpened = false">取 消</el-button>
-                <el-button type="primary" @click="onEditConfirm">确 定</el-button>
+                <el-button @click="formDialogOpened = false">{{ $t('commons.button.cancel') }}</el-button>
+                <el-button type="primary" @click="onConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
   </layout-content>
@@ -181,8 +140,10 @@ export default {
   components: {LayoutContent, ComplexTable},
   data() {
     return {
-      createDialogOpened: false,
+
+      formDialogOpened: false,
       editDialogOpened: false,
+      operation: "create",
       namespaceRoleDialogOpened: false,
       userOptions: [],
       clusterRolesOptions: [],
@@ -197,11 +158,6 @@ export default {
         customClusterRoles: [],
         namespaceRoles: [],
         roleType: "admin"
-      },
-      editForm: {
-        userName: "",
-        customClusterRoles: [],
-        roleType: ""
       },
       buttons: [
         {
@@ -223,6 +179,17 @@ export default {
     }
   },
   computed: {
+    getUserOptions() {
+      return this.userOptions.filter((n) => {
+        let exists = false
+        for (const user of this.data) {
+          if (user.name === n.name) {
+            exists = true
+          }
+        }
+        return !exists
+      })
+    },
     getNamespaceOptions() {
       return this.namespaceOptions.filter((n) => {
         let exists = false
@@ -232,6 +199,14 @@ export default {
           }
         }
         return !exists
+      })
+    },
+    getClusterRolesOptions() {
+      return this.clusterRolesOptions.filter((cr) => {
+        if (this.memberForm.roleType === 'custom') {
+          return !["admin-cluster", "view-cluster"].includes(cr.metadata.name)
+        }
+        return true
       })
     }
   },
@@ -243,8 +218,7 @@ export default {
         this.data = data.data
       })
     },
-    onCreate() {
-      this.createDialogOpened = true
+    listClusterRoles() {
       listClusterRoles(this.name).then(data => {
         this.clusterRolesOptions = data.data.filter((r) => {
           return r.metadata["labels"]["kubeoperator.io/role-type"] === "cluster"
@@ -253,7 +227,15 @@ export default {
           return r.metadata["labels"]["kubeoperator.io/role-type"] === "namespace"
         })
       })
-
+    },
+    onCreate() {
+      this.formDialogOpened = true
+      this.operation = "create"
+      this.memberForm.userName = ""
+      this.memberForm.customClusterRoles = []
+      this.memberForm.roleType = "admin"
+      this.memberForm.namespaceRoles = []
+      this.listClusterRoles()
       listUsers().then(data => {
         this.userOptions = data.data;
       })
@@ -261,28 +243,37 @@ export default {
         this.namespaceOptions = data.data;
       })
     },
-
     onEdit(row) {
-      listClusterRoles(this.name).then(data => {
-        this.clusterRolesOptions = data.data
-        getClusterMember(this.name, row.name).then(data => {
-          this.editForm.userName = data.data.name
-          if (data.data.clusterRoles.length === 1) {
-            if (data.data.clusterRoles[0] === 'Admin Cluster') {
-              this.editForm.roleType = 'admin'
-            } else if (data.data.clusterRoles[0] === 'View Cluster') {
-              this.editForm.roleType = 'viewer'
-            } else {
-              this.editForm.roleType = 'custom'
-              this.editForm.customClusterRoles = data.data.clusterRoles
-            }
-          } else {
-            this.editForm.roleType = 'custom'
-            this.editForm.customClusterRoles = data.data.clusterRoles
-          }
-        })
+      this.operation = "edit"
+      this.memberForm.userName = ""
+      this.memberForm.customClusterRoles = []
+      this.memberForm.roleType = "admin"
+      this.memberForm.namespaceRoles = []
+      this.listClusterRoles()
+      listNamespaces(this.name).then(data => {
+        this.namespaceOptions = data.data;
       })
-      this.editDialogOpened = true
+      getClusterMember(this.name, row.name).then(data => {
+        this.memberForm.userName = data.data.name
+        if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && !data.data.namespaceRoles) {
+          if (data.data.clusterRoles[0] === 'Admin Cluster') {
+            this.memberForm.roleType = 'admin'
+          } else if (data.data.clusterRoles[0] === 'View Cluster') {
+            this.memberForm.roleType = 'viewer'
+          }
+        } else {
+          this.memberForm.roleType = 'custom'
+          this.memberForm.customClusterRoles = data.data.clusterRoles
+          this.memberForm.namespaceRoles = data.data.namespaceRoles
+        }
+      })
+      this.formDialogOpened = true
+    },
+    onRoleTypeChange() {
+      if (this.memberForm.roleType === 'admin' || this.memberForm.roleType === 'viewer') {
+        this.memberForm.customClusterRoles = []
+        this.memberForm.namespaceRoles = []
+      }
     },
     onDelete(raw) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
@@ -297,29 +288,9 @@ export default {
       });
     },
     onNamespaceRoleCreate() {
-      this.namespaceRoleForm.namespaceRoles = []
       this.namespaceRoleDialogOpened = true
       this.namespaceRoleForm.namespace = ""
-    },
-    onEditConfirm() {
-      let req = {
-        name: this.editForm.userName,
-      }
-      switch (this.editForm.roleType) {
-        case "admin":
-          req.clusterRoles = ["Admin Cluster"]
-          break
-        case "viewer":
-          req.clusterRoles = ["View Cluster"]
-          break
-        case "custom":
-          req.clusterRoles = this.editForm.customClusterRoles
-          break
-      }
-      updateClusterMember(this.name, this.editForm.userName, req).then(() => {
-        this.editDialogOpened = false
-        this.list()
-      })
+      this.namespaceRoleForm.roles = []
     },
     onNamespaceRoleConfirm() {
       this.memberForm.namespaceRoles.push({
@@ -332,6 +303,7 @@ export default {
       this.memberForm.namespaceRoles.splice(this.memberForm.namespaceRoles.indexOf(row), 1)
 
     },
+
     onConfirm() {
       let req = {
         name: this.memberForm.userName,
@@ -339,21 +311,32 @@ export default {
       }
       switch (this.memberForm.roleType) {
         case "admin":
-          req.clusterRoles = ["Admin Cluster"]
+          req.clusterRoles = ["admin-cluster"]
           break
         case "viewer":
-          req.clusterRoles = ["View Cluster"]
+          req.clusterRoles = ["view-cluster"]
           break
         case "custom":
           req.clusterRoles = this.memberForm.customClusterRoles
           break
       }
-      createClusterMember(this.name, req).then(() => {
-        this.createDialogOpened = false
-        this.list()
-      })
+      switch (this.operation) {
+        case "create":
+          createClusterMember(this.name, req).then(() => {
+            this.formDialogOpened = false
+            this.list()
+          })
+          break;
+        case "edit":
+          console.log(req)
+          updateClusterMember(this.name, this.memberForm.userName, req).then(() => {
+            this.formDialogOpened = false
+            this.list()
+          })
+      }
     },
-  },
+  }
+  ,
   created() {
     this.list()
   }

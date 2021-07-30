@@ -1,8 +1,8 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster_detail')" :back-to="{ name: 'Clusters' }">
     <el-menu class="menuClass" router :default-active="$route.path" mode="horizontal">
-      <el-menu-item :index="'/clusters/detail/'+name+'/members'">成员</el-menu-item>
-      <el-menu-item :index="'/clusters/detail/'+name+'/clusterroles'">角色</el-menu-item>
+      <el-menu-item :index="'/clusters/detail/'+name+'/members'">{{ $t('business.cluster.member') }}</el-menu-item>
+      <el-menu-item :index="'/clusters/detail/'+name+'/clusterroles'">{{ $t('business.cluster.role') }}</el-menu-item>
     </el-menu>
     <br/>
     <div class="detailClass">

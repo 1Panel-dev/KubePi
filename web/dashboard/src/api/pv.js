@@ -29,6 +29,6 @@ export function createPv (cluster_name, data) {
   return post(`${pvUrl(cluster_name,)}`, data)
 }
 
-export function editPv (cluster_name, data) {
-  return patch(`${pvUrl(cluster_name,)}`, data)
+export function updatePv (cluster_name, data, name) {
+  return patch(`${pvUrl(cluster_name,)}/${name}`, data)
 }

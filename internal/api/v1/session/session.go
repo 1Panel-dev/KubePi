@@ -219,6 +219,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 	return func(ctx *context.Context) {
 		session := sessions.Get(ctx)
 		clusterName := ctx.Params().GetString("cluster_name")
+		namesapce := ctx.URLParam("namespace")
 		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -242,7 +243,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster-role-binding failed: %s", err.Error()))
 			return
 		}
-		rolebindings, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{
+		rolebindings, err := client.RbacV1().RoleBindings(namesapce).List(goContext.TODO(), metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
 		})
 		if err != nil {

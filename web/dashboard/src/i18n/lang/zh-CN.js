@@ -29,6 +29,7 @@ const message = {
       view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
+      open_shell:"打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
     },
@@ -48,7 +49,8 @@ const message = {
     },
     form: {
       name: "名称",
-      detail: "详情"
+      detail: "详情",
+      setting: "设置"
     },
     validate: {
       limit: "长度在 {0} 到 {1} 个字符",
@@ -351,7 +353,16 @@ const message = {
       reclaimPolicy: "回收策略",
       storageClass: "存储类",
       claim: "要求",
-      assignSc: "绑定 StorageClass"
+      pvSource: "VolumeClaim Source",
+      assignSc: "绑定 StorageClass",
+      assignPv: "绑定 PersistentVolume",
+      DirectoryOrCreateLabel: "DirectoryOrCreate: 如果路径不存在则创建空目录，默认权限为0755 ",
+      DirectoryLabel: "Directory: 路径必须存在",
+      FileOrCreateLabel: "FileOrCreate: 如果路径上什么都不存在，则创建空文件，默认权限为：0644",
+      FileLabel: "File: 路径上必须存在的文件 ",
+      SocketLabel: "Socket: 路径上必须存在的 UNIX 套接字 ",
+      CharDeviceLabel: "CharDevice: 路径上必须存在的字符设备 ",
+      BlockDeviceLabel: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 ",
     },
     configuration: {
       configuration: "配置",
@@ -366,7 +377,21 @@ const message = {
       selector: "选择"
     },
     access_control: {
-      access_control: "访问控制"
+      access_control: "访问控制",
+      resource_helper: "多个resource请用,分隔"
+    },
+    custom_resource: {
+      custom_resource: "自定义资源",
+      full_name: "全名",
+      namespaced: "有命名空间的",
+      version: "版本",
+      scope: "范围",
+      names: "允许的名称",
+      singular: "单数",
+      plural: "复数",
+      served: "服务",
+      storage: "存储",
+      status: "状态"
     },
     user: {
       user_management: "用户与权限",

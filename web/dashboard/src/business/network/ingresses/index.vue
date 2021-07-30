@@ -3,10 +3,10 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -18,9 +18,6 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
-        </template>
       </el-table-column>
       <el-table-column :label="$t('business.network.target')" prop="metadata.rules">
         <template v-slot:default="{row}">
@@ -60,6 +57,7 @@ import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteIngress, listIngresses} from "@/api/ingress"
 import {mixin} from "@/utils/resourceRoutes"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "Ingresses",
@@ -81,6 +79,9 @@ export default {
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"update"})
           }
         },
         {
@@ -92,6 +93,9 @@ export default {
               params: { name: row.metadata.name, namespace: row.metadata.namespace },
               query: { yamlShow: true }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"update"})
           }
         },
         {
@@ -106,20 +110,17 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"delete"})
           }
         },
       ],
     }
   },
   methods: {
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
       listIngresses(this.cluster, this.conditions).then(res => {
         this.data = res.items
         this.loading = false
@@ -151,14 +152,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search(true)
+              this.search()
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search(true)
+              this.search()
             })
         }
       })

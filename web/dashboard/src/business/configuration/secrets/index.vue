@@ -1,12 +1,13 @@
 <template>
   <layout-content header="Secrets">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search"
+                   v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate"  v-has-permissions="{apiGroup:'',resource:'secrets',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'secrets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -18,22 +19,9 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.configuration.type')" prop="type">
-        <template v-slot:default="{row}">
-          {{ row.type }}
-        </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
-          {{ row.metadata.namespace }}
-        </template>
       </el-table-column>
-      <!--      <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">-->
-      <!--        <template v-slot:default="{row}">-->
-      <!--          <el-tag v-for="(value,key,index) in row.metadata.labels" v-bind:key="index" type="info" size="mini">-->
-      <!--            {{ key }}={{ value }}-->
-      <!--          </el-tag>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -50,11 +38,12 @@ import ComplexTable from "@/components/complex-table"
 import {deleteSecrets, listSecrets} from "@/api/secrets"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "Secrets",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       selects: [],
@@ -68,9 +57,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "SecretEdit",
-              params: {namespace: row.metadata.namespace,name:row.metadata.name},
-              query: { yamlShow: false }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: false}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"update"})
           }
         },
         {
@@ -79,9 +71,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "SecretEdit",
-              params: {namespace: row.metadata.namespace,name:row.metadata.name},
-              query: { yamlShow: true }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: true}
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"update"})
           }
         },
         {
@@ -96,36 +91,33 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"",resource:"secrets",verb:"delete"})
           }
         },
       ]
     }
   },
   methods: {
-    search (init) {
+    search() {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
-      }
       listSecrets(this.cluster).then(res => {
         this.data = res.items
         this.loading = false
       })
     },
-    onCreate () {
-      this.$router.push({ name: "SecretCreate" })
+    onCreate() {
+      this.$router.push({name: "SecretCreate"})
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteSecrets(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -138,28 +130,28 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "SecretDetail",
-        params: {namespace: row.metadata.namespace,name:row.metadata.name},
-        query: { yamlShow: false }
+        params: {namespace: row.metadata.namespace, name: row.metadata.name},
+        query: {yamlShow: false}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }

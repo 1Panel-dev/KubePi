@@ -107,6 +107,12 @@ const message = {
             management: "管理",
             open_dashboard: "控制台",
             cluster_version: "版本",
+            member: "成员",
+            role: "角色",
+            administrator: "管理员",
+            viewer: "只读者",
+            custom: "自定义",
+            rule: "规则",
 
         },
         namespace: {

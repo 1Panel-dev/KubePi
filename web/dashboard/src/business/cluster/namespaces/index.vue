@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :selects.sync="selects" :data="data" :pagination-config="page" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" @search="search()">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'create'}" type="primary" size="small" @click="onCreate">
@@ -126,14 +126,8 @@ export default {
     onCreate () {
       this.$router.push({ name: "NamespaceCreate" })
     },
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
       listNamespace(this.clusterName, this.searchName).then((res) => {
         this.data = res.items
       }).catch(error => {
@@ -166,14 +160,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search(true)
+              this.search()
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search(true)
+              this.search()
             })
         }
       })

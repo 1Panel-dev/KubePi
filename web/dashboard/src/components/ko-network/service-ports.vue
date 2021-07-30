@@ -19,13 +19,13 @@
         </tr>
         <tr v-for="(row,index) in servicePorts" v-bind:key="index">
           <td>
-            <el-input v-model="row.name" @change="transformation"></el-input>
+            <el-input v-model="row.name" ></el-input>
           </td>
           <td>
-            <el-input v-model.number="row.port" @change="transformation"></el-input>
+            <el-input v-model.number="row.port" ></el-input>
           </td>
           <td>
-            <el-select v-model="row.protocol" style="width: 100%" @change="transformation">
+            <el-select v-model="row.protocol" style="width: 100%" >
               <el-option label="TCP" value="TCP"></el-option>
               <el-option label="UDP" value="UDP"></el-option>
             </el-select>
@@ -75,7 +75,6 @@ export default {
     },
     handleDelete (index) {
       this.servicePorts.splice(index, 1)
-      this.transformation()
     },
     transformation (index) {
       if (index !== undefined && !Number.isNaN(Number(this.servicePorts[index].targetPort))) {
@@ -92,6 +91,7 @@ export default {
         protocol: "TCP",
         targetPort: ""
       })
+      this.$emit("update:ports", this.servicePorts)
     } else {
       this.servicePorts = this.ports
     }

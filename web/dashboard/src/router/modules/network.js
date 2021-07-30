@@ -26,6 +26,11 @@ const Network = {
     },
     {
       path: "/services/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "",
+        resource: "services",
+        verb: "get",
+      },
       component: () => import("@/business/network/services/detail"),
       name: "ServiceDetail",
       hidden: true,
@@ -36,6 +41,11 @@ const Network = {
     },
     {
       path: "/services/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "services",
+        verb: "create",
+      },
       component: () => import("@/business/network/services/create"),
       name: "ServiceCreate",
       hidden: true,
@@ -45,6 +55,11 @@ const Network = {
     },
     {
       path: "/services/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "",
+        resource: "services",
+        verb: "update",
+      },
       component: () => import("@/business/network/services/edit"),
       name: "ServiceEdit",
       hidden: true,
@@ -68,6 +83,11 @@ const Network = {
     },
     {
       path: "/ingresses/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "get",
+      },
       component: () => import("@/business/network/ingresses/detail"),
       name: "IngressDetail",
       hidden: true,
@@ -78,6 +98,11 @@ const Network = {
     },
     {
       path: "/ingresses/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "update",
+      },
       component: () => import("@/business/network/ingresses/edit"),
       name: "IngressEdit",
       hidden: true,
@@ -88,6 +113,11 @@ const Network = {
     },
     {
       path: "/ingresses/create",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "create",
+      },
       component: () => import("@/business/network/ingresses/create"),
       name: "IngressCreate",
       hidden: true,
@@ -111,6 +141,11 @@ const Network = {
     },
     {
       path: "/endpoints/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "update",
+      },
       component: () => import("@/business/network/endpoints/detail"),
       name: "EndpointDetail",
       hidden: true,
@@ -121,15 +156,25 @@ const Network = {
     },
     {
       path: "/endpoints/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "create",
+      },
       component: () => import("@/business/network/endpoints/create"),
       name: "EndpointCreate",
       hidden: true,
       meta: {
-        activeMenu: "/ingresses"
+        activeMenu: "/endpoints"
       }
     },
     {
       path: "/endpoints/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "update",
+      },
       component: () => import("@/business/network/endpoints/edit"),
       name: "EndpointEdit",
       hidden: true,

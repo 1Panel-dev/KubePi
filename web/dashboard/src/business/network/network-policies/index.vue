@@ -3,10 +3,10 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -42,10 +42,10 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
-import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deletePolicyUrl, listNetworkPolicies} from "@/api/networkpolicy"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "NetworkPolicies",
@@ -56,7 +56,6 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
-      namespaces: [],
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -66,6 +65,9 @@ export default {
               name: "NetworkPolicyEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"networkpolicies",verb:"update"})
           }
         },
         {
@@ -80,20 +82,17 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"networkpolicies",verb:"delete"})
           }
         },
       ],
     }
   },
   methods: {
-    search (init) {
+    search () {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
-      }
       listNetworkPolicies(this.cluster,  this.conditions).then(res => {
         this.data = res.items
         this.loading = false
@@ -125,14 +124,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search(true)
+              this.search()
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search(true)
+              this.search()
             })
         }
       })
@@ -143,15 +142,9 @@ export default {
         params: { name: row.metadata.name, namespace: row.metadata.namespace }
       })
     },
-    listAllNameSpaces () {
-      listNamespace(this.cluster).then(res => {
-        this.namespaces = res.items
-      })
-    }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listAllNameSpaces()
     this.search()
   }
 }

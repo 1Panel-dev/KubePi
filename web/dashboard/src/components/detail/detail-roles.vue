@@ -8,7 +8,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="URL"></el-table-column>
+      <el-table-column label="URL">
+        <template v-slot:default="{row}">
+          <span v-for="(url,index) in row.nonResourceURLs" :key="index">{{ url }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Resources" min-width="300px">
         <template v-slot:default="{row}">
           <span v-for="(resource,index) in row.resources" :key="index">{{ resource }}</span>

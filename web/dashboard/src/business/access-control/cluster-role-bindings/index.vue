@@ -3,10 +3,12 @@
     <complex-table :data="data" @sarch="search" v-loading="loading">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -33,6 +35,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteClusterRoleBinding, listClusterRoleBindings} from "@/api/clusterrolebindings"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ClusterRoleBindings",
@@ -40,10 +43,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -56,6 +55,9 @@ export default {
               name: "ClusterRoleBindingEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name }
             })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterrolebindings",verb:"update"})
           }
         },
         {
@@ -70,6 +72,9 @@ export default {
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterrolebindings",verb:"delete"})
           }
         },
       ],

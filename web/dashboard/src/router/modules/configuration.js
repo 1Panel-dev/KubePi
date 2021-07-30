@@ -26,6 +26,11 @@ const Configuration = {
     },
     {
       path: "/configmaps/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "configmaps",
+        verb: "create",
+      },
       component: () => import("@/business/configuration/config-maps/create"),
       name: "ConfigMapCreate",
       props: true,
@@ -36,6 +41,11 @@ const Configuration = {
     },
     {
       path: "/:namespace/configmaps/detail/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "configmaps",
+        verb: "get",
+      },
       component: () => import("@/business/configuration/config-maps/detail"),
       name: "ConfigMapDetail",
       props: true,
@@ -45,6 +55,11 @@ const Configuration = {
       }
     },
     {
+      requirePermission: {
+        apiGroup: "",
+        resource: "configmaps",
+        verb: "edit",
+      },
       path: "/configmaps/edit/:namespace/:name",
       component: () => import("@/business/configuration/config-maps/edit"),
       name: "ConfigMapEdit",
@@ -68,7 +83,12 @@ const Configuration = {
       }
     },
     {
-      path: "/secrets/detail/:namespace/:name",
+      path: "/secrets/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "",
+        resource: "secrets",
+        verb: "get",
+      },
       component: () => import("@/business/configuration/secrets/detail"),
       name: "SecretDetail",
       props: true,
@@ -79,6 +99,11 @@ const Configuration = {
     },
     {
       path: "/secrets/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "secrets",
+        verb: "create",
+      },
       component: () => import("@/business/configuration/secrets/create"),
       name: "SecretCreate",
       props: true,
@@ -88,7 +113,12 @@ const Configuration = {
       }
     },
     {
-      path: "/:namespace/secrets/edit/:name",
+      path: "/secrets/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "",
+        resource: "secrets",
+        verb: "update",
+      },
       component: () => import("@/business/configuration/secrets/edit"),
       name: "SecretEdit",
       props: true,
@@ -112,6 +142,11 @@ const Configuration = {
     },
     {
       path: "/:namespace/resourcequotas/detail/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "resourcequotas",
+        verb: "get",
+      },
       component: () => import("@/business/configuration/resource-quotas/detail"),
       name: "ResourceQuotaDetail",
       props: true,
@@ -122,6 +157,11 @@ const Configuration = {
     },
     {
       path: "/resourcequotas/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "resourcequotas",
+        verb: "create",
+      },
       component: () => import("@/business/configuration/resource-quotas/create"),
       name: "ResourceQuotaCreate",
       props: true,
@@ -132,6 +172,11 @@ const Configuration = {
     },
     {
       path: "/resourcequotas/edit/:namespace/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "resourcequotas",
+        verb: "update",
+      },
       component: () => import("@/business/configuration/resource-quotas/edit"),
       name: "ResourceQuotaEdit",
       props: true,
@@ -155,6 +200,11 @@ const Configuration = {
     },
     {
       path: "/limitranges/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "limitranges",
+        verb: "create",
+      },
       component: () => import("@/business/configuration/limit-ranges/create"),
       name: "LimitRangeCreate",
       hidden: true,
@@ -164,6 +214,11 @@ const Configuration = {
     },
     {
       path: "/limitranges/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "limitranges",
+        verb: "get",
+      },
       component: () => import("@/business/configuration/limit-ranges/detail"),
       name: "LimitRangeDetail",
       props: true,
@@ -174,6 +229,11 @@ const Configuration = {
     },
     {
       path: "/limitranges/edit/:namespace/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "limitranges",
+        verb: "update",
+      },
       component: () => import("@/business/configuration/limit-ranges/edit"),
       name: "LimitRangeEdit",
       props: true,
@@ -197,6 +257,11 @@ const Configuration = {
     },
     {
       path: "/horizontalpodautoscalers/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "autoscaling",
+        resource: "horizontalpodautoscalers",
+        verb: "get",
+      },
       component: () => import("@/business/configuration/hpa/detail"),
       name: "HPADetail",
       props: true,
@@ -207,6 +272,11 @@ const Configuration = {
     },
     {
       path: "/horizontalpodautoscalers/create",
+      requirePermission: {
+        apiGroup: "autoscaling",
+        resource: "horizontalpodautoscalers",
+        verb: "create",
+      },
       component: () => import("@/business/configuration/hpa/create"),
       name: "HPACreate",
       hidden: true,
@@ -216,6 +286,11 @@ const Configuration = {
     },
     {
       path: "/horizontalpodautoscalers/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "autoscaling",
+        resource: "horizontalpodautoscalers",
+        verb: "update",
+      },
       component: () => import("@/business/configuration/hpa/edit"),
       name: "HPAEdit",
       hidden: true,

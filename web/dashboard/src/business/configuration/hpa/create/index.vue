@@ -13,9 +13,9 @@
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <el-select v-model="form.metadata.namespace">
                   <el-option v-for="namespace in namespaces"
-                             :key="namespace.metadata.name"
-                             :label="namespace.metadata.name"
-                             :value="namespace.metadata.name">
+                             :key="namespace"
+                             :label="namespace"
+                             :value="namespace">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -62,10 +62,10 @@ import KoLabels from "@/components/ko-workloads/ko-labels"
 import KoAnnotations from "@/components/ko-workloads/ko-annotations"
 import YamlEditor from "@/components/yaml-editor"
 import KoHpaTarget from "@/components/ko-configuration/ko-hpa-target"
-import {listNamespace} from "@/api/namespaces"
 import {createHpa} from "@/api/hpa"
 import Rule from "@/utils/rules"
 import KoHpaMetrics from "@/components/ko-configuration/ko-hpa-metrics"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "HPACreate",
@@ -77,7 +77,7 @@ export default {
         apiVersion: "autoscaling/v2beta2",
         kind: "HorizontalPodAutoscaler",
         metadata: {
-          namespace: "default"
+          namespace: ""
         },
         spec: {}
       },
@@ -135,8 +135,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    listNamespace(this.cluster).then(res => {
-      this.namespaces = res.items
+    getNamespaces(this.cluster).then(res => {
+      this.namespaces = res.data
+      this.form.metadata.namespace = this.namespaces[0]
     })
   }
 }

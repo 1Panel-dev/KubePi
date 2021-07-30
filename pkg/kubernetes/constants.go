@@ -17,7 +17,7 @@ const (
 var initClusterRoles = []rbacV1.ClusterRole{
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Admin Cluster",
+			Name: "admin-cluster",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -37,7 +37,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Cluster",
+			Name: "view-cluster",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -56,7 +56,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Manage Namespaces",
+			Name: "manage-namespaces",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -75,7 +75,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Namespaces",
+			Name: "view-namespaces",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -94,26 +94,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Nodes",
-			Annotations: map[string]string{
-				"builtin":    "true",
-				"created-at": time.Now().Format("2006-01-02 15:04:05"),
-			},
-			Labels: map[string]string{
-				LabelManageKey:   "ekko",
-				LabelRoleTypeKey: RoleTypeCluster},
-		},
-		Rules: []rbacV1.PolicyRule{
-			{
-				APIGroups: []string{""},
-				Resources: []string{"nodes"},
-				Verbs:     []string{"*"},
-			},
-		},
-	},
-	{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Nodes",
+			Name: "view-nodes",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -132,7 +113,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Events",
+			Name: "view-events",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -151,7 +132,93 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Manage Network",
+			Name: "manage-cluster-rbac",
+			Annotations: map[string]string{
+				"builtin":    "true",
+				"created-at": time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "ekko",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{"rbac.authorization.k8s.io"},
+				Resources: []string{"clusterroles", "clusterrolebindings"},
+				Verbs:     []string{"*"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "view-cluster-rbac",
+			Annotations: map[string]string{
+				"builtin":    "true",
+				"created-at": time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "ekko",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{"rbac.authorization.k8s.io"},
+				Resources: []string{"clusterroles", "clusterrolebindings"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "manage-cluster-storage",
+			Annotations: map[string]string{
+				"builtin":    "true",
+				"created-at": time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "ekko",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"persistentvolumes"},
+				Verbs:     []string{"*"},
+			},
+			{
+				APIGroups: []string{"storage.k8s.io"},
+				Resources: []string{"storageclasses"},
+				Verbs:     []string{"*"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "view-cluster-storage",
+			Annotations: map[string]string{
+				"builtin":    "true",
+				"created-at": time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "ekko",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"persistentvolumes"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+			{
+				APIGroups: []string{"storage.k8s.io"},
+				Resources: []string{"storageclasses"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "manage-network",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -176,7 +243,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Network",
+			Name: "view-network",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -200,7 +267,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Manage Config",
+			Name: "manage-config",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -212,7 +279,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"configmaps","secrets","resourcequotas","limitranges"},
+				Resources: []string{"configmaps", "secrets", "resourcequotas", "limitranges"},
 				Verbs:     []string{"*"},
 			},
 			{
@@ -224,7 +291,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Config",
+			Name: "view-config",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -236,7 +303,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"configmaps","secrets","resourcequotas","limitranges"},
+				Resources: []string{"configmaps", "secrets", "resourcequotas", "limitranges"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
@@ -248,7 +315,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Manage Storage",
+			Name: "manage-storage",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -261,19 +328,14 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"persistentvolumes", "persistentvolumeclaims"},
-				Verbs:     []string{"*"},
-			},
-			{
-				APIGroups: []string{"storage.k8s.io"},
-				Resources: []string{"storageclasses"},
+				Resources: []string{"persistentvolumeclaims"},
 				Verbs:     []string{"*"},
 			},
 		},
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Storage",
+			Name: "view-storage",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -286,19 +348,14 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"persistentvolumes", "persistentvolumeclaims"},
-				Verbs:     []string{"list", "get", "watch"},
-			},
-			{
-				APIGroups: []string{"storage.k8s.io"},
-				Resources: []string{"storageclasses"},
+				Resources: []string{"persistentvolumeclaims"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 		},
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Manage Workload",
+			Name: "manage-workload",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -328,7 +385,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "View Workload",
+			Name: "view-workload",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -358,7 +415,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Mange RBAC",
+			Name: "manage-rbac",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -371,7 +428,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{"rbac.authorization.k8s.io"},
-				Resources: []string{"clusterroles", "clusterrolebindings", "roles", "rolebindings"},
+				Resources: []string{"roles", "rolebindings"},
 				Verbs:     []string{"*"},
 			},
 			{
@@ -388,7 +445,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "Mange RBAC",
+			Name: "view-rbac",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -401,7 +458,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{"rbac.authorization.k8s.io"},
-				Resources: []string{"clusterroles", "clusterrolebindings", "roles", "rolebindings"},
+				Resources: []string{"roles", "rolebindings"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{

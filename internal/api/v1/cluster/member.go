@@ -29,14 +29,17 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-
+		if c.CreatedBy == req.Name {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("can not delete or update cluster importer %s", req.Name))
+			return
+		}
 		k := kubernetes.NewKubernetes(*c)
 		client, err := k.Client()
 		if err != nil {
@@ -44,58 +47,55 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
 			return
 		}
-
-		binding, err := h.clusterBindingService.GetBindingByClusterNameAndUserName(name, req.Name, common.DBOptions{})
-		if err != nil {
+		if err := k.CleanManagedClusterRoleBinding(req.Name); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get cluster binding failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
 			return
 		}
-
-		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("user-name=%s", binding.UserRef),
-		})
-		if err != nil {
+		if err := k.CleanManagedRoleBinding(req.Name); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get cluster role binding failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
 			return
 		}
-		var forCreate []string
-		var forDelete []string
-
+		// 删除重建
+		for i := range req.NamespaceRoles {
+			for j := range req.NamespaceRoles[i].Roles {
+				b := rbacV1.RoleBinding{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: req.NamespaceRoles[i].Namespace,
+						Name:      fmt.Sprintf("%s-%s-%s", name, req.Name, req.NamespaceRoles[i].Roles[j]),
+						Labels: map[string]string{
+							"kubeoperator.io/manage": "ekko",
+							"user-name":              req.Name,
+						},
+						Annotations: map[string]string{
+							"builtin":    "false",
+							"created-at": time.Now().Format("2006-01-02 15:04:05"),
+						},
+					},
+					Subjects: []rbacV1.Subject{
+						{
+							Kind: "User",
+							Name: req.Name,
+						},
+					},
+					RoleRef: rbacV1.RoleRef{
+						Name: req.NamespaceRoles[i].Roles[j],
+						Kind: "ClusterRole",
+					},
+				}
+				_, err := client.RbacV1().RoleBindings(req.NamespaceRoles[i].Namespace).Create(goContext.TODO(), &b, metav1.CreateOptions{})
+				if err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err)
+					return
+				}
+			}
+		}
 		for i := range req.ClusterRoles {
-			exists := false
-			for j := range clusterRoleBindings.Items {
-				if req.ClusterRoles[i] == clusterRoleBindings.Items[j].RoleRef.Name {
-					exists = true
-				}
-			}
-			if !exists {
-				forCreate = append(forCreate, req.ClusterRoles[i])
-			}
-		}
-		for i := range clusterRoleBindings.Items {
-			exists := false
-			for j := range req.ClusterRoles {
-				if req.ClusterRoles[j] == clusterRoleBindings.Items[i].RoleRef.Name {
-					exists = true
-				}
-			}
-			if !exists {
-				forDelete = append(forDelete, clusterRoleBindings.Items[i].Name)
-			}
-		}
-		for i := range forDelete {
-			if err := client.RbacV1().ClusterRoleBindings().Delete(goContext.TODO(), forDelete[i], metav1.DeleteOptions{}); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Sprintf("update cluster role binding failed: %s", err.Error()))
-				return
-			}
-		}
-		for i := range forCreate {
 			b := rbacV1.ClusterRoleBinding{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: fmt.Sprintf("%s-%s-%s", name, req.Name, forCreate[i]),
+					Name: fmt.Sprintf("%s-%s-%s", name, req.Name, req.ClusterRoles[i]),
 					Labels: map[string]string{
 						"kubeoperator.io/manage": "ekko",
 						"user-name":              req.Name,
@@ -112,19 +112,18 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 					},
 				},
 				RoleRef: rbacV1.RoleRef{
-					Name: forCreate[i],
+					Name: req.ClusterRoles[i],
 					Kind: "ClusterRole",
 				},
 			}
 			_, err := client.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &b, metav1.CreateOptions{})
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Sprintf("create cluster role binding failed: %s", err.Error()))
+				ctx.Values().Set("message", err)
 				return
 			}
 		}
 		ctx.Values().Set("data", &req)
-
 	}
 }
 
@@ -159,18 +158,41 @@ func (h *Handler) GetClusterMember() iris.Handler {
 		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get cluster role binding failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
+			return
+		}
+		rolebindings, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{LabelSelector: fmt.Sprintf("user-name=%s", binding.UserRef)})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err)
 			return
 		}
 
 		var member Member
 		member.ClusterRoles = make([]string, 0)
+		member.NamespaceRoles = make([]NamespaceRoles, 0)
 		member.Name = binding.UserRef
 		set := collectons.NewStringSet()
 		for i := range clusterRoleBindings.Items {
 			set.Add(clusterRoleBindings.Items[i].RoleRef.Name)
 		}
 		member.ClusterRoles = set.ToSlice()
+
+		roleMap := map[string][]string{}
+
+		for i := range rolebindings.Items {
+			if roleMap[rolebindings.Items[i].Namespace] == nil {
+				roleMap[rolebindings.Items[i].Namespace] = []string{rolebindings.Items[i].RoleRef.Name}
+			} else {
+				roleMap[rolebindings.Items[i].Namespace] = append(roleMap[rolebindings.Items[i].Namespace], rolebindings.Items[i].RoleRef.Name)
+			}
+		}
+		for k := range roleMap {
+			member.NamespaceRoles = append(member.NamespaceRoles, NamespaceRoles{
+				Namespace: k,
+				Roles:     roleMap[k],
+			})
+		}
 		ctx.Values().Set("data", &member)
 	}
 
@@ -207,6 +229,12 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("create cluster member failed: %s", err.Error()))
 			return
 		}
+		if req.Name == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Errorf("invalid username %s", req.Name))
+			return
+		}
+
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		binding := v1Cluster.Binding{
@@ -331,7 +359,7 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 		}
 		if c.CreatedBy == memberName {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("can not delete cluster importer %s", profile.Name))
+			ctx.Values().Set("message", fmt.Sprintf("can not delete or update cluster importer %s", profile.Name))
 			return
 		}
 
@@ -354,19 +382,16 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 			return
 		}
 		k := kubernetes.NewKubernetes(*c)
-		client, err := k.Client()
-		if err != nil {
+		if err := k.CleanManagedClusterRoleBinding(memberName); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
 			return
 		}
-		if err = client.RbacV1().ClusterRoleBindings().DeleteCollection(goContext.TODO(),
-			metav1.DeleteOptions{},
-			metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("user-name=%s", memberName),
-			}); err != nil {
+		if err := k.CleanManagedRoleBinding(memberName); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("delete cluster role failed: %s", err.Error()))
+			ctx.Values().Set("message", err)
 			return
 		}
 		_ = tx.Commit()

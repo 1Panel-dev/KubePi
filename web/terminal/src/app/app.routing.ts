@@ -7,7 +7,8 @@ export const routes: Routes = [
   {
     path: '', component: AppComponent, children: [
       {path: '', redirectTo: 'app', pathMatch: 'full'},
-      {path: 'app', component: TerminalComponent}
+      {path: 'app', component: TerminalComponent},
+      {path: '*', redirectTo: '', pathMatch: 'full'},
     ]
   },
 

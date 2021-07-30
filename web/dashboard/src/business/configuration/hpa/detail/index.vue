@@ -4,54 +4,7 @@
       <div v-if="!yamlShow">
         <el-col :span="15">
           <el-card>
-            <table style="width: 100%" class="myTable">
-              <tr>
-                <th scope="col" width="30%" align="left">
-                  <h3>{{ $t("business.common.basic") }}</h3>
-                </th>
-                <th scope="col"></th>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.name") }}</td>
-                <td>{{ item.metadata.name }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.namespace.namespace") }}</td>
-                <td>{{ item.metadata.namespace }}</td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.label") }}</td>
-                <td>
-                  <div v-for="(value,key,index) in item.metadata.labels" v-bind:key="index" class="myTag">
-                    <el-tag type="info" size="small">
-                      {{ key }} = {{ value }}
-                    </el-tag>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>{{ $t("business.common.annotation") }}</td>
-                <td>
-                  <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
-                    <el-tag type="info" size="small" v-if="value.length < 50">
-                      {{ key }} = {{ value }}
-                    </el-tag>
-                    <el-tooltip v-if="value.length > 50" :content="value" placement="top">
-                      <el-tag type="info" size="small" v-if="value.length >= 50">
-                        {{ key }} = {{ value.substring(0, 50) + "..." }}
-                      </el-tag>
-                    </el-tooltip>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>{{ $t("commons.table.created_time") }}</td>
-                <td>{{ item.metadata.creationTimestamp | age }}</td>
-              </tr>
-            </table>
-            <div class="bottom-button">
-              <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-            </div>
+            <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
@@ -86,7 +39,8 @@
           <br>
           <el-tabs type="border-card">
             <el-tab-pane label="Metrics" v-if="item.spec.metrics.length > 0">
-              <div v-for="(metric,index) in item.spec.metrics" v-bind:key="index"  style="border:1px solid #383c42;margin-top: 5px">
+              <div v-for="(metric,index) in item.spec.metrics" v-bind:key="index"
+                   style="border:1px solid #383c42;margin-top: 5px">
                 <el-row :gutter="20">
                   <el-col :span="12">
                     <table style="width: 100%" class="myTable" v-if="metric.type">
@@ -122,73 +76,29 @@
                         </th>
                         <th scope="col"></th>
                       </tr>
-                      <tr v-if="item.status.currentMetrics[index].type !== '' ">
+                      <tr v-if="item.status.currentMetrics && item.status.currentMetrics[index].type !== '' ">
                         <td>Average Utilization</td>
                         <td v-if="metric.type">
                           {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageUtilization }}
                         </td>
                       </tr>
-                      <tr v-if="item.status.currentMetrics[index].type !== '' ">
+                      <tr v-if="item.status.currentMetrics && item.status.currentMetrics[index].type !== '' ">
                         <td>Average Value</td>
                         <td v-if="metric.type">
                           {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageValue }}
                         </td>
                       </tr>
-                      <span v-if="item.status.currentMetrics[index].type === '' ">No Current Metrics</span>
+                      <span v-if="item.status.currentMetrics && item.status.currentMetrics[index].type === '' ">No Current Metrics</span>
                     </table>
                   </el-col>
                 </el-row>
               </div>
             </el-tab-pane>
             <el-tab-pane label="Conditions">
-              <complex-table :data="item.status.conditions">
-                <el-table-column label="Condition" prop="type">
-                  <template v-slot:default="{row}">
-                    {{ row.type }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="Status" prop="status">
-                  <template v-slot:default="{row}">
-                    {{ row.status }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="Reason" prop="reason">
-                  <template v-slot:default="{row}">
-                    {{ row.reason }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="Message" prop="message" min-width="200px">
-                  <template v-slot:default="{row}">
-                    {{ row.message }}
-                  </template>
-                </el-table-column>
-              </complex-table>
+              <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane label="Events">
-              <complex-table :data="events">
-                <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
-                  <template v-slot:default="{row}">
-                    {{ row.reason }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.event.type')" prop="type" fix max-width="50px">
-                  <template v-slot:default="{row}">
-                    <el-tag v-if="row.type ==='Normal'">{{ row.type }}</el-tag>
-                    <el-tag v-else type="danger">{{ row.type }}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.namespace.namespace')" prop="namespace" fix max-width="50px">
-                  <template v-slot:default="{row}">
-                    {{ row.metadata.namespace }}
-                  </template>
-                </el-table-column>
-                <el-table-column :label="$t('business.event.message')" prop="resource" fix min-width="200px"
-                                 show-overflow-tooltip>
-                  <template v-slot:default="{row}">
-                    {{ row.message }}
-                  </template>
-                </el-table-column>
-              </complex-table>
+              <ko-detail-events :namespace="namespace" :cluster="cluster" :selector="'involvedObject.kind=HorizontalPodAutoscaler,involvedObject.name='+name"></ko-detail-events>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -206,13 +116,14 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getHpa} from "@/api/hpa"
-import ComplexTable from "@/components/complex-table"
-import {listEventsWithNsSelector} from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
+import KoDetailBasic from "@/components/detail/detail-basic"
+import KoDetailConditions from "@/components/detail/detail-conditions"
+import KoDetailEvents from "@/components/detail/detail-events"
 
 export default {
   name: "HPADetail",
-  components: { ComplexTable, LayoutContent, YamlEditor },
+  components: { KoDetailEvents, KoDetailConditions, KoDetailBasic, LayoutContent, YamlEditor },
   props: {
     name: String,
     namespace: String,
@@ -250,10 +161,6 @@ export default {
         this.item = res
       }).finally(() => {
         this.loading = false
-      })
-      const selectors = "involvedObject.kind=HorizontalPodAutoscaler,involvedObject.name=" + this.name
-      listEventsWithNsSelector(this.cluster, this.namespace, selectors).then(res => {
-        this.events = res.items
       })
     },
     getTargetValue (target) {

@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ClusterRoleBindings'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ClusterRoleBindings'}" v-loading="loading">
     <yaml-editor :value="form" ref="yaml_editor"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
