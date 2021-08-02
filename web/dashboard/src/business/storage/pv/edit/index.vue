@@ -118,7 +118,7 @@
         </el-form>
       </div>
       <div v-if="showYaml">
-        <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+        <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
       </div>
       <div>
         <div style="float: right;margin-top: 10px">

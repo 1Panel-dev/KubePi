@@ -6,8 +6,9 @@
         <layout-header>
           <slot name="header"></slot>
         </layout-header>
-        <div style="width:100%;height:100%;">
-          <fu-split-pane :bottom="buttomHeight" direction="vertical" resizer-type="line" :resizer-style="{background:'#424649',height:'2px'}">
+        <layout-view />
+        <!-- <div style="width:100%;height:100%;">
+          <fu-split-pane :bottom="buttomHeight" direction="vertical" resizer-type="line" :resizer-style="{background:'#ffffff',height:'5px'}">
             <div slot="top">
               <layout-view />
             </div>
@@ -17,7 +18,7 @@
               </layout-footer>
             </div>
           </fu-split-pane>
-        </div>
+        </div> -->
       </layout-main>
     </slot>
   </el-container>
@@ -27,16 +28,27 @@
 import LayoutSidebar from "./LayoutSidebar"
 import LayoutMain from "./LayoutMain"
 import LayoutHeader from "./LayoutHeader"
-import LayoutFooter from "./LayoutFooter"
+// import LayoutFooter from "./LayoutFooter"
 import LayoutView from "./LayoutView"
-import FuSplitPane from "@/components/split-pane/FuSplitPane.vue"
+// import FuSplitPane from "@/components/split-pane/FuSplitPane.vue"
 
 export default {
   name: "Layout",
-  components: { LayoutView, LayoutFooter, LayoutHeader, LayoutMain, LayoutSidebar, FuSplitPane },
+  components: { LayoutView, LayoutHeader, LayoutMain, LayoutSidebar },
+  // components: { LayoutView, LayoutFooter, LayoutHeader, LayoutMain, LayoutSidebar, FuSplitPane },
+  data() {
+    return {
+      isRefresh: false,
+    }
+  },
   computed: {
     buttomHeight() {
       return this.$store.state.app.buttomHeight
+    },
+  },
+  watch: {
+    buttomHeight: function () {
+      this.isRefresh = !this.isRefresh
     },
   },
   methods: {},

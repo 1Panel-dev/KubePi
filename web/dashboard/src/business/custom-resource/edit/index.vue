@@ -1,6 +1,6 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'CustomResourceDefinitions'}" v-loading="loading">
-    <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+    <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">
