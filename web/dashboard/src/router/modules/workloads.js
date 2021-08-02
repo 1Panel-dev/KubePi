@@ -29,6 +29,7 @@ const Workloads = {
       name: "PodDetail",
       hidden: true,
       component: () => import("@/business/workloads/pods/detail"),
+      props: true,
       meta: {
         activeMenu: "/pods",
       },
@@ -51,6 +52,7 @@ const Workloads = {
       name: "DeploymentDetail",
       hidden: true,
       component: () => import("@/business/workloads/deployments/detail"),
+      props: true,
       meta: {
         activeMenu: "/deployments",
       },
@@ -92,6 +94,7 @@ const Workloads = {
       name: "DaemonSetDetail",
       hidden: true,
       component: () => import("@/business/workloads/daemonsets/detail"),
+      props: true,
       meta: {
         activeMenu: "/daemonsets",
       },
@@ -133,6 +136,7 @@ const Workloads = {
       name: "StatefulSetDetail",
       hidden: true,
       component: () => import("@/business/workloads/statefulsets/detail"),
+      props: true,
       meta: {
         activeMenu: "/statefulsets",
       },
@@ -174,6 +178,7 @@ const Workloads = {
       name: "JobDetail",
       hidden: true,
       component: () => import("@/business/workloads/jobs/detail"),
+      props: true,
       meta: {
         activeMenu: "/jobs",
       },
@@ -215,6 +220,7 @@ const Workloads = {
       name: "CronJobDetail",
       hidden: true,
       component: () => import("@/business/workloads/cronjobs/detail"),
+      props: true,
       meta: {
         activeMenu: "/cronjobs",
       },
