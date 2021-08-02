@@ -15,9 +15,6 @@ module.exports = {
             errors: true
         },
         proxy: {
-            '/proxy': {
-                target: 'http://0.0.0.0:2019',
-            },
             '/api': {
                 target: 'http://0.0.0.0:2019',
                 ws: true,
@@ -28,6 +25,8 @@ module.exports = {
             },
             '/terminal': {
                 target: 'http://0.0.0.0:4200',
+                ws: true,
+                secure: false,
             }
 
         }

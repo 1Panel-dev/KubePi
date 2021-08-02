@@ -15,13 +15,10 @@ module.exports = {
             errors: true
         },
         proxy: {
-            '/proxy': {
+            '/api': {
                 target: 'http://0.0.0.0:2019',
                 ws: true,
                 secure: false,
-            },
-            '/api': {
-                target: 'http://0.0.0.0:2019',
             }
         }
     },

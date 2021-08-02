@@ -1,8 +1,9 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Terminal} from "xterm";
 import {FitAddon} from "xterm-addon-fit";
 import {debounce} from "lodash";
-import {mergeScan} from "rxjs/operators";
+import {LoggingService} from "./logging.service";
+import {ActivatedRoute} from "@angular/router";
 
 declare let SockJS: any;
 
@@ -14,7 +15,14 @@ declare let SockJS: any;
 })
 export class LoggingComponent implements AfterViewInit {
 
-  constructor(private readonly cdr_: ChangeDetectorRef) {
+  constructor(private readonly cdr_: ChangeDetectorRef,
+              private loggingService: LoggingService, private activatedRoute_: ActivatedRoute) {
+    this.clusterName = this.activatedRoute_.snapshot.queryParams["cluster"]
+    this.namespace = this.activatedRoute_.snapshot.queryParams["namespace"]
+    this.podName = this.activatedRoute_.snapshot.queryParams["pod"]
+    this.container = this.activatedRoute_.snapshot.queryParams["container"]
+    this.tailLines = this.activatedRoute_.snapshot.queryParams["tailLines"]
+    this.follow = this.activatedRoute_.snapshot.queryParams["follow"]
   }
 
   @ViewChild('anchor', {static: true}) anchorRef: ElementRef;
@@ -26,18 +34,19 @@ export class LoggingComponent implements AfterViewInit {
   tailLines: number;
   follow: boolean;
 
+  private conn_: WebSocket
+
+
   private debouncedFit_: Function
 
 
   ngAfterViewInit(): void {
-    this.initTerm()
-    this.setupConnection()
-    // if (this.namespace && this.podName && this.container) {
-    //   // this.setupConnection()
-    //   // this.initTerm()
-    // } else {
-    //   alert("please set param: namespace,pod  and container name ")
-    // }
+    if (this.clusterName && this.namespace && this.podName) {
+      this.setupConnection()
+      this.initTerm()
+    } else {
+      alert("please set param: namespace,pod  and container name ")
+    }
   }
 
   initTerm() {
@@ -57,23 +66,23 @@ export class LoggingComponent implements AfterViewInit {
     this.debouncedFit_();
   }
 
-  setupConnection() {
-    let options = {
-      debug: true,
-      devel: true,
-      protocols_whitelist: ['websocket', 'xdr-streaming', 'xhr-streaming', 'iframe-eventsource', 'iframe-htmlfile', 'xdr-polling', 'xhr-polling', 'iframe-xhr-polling', 'jsonp-polling']
-    };
-    let sock = new SockJS('/echo', undefined, options);
-    sock.onopen = () => {
-      console.log("open")
-      sock.send("aaaaaa")
+  async setupConnection() {
+    try {
+      const {data} = await this.loggingService.createLoggingSession(this.clusterName, this.namespace, this.podName, this.container, this.tailLines, this.follow).toPromise()
+      const id = data.id
+      this.conn_ = new SockJS(`/api/v1/logging/sockjs?${id}`)
+      this.conn_.onopen = () => {
+        this.conn_.send(JSON.stringify({SessionID: id}))
+        this.conn_.onmessage = (msg) => {
+          this.term.write(msg.data)
+        }
+        this.term.focus();
+        this.cdr_.markForCheck()
+      }
+    } catch (e) {
+      alert(e.error.message)
     }
-    sock.onmessage = (msg: any) => {
-      console.log(msg)
-      this.term.write(msg.data)
-    }
-    sock.onclose = () => {
-      console.log("connection close")
-    }
+
   }
+
 }

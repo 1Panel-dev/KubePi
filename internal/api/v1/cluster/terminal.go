@@ -7,11 +7,10 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"k8s.io/client-go/tools/remotecommand"
-	"net/http"
 )
 
 type TerminalResponse struct {
-	ID string `json:"id"`
+	ID    string `json:"id"`
 }
 
 func (h *Handler) TerminalSessionHandler() iris.Handler {
@@ -47,7 +46,6 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 			SizeChan: make(chan remotecommand.TerminalSize),
 		})
 		go terminal.WaitForTerminal(client, conf, namespace, podName, containerName, sessionID)
-		ctx.StatusCode(http.StatusOK)
 		resp := TerminalResponse{ID: sessionID}
 		ctx.Values().Set("data", resp)
 	}
