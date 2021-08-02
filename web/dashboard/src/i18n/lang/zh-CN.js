@@ -32,6 +32,8 @@ const message = {
       open_shell: "打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
+      show_diff: "差异对比",
+      continue_edit: "继续编辑"
     },
     table: {
       name: "名称",

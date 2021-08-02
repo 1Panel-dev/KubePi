@@ -16,6 +16,13 @@ export const mixin = {
             query: { yamlShow: false }
           })
           break
+        case "Job":
+          this.$router.push({
+            name: "JobDetail",
+            params: { namespace: namespace, name: name },
+            query: { yamlShow: false }
+          })
+          break
         default:
           break
       }

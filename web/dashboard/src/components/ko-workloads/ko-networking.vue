@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Networking">
+    <ko-card :title="$t('business.workload.network')">
       <el-form label-position="top" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">

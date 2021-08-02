@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
               <template v-slot:default="{row}">
-                <el-link @click="goPodDetail(row)">{{ row.metadata.name }}</el-link>
+                <el-link @click="toResource('Pod', row.metadata.namespace, row.metadata.name)">{{ row.metadata.name }}</el-link>
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('business.cluster.nodes')" prop="spec.nodeName" min-width="70" />
@@ -109,12 +109,18 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import { getDeploymentByName } from "@/api/deployments"
 import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
+import { mixin } from "@/utils/resourceRoutes"
 
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "DeploymentDetail",
   components: { LayoutContent, ComplexTable, YamlEditor },
+  mixins: [mixin],
+  props: {
+    name: String,
+    namespace: String,
+  },
   data() {
     return {
       form: {
@@ -130,13 +136,19 @@ export default {
       pods: [],
     }
   },
-  methods: {
-    goPodDetail(row) {
-      this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+  watch: {
+    yamlShow: function (newValue) {
+      this.$router.push({
+        name: "DeploymentDetail",
+        params: { name: this.name, namespace: this.namespace },
+        query: { yamlShow: newValue },
+      })
     },
+  },
+  methods: {
     getDetail() {
       this.loading = true
-      getDeploymentByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
+      getDeploymentByName(this.clusterName, this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
           let selectors = ""
@@ -146,7 +158,7 @@ export default {
             }
           }
           selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listPodsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
+          listPodsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
             this.pods = res.items
           })
         }

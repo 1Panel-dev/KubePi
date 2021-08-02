@@ -93,7 +93,7 @@
       </el-tabs>
     </div>
     <div class="grid-content bg-purple-light" v-if="showYaml">
-      <yaml-editor :value="yaml"></yaml-editor>
+      <yaml-editor :value="yaml" :is-edit="true"></yaml-editor>
     </div>
     <div class="grid-content bg-purple-light">
       <div style="float: right;margin-top: 10px">
@@ -448,11 +448,11 @@ export default {
       switch (this.type) {
         case "deployments":
           return "Deployment"
-        case "deamonsets":
+        case "daemonsets":
           return "DaemonSet"
         case "statefulsets":
           return "StatefulSet"
-        case "cornjobs":
+        case "cronjobs":
           return "CronJob"
         case "jobs":
           return "Job"

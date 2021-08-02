@@ -61,7 +61,7 @@
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
               <template v-slot:default="{row}">
-                <el-link @click="goJobDetail(row)">{{ row.metadata.name }}</el-link>
+                <el-link @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{ row.metadata.name }}</el-link>
               </template>
             </el-table-column>
             <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
@@ -115,10 +115,16 @@ import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
+import { mixin } from "@/utils/resourceRoutes"
 
 export default {
   name: "CronJobDetail",
   components: { LayoutContent, YamlEditor, ComplexTable },
+  mixins: [mixin],
+  props: {
+    name: String,
+    namespace: String,
+  },
   data() {
     return {
       form: {
@@ -138,14 +144,20 @@ export default {
       events: [],
     }
   },
-  methods: {
-    goJobDetail(row) {
-      this.$router.push({ name: "JobDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+  watch: {
+    yamlShow: function (newValue) {
+      this.$router.push({
+        name: "CronJobDetail",
+        params: { name: this.name, namespace: this.namespace },
+        query: { yamlShow: newValue },
+      })
     },
+  },
+  methods: {
     getDetail() {
       this.loading = true
       this.events = []
-      getCronJobByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
+      getCronJobByName(this.clusterName, this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.jobTemplate.spec.template.metadata.labels) {
           let selectors = ""
@@ -155,11 +167,11 @@ export default {
             }
           }
           selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listJobsWithNsSelector(this.clusterName, this.$route.params.namespace, selectors).then((res) => {
+          listJobsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
             this.jobs = res.items
           })
           let eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
-          listEventsWithNsSelector(this.clusterName, this.$route.params.namespace, eventSelectors).then((res) => {
+          listEventsWithNsSelector(this.clusterName, this.namespace, eventSelectors).then((res) => {
             for (const e of res.items) {
               this.events.unshift(e)
             }
