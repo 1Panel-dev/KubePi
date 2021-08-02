@@ -1,12 +1,18 @@
 <template>
   <div>
     <div class="yaml-editor">
-      <codemirror ref="editor" v-model="content" :options="options"></codemirror>
+      <codemirror :merge="diff" ref="editor" v-model="content" :options="options"></codemirror>
     </div>
-    <div class="upload" v-if="!readOnly"  >
-      <el-upload  :before-upload="readFile" action="" >
+    <div v-if="!readOnly">
+      <el-upload :before-upload="readFile" class="upload" action="">
         <el-button>{{ $t("commons.button.upload") }}</el-button>
       </el-upload>
+      <el-button @click="showDiff" v-if="!diff && isEdit" :disabled="content===oldValue" class="upload">
+        {{ $t("commons.button.show_diff") }}
+      </el-button>
+      <el-button @click="diff=false" v-if="diff" class="upload">
+        {{ $t("commons.button.continue_edit") }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -27,8 +33,16 @@ import "codemirror/addon/fold/indent-fold"
 import "codemirror/addon/search/searchcursor"
 import "codemirror/addon/search/search"
 import "js-yaml"
+import "codemirror/addon/merge/merge"
+import "codemirror/addon/merge/merge.css"
+import DiffMatchPatch from "diff-match-patch"
 
+window.diff_match_patch = DiffMatchPatch
+window.DIFF_DELETE = -1
+window.DIFF_INSERT = 1
+window.DIFF_EQUAL = 0
 window.jsyaml = require("js-yaml")
+
 export default {
   name: "YamlEditor",
   props: {
@@ -40,7 +54,15 @@ export default {
     },
     readOnly: {
       type: Boolean,
-      default: false
+      default () {
+        return false
+      }
+    },
+    isEdit: {
+      type: Boolean,
+      default () {
+        return false
+      }
     }
   },
   data () {
@@ -54,16 +76,26 @@ export default {
         foldGutter: true,
         lineWrapping: true,
         gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
-        lint: true
+        lint: true,
+        origLeft: null,
+        orig: "",
+        connect: "align",
+        collapseIdentical: true,
+        highlightDifference: true,
+        // viewportMargin: "Infinity"
       },
       content: "",
-      file: File
+      file: File,
+      oldValue: "",
+      diff: false,
+      changed: false
     }
   },
   watch: {
-    value:function (newValue) {
+    value: function (newValue) {
       if (newValue !== undefined) {
         let yaml = require("js-yaml")
+        this.oldValue = yaml.dump(newValue)
         this.$refs.editor.codemirror.setValue(yaml.dump(newValue))
         //折叠一些无用的key
         const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
@@ -78,6 +110,7 @@ export default {
     if (this.value !== undefined) {
       let yaml = require("js-yaml")
       this.$refs.editor.codemirror.setValue(yaml.dump(this.value))
+      this.oldValue = yaml.dump(this.value)
       //折叠一些无用的key
       const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
       if (cursor.findNext()) {
@@ -101,29 +134,45 @@ export default {
         this.$refs.editor.codemirror.setValue(reader.result)
       }
       return false
+    },
+    showDiff () {
+      this.diff = !this.diff
+      this.options.value = this.content
+      this.options.orig = this.oldValue
+    },
+    changeValue () {
+      this.changed = true
     }
   },
+  created () {
+    console.log(this.isEdit)
+  }
 }
 </script>
 
-<style scoped>
-    .yaml-editor {
-        height: 100%;
-        position: relative;
-    }
+<style lang="scss">
+  .yaml-editor {
+    height: 100%;
+    position: relative;
+  }
 
-    .yaml-editor >>> .CodeMirror {
-        height: auto;
-        min-height: 600px;
-    }
+  .CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+  }
 
-    .yaml-editor >>> .CodeMirror-scroll {
-        min-height: 600px;
-    }
+  .CodeMirror-merge {
+    border: 1px solid #eee;
+    height: auto;
+  }
 
-    .upload {
-        display: inline-block;
-        float: left;
-        margin-top: 10px;
-    }
+  .CodeMirror-merge-r-chunk {
+    background: #9aabbc;
+  }
+
+  .upload {
+    display: inline-block;
+    float: left;
+    margin-top: 10px;
+  }
 </style>

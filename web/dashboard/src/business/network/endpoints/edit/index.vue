@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Endpoints'}"
                   v-loading="loading">
-    <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
+    <yaml-editor ref="yaml_editor" :is-edit="true" :value="form"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">

@@ -45,7 +45,7 @@
       </el-row>
     </div>
     <div v-if="showYaml">
-      <yaml-editor ref="yaml_editor" :value="yaml"></yaml-editor>
+      <yaml-editor ref="yaml_editor" :is-edit="true" :value="yaml"></yaml-editor>
     </div>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>

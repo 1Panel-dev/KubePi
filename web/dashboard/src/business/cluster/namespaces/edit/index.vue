@@ -14,7 +14,7 @@
           <br>
           <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick"
                    v-if="Object.keys(item.metadata).length!==0">
-            <el-tab-pane  :label="$t('business.workload.labels_annotations')">
+            <el-tab-pane :label="$t('business.workload.labels_annotations')">
               <ko-key-value :title="$t('business.workload.label')"
                             :value.sync="item.metadata.labels"></ko-key-value>
               <ko-key-value :title="$t('business.workload.annotations')"
@@ -24,7 +24,7 @@
         </el-col>
       </div>
       <div v-if="showYaml">
-        <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+        <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
       </div>
       <div class="bottom-button">
         <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>

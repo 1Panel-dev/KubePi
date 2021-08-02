@@ -26,15 +26,17 @@
                   <ko-data :data-obj.sync="item.data"></ko-data>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('business.workload.labels_annotations')">
-                  <ko-key-value :title="$t('business.workload.label')" :value.sync="item.metadata.labels"></ko-key-value>
-                  <ko-key-value :title="$t('business.workload.annotations')" :value.sync="item.metadata.annotations"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="item.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')"
+                                :value.sync="item.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
           </el-form>
         </div>
         <div v-if="yamlShow">
-          <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+          <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
         </div>
         <div>
           <div class="bottom-button">
@@ -84,9 +86,7 @@ export default {
       getConfigMap(this.cluster, this.namespace, this.name).then(res => {
         this.loading = false
         this.item = res
-        if (this.yamlShow) {
-          this.yaml = this.transformYaml()
-        }
+        this.yaml = this.transformYaml()
       })
     },
     onSubmit () {
