@@ -8,6 +8,7 @@ import (
 	"github.com/KubeOperator/ekko/internal/api/v1/role"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	"github.com/KubeOperator/ekko/internal/api/v1/user"
+	"github.com/KubeOperator/ekko/internal/api/v1/ws"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
 	v1RoleService "github.com/KubeOperator/ekko/internal/service/v1/role"
@@ -104,7 +105,7 @@ func roleHandler() iris.Handler {
 				Operator: "in",
 				Value:    roleNames,
 			},
-		},common.DBOptions{})
+		}, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -150,7 +151,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				if len(ss) >= 4 {
 					resourceName := ss[3]
 					//过滤session资源
-					if resourceName == "sessions" || resourceName == "proxy" {
+					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {
@@ -195,7 +196,7 @@ func roleAccessHandler() iris.Handler {
 		//// 通过api resource 过滤出来资源主体,method 过滤操作
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
-		if !strings.Contains(ctx.Request().URL.Path, "/proxy") {
+		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") {
 			rs := ctx.Values().Get("roles")
 			roles := rs.([]v1Role.Role)
 			requestResource := ctx.Values().GetString("resource")
@@ -266,4 +267,5 @@ func AddV1Route(app iris.Party) {
 	cluster.Install(authParty)
 	role.Install(authParty)
 	proxy.Install(authParty)
+	ws.Install(authParty)
 }
