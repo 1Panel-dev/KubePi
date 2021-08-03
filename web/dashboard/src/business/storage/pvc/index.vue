@@ -54,122 +54,126 @@
 </template>
 
 <script>
-  import LayoutContent from "@/components/layout/LayoutContent"
-  import ComplexTable from "@/components/complex-table/index"
-  import {downloadYaml} from "@/utils/actions"
-  import KoTableOperations from "@/components/ko-table-operations"
-  import {deletePvcs, listPvcs} from "@/api/pvc";
+import LayoutContent from "@/components/layout/LayoutContent"
+import ComplexTable from "@/components/complex-table/index"
+import {downloadYaml} from "@/utils/actions"
+import KoTableOperations from "@/components/ko-table-operations"
+import {deletePvcs, listPvcs} from "@/api/pvc";
 
-  export default {
-    name: "PersistentVolumeClaim",
-    components: {ComplexTable, LayoutContent, KoTableOperations},
-    data() {
-      return {
-        data: [],
-        selects: [],
-        cluster: "",
-        loading: false,
-        conditions: "",
-        buttons: [
-          {
-            label: this.$t("commons.button.edit"),
-            icon: "el-icon-edit",
-            click: (row) => {
-              this.$router.push({
-                name: "PersistentVolumeClaimEdit",
-                params: {name: row.metadata.name},
-                query: {yamlShow: false}
-              })
-            }
-          },
-          {
-            label: this.$t("commons.button.edit_yaml"),
-            icon: "el-icon-edit",
-            click: (row) => {
-              this.$router.push({
-                name: "PersistentVolumeClaimEdit",
-                params: {name: row.metadata.name},
-                query: {yamlShow: true}
-              })
-            }
-          },
-          {
-            label: this.$t("commons.button.download_yaml"),
-            icon: "el-icon-download",
-            click: (row) => {
-              downloadYaml(row.metadata.name + ".yml", row)
-            }
-          },
-          {
-            label: this.$t("commons.button.delete"),
-            icon: "el-icon-delete",
-            click: (row) => {
-              this.onDelete(row)
-            }
-          },
-        ],
-      }
-    },
-    methods: {
-      search() {
-        this.loading = true
-        listPvcs(this.cluster, this.conditions).then(res => {
-          this.data = res.items
-          this.loading = false
-        })
-      },
-      onCreate() {
-        this.$router.push({
-          name: "PersistentVolumeClaimCreate",
-          query: {yamlShow: false}
-        })
-      },
-      onDelete(row) {
-        this.$confirm(
-            this.$t("commons.confirm_message.delete"),
-            this.$t("commons.message_box.prompt"), {
-              confirmButtonText: this.$t("commons.button.confirm"),
-              cancelButtonText: this.$t("commons.button.cancel"),
-              type: "warning",
-            }).then(() => {
-          this.ps = []
-          if (row) {
-            this.ps.push(deletePvcs(this.cluster, row.metadata.namespace, row.metadata.name))
-          } else {
-            if (this.selects.length > 0) {
-              for (const select of this.selects) {
-                this.ps.push(deletePvcs(this.cluster, select.metadata.name))
-              }
-            }
+export default {
+  name: "PersistentVolumeClaim",
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
+    return {
+      data: [],
+      selects: [],
+      cluster: "",
+      loading: false,
+      conditions: "",
+      buttons: [
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "PersistentVolumeClaimEdit",
+              params: {name: row.metadata.name},
+              query: {yamlShow: false}
+            })
           }
-          if (this.ps.length !== 0) {
-            Promise.all(this.ps)
-                .then(() => {
-                  this.search()
-                  this.$message({
-                    type: "success",
-                    message: this.$t("commons.msg.delete_success"),
-                  })
-                })
-                .catch(() => {
-                  this.search()
-                })
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "PersistentVolumeClaimEdit",
+              params: {name: row.metadata.name},
+              query: {yamlShow: true}
+            })
           }
-        })
-      },
-      openDetail(row) {
-        this.$router.push({
-          name: "PersistentVolumeClaimDetail",
-          params: {name: row.metadata.name},
-          query: {yamlShow: false}
-        })
-      },
-    },
-    created() {
-      this.cluster = this.$route.query.cluster
-      this.search()
+        },
+        {
+          label: this.$t("commons.button.download_yaml"),
+          icon: "el-icon-download",
+          click: (row) => {
+            downloadYaml(row.metadata.name + ".yml", row)
+          }
+        },
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.onDelete(row)
+          }
+        },
+      ],
     }
+  },
+  methods: {
+    search() {
+      this.loading = true
+      listPvcs(this.cluster, this.conditions).then(res => {
+        this.data = res.items
+        this.loading = false
+      })
+    },
+    onCreate() {
+      this.$router.push({
+        name: "PersistentVolumeClaimCreate",
+        query: {yamlShow: false}
+      })
+    },
+    onDelete(row) {
+      this.$confirm(
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deletePvcs(this.cluster, row.metadata.namespace, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deletePvcs(this.cluster, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+              .then(() => {
+                this.search()
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
+              })
+              .catch(() => {
+                this.search()
+              })
+        }
+      })
+    },
+    openDetail(row) {
+      this.$router.push({
+        name: "PersistentVolumeClaimDetail",
+        params: {
+          name: row.metadata.name,
+          namespace: row.metadata.namespace
+        },
+        query: {yamlShow: false}
+      })
+    },
+  },
+  created() {
+    this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === "true"
+    this.search()
   }
+}
 </script>
 
 <style scoped>

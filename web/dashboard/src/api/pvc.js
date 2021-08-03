@@ -10,12 +10,6 @@ const namespacePvcUrl = (cluster_name, namespace) => {
 export function listPvcs (cluster_name, continueToken, search) {
     let url = pvcUrl(cluster_name)
     const param = {}
-    // if (limit && limit !== 0) {
-    //     param.limit = limit
-    // }
-    // if (continueToken && continueToken !== "") {
-    //     param.continue = continueToken
-    // }
     if (search && search !== "") {
         param.fieldSelector = "metadata.namespace=" + search
     }

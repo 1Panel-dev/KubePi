@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'PersistentVolumeClaim'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <div v-if="!showYaml">
         <el-form label-position="top" :model="form">

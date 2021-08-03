@@ -138,6 +138,7 @@ const Storage = {
       },
       component: () => import("@/business/storage/pvc/"),
       name: "PersistentVolumeClaim",
+      props: true,
       meta: {
         title: "PersistentVolumeClaim",
         activeMenu: "/persistentVolumeClaim",
@@ -166,12 +167,13 @@ const Storage = {
       component: () => import("@/business/storage/pvc/edit"),
       name: "PersistentVolumeClaimEdit",
       hidden: true,
+      props: true,
       meta: {
         title: "PersistentVolumeClaim Edit",
         activeMenu: "/persistentVolumeClaim",
       }
     }, {
-      path: "/persistentVolumeClaim/detail/:name",
+      path: "/:namespace/persistentVolumeClaim/detail/:name",
       requirePermission: {
         apiGroup: "core",
         resource: "persistentvolumeclaims",
@@ -180,6 +182,7 @@ const Storage = {
       component: () => import("@/business/storage/pvc/detail"),
       name: "PersistentVolumeClaimDetail",
       hidden: true,
+      props: true,
       meta: {
         title: "PersistentVolumeClaim Detail",
         activeMenu: "/persistentVolumeClaim",
