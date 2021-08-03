@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     toHome () {
-      window.open("/ekko", '_blank');
+      window.open("/ekko", '_self');
     }
   }
 }

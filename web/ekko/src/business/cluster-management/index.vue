@@ -126,7 +126,7 @@
                 });
             },
             onGotoDashboard(name) {
-                window.open(`/dashboard?cluster=${name}`, "_blank")
+                window.open(`/dashboard?cluster=${name}`, "_self")
             },
             onHiddenUnAccessClusterChange() {
                 this.onVueCreated()
