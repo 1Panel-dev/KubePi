@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
-      <div v-if="!showYaml">
+      <div v-if="!yamlShow">
         <el-form label-position="top" :model="form">
           <el-row :gutter="24">
             <el-col :span="8">
@@ -117,14 +117,14 @@
 
         </el-form>
       </div>
-      <div v-if="showYaml">
+      <div v-if="yamlShow">
         <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
       </div>
       <div>
         <div style="float: right;margin-top: 10px">
           <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-          <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+          <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
+          <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
           <el-button v-loading="loading" @click="onSubmit" type="primary">
             {{ $t("commons.button.submit") }}
           </el-button>
@@ -152,7 +152,7 @@ export default {
   data () {
     return {
       loading: false,
-      showYaml: false,
+      yamlShow: false,
       page: {
         pageSize: 10,
         nextToken: "",
@@ -267,15 +267,15 @@ export default {
       this.$router.push({ name: "PersistentVolumes" })
     },
     onEditYaml () {
-      this.showYaml = true
+      this.yamlShow = true
       this.yaml = this.transformYaml()
     },
     backToForm () {
-      this.showYaml = false
+      this.yamlShow = false
     },
     onSubmit () {
       let data = {}
-      if (this.showYaml) {
+      if (this.yamlShow) {
         data = this.$refs.yaml_editor.getValue()
       } else {
         data = this.transformYaml()

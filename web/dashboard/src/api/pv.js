@@ -5,7 +5,7 @@ const pvUrl = (cluster_name) => {
 }
 
 
-export function listPvs (cluster_name, limit, continueToken, search) {
+export function listPvs (cluster_name, continueToken, search) {
   let url = pvUrl(cluster_name)
   if (search && search !== "") {
     url += "&fieldSelector=metadata.name=" + search
