@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Deployments' }" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading="loading">
     <br>
     <div v-if="!showYaml">
       <el-form label-position="top" ref="form" :model="form">
@@ -396,7 +396,7 @@ export default {
       return this.type === "statefulsets"
     },
     onCancel() {
-      this.$router.push({ name: this.toggleCase(this.type) + "s" })
+      this.$router.push({ name: this.toggleCase() + "s" })
     },
     onSubmit() {
       let data = {}
@@ -418,7 +418,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.create_success"),
             })
-            this.$router.push({ name: this.toggleCase(this.type) + "s" })
+            this.$router.push({ name: this.toggleCase() + "s" })
           })
           .finally(() => {
             this.loading = false
@@ -430,7 +430,7 @@ export default {
               type: "success",
               message: this.$t("commons.msg.edit_success"),
             })
-            this.$router.push({ name: this.toggleCase(this.type) + "s" })
+            this.$router.push({ name: this.toggleCase() + "s" })
           })
           .finally(() => {
             this.loading = false
@@ -490,7 +490,7 @@ export default {
       this.currentContainer = this.podSpec.containers[0]
       this.isRefresh = !this.isRefresh
     }
-    this.form.kind = this.toggleCase(this.type)
+    this.form.kind = this.toggleCase()
   },
 }
 </script>
