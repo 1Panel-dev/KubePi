@@ -32,8 +32,8 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
-      <el-table-column show-overflow-tooltip label="Volume" prop="spec.volumeName"/>
-      <el-table-column :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
+      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName"/>
+      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
       <el-table-column :label="$t('business.storage.accessModes')" prop="spec.accessModes">
         <template v-slot:default="{row}">
           <div v-for="(name,index) in row.spec.accessModes " :key="index" style="display:inline-block">
@@ -41,7 +41,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
+      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
@@ -111,14 +111,8 @@
       }
     },
     methods: {
-      search(init) {
+      search() {
         this.loading = true
-        if (init) {
-          this.page = {
-            pageSize: this.page.pageSize,
-            nextToken: "",
-          }
-        }
         listPvcs(this.cluster, this.conditions).then(res => {
           this.data = res.items
           this.loading = false
@@ -140,7 +134,7 @@
             }).then(() => {
           this.ps = []
           if (row) {
-            this.ps.push(deletePvcs(this.cluster, row.metadata.name))
+            this.ps.push(deletePvcs(this.cluster, row.metadata.namespace, row.metadata.name))
           } else {
             if (this.selects.length > 0) {
               for (const select of this.selects) {
@@ -151,14 +145,14 @@
           if (this.ps.length !== 0) {
             Promise.all(this.ps)
                 .then(() => {
-                  this.search(true)
+                  this.search()
                   this.$message({
                     type: "success",
                     message: this.$t("commons.msg.delete_success"),
                   })
                 })
                 .catch(() => {
-                  this.search(true)
+                  this.search()
                 })
           }
         })

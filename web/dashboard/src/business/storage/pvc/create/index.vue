@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required>
-                <el-select v-model="form.metadata.namespace"  placeholder="请选择">
+                <el-select v-model="form.metadata.namespace">
                   <el-option
                       v-for="(item, index) in namespace_list"
                       :key="index"
@@ -21,15 +21,14 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-row :span="6">
+            <el-col :span="8">
               <el-form-item :label="$t('business.storage.pvSource')" required>
-                <el-radio-group v-model="currentVolumeClaimSource">
-                  <el-radio label="sc">{{ this.$t('business.storage.assignSc') }}</el-radio>
-                  <el-radio label="pv">{{ this.$t('business.storage.assignPv') }}</el-radio>
-                </el-radio-group>
+                <el-radio v-model="currentVolumeClaimSource" label="sc">{{ this.$t('business.storage.assignSc') }}</el-radio>
+                <el-radio v-model="currentVolumeClaimSource" label="pv">{{ this.$t('business.storage.assignPv') }}</el-radio>
               </el-form-item>
-            </el-row>
+            </el-col>
           </el-row>
+
           <el-tabs v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
             <el-tab-pane :label="$t('commons.form.setting')">
@@ -75,7 +74,7 @@
                     <el-col :span="6">
                       <el-form-item v-if="currentVolumeClaimSource == 'sc'" :label="$t('business.storage.capacity')"
                                     required>
-                        <el-input-number :min="1" @change="setStorageCapacity" clearable
+                        <el-input-number :min="1" :step="2" @change="setStorageCapacity" clearable
                                          v-model="currentStorageCapacity"></el-input-number>
                       </el-form-item>
                     </el-col>
@@ -106,7 +105,8 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {createPv, listPvs} from "@/api/pv"
+import {listPvs} from "@/api/pv"
+import {createPvc} from "@/api/pvc"
 import KoCard from "@/components/ko-card/index";
 import {listStorageClasses} from "@/api/storageclass";
 import {listNamespace} from "@/api/namespaces"
@@ -125,13 +125,18 @@ export default {
       conditions: "",
       form: {
         apiVersion: "v1",
-        kind: "PersistentVolume",
+        kind: "PersistentVolumeClaim",
         metadata: {
           name: "",
           namespace: "default",
         },
         spec: {
-          accessModes: []
+          accessModes: [],
+          resources: {
+            requests: {
+              storage: "1Gi"
+            }
+          },
         }
       },
       namespace_list: [],
@@ -177,7 +182,7 @@ export default {
     loadStorageClasses() {
       this.storageClasses = []
       listStorageClasses(this.cluster).then((res) => {
-        this.storageClasses.push('None')
+        this.storageClasses.push('Default StorageClass')
         for (const sc of res.items) {
           this.storageClasses.push(sc.metadata.name)
         }
@@ -191,23 +196,27 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createPv(this.cluster, data).then(() => {
+      createPvc(this.cluster, this.form.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({name: "PersistentVolumes"})
+        this.$router.push({name: "PersistentVolumeClaim"})
       }).finally(() => {
         this.loading = false
       })
     },
     transformYaml() {
       let formData = {}
+      if (this.form.spec.storageClassName == 'Default StorageClass') {
+        this.form.spec.storageClassName = ''
+      }
       formData = JSON.parse(JSON.stringify(this.form))
       return formData
     },
     setStorageCapacity() {
       this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + 'Gi'
+      console.log("Test Storage:", this.form.spec.resources.requests.storage )
     }
   },
   created() {
