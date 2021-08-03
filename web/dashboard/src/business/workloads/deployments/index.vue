@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Deployments">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'deployments',verb:'create'}">
@@ -95,9 +95,10 @@ export default {
       ],
       loading: false,
       data: [],
-      page: {
+      paginationConfig: {
+        currentPage: 1,
         pageSize: 10,
-        nextToken: "",
+        total: 0
       },
       selects: [],
       clusterName: "",
@@ -144,9 +145,11 @@ export default {
     search() {
       this.loading = true
       this.data = []
-      listDeployments(this.clusterName)
+      const { currentPage, pageSize } = this.paginationConfig
+      listDeployments(this.clusterName, currentPage, pageSize)
         .then((res) => {
-          this.data = res.items
+          this.data = res.items.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

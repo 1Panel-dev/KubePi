@@ -12,44 +12,37 @@
     </div>
 
     <div class="complex-table__body">
-      <fu-table v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey"
-                @selection-change="handleSelectionChange">
+      <fu-table v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey" @selection-change="handleSelectionChange">
         <slot></slot>
       </fu-table>
     </div>
 
     <div class="complex-table__pagination" v-if="$slots.pagination || paginationConfig">
       <slot name="pagination">
-<!--        <fu-table-pagination :current-page="paginationConfig.currentPage"-->
-<!--                             :page-size="paginationConfig.pageSize"-->
-<!--                             v-bind="paginationConfig">-->
-
-<!--        </fu-table-pagination>-->
+        <fu-table-pagination :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig" @change="search" />
       </slot>
     </div>
   </div>
 </template>
 
 <script>
-
-
 export default {
   name: "ComplexTable",
   components: {},
   props: {
     columns: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     localKey: String, // 如果需要记住选择的列，则这里添加一个唯一的Key
     header: String,
     searchConfig: Object,
     paginationConfig: Object,
-    selects: Array
+    selects: Array,
   },
   data() {
     return {
-      pageShow: false
+      pageShow: false,
     }
   },
   methods: {
@@ -84,5 +77,4 @@ export default {
     @include flex-row(flex-end);
   }
 }
-
 </style>

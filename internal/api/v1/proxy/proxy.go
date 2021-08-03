@@ -5,21 +5,23 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"io/ioutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
-	"net/http"
-	"net/url"
-	"strings"
-	"sync"
 )
 
 type Handler struct {
@@ -136,11 +138,57 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if resp.StatusCode == http.StatusForbidden {
 			resp.StatusCode = http.StatusInternalServerError
 		}
+		num, err1 := ctx.Values().GetInt("pageNum")
+		size, err2 := ctx.Values().GetInt("pageSize")
+		if err1 == nil || err2 == nil {
+			total, datas, err := pageFilter(num, size, rawResp)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err)
+				return
+			}
+			backDatas, _ := json.Marshal(pkgV1.Page{Items: datas, Total: total})
+			_, _ = ctx.Write(backDatas)
+			return
+		}
 		ctx.StatusCode(resp.StatusCode)
 		ctx.Values().Set("message", string(rawResp))
-
 		_, _ = ctx.Write(rawResp)
 	}
+}
+
+type K8sObj struct {
+	Kind       string      `json:"kind"`
+	ApiVersion string      `json:"apiVersion"`
+	Metadata   interface{} `json:"metadata"`
+	Items      []pageItem  `json:"items"`
+}
+type pageItem struct {
+	Metadata metadata    `json:"metadata"`
+	Spec     interface{} `json:"spec"`
+	Status   interface{} `json:"status"`
+}
+type metadata struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+func pageFilter(num, size int, resp []byte) (int, interface{}, error) {
+	datas := &K8sObj{}
+	if err := json.Unmarshal(resp, datas); err != nil {
+		return 0, datas, err
+	}
+	total := len(datas.Items)
+	if (num-1)*size >= len(datas.Items) {
+		datas.Items = []pageItem{}
+	} else {
+		if num*size < len(datas.Items) {
+			datas.Items = datas.Items[(num-1)*size : (num * size)]
+		} else {
+			datas.Items = datas.Items[(num-1)*size : len(datas.Items)]
+		}
+	}
+	return total, datas, nil
 }
 
 func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUrl url.URL) (*NamespaceResourceContainer, error) {
