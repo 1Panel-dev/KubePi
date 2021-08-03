@@ -7,16 +7,10 @@ const deploymentWithNsUrl = (cluster_name, namespaces) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespaces}/deployments`
 }
 
-export function listDeployments (cluster_name, limit, continueToken, search) {
+export function listDeployments (cluster_name, currentPage, pageSize) {
   let url = deploymentUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
-  }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search
+  if (currentPage && pageSize) {
+    return get(`${url}?pageNum=${currentPage}&pageSize=${pageSize}`)
   }
   return get(url)
 }
