@@ -20,7 +20,7 @@
 <script>
 import "codemirror/addon/lint/lint.css"
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/erlang-dark.css"
+import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/yaml/yaml"
 import "codemirror/addon/lint/lint"
 import "codemirror/addon/lint/yaml-lint"
@@ -70,7 +70,7 @@ export default {
       options: {
         value: "",
         mode: "yaml",
-        theme: "erlang-dark",
+        theme: "ayu-dark",
         lineNumbers: true,
         tabSize: 4,
         foldGutter: true,
@@ -167,7 +167,15 @@ export default {
   }
 
   .CodeMirror-merge-r-chunk {
-    background: #9aabbc;
+    background: #3c3c3ce3;
+  }
+
+  .CodeMirror-merge-r-chunk-end {
+     border-bottom: unset;
+  }
+
+  .CodeMirror-merge-r-chunk-start {
+    border-top: unset;
   }
 
   .upload {

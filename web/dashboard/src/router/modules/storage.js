@@ -100,21 +100,7 @@ const Storage = {
         activeMenu: "/storageclasses",
       }
     },
-    {
-      path: "/storageclasses/edit/:name",
-      requirePermission: {
-        apiGroup: "storage.k8s.io",
-        resource: "storageclasses",
-        verb: "update",
-      },
-      component: () => import("@/business/storage/sc/edit"),
-      name: "StorageClassEdit",
-      hidden: true,
-      meta: {
-        title: "Storage Classes Edit",
-        activeMenu: "/storageclasses",
-      }
-    },
+
     {
       path: "/storageclasses/detail/:name",
       requirePermission: {
@@ -124,6 +110,7 @@ const Storage = {
       },
       component: () => import("@/business/storage/sc/detail"),
       name: "StorageClassDetail",
+      props: true,
       hidden: true,
       meta: {
         title: "Storage Classes Detail",
