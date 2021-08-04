@@ -35,4 +35,3 @@ export function createPvc (cluster_name, namespace, data) {
 export function editPvc (cluster_name, namespace, data) {
     return patch(`${namespacePvcUrl(cluster_name, namespace)}`, data)
 }
-

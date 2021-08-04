@@ -216,7 +216,6 @@ export default {
     },
     setStorageCapacity() {
       this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + 'Gi'
-      console.log("Test Storage:", this.form.spec.resources.requests.storage )
     }
   },
   created() {

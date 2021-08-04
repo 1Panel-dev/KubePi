@@ -158,21 +158,6 @@ const Storage = {
         activeMenu: "/persistentVolumeClaim",
       }
     }, {
-      path: "/persistentVolumeClaim/edit/:name",
-      requirePermission: {
-        apiGroup: "core",
-        resource: "persistentvolumeclaims",
-        verb: "update",
-      },
-      component: () => import("@/business/storage/pvc/edit"),
-      name: "PersistentVolumeClaimEdit",
-      hidden: true,
-      props: true,
-      meta: {
-        title: "PersistentVolumeClaim Edit",
-        activeMenu: "/persistentVolumeClaim",
-      }
-    }, {
       path: "/:namespace/persistentVolumeClaim/detail/:name",
       requirePermission: {
         apiGroup: "core",

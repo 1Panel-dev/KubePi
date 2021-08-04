@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.form.detail')"  :back-to="{name: 'PersistentVolumeClaim'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
-      <div v-if="!showYaml">
+      <div v-if="!yamlShow">
         <el-form label-position="top" :disabled="true" :model="form">
           <el-row :gutter="24">
             <el-col :span="8">
@@ -85,13 +85,13 @@
           </el-tabs>
         </el-form>
       </div>
-      <div v-if="showYaml">
+      <div v-if="yamlShow">
         <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
       </div>
       <div>
         <div style="float: right;margin-top: 10px">
-          <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+          <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
+          <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       loading: false,
-      showYaml: false,
+      yamlShow: false,
       page: {
         pageSize: 10,
         nextToken: "",
@@ -154,15 +154,19 @@ export default {
       this.$router.push({name: "PersistentVolumes"})
     },
     onEditYaml() {
-      this.showYaml = true
+      this.yamlShow = true
       this.yaml = this.transformYaml()
     },
     backToForm() {
-      this.showYaml = false
+      this.yamlShow = false
     },
     search() {
       getPvc(this.cluster, this.namespace, this.name).then(res => {
         this.form = res
+        if (this.yamlShow) {
+          this.onEditYaml()
+        }
+        this.currentStorageCapacity = parseInt(this.form.spec.resources.requests.storage)
         this.loading = false
       })
     },
@@ -180,11 +184,8 @@ export default {
   },
   created() {
     this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === "true"
     this.search()
   }
 }
 </script>
-
-<style scoped>
-
-</style>

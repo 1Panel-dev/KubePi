@@ -71,24 +71,24 @@ export default {
       loading: false,
       conditions: "",
       buttons: [
+        // {
+        //   label: this.$t("commons.button.edit"),
+        //   icon: "el-icon-edit",
+        //   click: (row) => {
+        //     this.$router.push({
+        //       name: "PersistentVolumeClaimEdit",
+        //       params: {name: row.metadata.name, namespace: row.metadata.namespace},
+        //       query: {yamlShow: false}
+        //     })
+        //   }
+        // },
         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
+          label: this.$t("commons.button.view_yaml"),
+          icon: "el-icon-view",
           click: (row) => {
             this.$router.push({
-              name: "PersistentVolumeClaimEdit",
-              params: {name: row.metadata.name},
-              query: {yamlShow: false}
-            })
-          }
-        },
-        {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "PersistentVolumeClaimEdit",
-              params: {name: row.metadata.name},
+              name: "PersistentVolumeClaimDetail",
+              params: {name: row.metadata.name, namespace: row.metadata.namespace},
               query: {yamlShow: true}
             })
           }
@@ -170,7 +170,6 @@ export default {
   },
   created() {
     this.cluster = this.$route.query.cluster
-    this.yamlShow = this.$route.query.yamlShow === "true"
     this.search()
   }
 }
