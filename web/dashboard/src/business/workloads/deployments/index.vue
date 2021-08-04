@@ -35,7 +35,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listDeployments, deleteDeployment } from "@/api/deployments"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -98,7 +98,7 @@ export default {
       paginationConfig: {
         currentPage: 1,
         pageSize: 10,
-        total: 0
+        total: 0,
       },
       selects: [],
       clusterName: "",
@@ -119,11 +119,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteDeployment(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "deployments", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteDeployment(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "deployments", row.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -146,7 +146,7 @@ export default {
       this.loading = true
       this.data = []
       const { currentPage, pageSize } = this.paginationConfig
-      listDeployments(this.clusterName, currentPage, pageSize)
+      listWorkLoads(this.clusterName, "deployments", currentPage, pageSize)
         .then((res) => {
           this.data = res.items.items
           this.paginationConfig.total = res.total

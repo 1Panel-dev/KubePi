@@ -1,9 +1,9 @@
 <template>
   <layout-content header="StatefulSets">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()" v-has-permissions="{apiGroup:'',resource:'statefulsets',verb:'create'}">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'statefulsets',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'statefulsets',verb:'delete'}">
@@ -35,7 +35,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listStatefulSets, deleteStatefulSet } from "@/api/statefulsets"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -95,9 +95,10 @@ export default {
       ],
       loading: false,
       data: [],
-      page: {
+      paginationConfig: {
+        currentPage: 1,
         pageSize: 10,
-        nextToken: "",
+        total: 0,
       },
       selects: [],
       clusterName: "",
@@ -118,11 +119,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteStatefulSet(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "statefulsets", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteStatefulSet(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "statefulsets", select.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -144,9 +145,11 @@ export default {
     search() {
       this.loading = true
       this.data = []
-      listStatefulSets(this.clusterName)
+      const { currentPage, pageSize } = this.paginationConfig
+      listWorkLoads(this.clusterName, "statefulsets", currentPage, pageSize)
         .then((res) => {
-          this.data = res.items
+          this.data = res.items.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

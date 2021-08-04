@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Pods">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
@@ -39,7 +39,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listPods, deletePod } from "@/api/pods"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -71,6 +71,11 @@ export default {
       ],
       loading: false,
       data: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
       selects: [],
       clusterName: "",
     }
@@ -87,11 +92,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deletePod(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deletePod(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "pods", select.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -135,9 +140,11 @@ export default {
     search() {
       this.loading = true
       this.data = []
-      listPods(this.clusterName)
+      const { currentPage, pageSize } = this.paginationConfig
+      listWorkLoads(this.clusterName, "pods", currentPage, pageSize)
         .then((res) => {
-          this.data = res.items
+          this.data = res.items.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

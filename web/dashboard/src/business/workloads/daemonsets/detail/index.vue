@@ -69,7 +69,7 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90" >
+            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
               <template v-slot:default="{row}">
                 <el-link @click="toResource('Pod', row.metadata.namespace, row.metadata.name)">{{ row.metadata.name }}</el-link>
               </template>
@@ -116,11 +116,11 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getDaemonSetByName } from "@/api/daemonsets"
+import { getWorkLoadByName } from "@/api/workloads"
 import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 import ComplexTable from "@/components/complex-table"
-import {mixin} from "@/utils/resourceRoutes"
+import { mixin } from "@/utils/resourceRoutes"
 
 export default {
   name: "DaemonSetDetail",
@@ -164,7 +164,7 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      getDaemonSetByName(this.clusterName, this.namespace, this.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "daemonsets", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
           let selectors = ""

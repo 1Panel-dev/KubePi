@@ -5,7 +5,7 @@ const Dashboard = {
     sort: 0,
     global: true,
     component: Layout,
-    name: "Dashboard",
+    name: "Dashboards",
     children: [
         {
             path: "/dashboard",

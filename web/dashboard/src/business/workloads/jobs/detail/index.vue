@@ -122,7 +122,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getJobByName } from "@/api/jobs"
+import { getWorkLoadByName } from "@/api/workloads"
 import { listPodsWithNsSelector } from "@/api/pods"
 import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
@@ -171,7 +171,7 @@ export default {
     getDetail() {
       this.loading = true
       this.events = []
-      getJobByName(this.clusterName, this.namespace, this.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "jobs", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.template.metadata.labels) {
           let selectors = ""

@@ -69,11 +69,11 @@
             </el-table-column>
             <el-table-column sortable :label="$t('business.pod.ready')" prop="ready" min-width="40">
               <template v-slot:default="{row}">
-                <i class="el-icon-check" v-if="row.ready"/>
-                <i class="el-icon-close" v-if="!row.ready"/>
+                <i class="el-icon-check" v-if="row.ready" />
+                <i class="el-icon-close" v-if="!row.ready" />
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50"/>
+            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50" />
             <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
               <template v-slot:default="{row}">
                 <div class="myTag">
@@ -83,7 +83,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30"/>
+            <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30" />
             <el-table-column sortable :label="$t('commons.table.created_time')" min-width="70">
               <template v-slot:default="{row}">
                 <span v-if="row.started">{{ row.state.running.startedAt | age }}</span>
@@ -94,8 +94,8 @@
         </el-tab-pane>
         <el-tab-pane lazy label="Conditions" name="Conditions">
           <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type"/>
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status"/>
+            <el-table-column sortable label="Condition" prop="type" />
+            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
             <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
               <template v-slot:default="{row}">
                 {{ row.lastTransitionTime | age }}
@@ -111,8 +111,7 @@
         </el-tab-pane>
         <el-tab-pane lazy label="Shell" name="Shell">
           <el-select v-model="selectedTerminalContainer" @change="onSelectedTerminalContainerChange" placeholder="选择容器">
-            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name"
-                       :value="item.name"/>
+            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name" :value="item.name" />
           </el-select>
 
           <div v-if="terminalOpened" style="margin-top: 5px">
@@ -122,16 +121,12 @@
         </el-tab-pane>
         <el-tab-pane lazy label="Logging" name="Logging">
           <el-select v-model="selectedLoggingContainer" placeholder="选择容器">
-            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name"
-                       :value="item.name"/>
+            <el-option v-for="(item, index) in form.status.containerStatuses" :key="index" :label="item.name" :value="item.name" />
           </el-select>
           <el-select v-model="tailLines" placeholder="显示条数">
-            <el-option v-for="(item, index) in tailLinesOptions" :key="index" :label="item.label"
-                       :value="item.value"/>
+            <el-option v-for="(item, index) in tailLinesOptions" :key="index" :label="item.label" :value="item.value" />
           </el-select>
-          <el-switch
-              v-model="follow"
-              active-text="自动刷新">
+          <el-switch v-model="follow" active-text="自动刷新">
           </el-switch>
 
           <div v-if="loggingOpened" style="margin-top: 5px">
@@ -151,14 +146,18 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getPodByName} from "@/api/pods"
+import { getWorkLoadByName } from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
 
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "PodDetail",
-  components: {LayoutContent, ComplexTable, YamlEditor},
+  components: { LayoutContent, ComplexTable, YamlEditor },
+  props: {
+    name: String,
+    namespace: String,
+  },
   data() {
     return {
       form: {
@@ -186,11 +185,11 @@ export default {
       follow: false,
       tailLines: 20,
       tailLinesOptions: [
-        {label: "最后20行", value: 20,},
-        {label: "最后100行", value: 100,},
-        {label: "最后200行", value: 200,},
-        {label: "最后500行", value: 500,},
-      ]
+        { label: "最后20行", value: 20 },
+        { label: "最后100行", value: 100 },
+        { label: "最后200行", value: 200 },
+        { label: "最后500行", value: 500 },
+      ],
     }
   },
   computed: {
@@ -220,12 +219,12 @@ export default {
         baseUrl += `&&follow=${follow}`
       }
       return baseUrl
-    }
+    },
   },
   methods: {
     getDetail() {
       this.loading = true
-      getPodByName(this.clusterName, this.$route.params.namespace, this.$route.params.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name).then((res) => {
         this.form = res
         this.loading = false
       })
@@ -259,7 +258,7 @@ export default {
         this.tailLines = 20
         this.loggingOpened = true
       }
-    }
+    },
   },
   created() {
     this.clusterName = this.$route.query.cluster
