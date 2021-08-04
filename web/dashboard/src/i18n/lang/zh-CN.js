@@ -52,7 +52,8 @@ const message = {
     form: {
       name: "名称",
       detail: "详情",
-      setting: "设置"
+      setting: "设置",
+      parameters: "参数"
     },
     validate: {
       limit: "长度在 {0} 到 {1} 个字符",
@@ -360,6 +361,7 @@ const message = {
       api_group: "API 组"
     },
     storage: {
+      provisioner: "提供商",
       storage: "存储",
       accessModes: "访问模式",
       capacity: "容量 Gib",

@@ -6,7 +6,7 @@
 
 <script>
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/rubyblue.css"
+import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 
 export default {
@@ -24,7 +24,7 @@ export default {
       options: {
         value: "",
         mode: "application/json",
-        theme: "rubyblue",
+        theme: "ayu-dark",
         lineNumbers: true,
         tabSize: 2,
         readOnly: true,
