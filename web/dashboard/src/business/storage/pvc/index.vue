@@ -34,13 +34,6 @@
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
       <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName"/>
       <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
-      <el-table-column :label="$t('business.storage.accessModes')" prop="spec.accessModes">
-        <template v-slot:default="{row}">
-          <div v-for="(name,index) in row.spec.accessModes " :key="index" style="display:inline-block">
-            <el-tag>{{ name }}</el-tag>
-          </div>
-        </template>
-      </el-table-column>
       <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -71,17 +64,6 @@ export default {
       loading: false,
       conditions: "",
       buttons: [
-        // {
-        //   label: this.$t("commons.button.edit"),
-        //   icon: "el-icon-edit",
-        //   click: (row) => {
-        //     this.$router.push({
-        //       name: "PersistentVolumeClaimEdit",
-        //       params: {name: row.metadata.name, namespace: row.metadata.namespace},
-        //       query: {yamlShow: false}
-        //     })
-        //   }
-        // },
         {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
