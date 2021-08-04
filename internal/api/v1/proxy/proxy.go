@@ -49,6 +49,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		name := ctx.Params().GetString("name")
 		proxyPath := ensureProxyPathValid(ctx.Params().GetString("p"))
 		namespace := ctx.URLParam("namespace")
+		keywords := ctx.URLParam("keywords")
 		requestMethod := ctx.Request().Method
 		// 获取当亲集群
 		c, err := h.clusterService.Get(name, common.DBOptions{})
@@ -141,13 +142,23 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		num, err1 := ctx.Values().GetInt("pageNum")
 		size, err2 := ctx.Values().GetInt("pageSize")
 		if err1 == nil || err2 == nil {
-			total, datas, err := pageFilter(num, size, rawResp)
+			var listObj K8sListObj
+			if err := json.Unmarshal(rawResp, &listObj); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err)
+				return
+			}
+			if keywords != "" {
+				listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
+			}
+
+			total, items, err := pageFilter(num, size, listObj.Items)
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err)
 				return
 			}
-			backDatas, _ := json.Marshal(pkgV1.Page{Items: datas, Total: total})
+			backDatas, _ := json.Marshal(pkgV1.Page{Items: items, Total: total})
 			_, _ = ctx.Write(backDatas)
 			return
 		}
@@ -157,7 +168,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 	}
 }
 
-type K8sObj struct {
+type K8sListObj struct {
 	Kind       string      `json:"kind"`
 	ApiVersion string      `json:"apiVersion"`
 	Metadata   interface{} `json:"metadata"`
@@ -173,22 +184,48 @@ type metadata struct {
 	Namespace string `json:"namespace"`
 }
 
-func pageFilter(num, size int, resp []byte) (int, interface{}, error) {
-	datas := &K8sObj{}
-	if err := json.Unmarshal(resp, datas); err != nil {
-		return 0, datas, err
+type fieldMatcher interface {
+	Match(item pageItem) bool
+}
+
+type namespaceAndNameMatcher struct {
+	Namespace string
+	Name      string
+}
+
+func (n namespaceAndNameMatcher) Match(item pageItem) bool {
+	return item.Metadata.Namespace == n.Namespace || strings.Contains(item.Metadata.Name, n.Name)
+}
+
+func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
+	return &namespaceAndNameMatcher{
+		Namespace: keywords,
+		Name:      keywords,
 	}
-	total := len(datas.Items)
-	if (num-1)*size >= len(datas.Items) {
-		datas.Items = []pageItem{}
-	} else {
-		if num*size < len(datas.Items) {
-			datas.Items = datas.Items[(num-1)*size : (num * size)]
-		} else {
-			datas.Items = datas.Items[(num-1)*size : len(datas.Items)]
+}
+
+func fieldFilter(data []pageItem, fms ...fieldMatcher) []pageItem {
+	var result []pageItem
+	for i := range data {
+		for j := range fms {
+			if fms[j].Match(data[i]) {
+				result = append(result, data[i])
+				break
+			}
 		}
 	}
-	return total, datas, nil
+	return result
+}
+
+func pageFilter(num, size int, data []pageItem) (int, []pageItem, error) {
+	total := len(data)
+	result := make([]pageItem, 0)
+	if num*size < len(data) {
+		result = data[(num-1)*size : (num * size)]
+	} else {
+		result = data[(num-1)*size:]
+	}
+	return total, result, nil
 }
 
 func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUrl url.URL) (*NamespaceResourceContainer, error) {
