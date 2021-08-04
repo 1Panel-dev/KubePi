@@ -68,8 +68,8 @@
       <el-col :span="4">
         <el-card v-has-permissions="{resource:'clusters',verb:'update'}" class="card_header box-card cluster-card"
                  shadow="hover">
-          <div @click="onCreate" style="text-align: center;padding-top: 35px;font-size: 50px;cursor: pointer">
-            <i class="el-icon-circle-plus-outline"></i>
+          <div @click="onCreate" style="text-align: center;padding-top: 45px;font-size: 36px;cursor: pointer">
+            <i class="el-icon-plus"></i>
           </div>
         </el-card>
       </el-col>

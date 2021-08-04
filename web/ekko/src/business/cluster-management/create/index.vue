@@ -23,10 +23,6 @@
                             <el-form-item label="API Server" prop="apiServer" required>
                                 <el-input v-model="form.apiServer" clearable></el-input>
                             </el-form-item>
-
-                            <el-form-item label="Insecure">
-                                <el-switch v-model="form.apiServerInsecure"></el-switch>
-                            </el-form-item>
                             <div v-if="!form.apiServerInsecure">
                                 <el-form-item label="Ca Certificate" prop="caDataStr" required>
                                     <el-input type="textarea" v-model="form.caDataStr" clearable></el-input>
