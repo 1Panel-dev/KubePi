@@ -5,12 +5,20 @@ const pvUrl = (cluster_name) => {
 }
 
 
-export function listPvs (cluster_name, continueToken, search) {
+export function listPvs (cluster_name, search, keywords, pageNum, pageSize) {
   let url = pvUrl(cluster_name)
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url)
+  return get(url, params)
 }
 
 export function listPvsWithNs (cluster_name, namespace) {
