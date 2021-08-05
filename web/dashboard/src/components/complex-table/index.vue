@@ -9,7 +9,7 @@
         <div v-if="searchConfig">
           <el-input :placeholder="$t('commons.button.search')"
                     suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords"
-                    @change="search()">
+                    @change="search(true)">
           </el-input>
         </div>
         <slot name="toolbar">
@@ -28,7 +28,7 @@
       <slot name="pagination">
         <fu-table-pagination :current-page.sync="paginationConfig.currentPage"
                              :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig"
-                             @change="search(true)"/>
+                             @change="search()"/>
       </slot>
     </div>
   </div>
@@ -49,16 +49,16 @@ export default {
     paginationConfig: Object,
     selects: Array,
   },
-  data() {
+  data () {
     return {
       pageShow: false,
     }
   },
   methods: {
-    search() {
-      this.$emit("search")
+    search (resetPage) {
+      this.$emit("search", resetPage)
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.$emit("update:selects", val)
     },
   },
@@ -66,25 +66,25 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~@/styles/common/mixins.scss";
-@import "~@/styles/common/variables.scss";
+  @import "~@/styles/common/mixins.scss";
+  @import "~@/styles/common/variables.scss";
 
-.complex-table {
-  .complex-table__header {
-    @include flex-row(flex-start, center);
-    line-height: 60px;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
+  .complex-table {
+    .complex-table__header {
+      @include flex-row(flex-start, center);
+      line-height: 60px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
 
-  .complex-table__toolbar {
-    @include flex-row(flex-end, center);
-    margin-bottom: 10px;
-  }
+    .complex-table__toolbar {
+      @include flex-row(flex-end, center);
+      margin-bottom: 10px;
+    }
 
-  .complex-table__pagination {
-    margin-top: 20px;
-    @include flex-row(flex-end);
+    .complex-table__pagination {
+      margin-top: 20px;
+      @include flex-row(flex-end);
+    }
   }
-}
 </style>
