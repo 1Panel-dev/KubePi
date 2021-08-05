@@ -176,10 +176,10 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 }
 
 type K8sListObj struct {
-	Kind       string      `json:"kind"`
-	ApiVersion string      `json:"apiVersion"`
-	Metadata   interface{} `json:"metadata"`
-	Items      []pageItem  `json:"items"`
+	Kind       string        `json:"kind"`
+	ApiVersion string        `json:"apiVersion"`
+	Metadata   interface{}   `json:"metadata"`
+	Items      []interface{} `json:"items"`
 }
 type pageItem struct {
 	Metadata interface{} `json:"metadata"`
@@ -192,7 +192,7 @@ type metadata struct {
 }
 
 type fieldMatcher interface {
-	Match(item pageItem) bool
+	Match(item interface{}) bool
 }
 
 type namespaceAndNameMatcher struct {
@@ -200,8 +200,10 @@ type namespaceAndNameMatcher struct {
 	Name      string
 }
 
-func (n namespaceAndNameMatcher) Match(item pageItem) bool {
-	return item.Metadata.(metadata).Namespace == n.Namespace || strings.Contains(item.Metadata.(metadata).Name, n.Name)
+func (n namespaceAndNameMatcher) Match(item interface{}) bool {
+	pageItem := item.(map[string]interface{})
+	return pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.Namespace || strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.Name)
+
 }
 
 func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
@@ -211,8 +213,8 @@ func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
 	}
 }
 
-func fieldFilter(data []pageItem, fms ...fieldMatcher) []pageItem {
-	var result []pageItem
+func fieldFilter(data []interface{}, fms ...fieldMatcher) []interface{} {
+	var result []interface{}
 	for i := range data {
 		for j := range fms {
 			if fms[j].Match(data[i]) {
@@ -224,9 +226,9 @@ func fieldFilter(data []pageItem, fms ...fieldMatcher) []pageItem {
 	return result
 }
 
-func pageFilter(num, size int, data []pageItem) (int, []pageItem, error) {
+func pageFilter(num, size int, data []interface{}) (int, []interface{}, error) {
 	total := len(data)
-	result := make([]pageItem, 0)
+	result := make([]interface{}, 0)
 	if num*size < len(data) {
 		result = data[(num-1)*size : (num * size)]
 	} else {
