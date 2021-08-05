@@ -27,7 +27,8 @@
     <div class="complex-table__pagination" v-if="$slots.pagination || paginationConfig">
       <slot name="pagination">
         <fu-table-pagination :current-page.sync="paginationConfig.currentPage"
-                             :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig" @change="search"/>
+                             :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig"
+                             @change="search(true)"/>
       </slot>
     </div>
   </div>

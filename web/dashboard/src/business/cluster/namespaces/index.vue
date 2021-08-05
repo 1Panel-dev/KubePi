@@ -132,7 +132,10 @@ export default {
     onCreate() {
       this.$router.push({name: "NamespaceCreate"})
     },
-    search() {
+    search(resetPage) {
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
       this.loading = true
       listNamespace(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then((res) => {
         this.data = res.items
