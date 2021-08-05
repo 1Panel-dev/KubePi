@@ -135,182 +135,175 @@
 </template>
 
 <script>
-  import LayoutContent from "@/components/layout/LayoutContent"
-  import YamlEditor from "@/components/yaml-editor"
-  import {createPv} from "@/api/pv"
-  import KoCard from "@/components/ko-card/index";
-  import {listStorageClasses} from "@/api/storageclass";
-  import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
+import LayoutContent from "@/components/layout/LayoutContent"
+import YamlEditor from "@/components/yaml-editor"
+import {createPv} from "@/api/pv"
+import KoCard from "@/components/ko-card/index";
+import {listStorageClasses} from "@/api/storageclass";
+import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 
-  export default {
-    name: "PersistentVolumeCreate",
-    components: {KoCard, YamlEditor, LayoutContent, KoNodeScheduling},
-    data() {
-      return {
-        loading: false,
-        showYaml: false,
-        page: {
-          pageSize: 10,
-          nextToken: "",
+export default {
+  name: "PersistentVolumeCreate",
+  components: {KoCard, YamlEditor, LayoutContent, KoNodeScheduling},
+  data() {
+    return {
+      loading: false,
+      showYaml: false,
+      page: {
+        pageSize: 10,
+        nextToken: "",
+      },
+      conditions: "",
+      form: {
+        apiVersion: "v1",
+        kind: "PersistentVolume",
+        metadata: {
+          name: "",
         },
-        conditions: "",
-        form: {
-          apiVersion: "v1",
-          kind: "PersistentVolume",
-          metadata: {
-            name: "",
+        spec: {
+          nfs: {
+            server: "",
+            path: "",
+            readOnly: false
           },
-          spec: {
-            nfs: {
-              server: "",
-              path: "",
-              readOnly: false
+          hostPath: {
+            path: "",
+            type: ""
+          },
+          local: {
+            path: "",
+          },
+          capacity: {
+            storage: "1Gi"
+          },
+          storageClassName: "None",
+          nodeAffinity: {
+            required: {
+              nodeSelectorTerms: [],
             },
-            hostPath: {
-              path: "",
-              type: ""
-            },
-            local: {
-              path: "",
-            },
-            capacity: {
-              storage: "1Gi"
-            },
-            storageClassName: "None",
-            nodeAffinity: {
-              required: {
-                nodeSelectorTerms: [
-                  {
-                    matchExpressions: [
-                      {
-                        key: "",
-                        operator: "",
-                        values: [],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-            accessModes: []
-          }
-        },
-        namespaces: [],
-        activeName: "",
-        yaml: {},
-        cluster: "",
-        storageTypes: [{
-          value: "NFS",
-          label: "NFS Share"
-        }, {
-          value: "Local",
-          label: "Local Volume"
-        }, {
-          value: "Host",
-          label: "Host Path"
-        }],
-        hostPathTypes: [{
-          value: "DirectoryOrCreate",
-          label: this.$t('business.storage.DirectoryOrCreateLabel')
-        }, {
-          value: "Directory",
-          label: this.$t('business.storage.DirectoryLabel')
-        }, {
-          value: "FileOrCreate",
-          label: this.$t('business.storage.FileOrCreateLabel')
-        }, {
-          value: "File",
-          label: this.$t('business.storage.FileLabel')
-        }, {
-          value: "Socket",
-          label: this.$t('business.storage.SocketLabel')
-        }, {
-          value: "CharDevice",
-          label: this.$t('business.storage.CharDeviceLabel')
-        }, {
-          value: "BlockDevice",
-          label: this.$t('business.storage.BlockDeviceLabel')
-        }],
-        currentStorageType: "Local",
-        currentStorageCapacity: 1,
-        storageClasses: []
-      }
-    },
-    methods: {
-      handleClick(tab) {
-        this.activeName = tab.index
-      },
-      onCancel() {
-        this.$router.push({name: "PersistentVolumes"})
-      },
-      onEditYaml() {
-        this.showYaml = true
-        this.yaml = this.transformYaml()
-      },
-      backToForm() {
-        this.showYaml = false
-      },
-      onSubmit() {
-        let data = {}
-        if (this.showYaml) {
-          data = this.$refs.yaml_editor.getValue()
-        } else {
-          data = this.transformYaml()
+          },
+          accessModes: []
         }
-        this.loading = true
-        createPv(this.cluster, data).then(() => {
-          this.$message({
-            type: "success",
-            message: this.$t("commons.msg.create_success"),
-          })
-          this.$router.push({name: "PersistentVolumes"})
-        }).finally(() => {
-          this.loading = false
-        })
       },
-      loadStorageClasses() {
-        this.storageClasses = []
-        listStorageClasses(this.cluster).then((res) => {
-          this.storageClasses.push('None')
-          for (const sc of res.items) {
-            this.storageClasses.push(sc.metadata.name)
-          }
-        })
-      },
-      transformYaml() {
-        let formData = {}
-        switch (this.currentStorageType) {
-          case "Local":
-            delete this.form.spec["hostPath"]
-            delete this.form.spec["nfs"]
-            break
-          case "Host":
-            delete this.form.spec["local"]
-            delete this.form.spec["nfs"]
-            delete this.form.spec["storageClassName"]
-            break
-          case "NFS":
-            delete this.form.spec["hostPath"]
-            delete this.form.spec["local"]
-            if (this.form.spec.nfs.readOnly) {
-              delete this.form.spec.nfs["readOnly"]
-            }
-            break
-        }
-
-        this.$refs.ko_node_scheduling.transformation(this.form.spec)
-        formData = JSON.parse(JSON.stringify(this.form))
-        return formData
-      },
-      setStorageCapacity() {
-        this.form.spec.capacity.storage = this.currentStorageCapacity.toString() + 'Gi'
-      }
-    },
-    created() {
-      this.cluster = this.$route.query.cluster
-      this.loadStorageClasses()
+      namespaces: [],
+      activeName: "",
+      yaml: {},
+      cluster: "",
+      storageTypes: [{
+        value: "NFS",
+        label: "NFS Share"
+      }, {
+        value: "Local",
+        label: "Local Volume"
+      }, {
+        value: "Host",
+        label: "Host Path"
+      }],
+      hostPathTypes: [{
+        value: "DirectoryOrCreate",
+        label: this.$t('business.storage.DirectoryOrCreateLabel')
+      }, {
+        value: "Directory",
+        label: this.$t('business.storage.DirectoryLabel')
+      }, {
+        value: "FileOrCreate",
+        label: this.$t('business.storage.FileOrCreateLabel')
+      }, {
+        value: "File",
+        label: this.$t('business.storage.FileLabel')
+      }, {
+        value: "Socket",
+        label: this.$t('business.storage.SocketLabel')
+      }, {
+        value: "CharDevice",
+        label: this.$t('business.storage.CharDeviceLabel')
+      }, {
+        value: "BlockDevice",
+        label: this.$t('business.storage.BlockDeviceLabel')
+      }],
+      currentStorageType: "Local",
+      currentStorageCapacity: 1,
+      storageClasses: []
     }
+  },
+  methods: {
+    handleClick(tab) {
+      this.activeName = tab.index
+    },
+    onCancel() {
+      this.$router.push({name: "PersistentVolumes"})
+    },
+    onEditYaml() {
+      this.showYaml = true
+      this.yaml = this.transformYaml()
+    },
+    backToForm() {
+      this.showYaml = false
+    },
+    onSubmit() {
+      let data = {}
+      if (this.showYaml) {
+        data = this.$refs.yaml_editor.getValue()
+      } else {
+        data = this.transformYaml()
+      }
+      this.loading = true
+      createPv(this.cluster, data).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.create_success"),
+        })
+        this.$router.push({name: "PersistentVolumes"})
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    loadStorageClasses() {
+      this.storageClasses = []
+      listStorageClasses(this.cluster).then((res) => {
+        this.storageClasses.push('None')
+        for (const sc of res.items) {
+          this.storageClasses.push(sc.metadata.name)
+        }
+      })
+    },
+    transformYaml() {
+      let formData = {}
+      switch (this.currentStorageType) {
+        case "Local":
+          delete this.form.spec["hostPath"]
+          delete this.form.spec["nfs"]
+          break
+        case "Host":
+          delete this.form.spec["local"]
+          delete this.form.spec["nfs"]
+          delete this.form.spec["storageClassName"]
+          break
+        case "NFS":
+          delete this.form.spec["hostPath"]
+          delete this.form.spec["local"]
+          if (this.form.spec.nfs.readOnly) {
+            delete this.form.spec.nfs["readOnly"]
+          }
+          break
+      }
+
+      this.$refs.ko_node_scheduling.transformation(this.form.spec)
+      if (this.form.spec.nodeAffinity.required.nodeSelectorTerms.length === 0 ) {
+        delete this.form.spec.nodeAffinity.required
+      }
+      formData = JSON.parse(JSON.stringify(this.form))
+      return formData
+    },
+    setStorageCapacity() {
+      this.form.spec.capacity.storage = this.currentStorageCapacity.toString() + 'Gi'
+    }
+  },
+  created() {
+    this.cluster = this.$route.query.cluster
+    this.loadStorageClasses()
   }
+}
 </script>
 
 <style scoped>
