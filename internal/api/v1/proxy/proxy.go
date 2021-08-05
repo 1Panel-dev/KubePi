@@ -182,7 +182,7 @@ type K8sListObj struct {
 	Items      []pageItem  `json:"items"`
 }
 type pageItem struct {
-	Metadata metadata    `json:"metadata"`
+	Metadata interface{} `json:"metadata"`
 	Spec     interface{} `json:"spec"`
 	Status   interface{} `json:"status"`
 }
@@ -201,7 +201,7 @@ type namespaceAndNameMatcher struct {
 }
 
 func (n namespaceAndNameMatcher) Match(item pageItem) bool {
-	return item.Metadata.Namespace == n.Namespace || strings.Contains(item.Metadata.Name, n.Name)
+	return item.Metadata.(metadata).Namespace == n.Namespace || strings.Contains(item.Metadata.(metadata).Name, n.Name)
 }
 
 func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
