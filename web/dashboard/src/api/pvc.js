@@ -7,13 +7,20 @@ const namespacePvcUrl = (cluster_name, namespace) => {
     return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/persistentvolumeclaims`
 }
 
-export function listPvcs (cluster_name, continueToken, search) {
+export function listPvcs (cluster_name, search, keywords, pageNum, pageSize) {
     let url = pvcUrl(cluster_name)
-    const param = {}
-    if (search && search !== "") {
-        param.fieldSelector = "metadata.namespace=" + search
+    const params = {}
+    if (search) {
+        params["search"] = true
+        if (keywords) {
+            params["keywords"] = keywords
+        }
+        if (pageNum && pageSize) {
+            params["pageNum"] = pageNum
+            params["pageSize"] = pageSize
+        }
     }
-    return get(url, param)
+    return get(url, params)
 }
 
 export function listPvcsWithNs (cluster_name, namespace) {
