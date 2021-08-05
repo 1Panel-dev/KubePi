@@ -50,6 +50,11 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		proxyPath := ensureProxyPathValid(ctx.Params().GetString("p"))
 		namespace := ctx.URLParam("namespace")
 		keywords := ctx.URLParam("keywords")
+		search := false
+		if ctx.URLParamExists("search") {
+			search, _ = ctx.URLParamBool("search")
+		}
+
 		requestMethod := ctx.Request().Method
 		// 获取当亲集群
 		c, err := h.clusterService.Get(name, common.DBOptions{})
@@ -128,7 +133,6 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if ctx.Method() == "PATCH" {
 			req.Header.Set("Content-Type", "application/merge-patch+json")
 		}
-
 		resp, err := httpClient.Do(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -139,9 +143,9 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if resp.StatusCode == http.StatusForbidden {
 			resp.StatusCode = http.StatusInternalServerError
 		}
-		num, err1 := ctx.Values().GetInt("pageNum")
-		size, err2 := ctx.Values().GetInt("pageSize")
-		if err1 == nil || err2 == nil {
+		if req.Method == http.MethodGet && search {
+			num, err1 := ctx.Values().GetInt("pageNum")
+			size, err2 := ctx.Values().GetInt("pageSize")
 			var listObj K8sListObj
 			if err := json.Unmarshal(rawResp, &listObj); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -151,15 +155,18 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			if keywords != "" {
 				listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
 			}
-
-			total, items, err := pageFilter(num, size, listObj.Items)
-			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err)
-				return
+			total := len(listObj.Items)
+			if err1 == nil && err2 == nil {
+				tt, items, err := pageFilter(num, size, listObj.Items)
+				if err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err)
+					return
+				}
+				total = tt
+				listObj.Items = items
 			}
-			backDatas, _ := json.Marshal(pkgV1.Page{Items: items, Total: total})
-			_, _ = ctx.Write(backDatas)
+			_, _ = ctx.JSON(pkgV1.Page{Items: listObj.Items, Total: total})
 			return
 		}
 		ctx.StatusCode(resp.StatusCode)

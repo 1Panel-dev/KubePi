@@ -4,22 +4,30 @@
       <slot name="header">{{ header }}</slot>
     </div>
 
-    <div class="complex-table__toolbar" v-if="$slots.toolbar">
+    <div class="complex-table__toolbar">
       <div>
+        <div v-if="searchConfig">
+          <el-input :placeholder="$t('commons.button.search')"
+                    suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords"
+                    @change="search()">
+          </el-input>
+        </div>
         <slot name="toolbar">
         </slot>
       </div>
     </div>
 
     <div class="complex-table__body">
-      <fu-table v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey" @selection-change="handleSelectionChange">
+      <fu-table v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey"
+                @selection-change="handleSelectionChange">
         <slot></slot>
       </fu-table>
     </div>
 
     <div class="complex-table__pagination" v-if="$slots.pagination || paginationConfig">
       <slot name="pagination">
-        <fu-table-pagination :current-page.sync="paginationConfig.currentPage" :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig" @change="search" />
+        <fu-table-pagination :current-page.sync="paginationConfig.currentPage"
+                             :page-size.sync="paginationConfig.pageSize" v-bind="paginationConfig" @change="search"/>
       </slot>
     </div>
   </div>
@@ -70,6 +78,7 @@ export default {
 
   .complex-table__toolbar {
     @include flex-row(flex-end, center);
+    margin-bottom: 10px;
   }
 
   .complex-table__pagination {
