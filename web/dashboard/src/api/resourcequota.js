@@ -8,13 +8,20 @@ const namespaceResourceQuotaUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/resourcequotas`
 }
 
-export function listResourceQuotas (cluster_name, search) {
+export function listResourceQuotas (cluster_name, search, keywords, pageNum, pageSize) {
   let url = resourceQuotaUrl(cluster_name)
-  const param = {}
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function deleteResourceQuota (cluster_name, namespace, name) {

@@ -9,17 +9,24 @@ const namespaceMapUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/configmaps`
 }
 
-export function listConfigMaps (cluster_name, search) {
+export function listConfigMaps (cluster_name, search, keywords, pageNum, pageSize) {
   let url = configMapUrl(cluster_name)
-  const param = {}
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function listConfigMapsWithNs (cluster_name, namespace) {
-  return get(`${namespaceMapUrl(cluster_name, namespace)}`);
+  return get(`${namespaceMapUrl(cluster_name, namespace)}`)
 }
 
 export function getConfigMap (cluster_name, namespace, name) {
@@ -30,10 +37,10 @@ export function createConfigMap (cluster_name, namespace, data) {
   return post(`${namespaceMapUrl(cluster_name, namespace)}`, data)
 }
 
-export function deleteConfigMap(cluster_name,namespace, name) {
+export function deleteConfigMap (cluster_name, namespace, name) {
   return del(`${namespaceMapUrl(cluster_name, namespace)}/${name}`)
 }
 
-export function updateConfigMap(cluster_name, namespace,name, data) {
+export function updateConfigMap (cluster_name, namespace, name, data) {
   return patch(`${namespaceMapUrl(cluster_name, namespace)}/${name}`, data)
 }

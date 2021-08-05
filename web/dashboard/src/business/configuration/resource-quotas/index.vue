@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ResourceQuotas">
-    <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search">
+    <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
@@ -106,19 +106,25 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search (init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listResourceQuotas(this.cluster).then(res => {
+      listResourceQuotas(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
+        this.paginationConfig.total = res.total
         this.loading = false
       })
     },

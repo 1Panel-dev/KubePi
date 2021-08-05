@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Services">
-    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'services',verb:'create'}">
@@ -113,20 +113,26 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search (init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listServices(this.cluster, this.conditions).then(res => {
+      listServices(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {

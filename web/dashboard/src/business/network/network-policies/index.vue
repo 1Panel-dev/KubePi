@@ -1,12 +1,15 @@
 <template>
   <layout-content header="NetworkPolicies">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -24,7 +27,8 @@
       </el-table-column>
       <el-table-column :label="$t('business.network.pod_selector')" prop="spec.pod_selector">
         <template v-slot:default="{row}">
-          <el-tag v-for="(value,key,index) in row.spec.podSelector.matchLabels" v-bind:key="index" type="info" size="mini">
+          <el-tag v-for="(value,key,index) in row.spec.podSelector.matchLabels" v-bind:key="index" type="info"
+                  size="mini">
             {{ key }}={{ value }}
           </el-tag>
         </template>
@@ -66,8 +70,8 @@ export default {
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"networkpolicies",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "update" })
           }
         },
         {
@@ -83,19 +87,31 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"networkpolicies",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "delete" })
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
-      listNetworkPolicies(this.cluster,  this.conditions).then(res => {
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listNetworkPolicies(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {
@@ -124,14 +140,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search()
+              this.search(true)
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search()
+              this.search(true)
             })
         }
       })

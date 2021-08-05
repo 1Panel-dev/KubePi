@@ -9,19 +9,20 @@ const namespaceLimitRangeUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/limitranges`
 }
 
-export function listLimitRanges (cluster_name, limit, continueToken, search) {
+export function listLimitRanges (cluster_name, search, keywords, pageNum, pageSize) {
   let url = limitRangeUrl(cluster_name)
-  const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
-  }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function getLimitRange (cluster_name, namespace, name) {

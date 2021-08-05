@@ -4,19 +4,20 @@ const clusterRoleUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/rbac.authorization.k8s.io/v1/clusterroles`
 }
 
-export function listClusterRoles (cluster_name, limit, continueToken, search) {
+export function listClusterRoles (cluster_name, search, keywords, pageNum, pageSize) {
   let url = clusterRoleUrl(cluster_name)
-  const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
-  }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function deleteClusterRole (cluster_name, name) {

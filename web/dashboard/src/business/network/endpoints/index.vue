@@ -1,12 +1,15 @@
 <template>
   <layout-content header="Endpoints">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'endpoints',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'',resource:'endpoints',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'endpoints',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'',resource:'endpoints',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -26,7 +29,10 @@
         <template v-slot:default="{row}">
           <div v-for="(subset,index) in row.subsets" v-bind:key="index">
             <div v-for="(address,index) in subset.addresses" v-bind:key="index" style="display:inline-block">
-              <el-tag v-for="(port,index) in subset.ports" v-bind:key="index" type="info" size="mini">{{ address.ip }}:{{ port.port }}</el-tag>
+              <el-tag v-for="(port,index) in subset.ports" v-bind:key="index" type="info" size="mini">{{
+                  address.ip
+                }}:{{ port.port }}
+              </el-tag>
             </div>
           </div>
         </template>
@@ -70,8 +76,8 @@ export default {
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"endpoints",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "endpoints", verb: "update" })
           }
         },
         {
@@ -87,24 +93,30 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"endpoints",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "endpoints", verb: "delete" })
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search (init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listEndPoints(this.cluster,this.conditions).then(res => {
+      listEndPoints(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
+        this.paginationConfig.total = res.total
         this.loading = false
       })
     },
