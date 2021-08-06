@@ -42,7 +42,7 @@
 
 <script>
 import ComplexTable from "@/components/complex-table"
-import {listPods, listPodsWithNsSelector} from "@/api/pods"
+import {listPodsWithNsSelector} from "@/api/pods"
 
 export default {
   name: "KoDetailPods",
