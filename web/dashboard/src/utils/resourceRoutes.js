@@ -23,6 +23,13 @@ export const mixin = {
             query: { yamlShow: false }
           })
           break
+        case "HorizontalPodAutoscaler":
+          this.$router.push({
+            name: "HPADetail",
+            params: { namespace: namespace, name: name },
+            query: { yamlShow: false }
+          })
+          break
         default:
           break
       }
