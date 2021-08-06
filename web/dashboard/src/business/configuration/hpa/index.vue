@@ -1,6 +1,6 @@
 <template>
   <layout-content header="HorizontalPodAutoscalers">
-    <complex-table :data="data" @sarch="search" v-loading="loading" :pagination-config="paginationConfig"
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
         <el-button-group>

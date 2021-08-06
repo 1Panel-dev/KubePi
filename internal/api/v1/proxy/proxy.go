@@ -202,8 +202,7 @@ type namespaceAndNameMatcher struct {
 
 func (n namespaceAndNameMatcher) Match(item interface{}) bool {
 	pageItem := item.(map[string]interface{})
-	return pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.Namespace || strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.Name)
-
+	return (pageItem["metadata"].(map[string]interface{})["namespace"] != nil && pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.Namespace) || strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.Name)
 }
 
 func withNamespaceAndNameMatcher(keywords string) fieldMatcher {

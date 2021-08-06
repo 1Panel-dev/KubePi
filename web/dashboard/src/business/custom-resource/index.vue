@@ -1,6 +1,6 @@
 <template>
   <layout-content header="CustomResourceDefinitions">
-    <complex-table :data="data" @sarch="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'create'}">
