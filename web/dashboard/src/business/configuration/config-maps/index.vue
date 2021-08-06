@@ -1,12 +1,15 @@
 <template>
   <layout-content header="ConfigMaps">
-    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'',resource:'configmaps',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -46,14 +49,13 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ConfigMaps",
-  components: {ComplexTable, LayoutContent, KoTableOperations},
-  data() {
+  components: { ComplexTable, LayoutContent, KoTableOperations },
+  data () {
     return {
       data: [],
       selects: [],
       cluster: "",
       loading: false,
-      conditions: "",
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -61,12 +63,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ConfigMapEdit",
-              params: {namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: false}
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "configmaps", verb: "update" })
           }
         },
         {
@@ -75,12 +77,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ConfigMapEdit",
-              params: {name: row.metadata.name, namespace: row.metadata.namespace},
-              query: {yamlShow: true}
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "configmaps", verb: "update" })
           }
         },
         {
@@ -96,40 +98,46 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"configmaps",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "configmaps", verb: "delete" })
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search(init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: "",
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listConfigMaps(this.cluster, this.conditions).then(res => {
+      listConfigMaps(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
+        this.paginationConfig.total = res.total
         this.loading = false
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({
         name: "ConfigMapCreate",
       })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteConfigMap(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -142,28 +150,28 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search(true)
-              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
         }
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "ConfigMapDetail",
-        params: {name: row.metadata.name, namespace: row.metadata.namespace},
-        query: {yamlShow: false}
+        params: { name: row.metadata.name, namespace: row.metadata.namespace },
+        query: { yamlShow: false }
       })
     },
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.search()
   }

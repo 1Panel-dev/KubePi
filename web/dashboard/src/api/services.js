@@ -9,12 +9,20 @@ const namespaceServiceUrl = (cluster_name, namespace) => {
 }
 
 
-export function listServices (cluster_name, search) {
+export function listServices (cluster_name, search, keywords, pageNum, pageSize) {
   let url = serviceUrl(cluster_name)
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url)
+  return get(url,params)
 }
 
 export function listNsServices (cluster_name, namespace) {

@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ClusterRoleBindings">
-    <complex-table :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @sarch="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
@@ -78,14 +78,26 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
-      listClusterRoleBindings(this.cluster).then(res => {
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listClusterRoleBindings(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {

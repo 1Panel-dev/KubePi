@@ -9,18 +9,20 @@ const namespaceEndpointUrl = (cluster_name,namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/endpoints`
 }
 
-export function listEndPoints (cluster_name, limit, continueToken, search) {
+export function listEndPoints (cluster_name, search, keywords, pageNum, pageSize) {
   let url = endpointUrl(cluster_name)
-  if (limit) {
-    url += "?limit=" + limit
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  if (continueToken) {
-    url += "&continue=" + continueToken
-  }
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search
-  }
-  return get(url)
+  return get(url,params)
 }
 
 export function deleteEndPoint (cluster_name, namespace, name) {

@@ -9,12 +9,20 @@ const namespaceNetworkPolicyUrlUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/networking.k8s.io/v1/namespaces/${namespace}/networkpolicies`
 }
 
-export function listNetworkPolicies (cluster_name,search) {
+export function listNetworkPolicies (cluster_name,search, keywords, pageNum, pageSize) {
   let url = networkPolicyUrl(cluster_name)
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url)
+  return get(url,params)
 }
 
 export function deletePolicyUrl (cluster_name, namespace, name) {

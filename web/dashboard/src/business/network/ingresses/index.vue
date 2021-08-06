@@ -1,12 +1,15 @@
 <template>
   <layout-content header="Ingresses">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -36,7 +39,7 @@
           </div>
           <div v-if="row.spec.defaultBackend">
             <span>Default</span> >
-            <el-link>{{row.spec.defaultBackend.service.name}}</el-link>
+            <el-link>{{ row.spec.defaultBackend.service.name }}</el-link>
           </div>
         </template>
       </el-table-column>
@@ -80,8 +83,8 @@ export default {
               query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
           }
         },
         {
@@ -94,8 +97,8 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
           }
         },
         {
@@ -111,18 +114,30 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"networking.k8s.io",resource:"ingresses",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "delete" })
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
-      listIngresses(this.cluster, this.conditions).then(res => {
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listIngresses(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
+        this.paginationConfig.total = res.total
         this.loading = false
       })
     },
@@ -152,14 +167,14 @@ export default {
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
             .then(() => {
-              this.search()
+              this.search(true)
               this.$message({
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
             })
             .catch(() => {
-              this.search()
+              this.search(true)
             })
         }
       })
