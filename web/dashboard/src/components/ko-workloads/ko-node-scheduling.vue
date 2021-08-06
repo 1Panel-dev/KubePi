@@ -222,6 +222,8 @@ export default {
                   if (!parentFrom.nodeAffinity) {
                     parentFrom.nodeAffinity = {}
                   }
+                  parentFrom.nodeAffinity.required.nodeSelectorTerms = []
+
                   itemAdd.matchExpressions = matchs
                   parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
                   break

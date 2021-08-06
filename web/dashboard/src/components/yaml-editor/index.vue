@@ -144,9 +144,6 @@ export default {
       this.changed = true
     }
   },
-  created () {
-    console.log(this.isEdit)
-  }
 }
 </script>
 
