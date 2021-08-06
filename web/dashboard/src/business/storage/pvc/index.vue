@@ -33,7 +33,11 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
-      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName"/>
+      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName">
+        <template v-slot:default="{row}">
+          <el-link @click="openPvDetail(row)">{{ row.spec.volumeName }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
       <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
@@ -154,6 +158,15 @@ export default {
         params: {
           name: row.metadata.name,
           namespace: row.metadata.namespace
+        },
+        query: {yamlShow: false}
+      })
+    },
+    openPvDetail(row){
+      this.$router.push({
+        name: "PersistentVolumeDetail",
+        params: {
+          name: row.spec.volumeName,
         },
         query: {yamlShow: false}
       })
