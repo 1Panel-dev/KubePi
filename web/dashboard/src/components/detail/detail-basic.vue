@@ -24,6 +24,16 @@
           </div>
         </td>
       </tr>
+      <tr v-if="item.spec&& item.spec.template&& item.spec.template.spec &&item.spec.template.spec.containers">
+        <td>{{ $t("business.pod.image") }}</td>
+        <td colspan="4">
+          <div v-for="(item,index) in item.spec.template.spec.containers" v-bind:key="index" class="myTag">
+            <el-tag type="info" size="small">
+              {{ item.image }}
+            </el-tag>
+          </div>
+        </td>
+      </tr>
       <tr>
         <td>{{ $t("commons.table.created_time") }}</td>
         <td>{{ item.metadata.creationTimestamp | age }}</td>
@@ -38,7 +48,8 @@
       <tr>
         <td>{{ $t("business.common.annotation") }}</td>
         <td>
-          <ko-detail-key-value v-if="Object.keys(item.metadata).length > 0" :valueObj="item.metadata.annotations"></ko-detail-key-value>
+          <ko-detail-key-value v-if="Object.keys(item.metadata).length > 0"
+                               :valueObj="item.metadata.annotations"></ko-detail-key-value>
         </td>
       </tr>
     </table>

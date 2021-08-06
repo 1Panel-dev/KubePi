@@ -19,6 +19,11 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column label="Role">
+        <template v-slot:default="{row}">
+          <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
