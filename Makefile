@@ -27,4 +27,4 @@ build_web_terminal:
 build_web: build_web_ekko build_web_dashboard build_web_terminal
 
 build_bin:
-	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -o $(BUILDDIR)/$(GOOS)/$(GOARCH)/$(APP_NAME) $(MAIN)
+	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -trimpath  -ldflags "-s -w"  -o $(BUILDDIR)/$(GOOS)/$(GOARCH)/$(APP_NAME) $(MAIN)

@@ -11,13 +11,16 @@ var (
 	configPath     string
 	serverBindHost string
 	serverBindPort int
-	//go: embed web/ekko
-	embedWebEkko embed.FS
-	//go: embed web/dashboard
-	embedWebDashboard embed.FS
-	//go: embed web/terminal
-	embedWebTerminal embed.FS
 )
+
+//go:embed web/ekko
+var embedWebEkko embed.FS
+
+//go:embed web/dashboard
+var embedWebDashboard embed.FS
+
+//go:embed web/terminal
+var embedWebTerminal embed.FS
 
 func init() {
 	RootCmd.Flags().StringVar(&serverBindHost, "server-bind-host", "", "ekko bind address")
