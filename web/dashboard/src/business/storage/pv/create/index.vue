@@ -289,8 +289,8 @@ export default {
       }
 
       this.$refs.ko_node_scheduling.transformation(this.form.spec)
-      if (this.form.spec.nodeAffinity.required.nodeSelectorTerms.length === 0 ) {
-        delete this.form.spec.nodeAffinity.required
+      if (this.form.spec.nodeAffinity.required.nodeSelectorTerms.length === 0) {
+        delete this.form.spec.nodeAffinity.required.nodeSelectorTerms
       }
       formData = JSON.parse(JSON.stringify(this.form))
       return formData
