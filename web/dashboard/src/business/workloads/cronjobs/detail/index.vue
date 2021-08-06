@@ -46,8 +46,8 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
         </div>
       </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName">
-        <el-tab-pane label="Jobs" name="Jobs">
+      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
+        <el-tab-pane label="Jobs" name="Jobs" >
           <complex-table :data="jobs">
             <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
               <template v-slot:default="{row}">

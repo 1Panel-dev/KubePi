@@ -46,7 +46,7 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
         </div>
       </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName">
+      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
         <el-tab-pane label="Pods" name="Pods">
           <complex-table :data="pods">
             <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase" min-width="30">
@@ -77,21 +77,7 @@
           </complex-table>
         </el-tab-pane>
         <el-tab-pane label="Conditions" name="Conditions">
-          <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
-            <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
-              <template v-slot:default="{row}">
-                {{ row.lastUpdateTime | age }}
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
-              <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
-                <span v-if="!row.message">---</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+          <ko-detail-conditions :conditions="form.status.conditions"></ko-detail-conditions>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -112,10 +98,11 @@ import YamlEditor from "@/components/yaml-editor"
 import { mixin } from "@/utils/resourceRoutes"
 
 import ComplexTable from "@/components/complex-table"
+import KoDetailConditions from "@/components/detail/detail-conditions"
 
 export default {
   name: "DeploymentDetail",
-  components: { LayoutContent, ComplexTable, YamlEditor },
+  components: {KoDetailConditions, LayoutContent, ComplexTable, YamlEditor },
   mixins: [mixin],
   props: {
     name: String,
