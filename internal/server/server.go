@@ -18,6 +18,7 @@ import (
 
 const sessionCookieName = "SESS_COOKIE_EKKO"
 
+var EmbedWebEkko embed.FS
 var EmbedWebDashboard embed.FS
 var EmbedWebTerminal embed.FS
 
@@ -59,14 +60,18 @@ func (e *EkkoSerer) setUpDB() {
 }
 
 func (e *EkkoSerer) setUpStaticFile() {
+
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
 	e.RegisterView(view.HTML(dashboardFS, ".html"))
-	e.HandleDir("/ui", dashboardFS)
+	e.HandleDir("/dashboard", dashboardFS)
 
 	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
 	e.RegisterView(view.HTML(terminalFS, ".html"))
 	e.HandleDir("/terminal", terminalFS)
 
+	ekkoFS := iris.PrefixDir("web/ekko", http.FS(EmbedWebEkko))
+	e.RegisterView(view.HTML(ekkoFS, ".html"))
+	e.HandleDir("/ekko", ekkoFS)
 }
 
 func (e *EkkoSerer) setUpSession() {
@@ -125,6 +130,7 @@ func (e *EkkoSerer) runMigrations() {
 
 func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.Application = iris.New()
+	e.setUpStaticFile()
 	e.setUpConfig()
 	e.setUpLogger()
 	e.setUpDB()

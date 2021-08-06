@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../cmd/server/web/ekko'),
+    outputDir: path.resolve(__dirname, '../../cmd/server/web/ekko'),
     productionSourceMap: true,
     devServer: {
         port: 4300,

@@ -1,10 +1,15 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
+GOARCH=$(shell go env GOARCH)
+GOOS=$(shell go env GOOS )
+
 BASEPATH := $(shell pwd)
 BUILDDIR=$(BASEPATH)/dist/bin
-UIDIR=$(BASEPATH)/web/dashboard
+EKKODIR=$(BASEPATH)/web/ekko
+DASHBOARDDIR=$(BASEPATH)/web/dashboard
 TERMINALDIR=$(BASEPATH)/web/terminal
+
 
 MAIN= $(BASEPATH)/cmd/server/main.go
 
@@ -12,11 +17,14 @@ APP_NAME=ekko
 
 GOPROXY="https://goproxy.cn,direct"
 
-build_web:
-	cd $(UIDIR) && npm install && npm run-script build
+build_web_ekko:
+	cd $(EKKODIR) && npm install && npm run-script build
+build_web_dashboard:
+	cd $(DASHBOARDDIR) && npm install && npm run-script build
+build_web_terminal:
 	cd $(TERMINALDIR) && npm install && npm run-script build
 
+build_web: build_web_ekko build_web_dashboard build_web_terminal
 
-build_bin_darwin: build_web
-	cd $(BASEPATH)
-	GOOS=darwin GOARCH=amd64  $(GOBUILD) -o $(BUILDDIR)/darwin/amd64/$(APP_NAME) $(MAIN)
+build_bin:
+	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -o $(BUILDDIR)/$(GOOS)/$(GOARCH)/$(APP_NAME) $(MAIN)

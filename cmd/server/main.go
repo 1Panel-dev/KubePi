@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"github.com/KubeOperator/ekko/internal/route"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/spf13/cobra"
@@ -10,6 +11,12 @@ var (
 	configPath     string
 	serverBindHost string
 	serverBindPort int
+	//go: embed web/ekko
+	embedWebEkko embed.FS
+	//go: embed web/dashboard
+	embedWebDashboard embed.FS
+	//go: embed web/terminal
+	embedWebTerminal embed.FS
 )
 
 func init() {
@@ -22,8 +29,9 @@ var RootCmd = &cobra.Command{
 	Use:   "ekko",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// server.EmbedWebDashboard = embedWebDashboard
-		// server.EmbedWebTerminal = embedWebTerminal
+		server.EmbedWebDashboard = embedWebDashboard
+		server.EmbedWebTerminal = embedWebTerminal
+		server.EmbedWebEkko = embedWebEkko
 		return server.Listen(route.InitRoute)
 	},
 }
