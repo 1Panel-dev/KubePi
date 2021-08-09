@@ -1,6 +1,6 @@
 <template>
   <layout-content header="CronJobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'cronjobs',verb:'create'}">
@@ -106,6 +106,9 @@ export default {
         pageSize: 10,
         total: 0,
       },
+      searchConfig: {
+        keywords: "",
+      },
       selects: [],
       clusterName: "",
     }
@@ -152,13 +155,14 @@ export default {
         }
       })
     },
-    search() {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      const { currentPage, pageSize } = this.paginationConfig
-      listWorkLoads(this.clusterName, "cronjobs", currentPage, pageSize)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "cronjobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
-          this.data = res.items.items
+          this.data = res.items
           this.paginationConfig.total = res.total
         })
         .catch((error) => {

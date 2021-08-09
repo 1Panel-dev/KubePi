@@ -27,12 +27,13 @@ const batchV1WithNsUrl = (cluster_name, type, namespaces) => {
 export function listWorkLoads(
   cluster_name,
   type,
-  currentPage,
-  pageSize,
-  search
+  search,
+  keywords,
+  pageNum,
+  pageSize
 ) {
   let url;
-  let params = { pageNum: currentPage, pageSize: pageSize };
+  let params = {};
   switch (type) {
     case "deployments":
     case "statefulsets":
@@ -49,8 +50,15 @@ export function listWorkLoads(
       url = batchV1Url(cluster_name, type);
       break;
   }
-  if (search && search !== "") {
-    url += "&fieldSelector=metadata.name=" + search;
+  if (search) {
+    params["search"] = true;
+    if (keywords) {
+      params["keywords"] = keywords;
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum;
+      params["pageSize"] = pageSize;
+    }
   }
   return get(url, params);
 }
@@ -68,9 +76,7 @@ export function getWorkLoadByName(cluster_name, type, namespace, name) {
         `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`
       );
     case "pods":
-      return get(
-        `${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
-      )
+      return get(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`);
     case "jobs":
       return get(`${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`);
   }
@@ -89,9 +95,7 @@ export function deleteWorkLoad(cluster_name, type, namespace, name) {
         `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`
       );
     case "pods":
-      return del(
-        `${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
-      )
+      return del(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`);
     case "jobs":
       return del(`${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`);
   }
@@ -111,7 +115,7 @@ export function createWorkLoad(cluster_name, type, namespace, data) {
     case "pods":
       return post(
         `${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
-      )
+      );
     case "jobs":
       return post(`${batchV1WithNsUrl(cluster_name, type, namespace)}`, data);
   }
@@ -132,9 +136,7 @@ export function updateWorkLoad(cluster_name, type, namespace, name, data) {
         data
       );
     case "pods":
-      return put(
-        `${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
-      )
+      return put(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`);
     case "jobs":
       return put(
         `${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`,

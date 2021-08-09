@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Pods">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
@@ -93,6 +93,9 @@ export default {
         currentPage: 1,
         pageSize: 10,
         total: 0,
+      },
+      searchConfig: {
+        keywords: "",
       },
       selects: [],
       clusterName: "",
@@ -215,13 +218,14 @@ export default {
       }
       return 0
     },
-    search() {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      const { currentPage, pageSize } = this.paginationConfig
-      listWorkLoads(this.clusterName, "pods", currentPage, pageSize)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
-          this.data = res.items.items
+          this.data = res.items
           for (const item of this.data) {
             let container = []
             for (const c of item.spec.containers) {
