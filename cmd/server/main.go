@@ -29,7 +29,7 @@ func init() {
 }
 
 var RootCmd = &cobra.Command{
-	Use:   "ekko",
+	Use:   "ekko-server",
 	Short: "A dashboard for kubernetes",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		server.EmbedWebDashboard = embedWebDashboard
