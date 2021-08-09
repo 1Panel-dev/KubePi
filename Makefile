@@ -30,3 +30,6 @@ build_bin:
 	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -trimpath  -ldflags "-s -w"  -o $(BUILDDIR)/$(APP_NAME) $(MAIN)
 
 build_all: build_web build_bin
+
+build_docker:
+	docker build -t kubeoperator/ekko-server:master .
