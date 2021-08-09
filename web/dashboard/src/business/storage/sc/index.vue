@@ -1,6 +1,7 @@
 <template>
   <layout-content header="Storage Class">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small"
@@ -57,7 +58,6 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
-      conditions: "",
       buttons: [
         {
           label: this.$t("commons.button.view_yaml"),
@@ -85,12 +85,21 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      },
     }
   },
   methods: {
     search() {
       this.loading = true
-      listStorageClasses(this.cluster, this.conditions).then(res => {
+      const {currentPage, pageSize} = this.paginationConfig
+      listStorageClasses(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.data = res.items
         this.loading = false
       })

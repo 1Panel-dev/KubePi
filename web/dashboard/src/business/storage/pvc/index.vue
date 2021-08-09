@@ -1,6 +1,7 @@
 <template>
   <layout-content header="Persistent Volume Claims">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small"
@@ -32,7 +33,11 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
-      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName"/>
+      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName">
+        <template v-slot:default="{row}">
+          <el-link @click="openPvDetail(row)">{{ row.spec.volumeName }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
       <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
@@ -62,7 +67,6 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
-      conditions: "",
       buttons: [
         {
           label: this.$t("commons.button.view_yaml"),
@@ -90,12 +94,21 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      },
     }
   },
   methods: {
     search() {
       this.loading = true
-      listPvcs(this.cluster, this.conditions).then(res => {
+      const {currentPage, pageSize} = this.paginationConfig
+      listPvcs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.data = res.items
         this.loading = false
       })
@@ -145,6 +158,15 @@ export default {
         params: {
           name: row.metadata.name,
           namespace: row.metadata.namespace
+        },
+        query: {yamlShow: false}
+      })
+    },
+    openPvDetail(row){
+      this.$router.push({
+        name: "PersistentVolumeDetail",
+        params: {
+          name: row.spec.volumeName,
         },
         query: {yamlShow: false}
       })

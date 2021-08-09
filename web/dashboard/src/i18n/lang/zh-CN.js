@@ -409,6 +409,7 @@ const message = {
       metrics: "指标",
       min_replicas: "最小副本数",
       max_replicas: "最大副本数",
+      current_replicas: "当前副本数",
       target_reference: "目标引用",
       source: "来源",
       resource_name: "资源名称",

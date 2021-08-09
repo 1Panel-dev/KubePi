@@ -6,18 +6,23 @@ import (
 	"github.com/KubeOperator/ekko/internal/config"
 	v1Config "github.com/KubeOperator/ekko/internal/model/v1/config"
 	"github.com/KubeOperator/ekko/migrate"
+	"github.com/KubeOperator/ekko/pkg/file"
 	"github.com/asdine/storm/v3"
+	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"os"
+	"path"
 	"strings"
 )
 
 const sessionCookieName = "SESS_COOKIE_EKKO"
 
+var EmbedWebEkko embed.FS
 var EmbedWebDashboard embed.FS
 var EmbedWebTerminal embed.FS
 
@@ -51,21 +56,42 @@ func (e *EkkoSerer) setUpLogger() {
 }
 
 func (e *EkkoSerer) setUpDB() {
-	d, err := storm.Open(e.config.Spec.DB.Path)
+	realDir := file.ReplaceHomeDir(e.config.Spec.DB.Path)
+	if !fileutil.Exist(realDir) {
+		if err := os.MkdirAll(realDir, 0755); err != nil {
+			panic(fmt.Errorf("can not create database dir: %s message: %s", e.config.Spec.DB.Path, err))
+		}
+	}
+	d, err := storm.Open(path.Join(realDir, "ekko.db"))
 	if err != nil {
 		panic(err)
 	}
 	e.db = d
 }
 
+func (e *EkkoSerer) makeEkkoDir() {
+	ekkoDir := "~/.ekko"
+	if !fileutil.Exist("~/.ekko") {
+		if err := os.MkdirAll(ekkoDir, 0755); err != nil {
+			panic(err)
+		}
+	}
+}
+
 func (e *EkkoSerer) setUpStaticFile() {
+	e.Get("/", func(ctx *context.Context) {
+		ctx.Redirect("/ekko")
+	})
+	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
 	e.RegisterView(view.HTML(dashboardFS, ".html"))
-	e.HandleDir("/ui", dashboardFS)
-
+	e.HandleDir("/dashboard/", dashboardFS, spaOption)
 	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
 	e.RegisterView(view.HTML(terminalFS, ".html"))
-	e.HandleDir("/terminal", terminalFS)
+	e.HandleDir("/terminal/", terminalFS, spaOption)
+	ekkoFS := iris.PrefixDir("web/ekko", http.FS(EmbedWebEkko))
+	e.RegisterView(view.HTML(ekkoFS, ".html"))
+	e.HandleDir("/ekko", ekkoFS, spaOption)
 
 }
 
@@ -125,6 +151,7 @@ func (e *EkkoSerer) runMigrations() {
 
 func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.Application = iris.New()
+	e.setUpStaticFile()
 	e.setUpConfig()
 	e.setUpLogger()
 	e.setUpDB()

@@ -7,19 +7,20 @@ const namespaceHpaUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2beta2/namespaces/${namespace}/horizontalpodautoscalers`
 }
 
-export function listHpas (cluster_name, limit, continueToken, search) {
+export function listHpas (cluster_name, search, keywords, pageNum, pageSize) {
   let url = hpaUrl(cluster_name)
-  const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
-  }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function deleteHpa (cluster_name, namespace, name) {

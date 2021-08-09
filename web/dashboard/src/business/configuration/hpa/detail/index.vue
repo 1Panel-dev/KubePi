@@ -17,19 +17,19 @@
                 <th scope="col"></th>
               </tr>
               <tr>
-                <td>Workload</td>
+                <td>{{$t('business.workload.workload')}}</td>
                 <td>{{ item.spec.scaleTargetRef.kind }}/{{ item.spec.scaleTargetRef.name }}</td>
               </tr>
               <tr>
-                <td>Min Replicas</td>
+                <td>{{$t('business.configuration.min_replicas')}}</td>
                 <td>{{ item.spec.minReplicas }}</td>
               </tr>
               <tr>
-                <td>Max Replicas</td>
+                <td>{{$t('business.configuration.max_replicas')}}</td>
                 <td>{{ item.spec.maxReplicas }}</td>
               </tr>
               <tr>
-                <td>Current Replicas</td>
+                <td>{{$t('business.configuration.current_replicas')}}</td>
                 <td>{{ item.status.currentReplicas }}</td>
               </tr>
             </table>
@@ -94,7 +94,7 @@
                 </el-row>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="Conditions">
+            <el-tab-pane  :label="$t('commons.table.status')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane label="Events">

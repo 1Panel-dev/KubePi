@@ -42,7 +42,7 @@
 
 <script>
 import ComplexTable from "@/components/complex-table"
-import {listPods, listPodsWithNsSelector} from "@/api/pods"
+import {listPodsWithNsSelector} from "@/api/pods"
 
 export default {
   name: "KoDetailPods",
@@ -50,7 +50,8 @@ export default {
   props: {
     cluster: String,
     namespace: String,
-    selector: String
+    selector: String,
+    fieldSelector: String
   },
   data () {
     return {
@@ -61,17 +62,10 @@ export default {
   methods: {
     search () {
       this.loading = true
-      if (this.namespace && this.namespace !== "") {
-        listPodsWithNsSelector(this.cluster, this.namespace, this.selector).then(res => {
-          this.pods = res.items
-          this.loading = false
-        })
-      } else {
-        listPods(this.cluster, this.selector).then(res => {
-          this.pods = res.items
-          this.loading = false
-        })
-      }
+      listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then(res => {
+        this.pods = res.items
+        this.loading = false
+      })
     },
     openDetail (row) {
       this.$router.push({

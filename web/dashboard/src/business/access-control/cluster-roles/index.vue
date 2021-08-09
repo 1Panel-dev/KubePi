@@ -1,6 +1,6 @@
 <template>
   <layout-content header="ClusterRoles">
-    <complex-table :pagination-config="page" :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'create'}">
@@ -41,10 +41,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 200,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -81,21 +77,26 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search (init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listClusterRoles(this.cluster, this.page.pageSize, this.page.nextToken).then(res => {
+      listClusterRoles(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
-        this.page.nextToken = res.metadata["continue"] ? res.metadata["continue"] : ""
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {

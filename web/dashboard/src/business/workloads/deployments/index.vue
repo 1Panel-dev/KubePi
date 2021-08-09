@@ -109,7 +109,11 @@ export default {
       this.$router.push({ name: "DeploymentCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
-      this.$router.push({ name: "DeploymentDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+      this.$router.push({
+        name: "DeploymentDetail",
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false },
+      })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

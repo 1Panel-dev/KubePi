@@ -49,6 +49,12 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		name := ctx.Params().GetString("name")
 		proxyPath := ensureProxyPathValid(ctx.Params().GetString("p"))
 		namespace := ctx.URLParam("namespace")
+		keywords := ctx.URLParam("keywords")
+		search := false
+		if ctx.URLParamExists("search") {
+			search, _ = ctx.URLParamBool("search")
+		}
+
 		requestMethod := ctx.Request().Method
 		// 获取当亲集群
 		c, err := h.clusterService.Get(name, common.DBOptions{})
@@ -127,7 +133,6 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if ctx.Method() == "PATCH" {
 			req.Header.Set("Content-Type", "application/merge-patch+json")
 		}
-
 		resp, err := httpClient.Do(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -138,17 +143,30 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		if resp.StatusCode == http.StatusForbidden {
 			resp.StatusCode = http.StatusInternalServerError
 		}
-		num, err1 := ctx.Values().GetInt("pageNum")
-		size, err2 := ctx.Values().GetInt("pageSize")
-		if err1 == nil || err2 == nil {
-			total, datas, err := pageFilter(num, size, rawResp)
-			if err != nil {
+		if req.Method == http.MethodGet && search {
+			num, err1 := ctx.Values().GetInt("pageNum")
+			size, err2 := ctx.Values().GetInt("pageSize")
+			var listObj K8sListObj
+			if err := json.Unmarshal(rawResp, &listObj); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err)
 				return
 			}
-			backDatas, _ := json.Marshal(pkgV1.Page{Items: datas, Total: total})
-			_, _ = ctx.Write(backDatas)
+			if keywords != "" {
+				listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
+			}
+			total := len(listObj.Items)
+			if err1 == nil && err2 == nil {
+				tt, items, err := pageFilter(num, size, listObj.Items)
+				if err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err)
+					return
+				}
+				total = tt
+				listObj.Items = items
+			}
+			_, _ = ctx.JSON(pkgV1.Page{Items: listObj.Items, Total: total})
 			return
 		}
 		ctx.StatusCode(resp.StatusCode)
@@ -157,14 +175,14 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 	}
 }
 
-type K8sObj struct {
-	Kind       string      `json:"kind"`
-	ApiVersion string      `json:"apiVersion"`
-	Metadata   interface{} `json:"metadata"`
-	Items      []pageItem  `json:"items"`
+type K8sListObj struct {
+	Kind       string        `json:"kind"`
+	ApiVersion string        `json:"apiVersion"`
+	Metadata   interface{}   `json:"metadata"`
+	Items      []interface{} `json:"items"`
 }
 type pageItem struct {
-	Metadata metadata    `json:"metadata"`
+	Metadata interface{} `json:"metadata"`
 	Spec     interface{} `json:"spec"`
 	Status   interface{} `json:"status"`
 }
@@ -174,22 +192,49 @@ type metadata struct {
 	CreationTimestamp string `json:"creationTimestamp"`
 }
 
-func pageFilter(num, size int, resp []byte) (int, interface{}, error) {
-	datas := &K8sObj{}
-	if err := json.Unmarshal(resp, datas); err != nil {
-		return 0, datas, err
+type fieldMatcher interface {
+	Match(item interface{}) bool
+}
+
+type namespaceAndNameMatcher struct {
+	Namespace string
+	Name      string
+}
+
+func (n namespaceAndNameMatcher) Match(item interface{}) bool {
+	pageItem := item.(map[string]interface{})
+	return (pageItem["metadata"].(map[string]interface{})["namespace"] != nil && pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.Namespace) || strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.Name)
+}
+
+func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
+	return &namespaceAndNameMatcher{
+		Namespace: keywords,
+		Name:      keywords,
 	}
-	total := len(datas.Items)
-	if (num-1)*size >= len(datas.Items) {
-		datas.Items = []pageItem{}
-	} else {
-		if num*size < len(datas.Items) {
-			datas.Items = datas.Items[(num-1)*size : (num * size)]
-		} else {
-			datas.Items = datas.Items[(num-1)*size : len(datas.Items)]
+}
+
+func fieldFilter(data []interface{}, fms ...fieldMatcher) []interface{} {
+	var result []interface{}
+	for i := range data {
+		for j := range fms {
+			if fms[j].Match(data[i]) {
+				result = append(result, data[i])
+				break
+			}
 		}
 	}
-	return total, datas, nil
+	return result
+}
+
+func pageFilter(num, size int, data []interface{}) (int, []interface{}, error) {
+	total := len(data)
+	result := make([]interface{}, 0)
+	if num*size < len(data) {
+		result = data[(num-1)*size : (num * size)]
+	} else {
+		result = data[(num-1)*size:]
+	}
+	return total, result, nil
 }
 
 func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUrl url.URL) (*NamespaceResourceContainer, error) {

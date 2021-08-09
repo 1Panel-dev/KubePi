@@ -144,9 +144,6 @@ export default {
       this.changed = true
     }
   },
-  created () {
-    console.log(this.isEdit)
-  }
 }
 </script>
 
@@ -168,6 +165,14 @@ export default {
 
   .CodeMirror-merge-r-chunk {
     background: #3c3c3ce3;
+  }
+
+  .CodeMirror-merge-r-chunk-end {
+     border-bottom: unset;
+  }
+
+  .CodeMirror-merge-r-chunk-start {
+    border-top: unset;
   }
 
   .upload {

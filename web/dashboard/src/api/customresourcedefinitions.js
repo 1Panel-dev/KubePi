@@ -4,13 +4,20 @@ const customResourceUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apiextensions.k8s.io/v1/customresourcedefinitions`
 }
 
-export function listCustomResources (cluster_name, search) {
+export function listCustomResources (cluster_name, search, keywords, pageNum, pageSize) {
   let url = customResourceUrl(cluster_name)
-  const param = {}
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function deleteCustomResource (cluster_name, name) {

@@ -1,10 +1,7 @@
 <template>
   <layout-content header="Nodes">
-    <complex-table  :data="data" v-loading="loading" @search="search()">
-      <template #toolbar>
-        <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchName"
-                  @change="search(true)" @clear="search(true)"></el-input>
-      </template>
+    <complex-table :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search()"
+                   :search-config="searchConfig">
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix max-width="50px">
         <template v-slot:default="{row}">
           <el-link @click="onDetail(row)"> {{ row.metadata.name }}</el-link>
@@ -46,37 +43,47 @@ import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "NodeList",
-  components: { KoTableOperations, ComplexTable, LayoutContent },
-  data () {
+  components: {KoTableOperations, ComplexTable, LayoutContent},
+  data() {
     return {
       data: [],
       loading: false,
-      searchName: "",
+      keywords: "",
       clusterName: "",
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      },
       buttons: [
         {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
           click: (row) => {
-            this.$router.push({ path: "/nodes/detail/"+row.metadata.name, query: { yamlShow: "true" } })
+            this.$router.push({path: "/nodes/detail/" + row.metadata.name, query: {yamlShow: "true"}})
           }
         },
       ]
     }
   },
   methods: {
-    search () {
+    search() {
       this.loading = true
-      listNodes(this.clusterName, this.searchName).then(res => {
+      const {currentPage, pageSize} = this.paginationConfig
+      listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.loading = false
         this.data = res.items
+        this.paginationConfig.total = res.total
       })
     },
-    onDetail (row) {
-      this.$router.push({ path: "/nodes/detail/"+row.metadata.name, query: { yamlShow: "false" } })
+    onDetail(row) {
+      this.$router.push({path: "/nodes/detail/" + row.metadata.name, query: {yamlShow: "false"}})
     }
   },
-  created () {
+  created() {
     this.clusterName = this.$route.query.cluster
     this.search()
   }

@@ -7,19 +7,20 @@ const namespaceRoleBindingUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/rbac.authorization.k8s.io/v1/namespaces/${namespace}/rolebindings`
 }
 
-export function listRoleBindings (cluster_name, limit, continueToken, search) {
+export function listRoleBindings (cluster_name, search, keywords, pageNum, pageSize) {
   let url = roleBindingUrl(cluster_name)
-  const param = {}
-  if (limit && limit !== 0) {
-    param.limit = limit
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
   }
-  if (continueToken && continueToken !== "") {
-    param.continue = continueToken
-  }
-  if (search && search !== "") {
-    param.fieldSelector = "metadata.namespace=" + search
-  }
-  return get(url, param)
+  return get(url, params)
 }
 
 export function deleteRoleBinding (cluster_name, namespace, name) {

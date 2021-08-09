@@ -142,7 +142,6 @@
     components: {YamlEditor, LayoutContent},
     props: {
       name: String,
-      namespace: String,
     },
     data() {
       return {
@@ -191,7 +190,7 @@
       yamlShow: function (newValue) {
         this.$router.push({
           name: "PersistentVolumeDetail",
-          params: {name: this.name, namespace: this.namespace},
+          params: {name: this.name},
           query: {yamlShow: newValue}
         })
         this.getDetail()

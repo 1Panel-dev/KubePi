@@ -5,6 +5,7 @@ import (
 	"fmt"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	"github.com/KubeOperator/ekko/internal/model/v1/config"
+	"github.com/KubeOperator/ekko/pkg/file"
 	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/spf13/viper"
 )
@@ -14,7 +15,7 @@ const configReadErr = "can not read config file %s ,%s"
 const configMergeErr = "can not merge config file, %s"
 
 var configFilePaths = []string{
-	"/etc/ekko",
+	"~/.ekko/conf",
 }
 
 func ReadConfig(path ...string) (config.Config, error) {
@@ -26,13 +27,16 @@ func ReadConfig(path ...string) (config.Config, error) {
 		configFilePaths = append(configFilePaths, path[i])
 	}
 	for i := range configFilePaths {
-		if exists := fileutil.Exist(configFilePaths[i]); !exists {
-			fmt.Println(fmt.Sprintf(configNotFoundSkipErr, configFilePaths[i]))
+		realDir := file.ReplaceHomeDir(configFilePaths[i])
+
+		if exists := fileutil.Exist(realDir); !exists {
+			fmt.Println(fmt.Sprintf(configNotFoundSkipErr, realDir))
 			continue
 		}
-		v.AddConfigPath(configFilePaths[i])
+
+		v.AddConfigPath(realDir)
 		if err := v.ReadInConfig(); err != nil {
-			fmt.Println(fmt.Sprintf(configReadErr, configFilePaths[i], err.Error()))
+			fmt.Println(fmt.Sprintf(configReadErr, realDir, err.Error()))
 			continue
 		}
 		if err := v.MergeInConfig(); err != nil {
@@ -73,7 +77,7 @@ func defaultConfig() config.Config {
 				},
 			},
 			DB: config.DBConfig{
-				Path: "/var/lib/ekko/db/ekko.db",
+				Path: "~/.ekko/db",
 			},
 			Logger: config.LoggerConfig{Level: "debug"},
 		},

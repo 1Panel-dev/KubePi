@@ -1,6 +1,6 @@
 <template>
   <layout-content header="RoleBindings">
-    <complex-table :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
@@ -20,6 +20,11 @@
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Role">
+        <template v-slot:default="{row}">
+          <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -46,10 +51,6 @@ export default {
   data () {
     return {
       data: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       selects: [],
       loading: false,
       cluster: "",
@@ -85,14 +86,26 @@ export default {
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
-      listRoleBindings(this.cluster).then(res => {
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listRoleBindings(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {

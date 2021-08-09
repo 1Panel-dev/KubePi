@@ -127,7 +127,7 @@
           <br>
           <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
             <el-tab-pane label="Pods">
-              <ko-detail-pods :cluster="cluster" :selector="item.metadata.name"></ko-detail-pods>
+              <ko-detail-pods :cluster="cluster" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
             </el-tab-pane>
             <el-tab-pane :label="$t('commons.table.status')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
@@ -176,7 +176,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getNode} from "@/api/nodes"
-import {listPods} from "@/api/pods"
+import {listPodsWithNsSelector} from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailConditions from "@/components/detail/detail-conditions"
 import KoDetailPods from "@/components/detail/detail-pods"
@@ -250,7 +250,7 @@ export default {
       })
     },
     listPodsByNodeName () {
-      listPods(this.cluster, this.item.metadata.name).then(res => {
+      listPodsWithNsSelector(this.cluster, "", "", "spec.nodeName=" + this.item.metadata.name).then(res => {
         this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
         this.podsData.podsCount = res.items.length
 

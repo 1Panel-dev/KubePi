@@ -1,12 +1,15 @@
 <template>
   <layout-content header="HorizontalPodAutoscalers">
-    <complex-table :data="data" @sarch="search" v-loading="loading">
+    <complex-table :data="data" @search="search" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate"
+                     v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                     v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -44,10 +47,12 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.currentReplicas ===row.status.desiredReplicas" type="success" size="mini" plain round>
+          <el-button v-if="row.status.currentReplicas ===row.status.desiredReplicas" type="success" size="mini" plain
+                     round>
             Active
           </el-button>
-          <el-button v-if="row.status.currentReplicas !==row.status.desiredReplicas"  type="danger" size="mini" plain round>
+          <el-button v-if="row.status.currentReplicas !==row.status.desiredReplicas" type="danger" size="mini" plain
+                     round>
             Pending
           </el-button>
         </template>
@@ -94,8 +99,8 @@ export default {
               query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "update" })
           }
         },
         {
@@ -108,8 +113,8 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "update" })
           }
         },
         {
@@ -125,25 +130,31 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"autoscaling",resource:"horizontalpodautoscalers",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "delete" })
           }
         },
       ],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
-    search (init) {
+    search (resetPage) {
       this.loading = true
-      if (init) {
-        this.page = {
-          pageSize: this.page.pageSize,
-          nextToken: ""
-        }
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
       }
-      listHpas(this.cluster).then(res => {
+      listHpas(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate () {

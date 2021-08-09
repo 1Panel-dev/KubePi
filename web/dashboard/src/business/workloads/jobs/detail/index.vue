@@ -2,52 +2,9 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Jobs'}" v-loading="loading">
     <div v-if="!yamlShow">
       <el-card>
-        <table style="width: 100%" class="myTable">
-          <tr>
-            <th scope="col" align="left">
-              <h3>{{ $t("business.common.basic") }}</h3>
-            </th>
-            <th scope="col"></th>
-          </tr>
-          <tr>
-            <td>{{ $t("commons.table.name") }}</td>
-            <td colspan="2">{{ form.metadata.name }}</td>
-          </tr>
-          <tr>
-            <td>{{ $t("business.namespace.namespace") }}</td>
-            <td>{{ form.metadata.namespace }}</td>
-          </tr>
-          <tr>
-            <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | age }}</td>
-          </tr>
-          <tr>
-            <td>{{ $t("business.common.label") }}</td>
-            <td colspan="4">
-              <div v-for="(value,key,index) in form.metadata.labels" v-bind:key="index" class="myTag">
-                <el-tag type="info" size="small">
-                  {{ key }} = {{ value }}
-                </el-tag>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ $t("business.common.annotation") }}</td>
-            <td colspan="4">
-              <div v-for="(value,key,index) in form.metadata.annotations" v-bind:key="index" class="myTag">
-                <el-tag type="info" size="small">
-                  {{ key }} = {{ value.length > 100 ? value.substring(0, 100) + "..." : value }}
-                </el-tag>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-        </div>
+        <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
       </el-card>
-
-      <el-tabs style="margin-top:20px" v-model="activeName">
+      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
         <el-tab-pane label="Pods" name="Pods">
           <complex-table :data="jobs">
             <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase" min-width="35">
@@ -78,21 +35,7 @@
           </complex-table>
         </el-tab-pane>
         <el-tab-pane label="Conditions" name="Conditions">
-          <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" min-width=20 />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" min-width=20 />
-            <el-table-column sortable :label="$t('business.workload.lastTransitionTime')" prop="lastTransitionTime" min-width=30>
-              <template v-slot:default="{row}">
-                {{ row.lastTransitionTime | age }}
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width=120>
-              <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
-                <span v-if="!row.message">---</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+          <ko-detail-conditions :conditions="form.status.conditions"></ko-detail-conditions>
         </el-tab-pane>
         <el-tab-pane label="Events" name="Events">
           <complex-table :data="events">
@@ -129,10 +72,12 @@ import YamlEditor from "@/components/yaml-editor"
 import { mixin } from "@/utils/resourceRoutes"
 
 import ComplexTable from "@/components/complex-table"
+import KoDetailBasic from "@/components/detail/detail-basic"
+import KoDetailConditions from "@/components/detail/detail-conditions"
 
 export default {
   name: "JobDetail",
-  components: { LayoutContent, YamlEditor, ComplexTable },
+  components: { KoDetailConditions, KoDetailBasic, LayoutContent, YamlEditor, ComplexTable },
   mixins: [mixin],
   props: {
     name: String,

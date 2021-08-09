@@ -1,38 +1,44 @@
-import { get, del } from "@/plugins/request";
+import {get, del} from "@/plugins/request"
 
 const podUrl = (cluster_name) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/pods`;
-};
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/pods`
+}
 const podUrlWithNs = (cluster_name, namespace) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/pods`;
-};
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/pods`
+}
 
-export function listPods(cluster_name,  search) {
-  let url = podUrl(cluster_name);
-  const param = {};
+export function listPods (cluster_name, search) {
+  let url = podUrl(cluster_name)
+  const param = {}
   if (search && search !== "") {
-    param.fieldSelector = "spec.nodeName=" + search;
+    param.fieldSelector = "spec.nodeName=" + search
   }
-  return get(url, param);
+  return get(url, param)
 }
 
-export function listPodsWithNsSelector(cluster_name, namespace, selectors) {
-  let url = podUrlWithNs(cluster_name, namespace);
-  const param = {};
+export function listPodsWithNsSelector (cluster_name, namespace, selectors, fieldSelectors) {
+  let url = podUrl(cluster_name)
+  if (namespace && namespace !== "") {
+    url = podUrlWithNs(cluster_name, namespace)
+  }
+  const param = {}
   if (selectors && selectors !== "") {
-    param.labelSelector = selectors;
+    param.labelSelector = selectors
   }
-  return get(url, param);
+  if (fieldSelectors && fieldSelectors !== "") {
+    param.fieldSelector = fieldSelectors
+  }
+  return get(url, param)
 }
 
-export function getPodByName(cluster_name, namespace, pod) {
-  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}`);
+export function getPodByName (cluster_name, namespace, pod) {
+  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}`)
 }
 
-export function deletePod(cluster_name, pod) {
-  return del(`${podUrl(cluster_name)}/${pod}`);
+export function deletePod (cluster_name, pod) {
+  return del(`${podUrl(cluster_name)}/${pod}`)
 }
 
-export function getPodLogsByName(cluster_name, namespace, pod, paramInfo) {
-  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log` + paramInfo);
+export function getPodLogsByName (cluster_name, namespace, pod, paramInfo) {
+  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log` + paramInfo)
 }
