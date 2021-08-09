@@ -4,7 +4,7 @@
             v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-no-dropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="$t(onlyOneChild.meta.title)"/>
+          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="transformTitle(onlyOneChild.meta.title)"/>
         </el-menu-item>
       </app-link>
     </template>
@@ -84,6 +84,9 @@ export default {
       }
 
       return false
+    },
+    transformTitle(title) {
+      return title.indexOf(".") !== -1 ? this.$t(title) : title 
     },
     resolvePath(routePath) {
       if (isExternal(routePath)) {

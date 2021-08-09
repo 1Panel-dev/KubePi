@@ -10,7 +10,8 @@ const deploymentWithNsUrl = (cluster_name, namespaces) => {
 export function listDeployments (cluster_name, currentPage, pageSize) {
   let url = deploymentUrl(cluster_name)
   if (currentPage && pageSize) {
-    return get(`${url}?pageNum=${currentPage}&pageSize=${pageSize}`)
+    let params = {pageNum: currentPage, pageSize: pageSize }
+    return get(url, params)
   }
   return get(url)
 }

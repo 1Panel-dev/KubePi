@@ -24,7 +24,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getDeploymentByName } from "@/api/deployments"
+import { getWorkLoadByName } from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
 import { mixin } from "@/utils/resourceRoutes"
 import KoDetailConditions from "@/components/detail/detail-conditions"
@@ -66,7 +66,7 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      getDeploymentByName(this.clusterName, this.namespace, this.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "deployments", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
           for (const key in this.form.spec.selector.matchLabels) {

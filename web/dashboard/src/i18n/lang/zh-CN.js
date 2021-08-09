@@ -33,7 +33,9 @@ const message = {
       back_detail: "返回详情",
       submit: "提交",
       show_diff: "差异对比",
-      continue_edit: "继续编辑"
+      continue_edit: "继续编辑",
+      terminal: "终端",
+      logs: "日志",
     },
     table: {
       name: "名称",
@@ -144,7 +146,13 @@ const message = {
       lastTransitionTime: "最后迁移时间",
       size: "大小",
       resource: "资源信息",
-      address: "地址"
+      address: "地址",
+      watch: "监听",
+      lines: "行数",
+      last_20_lines: "最后20行",
+      last_100_lines: "最后100行",
+      last_200_lines: "最后200行",
+      last_500_lines: "最后500行",
     },
     namespace: {
       namespace: "命名空间",

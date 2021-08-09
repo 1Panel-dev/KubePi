@@ -1,6 +1,6 @@
 <template>
   <layout-content header="CronJobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'cronjobs',verb:'create'}">
@@ -41,7 +41,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listCronJobs, deleteCronJob } from "@/api/cronjobs"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -101,6 +101,14 @@ export default {
       ],
       loading: false,
       data: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: "",
+      },
       selects: [],
       clusterName: "",
     }
@@ -124,11 +132,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteCronJob(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "cronjobs", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteCronJob(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "cronjobs", row.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -147,12 +155,15 @@ export default {
         }
       })
     },
-    search() {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      listCronJobs(this.clusterName)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "cronjobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data = res.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

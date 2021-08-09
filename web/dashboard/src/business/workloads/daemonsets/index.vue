@@ -1,6 +1,6 @@
 <template>
   <layout-content header="DaemonSets">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'daemonsets',verb:'create'}">
@@ -33,7 +33,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listDaemonSets, deleteDaemonSet } from "@/api/daemonsets"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -93,9 +93,13 @@ export default {
       ],
       loading: false,
       data: [],
-      page: {
+      paginationConfig: {
+        currentPage: 1,
         pageSize: 10,
-        nextToken: "",
+        total: 0,
+      },
+      searchConfig: {
+        keywords: "",
       },
       selects: [],
       clusterName: "",
@@ -116,11 +120,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteDaemonSet(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "daemonsets", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteDaemonSet(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "daemonsets", row.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -139,13 +143,15 @@ export default {
         }
       })
     },
-    search(init) {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      this.page.nextToken = init ? "" : this.page.nextToken
-      listDaemonSets(this.clusterName)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "daemonsets", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data = res.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

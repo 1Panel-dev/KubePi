@@ -64,7 +64,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getStatefulSetByName } from "@/api/statefulsets"
+import { getWorkLoadByName } from "@/api/workloads"
 import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
 
@@ -107,7 +107,7 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      getStatefulSetByName(this.clusterName, this.namespace, this.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "statefulsets", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
           let selectors = ""

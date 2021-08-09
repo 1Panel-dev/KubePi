@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+
 	"github.com/KubeOperator/ekko/internal/route"
 	"github.com/KubeOperator/ekko/internal/server"
 	"github.com/spf13/cobra"

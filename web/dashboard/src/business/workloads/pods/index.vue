@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Pods">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading"  @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
@@ -32,45 +32,71 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
+      <el-table-column min-width="20" :label="$t('commons.table.action')">
+        <template v-slot:default="{row}">
+          <el-dropdown @command="handleClick($event,row)" :hide-on-click="false">
+            <el-button circle icon="el-icon-more" size="mini" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-download" command="download">{{$t("commons.button.download_yaml")}}</el-dropdown-item>
+              <div v-if="row.containers.length > 1">
+                <el-popover placement="left" trigger="hover">
+                  <div v-for="c in row.containers" :key="c">
+                    <p style="margin: 0">
+                      <el-button @click="openTerminal(row, c)" type="text">{{c}}</el-button>
+                    </p>
+                  </div>
+                  <el-dropdown-item slot="reference" icon="el-icon-date" command="terminal">
+                    {{$t("commons.button.terminal")}}
+                    <i class="el-icon-arrow-right" />
+                  </el-dropdown-item>
+                </el-popover>
+                <el-popover placement="left" trigger="hover">
+                  <div v-for="c in row.containers" :key="c">
+                    <p style="margin: 0">
+                      <el-button @click="openTerminalLogs(row, c)" type="text">{{c}}</el-button>
+                    </p>
+                  </div>
+                  <el-dropdown-item slot="reference" icon="el-icon-date" command="logs">
+                    {{$t("commons.button.logs")}}
+                    <i class="el-icon-arrow-right" />
+                  </el-dropdown-item>
+                </el-popover>
+              </div>
+              <div v-if="row.containers.length == 1">
+                <el-dropdown-item icon="el-icon-date" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-date" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
+              </div>
+              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">{{$t("commons.button.delete")}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
     </complex-table>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listPods, deletePod } from "@/api/pods"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
-import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "Pods",
-  components: { LayoutContent, ComplexTable, KoTableOperations },
+  components: { LayoutContent, ComplexTable },
   data() {
     return {
-      buttons: [
-        {
-          label: this.$t("commons.button.download_yaml"),
-          icon: "el-icon-download",
-          click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
-          },
-        },
-        {
-          label: this.$t("commons.button.delete"),
-          icon: "el-icon-delete",
-          click: (row) => {
-            this.onDelete(row)
-          },
-          disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
-          },
-        },
-      ],
       loading: false,
       data: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: "",
+      },
       selects: [],
       clusterName: "",
     }
@@ -78,6 +104,66 @@ export default {
   methods: {
     openDetail(row) {
       this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    },
+    onCheckPermissions() {
+      checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
+    },
+    handleClick(btn, row) {
+      switch (btn) {
+        case "download":
+          downloadYaml(row.metadata.name + ".yml", row)
+          break
+        case "terminal":
+          this.openTerminal(row)
+          break
+        case "logs":
+          this.openTerminalLogs(row)
+          break
+        case "delete":
+          this.onDelete(row)
+          break
+      }
+    },
+    openTerminal(row, container) {
+      let c
+      if (container) {
+        c = container
+      } else {
+        c = row.containers[0]
+      }
+      let existTerminals = this.$store.getters.terminals
+      const item = {
+        type: "terminal",
+        key: this.randomNum(8),
+        name: row.metadata.name,
+        cluster: this.clusterName,
+        namespace: row.metadata.namespace,
+        pod: row.metadata.name,
+        container: c,
+      }
+      existTerminals.push(item)
+      this.$store.commit("terminal/TERMINALS", existTerminals)
+    },
+    openTerminalLogs(row, container) {
+      let c
+      if (container) {
+        c = container
+      } else {
+        c = row.containers[0]
+      }
+      let existTerminals = this.$store.getters.terminals
+      const item = {
+        type: "logs",
+        key: this.randomNum(8),
+        name: row.metadata.name,
+        cluster: this.clusterName,
+        namespace: row.metadata.namespace,
+        pod: row.metadata.name,
+        container: c,
+        containers: row.containers,
+      }
+      existTerminals.push(item)
+      this.$store.commit("terminal/TERMINALS", existTerminals)
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -87,11 +173,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deletePod(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deletePod(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "pods", select.metadata.namespace, select.metadata.name))
             }
           }
         }
@@ -132,12 +218,22 @@ export default {
       }
       return 0
     },
-    search() {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      listPods(this.clusterName)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data = res.items
+          for (const item of this.data) {
+            let container = []
+            for (const c of item.spec.containers) {
+              container.push(c.name)
+            }
+            item.containers = container
+          }
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)
@@ -145,6 +241,11 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    randomNum(n) {
+      var rnd = ""
+      for (var i = 0; i < n; i++) rnd += Math.floor(Math.random() * 10)
+      return rnd
     },
   },
   mounted() {

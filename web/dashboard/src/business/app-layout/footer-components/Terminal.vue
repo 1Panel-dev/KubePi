@@ -1,53 +1,115 @@
 <template>
   <div>
     <div style="position: relative;">
-      <el-tabs style="min-height: 35px;background-color: #1f2224" type="border-card" v-model="currentTab" @tab-click="handleClick" closable @tab-remove="removeTab">
-        <el-tab-pane v-for="item in terminalTabs" :key="item.name" :name="item.title">
-          <span slot="label"><i class="el-icon-date"></i>{{item.title}}</span>
-          <!-- <iframe :src="item.url"></iframe> -->
+      <el-tabs class="TabsWithoutContant" style="min-height: 35px;background-color: #1f2224" type="border-card" v-model="currentTab" @tab-click="handleClick" closable @tab-remove="removeTab">
+        <el-tab-pane v-for="item in terminalTabs" :label="item.name" :key="item.key" :name="item.key">
+          <span slot="label"><i class="el-icon-date"></i>{{item.name}}</span>
         </el-tab-pane>
       </el-tabs>
+      <div>
+        <el-form v-if="currentTerminal.type ==='logs'" style="background-color: #000000; margin-top: 5px">
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label="$t('business.pod.lines')">
+                <el-select @change="changeConditions(currentTerminal)" size="mini" v-model="tailLines">
+                  <el-option v-for="l in tailLinesOptions" :key="l.label" :label="l.label" :value="l.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item :label="$t('business.workload.container')">
+                <el-select @change="changeConditions(currentTerminal)" size="mini" v-model="currentTerminal.container">
+                  <el-option v-for="c in currentTerminal.containers" :key="c" :label="c" :value="c" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <div style="float: right;margin-top: 5px">
+              <span style="color: white">{{$t('business.pod.watch')}}</span>
+              <el-switch @change="changeConditions(currentTerminal)" style="margin-left: 10px" v-model="follow" />
+            </div>
+          </el-row>
+        </el-form>
+      </div>
+      <div v-for="item in terminalTabs" :key="item.key">
+        <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 800px;border: 0"></iframe>
+      </div>
       <div class="tabButton">
-        <el-button size="mini" @click="addTabs" icon="el-icon-plus" circle />
         <el-button v-if="terminalTabs.length !== 0" size="mini" @click="shrinkTabs" icon="el-icon-arrow-down" circle />
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   data() {
     return {
       currentTab: "",
-      terminalTabs: [],
+      currentTerminal: {},
       expand: false,
       tabIndex: 1,
+
+      follow: false,
+      tailLines: 20,
+      tailLinesOptions: [
+        { label: this.$t("business.pod.last_20_lines"), value: 20 },
+        { label: this.$t("business.pod.last_100_lines"), value: 100 },
+        { label: this.$t("business.pod.last_200_lines"), value: 200 },
+        { label: this.$t("business.pod.last_500_lines"), value: 500 },
+      ],
     }
   },
+  computed: {
+    terminalTabs: {
+      get() {
+        const terminals = this.$store.state.terminal.terminals || []
+        if (terminals.length == 0) {
+          this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", 0)
+        } else {
+          this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", 400)
+        }
+        return this.$store.state.terminal.terminals
+      },
+      set() {
+        this.$store.commit("terminal/TERMINALS", this.terminalTabs)
+      },
+    },
+  },
+  watch: {
+    terminalTabs: function (val) {
+      if (val && val.length > 0) {
+        for (const item of val) {
+          item.show = false
+        }
+        val[val.length - 1].show = true
+        val[val.length - 1].url = this.getTerminalUrl(val[val.length - 1])
+        this.currentTab = val[val.length - 1].key
+        this.currentTerminal = val[val.length - 1]
+      }
+    },
+  },
   methods: {
-    addTabs() {
-      let newTabName = "Terminal " + this.tabIndex
-      this.terminalTabs.push({
-        title: newTabName,
-        name: this.tabIndex,
-        url: "www.douyu.com",
-        token: "",
-      })
-      this.tabIndex++
-      this.currentTab = newTabName
-      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "400")
+    getTerminalUrl(item) {
+      if (item.type == "terminal") {
+        return `/terminal/app?cluster=${item.cluster}&pod=${item.pod}&namespace=${item.namespace}&container=${item.container}`
+      } else {
+        return `/terminal/logging?cluster=${item.cluster}&pod=${item.pod}&namespace=${item.namespace}&container=${item.container}&tailLines=${this.tailLines}&follow=${this.follow}`
+      }
+    },
+    changeConditions(item) {
+      item.url = this.getTerminalUrl(item)
     },
     removeTab(targetName) {
       for (let i = 0; i < this.terminalTabs.length; i++) {
-        if (this.terminalTabs[i].title === targetName) {
+        if (this.terminalTabs[i].key === targetName) {
           this.terminalTabs.splice(i, 1)
         }
       }
       if (this.terminalTabs.length === 0) {
-        this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
+        this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "0")
         this.expand = false
       } else {
-        this.currentTab = this.terminalTabs[this.terminalTabs.length - 1].title
+        this.currentTab = this.terminalTabs[this.terminalTabs.length - 1].key
       }
     },
     shrinkTabs() {
@@ -57,18 +119,15 @@ export default {
     handleClick() {
       this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "400")
       this.expand = true
+      for (const tab of this.terminalTabs) {
+        if (tab.key == this.currentTab) {
+          this.currentTerminal = tab
+          tab.show = true
+        } else {
+          tab.show = false
+        }
+      }
     },
-    // 这里将连接的 tablist 存到 localstorage 里面，刷新后，保证仍然存在
-    beforeunloadHandler() {
-      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
-      this.expand = false
-    },
-  },
-  mounted() {
-    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e))
-  },
-  destroyed() {
-    window.removeEventListener("beforeunload", (e) => this.beforeunloadHandler(e))
   },
 }
 </script>
@@ -78,9 +137,5 @@ export default {
   position: absolute;
   right: 20px;
   top: 5px;
-}
-.divBorder {
-  border-top: 8px solid #2f3236;
-  border-bottom: 2px solid #2f3236;
 }
 </style>

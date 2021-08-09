@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Jobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" @search="search()">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'jobs',verb:'create'}">
@@ -40,7 +40,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listJobs, deleteJob } from "@/api/jobs"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -100,6 +100,14 @@ export default {
       ],
       loading: false,
       data: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: "",
+      },
       selects: [],
       clusterName: "",
     }
@@ -119,11 +127,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteJob(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteJob(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, select.metadata.name))
             }
           }
         }
@@ -147,12 +155,15 @@ export default {
       let endTime = new Date(row.status.completionTime)
       return Math.floor((endTime - startTime) / 1000)
     },
-    search() {
+    search(resetPage) {
       this.loading = true
-      this.data = []
-      listJobs(this.clusterName)
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
+      listWorkLoads(this.clusterName, "jobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data = res.items
+          this.paginationConfig.total = res.total
         })
         .catch((error) => {
           console.log(error)

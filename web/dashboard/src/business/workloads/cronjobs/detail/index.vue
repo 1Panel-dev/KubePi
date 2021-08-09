@@ -67,7 +67,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getCronJobByName } from "@/api/cronjobs"
+import { getWorkLoadByName } from "@/api/workloads"
 import { listJobsWithNsSelector } from "@/api/jobs"
 import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
@@ -116,7 +116,7 @@ export default {
     getDetail() {
       this.loading = true
       this.events = []
-      getCronJobByName(this.clusterName, this.namespace, this.name).then((res) => {
+      getWorkLoadByName(this.clusterName, "cronjobs", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.jobTemplate.spec.template.metadata.labels) {
           let selectors = ""

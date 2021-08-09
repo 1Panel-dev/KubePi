@@ -187,8 +187,9 @@ type pageItem struct {
 	Status   interface{} `json:"status"`
 }
 type metadata struct {
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
+	Name              string `json:"name"`
+	Namespace         string `json:"namespace"`
+	CreationTimestamp string `json:"creationTimestamp"`
 }
 
 type fieldMatcher interface {
