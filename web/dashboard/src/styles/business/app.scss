@@ -121,3 +121,9 @@ a:hover {
 .el-radio-button__inner {
   width: 100%;
 }
+
+.TabsWithoutContant {
+  .el-tabs__content {
+    display: none;
+  }
+}

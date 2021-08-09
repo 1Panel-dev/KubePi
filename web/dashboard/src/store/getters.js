@@ -9,6 +9,7 @@ const getters = {
     cluster: state => state.user.cluster,
     clusterRoles: state => state.user.clusterRoles,
     nickName: state => state.user.nickName,
-    buttom_height: state => state.app.buttomHeight
+    buttom_height: state => state.app.buttomHeight,
+    terminals: state => state.terminal.terminals
 }
 export default getters
