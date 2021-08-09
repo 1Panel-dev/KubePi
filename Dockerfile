@@ -10,6 +10,8 @@ COPY . .
 
 RUN make build_web
 
+RUN rm -fr web
+
 
 FROM golang:1.16 as stage-bin-build
 
@@ -25,13 +27,13 @@ ENV GO111MODULE=on
 
 RUN go mod download
 
-RUN make build_all
+RUN make build_bin
 
 FROM alpine:3.14
 
 WORKDIR /
 
-COPY --from=stage-bin-build /build/ekko/dist/usr /usr
+COPY --from=stage-bin-build /build/ekko/bin/dist/usr /usr
 
 EXPOSE 2019
 
