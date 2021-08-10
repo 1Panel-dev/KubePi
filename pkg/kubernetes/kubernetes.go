@@ -203,8 +203,14 @@ func (k *Kubernetes) CreateDefaultClusterRoles() error {
 				return err
 			}
 		}
+		// 如果已存在，尝试更新
 		if instance == nil || instance.Name == "" {
 			_, err = client.RbacV1().ClusterRoles().Create(context.TODO(), &initClusterRoles[i], metav1.CreateOptions{})
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err = client.RbacV1().ClusterRoles().Update(context.TODO(), &initClusterRoles[i], metav1.UpdateOptions{})
 			if err != nil {
 				return err
 			}
