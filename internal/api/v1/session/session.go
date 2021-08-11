@@ -240,7 +240,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		labels := []string{
 			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
 			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
-			fmt.Sprintf("%s=%s", "user-name", profile.Name),
+			fmt.Sprintf("%s=%s", kubernetes.LabelUsername, profile.Name),
 		}
 		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
 			LabelSelector: strings.Join(labels, ","),

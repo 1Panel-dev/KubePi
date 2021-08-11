@@ -9,10 +9,12 @@ import (
 	"github.com/KubeOperator/ekko/pkg/collectons"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
+	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -32,10 +34,117 @@ type Interface interface {
 	CleanManagedClusterRoleBinding(username string) error
 	CleanManagedRoleBinding(username string) error
 	CleanAllRBACResource() error
+	CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error
+	CreateOrUpdateRolebinding(namespace string, clusterRoleName string, username string, builtIn bool) error
 }
 
 type Kubernetes struct {
 	*v1Cluster.Cluster
+}
+
+func (k *Kubernetes) CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error {
+	client, err := k.Client()
+	if err != nil {
+		return err
+	}
+	name := fmt.Sprintf("%s:%s:%s", username, clusterRoleName, k.UUID)
+	labels := map[string]string{
+		LabelManageKey: "ekko",
+		LabelClusterId: k.UUID,
+		LabelUsername:  username,
+	}
+	annotations := map[string]string{
+		"built-in":   strconv.FormatBool(builtIn),
+		"created-at": time.Now().Format("2006-01-02 15:04:05"),
+	}
+	item := rbacV1.ClusterRoleBinding{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        name,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Subjects: []rbacV1.Subject{
+			{
+				Kind: "User",
+				Name: username,
+			},
+		},
+		RoleRef: rbacV1.RoleRef{
+			Kind: "ClusterRole",
+			Name: clusterRoleName,
+		},
+	}
+	baseItem, err := client.RbacV1().ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		if !strings.Contains(err.Error(), "not found") {
+			return err
+		}
+	}
+	if baseItem != nil && baseItem.Name != "" {
+		_, err := client.RbacV1().ClusterRoleBindings().Create(context.TODO(), &item, metav1.CreateOptions{})
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := client.RbacV1().ClusterRoleBindings().Update(context.TODO(), &item, metav1.UpdateOptions{})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (k *Kubernetes) CreateOrUpdateRolebinding(namespace string, clusterRoleName string, username string, builtIn bool) error {
+	client, err := k.Client()
+	if err != nil {
+		return err
+	}
+	labels := map[string]string{
+		LabelManageKey: "ekko",
+		LabelClusterId: k.UUID,
+		LabelUsername:  username,
+	}
+	annotations := map[string]string{
+		"built-in":   strconv.FormatBool(builtIn),
+		"created-at": time.Now().Format("2006-01-02 15:04:05"),
+	}
+	name := fmt.Sprintf("%s:%s:%s:%s", namespace, username, clusterRoleName, k.UUID)
+	item := rbacV1.RoleBinding{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        name,
+			Labels:      labels,
+			Annotations: annotations,
+			Namespace:   namespace,
+		},
+		Subjects: []rbacV1.Subject{
+			{
+				Kind: "User",
+				Name: username,
+			},
+		},
+		RoleRef: rbacV1.RoleRef{
+			Kind: "ClusterRole",
+			Name: clusterRoleName,
+		},
+	}
+	baseItem, err := client.RbacV1().RoleBindings(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		if !strings.Contains(err.Error(), "not found") {
+			return err
+		}
+	}
+	if baseItem != nil && baseItem.Name != "" {
+		_, err := client.RbacV1().RoleBindings(namespace).Create(context.TODO(), &item, metav1.CreateOptions{})
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := client.RbacV1().RoleBindings(namespace).Update(context.TODO(), &item, metav1.UpdateOptions{})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (k *Kubernetes) CleanManagedClusterRole() error {
@@ -63,7 +172,7 @@ func (k *Kubernetes) CleanManagedClusterRoleBinding(username string) error {
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 	}
 	if username != "" {
-		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
+		labels = append(labels, fmt.Sprintf("%s=%s", LabelUsername, username))
 	}
 	return client.RbacV1().ClusterRoleBindings().DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
 		LabelSelector: strings.Join(labels, ","),
@@ -84,7 +193,7 @@ func (k *Kubernetes) CleanManagedRoleBinding(username string) error {
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 	}
 	if username != "" {
-		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
+		labels = append(labels, fmt.Sprintf("%s=%s", LabelUsername, username))
 	}
 	for i := range nss.Items {
 		if err := client.RbacV1().RoleBindings(nss.Items[i].Name).DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{

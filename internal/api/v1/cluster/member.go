@@ -68,7 +68,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 						Labels: map[string]string{
 							kubernetes.LabelManageKey: "ekko",
 							kubernetes.LabelClusterId: c.UUID,
-							"user-name":              req.Name,
+							kubernetes.LabelUsername:              req.Name,
 						},
 						Annotations: map[string]string{
 							"builtin":    "false",
@@ -101,7 +101,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 					Labels: map[string]string{
 						kubernetes.LabelManageKey: "ekko",
 						kubernetes.LabelClusterId: c.UUID,
-						"user-name":               req.Name,
+						kubernetes.LabelUsername:               req.Name,
 					},
 					Annotations: map[string]string{
 						"builtin":    "false",
@@ -158,7 +158,7 @@ func (h *Handler) GetClusterMember() iris.Handler {
 		labels := []string{
 			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
 			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
-			fmt.Sprintf("%s=%s", "user-name", binding.UserRef),
+			fmt.Sprintf("%s=%s", kubernetes.LabelUsername, binding.UserRef),
 		}
 		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
 			LabelSelector: strings.Join(labels, ","),
@@ -288,7 +288,7 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 					Labels: map[string]string{
 						kubernetes.LabelManageKey: "ekko",
 						kubernetes.LabelClusterId: c.UUID,
-						"user-name":               req.Name,
+						kubernetes.LabelUsername:               req.Name,
 					},
 					Annotations: map[string]string{
 						"builtin":    "false",
@@ -322,7 +322,7 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 						Name:      fmt.Sprintf("%s-%s", req.Name, req.NamespaceRoles[i].Roles[j]),
 						Labels: map[string]string{
 							"kubeoperator.io/manage": "ekko",
-							"user-name":              req.Name,
+							kubernetes.LabelUsername:              req.Name,
 						},
 						Annotations: map[string]string{
 							"builtin":    "false",

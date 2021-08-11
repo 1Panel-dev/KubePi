@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	goContext "context"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
@@ -17,8 +16,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
-	rbacV1 "k8s.io/api/rbac/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 	"sync"
 )
@@ -165,7 +162,6 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		binding.Certificate = csr
-
 		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -173,53 +169,11 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		// 管理员权限
-
-		kc, err := client.Client()
-		if err != nil {
+		if err := client.CreateOrUpdateClusterRoleBinding("admin-cluster", profile.Name, true); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
-		}
-
-		roleBindingName := "ekko:admin-cluster"
-		obj, err := kc.RbacV1().ClusterRoleBindings().Get(goContext.TODO(), roleBindingName, metav1.GetOptions{})
-		if err != nil {
-			if !strings.Contains(strings.ToLower(err.Error()), "not found") {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-			}
-		}
-		if obj == nil || obj.Name == "" {
-			if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: roleBindingName,
-					Annotations: map[string]string{
-						"builtin": "true",
-					},
-					Labels: map[string]string{
-						"user-name":               profile.Name,
-						kubernetes.LabelManageKey: "ekko",
-						kubernetes.LabelClusterId: req.UUID,
-					},
-				},
-				Subjects: []rbacV1.Subject{
-					{
-						Kind: "User",
-						Name: profile.Name,
-					},
-				},
-				RoleRef: rbacV1.RoleRef{
-					Name: "admin-cluster",
-					Kind: "ClusterRole",
-				},
-			}, metav1.CreateOptions{}); err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
 		}
 		_ = tx.Commit()
 		ctx.Values().Set("data", &req)

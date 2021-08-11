@@ -10,6 +10,7 @@ const (
 	LabelManageKey   = "kubeoperator.io/manage"
 	LabelRoleTypeKey = "kubeoperator.io/role-type"
 	LabelClusterId   = "kubeoperator.io/cluster-id"
+	LabelUsername    = "kubeoperator.io/username"
 
 	RoleTypeCluster   = "cluster"
 	RoleTypeNamespace = "namespace"
