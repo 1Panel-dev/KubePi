@@ -10,7 +10,6 @@ import (
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/project"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
@@ -27,14 +26,12 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
-	projectService        project.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
-		projectService:        project.NewService(),
 	}
 }
 
