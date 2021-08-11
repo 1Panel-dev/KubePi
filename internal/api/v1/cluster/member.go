@@ -68,7 +68,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 						Labels: map[string]string{
 							kubernetes.LabelManageKey: "ekko",
 							kubernetes.LabelClusterId: c.UUID,
-							kubernetes.LabelUsername:              req.Name,
+							kubernetes.LabelUsername:  req.Name,
 						},
 						Annotations: map[string]string{
 							"builtin":    "false",
@@ -101,7 +101,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 					Labels: map[string]string{
 						kubernetes.LabelManageKey: "ekko",
 						kubernetes.LabelClusterId: c.UUID,
-						kubernetes.LabelUsername:               req.Name,
+						kubernetes.LabelUsername:  req.Name,
 					},
 					Annotations: map[string]string{
 						"builtin":    "false",
@@ -275,80 +275,23 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			return
 		}
 		// 创建clusterrolebinding
-		client, err := k.Client()
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
-			return
-		}
 		for i := range req.ClusterRoles {
-			binding := rbacV1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: fmt.Sprintf("%s-%s", req.Name, req.ClusterRoles[i]),
-					Labels: map[string]string{
-						kubernetes.LabelManageKey: "ekko",
-						kubernetes.LabelClusterId: c.UUID,
-						kubernetes.LabelUsername:               req.Name,
-					},
-					Annotations: map[string]string{
-						"builtin":    "false",
-						"created-at": time.Now().Format("2006-01-02 15:04:05"),
-					},
-				},
-				Subjects: []rbacV1.Subject{
-					{
-						Kind: "User",
-						Name: req.Name,
-					},
-				},
-				RoleRef: rbacV1.RoleRef{
-					Name: req.ClusterRoles[i],
-					Kind: "ClusterRole",
-				},
-			}
-			_, err := client.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &binding, metav1.CreateOptions{})
-			if err != nil {
+			if err := k.CreateOrUpdateClusterRoleBinding(req.ClusterRoles[i], req.Name, false); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Sprintf("create cluster role binding failed: %s", err.Error()))
+				ctx.Values().Set("message", err)
 				return
 			}
 		}
 		// 创建Rolebinding
 		for i := range req.NamespaceRoles {
 			for j := range req.NamespaceRoles[i].Roles {
-				b := rbacV1.RoleBinding{
-					ObjectMeta: metav1.ObjectMeta{
-						Namespace: req.NamespaceRoles[i].Namespace,
-						Name:      fmt.Sprintf("%s-%s", req.Name, req.NamespaceRoles[i].Roles[j]),
-						Labels: map[string]string{
-							"kubeoperator.io/manage": "ekko",
-							kubernetes.LabelUsername:              req.Name,
-						},
-						Annotations: map[string]string{
-							"builtin":    "false",
-							"created-at": time.Now().Format("2006-01-02 15:04:05"),
-						},
-					},
-					Subjects: []rbacV1.Subject{
-						{
-							Kind: "User",
-							Name: req.Name,
-						},
-					},
-					RoleRef: rbacV1.RoleRef{
-						Kind: "ClusterRole",
-						Name: req.NamespaceRoles[i].Roles[j],
-					},
-				}
-				_, err := client.RbacV1().RoleBindings(req.NamespaceRoles[i].Namespace).Create(goContext.TODO(), &b, metav1.CreateOptions{})
-				if err != nil {
+				if err := k.CreateOrUpdateRolebinding(req.NamespaceRoles[i].Namespace, req.NamespaceRoles[i].Roles[j], req.Name, false); err != nil {
 					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", fmt.Sprintf("create role binding failed: %s", err.Error()))
+					ctx.Values().Set("message", err)
 					return
 				}
 			}
 		}
-
 		ctx.Values().Set("data", req)
 	}
 }

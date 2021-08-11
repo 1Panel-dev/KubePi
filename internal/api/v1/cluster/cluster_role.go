@@ -69,7 +69,6 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
-
 		for i := range req.Rules {
 			for j := range req.Rules[i].APIGroups {
 				if req.Rules[i].APIGroups[j] == "core" {
@@ -77,7 +76,6 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 				}
 			}
 		}
-
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
