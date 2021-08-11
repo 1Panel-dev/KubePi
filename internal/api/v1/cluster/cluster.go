@@ -60,7 +60,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		req.PrivateKey = privateKey
 
-		client := kubernetes.NewKubernetes(req.Cluster)
+		client := kubernetes.NewKubernetes(&req.Cluster)
 		if err := client.Ping(); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -201,6 +201,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 					Labels: map[string]string{
 						"user-name":               profile.Name,
 						kubernetes.LabelManageKey: "ekko",
+						kubernetes.LabelClusterId: req.UUID,
 					},
 				},
 				Subjects: []rbacV1.Subject{
@@ -340,7 +341,7 @@ func (h *Handler) DeleteCluster() iris.Handler {
 				return
 			}
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		if err := k.CleanAllRBACResource(); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -374,6 +375,5 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
-
 
 }

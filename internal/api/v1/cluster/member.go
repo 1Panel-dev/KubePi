@@ -16,6 +16,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("can not delete or update cluster importer %s", req.Name))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -65,7 +66,8 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 						Namespace: req.NamespaceRoles[i].Namespace,
 						Name:      fmt.Sprintf("%s-%s-%s", name, req.Name, req.NamespaceRoles[i].Roles[j]),
 						Labels: map[string]string{
-							"kubeoperator.io/manage": "ekko",
+							kubernetes.LabelManageKey: "ekko",
+							kubernetes.LabelClusterId: c.UUID,
 							"user-name":              req.Name,
 						},
 						Annotations: map[string]string{
@@ -97,8 +99,9 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("%s-%s-%s", name, req.Name, req.ClusterRoles[i]),
 					Labels: map[string]string{
-						"kubeoperator.io/manage": "ekko",
-						"user-name":              req.Name,
+						kubernetes.LabelManageKey: "ekko",
+						kubernetes.LabelClusterId: c.UUID,
+						"user-name":               req.Name,
 					},
 					Annotations: map[string]string{
 						"builtin":    "false",
@@ -138,7 +141,7 @@ func (h *Handler) GetClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -152,9 +155,13 @@ func (h *Handler) GetClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster binding failed: %s", err.Error()))
 			return
 		}
-
+		labels := []string{
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
+			fmt.Sprintf("%s=%s", "user-name", binding.UserRef),
+		}
 		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("user-name=%s", binding.UserRef),
+			LabelSelector: strings.Join(labels, ","),
 		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -254,7 +261,7 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		cert, err := k.CreateCommonUser(req.Name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -279,8 +286,9 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("%s-%s", req.Name, req.ClusterRoles[i]),
 					Labels: map[string]string{
-						"kubeoperator.io/manage": "ekko",
-						"user-name":              req.Name,
+						kubernetes.LabelManageKey: "ekko",
+						kubernetes.LabelClusterId: c.UUID,
+						"user-name":               req.Name,
 					},
 					Annotations: map[string]string{
 						"builtin":    "false",
@@ -366,6 +374,7 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 		binding, err := h.clusterBindingService.GetBindingByClusterNameAndUserName(c.Name, memberName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
@@ -381,7 +390,7 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster binding failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		if err := k.CleanManagedClusterRoleBinding(memberName); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

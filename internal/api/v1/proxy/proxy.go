@@ -75,7 +75,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		}
 		// 生成httpClient
 		httpClient := http.Client{Transport: ts}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		// 判断资源类型是否是namespace级别的
 		resourceName, err := parseResourceName(proxyPath)
 		if err != nil {

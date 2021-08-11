@@ -36,7 +36,7 @@ func (h *Handler) UpdateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -84,7 +84,7 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -115,7 +115,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -153,7 +153,7 @@ func (h *Handler) ListClusterRoles() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

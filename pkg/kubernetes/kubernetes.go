@@ -43,8 +43,13 @@ func (k *Kubernetes) CleanManagedClusterRole() error {
 	if err != nil {
 		return err
 	}
+
+	labels := []string{
+		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
+	}
 	return client.RbacV1().ClusterRoles().DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		LabelSelector: strings.Join(labels, ","),
 	})
 }
 
@@ -53,7 +58,10 @@ func (k *Kubernetes) CleanManagedClusterRoleBinding(username string) error {
 	if err != nil {
 		return err
 	}
-	labels := []string{fmt.Sprintf("%s=%s", LabelManageKey, "ekko")}
+	labels := []string{
+		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
+	}
 	if username != "" {
 		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
 	}
@@ -71,7 +79,10 @@ func (k *Kubernetes) CleanManagedRoleBinding(username string) error {
 	if err != nil {
 		return err
 	}
-	labels := []string{fmt.Sprintf("%s=%s", LabelManageKey, "ekko")}
+	labels := []string{
+		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
+	}
 	if username != "" {
 		labels = append(labels, fmt.Sprintf("%s=%s", "user-name", username))
 	}
@@ -186,8 +197,8 @@ type PermissionCheckResult struct {
 	Allowed  bool
 }
 
-func NewKubernetes(cluster v1Cluster.Cluster) Interface {
-	return &Kubernetes{Cluster: &cluster}
+func NewKubernetes(cluster *v1Cluster.Cluster) Interface {
+	return &Kubernetes{Cluster: cluster}
 }
 
 func (k *Kubernetes) CreateDefaultClusterRoles() error {

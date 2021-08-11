@@ -19,7 +19,7 @@ func (h *Handler) ListNamespace() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

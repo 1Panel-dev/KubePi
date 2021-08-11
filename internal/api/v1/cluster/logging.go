@@ -43,7 +43,7 @@ func (h *Handler) LoggingHandler() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

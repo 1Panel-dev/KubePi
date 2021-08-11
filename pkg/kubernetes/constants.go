@@ -9,6 +9,7 @@ import (
 const (
 	LabelManageKey   = "kubeoperator.io/manage"
 	LabelRoleTypeKey = "kubeoperator.io/role-type"
+	LabelClusterId   = "kubeoperator.io/cluster-id"
 
 	RoleTypeCluster   = "cluster"
 	RoleTypeNamespace = "namespace"

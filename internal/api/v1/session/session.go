@@ -20,6 +20,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	v1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 type Handler struct {
@@ -204,7 +205,7 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 		u := session.Get("profile")
 		profile := u.(UserProfile)
 
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		ns, err := k.GetUserNamespaceNames(profile.Name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -226,7 +227,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -235,8 +236,14 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		}
 		u := session.Get("profile")
 		profile := u.(UserProfile)
+
+		labels := []string{
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
+			fmt.Sprintf("%s=%s", "user-name", profile.Name),
+		}
 		clusterRoleBindings, err := client.RbacV1().ClusterRoleBindings().List(goContext.TODO(), metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
+			LabelSelector: strings.Join(labels, ","),
 		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -244,7 +251,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			return
 		}
 		rolebindings, err := client.RbacV1().RoleBindings(namesapce).List(goContext.TODO(), metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("user-name=%s", profile.Name),
+			LabelSelector: strings.Join(labels, ","),
 		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

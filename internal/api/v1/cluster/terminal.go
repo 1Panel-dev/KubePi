@@ -32,7 +32,7 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		conf := k.Config()
 		client, err := k.Client()
 		if err != nil {
