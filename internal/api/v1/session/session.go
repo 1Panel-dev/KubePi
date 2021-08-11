@@ -287,6 +287,10 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			UserProfile:  profile,
 			ClusterRoles: roles,
 		}
+		if len(roles) <= 0 {
+			ctx.StatusCode(iris.StatusForbidden)
+			return
+		}
 		ctx.Values().Set("data", &crp)
 	}
 }
