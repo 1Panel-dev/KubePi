@@ -14,6 +14,8 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +24,7 @@ import (
 type Interface interface {
 	Ping() error
 	Version() (*version.Info, error)
-	Config() *rest.Config
+	Config() (*rest.Config, error)
 	Client() (*kubernetes.Clientset, error)
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
 	CreateCommonUser(commonName string) ([]byte, error)
@@ -419,7 +421,7 @@ func (k *Kubernetes) HasPermission(attributes v1.ResourceAttributes) (Permission
 	}, nil
 
 }
-func (k *Kubernetes) Config() *rest.Config {
+func (k *Kubernetes) Config() (*rest.Config, error) {
 	if k.Spec.Connect.Direction == "forward" {
 		kubeConf := &rest.Config{
 			Host: k.Spec.Connect.Forward.ApiServer,
@@ -429,20 +431,32 @@ func (k *Kubernetes) Config() *rest.Config {
 		} else {
 			kubeConf.Insecure = true
 		}
-		switch k.Spec.Authentication.Mode {
-		case strings.ToLower("bearer"):
+		switch strings.ToLower(k.Spec.Authentication.Mode) {
+		case "bearer":
 			kubeConf.BearerToken = k.Spec.Authentication.BearerToken
-		case strings.ToLower("certificate"):
+		case "certificate":
 			kubeConf.TLSClientConfig.CertData = k.Spec.Authentication.Certificate.CertData
 			kubeConf.TLSClientConfig.KeyData = k.Spec.Authentication.Certificate.KeyData
+		case "configfile":
+			cfg, err := clientcmd.BuildConfigFromKubeconfigGetter("", func() (*clientcmdapi.Config, error) {
+				return clientcmd.Load(k.Spec.Authentication.ConfigFileContent)
+			})
+			if err != nil {
+				return nil, err
+			}
+			kubeConf = cfg
 		}
-		return kubeConf
+		return kubeConf, nil
 	}
-	return nil
+	return nil, nil
 }
 
 func (k *Kubernetes) Client() (*kubernetes.Clientset, error) {
-	return kubernetes.NewForConfig(k.Config())
+	cfg, err := k.Config()
+	if err != nil {
+		return nil, err
+	}
+	return kubernetes.NewForConfig(cfg)
 }
 
 func (k *Kubernetes) Version() (*version.Info, error) {

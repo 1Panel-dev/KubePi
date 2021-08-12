@@ -10,7 +10,7 @@ import (
 )
 
 type TerminalResponse struct {
-	ID    string `json:"id"`
+	ID string `json:"id"`
 }
 
 func (h *Handler) TerminalSessionHandler() iris.Handler {
@@ -33,7 +33,12 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 			return
 		}
 		k := kubernetes.NewKubernetes(c)
-		conf := k.Config()
+		conf, err := k.Config()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err)
+			return
+		}
 		client, err := k.Client()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

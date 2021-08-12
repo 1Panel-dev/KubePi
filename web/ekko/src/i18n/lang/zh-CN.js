@@ -23,7 +23,8 @@ const message = {
             back_form: "返回表单",
             add: "添加",
             edit: "编辑",
-            all_select: "全选"
+            all_select: "全选",
+            upload: "上传文件"
         },
         table: {
             name: "名称",
@@ -113,7 +114,8 @@ const message = {
             viewer: "只读者",
             custom: "自定义",
             rule: "规则",
-
+            config_file: "config 文件",
+            config_content: "config 内容"
         },
         namespace: {
             description: "描述"

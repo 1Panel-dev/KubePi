@@ -40,6 +40,9 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		if req.ConfigFileContentStr != "" {
+			req.Spec.Authentication.ConfigFileContent = []byte(req.ConfigFileContentStr)
+		}
 		if req.CaDataStr != "" {
 			req.CaCertificate.CertData = []byte(req.CaDataStr)
 		}
@@ -64,7 +67,15 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		v, _ := client.Version()
 		req.Status.Version = v.GitVersion
-
+		if req.Spec.Authentication.Mode == "configFile" {
+			kubeCfg, err := client.Config()
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			req.Spec.Connect.Forward.ApiServer = kubeCfg.Host
+		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		req.CreatedBy = profile.Name

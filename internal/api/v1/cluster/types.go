@@ -14,9 +14,10 @@ const (
 
 type Cluster struct {
 	v1Cluster.Cluster
-	KeyDataStr  string `json:"keyDataStr"`
-	CertDataStr string `json:"certDataStr"`
-	CaDataStr   string `json:"caDataStr"`
+	KeyDataStr       string `json:"keyDataStr"`
+	CertDataStr      string `json:"certDataStr"`
+	CaDataStr        string `json:"caDataStr"`
+	ConfigFileContentStr string `json:"configContentStr"`
 }
 
 type NamespaceRoles struct {
