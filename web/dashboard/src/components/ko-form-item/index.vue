@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-select v-if="itemType==='select'" filterable clearable style="width: 100%;" v-bind="$attrs" v-on="$listeners">
+    <el-select v-if="itemType==='select'" filterable :clearable="!noClear" style="width: 100%;" v-bind="$attrs" v-on="$listeners">
       <el-option v-for="(item, index) in selections" :key="index" :label="item.label" :value="item.value" />
     </el-select>
 
-    <el-select v-if="itemType==='select2'" filterable clearable style="width: 100%;" v-bind="$attrs" v-on="$listeners">
+    <el-select v-if="itemType==='select2'" filterable :clearable="!noClear" style="width: 100%;" v-bind="$attrs" v-on="$listeners">
       <el-option v-for="(item, index) in selections" :key="index" :label="item" :value="item" />
     </el-select>
 
@@ -51,6 +51,7 @@ export default {
   props: {
     itemType: String, // input, select, radio
     selections: Array, // 如果是 select
+    noClear: Boolean, // 如何是 select 是否可清除
     deviderName: String, // 如果需要加上单位
     radios: Array, // 如果是 radio
     radioLayout: String, // radio 布局是否纵向排列 vertical 纵向 normal 横向

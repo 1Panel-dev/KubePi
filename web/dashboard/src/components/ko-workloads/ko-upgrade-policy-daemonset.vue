@@ -8,6 +8,11 @@
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.restart_strategy')" prop="template.spec.restartPolicy">
+              <ko-form-item itemType="radio" v-model="form.template.spec.restartPolicy" :radios="restart_policy_list" />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -19,20 +24,18 @@
               </el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.min_ready_time')" prop="minReadySeconds">
               <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.minReadySeconds" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.revision_history_limit')" prop="revisionHistoryLimit">
               <ko-form-item :deviderName="$t('business.workload.revision')" itemType="number" v-model.number="form.revisionHistoryLimit" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.termination_grace_period')" prop="template.spec.terminationGracePeriodSeconds">
               <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.template.spec.terminationGracePeriodSeconds" />
@@ -60,6 +63,11 @@ export default {
         { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
         { label: this.$t("business.workload.recreate"), value: "Recreate" },
       ],
+      restart_policy_list: [
+        { label: "Always", value: "Always" },
+        { label: "OnFailure", value: "OnFailure" },
+        { label: "Never", value: "Never" },
+      ],
       devider_list: ["Pods", "%"],
       form: {
         updateStrategy: {
@@ -72,6 +80,7 @@ export default {
         template: {
           spec: {
             terminationGracePeriodSeconds: null,
+            restartPolicy: "Always",
           },
         },
         minReadySeconds: null,
@@ -106,6 +115,9 @@ export default {
       if (this.form.template.spec.terminationGracePeriodSeconds) {
         parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
+      if (this.form.template.spec.restartPolicy) {
+        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
+      }
     },
   },
   mounted() {
@@ -136,6 +148,9 @@ export default {
         if (this.upgradePolicyParentObj.template.spec) {
           if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
             this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
+          }
+          if (this.upgradePolicyParentObj.template.spec.restartPolicy) {
+            this.form.template.spec.restartPolicy = this.upgradePolicyParentObj.template.spec.restartPolicy
           }
         }
       }

@@ -61,8 +61,11 @@ const message = {
       limit: "长度在 {0} 到 {1} 个字符",
       input: "请输入{0}",
       select: "请选择{0}",
-      required_msg: "输入项不能为空",
+      required_input_msg: "输入项不能为空",
+      required_select_msg: "选择项不能为空",
       number_limit: "请输入正确的数字",
+      name_rules: "仅支持小写英文、数字和-",
+      params_not_complete: "参数不完整",
     },
     msg: {
       delete_success: "删除成功",
@@ -283,6 +286,7 @@ const message = {
 
       upgrade_policy: "扩缩容/升级策略",
       strategy: "策略",
+      restart_strategy: "重启策略",
       rolling_update: "滚动升级，先创建，后停止",
       recreate: "先杀死所有POD，再启用新的",
       max_surge: "最大 Pod 数量",

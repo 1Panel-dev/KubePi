@@ -54,7 +54,7 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
         </div>
       </el-card>
-      <el-tabs style="margin-top:20px" type="border-card" v-model="activeName" @tab-click="onTabChange">
+      <el-tabs style="margin-top:20px" type="border-card" v-model="activeName">
         <el-tab-pane lazy label="Containers" name="Containers">
           <complex-table :data="form.status.containerStatuses">
             <el-table-column sortable :label="$t('commons.table.status')" min-width="30">

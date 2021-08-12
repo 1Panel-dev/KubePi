@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.pull_policy')" prop="imagePullPolicy">
-              <ko-form-item itemType="select" v-model="form.imagePullPolicy" :selections="image_pull_policy_list" />
+              <ko-form-item itemType="select" :noClear="true" v-model="form.imagePullPolicy" :selections="image_pull_policy_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,7 +64,9 @@ export default {
         imagePullPolicy: "",
       },
       rules: {
+        name: [Rule.CommonNameRule],
         image: [Rule.RequiredRule],
+        imagePullPolicy: [Rule.SelectRule],
       },
       image_pull_policy_list: [
         { label: "Always", value: "Always" },

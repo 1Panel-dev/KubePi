@@ -4,21 +4,26 @@
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-row>
-              <el-form-item :label="$t('business.workload.completions')" prop="completions">
-                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.completions" />
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <el-form-item :label="$t('business.workload.parallelism')" prop="parallelism">
-                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.parallelism" />
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <el-form-item :label="$t('business.workload.back_off_limit')" prop="backoffLimit">
-                <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.backoffLimit" />
-              </el-form-item>
-            </el-row>
+            <el-form-item :label="$t('business.workload.completions')" prop="completions">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.completions" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.restart_strategy')" prop="template.spec.restartPolicy">
+              <ko-form-item itemType="radio" v-model="form.template.spec.restartPolicy" :radios="restart_policy_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.parallelism')" prop="parallelism">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.parallelism" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.back_off_limit')" prop="backoffLimit">
+              <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.backoffLimit" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -51,6 +56,10 @@ export default {
   },
   data() {
     return {
+      restart_policy_list: [
+        { label: "OnFailure", value: "OnFailure" },
+        { label: "Never", value: "Never" },
+      ],
       form: {
         activeDeadlineSeconds: null,
         backoffLimit: null,
@@ -59,6 +68,7 @@ export default {
         template: {
           spec: {
             terminationGracePeriodSeconds: null,
+            restartPolicy: "Always",
           },
         },
       },
@@ -81,6 +91,9 @@ export default {
       if (this.form.template.spec.terminationGracePeriodSeconds) {
         parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
+      if (this.form.template.spec.restartPolicy) {
+        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
+      }
     },
   },
   mounted() {
@@ -101,6 +114,9 @@ export default {
         if (this.upgradePolicyParentObj.template.spec) {
           if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
             this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
+          }
+          if (this.upgradePolicyParentObj.template.spec.restartPolicy) {
+            this.form.template.spec.restartPolicy = this.upgradePolicyParentObj.template.spec.restartPolicy
           }
         }
       }
