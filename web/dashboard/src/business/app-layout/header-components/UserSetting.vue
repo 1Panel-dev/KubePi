@@ -6,7 +6,7 @@
         <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
         <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item style="text-align: center" divided command="exit">
+            <el-dropdown-item style="text-align: center" command="exit">
                 {{ $t("commons.personal.exit") }}
             </el-dropdown-item>
         </el-dropdown-menu>
