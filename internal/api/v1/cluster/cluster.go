@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	goContext "context"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
@@ -10,7 +9,6 @@ import (
 	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/project"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
@@ -18,8 +16,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
-	rbacV1 "k8s.io/api/rbac/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 	"sync"
 )
@@ -27,14 +23,12 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
-	projectService        project.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
-		projectService:        project.NewService(),
 	}
 }
 
@@ -62,8 +56,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 
 		}
 		req.PrivateKey = privateKey
-
-		client := kubernetes.NewKubernetes(req.Cluster)
+		client := kubernetes.NewKubernetes(&req.Cluster)
 		if err := client.Ping(); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -71,59 +64,10 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		v, _ := client.Version()
 		req.Status.Version = v.GitVersion
-		requiredPermissions := map[string][]string{
-			"namespaces":       {"get", "post", "delete"},
-			"clusterroles":     {"get", "post", "delete"},
-			"clusterrolebings": {"get", "post", "delete"},
-			"roles":            {"get", "post", "delete"},
-			"rolebindings":     {"get", "post", "delete"},
-		}
-		wg := sync.WaitGroup{}
-		errCh := make(chan error)
-		resultCh := make(chan kubernetes.PermissionCheckResult)
-		doneCh := make(chan struct{})
-		for key := range requiredPermissions {
-			for i := range requiredPermissions[key] {
-				wg.Add(1)
-				i := i
-				go func(key string, index int) {
-					rs, err := client.HasPermission(authV1.ResourceAttributes{
-						Verb:     requiredPermissions[key][i],
-						Resource: key,
-					})
-					if err != nil {
-						errCh <- err
-						wg.Done()
-						return
-					}
-					resultCh <- rs
-					wg.Done()
-				}(key, i)
-			}
-		}
-		go func() {
-			wg.Wait()
-			doneCh <- struct{}{}
-		}()
-		for {
-			select {
-			case <-doneCh:
-				goto end
-			case err := <-errCh:
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			case b := <-resultCh:
-				if !b.Allowed {
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", fmt.Errorf("permission %s-%s  not allowed", b.Resource.Resource, b.Resource.Verb))
-					return
-				}
-			}
-		}
-	end:
+
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
+		req.CreatedBy = profile.Name
 
 		tx, err := server.DB().Begin(true)
 		if err != nil {
@@ -132,100 +76,131 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		txOptions := common.DBOptions{DB: tx}
-		req.CreatedBy = profile.Name
-
-		if err := client.CreateDefaultClusterRoles(); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
+		req.Cluster.Status.Phase = clusterStatusSaved
 		if err := h.clusterService.Create(&req.Cluster, txOptions); err != nil {
-			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		// 把创建者以管理员身份加入集群中
-
-		binding := v1Cluster.Binding{
-			BaseModel: v1.BaseModel{
-				Kind:      "ClusterBinding",
-				CreatedBy: profile.Name,
-			},
-			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
-			},
-			UserRef:    profile.Name,
-			ClusterRef: req.Name,
+		requiredPermissions := map[string][]string{
+			"namespaces":       {"get", "post", "delete"},
+			"clusterroles":     {"get", "post", "delete"},
+			"clusterrolebings": {"get", "post", "delete"},
+			"roles":            {"get", "post", "delete"},
+			"rolebindings":     {"get", "post", "delete"},
 		}
-
-		csr, err := client.CreateCommonUser(profile.Name)
-		if err != nil {
-			_ = tx.Rollback()
+		if err := checkRequiredPermissions(client, requiredPermissions); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		binding.Certificate = csr
-
-		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+		if err := client.CreateOrUpdateClusterRoleBinding("admin-cluster", profile.Name, true); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
-		}
-		// 管理员权限
-
-		kc, err := client.Client()
-		if err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-
-		roleBindingName := "ekko:admin-cluster"
-		obj, err := kc.RbacV1().ClusterRoleBindings().Get(goContext.TODO(), roleBindingName, metav1.GetOptions{})
-		if err != nil {
-			if !strings.Contains(strings.ToLower(err.Error()), "not found") {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-			}
-		}
-		if obj == nil || obj.Name == "" {
-			if _, err := kc.RbacV1().ClusterRoleBindings().Create(goContext.TODO(), &rbacV1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: roleBindingName,
-					Annotations: map[string]string{
-						"builtin": "true",
-					},
-					Labels: map[string]string{
-						"user-name":               profile.Name,
-						kubernetes.LabelManageKey: "ekko",
-					},
-				},
-				Subjects: []rbacV1.Subject{
-					{
-						Kind: "User",
-						Name: profile.Name,
-					},
-				},
-				RoleRef: rbacV1.RoleRef{
-					Name: "admin-cluster",
-					Kind: "ClusterRole",
-				},
-			}, metav1.CreateOptions{}); err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
 		}
 		_ = tx.Commit()
+		go func() {
+			req.Status.Phase = clusterStatusInitializing
+			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+				server.Logger().Errorf("cna not update cluster status %s", err)
+				return
+			}
+			if err := client.CreateDefaultClusterRoles(); err != nil {
+				req.Status.Phase = clusterStatusFailed
+				req.Status.Message = err.Error()
+				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+					server.Logger().Errorf("cna not update cluster status %s", err)
+					return
+				}
+				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+				return
+			}
+			if err := h.createClusterUser(client, profile.Name, req.Name); err != nil {
+				req.Status.Phase = clusterStatusFailed
+				req.Status.Message = err.Error()
+				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+					server.Logger().Errorf("cna not update cluster status %s", err)
+					return
+				}
+				server.Logger().Errorf("cna not create cluster user  %s", err)
+				return
+			}
+			req.Status.Phase = clusterStatusCompleted
+			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+				server.Logger().Errorf("cna not update cluster status %s", err)
+				return
+			}
+		}()
 		ctx.Values().Set("data", &req)
 	}
+}
+
+func (h *Handler) createClusterUser(client kubernetes.Interface, username string, clusterName string) error {
+	binding := v1Cluster.Binding{
+		BaseModel: v1.BaseModel{
+			Kind: "ClusterBinding",
+		},
+		Metadata: v1.Metadata{
+			Name: fmt.Sprintf("%s-%s-cluster-binding", clusterName, username),
+		},
+		UserRef:    username,
+		ClusterRef: clusterName,
+	}
+	csr, err := client.CreateCommonUser(username)
+	if err != nil {
+		return err
+	}
+	binding.Certificate = csr
+	if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions map[string][]string) error {
+	wg := sync.WaitGroup{}
+	errCh := make(chan error)
+	resultCh := make(chan kubernetes.PermissionCheckResult)
+	doneCh := make(chan struct{})
+	for key := range requiredPermissions {
+		for i := range requiredPermissions[key] {
+			wg.Add(1)
+			i := i
+			go func(key string, index int) {
+				rs, err := client.HasPermission(authV1.ResourceAttributes{
+					Verb:     requiredPermissions[key][i],
+					Resource: key,
+				})
+				if err != nil {
+					errCh <- err
+					wg.Done()
+					return
+				}
+				resultCh <- rs
+				wg.Done()
+			}(key, i)
+		}
+	}
+	go func() {
+		wg.Wait()
+		doneCh <- struct{}{}
+	}()
+	for {
+		select {
+		case <-doneCh:
+			goto end
+		case err := <-errCh:
+			return err
+		case b := <-resultCh:
+			if !b.Allowed {
+				return fmt.Errorf("permission %s-%s  not allowed", b.Resource.Resource, b.Resource.Verb)
+			}
+		}
+	}
+end:
+	return nil
 }
 
 func (h *Handler) SearchClusters() iris.Handler {
@@ -343,7 +318,7 @@ func (h *Handler) DeleteCluster() iris.Handler {
 				return
 			}
 		}
-		k := kubernetes.NewKubernetes(*c)
+		k := kubernetes.NewKubernetes(c)
 		if err := k.CleanAllRBACResource(); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -377,6 +352,5 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
-
 
 }

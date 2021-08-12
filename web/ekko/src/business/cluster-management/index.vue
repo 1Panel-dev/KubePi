@@ -42,12 +42,17 @@
                   <img height="48px" src="~@/assets/kubernetes.png" alt="kubernetes.png">
                 </el-col>
                 <el-col :span="20">
-                  <ul>
-                    <li style="list-style-type: none;margin: 5px">
-                      {{ $t('business.cluster.cluster_version') }}:{{ item.status.version }}
-                    </li>
-                    <!--                                        <li style="list-style-type: none;margin: 5px">创建时间:{{item.createAt}}</li>-->
-                  </ul>
+                  <div style="margin-top: 20px"
+                       v-if="item.status.phase!=='Initializing' && item.status.phase!=='Failed' ">
+                    <ul>
+                      <li style="list-style-type: none;margin: 5px">
+                        {{ $t('business.cluster.cluster_version') }}:{{ item.status.version }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div v-if="item.status.phase==='Initializing'" style="margin-left: 30px;margin-top: 28px">
+                    <i class="el-icon-loading"></i>初始化中...
+                  </div>
                 </el-col>
               </el-row>
             </div>

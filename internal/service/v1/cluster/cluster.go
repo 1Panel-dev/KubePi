@@ -11,6 +11,7 @@ import (
 type Service interface {
 	common.DBService
 	Create(cluster *v1Cluster.Cluster, options common.DBOptions) error
+	Update(name string, cluster *v1Cluster.Cluster, options common.DBOptions) error
 	Get(name string, options common.DBOptions) (*v1Cluster.Cluster, error)
 	List(options common.DBOptions) ([]v1Cluster.Cluster, error)
 	Delete(name string, options common.DBOptions) error
@@ -25,6 +26,18 @@ func NewService() Service {
 
 type cluster struct {
 	common.DefaultDBService
+}
+
+func (c *cluster) Update(name string, cluster *v1Cluster.Cluster, options common.DBOptions) error {
+	db := c.GetDB(options)
+	r, err := c.Get(name, options)
+	if err != nil {
+		return err
+	}
+	cluster.UUID = r.UUID
+	cluster.CreateAt = r.CreateAt
+	cluster.UpdateAt = time.Now()
+	return db.Update(cluster)
 }
 
 func (c *cluster) Create(cluster *v1Cluster.Cluster, options common.DBOptions) error {
