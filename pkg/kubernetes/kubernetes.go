@@ -227,8 +227,13 @@ func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
 		return false, err
 	}
 	roleSet := collectons.NewStringSet()
+	labels := []string{
+		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
+		fmt.Sprintf("%s=%s", LabelUsername, username),
+	}
 	clusterrolebindings, err := client.RbacV1().ClusterRoleBindings().List(context.TODO(), metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("user-name=%s", username),
+		LabelSelector: strings.Join(labels, ","),
 	})
 	if err != nil {
 		return false, err
