@@ -3,17 +3,22 @@
     <ko-card :title="$t('business.workload.upgrade_policy')">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
+          <el-col>
+            <el-form-item :label="$t('business.workload.strategy')" prop="updateStrategy.type">
+              <ko-form-item itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
           <el-col :span="12">
-            <el-row>
-              <el-form-item :label="$t('business.workload.strategy')" prop="updateStrategy.type">
-                <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
-              </el-form-item>
-            </el-row>
             <el-form-item :label="$t('business.workload.pod_manage_policy')" prop="podManagementPolicy">
               <ko-form-item itemType="radio" v-model="form.podManagementPolicy" :radios="pod_management_policy_list" />
             </el-form-item>
-            <el-row>
-            </el-row>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('business.workload.restart_strategy')" prop="template.spec.restartPolicy">
+              <ko-form-item itemType="radio" v-model="form.template.spec.restartPolicy" :radios="restart_policy_list" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -49,6 +54,11 @@ export default {
         { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
         { label: this.$t("business.workload.recreate"), value: "Recreate" },
       ],
+      restart_policy_list: [
+        { label: "Always", value: "Always" },
+        { label: "OnFailure", value: "OnFailure" },
+        { label: "Never", value: "Never" },
+      ],
       pod_management_policy_list: [
         { label: "OrderedReady", value: "OrderedReady" },
         { label: "Parallel", value: "Parallel" },
@@ -60,6 +70,7 @@ export default {
         template: {
           spec: {
             terminationGracePeriodSeconds: null,
+            restartPolicy: "Always",
           },
         },
         podManagementPolicy: "OrderedReady",
@@ -80,6 +91,9 @@ export default {
       if (this.form.template.spec.terminationGracePeriodSeconds) {
         parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
       }
+      if (this.form.template.spec.restartPolicy) {
+        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
+      }
     },
   },
   mounted() {
@@ -99,6 +113,9 @@ export default {
         if (this.upgradePolicyParentObj.template.spec) {
           if (this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds) {
             this.form.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.template.spec.terminationGracePeriodSeconds
+          }
+          if (this.upgradePolicyParentObj.template.spec.restartPolicy) {
+            this.form.template.spec.restartPolicy = this.upgradePolicyParentObj.template.spec.restartPolicy
           }
         }
       }

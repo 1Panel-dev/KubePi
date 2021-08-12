@@ -8,9 +8,14 @@
               <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.concurrencyPolicy" :radios="concurrency_policy_list" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item :label="$t('business.workload.suspend')" prop="suspend">
               <ko-form-item itemType="radio" v-model="form.suspend" :radios="suspend_list" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item :label="$t('business.workload.restart_strategy')" prop="jobTemplate.spec.template.spec.restartPolicy">
+              <ko-form-item itemType="radio" v-model="form.jobTemplate.spec.template.spec.restartPolicy" :radios="restart_policy_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -84,6 +89,10 @@ export default {
         { label: this.$t("business.workload.skip_if_not_finish"), value: "Forbid" },
         { label: this.$t("business.workload.replace_if_not_finish"), value: "Replace" },
       ],
+      restart_policy_list: [
+        { label: "OnFailure", value: "OnFailure" },
+        { label: "Never", value: "Never" },
+      ],
       suspend_list: [
         { label: this.$t("business.workload.yes"), value: true },
         { label: this.$t("business.workload.no"), value: false },
@@ -98,6 +107,7 @@ export default {
             template: {
               spec: {
                 terminationGracePeriodSeconds: null,
+                restartPolicy: "OnFailure",
               },
             },
           },
@@ -126,6 +136,9 @@ export default {
       }
       if (this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
         parentFrom.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+      }
+      if (this.form.jobTemplate.spec.template.spec.restartPolicy) {
+        parentFrom.restartPolicy = this.form.jobTemplate.spec.template.spec.restartPolicy
       }
 
       if (this.form.concurrencyPolicy) {
@@ -165,6 +178,9 @@ export default {
             if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec) {
               if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
                 this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
+              }
+              if (this.upgradePolicyParentObj.jobTemplate.spec.template.spec.restartPolicy) {
+                this.form.jobTemplate.spec.template.spec.restartPolicy = this.upgradePolicyParentObj.jobTemplate.spec.template.spec.restartPolicy
               }
             }
           }

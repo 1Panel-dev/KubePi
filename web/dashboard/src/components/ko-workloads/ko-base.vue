@@ -113,14 +113,14 @@ export default {
       itemContainer.imagePullPolicy = "ifNotPresent"
       if (this.selectContainerType === "initContainers") {
         if (this.initContainers) {
-          itemContainer.name = "initContainer-" + this.initContainers.length.toString()
+          itemContainer.name = "init_container-" + this.initContainers.length.toString()
         } else {
           this.initContainers = []
-          itemContainer.name = "initContainer-0"
+          itemContainer.name = "init_container-0"
         }
         this.initContainers.push(itemContainer)
       } else {
-        itemContainer.name = "Container-" + this.containers.length.toString()
+        itemContainer.name = "container-" + this.containers.length.toString()
         this.containers.push(itemContainer)
       }
       this.$emit("addContainer", this.currentContainerType, itemContainer)

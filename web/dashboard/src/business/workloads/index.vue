@@ -5,12 +5,12 @@
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="5">
-            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-              <ko-form-item :disabled="readOnly" @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
+            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
+              <ko-form-item :disabled="readOnly" :noClear="true" @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="requiredRules">
+            <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="nameRules">
               <ko-form-item :disabled="readOnly" itemType="input" v-model="form.metadata.name" />
             </el-form-item>
           </el-col>
@@ -30,8 +30,8 @@
             <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
           </el-col>
           <el-col :span="12" v-if="isStatefulSet()">
-            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName" :rules="requiredRules">
-              <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName" :selections="service_list_of_ns" />
+            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName" :rules="selectRules">
+              <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="service_list_of_ns" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -210,7 +210,6 @@ export default {
       },
       podSpec: {
         containers: [],
-        restartPolicy: "Always",
       },
       podMetadata: {},
       isRefresh: false,
@@ -218,7 +217,9 @@ export default {
       loading: false,
       operationLoading: false,
       numberRules: [Rule.NumberRule],
+      selectRules: [Rule.SelectRule],
       requiredRules: [Rule.RequiredRule],
+      nameRules: [Rule.CommonNameRule],
     }
   },
   methods: {
@@ -319,15 +320,25 @@ export default {
       }
     },
     gatherFormValid() {
-      this.isValid = true
+      this.$refs["form"].validate((valid) => {
+        if (!valid) {
+          this.isValid = false
+          this.unValidInfo = this.type + this.$t("commons.validate.params_not_complete")
+          return
+        }
+        this.isValid = true
+      })
+      if (!this.isValid) {
+        return
+      }
       if (!this.$refs.ko_container.checkIsValid()) {
         this.isValid = false
-        this.unValidInfo = "ko_container 参数不完整"
+        this.unValidInfo = "ko_container " + this.$t("commons.validate.params_not_complete")
         return
       }
       if (!this.$refs.ko_storage.checkIsValid()) {
         this.isValid = false
-        this.unValidInfo = "ko_storage 参数不完整"
+        this.unValidInfo = "ko_storage " + this.$t("commons.validate.params_not_complete")
         return
       }
     },
@@ -375,15 +386,15 @@ export default {
         delete this.form.spec.serviceName
       }
       if (this.isCronJob()) {
-        this.form.spec.jobTemplate.spec.template.spec = this.podSpec
-        this.form.spec.jobTemplate.spec.template.metadata = this.podMetadata
+        delete this.form.spec.template
+        this.form.spec.jobTemplate = { spec: { template: { spec: this.podSpec, metadata: this.podMetadata } } }
       } else {
         delete this.form.spec.schedule
         this.form.spec.template.spec = this.podSpec
         this.form.spec.template.metadata = this.podMetadata
       }
-      this.form.spec.selector = {}
-      this.form.spec.selector.matchLabels = this.podMetadata.labels
+      this.podMetadata.labels = this.podMetadata.labels || {app: this.form.metadata.name}
+      this.form.spec.selector = {matchLabels: this.podMetadata.labels}
       return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow() {
@@ -405,7 +416,7 @@ export default {
       } else {
         this.gatherFormValid()
         if (!this.isValid) {
-          this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo })
+          this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo, type: "warning" })
           return
         }
         data = this.gatherFormData()
@@ -479,7 +490,7 @@ export default {
       this.podSpec = {
         containers: [
           {
-            name: "Container-0",
+            name: "container-0",
             image: "",
             imagePullPolicy: "IfNotPresent",
           },

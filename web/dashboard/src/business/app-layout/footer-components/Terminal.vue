@@ -6,29 +6,23 @@
           <span slot="label"><i class="el-icon-date"></i>{{item.name}}</span>
         </el-tab-pane>
       </el-tabs>
-      <div>
-        <el-form v-if="currentTerminal.type ==='logs'" style="background-color: #000000; margin-top: 5px">
-          <el-row>
-            <el-col :span="5">
-              <el-form-item label="$t('business.pod.lines')">
-                <el-select @change="changeConditions(currentTerminal)" size="mini" v-model="tailLines">
-                  <el-option v-for="l in tailLinesOptions" :key="l.label" :label="l.label" :value="l.value" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="5">
-              <el-form-item :label="$t('business.workload.container')">
-                <el-select @change="changeConditions(currentTerminal)" size="mini" v-model="currentTerminal.container">
-                  <el-option v-for="c in currentTerminal.containers" :key="c" :label="c" :value="c" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <div style="float: right;margin-top: 5px">
-              <span style="color: white">{{$t('business.pod.watch')}}</span>
-              <el-switch @change="changeConditions(currentTerminal)" style="margin-left: 10px" v-model="follow" />
-            </div>
-          </el-row>
-        </el-form>
+      <div v-if="currentTerminal.type ==='logs'" style="background-color: #000000; display:inline">
+        <div class="terminalOption">
+          <span class="spanClass">{{$t('business.pod.lines')}}</span>
+          <el-select class="interval" @change="changeConditions(currentTerminal)" size="mini" v-model="tailLines">
+            <el-option v-for="l in tailLinesOptions" :key="l.label" :label="l.label" :value="l.value" />
+          </el-select>
+        </div>
+        <div class="terminalOption">
+          <span class="spanClass">{{$t('business.workload.container')}}</span>
+          <el-select class="interval" @change="changeConditions(currentTerminal)" size="mini" v-model="currentTerminal.container">
+            <el-option v-for="c in currentTerminal.containers" :key="c" :label="c" :value="c" />
+          </el-select>
+        </div>
+        <div style="margin-top: 15px; margin-bottom: 10px; float: left">
+          <span class="spanClass">{{$t('business.pod.watch')}}</span>
+          <el-switch class="interval" @change="changeConditions(currentTerminal)" v-model="follow" />
+        </div>
       </div>
       <div v-for="item in terminalTabs" :key="item.key">
         <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 800px;border: 0"></iframe>
@@ -137,5 +131,17 @@ export default {
   position: absolute;
   right: 20px;
   top: 5px;
+}
+.terminalOption {
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.spanClass {
+  margin-left: 20px;
+  color: white;
+}
+.interval {
+  margin-left: 10px;
 }
 </style>
