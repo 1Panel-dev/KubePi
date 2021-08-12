@@ -47,4 +47,6 @@ type Certificate struct {
 
 type Status struct {
 	Version string `json:"version"`
+	Phase   string `json:"phase"`
+	Message string `json:"message"`
 }

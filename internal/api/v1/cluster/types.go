@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+const (
+	clusterStatusInitializing = "Initializing"
+	clusterStatusFailed       = "Failed"
+	clusterStatusCompleted    = "Completed"
+	clusterStatusSaved        = "Saved"
+)
+
 type Cluster struct {
 	v1Cluster.Cluster
 	KeyDataStr  string `json:"keyDataStr"`
