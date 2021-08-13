@@ -2,7 +2,7 @@ FROM node:14-alpine as stage-web-build
 
 LABEL stage=stage-web-build
 
-RUN apk add make
+RUN apk add make python
 
 WORKDIR /build/ekko/web
 
