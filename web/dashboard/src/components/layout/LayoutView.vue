@@ -1,5 +1,5 @@
 <template>
-  <main class="view-container">
+  <main class="view-container" style="overflow:auto">
     <transition name="el-fade-in" mode="out-in">
       <keep-alive :include="caches">
         <router-view></router-view>
@@ -11,17 +11,17 @@
 <script>
 export default {
   name: "LayoutView",
-  data () {
+  data() {
     return {
       caches: []
     }
   },
   computed: {
-    key () {
+    key() {
       return this.$route.path
     },
   },
-  beforeUpdate () {
+  beforeUpdate() {
     let cache = this.$route.meta?.cache
     let name = this.$route.name
     if (cache && name && !this.caches.includes(name)) {
