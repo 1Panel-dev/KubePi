@@ -1,4 +1,4 @@
-name: Go
+name: Build production package 
 
 on:
   push:
