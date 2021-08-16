@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'HPA'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'HPA'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">

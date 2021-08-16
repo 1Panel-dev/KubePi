@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Endpoints'}"
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Endpoints'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :is-edit="true" :value="form"></yaml-editor>
     <div class="bottom-button">

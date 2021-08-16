@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ResourceQuotas'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'ResourceQuotas'}" v-loading="loading">
     <yaml-editor :value="item" :is-edit="true" ref="yaml_editor"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
