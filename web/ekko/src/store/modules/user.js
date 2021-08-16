@@ -70,7 +70,6 @@ const actions = {
                 const {name, resourcePermissions, nickName} = user
                 commit("SET_NAME", name)
                 commit("SET_RESOURCE_PERMISSIONS", resourcePermissions)
-                commit("SET_LANGUAGE", "zh-CN")
                 commit("SET_NICK_NAME", nickName)
                 resolve(user)
             }).catch(error => {

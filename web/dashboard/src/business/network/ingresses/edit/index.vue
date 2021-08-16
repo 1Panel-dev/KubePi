@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'Ingresses'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Ingresses'}" v-loading="loading">
     <div v-if="!showYaml">
       <el-row :gutter="20">
         <el-form label-position="top" :model="form" ref="form" :rules="rules">
