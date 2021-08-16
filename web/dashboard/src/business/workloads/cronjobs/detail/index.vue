@@ -5,7 +5,7 @@
         <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
       </el-card>
       <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
-        <el-tab-pane label="Jobs" name="Jobs" >
+        <el-tab-pane label="Jobs" name="Jobs">
           <complex-table :data="jobs">
             <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
               <template v-slot:default="{row}">
@@ -40,19 +40,7 @@
           </complex-table>
         </el-tab-pane>
         <el-tab-pane label="Events" name="Events">
-          <complex-table :data="events">
-            <el-table-column sortable :label="$t('commons.table.status')">
-              <template v-slot:default="{row}">
-                <span>{{ row.firstTimestamp | age }} - {{ row.lastTimestamp | age }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width=250>
-              <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
-                <span v-if="!row.message">---</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+          <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -69,16 +57,15 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import { getWorkLoadByName } from "@/api/workloads"
 import { listJobsWithNsSelector } from "@/api/jobs"
-import { listEventsWithNsSelector } from "@/api/events"
 import YamlEditor from "@/components/yaml-editor"
-
 import ComplexTable from "@/components/complex-table"
 import { mixin } from "@/utils/resourceRoutes"
 import KoDetailBasic from "@/components/detail/detail-basic"
+import KoDetailEvents from "@/components/detail/detail-events"
 
 export default {
   name: "CronJobDetail",
-  components: { KoDetailBasic, LayoutContent, YamlEditor, ComplexTable },
+  components: { KoDetailBasic, KoDetailEvents, LayoutContent, YamlEditor, ComplexTable },
   mixins: [mixin],
   props: {
     name: String,
@@ -100,7 +87,7 @@ export default {
       loading: false,
       clusterName: "",
       jobs: [],
-      events: [],
+      eventSelectors: "",
     }
   },
   watch: {
@@ -129,15 +116,7 @@ export default {
           listJobsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
             this.jobs = res.items
           })
-          let eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
-          listEventsWithNsSelector(this.clusterName, this.namespace, eventSelectors).then((res) => {
-            for (const e of res.items) {
-              this.events.unshift(e)
-            }
-          })
-          this.events.sort(function (a, b) {
-            return Date.parse(b.firstTimestamp.replace(/-/g, "/")) - Date.parse(a.firstTimestamp.replace(/-/g, "/"))
-          })
+          this.eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
         }
         this.loading = false
       })

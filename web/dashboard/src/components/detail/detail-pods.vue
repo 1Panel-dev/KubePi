@@ -3,13 +3,11 @@
     <complex-table :data="pods" v-loading="loading" @search="search()">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
-                     size="mini" plain round>
-            {{ row.status.phase }}
+          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success" size="mini" plain round>
+            {{ $t('commons.statu.' + row.status.phase) }}
           </el-button>
-          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning"
-                     size="mini" plain round>
-            {{ row.status.phase }}
+          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning" size="mini" plain round>
+            {{ $t('commons.statu.' + row.status.phase) }}
           </el-button>
         </template>
       </el-table-column>
@@ -18,19 +16,17 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
-      <el-table-column :label="$t('business.pod.ready')" min-width="30">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace" />
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" />
+      <el-table-column sortable :label="$t('business.pod.image')" min-width="120">
         <template v-slot:default="{row}">
-          {{ getPodStatus(row) }}
+          <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
+            <el-tag type="info" size="small">
+              {{ item.image }}
+            </el-tag>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.workload.restarts')" min-width="30">
-        <template v-slot:default="{row}">
-          {{ getRestartTimes(row) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="IP" min-width="45" prop="status.podIP"/>
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName"/>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -42,7 +38,7 @@
 
 <script>
 import ComplexTable from "@/components/complex-table"
-import {listPodsWithNsSelector} from "@/api/pods"
+import { listPodsWithNsSelector } from "@/api/pods"
 
 export default {
   name: "KoDetailPods",
@@ -51,30 +47,48 @@ export default {
     cluster: String,
     namespace: String,
     selector: String,
-    fieldSelector: String
+    fieldSelector: String,
   },
-  data () {
+  watch: {
+    selector: {
+      handler(newSelector) {
+        if (newSelector) {
+          this.search()
+        }
+      },
+      immediate: true,
+    },
+    fieldSelector: {
+      handler(newSelector) {
+        if (newSelector) {
+          this.search()
+        }
+      },
+      immediate: true,
+    },
+  },
+  data() {
     return {
       loading: false,
-      pods: []
+      pods: [],
     }
   },
   methods: {
-    search () {
+    search() {
       this.loading = true
-      listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then(res => {
+      listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
         this.loading = false
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "PodDetail",
         params: { namespace: row.metadata.namespace, name: row.metadata.name },
-        query: { yamlShow: false }
+        query: { yamlShow: false },
       })
     },
-    getPodStatus (row) {
+    getPodStatus(row) {
       if (row.status.containerStatuses) {
         let readyCount = 0
         for (const c of row.status.containerStatuses) {
@@ -85,7 +99,7 @@ export default {
         return readyCount + "/" + row.status.containerStatuses.length
       }
     },
-    getRestartTimes (row) {
+    getRestartTimes(row) {
       if (row.status.containerStatuses) {
         let restartCount = 0
         for (const c of row.status.containerStatuses) {
@@ -96,14 +110,8 @@ export default {
       return 0
     },
   },
-  created () {
-    if (this.selector !== "") {
-      this.search()
-    }
-  }
 }
 </script>
 
 <style scoped>
-
 </style>

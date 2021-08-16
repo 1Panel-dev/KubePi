@@ -2,19 +2,19 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Deployments'}" v-loading="loading">
     <div v-if="!yamlShow">
       <el-card>
-        <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
+        <ko-detail-basic :item="form" :yaml-show.sync="yamlShow" />
       </el-card>
       <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
         <el-tab-pane label="Pods" name="Pods">
-          <ko-detail-pods :cluster="clusterName" :namespace="namespace" :field-selector="selectors"></ko-detail-pods>
+          <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
         </el-tab-pane>
         <el-tab-pane label="Conditions" name="Conditions">
-          <ko-detail-conditions :conditions="form.status.conditions"></ko-detail-conditions>
+          <ko-detail-conditions :conditions="form.status.conditions" />
         </el-tab-pane>
       </el-tabs>
     </div>
     <div v-if="yamlShow">
-      <yaml-editor :value="form" :read-only="true"></yaml-editor>
+      <yaml-editor :value="form" :read-only="true" />
       <div class="bottom-button">
         <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
       </div>
@@ -26,7 +26,6 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import { getWorkLoadByName } from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
-import { mixin } from "@/utils/resourceRoutes"
 import KoDetailConditions from "@/components/detail/detail-conditions"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoDetailPods from "@/components/detail/detail-pods"
@@ -34,7 +33,6 @@ import KoDetailPods from "@/components/detail/detail-pods"
 export default {
   name: "DeploymentDetail",
   components: { KoDetailPods, KoDetailBasic, KoDetailConditions, LayoutContent, YamlEditor },
-  mixins: [mixin],
   props: {
     name: String,
     namespace: String,
@@ -69,6 +67,7 @@ export default {
       getWorkLoadByName(this.clusterName, "deployments", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
+          this.selectors = ""
           for (const key in this.form.spec.selector.matchLabels) {
             if (Object.prototype.hasOwnProperty.call(this.form.spec.selector.matchLabels, key)) {
               this.selectors += key + "=" + this.form.spec.selector.matchLabels[key] + ","
