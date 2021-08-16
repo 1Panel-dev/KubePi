@@ -93,10 +93,139 @@ const message = {
       }
     },
   },
+  business: {
+    common: {
+      label: "Label",
+      annotation: "Annotation",
+      basic: "Basic Information",
+      expand: "Expand",
+      pack_up: "Pack Up",
+      system: "System Information",
+      config: "Configuration Information",
+      resource: "Resource Information"
+    },
+    dashboard: {
+      dashboard: "Dashboard"
+    },
+    cluster: {
+      cluster: "Cluster",
+      version: "Version",
+      list: "Cluster List",
+      import: "Import Cluster",
+      nodes: "Node",
+      api_server_help: "eg: https://172.16.10.100:8443",
+      router_help: "The accessible IP address of any node with kube-proxy installed",
+      label: "Label",
+      description: "Description"
+    },
+    event: {
+      reason: "Reason",
+      type: "Type",
+      time: "Time",
+      resource: "Resource",
+      message: "Message"
+    },
+    node: {
+      ready: "Ready",
+      role: "Role",
+      os: "OS",
+      arch: "Arch",
+      osImage: "OS Image",
+      kernel: "Kernel",
+      container: "Container",
+      kubelet_version: "Kubelet Version",
+      kubeProxy_version: "KubeProxy Version",
+      allocation: "Allocation"
+    },
+    pod: {
+      image: "Image",
+      ready: "Ready",
+      restart: "Restart",
+      type: "Type",
+      reason: "Reason",
+      message: "Message",
+      lastHeartbeatTime: "Last HeartbeatTime",
+      lastTransitionTime: "Last TransitionTime",
+      size: "Size",
+      resource: "Resource",
+      address: "Address",
+      watch: "Watch",
+      lines: "Lines",
+      last_20_lines: "Last 20 lines",
+      last_100_lines: "Last 100 lines",
+      last_200_lines: "Last 200 lines",
+      last_500_lines: "Last 500 lines",
+    },
+    namespace: {
+      namespace: "Namespace",
+      description: "Description"
+    },
+    configuration: {
+      configuration: "Configuration",
+      data: "Data",
+      no_data: "No Data",
+      type: "Type",
+      basic_auth: "Basic Auth",
+      ssh_auth: "SSH Auth",
+      tls_auth: "TLS",
+      token_auth: "Token Auth",
+      cluster_ip: "Cluster IP",
+      selector: "Selector",
+      registry_domain_name: "Registry Domain Name",
+      username: "Username",
+      password: "Password",
+      authentication: "Authentication",
+      certificate: "Certificate",
+      publicKey: "PublicKey",
+      privateKey: "PrivateKey",
+      target: "Target",
+      metrics: "Metrics",
+      min_replicas: "Min Replicas",
+      max_replicas: "Max Replicas",
+      current_replicas: "Current Replicas",
+      target_reference: "Target Reference",
+      source: "Source",
+      resource_name: "Resource Name",
+      quantity: "Quantity",
+      metrics_name: "Metrics Name",
+      metrics_selector: "Metrics Selector",
+      api_version: "API Version",
+      kind: "Kind",
+      name: "Name"
+    },
+    access_control: {
+      access_control: "Access Control",
+      resource_helper: "Use multiple items, separate"
+    },
+    custom_resource: {
+      custom_resource: "Custom Resource",
+      full_name: "Full Name",
+      namespaced: "Namespaced",
+      version: "Version",
+      scope: "Scope",
+      names: "Names",
+      singular: "Singular",
+      plural: "Plural",
+      served: "Served",
+      storage: "Storage",
+      status: "Status"
+    },
+    user: {
+      user_management: "User Management",
+      user_group: "User Group",
+      nickname: "Nickname",
+      email: "Email",
+      user_list: "User List",
+      user_group_list: "User Group List",
+      role_list: "Role List",
+      user: "User",
+      role: "Role",
+    }
+  }
 }
 
 export default {
   ...el,
   ...fu,
   ...message
-};
+}
