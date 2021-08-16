@@ -1,6 +1,6 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster_detail')" :back-to="{ name: 'Clusters' }">
-    <el-menu class="menuClass" router :default-active="$route.path" mode="horizontal">
+    <el-menu class="menuClass" router :default-active="$route.path" mode="horizontal" >
       <el-menu-item :index="'/clusters/detail/'+name+'/members'">{{ $t('business.cluster.member') }}</el-menu-item>
       <el-menu-item :index="'/clusters/detail/'+name+'/clusterroles'">{{ $t('business.cluster.role') }}</el-menu-item>
     </el-menu>
@@ -37,5 +37,12 @@ export default {
   margin-top: 60px;
   height: calc(100% - 140px);
   overflow: auto;
+}
+.el-menu-item:hover{
+    background-color: #19191c !important;
+}
+
+.el-menu-item.is-active {
+    background-color: #19191c !important;
 }
 </style>
