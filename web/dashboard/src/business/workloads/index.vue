@@ -93,7 +93,7 @@
       </el-tabs>
     </div>
     <div class="grid-content bg-purple-light" v-if="showYaml">
-      <yaml-editor :value="yaml" :is-edit="true"></yaml-editor>
+      <yaml-editor :value="yaml" :is-edit="true" :readOnly="readOnly" ref="yaml_editor"></yaml-editor>
     </div>
     <div class="grid-content bg-purple-light">
       <div style="float: right;margin-top: 10px">
@@ -396,11 +396,11 @@ export default {
           this.$refs.ko_volume_claim.transformation(tempForm.spec)
           break
         case "cronjobs":
-          this.form.apiVersion = "batch/v1"
+          tempForm.apiVersion = "batch/v1beta1"
           this.$refs.ko_upgrade_policy_cronjob.transformation(tempForm.spec, tempPodSpec)
           break
         case "jobs":
-          this.form.apiVersion = "batch/v1"
+          tempForm.apiVersion = "batch/v1"
           this.$refs.ko_upgrade_policy_job.transformation(tempForm.spec, tempPodSpec)
           break
         case "daemonsets":
@@ -431,8 +431,12 @@ export default {
         tempForm.spec.template.metadata = this.podMetadata
       }
       this.podMetadata.labels = this.podMetadata.labels || { app: this.form.metadata.name }
-      tempForm.spec.selector = { matchLabels: this.podMetadata.labels }
-      return JSON.parse(JSON.stringify(tempForm))
+      if (!this.isJob()) {
+        tempForm.spec.selector = { matchLabels: this.podMetadata.labels }
+      }
+      let returnForm = JSON.parse(JSON.stringify(tempForm))
+      this.form = returnForm
+      return returnForm
     },
     isReplicasShow() {
       return this.type === "deployments" || this.type === "statefulsets"
@@ -443,13 +447,16 @@ export default {
     isStatefulSet() {
       return this.type === "statefulsets"
     },
+    isJob() {
+      return this.type === "jobs"
+    },
     onCancel() {
       this.$router.push({ name: this.toggleCase() + "s" })
     },
     onSubmit() {
       let data = {}
       if (this.showYaml) {
-        data = this.yaml
+        data = this.$refs.yaml_editor.getValue()
       } else {
         this.gatherFormValid()
         if (!this.isValid) {

@@ -217,13 +217,13 @@ export default {
           break
       }
       switch (this.health_check_type) {
-        case "Readiness Check":
+        case this.$t('business.workload.readiness_check'):
           parentFrom.readinessProbe = childForm
           break
-        case "Liveness Check":
+        case this.$t('business.workload.liveness_check'):
           parentFrom.livenessProbe = childForm
           break
-        case "Startup Check":
+        case this.$t('business.workload.startup_check'):
           parentFrom.startupProbe = childForm
           break
       }
@@ -233,13 +233,13 @@ export default {
     if (this.healthCheckParentObj) {
       let prodeForm = {}
       switch (this.health_check_type) {
-        case "Readiness Check":
+        case this.$t('business.workload.readiness_check'):
           prodeForm = this.healthCheckParentObj.readinessProbe
           break
-        case "Liveness Check":
+        case this.$t('business.workload.liveness_check'):
           prodeForm = this.healthCheckParentObj.livenessProbe
           break
-        case "Startup Check":
+        case this.$t('business.workload.startup_check'):
           prodeForm = this.healthCheckParentObj.startupProbe
           break
       }

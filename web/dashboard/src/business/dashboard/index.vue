@@ -31,7 +31,7 @@
     <br>
     <el-row :gutter="24" class="resources">
       <el-col :span="4" v-for="resource in resources" v-bind:key="resource.name">
-        <el-card :body-style="{padding: '0px'}" class="d-card">
+        <el-card :body-style="{padding: '0px'}" @click.native="jumpTo(resource.name)" class="d-card">
           <el-row :gutter="24">
             <el-col :span="10">
               <div>
@@ -125,6 +125,9 @@ export default {
       const a = new Date(date)
       const b = new Date()
       return parseInt(Math.abs(b - a) / 1000 / 60 / 60 / 24)
+    },
+    jumpTo(val) {
+      this.$router.push({ name: val })
     },
     listResources () {
       getCluster(this.clusterName).then(res => {

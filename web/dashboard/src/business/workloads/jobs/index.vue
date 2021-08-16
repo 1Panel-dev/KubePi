@@ -127,11 +127,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteWorkLoad(this.clusterName, row.metadata.name))
+          this.ps.push(deleteWorkLoad(this.clusterName, "jobs", row.metadata.namespace, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteWorkLoad(this.clusterName, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "jobs", select.metadata.namespace, select.metadata.name))
             }
           }
         }
