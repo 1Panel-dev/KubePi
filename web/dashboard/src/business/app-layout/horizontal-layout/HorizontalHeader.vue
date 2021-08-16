@@ -3,10 +3,10 @@
     <div class="header-left">
       <sidebar-toggle-button/>
       <home></home>
+      <project-switch style="margin-left: 20px" ></project-switch>
     </div>
     <div class="header-right">
       <language-switch></language-switch>
-      <project-switch></project-switch>
       <user-setting style="margin-left: 20px"></user-setting>
     </div>
   </div>
