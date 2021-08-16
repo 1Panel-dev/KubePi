@@ -21,7 +21,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row :gutter="20">
+            <el-row :gutter="20" v-if="item.type === 'new'">
               <el-col :span="12">
                 <el-form-item :label="$t('business.workload.storage_class')">
                   <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
@@ -30,6 +30,13 @@
               <el-col :span="12" v-if="item.type === 'new'">
                 <el-form-item :label="$t('business.workload.size')">
                   <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" v-if="item.type === 'existing'">
+              <el-col :span="12">
+                <el-form-item :label="$t('business.workload.pvc')">
+                  <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -61,6 +68,7 @@ export default {
     volumeClaimParentObj: Object,
     currentNamespace: String,
     scList: Array,
+    pvcList: Array,
     isReadOnly: Boolean,
   },
   watch: {
@@ -79,12 +87,22 @@ export default {
       },
       immediate: true,
     },
+    pvcList: {
+      handler(newName) {
+        this.pvc_list = []
+        for (const s of newName) {
+          this.pvc_list.push(s.metadata.name)
+        }
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
       namespace: "",
       volumeClaimTemplates: [],
       sc_list: [],
+      pvc_list: [],
       type_list: [
         { label: this.$t("business.workload.new_pv"), value: "new" },
         { label: this.$t("business.workload.existing_pv"), value: "existing" },
@@ -121,14 +139,13 @@ export default {
           },
           spec: {
             accessModes: volume.accessModes,
-            storageClassName: volume.storageClass,
-            resources: {
-              requests: {},
-            },
           },
         }
         if (volume.type === "new") {
-          item.spec.resources.requests.storage = volume.storage.toString() + "Gi"
+          item.spec.resources = {requests: {storage: volume.storage.toString() + "Gi"}}
+          item.spec.storageClassName = volume.storageClass
+        } else {
+          item.spec.volumeName = volume.volumeName
         }
         parentFrom.volumeClaimTemplates.push(item)
       }
@@ -141,7 +158,8 @@ export default {
           this.volumeClaimTemplates.push({
             name: volume.metadata.name,
             type: volume.spec?.resources?.requests?.storage ? "new" : "existing",
-            storageClass: volume.spec.storageClassName,
+            storageClass: volume.spec.storageClassName || "",
+            volumeName: volume.spec.volumeName || "",
             accessModes: volume.spec.accessModes,
             storage: volume.spec?.resources?.requests?.storage ? Number(volume.spec.resources.requests.storage.replace("Gi", "")) : 0,
           })

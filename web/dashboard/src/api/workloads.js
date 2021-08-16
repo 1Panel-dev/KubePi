@@ -87,7 +87,7 @@ export function deleteWorkLoad(cluster_name, type, namespace, name) {
     case "deployments":
     case "statefulsets":
     case "daemonsets":
-      return get(
+      return del(
         `${appsV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
       );
     case "cronjobs":

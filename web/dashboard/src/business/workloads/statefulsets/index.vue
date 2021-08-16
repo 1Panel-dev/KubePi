@@ -20,7 +20,7 @@
       <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
       <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
         <template v-slot:default="{row}">
-          {{ row.status.readyReplicas }} / {{ row.status.replicas }}
+          {{ row.status.readyReplicas || 0 }} / {{ row.status.replicas }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>

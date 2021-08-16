@@ -88,7 +88,7 @@
         </el-tab-pane>
 
         <el-tab-pane v-if="isStatefulSet()" :label="$t('business.workload.volume_claim_template')" name="Volume Claim Templates">
-          <ko-volume-claim :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :scList="sc_list" />
+          <ko-volume-claim :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :pvcList="pvc_list" :scList="sc_list" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -140,6 +140,7 @@ import { listSecretsWithNs } from "@/api/secrets"
 import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
 import { listNsServices } from "@/api/services"
+import { listPvcs } from "@/api/pvc"
 
 export default {
   components: {
@@ -186,6 +187,7 @@ export default {
       config_map_list_of_ns: [],
       node_list: [],
       sc_list: [],
+      pvc_list: [],
       service_list_of_ns: [],
       // base form
       activeName: "General",
@@ -270,6 +272,11 @@ export default {
         this.sc_list = res.items
       })
     },
+    loadPvcs() {
+      listPvcs(this.clusterName).then((res) => {
+        this.pvc_list = res.items
+      })
+    },
     loadServicesWithNs() {
       this.service_list_of_ns = []
       listNsServices(this.clusterName, this.form.metadata.namespace).then((res) => {
@@ -342,60 +349,90 @@ export default {
         return
       }
     },
-    gatherFormData() {
-      this.$refs.ko_container.transformation(this.currentContainer)
-      this.$refs.ko_ports.transformation(this.currentContainer)
-      this.$refs.ko_command.transformation(this.currentContainer)
-      this.$refs.ko_resource.transformation(this.currentContainer)
-      if (this.currentContainerType === "standardContainers") {
-        this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
-        this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
-        this.$refs.ko_health_startup_check.transformation(this.currentContainer)
+    newFormItem() {
+      return {
+        apiVersion: "",
+        kind: this.form.kind,
+        metadata: {
+          name: this.form.metadata.name,
+          namespace: this.form.metadata.namespace,
+        },
+        spec: {
+          replicas: this.form.spec.replicas,
+          schedule: this.form.spec.schedule,
+          serviceName: this.form.spec.serviceName,
+          template: {
+            metadata: {},
+            spec: {},
+          },
+        },
       }
-      this.$refs.ko_security_context.transformation(this.currentContainer)
-      this.$refs.ko_networking.transformation(this.podSpec)
-      this.$refs.ko_pod_scheduling.transformation(this.podSpec)
-      this.$refs.ko_node_scheduling.transformation(this.podSpec)
+    },
+    gatherFormData() {
+      var tempForm = this.newFormItem()
+      var tempContainer = {}
+      var tempPodSpec = { containers: this.podSpec.containers, initContainers: this.podSpec.initContainers }
+      this.$refs.ko_container.transformation(tempContainer)
+      this.$refs.ko_ports.transformation(tempContainer)
+      this.$refs.ko_command.transformation(tempContainer)
+      this.$refs.ko_resource.transformation(tempContainer)
+      if (this.currentContainerType === "standardContainers") {
+        this.$refs.ko_health_readiness_check.transformation(tempContainer)
+        this.$refs.ko_health_liveness_check.transformation(tempContainer)
+        this.$refs.ko_health_startup_check.transformation(tempContainer)
+      }
+      this.$refs.ko_security_context.transformation(tempContainer)
+      this.$refs.ko_networking.transformation(tempPodSpec)
+      this.$refs.ko_pod_scheduling.transformation(tempPodSpec)
+      this.$refs.ko_node_scheduling.transformation(tempPodSpec)
       switch (this.type) {
         case "deployments":
-          this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
+          tempForm.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy.transformation(tempForm.spec, tempPodSpec)
           break
         case "statefulsets":
-          this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
+          tempForm.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy_statefulset.transformation(tempForm.spec, tempPodSpec)
+          this.$refs.ko_volume_claim.transformation(tempForm.spec)
           break
         case "cronjobs":
-          this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
+          this.form.apiVersion = "batch/v1"
+          this.$refs.ko_upgrade_policy_cronjob.transformation(tempForm.spec, tempPodSpec)
           break
         case "jobs":
-          this.$refs.ko_upgrade_policy_job.transformation(this.form.spec, this.podSpec)
+          this.form.apiVersion = "batch/v1"
+          this.$refs.ko_upgrade_policy_job.transformation(tempForm.spec, tempPodSpec)
           break
         case "daemonsets":
-          this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec, this.podSpec)
+          tempForm.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy_daemonset.transformation(tempForm.spec, tempPodSpec)
           break
       }
-      this.$refs.ko_storage.transformation(this.podSpec)
+      this.$refs.ko_storage.transformation(tempPodSpec)
+
+      this.currentContainer = tempContainer
       if (this.currentContainerType === "initContainers") {
-        this.podSpec.initContainers[this.currentContainerIndex] = this.currentContainer
+        tempPodSpec.initContainers[this.currentContainerIndex] = tempContainer
       } else {
-        this.podSpec.containers[this.currentContainerIndex] = this.currentContainer
+        tempPodSpec.containers[this.currentContainerIndex] = tempContainer
       }
       if (!this.isReplicasShow()) {
-        delete this.form.spec.replicas
+        delete tempForm.spec.replicas
       }
-      if (!this.isStatefulSet) {
-        delete this.form.spec.serviceName
+      if (!this.isStatefulSet()) {
+        delete tempForm.spec.serviceName
       }
       if (this.isCronJob()) {
-        delete this.form.spec.template
-        this.form.spec.jobTemplate = { spec: { template: { spec: this.podSpec, metadata: this.podMetadata } } }
+        delete tempForm.spec.template
+        tempForm.spec.jobTemplate = { spec: { template: { spec: tempPodSpec, metadata: this.podMetadata } } }
       } else {
-        delete this.form.spec.schedule
-        this.form.spec.template.spec = this.podSpec
-        this.form.spec.template.metadata = this.podMetadata
+        delete tempForm.spec.schedule
+        tempForm.spec.template.spec = tempPodSpec
+        tempForm.spec.template.metadata = this.podMetadata
       }
-      this.podMetadata.labels = this.podMetadata.labels || {app: this.form.metadata.name}
-      this.form.spec.selector = {matchLabels: this.podMetadata.labels}
-      return JSON.parse(JSON.stringify(this.form))
+      this.podMetadata.labels = this.podMetadata.labels || { app: this.form.metadata.name }
+      tempForm.spec.selector = { matchLabels: this.podMetadata.labels }
+      return JSON.parse(JSON.stringify(tempForm))
     },
     isReplicasShow() {
       return this.type === "deployments" || this.type === "statefulsets"
@@ -449,6 +486,11 @@ export default {
       }
     },
     onEditYaml() {
+      this.gatherFormValid()
+      if (!this.isValid) {
+        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo, type: "warning" })
+        return
+      }
       this.yaml = this.gatherFormData()
       this.showYaml = true
     },
@@ -473,6 +515,7 @@ export default {
   mounted() {
     if (this.isStatefulSet) {
       this.loadStorageClass()
+      this.loadPvcs()
     }
     this.loadNamespace()
     this.loadNodes()

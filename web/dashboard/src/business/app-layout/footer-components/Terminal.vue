@@ -107,7 +107,7 @@ export default {
       }
     },
     shrinkTabs() {
-      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "35")
+      this.$store.commit("app/CHANGE_BOTTOM_HEIGHT", "40")
       this.expand = false
     },
     handleClick() {

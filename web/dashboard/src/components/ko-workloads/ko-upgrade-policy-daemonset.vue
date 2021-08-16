@@ -4,8 +4,8 @@
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.strategy')" prop="updateStrategy.type">
-              <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.updateStrategy.type" :radios="strategy_list" />
+            <el-form-item :label="$t('business.workload.strategy')" prop="strategy.type">
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="form.strategy.type" :radios="strategy_list" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -16,9 +16,9 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.max_unavaliable')" prop="updateStrategy.rollingUpdate.maxUnavailable">
-              <el-input type="number" v-model.number="form.updateStrategy.rollingUpdate.maxUnavailable">
-                <el-select slot="append" style="width: 80px" v-model="form.updateStrategy.rollingUpdate.maxUnavailableUnit">
+            <el-form-item :label="$t('business.workload.max_unavaliable')" prop="strategy.rollingUpdate.maxUnavailable">
+              <el-input type="number" v-model.number="form.strategy.rollingUpdate.maxUnavailable">
+                <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxUnavailableUnit">
                   <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
                 </el-select>
               </el-input>
@@ -70,7 +70,7 @@ export default {
       ],
       devider_list: ["Pods", "%"],
       form: {
-        updateStrategy: {
+        strategy: {
           type: "Recreate",
           rollingUpdate: {
             maxUnavailable: null,
@@ -90,19 +90,19 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      grandFrom.updateStrategy = {}
-      switch (this.form.updateStrategy.type) {
+      grandFrom.strategy = {}
+      switch (this.form.strategy.type) {
         case "Recreate":
-          grandFrom.updateStrategy.type = "Recreate"
+          grandFrom.strategy.type = "Recreate"
           break
         case "RollingUpdate":
-          grandFrom.updateStrategy.type = "RollingUpdate"
-          grandFrom.updateStrategy.rollingUpdate = {}
-          if (this.form.updateStrategy.rollingUpdate.maxUnavailable) {
-            if (this.form.updateStrategy.rollingUpdate.maxUnavailableUnit === "%") {
-              this.form.updateStrategy.rollingUpdate.maxUnavailable += "%"
+          grandFrom.strategy.type = "RollingUpdate"
+          grandFrom.strategy.rollingUpdate = {}
+          if (this.form.strategy.rollingUpdate.maxUnavailable) {
+            if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
+              this.form.strategy.rollingUpdate.maxUnavailable += "%"
             }
-            grandFrom.updateStrategy.rollingUpdate.maxUnavailable = this.form.updateStrategy.rollingUpdate.maxUnavailable
+            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
           }
           break
       }
@@ -124,16 +124,16 @@ export default {
     if (this.upgradePolicyParentObj) {
       if (this.upgradePolicyParentObj.updateStrategy) {
         if (this.upgradePolicyParentObj.updateStrategy.type) {
-          this.form.updateStrategy.type = this.upgradePolicyParentObj.updateStrategy.type
+          this.form.strategy.type = this.upgradePolicyParentObj.updateStrategy.type
         }
         if (this.upgradePolicyParentObj.updateStrategy.rollingUpdate) {
           if (this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable) {
             if (this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable.toString().indexOf("%") !== -1) {
-              this.form.updateStrategy.rollingUpdate.maxUnavailableUnit = "%"
-              this.form.updateStrategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable.replace("%", ""))
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = "%"
+              this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable.replace("%", ""))
             } else {
-              this.form.updateStrategy.rollingUpdate.maxUnavailableUnit = "Pods"
-              this.form.updateStrategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable)
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable)
             }
           }
         }

@@ -60,7 +60,7 @@ export default {
       return this.active && this.resizable ? (this.isHorizontal ? "col-resize" : "row-resize") : ""
     },
     outerWrapperSize() {
-      return this.$refs.outerWrapper[this.offsetSize]
+      return this.screenHeight
     },
     offsetSize() {
       return this.isHorizontal ? "offsetWidth" : "offsetHeight"
@@ -98,12 +98,19 @@ export default {
       valueL: 0,
       oldValue: 0,
       initOffset: 0,
+      screenHeight: null,
     }
   },
   mounted() {
+    this.screenHeight = document.body.clientHeight - 55
+    window.addEventListener("resize", this.listenResize)
     this.readValue()
   },
   methods: {
+    listenResize() {
+      this.screenHeight = document.body.clientHeight - 55
+      this.valueL = this.getMin(this.screenHeight - this.percentToValue(this.bottom))
+    },
     onMouseDown(e) {
       this.initOffset = this.isHorizontal ? e.pageX : e.pageY
       this.oldValue = this.valueL
@@ -130,7 +137,7 @@ export default {
     },
     // 百分比换算成像素
     percentToValue(val) {
-      const size = this.$refs.outerWrapper[this.offsetSize]
+      const size = this.screenHeight
       if (typeof val === "string" && val.includes("%")) {
         return (parseInt(val) / 100) * size
       } else {

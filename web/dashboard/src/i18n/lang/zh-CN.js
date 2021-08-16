@@ -162,7 +162,7 @@ const message = {
       description: "描述"
     },
     workload: {
-      workload: "工作量",
+      workload: "工作负载",
       replicas: "副本数",
       container: "容器",
       initContainer: "初始化容器",
