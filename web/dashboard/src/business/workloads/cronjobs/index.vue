@@ -136,7 +136,7 @@ export default {
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteWorkLoad(this.clusterName, "cronjobs", row.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "cronjobs", select.metadata.namespace, select.metadata.name))
             }
           }
         }

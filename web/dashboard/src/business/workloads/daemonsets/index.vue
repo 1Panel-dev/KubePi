@@ -124,7 +124,7 @@ export default {
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteWorkLoad(this.clusterName, "daemonsets", row.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteWorkLoad(this.clusterName, "daemonsets", select.metadata.namespace, select.metadata.name))
             }
           }
         }
