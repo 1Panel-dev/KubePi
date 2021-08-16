@@ -83,7 +83,6 @@ const actions = {
                 const {name, nickName, roles, clusterRoles} = user
                 commit("SET_NAME", name)
                 commit("SET_ROLES", roles)
-                commit("SET_LANGUAGE", "zh-CN")
                 commit("SET_CLUSTER_ROLES", clusterRoles)
                 commit("SET_NICK_NAME", nickName)
                 resolve(user)
