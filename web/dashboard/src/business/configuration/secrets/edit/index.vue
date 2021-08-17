@@ -35,16 +35,17 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" v-if="Object.keys(item.data).length!==0">
-                <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
+                <el-tab-pane key="data" :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
-                <el-tab-pane key="data"  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/dockerconfigjson'">
+                <el-tab-pane key="data" :label="$t('business.configuration.data')"
+                             v-if="item.type==='kubernetes.io/dockerconfigjson'">
                   <ko-secret-docker-data :dataObj.sync="item.data"></ko-secret-docker-data>
                 </el-tab-pane>
-                <el-tab-pane  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/ssh-auth'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/ssh-auth'">
                   <ko-secret-keys :data-obj.sync="item.data"></ko-secret-keys>
                 </el-tab-pane>
-                <el-tab-pane  :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/basic-auth'">
+                <el-tab-pane :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/basic-auth'">
                   <ko-secret-authentication :authentication-obj.sync="item.data"></ko-secret-authentication>
                 </el-tab-pane>
                 <el-tab-pane label="TLS" v-if="item.type==='kubernetes.io/tls'">
@@ -152,7 +153,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      editSecret(this.cluster, this.form.metadata.namespace, data).then(() => {
+      editSecret(this.cluster, data.metadata.namespace, data.metadata.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),

@@ -7,7 +7,7 @@ const namespaceSecretUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/secrets`
 }
 
-export function listSecrets (cluster_name, search, keywords, pageNum, pageSize ){
+export function listSecrets (cluster_name, search, keywords, pageNum, pageSize) {
   let url = secretUrl(cluster_name)
   const params = {}
   if (search) {
@@ -39,7 +39,7 @@ export function createSecret (cluster_name, namespace, data) {
   return post(`${namespaceSecretUrl(cluster_name, namespace)}`, data)
 }
 
-export function editSecret (cluster_name, namespace, data) {
-  return patch(`${namespaceSecretUrl(cluster_name, namespace)}`, data)
+export function editSecret (cluster_name, namespace, name, data) {
+  return patch(`${namespaceSecretUrl(cluster_name, namespace)}/${name}`, data)
 }
 
