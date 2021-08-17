@@ -38,7 +38,19 @@ export default {
             tooltip:{
               show: false
             },
-            data: this.chartData.data
+            data: this.chartData.data,
+            itemStyle: {
+              normal: {
+                color: function (p) {
+                  if (p.data.value > 0) {
+                    return ['#158fd2']
+                  }else {
+                    return ['#2e3c3e']
+                  }
+                }
+              }
+            },
+
           }
         ]
       };

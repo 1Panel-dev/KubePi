@@ -258,6 +258,11 @@ export default {
           }
         }
       }
+      if (items.length === 0) {
+        result = [{
+          value: 0
+        }]
+      }
       return result
     },
     traverse (obj, keys) {
