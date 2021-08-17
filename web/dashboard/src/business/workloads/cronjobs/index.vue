@@ -6,7 +6,7 @@
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'batch',resource:'cronjobs',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'batch',resource:'cronjobs',verb:'deletecollection'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'batch',resource:'cronjobs',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
