@@ -97,6 +97,17 @@
                 if (this.isSubmitGoing) {
                     return
                 }
+
+              let isFormReady = false
+              this.$refs["form"].validate((valid) => {
+                if (!valid) {
+                  isFormReady = true
+                }
+              })
+              if (!isFormReady) {
+                return
+              }
+
                 this.isSubmitGoing = true
 
                 const policyRules = []
