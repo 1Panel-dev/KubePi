@@ -207,7 +207,7 @@ type namespaceAndNameMatcher struct {
 func hasNamespaceFilter(path string) bool {
 	ss := strings.Split(path, "/")
 	for i := range ss {
-		if ss[i] == "namespace" {
+		if ss[i] == "namespaces" {
 			return true
 		}
 	}
