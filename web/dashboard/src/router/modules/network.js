@@ -186,7 +186,7 @@ const Network = {
     {
       path: "/networkpolicies",
       requirePermission: {
-        apiGroup: "",
+        apiGroup: "networking.k8s.io",
         resource: "networkpolicies",
         verb: "list",
       },
@@ -198,6 +198,11 @@ const Network = {
     },
     {
       path: "/networkpolicies/create",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "networkpolicies",
+        verb: "create",
+      },
       component: () => import("@/business/network/network-policies/create"),
       name: "NetworkPolicyCreate",
       hidden: true,
@@ -207,6 +212,11 @@ const Network = {
     },
     {
       path: "/networkpolicies/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "networkpolicies",
+        verb: "get",
+      },
       component: () => import("@/business/network/network-policies/detail"),
       name: "NetworkPolicyDetail",
       hidden: true,
@@ -217,6 +227,11 @@ const Network = {
     },
     {
       path: "/networkpolicies/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "networkpolicies",
+        verb: "update",
+      },
       component: () => import("@/business/network/network-policies/edit"),
       name: "NetworkPolicyEdit",
       hidden: true,
