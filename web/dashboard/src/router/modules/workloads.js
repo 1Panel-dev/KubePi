@@ -14,7 +14,7 @@ const Workloads = {
     {
       path: "/pods",
       requirePermission: {
-        apiGroup: "",
+        apiGroup: "core",
         resource: "pods",
         verb: "list",
       },
@@ -26,6 +26,11 @@ const Workloads = {
     },
     {
       path: "/pods/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "core",
+        resource: "pods",
+        verb: "get",
+      },
       name: "PodDetail",
       hidden: true,
       component: () => import("@/business/workloads/pods/detail"),
@@ -34,6 +39,7 @@ const Workloads = {
         activeMenu: "/pods",
       },
     },
+
     {
       path: "/deployments",
       requirePermission: {
@@ -49,6 +55,11 @@ const Workloads = {
     },
     {
       path: "/deployments/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "deployments",
+        verb: "get",
+      },
       name: "DeploymentDetail",
       hidden: true,
       component: () => import("@/business/workloads/deployments/detail"),
@@ -59,6 +70,11 @@ const Workloads = {
     },
     {
       path: "deployments/:operation",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "deployments",
+        verb: "create",
+      },
       name: "DeploymentCreate",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -68,6 +84,11 @@ const Workloads = {
     },
     {
       path: "deployments/:operation/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "deployments",
+        verb: "update",
+      },
       name: "DeploymentEdit",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -91,6 +112,11 @@ const Workloads = {
     },
     {
       path: "/daemonsets/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "daemonsets",
+        verb: "get",
+      },
       name: "DaemonSetDetail",
       hidden: true,
       component: () => import("@/business/workloads/daemonsets/detail"),
@@ -101,6 +127,11 @@ const Workloads = {
     },
     {
       path: "daemonsets/:operation",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "daemonsets",
+        verb: "create",
+      },
       name: "DaemonSetCreate",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -110,6 +141,11 @@ const Workloads = {
     },
     {
       path: "daemonsets/:operation/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "daemonsets",
+        verb: "update",
+      },
       name: "DaemonSetEdit",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -133,6 +169,11 @@ const Workloads = {
     },
     {
       path: "/statefulsets/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "statefulsets",
+        verb: "get",
+      },
       name: "StatefulSetDetail",
       hidden: true,
       component: () => import("@/business/workloads/statefulsets/detail"),
@@ -143,6 +184,11 @@ const Workloads = {
     },
     {
       path: "statefulsets/:operation",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "statefulsets",
+        verb: "create",
+      },
       name: "StatefulSetCreate",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -152,6 +198,11 @@ const Workloads = {
     },
     {
       path: "statefulsets/:operation/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "statefulsets",
+        verb: "update",
+      },
       name: "StatefulSetEdit",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -175,6 +226,11 @@ const Workloads = {
     },
     {
       path: "/jobs/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "jobs",
+        verb: "get",
+      },
       name: "JobDetail",
       hidden: true,
       component: () => import("@/business/workloads/jobs/detail"),
@@ -185,6 +241,11 @@ const Workloads = {
     },
     {
       path: "jobs/:operation",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "jobs",
+        verb: "create",
+      },
       name: "JobCreate",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -194,6 +255,11 @@ const Workloads = {
     },
     {
       path: "jobs/:operation/:namespace/:name",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "jobs",
+        verb: "update",
+      },
       name: "JobEdit",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -217,6 +283,11 @@ const Workloads = {
     },
     {
       path: "/cronjobs/detail/:namespace/:name",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "cronjobs",
+        verb: "get",
+      },
       name: "CronJobDetail",
       hidden: true,
       component: () => import("@/business/workloads/cronjobs/detail"),
@@ -227,6 +298,11 @@ const Workloads = {
     },
     {
       path: "cronjobs/:operation",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "cronjobs",
+        verb: "create",
+      },
       name: "CronJobCreate",
       hidden: true,
       component: () => import("@/business/workloads/index"),
@@ -236,6 +312,11 @@ const Workloads = {
     },
     {
       path: "cronjobs/:operation/:namespace/:name",
+      requirePermission: {
+        apiGroup: "batch",
+        resource: "cronjobs",
+        verb: "update",
+      },
       name: "CronJobEdit",
       hidden: true,
       component: () => import("@/business/workloads/index"),
