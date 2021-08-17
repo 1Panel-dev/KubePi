@@ -27,6 +27,27 @@
           <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Users">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'User'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Groups">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'Group'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ServiceAccounts">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'ServiceAccount'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
