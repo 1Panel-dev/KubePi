@@ -5,7 +5,7 @@
       <el-switch
           v-model="hiddenUnAccessCluster"
           @change="onHiddenUnAccessClusterChange"
-          active-text="隐藏不可访问集群">
+          :active-text="$t('business.cluster.hidden_cluster')">
       </el-switch>
     </div>
     <br>
@@ -79,12 +79,40 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <el-dialog
+        :title="$t('commons.header.guide')"
+        :visible.sync="guideDialogVisible"
+        width="30%">
+
+      <div>
+        <div style="font-size: 14px">
+          {{ $t('commons.header.guide_text') }}
+        </div>
+
+        <div style="font-size: 14px;margin-top: 50px">
+          <i class="el-icon-document"></i>{{ $t('commons.header.help_doc') }}：&nbsp;
+          <el-link href="https://doc.kubeoperator.io">https://doc.kubeoperator.io</el-link>
+          <br/>
+          <br/>
+          <i class="el-icon-chat-square"></i>{{ $t('commons.header.support') }}：&nbsp;
+          <el-link class="el-link" href="mailto:support@fit2cloud.com">support@fit2cloud.com</el-link>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="guideDialogVisible = false">{{ $t('commons.button.skip') }}</el-button>
+        <el-button type="primary" @click="onGuildSubmit">{{ $t('commons.button.confirm') }}</el-button>
+      </div>
+    </el-dialog>
+
+
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {listClusters, deleteCluster} from "@/api/clusters"
+import {checkPermissions} from "@/utils/permission";
 
 
 export default {
@@ -92,6 +120,7 @@ export default {
   components: {LayoutContent},
   data() {
     return {
+      guideDialogVisible: false,
       items: [],
       hiddenUnAccessCluster: false
     }
@@ -137,9 +166,15 @@ export default {
     onHiddenUnAccessClusterChange() {
       this.onVueCreated()
     },
+    onGuildSubmit() {
+      this.$router.push({name: "ClusterCreate"})
+    },
     onVueCreated() {
       listClusters(!this.hiddenUnAccessCluster).then(data => {
         this.items = data.data;
+        if (this.items.length === 0 && checkPermissions({resource: 'clusters', verb: 'create'})) {
+          this.guideDialogVisible = true
+        }
       })
     }
   },

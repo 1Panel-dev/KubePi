@@ -14,6 +14,7 @@ const message = {
         },
         button: {
             delete: "删除",
+            skip: "跳过",
             import: "导入",
             create: "创建",
             cancel: "取消",
@@ -35,6 +36,12 @@ const message = {
             creat_by: "创建者",
             built_in: "内置",
             description: "描述",
+        },
+        header: {
+            help_doc: "帮助文档",
+            support: "获取支持",
+            guide: "引导",
+            guide_text: "感谢选择本产品, 是否立即开始注册您的第一个集群?",
         },
         bool: {
             true: "是",
@@ -115,7 +122,8 @@ const message = {
             custom: "自定义",
             rule: "规则",
             config_file: "config 文件",
-            config_content: "config 内容"
+            config_content: "config 内容",
+            hidden_cluster: "隐藏不可访问的集群"
         },
         namespace: {
             description: "描述"
