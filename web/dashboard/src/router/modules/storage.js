@@ -14,7 +14,7 @@ const Storage = {
     {
       path: "/persistentvolumes",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumes",
         verb: "list",
       },
@@ -27,7 +27,7 @@ const Storage = {
     {
       path: "/persistentvolumes/create",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumes",
         verb: "create",
       },
@@ -42,7 +42,7 @@ const Storage = {
     {
       path: "/persistentvolumes/edit/:name",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumes",
         verb: "update",
       },
@@ -58,7 +58,7 @@ const Storage = {
     {
       path: "/persistentvolumes/detail/:name",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumes",
         verb: "get",
       },
@@ -119,8 +119,8 @@ const Storage = {
     }, {
       path: "/persistentVolumeClaim",
       requirePermission: {
-        apiGroup: "core",
-        resource: "persistentVolumeClaim",
+        apiGroup: "",
+        resource: "persistentvolumeclaims",
         verb: "list",
       },
       component: () => import("@/business/storage/pvc/"),
@@ -133,7 +133,7 @@ const Storage = {
     }, {
       path: "/persistentVolumeClaim/create",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumeclaims",
         verb: "create",
       },
@@ -147,7 +147,7 @@ const Storage = {
     }, {
       path: "/:namespace/persistentVolumeClaim/detail/:name",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "persistentvolumeclaims",
         verb: "get",
       },
