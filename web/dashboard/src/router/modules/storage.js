@@ -90,7 +90,7 @@ const Storage = {
       requirePermission: {
         apiGroup: "storage.k8s.io",
         resource: "storageclasses",
-        verb: "crate",
+        verb: "create",
       },
       component: () => import("@/business/storage/sc/create"),
       name: "StorageClassCreate",
@@ -100,7 +100,22 @@ const Storage = {
         activeMenu: "/storageclasses",
       }
     },
-
+    {
+      path: "/storageclasses/edit:name",
+      requirePermission: {
+        apiGroup: "storage.k8s.io",
+        resource: "storageclasses",
+        verb: "create",
+      },
+      component: () => import("@/business/storage/sc/edit"),
+      name: "StorageClassEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        title: "Storage Classes Edit",
+        activeMenu: "/storageclasses",
+      }
+    },
     {
       path: "/storageclasses/detail/:name",
       requirePermission: {

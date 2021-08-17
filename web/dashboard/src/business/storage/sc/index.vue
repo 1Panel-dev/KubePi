@@ -60,6 +60,17 @@ export default {
       loading: false,
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "StorageClassEdit",
+              params: {name: row.metadata.name},
+              query: {yamlShow: false}
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
           click: (row) => {
