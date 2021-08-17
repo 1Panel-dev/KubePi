@@ -168,7 +168,9 @@ func (h *Handler) GetClusterMember() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		rolebindings, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{LabelSelector: fmt.Sprintf("user-name=%s", binding.UserRef)})
+		rolebindings, err := client.RbacV1().RoleBindings("").List(goContext.TODO(), metav1.ListOptions{
+			LabelSelector: strings.Join(labels, ","),
+		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)

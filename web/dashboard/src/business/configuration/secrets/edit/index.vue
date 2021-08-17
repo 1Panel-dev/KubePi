@@ -153,7 +153,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      editSecret(this.cluster, data.metadata.namespace, data.metadata.name, data).then(() => {
+      editSecret(this.cluster, this.namespace, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),
