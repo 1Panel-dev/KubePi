@@ -122,7 +122,8 @@ export default {
     return {
       guideDialogVisible: false,
       items: [],
-      hiddenUnAccessCluster: false
+      hiddenUnAccessCluster: false,
+      timer: null,
     }
   },
   methods: {
@@ -169,17 +170,27 @@ export default {
     onGuildSubmit() {
       this.$router.push({name: "ClusterCreate"})
     },
+    pullingClusterStatus() {
+      this.timer = setInterval(() => {
+        listClusters(!this.hiddenUnAccessCluster).then(data => {
+          this.items = data.data;
+        })
+      }, 3000)
+    },
     onVueCreated() {
       listClusters(!this.hiddenUnAccessCluster).then(data => {
         this.items = data.data;
         if (this.items.length === 0 && checkPermissions({resource: 'clusters', verb: 'create'})) {
           this.guideDialogVisible = true
         }
+        this.pullingClusterStatus()
       })
     }
   },
   created() {
     this.onVueCreated()
+  }, destroyed() {
+    this.timer.clearInterval()
   }
 }
 </script>
