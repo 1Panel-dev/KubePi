@@ -127,6 +127,7 @@ const message = {
       description: "描述"
     },
     event: {
+      event: "事件",
       reason: "原因",
       type: "类型",
       time: "时间",

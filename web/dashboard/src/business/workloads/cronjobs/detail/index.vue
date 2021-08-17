@@ -39,7 +39,7 @@
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane label="Events" name="Events">
+        <el-tab-pane :label="$t('business.event.event')" name="Events">
           <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
         </el-tab-pane>
       </el-tabs>

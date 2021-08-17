@@ -126,6 +126,7 @@ const message = {
       description: "Description"
     },
     event: {
+      event: "Events",
       reason: "Reason",
       type: "Type",
       time: "Time",

@@ -3,7 +3,7 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'deletecollection'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -106,7 +106,7 @@ export default {
       this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     onCheckPermissions() {
-      checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
+      checkPermissions({ apiGroup: "core", resource: "jobs", verb: "delete" })
     },
     handleClick(btn, row) {
       switch (btn) {
