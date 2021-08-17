@@ -188,7 +188,7 @@ const AccessControl = {
         resource: "rolebindings",
         verb: "get",
       },
-      component: () => import("@/business/access-control/role-bindings/"),
+      component: () => import("@/business/access-control/role-bindings/detail"),
       name: "RoleBindingDetail",
       hidden: true,
       props: true,
