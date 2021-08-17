@@ -34,7 +34,7 @@
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane label="Conditions" name="Conditions">
+        <el-tab-pane :label="$t('commons.table.status')" name="Conditions">
           <ko-detail-conditions :conditions="form.status.conditions"></ko-detail-conditions>
         </el-tab-pane>
         <el-tab-pane label="Events" name="Events">

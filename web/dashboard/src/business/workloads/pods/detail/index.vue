@@ -92,7 +92,7 @@
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane lazy label="Conditions" name="Conditions">
+        <el-tab-pane lazy :label="$t('commons.table.status')" name="Conditions">
           <complex-table :data="form.status.conditions">
             <el-table-column sortable label="Condition" prop="type" />
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
