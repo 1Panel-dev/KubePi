@@ -9,7 +9,7 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="100">
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="80">
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
@@ -20,19 +20,19 @@
           {{getPodStatus(row)}}
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.workload.restarts')" min-width="30">
+      <el-table-column sortable :label="$t('business.workload.restarts')" min-width="35">
         <template v-slot:default="{row}">
           {{getRestartTimes(row)}}
         </template>
       </el-table-column>
-      <el-table-column sortable label="IP" min-width="45" prop="status.podIP" />
-      <el-table-column sortable :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" />
-      <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
+      <el-table-column sortable label="IP" min-width="40" prop="status.podIP" />
+      <el-table-column sortable :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName" />
+      <el-table-column :label="$t('commons.table.created_time')" min-width="35" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <el-table-column min-width="20" :label="$t('commons.table.action')">
+      <el-table-column min-width="25" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
           <el-dropdown @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini" />

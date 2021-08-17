@@ -18,7 +18,6 @@ const messages = LANG_FILES.keys().reduce((messages, path) => {
 
 export const getLanguage = () => {
   let language = localStorage.getItem('language')
-  console.log(language)
   if (!language) {
     language = "zh-CN"
   }

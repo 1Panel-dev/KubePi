@@ -52,7 +52,7 @@ export default {
     return {
       strategy_list: [
         { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
-        { label: this.$t("business.workload.delete"), value: "OnDelete" },
+        { label: this.$t("commons.button.delete"), value: "OnDelete" },
       ],
       restart_policy_list: [
         { label: "Always", value: "Always" },

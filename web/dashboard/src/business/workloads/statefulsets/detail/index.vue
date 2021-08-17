@@ -4,52 +4,12 @@
       <el-card>
         <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
       </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName">
+      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
         <el-tab-pane label="Pods" name="Pods">
-          <complex-table :data="pods">
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase" min-width="30">
-              <template v-slot:default="{row}">
-                <el-button v-if="row.status.phase ==='Running'" type="success" size="mini" plain round>
-                  {{row.status.phase}}
-                </el-button>
-                <el-button v-if="row.status.phase ==='Terminating'" type="warning" size="mini" plain round>
-                  {{row.status.phase}}
-                </el-button>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
-              <template v-slot:default="{row}">
-                <el-link @click="toResource('Pod', row.metadata.namespace, row.metadata.name)">{{ row.metadata.name }}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('business.cluster.nodes')" prop="spec.nodeName" min-width="70" />
-            <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
-              <template v-slot:default="{row}">
-                <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ item.image }}
-                  </el-tag>
-                </div>
-              </template>
-            </el-table-column>
-          </complex-table>
+          <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors"></ko-detail-pods>
         </el-tab-pane>
-        <el-tab-pane :label="$t('commons.table.status')" name="Conditions">
-          <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
-            <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
-              <template v-slot:default="{row}">
-                {{ row.lastUpdateTime | age }}
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
-              <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
-                <span v-if="!row.message">---</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+        <el-tab-pane label="Conditions" name="Conditions">
+          <ko-detail-conditions :conditions="form.status.conditions"></ko-detail-conditions>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -65,17 +25,14 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import { getWorkLoadByName } from "@/api/workloads"
-import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
-
-import ComplexTable from "@/components/complex-table"
-import { mixin } from "@/utils/resourceRoutes"
 import KoDetailBasic from "@/components/detail/detail-basic"
+import KoDetailPods from "@/components/detail/detail-pods"
+import KoDetailConditions from "@/components/detail/detail-conditions"
 
 export default {
   name: "StatefulSetDetail",
-  components: { KoDetailBasic, LayoutContent, ComplexTable, YamlEditor },
-  mixins: [mixin],
+  components: { KoDetailBasic, KoDetailPods, KoDetailConditions, LayoutContent, YamlEditor },
   props: {
     name: String,
     namespace: String,
@@ -92,7 +49,7 @@ export default {
       activeName: "Pods",
       loading: false,
       clusterName: "",
-      pods: [],
+      selectors: "",
     }
   },
   watch: {
@@ -110,16 +67,13 @@ export default {
       getWorkLoadByName(this.clusterName, "statefulsets", this.namespace, this.name).then((res) => {
         this.form = res
         if (this.form.spec.selector.matchLabels) {
-          let selectors = ""
+          this.selectors = ""
           for (const key in this.form.spec.selector.matchLabels) {
             if (Object.prototype.hasOwnProperty.call(this.form.spec.selector.matchLabels, key)) {
-              selectors += key + "=" + this.form.spec.selector.matchLabels[key] + ","
+              this.selectors += key + "=" + this.form.spec.selector.matchLabels[key] + ","
             }
           }
-          selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listPodsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
-            this.pods = res.items
-          })
+          this.selectors = this.selectors.length !== 0 ? this.selectors.substring(0, this.selectors.length - 1) : ""
         }
         this.loading = false
       })
