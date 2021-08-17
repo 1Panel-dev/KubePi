@@ -70,7 +70,7 @@ const message = {
       required_select_msg: "Select item cannot be empty",
       number_limit: "Please enter the correct number",
       name_rules: "Only lowercase English, numbers and-are supported",
-      params_not_complete: "Parameter is not complete",
+      params_not_complete: " params is not complete",
     },
     msg: {
       delete_success: "Delete successfully",
@@ -80,6 +80,7 @@ const message = {
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",
       add_init_container: "The current initContainers is empty, do you want to add it now?",
+      back_form: "Return form editing does not preserve all changes made to YAML",
     },
     login: {
       username: "Username",

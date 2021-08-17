@@ -81,6 +81,7 @@ const message = {
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
       add_init_container: "当前 initContainers 为空，是否现在添加?",
+      back_form: "返回表单编辑不会保留对 YAML 做出的所有更改",
     },
     login: {
       username: "用户名",
