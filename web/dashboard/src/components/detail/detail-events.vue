@@ -9,7 +9,7 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.event.message')" prop="message" fix min-width="200px" show-overflow-tooltip />
-      <el-table-column sortable :label="$t('commons.table.created_time')" min-width="40px">
+      <el-table-column sortable :label="$t('commons.table.created_time')" min-width="50px">
         <template v-slot:default="{row}">
           <span>{{ row.eventTime | age }}</span>
         </template>

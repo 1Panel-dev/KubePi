@@ -9,12 +9,12 @@
           <span v-if="!row.message">---</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.pod.lastUpdateTime')" min-width="40" prop="lastUpdateTime">
+      <el-table-column :label="$t('business.pod.lastUpdateTime')" min-width="50" prop="lastUpdateTime">
         <template v-slot:default="{row}">
           {{ row.lastUpdateTime | age }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.pod.lastTransitionTime')" min-width="40" prop="lastTransitionTime">
+      <el-table-column :label="$t('business.pod.lastTransitionTime')" min-width="50" prop="lastTransitionTime">
         <template v-slot:default="{row}">
           {{ row.lastTransitionTime | age }}
         </template>

@@ -19,7 +19,7 @@
       </el-table-column>
       <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace" />
       <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
-      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="60" prop="status.lastScheduleTime">
+      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="70" prop="status.lastScheduleTime">
         <template v-slot:default="{row}">
           {{ row.status.lastScheduleTime | age }}
         </template>
@@ -29,7 +29,7 @@
           {{ row.spec.suspend }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" min-width="50" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>

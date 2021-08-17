@@ -57,12 +57,12 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.allow_run')" prop="startingDeadlineSeconds">
+            <el-form-item :label="$t('business.workload.starting_deadline_seconds')" prop="startingDeadlineSeconds">
               <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.startingDeadlineSeconds" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.allow_run')" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
+            <el-form-item :label="$t('business.workload.termination_grace_period')" prop="jobTemplate.spec.template.spec.terminationGracePeriodSeconds">
               <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds" />
             </el-form-item>
           </el-col>
