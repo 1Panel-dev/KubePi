@@ -102,6 +102,7 @@ export default {
       listStorageClasses(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.data = res.items
         this.loading = false
+        this.paginationConfig.total = res.total
       })
     },
     onCreate() {
