@@ -68,7 +68,7 @@
                 </div>
                 <div v-else>
                   <el-col :span="6">
-                    <el-form-item  :label="$t('commons.table.name')" prop="name">
+                    <el-form-item :label="$t('commons.table.name')" prop="name">
                       <el-input v-model="row.name"></el-input>
                     </el-form-item>
                   </el-col>
@@ -153,25 +153,12 @@ export default {
     },
     changeSubjectKind (row) {
       if (row.kind === "ServiceAccount") {
-        row = {
-          kind: "ServiceAccount",
-          namespace: "",
-          name: ""
-        }
+        row.namespace = ''
+        delete row.apiGroup
       }
-      if (row.kind === "User") {
-        row = {
-          kind: "User",
-          apiGroup: "rbac.authorization.k8s.io",
-          name: ""
-        }
-      }
-      if (row.kind === "User") {
-        row = {
-          kind: "Group",
-          apiGroup: "rbac.authorization.k8s.io",
-          name: ""
-        }
+      if (row.kind === "User" || row.kind === "Group") {
+        row.apiGroup = "rbac.authorization.k8s.io"
+        delete row.namespace
       }
     },
     changeNamespace (row, index) {
@@ -188,13 +175,13 @@ export default {
     })
     this.changeKind(this.roleRef.kind)
     if (!this.roleRefObj) {
-      this.$emit("update:roleRefObj",this.roleRef)
-    }else {
+      this.$emit("update:roleRefObj", this.roleRef)
+    } else {
       this.roleRef = this.roleRefObj
     }
     if (!this.subjectArray) {
-      this.$emit("update:subjectArray",this.form.subjects)
-    }else {
+      this.$emit("update:subjectArray", this.form.subjects)
+    } else {
       this.form.subjects = this.subjectArray
     }
   }
