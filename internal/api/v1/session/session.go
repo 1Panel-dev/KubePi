@@ -304,4 +304,6 @@ func Install(parent iris.Party) {
 	sp.Get("/:cluster_name", handler.GetClusterProfile())
 	sp.Get("/status", handler.IsLogin())
 	sp.Get("/:cluster_name/namespaces", handler.ListUserNamespace())
+	sp.Put("", handler.UpdateProfile())
+	sp.Put("/password", handler.UpdatePassword())
 }

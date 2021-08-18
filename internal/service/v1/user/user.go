@@ -19,6 +19,7 @@ type Service interface {
 	Delete(name string, options common.DBOptions) error
 	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error)
 	Update(name string, u *v1User.User, options common.DBOptions) error
+	UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error
 }
 
 func NewService() Service {
@@ -30,14 +31,32 @@ type service struct {
 	common.DefaultDBService
 }
 
+func (u *service) UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error {
+	cu, err := u.GetByNameOrEmail(name, options)
+	if err != nil {
+		return err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(cu.Authenticate.Password), []byte(oldPassword)); err != nil {
+		return err
+	}
+	bs, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	cu.Authenticate.Password = string(bs)
+	cu.UpdateAt = time.Now()
+	db := u.GetDB(options)
+	return db.Update(cu)
+}
+
 func (u *service) Update(name string, us *v1User.User, options common.DBOptions) error {
 	cu, err := u.GetByNameOrEmail(name, options)
 	if err != nil {
 		return err
 	}
-	if cu.BuiltIn {
-		return errors.New("can not delete this resource,because it created by system")
-	}
+	//if cu.BuiltIn {
+	//	return errors.New("can not delete this resource,because it created by system")
+	//}
 	db := u.GetDB(options)
 	us.UUID = cu.UUID
 	us.CreateAt = cu.CreateAt

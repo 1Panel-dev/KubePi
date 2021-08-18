@@ -1,4 +1,4 @@
-import {post, del, get} from "@/plugins/request"
+import {post, del, get, put} from "@/plugins/request"
 
 const authUrl = "/api/v1/sessions"
 
@@ -16,4 +16,12 @@ export function getCurrentUser() {
 
 export function isLogin() {
     return get(`${authUrl}/status`)
+}
+
+export function updateProfile(data) {
+    return put(authUrl, data)
+}
+
+export function updatePassword(data) {
+    return put(`${authUrl}/password`, data)
 }

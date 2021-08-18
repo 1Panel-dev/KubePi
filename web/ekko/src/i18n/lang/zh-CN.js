@@ -10,6 +10,7 @@ const message = {
             prompt: "提示",
         },
         personal: {
+            profile: "个人信息",
             exit: "退出"
         },
         button: {
@@ -168,6 +169,9 @@ const message = {
             permission_setting: "权限设置",
             password: "密码",
             confirm_password: "确认密码",
+            old_password: "原密码",
+            new_password: "新密码",
+            change_password: "修改密码",
             resource_name: "资源名称",
             please_input_password: "请输入密码",
             please_input_password_agin: "请再次输入密码",
