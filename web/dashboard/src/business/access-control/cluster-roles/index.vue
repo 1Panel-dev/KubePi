@@ -46,6 +46,20 @@ export default {
       cluster: "",
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "ClusterRoleEdit",
+              params: {name: row.metadata.name },
+              query: { yamlShow: false }
+            })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          }
+        },
+        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {

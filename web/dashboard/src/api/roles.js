@@ -8,8 +8,11 @@ const namespaceRoleUrl = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/rbac.authorization.k8s.io/v1/namespaces/${namespace}/roles`
 }
 
-export function listRoles (cluster_name,  search, keywords, pageNum, pageSize) {
+export function listRoles (cluster_name, namespace, search, keywords, pageNum, pageSize) {
   let url = roleUrl(cluster_name)
+  if (namespace !== "") {
+    url = namespaceRoleUrl(cluster_name, namespace)
+  }
   const params = {}
   if (search) {
     params["search"] = true
@@ -22,6 +25,11 @@ export function listRoles (cluster_name,  search, keywords, pageNum, pageSize) {
     }
   }
   return get(url, params)
+}
+
+export function listNamespaceRoles(cluster_name, namespace ) {
+  let url = namespaceRoleUrl(cluster_name, namespace)
+  return get(url)
 }
 
 export function deleteRole (cluster_name, namespace, name) {
