@@ -439,7 +439,8 @@ const message = {
       object: "对象",
       ref: "关联",
       role: "角色",
-      authorized: "授权"
+      authorized: "授权",
+      api_group: "API 组"
     },
     custom_resource: {
       custom_resource: "自定义资源",

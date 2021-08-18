@@ -16,6 +16,12 @@
                                   :role-ref-obj.sync="form.roleRef"
                                   :subject-array.sync="form.subjects"></ko-role-object>
                 </el-tab-pane>
+                <el-tab-pane  :label="$t('business.workload.labels_annotations')">
+                  <ko-key-value :title="$t('business.workload.label')"
+                                :value.sync="form.metadata.labels"></ko-key-value>
+                  <ko-key-value :title="$t('business.workload.annotations')"
+                                :value.sync="form.metadata.annotations"></ko-key-value>
+                </el-tab-pane>
               </el-tabs>
             </el-col>
           </el-form>
@@ -42,10 +48,11 @@ import YamlEditor from "@/components/yaml-editor"
 import {createClusterRoleBinding} from "@/api/clusterrolebindings"
 import Rule from "@/utils/rules"
 import KoRoleObject from "@/components/ko-rbac/role-object"
+import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 
 export default {
   name: "ClusterRoleBindingCreate",
-  components: { YamlEditor, LayoutContent, KoRoleObject },
+  components: { YamlEditor, LayoutContent, KoRoleObject,KoKeyValue },
   data () {
     return {
       loading: false,
