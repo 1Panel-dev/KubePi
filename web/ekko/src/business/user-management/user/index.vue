@@ -82,16 +82,7 @@ export default {
         total: 0,
       },
       searchConfig: {
-        quickPlaceholder: this.$t("commons.search.quickSearch"),
-        components: [
-          {field: "name", label: "姓名", component: "FuComplexInput"},
-          {
-            field: "status",
-            label: "状态",
-            component: "FuComplexSelect",
-            options: [{label: "启用", value: "Enable"}, {label: "禁用", value: "Disable"}],
-          },
-        ],
+        keywords: ""
       },
       data: [],
       selects: [],
@@ -99,10 +90,10 @@ export default {
     }
   },
   methods: {
-    search(condition) {
+    search() {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchUsers(currentPage, pageSize, condition).then(data => {
+      searchUsers(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total

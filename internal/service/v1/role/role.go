@@ -4,10 +4,10 @@ import (
 	"errors"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	costomStorm "github.com/KubeOperator/ekko/pkg/storm"
+	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
-	"strings"
 	"time"
 )
 
@@ -16,10 +16,11 @@ type Service interface {
 	Create(r *v1Role.Role, options common.DBOptions) error
 	CreateWithTemplate(r *v1Role.Role, templateName string, options common.DBOptions) error
 	Get(name string, options common.DBOptions) (*v1Role.Role, error)
+	GetByNames(names []string, options common.DBOptions) ([]v1Role.Role, error)
 	List(options common.DBOptions) ([]v1Role.Role, error)
 	Delete(name string, options common.DBOptions) error
 	Update(name string, role *v1Role.Role, options common.DBOptions) error
-	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Role.Role, int, error)
+	Search(num, size int, pattern string, options common.DBOptions) ([]v1Role.Role, int, error)
 }
 
 func NewService() Service {
@@ -28,6 +29,16 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (s *service) GetByNames(names []string, options common.DBOptions) ([]v1Role.Role, error) {
+	db := s.GetDB(options)
+	roles := make([]v1Role.Role, 0)
+	query := db.Select(q.In("Name", names))
+	if err := query.Find(&roles); err != nil {
+		return nil, err
+	}
+	return roles, nil
 }
 
 func (s *service) Update(name string, role *v1Role.Role, options common.DBOptions) error {
@@ -95,16 +106,17 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	return db.DeleteStruct(item)
 }
 
-func (s *service) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Role.Role, int, error) {
+func (s *service) Search(num, size int, pattern string, options common.DBOptions) ([]v1Role.Role, int, error) {
 	db := s.GetDB(options)
-	var ms []q.Matcher
-	for key := range conditions {
-		if strings.ToLower(conditions[key].Operator) == "in" {
-			m := q.In(conditions[key].Field, conditions[key].Value)
-			ms = append(ms, m)
+	query := func() storm.Query {
+		if pattern != "" {
+			return db.Select(q.Or(
+				costomStorm.Like("Name", pattern),
+			)).OrderBy("CreateAt")
 		}
-	}
-	query := db.Select(ms...).OrderBy( "CreateAt")
+		return db.Select().OrderBy("CreateAt")
+	}()
+
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}

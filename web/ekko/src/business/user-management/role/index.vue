@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('business.user.role_list')">
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig">
+                   :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="[{resource:'roles',verb:'create'}]" type="primary"
@@ -71,15 +71,7 @@ export default {
         total: 0,
       },
       searchConfig: {
-        quickPlaceholder: this.$t("commons.search.quickSearch"),
-        components: [
-          {
-            field: "name",
-            label: this.$t("commons.table.name"),
-            component: "FuComplexInput",
-            defaultOperator: "eq"
-          },
-        ],
+        keywords: ""
       },
       data: [],
       selects: [],
@@ -87,10 +79,10 @@ export default {
     }
   },
   methods: {
-    search(condition) {
+    search() {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchRoles(currentPage, pageSize, condition).then(data => {
+      searchRoles(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total

@@ -26,7 +26,8 @@ const message = {
             add: "添加",
             edit: "编辑",
             all_select: "全选",
-            upload: "上传文件"
+            upload: "上传文件",
+            search: "搜索"
         },
         table: {
             name: "名称",
