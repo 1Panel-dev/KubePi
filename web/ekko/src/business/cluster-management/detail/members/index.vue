@@ -24,38 +24,6 @@
 
 
     <el-dialog
-        :title="$t('commons.button.create')+$t('business.cluster.namespace')+$t('business.cluster.role')"
-        :visible.sync="namespaceRoleDialogOpened"
-        width="40%"
-        center z-index="20">
-      <el-form label-position="left" label-width="144px" :model="namespaceRoleForm">
-        <el-form-item :label="$t('business.cluster.namespace')">
-          <el-select v-model="namespaceRoleForm.namespace" style="width:100%">
-            <el-option v-for="(item,index) in getNamespaceOptions"
-                       :key="index"
-                       :value="item.metadata.name">
-              {{ item.metadata.name }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="$t('business.cluster.role')">
-          <el-select multiple v-model="namespaceRoleForm.roles" style="width:100%">
-            <el-option v-for="(item,index) in namespaceRoleOptions"
-                       :key="index"
-                       :value="item.metadata.name">
-              {{ item.metadata.name }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-                <el-button @click="namespaceRoleDialogOpened=false">{{ $t('commons.button.cancel') }}</el-button>
-                <el-button type="primary" @click="onNamespaceRoleConfirm">{{ $t('commons.button.confirm') }}</el-button>
-        </span>
-    </el-dialog>
-
-    <el-dialog
         :title="$t('commons.button.'+operation)+$t('business.cluster.member')"
         :visible.sync="formDialogOpened"
         z-index="10"
@@ -90,31 +58,46 @@
 
           <el-form-item :label="$t('business.cluster.namespace')+$t('business.cluster.role')">
             <el-button @click="onNamespaceRoleCreate"><i class="el-icon-plus "></i></el-button>
-            <el-table
-                :data="memberForm.namespaceRoles"
-                border
-                style="width: 80%">
-              <el-table-column
-                  prop="namespace"
-                  :label="$t('business.cluster.namespace')"
-              >
-              </el-table-column>
-              <el-table-column
-                  :label="$t('business.cluster.role')"
-              >
-                <template v-slot:default="{row}">
-                  <span v-for="v in row.roles" :key="v">{{ v }}<br/></span>
-                </template>
-              </el-table-column>
-              <el-table-column width="256x">
-                <template v-slot:default="{row}">
-                  <el-button
-                      size="mini" circle @click="onNamespaceRoleDelete(row)">
-                    <i class="el-icon-delete"></i>
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+            <table border="1" cellspacing="0" style="width: 80%">
+              <thead style="background-color: #1d3e4d">
+              <tr>
+                <th style="width: 45%">{{ $t('business.cluster.namespace') }}</th>
+                <th style="width: 45%">{{ $t('business.cluster.role') }}</th>
+                <th>{{ $t('commons.table.action') }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-if="memberForm.namespaceRoles.length===0">
+                <td style="text-align: center" colspan="3">{{ $t('commons.msg.no_data') }}</td>
+              </tr>
+
+
+              <tr v-for="(item, index) in memberForm.namespaceRoles" :key="index">
+                <td style="text-align: center">
+                  <el-select v-model="item.namespace" style="width:100%">
+                    <el-option v-for="(item,index) in getNamespaceOptions"
+                               :key="index"
+                               :value="item.metadata.name">
+                      {{ item.metadata.name }}
+                    </el-option>
+                  </el-select>
+                </td>
+                <td>
+                  <el-select multiple v-model="item.roles" style="width:100%">
+                    <el-option v-for="(item,index) in namespaceRoleOptions"
+                               :key="index"
+                               :value="item.metadata.name">
+                      {{ item.metadata.name }}
+                    </el-option>
+                  </el-select>
+                </td>
+                <td style="text-align: center">
+                  <el-button @click="onNamespaceRoleDelete(index)" icon="el-icon-delete" size="mini" circle></el-button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+
           </el-form-item>
         </div>
       </el-form>
@@ -149,10 +132,6 @@ export default {
       clusterRolesOptions: [],
       namespaceRoleOptions: [],
       namespaceOptions: [],
-      namespaceRoleForm: {
-        namespace: "",
-        roles: [],
-      },
       memberForm: {
         userName: "",
         customClusterRoles: [],
@@ -255,10 +234,11 @@ export default {
       })
       getClusterMember(this.name, row.name).then(data => {
         this.memberForm.userName = data.data.name
-        if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && !data.data.namespaceRoles) {
-          if (data.data.clusterRoles[0] === 'Admin Cluster') {
+        console.log(data.data)
+        if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && data.data.namespaceRoles.length === 0) {
+          if (data.data.clusterRoles[0] === 'admin-cluster') {
             this.memberForm.roleType = 'admin'
-          } else if (data.data.clusterRoles[0] === 'View Cluster') {
+          } else if (data.data.clusterRoles[0] === 'view-cluster') {
             this.memberForm.roleType = 'viewer'
           }
         } else {
@@ -282,28 +262,26 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteClusterMember(this.name, raw.name, raw.kind).then(() => {
-          this.$message.success("删除成功")
+          this.$message.success(this.$t('commons.msg.delete_success'))
           this.list()
         })
       });
     },
     onNamespaceRoleCreate() {
-      this.namespaceRoleDialogOpened = true
-      this.namespaceRoleForm.namespace = ""
-      this.namespaceRoleForm.roles = []
-    },
-    onNamespaceRoleConfirm() {
+      for (const nr of this.memberForm.namespaceRoles) {
+        if (!nr.namespace || nr.roles.length === 0) {
+          this.$message.error(this.$t('business.cluster.namespace_role_form_check_msg'))
+          return
+        }
+      }
       this.memberForm.namespaceRoles.push({
-        namespace: this.namespaceRoleForm.namespace,
-        roles: this.namespaceRoleForm.roles,
+        namespace: "",
+        roles: [],
       })
-      this.namespaceRoleDialogOpened = false
     },
-    onNamespaceRoleDelete(row) {
-      this.memberForm.namespaceRoles.splice(this.memberForm.namespaceRoles.indexOf(row), 1)
-
+    onNamespaceRoleDelete(index) {
+      this.memberForm.namespaceRoles.splice(index, 1)
     },
-
     onConfirm() {
       let req = {
         name: this.memberForm.userName,

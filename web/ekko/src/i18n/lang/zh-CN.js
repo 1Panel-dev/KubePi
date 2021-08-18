@@ -64,7 +64,8 @@ const message = {
         msg: {
             create_success: "创建成功",
             delete_success: "删除成功",
-            update_success: "修改成功"
+            update_success: "修改成功",
+            no_data: "暂无数据",
         },
         confirm_message: {
             delete: "此操作不可撤销, 是否继续?",
@@ -124,7 +125,8 @@ const message = {
             rule: "规则",
             config_file: "config 文件",
             config_content: "config 内容",
-            hidden_cluster: "隐藏不可访问的集群"
+            hidden_cluster: "隐藏不可访问的集群",
+            namespace_role_form_check_msg: "命名空间或者角色列表不能为空"
         },
         namespace: {
             description: "描述"
