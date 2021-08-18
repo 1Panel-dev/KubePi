@@ -1,6 +1,5 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'RoleBindings'}" v-loading="loading">
-
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
