@@ -7,7 +7,7 @@
             <el-form-item :label="$t('business.configuration.kind')" required>
               <el-select v-model="roleRef.kind" style="width: 100%" @change="changeKind(roleRef.kind)">
                 <el-option label="ClusterRole" :value="'ClusterRole'"></el-option>
-                <el-option label="Role" v-if="namespace!==''" :value="'Role'"></el-option>
+                <el-option label="Role" v-if="namespace" :value="'Role'"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -153,7 +153,7 @@ export default {
     },
     changeSubjectKind (row) {
       if (row.kind === "ServiceAccount") {
-        row.namespace = ''
+        row.namespace = ""
         delete row.apiGroup
       }
       if (row.kind === "User" || row.kind === "Group") {
