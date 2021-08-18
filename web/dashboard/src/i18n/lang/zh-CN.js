@@ -435,7 +435,11 @@ const message = {
     },
     access_control: {
       access_control: "访问控制",
-      resource_helper: "多个项目请用,分隔"
+      resource_helper: "多个项目请用,分隔",
+      object: "对象",
+      ref: "关联",
+      role: "角色",
+      authorized: "授权"
     },
     custom_resource: {
       custom_resource: "自定义资源",
