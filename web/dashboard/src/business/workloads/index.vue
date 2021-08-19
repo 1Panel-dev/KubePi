@@ -495,16 +495,20 @@ export default {
     onEditYaml() {
       this.gatherFormValid()
       if (!this.isValid) {
-        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.unValidInfo, type: "warning" })
-        return
+        this.$confirm(this.unValidInfo + this.$t("commons.confirm_message.open_yaml"), this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+          this.yaml = this.gatherFormData()
+          this.showYaml = true
+        })
       }
-      this.yaml = this.gatherFormData()
-      this.showYaml = true
     },
     backToForm() {
       this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
-        cancelButtonText: this.$t("commons.button.continue_edit"),
+        cancelButtonText: this.$t("commons.button.cancel"),
         type: "warning",
       }).then(() => {
         this.showYaml = false

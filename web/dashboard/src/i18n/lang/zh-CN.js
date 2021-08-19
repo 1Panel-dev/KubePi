@@ -33,7 +33,6 @@ const message = {
       back_detail: "返回详情",
       submit: "提交",
       show_diff: "差异对比",
-      continue_edit: "继续编辑",
       terminal: "终端",
       logs: "日志",
     },
@@ -82,6 +81,7 @@ const message = {
       delete: "此操作不可撤销, 是否继续?",
       add_init_container: "当前 initContainers 为空，是否现在添加?",
       back_form: "返回表单编辑不会保留对 YAML 做出的所有更改",
+      open_yaml: "，仍要打开 YAML 编辑？",
     },
     login: {
       username: "用户名",
