@@ -84,6 +84,7 @@ func (h *Handler) Login() iris.Handler {
 			Name:                u.Name,
 			NickName:            u.NickName,
 			Email:               u.Email,
+			Language:            u.Language,
 			ResourcePermissions: permissions,
 		}
 		session.Set("profile", profile)
@@ -179,7 +180,20 @@ func (h *Handler) GetProfile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		p.ResourcePermissions = permissions
+		user, err := h.userService.GetByNameOrEmail(p.Name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		p = UserProfile{
+			Name:                user.Name,
+			NickName:            user.NickName,
+			Email:               user.Email,
+			Language:            user.Language,
+			ResourcePermissions: permissions,
+		}
+
 		session.Set("profile", p)
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", p)

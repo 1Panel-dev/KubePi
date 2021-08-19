@@ -15,6 +15,7 @@ import (
 	v1RoleBindingService "github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/collectons"
+	"github.com/KubeOperator/ekko/pkg/i18n"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -32,6 +33,20 @@ func authHandler() iris.Handler {
 			return
 		}
 		ctx.Values().Set("profile", p)
+		ctx.Next()
+	}
+}
+
+func langHandler() iris.Handler {
+	return func(ctx *context.Context) {
+		s := sessions.Get(ctx)
+		p := s.Get("profile")
+		u, ok := p.(session.UserProfile)
+		lang := i18n.LanguageZhCN
+		if ok {
+			lang = u.Language
+		}
+		ctx.Values().Set("language", lang)
 		ctx.Next()
 	}
 }
@@ -247,6 +262,7 @@ func resourceNameInvalidHandler() iris.Handler {
 
 func AddV1Route(app iris.Party) {
 	v1Party := app.Party("/v1")
+	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
 
 	session.Install(v1Party)

@@ -16,12 +16,14 @@ type PasswordSetter struct {
 type ProfileSetter struct {
 	NickName string `json:"nickName"`
 	Email    string `json:"email"`
+	Language string `json:"language"`
 }
 
 type UserProfile struct {
 	Name                string              `json:"name"`
 	NickName            string              `json:"nickName"`
 	Email               string              `json:"email"`
+	Language            string              `json:"language"`
 	ResourcePermissions map[string][]string `json:"resourcePermissions"`
 }
 

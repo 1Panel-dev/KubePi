@@ -1,4 +1,4 @@
-import {login, isLogin, logout, getCurrentUser} from "@/api/auth"
+import {login, isLogin, logout, getCurrentUser, updateProfile} from "@/api/auth"
 import {resetRouter} from "@/router"
 import {getLanguage, setLanguage} from "@/i18n"
 
@@ -45,7 +45,16 @@ const actions = {
             })
         })
     },
-
+    setLanguage({commit}, lang) {
+        return new Promise((resolve, reject) => {
+            updateProfile({"language": lang}).then(() => {
+                commit("SET_LANGUAGE", lang)
+                resolve()
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
     isLogin({commit}) {
         return new Promise((resolve) => {
             if (state.login) {
@@ -67,10 +76,11 @@ const actions = {
         return new Promise((resolve, reject) => {
             getCurrentUser().then(data => {
                 const user = data.data
-                const {name, resourcePermissions, nickName} = user
+                const {name, resourcePermissions, language, nickName} = user
                 commit("SET_NAME", name)
                 commit("SET_RESOURCE_PERMISSIONS", resourcePermissions)
                 commit("SET_NICK_NAME", nickName)
+                commit("SET_LANGUAGE", language)
                 resolve(user)
             }).catch(error => {
                 reject(error)

@@ -26,16 +26,24 @@ func (h Handler) UpdateProfile() iris.Handler {
 		}
 		if req.Email != "" {
 			user.Email = req.Email
-			profile.Email = req.Email
 		}
 		if req.NickName != "" {
 			user.NickName = req.NickName
-			profile.NickName = req.NickName
+		}
+		if req.Language != "" {
+			user.Language = req.Language
 		}
 		if err := h.userService.Update(profile.Name, user, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
+		}
+		profile = UserProfile{
+			Name:                user.Name,
+			NickName:            user.NickName,
+			Email:               user.Email,
+			Language:            user.Language,
+			ResourcePermissions: profile.ResourcePermissions,
 		}
 		session.Set("profile", profile)
 		ctx.Values().Set("data", "ok")

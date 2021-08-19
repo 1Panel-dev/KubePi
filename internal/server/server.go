@@ -7,6 +7,7 @@ import (
 	v1Config "github.com/KubeOperator/ekko/internal/model/v1/config"
 	"github.com/KubeOperator/ekko/migrate"
 	"github.com/KubeOperator/ekko/pkg/file"
+	"github.com/KubeOperator/ekko/pkg/i18n"
 	"github.com/asdine/storm/v3"
 	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/kataras/iris/v12"
@@ -135,13 +136,19 @@ func (e *EkkoSerer) setUpErrHandler() {
 				ctx.Values().Set("message", "the server could not find the requested resource")
 			}
 		}
-		err := iris.Map{
+		message := ctx.Values().GetString("message")
+		lang := ctx.Values().GetString("language")
+		m, err := i18n.Translate(lang, message)
+		if err != nil {
+			e.Logger().Error(err)
+			m = message
+		}
+		er := iris.Map{
 			"success": false,
 			"code":    ctx.GetStatusCode(),
-			"message": ctx.Values().GetString("message"),
+			"message": m,
 		}
-
-		_, _ = ctx.JSON(err)
+		_, _ = ctx.JSON(er)
 	})
 }
 

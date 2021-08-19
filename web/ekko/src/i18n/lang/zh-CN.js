@@ -187,14 +187,8 @@ const message = {
 }
 
 
-const raw = {
-    _administrator: "超级管理员"
-}
-
-
 export default {
     ...el,
     ...fu,
     ...message,
-    ...raw
 }
