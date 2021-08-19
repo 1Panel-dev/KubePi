@@ -1,52 +1,53 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')"  :back-to="{name: 'StorageClasses'}" v-loading="loading">
+  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'StorageClasses'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <div v-if="!yamlShow">
-        <el-form label-position="top" :disabled="true" :model="form">
+        <el-form label-position="top" :model="form">
           <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item :label="$t('commons.table.name')" required>
-                <el-input clearable v-model="form.metadata.name"></el-input>
-              </el-form-item>
+            <el-col :span="14">
+              <el-card>
+                <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
+              </el-card>
             </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('business.storage.provisioner')" required>
-                <el-input clearable v-model="form.provisioner"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item :label="$t('business.storage.reclaimPolicy')" required>
-                <el-input clearable v-model="form.reclaimPolicy"></el-input>
-              </el-form-item>
+            <el-col :span="10">
+              <el-tabs v-model="activeName" tab-position="top" type="border-card"
+                       @tab-click="handleClick">
+
+                <div style="margin-top: 20px">
+                  <ko-card>
+                    <table style="width: 100%" class="myTable">
+                      <th scope="col" width="60%" align="left">
+                        <h3>{{ $t('commons.form.parameters') }}</h3>
+                      </th>
+                      <tr v-for="(k,v,index) in form.parameters" :key="index">
+                        <td>{{ v }}</td>
+                        <td colspan="1">{{ k }}</td>
+                      </tr>
+                    </table>
+                  </ko-card>
+                </div>
+              </el-tabs>
             </el-col>
           </el-row>
-          <el-tabs v-model="activeName" tab-position="top" type="border-card"
+          <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
-            <el-tab-pane label="Customize">
-              <div style="margin-top: 20px">
-                <ko-card :title="$t('commons.form.parameters')">
-                  <table style="width: 100%" class="myTable"  >
-                    <tr>
-                      <th scope="col"></th>
-                    </tr>
-                    <tr v-for="(k,v,index) in form.parameters" :key="index">
-                      <td>{{v}}</td>
-                      <td colspan="3">{{ k }}</td>
-                    </tr>
-                  </table>
-                </ko-card>
-              </div>
+            <el-tab-pane lazy :label="$t('commons.table.status')">
+              <complex-table :data="[form]">
+                <el-table-column sortable :label="$t('business.storage.provisioner')" min-width="30"
+                                 prop="provisioner"/>
+                <el-table-column sortable :label="$t('business.storage.reclaimPolicy')" min-width="30"
+                                 prop="reclaimPolicy"/>
+                <el-table-column sortable :label="$t('business.storage.volumeBindingMode')" min-width="30"
+                                 prop="volumeBindingMode"/>
+              </complex-table>
             </el-tab-pane>
           </el-tabs>
         </el-form>
       </div>
       <div v-if="yamlShow">
         <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
-      </div>
-      <div>
-        <div style="float: right;margin-top: 10px">
-          <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
+        <div class="bottom-button">
+          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
       </div>
     </div>
@@ -57,11 +58,12 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getStorageClass} from "@/api/storageclass";
-import KoCard from "@/components/ko-card/index";
+import KoDetailBasic from "@/components/detail/detail-basic"
+import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "StorageClassDetail",
-  components: {KoCard, YamlEditor, LayoutContent},
+  components: {YamlEditor, LayoutContent, KoDetailBasic, ComplexTable},
   props: {
     name: String,
   },
@@ -69,8 +71,7 @@ export default {
     return {
       loading: false,
       yamlShow: false,
-      form: {
-      },
+      form: {},
       activeName: "",
       yaml: {},
       cluster: "",
@@ -93,9 +94,8 @@ export default {
     search() {
       getStorageClass(this.cluster, this.name).then(res => {
         this.form = res
-        if (this.yamlShow) {
-          this.onEditYaml()
-        }
+        this.yaml = JSON.parse(JSON.stringify(this.form))
+      }).finally(() => {
         this.loading = false
       })
     },
@@ -107,6 +107,15 @@ export default {
     setStorageCapacity() {
       this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + 'Gi'
     }
+  },
+  watch: {
+    yamlShow: function (newValue) {
+      this.$router.push({
+        name: "StorageClassDetail",
+        params: {name: this.name},
+        query: {yamlShow: newValue}
+      })
+    },
   },
   created() {
     this.cluster = this.$route.query.cluster

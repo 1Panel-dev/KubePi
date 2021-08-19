@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
     <el-row :gutter="24">
       <div v-if="!yamlShow">
-        <el-col :span="24">
+        <el-col :span="16">
           <el-card>
             <table style="width: 100%" class="myTable">
               <tr>
@@ -73,36 +73,12 @@
             </div>
           </el-card>
         </el-col>
-        <el-col :span="24">
-          <br>
-          <el-card v-if="'nfs' in item.spec">
-            <div class="card_title">
-              <h3>Network File System</h3>
-            </div>
-            <table style="width: 50%" class="myTable">
-              <tr>
-                <td>Server</td>
-                <td colspan="3">{{ item.spec.nfs.server }}</td>
-              </tr>
-              <tr>
-                <td>Path</td>
-                <td colspan="3">{{ item.spec.nfs.path }}</td>
-              </tr>
-              <tr v-if="item.spec.nfs.readOnly">
-                <td>Read Only</td>
-                <td colspan="3">{{ item.spec.nfs.readOnly }}</td>
-              </tr>
-            </table>
-
-          </el-card>
-        </el-col>
-        <el-col :span="24">
-          <br>
+        <el-col :span="8">
           <el-card v-if="item.spec.claimRef !== undefined">
             <div class="card_title">
               <h3>{{ this.$t('business.storage.claim') }}</h3>
             </div>
-            <table style="width: 50%" class="myTable">
+            <table  class="myTable">
               <tr>
                 <td>{{ this.$t('business.configuration.type') }}</td>
                 <td colspan="3">{{ item.spec.claimRef.kind }}</td>
@@ -116,10 +92,29 @@
                 <td colspan="3">{{ item.spec.claimRef.namespace }}</td>
               </tr>
             </table>
-
           </el-card>
         </el-col>
-
+        <el-col :span="24">
+          <el-card style="margin-top: 20px" v-if="'nfs' in item.spec">
+            <div class="card_title">
+              <h3>Network File System</h3>
+            </div>
+            <table style="width: 90%" class="myTable">
+              <tr>
+                <td>Server</td>
+                <td colspan="3">{{ item.spec.nfs.server }}</td>
+              </tr>
+              <tr>
+                <td>Path</td>
+                <td colspan="3">{{ item.spec.nfs.path }}</td>
+              </tr>
+              <tr v-if="item.spec.nfs.readOnly">
+                <td>Read Only</td>
+                <td colspan="3">{{ item.spec.nfs.readOnly }}</td>
+              </tr>
+            </table>
+          </el-card>
+        </el-col>
       </div>
       <div v-if="yamlShow">
         <yaml-editor :value="yaml" :read-only="true"></yaml-editor>

@@ -35,6 +35,6 @@ export function creategetStorageClass (cluster_name, data) {
   return post(`${scUrl(cluster_name,)}`, data)
 }
 
-export function editgetStorageClass (cluster_name, data) {
-  return patch(`${scUrl(cluster_name,)}`, data)
+export function editgetStorageClass (cluster_name, name, data) {
+  return patch(`${scUrl(cluster_name,)}/${name}`, data)
 }

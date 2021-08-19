@@ -24,8 +24,7 @@ type Service interface {
 }
 
 func NewService() Service {
-	return &service{
-	}
+	return &service{}
 }
 
 type service struct {
