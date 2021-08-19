@@ -48,7 +48,7 @@ const message = {
       lastUpdateTime: "更新时间",
       type: "类型"
     },
-    statu: {
+    status: {
       Running: "运行中",
       Succeeded: "成功",
       Failed: "失败",
@@ -386,6 +386,7 @@ const message = {
       capacity: "容量 Gib",
       reclaimPolicy: "回收策略",
       storageClass: "存储类",
+      volumeBindingMode: "卷绑定模式",
       claim: "要求",
       pvSource: "VolumeClaim Source",
       assignSc: "绑定 StorageClass",
