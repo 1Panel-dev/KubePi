@@ -253,6 +253,9 @@ export default {
       } else {
         data = this.transformYaml()
       }
+      if (data.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
+        delete data.spec.nodeAffinity
+      }
       this.loading = true
       createPv(this.cluster, data).then(() => {
         this.$message({
@@ -295,9 +298,9 @@ export default {
       }
 
       this.$refs.ko_node_scheduling.transformation(this.form.spec)
-      if (this.form.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
-        delete this.form.spec.nodeAffinity.required.nodeSelectorTerms
-      }
+      // if (this.form.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
+      //   delete this.form.spec.nodeAffinity.required.nodeSelectorTerms
+      // }
       formData = JSON.parse(JSON.stringify(this.form))
       return formData
     },

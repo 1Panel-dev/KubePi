@@ -90,7 +90,7 @@ const Storage = {
       requirePermission: {
         apiGroup: "storage.k8s.io",
         resource: "storageclasses",
-        verb: "crate",
+        verb: "create",
       },
       component: () => import("@/business/storage/sc/create"),
       name: "StorageClassCreate",
