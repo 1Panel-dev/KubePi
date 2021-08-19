@@ -8,6 +8,16 @@ type LoginCredential struct {
 	Password string `json:"password"`
 }
 
+type PasswordSetter struct {
+	NewPassword string `json:"newPassword"`
+	OldPassword string `json:"oldPassword"`
+}
+
+type ProfileSetter struct {
+	NickName string `json:"nickName"`
+	Email    string `json:"email"`
+}
+
 type UserProfile struct {
 	Name                string              `json:"name"`
 	NickName            string              `json:"nickName"`

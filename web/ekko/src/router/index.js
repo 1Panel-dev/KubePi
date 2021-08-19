@@ -27,6 +27,17 @@ export const constantRoutes = [
         ]
     },
     {
+        path: "/profile",
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: "",
+                component: () => import("@/business/profile")
+            }
+        ]
+    },
+    {
         path: "/login",
         component: () => import("@/business/login"),
         hidden: true

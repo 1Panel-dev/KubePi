@@ -27,6 +27,27 @@
           <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Users">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'User'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Groups">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'Group'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ServiceAccounts">
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'ServiceAccount'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -56,12 +77,27 @@ export default {
       cluster: "",
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "RoleBindingEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: {yamlShow: false}
+            })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          }
+        },
+        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
               name: "RoleBindingEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: {yamlShow: true}
             })
           },
           disabled:()=>{

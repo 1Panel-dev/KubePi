@@ -112,7 +112,7 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listRoles(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listRoles(this.cluster, "",true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.paginationConfig.total = res.total
         this.loading = false

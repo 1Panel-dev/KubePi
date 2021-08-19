@@ -10,10 +10,12 @@ const message = {
             prompt: "提示",
         },
         personal: {
+            profile: "个人信息",
             exit: "退出"
         },
         button: {
             delete: "删除",
+            skip: "跳过",
             import: "导入",
             create: "创建",
             cancel: "取消",
@@ -24,7 +26,8 @@ const message = {
             add: "添加",
             edit: "编辑",
             all_select: "全选",
-            upload: "上传文件"
+            upload: "上传文件",
+            search: "搜索"
         },
         table: {
             name: "名称",
@@ -35,6 +38,12 @@ const message = {
             creat_by: "创建者",
             built_in: "内置",
             description: "描述",
+        },
+        header: {
+            help_doc: "帮助文档",
+            support: "获取支持",
+            guide: "引导",
+            guide_text: "感谢选择本产品, 是否立即开始注册您的第一个集群?",
         },
         bool: {
             true: "是",
@@ -56,7 +65,8 @@ const message = {
         msg: {
             create_success: "创建成功",
             delete_success: "删除成功",
-            update_success: "修改成功"
+            update_success: "修改成功",
+            no_data: "暂无数据",
         },
         confirm_message: {
             delete: "此操作不可撤销, 是否继续?",
@@ -115,7 +125,9 @@ const message = {
             custom: "自定义",
             rule: "规则",
             config_file: "config 文件",
-            config_content: "config 内容"
+            config_content: "config 内容",
+            hidden_cluster: "隐藏不可访问的集群",
+            namespace_role_form_check_msg: "命名空间或者角色列表不能为空"
         },
         namespace: {
             description: "描述"
@@ -160,6 +172,9 @@ const message = {
             permission_setting: "权限设置",
             password: "密码",
             confirm_password: "确认密码",
+            old_password: "原密码",
+            new_password: "新密码",
+            change_password: "修改密码",
             resource_name: "资源名称",
             please_input_password: "请输入密码",
             please_input_password_agin: "请再次输入密码",

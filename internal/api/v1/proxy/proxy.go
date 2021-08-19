@@ -76,13 +76,16 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		// 生成httpClient
 		httpClient := http.Client{Transport: ts}
 		k := kubernetes.NewKubernetes(c)
-		// 判断资源类型是否是namespace级别的
+
+		//判断是否已经包含了namespace的查询
+		hasNsFilter := hasNamespaceFilter(proxyPath)
 		resourceName, err := parseResourceName(proxyPath)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
 			return
 		}
+		// 判断资源类型是否是namespace级别的
 		namespaced, err := k.IsNamespacedResource(resourceName)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -120,7 +123,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			_, _ = ctx.JSON(resp)
 			return
 		}
-		if http.MethodGet == requestMethod && namespaced && namespace != "" {
+		if http.MethodGet == requestMethod && namespaced && namespace != "" && !hasNsFilter {
 			apiUrl.Path = addUrlNamespace(apiUrl.Path, namespace)
 		}
 
@@ -199,6 +202,16 @@ type fieldMatcher interface {
 type namespaceAndNameMatcher struct {
 	Namespace string
 	Name      string
+}
+
+func hasNamespaceFilter(path string) bool {
+	ss := strings.Split(path, "/")
+	for i := range ss {
+		if ss[i] == "namespaces" {
+			return true
+		}
+	}
+	return false
 }
 
 func (n namespaceAndNameMatcher) Match(item interface{}) bool {
