@@ -94,7 +94,7 @@ export default {
 
       let isFormReady = false
       this.$refs["form"].validate((valid) => {
-        if (!valid) {
+        if (valid) {
           isFormReady = true
         }
       })

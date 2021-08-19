@@ -14,6 +14,7 @@ const message = {
             exit: "退出"
         },
         button: {
+            detail: "详情",
             delete: "删除",
             skip: "跳过",
             import: "导入",
@@ -169,6 +170,7 @@ const message = {
             role: "角色",
             template: "模版",
             base_on_exists_role: "基于已有角色",
+            permission:"权限",
             permission_setting: "权限设置",
             password: "密码",
             confirm_password: "确认密码",

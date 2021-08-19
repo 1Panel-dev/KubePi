@@ -328,7 +328,7 @@ export default {
     },
     gatherFormValid() {
       this.$refs["form"].validate((valid) => {
-        if (!valid) {
+        if (valid) {
           this.isValid = false
           this.unValidInfo = this.toggleCase() + this.$t("commons.validate.params_not_complete")
           return
