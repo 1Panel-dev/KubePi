@@ -67,6 +67,9 @@ func (h *Handler) CreateUser() iris.Handler {
 			return
 		}
 		req.CreatedBy = profile.Name
+		if req.Language == "" {
+			req.Language = profile.Language
+		}
 		if err := h.userService.Create(&req.User, common.DBOptions{DB: tx}); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

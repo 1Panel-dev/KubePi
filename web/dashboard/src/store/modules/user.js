@@ -2,6 +2,7 @@ import {login, isLogin, logout, getCurrentClusterUser} from "@/api/auth"
 import {resetRouter} from "@/router"
 import {getLanguage, setLanguage} from "@/i18n"
 import store from "../../store"
+import {updateProfile} from "../../../../ekko/src/api/auth";
 
 const state = {
     login: false,
@@ -74,17 +75,29 @@ const actions = {
             })
         })
     },
+    setLanguage({commit}, lang) {
+        return new Promise((resolve, reject) => {
+            updateProfile({"language": lang}).then(() => {
+                commit("SET_LANGUAGE", lang)
+                resolve()
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
     getCurrentUser({commit}) {
         return new Promise((resolve, reject) => {
             const clusterName = store.getters.cluster
             getCurrentClusterUser(clusterName).then(data => {
                 const user = data.data
                 user["roles"] = ["ADMIN"]
-                const {name, nickName, roles, clusterRoles} = user
+                const {name, nickName, roles,language, clusterRoles} = user
                 commit("SET_NAME", name)
                 commit("SET_ROLES", roles)
                 commit("SET_CLUSTER_ROLES", clusterRoles)
                 commit("SET_NICK_NAME", nickName)
+                commit("SET_LANGUAGE", language)
+
                 resolve(user)
             }).catch(error => {
                 reject(error)
