@@ -101,7 +101,7 @@ const Storage = {
       }
     },
     {
-      path: "/storageclasses/edit:name",
+      path: "/storageclasses/edit/:name",
       requirePermission: {
         apiGroup: "storage.k8s.io",
         resource: "storageclasses",

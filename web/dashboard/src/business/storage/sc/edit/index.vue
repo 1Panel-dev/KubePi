@@ -1,7 +1,7 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'StorageClasses'}"
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'StorageClasses'}"
                   v-loading="loading">
-    <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
+    <yaml-editor ref="yaml_editor" :is-edit="true"  :value="form"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">
