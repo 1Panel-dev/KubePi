@@ -81,6 +81,7 @@ const message = {
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
       add_init_container: "当前 initContainers 为空，是否现在添加?",
+      back_form: "返回表单编辑不会保留对 YAML 做出的所有更改",
     },
     login: {
       username: "用户名",
@@ -109,7 +110,8 @@ const message = {
       pack_up: "收起",
       system: "系统信息",
       config: "配置信息",
-      resource: "资源信息"
+      resource: "资源信息",
+      conditions: "状态"
     },
     dashboard: {
       dashboard: "概览"
@@ -126,6 +128,7 @@ const message = {
       description: "描述"
     },
     event: {
+      event: "事件",
       reason: "原因",
       type: "类型",
       time: "时间",
@@ -434,7 +437,12 @@ const message = {
     },
     access_control: {
       access_control: "访问控制",
-      resource_helper: "多个项目请用,分隔"
+      resource_helper: "多个项目请用,分隔",
+      object: "对象",
+      ref: "关联",
+      role: "角色",
+      authorized: "授权",
+      api_group: "API 组"
     },
     custom_resource: {
       custom_resource: "自定义资源",

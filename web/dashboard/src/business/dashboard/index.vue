@@ -41,7 +41,7 @@
             <el-col :span="14">
               <div class="card-content">
                 <span>{{ resource.name }}</span>
-                <h1>{{ resource.count }}</h1>
+                <h1><a>{{ resource.count }}</a></h1>
               </div>
             </el-col>
           </el-row>
@@ -257,6 +257,11 @@ export default {
             }
           }
         }
+      }
+      if (items.length === 0) {
+        result = [{
+          value: 0
+        }]
       }
       return result
     },

@@ -6,17 +6,16 @@
 
     <div class="complex-table__toolbar" v-if="$slots.toolbar || searchConfig">
       <div>
+        <div v-if="searchConfig">
+          <el-input :placeholder="$t('commons.button.search')"
+                    suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords"
+                    @change="search(true)">
+          </el-input>
+        </div>
         <slot name="toolbar">
 
         </slot>
       </div>
-      <fu-search-bar v-bind="searchConfig" @exec="search">
-        <template #complex>
-          <slot name="complex"></slot>
-        </template>
-        <slot name="buttons"></slot>
-        <fu-table-column-select :columns="columns"/>
-      </fu-search-bar>
     </div>
 
     <div class="complex-table__body">
@@ -50,21 +49,21 @@ export default {
     header: String,
     searchConfig: Object,
     paginationConfig: Object,
-    selects:Array
+    selects: Array
   },
-  data () {
+  data() {
     return {
       condition: {},
     }
   },
   methods: {
-    search (condition, e) {
+    search(condition, e) {
       if (condition) {
         this.condition = condition
       }
       this.$emit("search", this.condition, e)
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       // this.selects = val
       this.$emit("update:selects", val)
     }
@@ -73,28 +72,25 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "~@/styles/common/mixins.scss";
-  @import "~@/styles/common/variables.scss";
+@import "~@/styles/common/mixins.scss";
+@import "~@/styles/common/variables.scss";
 
-  .complex-table {
-    .complex-table__header {
-      @include flex-row(flex-start, center);
-      line-height: 60px;
-      font-size: 18px;
-    }
-
-    .complex-table__toolbar {
-      @include flex-row(space-between, center);
-
-      .fu-search-bar {
-        width: auto;
-      }
-    }
-
-    .complex-table__pagination {
-      margin-top: 20px;
-      @include flex-row(flex-end);
-    }
+.complex-table {
+  .complex-table__header {
+    @include flex-row(flex-start, center);
+    line-height: 60px;
+    font-size: 18px;
   }
+
+  .complex-table__toolbar {
+    @include flex-row(flex-end, center);
+    margin-bottom: 10px;
+  }
+
+  .complex-table__pagination {
+    margin-top: 20px;
+    @include flex-row(flex-end);
+  }
+}
 
 </style>

@@ -70,7 +70,7 @@ const message = {
       required_select_msg: "Select item cannot be empty",
       number_limit: "Please enter the correct number",
       name_rules: "Only lowercase English, numbers and-are supported",
-      params_not_complete: "Parameter is not complete",
+      params_not_complete: " params is not complete",
     },
     msg: {
       delete_success: "Delete successfully",
@@ -80,6 +80,7 @@ const message = {
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",
       add_init_container: "The current initContainers is empty, do you want to add it now?",
+      back_form: "Return form editing does not preserve all changes made to YAML",
     },
     login: {
       username: "Username",
@@ -108,7 +109,8 @@ const message = {
       pack_up: "Pack Up",
       system: "System Information",
       config: "Configuration Information",
-      resource: "Resource Information"
+      resource: "Resource Information",
+      conditions: "Conditions"
     },
     dashboard: {
       dashboard: "Dashboard"
@@ -125,6 +127,7 @@ const message = {
       description: "Description"
     },
     event: {
+      event: "Events",
       reason: "Reason",
       type: "Type",
       time: "Time",
@@ -202,7 +205,7 @@ const message = {
       public_port: "Public Port",
       listening_port: "Listening Port",
       host_ip: "Host IP",
-			
+
 			command: "Command",
       entry_point: "Entrypoint",
       arguments: "Arguments",
@@ -342,7 +345,7 @@ const message = {
       mount_point: "Mount Point",
       sub_path_in_volume: "Sub Path In Volume",
       read_only: "Read Only",
-      
+
       volume_claim_template: "Volume Claim Templates",
       pv_name: "Persistent Volume Name",
       new_pv: "Use a storage class to provision a new persistent volume",

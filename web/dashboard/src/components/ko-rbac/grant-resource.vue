@@ -19,13 +19,14 @@
         </tr>
         <tr v-for="(row, index) in rules" v-bind:key="index">
           <td>
-            <el-select multiple v-model="row.verbs" style="width: 100%">
-              <el-option label="create" :value="'create'"></el-option>
-              <el-option label="delete" :value="'delete'"></el-option>
-              <el-option label="get" :value="'list'"></el-option>
-              <el-option label="patch" :value="'patch'"></el-option>
-              <el-option label="update" :value="'update'"></el-option>
-              <el-option label="watch" :value="'watch'"></el-option>
+            <el-select multiple v-model="row.verbs" style="width: 100%" @change="changeVerbs(row)">
+              <el-option label="*" :value="'*'"></el-option>
+              <el-option label="create" :value="'create'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="delete" :value="'delete'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="get" :value="'list'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="patch" :value="'patch'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="update" :value="'update'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="watch" :value="'watch'" :disabled="row.verbs[0]==='*'"></el-option>
             </el-select>
           </td>
           <td>
@@ -42,9 +43,6 @@
             <el-select multiple v-model="rules[index].groups" style="width: 100%">
               <el-option v-for="(row,index) in groups" :label="row.name" :key="index" :value="row.name"></el-option>
             </el-select>
-
-<!--            <el-input v-model="rules[index].groups"-->
-<!--                      :placeholder="$t('business.access_control.resource_helper')"></el-input>-->
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="removeResource(index)">
@@ -77,7 +75,7 @@ export default {
       rules: [],
       resources: [],
       nonResourceURLs: [],
-      groups: []
+      groups: [],
     }
   },
   methods: {
@@ -127,6 +125,16 @@ export default {
       if (row.nonResourceURLs?.length !== 0 && row.resources?.length === 0) {
         delete row.resources
       }
+    },
+    changeVerbs (row) {
+      if (row.verbs.length > 0) {
+        for (let i = 0; i < row.verbs.length; i++) {
+          if (row.verbs[i] === "*") {
+            row.verbs = ["*"]
+            break
+          }
+        }
+      }
     }
   },
   created () {
@@ -151,7 +159,7 @@ export default {
         this.groups = res.groups
       })
     }
-  }
+  },
 }
 </script>
 

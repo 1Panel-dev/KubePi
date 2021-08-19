@@ -10,7 +10,6 @@ import (
 	"github.com/KubeOperator/ekko/internal/service/v1/role"
 	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/ekko/internal/service/v1/user"
-	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
 	"github.com/KubeOperator/ekko/pkg/collectons"
 	"github.com/KubeOperator/ekko/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
@@ -107,13 +106,8 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 	for i := range allRoleBindings {
 		roleNames = append(roleNames, allRoleBindings[i].RoleRef)
 	}
-	rs, _, err := h.roleService.Search(0, 0, pkgV1.Conditions{
-		"Name": pkgV1.Condition{
-			Field:    "Name",
-			Operator: "in",
-			Value:    roleNames,
-		},
-	}, common.DBOptions{})
+
+	rs, err := h.roleService.GetByNames(roleNames, common.DBOptions{})
 	if err != nil && !errors.As(err, &storm.ErrNotFound) {
 		return nil, err
 	}
@@ -304,4 +298,6 @@ func Install(parent iris.Party) {
 	sp.Get("/:cluster_name", handler.GetClusterProfile())
 	sp.Get("/status", handler.IsLogin())
 	sp.Get("/:cluster_name/namespaces", handler.ListUserNamespace())
+	sp.Put("", handler.UpdateProfile())
+	sp.Put("/password", handler.UpdatePassword())
 }

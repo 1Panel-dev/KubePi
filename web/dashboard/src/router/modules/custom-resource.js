@@ -2,7 +2,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 
 const CustomResource = {
   path: "/customResources",
-  sort: 6,
+  sort: 7,
   global: true,
   component: Layout,
   name: "CustomResources",

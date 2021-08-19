@@ -2,8 +2,13 @@ import {get, post, del, put} from "@/plugins/request"
 
 const baseUrl = "/api/v1/roles"
 
-export function searchRoles(pageNum, pageSize, conditions) {
-    return post(`${baseUrl}/search?pageNum=${pageNum}&&pageSize=${pageSize}`, conditions)
+export function searchRoles(pageNum, pageSize, pattern) {
+    console.log(pattern)
+    let url = `${baseUrl}/search?pageNum=${pageNum}&&pageSize=${pageSize}`
+    if (pattern) {
+        url = `${url}&pattern=${pattern}`
+    }
+    return get(url)
 }
 
 export function listRoles() {

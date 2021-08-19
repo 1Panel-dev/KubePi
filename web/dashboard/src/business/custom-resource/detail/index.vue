@@ -91,7 +91,7 @@
                 </el-table-column>
               </complex-table>
             </el-tab-pane>
-            <el-tab-pane :label=" $t('business.custom_resource.status')">
+            <el-tab-pane :label=" $t('business.common.conditions')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
           </el-tabs>

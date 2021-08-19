@@ -1,14 +1,14 @@
-import Layout from "@/business/app-layout/horizontal-layout"
+import Layout from "@/business/app-layout/horizontal-layout";
 
 const Storage = {
   path: "/storage",
-  sort: 3,
+  sort: 5,
   parent: true,
   component: Layout,
   name: "Storage",
   meta: {
     title: "business.storage.storage",
-    icon: "iconfont iconstorage"
+    icon: "iconfont iconstorage",
   },
   children: [
     {
@@ -22,7 +22,7 @@ const Storage = {
       name: "PersistentVolumes",
       meta: {
         title: "Persistent Volume",
-      }
+      },
     },
     {
       path: "/persistentvolumes/create",
@@ -90,7 +90,7 @@ const Storage = {
       requirePermission: {
         apiGroup: "storage.k8s.io",
         resource: "storageclasses",
-        verb: "create",
+        verb: "crate",
       },
       component: () => import("@/business/storage/sc/create"),
       name: "StorageClassCreate",
@@ -142,7 +142,7 @@ const Storage = {
       name: "PersistentVolumeClaim",
       props: true,
       meta: {
-        title: "PersistentVolumeClaim",
+        title: "Persistent Volume Claim",
         activeMenu: "/persistentVolumeClaim",
       }
     }, {

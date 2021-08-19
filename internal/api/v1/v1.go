@@ -99,13 +99,7 @@ func roleHandler() iris.Handler {
 		}
 
 		roleService := v1RoleService.NewService()
-		rs, _, err := roleService.Search(0, 0, pkgV1.Conditions{
-			"Name": pkgV1.Condition{
-				Field:    "Name",
-				Operator: "in",
-				Value:    roleNames,
-			},
-		}, common.DBOptions{})
+		rs, err := roleService.GetByNames(roleNames, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

@@ -328,9 +328,9 @@ export default {
     },
     gatherFormValid() {
       this.$refs["form"].validate((valid) => {
-        if (!valid) {
+        if (valid) {
           this.isValid = false
-          this.unValidInfo = this.type + this.$t("commons.validate.params_not_complete")
+          this.unValidInfo = this.toggleCase() + this.$t("commons.validate.params_not_complete")
           return
         }
         this.isValid = true
@@ -340,12 +340,12 @@ export default {
       }
       if (!this.$refs.ko_container.checkIsValid()) {
         this.isValid = false
-        this.unValidInfo = "ko_container " + this.$t("commons.validate.params_not_complete")
+        this.unValidInfo = this.$t("business.workload.container") + this.$t("commons.validate.params_not_complete")
         return
       }
       if (!this.$refs.ko_storage.checkIsValid()) {
         this.isValid = false
-        this.unValidInfo = "ko_storage " + this.$t("commons.validate.params_not_complete")
+        this.unValidInfo = this.$t("business.workload.storage") + this.$t("commons.validate.params_not_complete")
         return
       }
     },
@@ -502,7 +502,13 @@ export default {
       this.showYaml = true
     },
     backToForm() {
-      this.showYaml = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.continue_edit"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     toggleCase() {
       switch (this.type) {

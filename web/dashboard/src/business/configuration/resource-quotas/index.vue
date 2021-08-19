@@ -14,7 +14,7 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>

@@ -4,7 +4,8 @@ import (
 	"errors"
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	costomStorm "github.com/KubeOperator/ekko/pkg/storm"
+	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -17,17 +18,35 @@ type Service interface {
 	GetByNameOrEmail(el string, options common.DBOptions) (*v1User.User, error)
 	List(options common.DBOptions) ([]v1User.User, error)
 	Delete(name string, options common.DBOptions) error
-	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error)
+	Search(num, size int, pattern string, options common.DBOptions) ([]v1User.User, int, error)
 	Update(name string, u *v1User.User, options common.DBOptions) error
+	UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error
 }
 
 func NewService() Service {
-	return &service{
-	}
+	return &service{}
 }
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (u *service) UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error {
+	cu, err := u.GetByNameOrEmail(name, options)
+	if err != nil {
+		return err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(cu.Authenticate.Password), []byte(oldPassword)); err != nil {
+		return err
+	}
+	bs, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	cu.Authenticate.Password = string(bs)
+	cu.UpdateAt = time.Now()
+	db := u.GetDB(options)
+	return db.Update(cu)
 }
 
 func (u *service) Update(name string, us *v1User.User, options common.DBOptions) error {
@@ -35,9 +54,9 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	if err != nil {
 		return err
 	}
-	if cu.BuiltIn {
-		return errors.New("can not delete this resource,because it created by system")
-	}
+	//if cu.BuiltIn {
+	//	return errors.New("can not delete this resource,because it created by system")
+	//}
 	db := u.GetDB(options)
 	us.UUID = cu.UUID
 	us.CreateAt = cu.CreateAt
@@ -45,9 +64,19 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	return db.Update(us)
 }
 
-func (u *service) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1User.User, int, error) {
+func (u *service) Search(num, size int, pattern string, options common.DBOptions) ([]v1User.User, int, error) {
 	db := u.GetDB(options)
-	query := db.Select().OrderBy("CreateAt")
+	query := func() storm.Query {
+		if pattern != "" {
+			return db.Select(q.Or(
+				costomStorm.Like("Name", pattern),
+				costomStorm.Like("NickName", pattern),
+				costomStorm.Like("Email", pattern),
+			)).OrderBy("CreateAt")
+		}
+		return db.Select().OrderBy("CreateAt")
+	}()
+
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}

@@ -8,10 +8,10 @@
         <el-tab-pane label="Pods" name="Pods">
           <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
         </el-tab-pane>
-        <el-tab-pane :label="$t('commons.table.status')" name="Conditions">
+        <el-tab-pane :label="$t('business.common.conditions')" name="Conditions">
           <ko-detail-conditions :conditions="form.status.conditions" />
         </el-tab-pane>
-        <el-tab-pane label="Events" name="Events">
+        <el-tab-pane :label="$t('business.event.event')" name="Events">
           <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
         </el-tab-pane>
       </el-tabs>

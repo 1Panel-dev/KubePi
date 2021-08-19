@@ -153,6 +153,16 @@ export default {
       if (this.isSubmitGoing) {
         return
       }
+
+      let isFormReady = false
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          isFormReady = true
+        }
+      })
+      if (!isFormReady) {
+        return
+      }
       this.loading = true
       this.isSubmitGoing = true
       const req = {

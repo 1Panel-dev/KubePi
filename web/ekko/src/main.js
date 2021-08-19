@@ -17,6 +17,8 @@ import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import "./permission"
 import directives from "./directive";
+import filters from "./filters";
+
 
 
 Vue.config.productionTip = false
@@ -34,6 +36,7 @@ library.add(fas, far, fab)
 
 Vue.use(icons);
 Vue.use(directives);
+Vue.use(filters)
 new Vue({
     el: '#app',
     i18n,

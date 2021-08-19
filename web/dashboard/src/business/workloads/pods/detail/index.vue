@@ -55,7 +55,7 @@
         </div>
       </el-card>
       <el-tabs style="margin-top:20px" type="border-card" v-model="activeName">
-        <el-tab-pane lazy label="Containers" name="Containers">
+        <el-tab-pane lazy :label="$t('business.workload.container')" name="Containers">
           <complex-table :data="form.status.containerStatuses">
             <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
               <template v-slot:default="{row}">
@@ -92,7 +92,7 @@
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane lazy :label="$t('commons.table.status')" name="Conditions">
+        <el-tab-pane lazy :label="$t('business.common.conditions')" name="Conditions">
           <complex-table :data="form.status.conditions">
             <el-table-column sortable label="Condition" prop="type" />
             <el-table-column sortable :label="$t('commons.table.status')" prop="status" />

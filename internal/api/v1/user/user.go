@@ -36,15 +36,8 @@ func (h *Handler) SearchUsers() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
-		var conditions pkgV1.Conditions
-		if ctx.GetContentLength() > 0 {
-			if err := ctx.ReadJSON(&conditions); err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-		users, total, err := h.userService.Search(pageNum, pageSize, conditions, common.DBOptions{})
+		pattern := ctx.URLParam("pattern")
+		users, total, err := h.userService.Search(pageNum, pageSize, pattern, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -281,7 +274,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/users")
-	sp.Post("/search", handler.SearchUsers())
+	sp.Get("/search", handler.SearchUsers())
 	sp.Post("/", handler.CreateUser())
 	sp.Delete("/:name", handler.DeleteUser())
 	sp.Get("/:name", handler.GetUser())

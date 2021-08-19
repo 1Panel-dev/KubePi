@@ -129,7 +129,7 @@
             <el-tab-pane label="Pods">
               <ko-detail-pods :cluster="cluster" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
             </el-tab-pane>
-            <el-tab-pane :label="$t('commons.table.status')">
+            <el-tab-pane :label="$t('business.common.conditions')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane :label="$t('business.pod.image')">

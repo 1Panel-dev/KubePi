@@ -3,16 +3,16 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'deployments',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'apps',resource:'deployments',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'deployments',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'apps',resource:'deployments',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120">
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
@@ -58,7 +58,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "update" })
+            return !checkPermissions({ apiGroup: "apps", resource: "deployments", verb: "update" })
           },
         },
         {
@@ -72,7 +72,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "update" })
+            return !checkPermissions({ apiGroup: "apps", resource: "deployments", verb: "update" })
           },
         },
         {
@@ -89,7 +89,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "deployments", verb: "delete" })
+            return !checkPermissions({ apiGroup: "apps", resource: "deployments", verb: "delete" })
           },
         },
       ],

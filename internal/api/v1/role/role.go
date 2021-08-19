@@ -31,15 +31,8 @@ func (h *Handler) SearchRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
-		var conditions pkgV1.Conditions
-		if ctx.GetContentLength() > 0 {
-			if err := ctx.ReadJSON(&conditions); err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-		groups, total, err := h.roleService.Search(pageNum, pageSize, conditions, common.DBOptions{})
+		pattern := ctx.URLParam("pattern")
+		groups, total, err := h.roleService.Search(pageNum, pageSize, pattern, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -159,7 +152,7 @@ func (h *Handler) GetRole() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/roles")
-	sp.Post("/search", handler.SearchRoles())
+	sp.Get("/search", handler.SearchRoles())
 	sp.Get("/", handler.ListRoles())
 	sp.Get("/:name", handler.GetRole())
 	sp.Post("/", handler.CreateRole())

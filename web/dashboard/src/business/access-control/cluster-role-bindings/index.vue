@@ -1,6 +1,7 @@
 <template>
   <layout-content header="ClusterRoleBindings">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
@@ -14,17 +15,38 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Role">
+      <el-table-column label="Role" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
+          <span>{{ row.roleRef.kind }}/{{ row.roleRef.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
+      <el-table-column label="Users" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'User'">{{ subject.name }}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Groups" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'Group'">{{ subject.name }}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ServiceAccounts" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'ServiceAccount'">{{ subject.name }}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp">
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>
@@ -53,17 +75,40 @@ export default {
       cluster: "",
       buttons: [
         {
-          label: this.$t("commons.button.edit_yaml"),
+          label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
               name: "ClusterRoleBindingEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterrolebindings",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterrolebindings",
+              verb: "update"
+            })
           }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          disabled: () => {
+            return !checkPermissions({
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterrolebindings",
+              verb: "update"
+            })
+          },
+          click: (row) => {
+            this.$router.push({
+              name: "ClusterRoleBindingEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true }
+            })
+          },
         },
         {
           label: this.$t("commons.button.download_yaml"),
@@ -78,8 +123,12 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterrolebindings",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterrolebindings",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -99,7 +148,7 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listClusterRoleBindings(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listClusterRoleBindings(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total

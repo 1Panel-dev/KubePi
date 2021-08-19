@@ -11,14 +11,14 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100">
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace" />
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" />
-      <el-table-column sortable :label="$t('business.pod.image')" min-width="120">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName"  show-overflow-tooltip/>
+      <el-table-column sortable :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
             <el-tag type="info" size="small">
@@ -27,7 +27,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" min-width="50" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>

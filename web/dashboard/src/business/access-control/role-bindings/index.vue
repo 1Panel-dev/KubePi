@@ -12,19 +12,40 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" show-overflow-tooltip>
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Role">
+      <el-table-column label="Role" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Users" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'User'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Groups" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'Group'">{{subject.name}}</span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ServiceAccounts" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span v-for="(subject,index) in row.subjects" v-bind:key="index">
+            <span v-if="subject.kind === 'ServiceAccount'">{{subject.name}}</span>
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -56,12 +77,27 @@ export default {
       cluster: "",
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "RoleBindingEdit",
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: {yamlShow: false}
+            })
+          },
+          disabled:()=>{
+            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          }
+        },
+        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
               name: "RoleBindingEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: {yamlShow: true}
             })
           },
           disabled:()=>{
