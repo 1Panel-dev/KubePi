@@ -1,22 +1,22 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Roles' }">
+  <layout-content :header="$t('commons.button.detail')" :back-to="{ name: 'Roles' }">
 
     <el-row>
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
         <div class="grid-content bg-purple-light">
-          <el-form ref="form" :model="role" :rules="rules" label-width="150px" label-position="left">
+          <el-form ref="form" :model="role" label-width="150px" label-position="left">
 
             <el-form-item :label="$t('commons.table.name')" prop="name" required>
-              {{role.name}}
+              {{ role.name }}
             </el-form-item>
 
             <el-form-item :label="$t('commons.table.description')" prop="description">
-              <el-input v-model="role.description"></el-input>
+              {{ role.description }}
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.permission_setting')">
+            <el-form-item :label="$t('business.user.permission')">
               <el-table
                   :data="resources"
                   v-loading="loading"
@@ -27,18 +27,10 @@
                     min-width="180">
                 </el-table-column>
                 <el-table-column>
-                  <template #header>
-                    <div>
-                      <el-checkbox :indeterminate="indeterminate" v-model="allSelect"
-                                   @change="onAllSelectChange">
-                        {{ $t('commons.button.all_select') }}
-                      </el-checkbox>
-                    </div>
-                  </template>
                   <template slot-scope="scope">
                     <div v-for="(item,index) in scope.row.verbs" :key="index">
-                      <el-checkbox
-                          v-model="item.enable">
+                      <el-checkbox disabled
+                                   v-model="item.enable">
                         {{ item.name }}
                       </el-checkbox>
                     </div>
@@ -47,8 +39,10 @@
               </el-table>
             </el-form-item>
             <el-form-item style="float: right">
-              <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-              <el-button type="primary" @click="onConfirm">{{ $t("commons.button.confirm") }}</el-button>
+              <el-button @click="onEdit()"
+                         :disabled="role.builtIn || !checkPermissions([{resource: 'roles', verb: 'update'}])">
+                {{ $t("commons.button.edit") }}
+              </el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -63,73 +57,32 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {listApiResource} from "@/api/apis"
-import {getRole, updateRole} from "@/api/roles"
-import Rule from "@/utils/rules"
+import {getRole} from "@/api/roles"
+import {checkPermissions} from "@/utils/permission";
 
 
 export default {
-  name: "RoleEdit",
+  name: "RoleDetail",
   props: ["name"],
   components: {LayoutContent},
   data() {
     return {
       loading: false,
-      isSubmitGoing: false,
-      allSelect: false,
-      indeterminate: true,
       role: {},
       resources: [],
       roles: [],
-      rules: {
-        name: [Rule.RequiredRule]
-      },
     }
   },
   methods: {
-    onConfirm() {
-      if (this.isSubmitGoing) {
-        return
-      }
-      let isFormReady = false
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          isFormReady = true
-        }
-      })
-      if (!isFormReady) {
-        return
-      }
-      this.isSubmitGoing = true
-      this.loading = true
-      const policyRules = []
-      this.resources.forEach((r) => {
-        const rule = {resource: [r.name], verbs: []}
-        r.verbs.forEach((v) => {
-          if (v.enable) {
-            rule.verbs.push(v.name)
-          }
-        })
-        policyRules.push(rule)
-        this.role.rules = policyRules
-      })
-      updateRole(this.name, this.role).then(data => {
-        this.$message.success(this.$t("commons.msg.update_success"))
-        this.$router.push({name: "RoleEdit", params: {name: data.data.name}})
-        this.loading = false
-        this.isSubmitGoing = false
-        this.$router.push({name: "Roles"})
-      })
+
+    checkPermissions(r) {
+      return checkPermissions(r)
+    },
+    onEdit() {
+      this.$router.push({name: "RoleEdit", params: {name: this.name}})
     },
     onCancel() {
       this.$router.push({name: "Roles"})
-    },
-    onAllSelectChange() {
-      this.indeterminate = false
-      this.resources.forEach((r) => {
-        r.verbs.forEach(v => {
-          v.enable = this.allSelect
-        })
-      })
     },
     onCreated() {
       const sortFunc = function (a, b) {
@@ -141,7 +94,6 @@ export default {
         }
         return 0
       }
-
       this.loading = true
       listApiResource().then(data => {
         for (const key in data.data) {

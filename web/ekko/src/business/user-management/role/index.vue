@@ -13,7 +13,9 @@
       </template>
       <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
         <template v-slot:default="{row}">
-          {{ row.name }}
+          <el-link @click="onDetail(row.name)">
+            {{ row.name }}
+          </el-link>
         </template>
       </el-table-column>
 
@@ -91,6 +93,10 @@ export default {
     onCreate() {
       this.$router.push({name: "RoleCreate"})
 
+    },
+
+    onDetail(name) {
+      this.$router.push({name: "RoleDetail", params: {name: name}})
     },
     onEdit(name) {
       this.$router.push({name: "RoleEdit", params: {name: name}})
