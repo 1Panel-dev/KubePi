@@ -109,7 +109,8 @@ const message = {
       pack_up: "Pack Up",
       system: "System Information",
       config: "Configuration Information",
-      resource: "Resource Information"
+      resource: "Resource Information",
+      conditions: "Conditions"
     },
     dashboard: {
       dashboard: "Dashboard"
@@ -204,7 +205,7 @@ const message = {
       public_port: "Public Port",
       listening_port: "Listening Port",
       host_ip: "Host IP",
-			
+
 			command: "Command",
       entry_point: "Entrypoint",
       arguments: "Arguments",
@@ -344,7 +345,7 @@ const message = {
       mount_point: "Mount Point",
       sub_path_in_volume: "Sub Path In Volume",
       read_only: "Read Only",
-      
+
       volume_claim_template: "Volume Claim Templates",
       pv_name: "Persistent Volume Name",
       new_pv: "Use a storage class to provision a new persistent volume",

@@ -110,7 +110,8 @@ const message = {
       pack_up: "收起",
       system: "系统信息",
       config: "配置信息",
-      resource: "资源信息"
+      resource: "资源信息",
+      conditions: "状态"
     },
     dashboard: {
       dashboard: "概览"
