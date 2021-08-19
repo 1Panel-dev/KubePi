@@ -15,12 +15,12 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="50px">
       </el-table-column>
       <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">
         <template v-slot:default="{row}">
@@ -29,7 +29,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix min-width="50px">
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>

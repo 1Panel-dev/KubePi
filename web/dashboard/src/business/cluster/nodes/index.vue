@@ -2,26 +2,26 @@
   <layout-content header="Nodes">
     <complex-table :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search()"
                    :search-config="searchConfig">
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix max-width="50px">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix max-width="30px">
         <template v-slot:default="{row}">
           <el-link @click="onDetail(row)"> {{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Internal IP" prop="metadata.name" fix max-width="50px">
+      <el-table-column label="Internal IP" prop="metadata.name" max-width="30px">
         <template v-slot:default="{row}">
           <div v-for="(address,index) in row.status.addresses" v-bind:key="index">
             <span v-if="address.type === 'InternalIP'">{{ address.address }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.node.ready')" prop="status.conditions" fix max-width="50px">
+      <el-table-column :label="$t('business.node.ready')" prop="status.conditions" max-width="30px">
         <template v-slot:default="{row}">
           <div v-for="(condition,index) in row.status.conditions" v-bind:key="index">
             <span v-if="condition.type === 'Ready'">{{ condition.status }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.node.role')" prop="metadata.labels" fix max-width="50px">
+      <el-table-column :label="$t('business.node.role')" prop="metadata.labels" min-width="180px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(item,name,index) in row.metadata.labels" :key="index" style="display:inline-block">
             <span v-if="item"></span>

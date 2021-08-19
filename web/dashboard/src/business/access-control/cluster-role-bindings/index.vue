@@ -15,38 +15,38 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Role">
+      <el-table-column label="Role" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span>{{ row.roleRef.kind }}/{{ row.roleRef.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Users">
+      <el-table-column label="Users" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'User'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="Groups">
+      <el-table-column label="Groups" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'Group'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="ServiceAccounts">
+      <el-table-column label="ServiceAccounts" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'ServiceAccount'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" max-length="100px">
+      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp">
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>
