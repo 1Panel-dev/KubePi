@@ -3,7 +3,7 @@ import Layout from "@/business/app-layout/horizontal-layout";
 const Workloads = {
   path: "/workloads",
   parent: true,
-  sort: 4,
+  sort: 2,
   component: Layout,
   name: "Workloads",
   meta: {
