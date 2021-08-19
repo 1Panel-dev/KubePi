@@ -2,7 +2,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 
 const Network = {
   path: "/network",
-  sort: 3,
+  sort: 4,
   parent: true,
   component: Layout,
   name: "Network",
@@ -68,6 +68,65 @@ const Network = {
         activeMenu: "/services"
       }
     },
+
+    {
+      path: "/endpoints",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "list",
+      },
+      component: () => import("@/business/network/endpoints"),
+      name: "Endpoints",
+      meta: {
+        title: "Endpoints",
+      }
+    },
+    {
+      path: "/endpoints/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "update",
+      },
+      component: () => import("@/business/network/endpoints/detail"),
+      name: "EndpointDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+    {
+      path: "/endpoints/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "create",
+      },
+      component: () => import("@/business/network/endpoints/create"),
+      name: "EndpointCreate",
+      hidden: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+    {
+      path: "/endpoints/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "",
+        resource: "endpoints",
+        verb: "update",
+      },
+      component: () => import("@/business/network/endpoints/edit"),
+      name: "EndpointEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/endpoints"
+      }
+    },
+
     {
       path: "/ingresses",
       requirePermission: {
@@ -126,63 +185,7 @@ const Network = {
         activeMenu: "/ingresses"
       }
     },
-    {
-      path: "/endpoints",
-      requirePermission: {
-        apiGroup: "",
-        resource: "endpoints",
-        verb: "list",
-      },
-      component: () => import("@/business/network/endpoints"),
-      name: "Endpoints",
-      meta: {
-        title: "Endpoints",
-      }
-    },
-    {
-      path: "/endpoints/:namespace/:name/detail",
-      requirePermission: {
-        apiGroup: "",
-        resource: "endpoints",
-        verb: "update",
-      },
-      component: () => import("@/business/network/endpoints/detail"),
-      name: "EndpointDetail",
-      hidden: true,
-      props: true,
-      meta: {
-        activeMenu: "/endpoints"
-      }
-    },
-    {
-      path: "/endpoints/create",
-      requirePermission: {
-        apiGroup: "",
-        resource: "endpoints",
-        verb: "create",
-      },
-      component: () => import("@/business/network/endpoints/create"),
-      name: "EndpointCreate",
-      hidden: true,
-      meta: {
-        activeMenu: "/endpoints"
-      }
-    },
-    {
-      path: "/endpoints/:namespace/:name/edit",
-      requirePermission: {
-        apiGroup: "",
-        resource: "endpoints",
-        verb: "update",
-      },
-      component: () => import("@/business/network/endpoints/edit"),
-      name: "EndpointEdit",
-      hidden: true,
-      props: true,
-      meta: {
-        activeMenu: "/endpoints"
-      }
-    },
+    
     {
       path: "/networkpolicies",
       requirePermission: {

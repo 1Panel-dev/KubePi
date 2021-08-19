@@ -1,16 +1,63 @@
-import Layout from "@/business/app-layout/horizontal-layout"
+import Layout from "@/business/app-layout/horizontal-layout";
 
 const Storage = {
   path: "/storage",
-  sort: 3,
+  sort: 5,
   parent: true,
   component: Layout,
   name: "Storage",
   meta: {
     title: "business.storage.storage",
-    icon: "iconfont iconstorage"
+    icon: "iconfont iconstorage",
   },
   children: [
+    {
+      path: "/persistentVolumeClaim",
+      requirePermission: {
+        apiGroup: "",
+        resource: "persistentvolumeclaims",
+        verb: "list",
+      },
+      component: () => import("@/business/storage/pvc/"),
+      name: "PersistentVolumeClaim",
+      props: true,
+      meta: {
+        title: "Persistent Volume Claim",
+        activeMenu: "/persistentVolumeClaim",
+      },
+    },
+    {
+      path: "/persistentVolumeClaim/create",
+      requirePermission: {
+        apiGroup: "",
+        resource: "persistentvolumeclaims",
+        verb: "create",
+      },
+      component: () => import("@/business/storage/pvc/create"),
+      name: "PersistentVolumeClaimCreate",
+      hidden: true,
+      meta: {
+        title: "PersistentVolumeClaim Create",
+        activeMenu: "/persistentVolumeClaim",
+      },
+    },
+    {
+      path: "/:namespace/persistentVolumeClaim/detail/:name",
+      requirePermission: {
+        apiGroup: "",
+        resource: "persistentvolumeclaims",
+        verb: "get",
+      },
+      component: () => import("@/business/storage/pvc/detail"),
+      name: "PersistentVolumeClaimDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        title: "PersistentVolumeClaim Detail",
+        activeMenu: "/persistentVolumeClaim",
+      },
+    },
+    
     {
       path: "/persistentvolumes",
       requirePermission: {
@@ -22,7 +69,7 @@ const Storage = {
       name: "PersistentVolumes",
       meta: {
         title: "Persistent Volume",
-      }
+      },
     },
     {
       path: "/persistentvolumes/create",
@@ -37,7 +84,7 @@ const Storage = {
       meta: {
         title: "Persistent Volume Create",
         activeMenu: "/persistentvolumes",
-      }
+      },
     },
     {
       path: "/persistentvolumes/edit/:name",
@@ -52,8 +99,8 @@ const Storage = {
       hidden: true,
       meta: {
         title: "Persistent Volume Edit",
-        activeMenu: "/persistentvolumes"
-      }
+        activeMenu: "/persistentvolumes",
+      },
     },
     {
       path: "/persistentvolumes/detail/:name",
@@ -68,9 +115,10 @@ const Storage = {
       hidden: true,
       meta: {
         title: "Persistent Volume Detail",
-        activeMenu: "/persistentvolumes"
-      }
+        activeMenu: "/persistentvolumes",
+      },
     },
+    
     {
       path: "/storageclasses",
       requirePermission: {
@@ -83,7 +131,7 @@ const Storage = {
       meta: {
         title: "Storage Classes",
         activeMenu: "/storageclasses",
-      }
+      },
     },
     {
       path: "/storageclasses/create",
@@ -98,9 +146,8 @@ const Storage = {
       meta: {
         title: "Storage Classes Create",
         activeMenu: "/storageclasses",
-      }
+      },
     },
-
     {
       path: "/storageclasses/detail/:name",
       requirePermission: {
@@ -115,52 +162,9 @@ const Storage = {
       meta: {
         title: "Storage Classes Detail",
         activeMenu: "/storageclasses",
-      }
-    }, {
-      path: "/persistentVolumeClaim",
-      requirePermission: {
-        apiGroup: "",
-        resource: "persistentvolumeclaims",
-        verb: "list",
       },
-      component: () => import("@/business/storage/pvc/"),
-      name: "PersistentVolumeClaim",
-      props: true,
-      meta: {
-        title: "PersistentVolumeClaim",
-        activeMenu: "/persistentVolumeClaim",
-      }
-    }, {
-      path: "/persistentVolumeClaim/create",
-      requirePermission: {
-        apiGroup: "",
-        resource: "persistentvolumeclaims",
-        verb: "create",
-      },
-      component: () => import("@/business/storage/pvc/create"),
-      name: "PersistentVolumeClaimCreate",
-      hidden: true,
-      meta: {
-        title: "PersistentVolumeClaim Create",
-        activeMenu: "/persistentVolumeClaim",
-      }
-    }, {
-      path: "/:namespace/persistentVolumeClaim/detail/:name",
-      requirePermission: {
-        apiGroup: "",
-        resource: "persistentvolumeclaims",
-        verb: "get",
-      },
-      component: () => import("@/business/storage/pvc/detail"),
-      name: "PersistentVolumeClaimDetail",
-      hidden: true,
-      props: true,
-      meta: {
-        title: "PersistentVolumeClaim Detail",
-        activeMenu: "/persistentVolumeClaim",
-      }
     },
-  ]
-}
+  ],
+};
 
-export default Storage
+export default Storage;

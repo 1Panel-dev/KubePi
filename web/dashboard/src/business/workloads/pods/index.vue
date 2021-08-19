@@ -9,7 +9,7 @@
         </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="80">
+      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>

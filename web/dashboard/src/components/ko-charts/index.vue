@@ -45,7 +45,7 @@ export default {
                   if (p.data.value > 0) {
                     return ['#158fd2']
                   }else {
-                    return ['#2e3c3e']
+                    return ['#CCCCCC']
                   }
                 }
               }

@@ -30,6 +30,13 @@ export const mixin = {
             query: { yamlShow: false }
           })
           break
+        case "PersistentVolumeClaim":
+          this.$router.push({
+            name: "PersistentVolumeClaimDetail",
+            params: { namespace: namespace, name: name },
+            query: { yamlShow: false }
+          })
+          break
         default:
           break
       }

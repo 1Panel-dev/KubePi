@@ -3,7 +3,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 const Configuration = {
   path: "/configuration",
   parent: true,
-  sort: 2,
+  sort: 3,
   component: Layout,
   name: "Configuration",
   meta: {
@@ -21,7 +21,7 @@ const Configuration = {
       component: () => import("@/business/configuration/config-maps"),
       name: "ConfigMaps",
       meta: {
-        title: "Config Maps",
+        title: "ConfigMaps",
       }
     },
     {
@@ -69,6 +69,7 @@ const Configuration = {
         activeMenu: "/configmaps"
       }
     },
+
     {
       path: "/secrets",
       requirePermission: {
@@ -127,6 +128,7 @@ const Configuration = {
         activeMenu: "/secrets"
       }
     },
+
     {
       path: "/resourcequotas",
       requirePermission: {
@@ -185,6 +187,7 @@ const Configuration = {
         activeMenu: "/resourcequotas"
       }
     },
+
     {
       path: "/limitranges",
       requirePermission: {
@@ -242,6 +245,7 @@ const Configuration = {
         activeMenu: "/limitranges"
       }
     },
+    
     {
       path: "/horizontalpodautoscalers",
       requirePermission: {
