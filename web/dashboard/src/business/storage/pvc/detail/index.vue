@@ -47,12 +47,6 @@
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
       </div>
-      <!--      <div>-->
-      <!--        <div style="float: right;margin-top: 10px">-->
-      <!--          <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>-->
-      <!--          <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
   </layout-content>
 </template>
