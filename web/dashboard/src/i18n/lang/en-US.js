@@ -32,7 +32,6 @@ const message = {
       back_detail: "Back to Details",
       submit: "Submit",
       show_diff: "Diff Contrast",
-      continue_edit: "Continue editing",
       terminal: "Terminal",
       logs: "Log",
     },
@@ -81,6 +80,7 @@ const message = {
       delete: "This operation cannot be undone, do you want to continue?",
       add_init_container: "The current initContainers is empty, do you want to add it now?",
       back_form: "Return form editing does not preserve all changes made to YAML",
+      open_yaml: ", still want to open YAML edit?",
     },
     login: {
       username: "Username",
