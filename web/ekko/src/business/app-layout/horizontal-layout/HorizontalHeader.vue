@@ -5,7 +5,7 @@
     </div>
     <div class="header-right">
       <language-switch></language-switch>
-      <user-setting></user-setting>
+      <user-setting style="margin-left: 20px"></user-setting>
     </div>
   </div>
 </template>
