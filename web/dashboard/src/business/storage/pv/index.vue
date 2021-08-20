@@ -33,9 +33,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.storage.accessModes')" prop="metadata.labels">
         <template v-slot:default="{row}">
-          <div v-for="(name,index) in row.spec.accessModes " :key="index" style="display:inline-block">
-            <el-tag>{{ name }}</el-tag>
-          </div>
+          <el-tag  v-for="(name,index) in row.spec.accessModes " :key="index" type="info" size="mini">{{ name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.storage.capacity')" prop="metadata.labels">

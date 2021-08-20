@@ -277,7 +277,7 @@ export default {
         }
       }
     }
-    if (this.nodeSchedulingType !== "" && typeof this.nodeSchedulingType !== "undefined") {
+    if (this.nodeSchedulingType) {
       this.scheduling_type = this.nodeSchedulingType
       this.enableSchedulingList = false
       this.enablePrioritySelect = false

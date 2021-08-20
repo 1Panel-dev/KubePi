@@ -55,7 +55,7 @@
                     </el-col>
                   </el-row>
                 </ko-card>
-                <ko-node-scheduling ref="ko_node_scheduling" :nodeSchedulingType="'matching_rules'" :nodeList="[]"
+                <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingType="'matching_rules'" :nodeList="[]"
                                     :nodeSchedulingParentObj="form.spec"/>
               </div>
             </el-tab-pane>
@@ -154,6 +154,7 @@ export default {
         nextToken: "",
       },
       conditions: "",
+      readOnly: false,
       form: {
         apiVersion: "v1",
         kind: "PersistentVolume",
@@ -176,7 +177,6 @@ export default {
           capacity: {
             storage: "1Gi"
           },
-          storageClassName: "None",
           nodeAffinity: {
             required: {
               nodeSelectorTerms: [],
@@ -238,7 +238,13 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm() {
-      this.showYaml = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.continue_edit"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     onSubmit() {
       let data = {}
@@ -246,6 +252,9 @@ export default {
         data = this.$refs.yaml_editor.getValue()
       } else {
         data = this.transformYaml()
+      }
+      if (data.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
+        delete data.spec.nodeAffinity
       }
       this.loading = true
       createPv(this.cluster, data).then(() => {
@@ -289,9 +298,9 @@ export default {
       }
 
       this.$refs.ko_node_scheduling.transformation(this.form.spec)
-      if (this.form.spec.nodeAffinity.required.nodeSelectorTerms.length === 0) {
-        delete this.form.spec.nodeAffinity.required.nodeSelectorTerms
-      }
+      // if (this.form.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
+      //   delete this.form.spec.nodeAffinity.required.nodeSelectorTerms
+      // }
       formData = JSON.parse(JSON.stringify(this.form))
       return formData
     },
