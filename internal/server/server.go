@@ -136,17 +136,34 @@ func (e *EkkoSerer) setUpErrHandler() {
 				ctx.Values().Set("message", "the server could not find the requested resource")
 			}
 		}
-		message := ctx.Values().GetString("message")
+		message := ctx.Values().Get("message")
 		lang := ctx.Values().GetString("language")
-		m, err := i18n.Translate(lang, message)
+		var (
+			translateMessage string
+			err              error
+			originMessage    string
+		)
+
+		switch message.(type) {
+		case string:
+			originMessage = message.(string)
+			translateMessage, err = i18n.Translate(lang, message.(string))
+		case []string:
+			ms := message.([]string)
+			originMessage = strings.Join(ms, ",")
+			if len(ms) > 0 {
+				translateMessage, err = i18n.Translate(lang, ms[0], ms[1:])
+			}
+		}
+		msg := translateMessage
 		if err != nil {
 			e.Logger().Error(err)
-			m = message
+			msg = originMessage
 		}
 		er := iris.Map{
 			"success": false,
 			"code":    ctx.GetStatusCode(),
-			"message": m,
+			"message": msg,
 		}
 		_, _ = ctx.JSON(er)
 	})
