@@ -328,7 +328,7 @@ export default {
     },
     gatherFormValid() {
       this.$refs["form"].validate((valid) => {
-        if (valid) {
+        if (!valid) {
           this.isValid = false
           this.unValidInfo = this.toggleCase() + this.$t("commons.validate.params_not_complete")
           return
@@ -385,6 +385,7 @@ export default {
       this.$refs.ko_networking.transformation(tempPodSpec)
       this.$refs.ko_pod_scheduling.transformation(tempPodSpec)
       this.$refs.ko_node_scheduling.transformation(tempPodSpec)
+      this.$refs.ko_toleration.transformation(tempPodSpec)
       switch (this.type) {
         case "deployments":
           tempForm.apiVersion = "apps/v1"
@@ -504,6 +505,9 @@ export default {
           this.yaml = this.gatherFormData()
           this.showYaml = true
         })
+      } else {
+        this.yaml = this.gatherFormData()
+        this.showYaml = true
       }
     },
     backToForm() {

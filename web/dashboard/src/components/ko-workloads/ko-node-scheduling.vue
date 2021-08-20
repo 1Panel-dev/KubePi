@@ -5,15 +5,14 @@
         <el-row>
           <el-col :span="24">
             <el-form-item :label="$t('business.workload.schedule_type')" v-if="enableSchedulingList">
-              <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type"
-                            :radios="scheduling_type_list"/>
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="scheduling_type === 'specific_node'">
           <el-col :span="24">
             <el-form-item :label="$t('business.workload.node_name')">
-              <ko-form-item itemType="select2" v-model="nodeName" :selections="node_list"/>
+              <ko-form-item itemType="select2" v-model="nodeName" :selections="node_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -28,12 +27,12 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item :label="$t('business.workload.priority')" v-if="enablePrioritySelect">
-                    <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list"/>
+                    <ko-form-item itemType="radio" v-model="item.priority" :radios="priority_list" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="12" v-if="item.weight && item.priority === 'Preferred'">
                   <el-form-item :label="$t('business.workload.weight')">
-                    <ko-form-item itemType="number" v-model="item.weight"/>
+                    <ko-form-item itemType="number" v-model="item.weight" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -53,15 +52,14 @@
                 </tr>
                 <tr v-for="(row, index) in item.rules" v-bind:key="index">
                   <td>
-                    <ko-form-item itemType="input" v-model="row.key"/>
+                    <ko-form-item itemType="input" v-model="row.key" />
                   </td>
                   <td>
-                    <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list"/>
+                    <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
                   </td>
                   <td>
-                    <ko-form-item v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled
-                                  itemType="input" value="N/A"/>
-                    <ko-form-item v-else itemType="input" v-model="row.value"/>
+                    <ko-form-item v-if="row.operator === 'Exists' || row.operator === 'DoesNotExist'" disabled itemType="input" value="N/A" />
+                    <ko-form-item v-else itemType="input" v-model="row.value" />
                   </td>
                   <td>
                     <el-button type="text" style="font-size: 10px" @click="handleMatchDelete(item, index)">
@@ -94,7 +92,7 @@ import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoNodeScheduling",
-  components: {KoFormItem, KoCard},
+  components: { KoFormItem, KoCard },
   props: {
     nodeSchedulingParentObj: Object,
     nodeList: Array,
@@ -116,21 +114,21 @@ export default {
   data() {
     return {
       scheduling_type_list: [
-        {label: this.$t("business.workload.any_node"), value: "any_node"},
-        {label: this.$t("business.workload.specific_node"), value: "specific_node"},
-        {label: this.$t("business.workload.match_rules"), value: "matching_rules"},
+        { label: this.$t("business.workload.any_node"), value: "any_node" },
+        { label: this.$t("business.workload.specific_node"), value: "specific_node" },
+        { label: this.$t("business.workload.match_rules"), value: "matching_rules" },
       ],
       priority_list: [
-        {label: this.$t("business.workload.preferred"), value: "Preferred"},
-        {label: this.$t("business.workload.required"), value: "Required"},
+        { label: this.$t("business.workload.preferred"), value: "Preferred" },
+        { label: this.$t("business.workload.required"), value: "Required" },
       ],
       operator_list: [
-        {label: "<", value: "Lt"},
-        {label: ">", value: "Gt"},
-        {label: "Exists", value: "Exists"},
-        {label: "Not Exist", value: "DoesNotExist"},
-        {label: "=", value: "In"},
-        {label: "!=", value: "NotIn"},
+        { label: "<", value: "Lt" },
+        { label: ">", value: "Gt" },
+        { label: "Exists", value: "Exists" },
+        { label: "Not Exist", value: "DoesNotExist" },
+        { label: "=", value: "In" },
+        { label: "!=", value: "NotIn" },
       ],
       scheduling_type: "any_node",
       nodeName: "",
@@ -138,7 +136,7 @@ export default {
       nodeSchedulings: [],
       enableSchedulingList: true,
       enablePrioritySelect: true,
-      priority: ""
+      priority: "Preferred",
     }
   },
   methods: {
@@ -194,40 +192,43 @@ export default {
         if (this.nodeSchedulings.length !== 0) {
           for (const nS of this.nodeSchedulings) {
             const matchs = this.getMatchExpress(nS)
-            if (matchs.length !== 0) {
-              let itemAdd = {}
-              switch (nS.priority) {
-                case "Preferred":
-                  if (!parentFrom.nodeAffinity) {
-                    parentFrom.nodeAffinity = {}
-                  }
-                  parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-                  itemAdd.weight = 1
-                  itemAdd.preference = {}
+            let itemAdd = {}
+            switch (nS.priority) {
+              case "Preferred":
+                if (!parentFrom.nodeAffinity) {
+                  parentFrom.nodeAffinity = {}
+                }
+                parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+                itemAdd.weight = 1
+                itemAdd.preference = {}
+                if (matchs.length !== 0) {
                   itemAdd.preference.matchExpressions = matchs
-                  parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
-                  break
-                case "Required":
-                  if (!parentFrom.nodeAffinity) {
-                    parentFrom.nodeAffinity = {}
-                  }
-                  if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                    parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
-                  }
-                  parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                }
+                parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+                break
+              case "Required":
+                if (!parentFrom.nodeAffinity) {
+                  parentFrom.nodeAffinity = {}
+                }
+                if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                  parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
+                }
+                parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+                if (matchs.length !== 0) {
                   itemAdd.matchExpressions = matchs
-                  parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
-                  break
-                case "None":
-                  if (!parentFrom.nodeAffinity) {
-                    parentFrom.nodeAffinity = {}
-                  }
-                  parentFrom.nodeAffinity.required.nodeSelectorTerms = []
-
+                }
+                parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
+                break
+              case "None":
+                if (!parentFrom.nodeAffinity) {
+                  parentFrom.nodeAffinity = {}
+                }
+                parentFrom.nodeAffinity.required.nodeSelectorTerms = []
+                if (matchs.length !== 0) {
                   itemAdd.matchExpressions = matchs
-                  parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
-                  break
-              }
+                }
+                parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
+                break
             }
           }
         }
@@ -244,36 +245,44 @@ export default {
             const schedulings = this.nodeSchedulingParentObj.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
             for (const s of schedulings) {
               let rules = []
-              for (const express of s.matchExpressions) {
-                rules.push({key: express.key, operator: express.operator, value: express.values.join(",")})
+              if (s.matchExpressions) {
+                for (const express of s.matchExpressions) {
+                  rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                }
               }
-              this.nodeSchedulings.push({type: "Node", priority: "Required", rules: rules})
+              this.nodeSchedulings.push({ type: "Node", priority: "Required", rules: rules })
             }
-            this.priority = 'Required'
+            this.priority = "Required"
           }
         }
         if (this.nodeSchedulingParentObj.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
           const schedulings = this.nodeSchedulingParentObj.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
           for (const s of schedulings) {
             let rules = []
-            for (const express of s.preference.matchExpressions) {
-              rules.push({key: express.key, operator: express.operator, value: express.values.join(",")})
+            if (s.preference) {
+              if (s.preference.matchExpressions) {
+                for (const express of s.preference.matchExpressions) {
+                  rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                }
+              }
             }
             const weight = s.weight ? s.weight : 1
-            this.nodeSchedulings.push({type: "Node", priority: "Preferred", weight: weight, rules: rules})
+            this.nodeSchedulings.push({ type: "Node", priority: "Preferred", weight: weight, rules: rules })
           }
-          this.priority = 'Preferred'
+          this.priority = "Preferred"
         }
         if (this.nodeSchedulingParentObj.nodeAffinity.required) {
           const scheduling = this.nodeSchedulingParentObj.nodeAffinity.required.nodeSelectorTerms
           for (const s of scheduling) {
             let rules = []
-            for (const express of s.matchExpressions) {
-              rules.push({key: express.key, operator: express.operator, value: express.values.join(",")})
+            if (s.matchExpressions) {
+              for (const express of s.matchExpressions) {
+                rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+              }
             }
-            this.nodeSchedulings.push({type: "Node", priority: "None", rules: rules})
+            this.nodeSchedulings.push({ type: "Node", priority: "None", rules: rules })
           }
-          this.priority = 'None'
+          this.priority = "None"
         }
       }
     }
