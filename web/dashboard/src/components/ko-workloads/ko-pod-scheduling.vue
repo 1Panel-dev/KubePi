@@ -204,67 +204,76 @@ export default {
     },
 
     transformation(parentFrom) {
+      parentFrom.affinity = {}
       if (this.podSchedulings.length !== 0) {
         for (const pS of this.podSchedulings) {
-          const matchs = this.getMatchExpress(pS)
-          if (matchs.length !== 0) {
-            let itemAdd = {}
-            if (pS.namespaceOperation === "selectNamespace" && pS.namespaces.length !== 0) {
-              itemAdd.namespaces = pS.namespaces
-            }
+          let itemAdd = {}
+          if (pS.namespaceOperation === "selectNamespace" && pS.namespaces.length !== 0) {
+            itemAdd.namespaces = pS.namespaces
+          }
+          if (pS.topologyKey) {
             itemAdd.topologyKey = pS.topologyKey
-            switch (pS.type + "+" + pS.priority) {
-              case "Affinity+Required":
-                if (!parentFrom.podAffinity) {
-                  parentFrom.podAffinity = {}
-                }
-                if (!parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                  parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-                }
-                itemAdd.labelSelector = {}
+          }
+          const matchs = this.getMatchExpress(pS)
+          switch (pS.type + "+" + pS.priority) {
+            case "Affinity+Required":
+              if (!parentFrom.affinity.podAffinity) {
+                parentFrom.affinity.podAffinity = {}
+              }
+              if (!parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
+              }
+              itemAdd.labelSelector = {}
+              if (matchs.length !== 0) {
                 itemAdd.labelSelector.matchExpressions = matchs
-                parentFrom.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
-                break
-              case "Affinity+Preferred":
-                if (!parentFrom.podAffinity) {
-                  parentFrom.podAffinity = {}
-                }
-                if (!parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-                  parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-                }
-                itemAdd.podAffinityTerm = {}
-                itemAdd.weight = 1
-                itemAdd.podAffinityTerm.labelSelector = {}
+              }
+              parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+              break
+            case "Affinity+Preferred":
+              if (!parentFrom.affinity.podAffinity) {
+                parentFrom.affinity.podAffinity = {}
+              }
+              if (!parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+                parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+              }
+              itemAdd.podAffinityTerm = {}
+              itemAdd.weight = 1
+              itemAdd.podAffinityTerm.labelSelector = {}
+              if (matchs.length !== 0) {
                 itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
-                parentFrom.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
-                break
-              case "Anti-Affinity+Required":
-                if (!parentFrom.podAntiAffinity) {
-                  parentFrom.podAntiAffinity = {}
-                }
-                if (!parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                  parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-                }
-                itemAdd._anti = true
-                itemAdd.labelSelector = {}
+              }
+              parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+              break
+            case "Anti-Affinity+Required":
+              if (!parentFrom.affinity.podAntiAffinity) {
+                parentFrom.affinity.podAntiAffinity = {}
+              }
+              if (!parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
+              }
+              itemAdd._anti = true
+              itemAdd.labelSelector = {}
+              if (matchs.length !== 0) {
                 itemAdd.labelSelector.matchExpressions = matchs
-                parentFrom.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
-                break
-              case "Anti-Affinity+Preferred":
-                if (!parentFrom.podAntiAffinity) {
-                  parentFrom.podAntiAffinity = {}
-                }
-                if (!parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-                  parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-                }
-                itemAdd._anti = true
-                itemAdd.podAffinityTerm = {}
-                itemAdd.weight = 1
-                itemAdd.podAffinityTerm.labelSelector = {}
+              }
+              parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+              break
+            case "Anti-Affinity+Preferred":
+              if (!parentFrom.affinity.podAntiAffinity) {
+                parentFrom.affinity.podAntiAffinity = {}
+              }
+              if (!parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+                parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+              }
+              itemAdd._anti = true
+              itemAdd.podAffinityTerm = {}
+              itemAdd.weight = 1
+              itemAdd.podAffinityTerm.labelSelector = {}
+              if (matchs.length !== 0) {
                 itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
-                parentFrom.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
-                break
-            }
+              }
+              parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+              break
           }
         }
       }

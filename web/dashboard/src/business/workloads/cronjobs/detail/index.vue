@@ -10,10 +10,10 @@
             <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
               <template v-slot:default="{row}">
                 <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
-                  Succeeded
+                  {{ $t('commons.status.Succeeded') }}
                 </el-button>
                 <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
-                  Failed
+                  {{ $t('commons.status.Succeeded') }}
                 </el-button>
               </template>
             </el-table-column>

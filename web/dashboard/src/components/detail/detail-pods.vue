@@ -4,10 +4,10 @@
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success" size="mini" plain round>
-            {{ $t('commons.statu.' + row.status.phase) }}
+            {{ $t('commons.status.' + row.status.phase) }}
           </el-button>
           <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning" size="mini" plain round>
-            {{ $t('commons.statu.' + row.status.phase) }}
+            {{ $t('commons.status.' + row.status.phase) }}
           </el-button>
         </template>
       </el-table-column>

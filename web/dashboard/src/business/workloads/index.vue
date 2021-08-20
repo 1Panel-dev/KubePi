@@ -434,6 +434,7 @@ export default {
       if (!this.isJob()) {
         tempForm.spec.selector = { matchLabels: this.podMetadata.labels }
       }
+      this.podSpec = tempPodSpec
       let returnForm = JSON.parse(JSON.stringify(tempForm))
       this.form = returnForm
       return returnForm
