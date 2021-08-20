@@ -70,7 +70,7 @@
             </table>
             <el-row style="margin-top: 10px">
               <el-col :span=24>
-                <el-form-item :label="$t('business.workload.topology_key')">
+                <el-form-item :label="$t('business.workload.topology_key')" required>
                   <ko-form-item itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
                 </el-form-item>
               </el-col>
@@ -202,7 +202,15 @@ export default {
       }
       return matchs
     },
-
+    checkIsValid() {
+      let isValid = true
+      for(const po of this.podSchedulings) {
+        if (po.topologyKey === "") {
+          isValid = false
+        }
+      }
+      return isValid
+    },
     transformation(parentFrom) {
       parentFrom.affinity = {}
       if (this.podSchedulings.length !== 0) {

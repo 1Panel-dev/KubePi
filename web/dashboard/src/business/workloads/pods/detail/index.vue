@@ -11,23 +11,23 @@
           </tr>
           <tr>
             <td>{{ $t("commons.table.name") }}</td>
-            <td colspan="2">{{ form.metadata.name }}</td>
+            <td colspan="4">{{ form.metadata.name }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.namespace.namespace") }}</td>
-            <td>{{ form.metadata.namespace }}</td>
+            <td colspan="4">{{ form.metadata.namespace }}</td>
           </tr>
           <tr>
             <td>Pod IP</td>
-            <td>{{ form.status.podIP }}</td>
+            <td colspan="4">{{ form.status.podIP }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.cluster.nodes") }}</td>
-            <td>{{ form.spec.nodeName }}</td>
+            <td colspan="4">{{ form.spec.nodeName }}</td>
           </tr>
           <tr>
             <td>{{ $t("commons.table.created_time") }}</td>
-            <td>{{ form.metadata.creationTimestamp | age }}</td>
+            <td colspan="4">{{ form.metadata.creationTimestamp | age }}</td>
           </tr>
           <tr>
             <td>{{ $t("business.common.label") }}</td>
@@ -57,13 +57,13 @@
       <el-tabs style="margin-top:20px" type="border-card" v-model="activeName">
         <el-tab-pane lazy :label="$t('business.workload.container')" name="Containers">
           <complex-table :data="form.status.containerStatuses">
-            <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
+            <el-table-column sortable :label="$t('commons.table.status')" min-width="35">
               <template v-slot:default="{row}">
                 <el-button v-if="row.state.running" type="success" size="mini" plain round>
-                  Running
+                  {{ $t('commons.status.Running') }}
                 </el-button>
                 <el-button v-if="!row.state.running" type="warning" size="mini" plain round>
-                  Failed
+                  {{ $t('commons.status.Failed') }}
                 </el-button>
               </template>
             </el-table-column>
@@ -73,8 +73,8 @@
                 <i class="el-icon-close" v-if="!row.ready" />
               </template>
             </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50" />
-            <el-table-column sortable :label="$t('business.pod.image')" min-width="170">
+            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50" show-overflow-tooltip />
+            <el-table-column sortable :label="$t('business.pod.image')" min-width="170" show-overflow-tooltip>
               <template v-slot:default="{row}">
                 <div class="myTag">
                   <el-tag type="info" size="small">
@@ -92,22 +92,8 @@
             </el-table-column>
           </complex-table>
         </el-tab-pane>
-        <el-tab-pane lazy :label="$t('business.common.conditions')" name="Conditions">
-          <complex-table :data="form.status.conditions">
-            <el-table-column sortable label="Condition" prop="type" />
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status" />
-            <el-table-column sortable :label="$t('commons.table.lastUpdateTime')" prop="lastUpdateTime">
-              <template v-slot:default="{row}">
-                {{ row.lastTransitionTime | age }}
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.message')" min-width="200">
-              <template v-slot:default="{row}">
-                <span v-if="row.message">[{{ row.reason }} ]: {{ row.message }}</span>
-                <span v-if="!row.message">---</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+        <el-tab-pane :label="$t('business.common.conditions')" name="Conditions">
+          <ko-detail-conditions :conditions="form.status.conditions" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -124,12 +110,12 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import { getWorkLoadByName } from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
-
+import KoDetailConditions from "@/components/detail/detail-conditions"
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "PodDetail",
-  components: { LayoutContent, ComplexTable, YamlEditor },
+  components: { LayoutContent, ComplexTable, YamlEditor, KoDetailConditions },
   props: {
     name: String,
     namespace: String,
