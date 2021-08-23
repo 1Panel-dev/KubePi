@@ -23,7 +23,8 @@
               <el-option label="*" :value="'*'"></el-option>
               <el-option label="create" :value="'create'" :disabled="row.verbs[0]==='*'"></el-option>
               <el-option label="delete" :value="'delete'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="get" :value="'list'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="list" :value="'list'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option label="get" :value="'get'" :disabled="row.verbs[0]==='*'"></el-option>
               <el-option label="patch" :value="'patch'" :disabled="row.verbs[0]==='*'"></el-option>
               <el-option label="update" :value="'update'" :disabled="row.verbs[0]==='*'"></el-option>
               <el-option label="watch" :value="'watch'" :disabled="row.verbs[0]==='*'"></el-option>
