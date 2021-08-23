@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const customResourceUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apiextensions.k8s.io/v1/customresourcedefinitions`
@@ -33,6 +33,6 @@ export function createCustomResource (cluster_name, data) {
 }
 
 export function updateCustomResource (cluster_name, name, data) {
-  return patch(`${customResourceUrl(cluster_name)}/${name}`, data)
+  return put(`${customResourceUrl(cluster_name)}/${name}`, data)
 }
 

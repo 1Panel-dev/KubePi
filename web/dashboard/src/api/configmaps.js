@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 
 const configMapUrl = (cluster_name) => {
@@ -42,5 +42,5 @@ export function deleteConfigMap (cluster_name, namespace, name) {
 }
 
 export function updateConfigMap (cluster_name, namespace, name, data) {
-  return patch(`${namespaceMapUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceMapUrl(cluster_name, namespace)}/${name}`, data)
 }

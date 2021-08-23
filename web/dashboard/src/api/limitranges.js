@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 
 const limitRangeUrl = (cluster_name) => {
@@ -38,5 +38,5 @@ export function createLimitRange (cluster_name, namespace, data) {
 }
 
 export function updateLimitRange (cluster_name, namespace, name,data) {
-  return patch(`${namespaceLimitRangeUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceLimitRangeUrl(cluster_name, namespace)}/${name}`, data)
 }

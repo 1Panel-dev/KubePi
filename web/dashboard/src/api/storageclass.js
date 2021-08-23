@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const scUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/storage.k8s.io/v1/storageclasses`
@@ -36,5 +36,5 @@ export function creategetStorageClass (cluster_name, data) {
 }
 
 export function editgetStorageClass (cluster_name, name, data) {
-  return patch(`${scUrl(cluster_name,)}/${name}`, data)
+  return put(`${scUrl(cluster_name,)}/${name}`, data)
 }

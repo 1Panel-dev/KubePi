@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const roleUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/rbac.authorization.k8s.io/v1/roles`
@@ -45,6 +45,6 @@ export function createRole (cluster_name, namespace, data) {
 }
 
 export function updateRole (cluster_name, namespace, name, data) {
-  return patch(`${namespaceRoleUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceRoleUrl(cluster_name, namespace)}/${name}`, data)
 }
 

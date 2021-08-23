@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const clusterRoleBindingUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/rbac.authorization.k8s.io/v1/clusterrolebindings`
@@ -33,6 +33,6 @@ export function createClusterRoleBinding (cluster_name, data) {
 }
 
 export function updateClusterRoleBinding (cluster_name, name, data) {
-  return patch(`${clusterRoleBindingUrl(cluster_name)}/${name}`, data)
+  return put(`${clusterRoleBindingUrl(cluster_name)}/${name}`, data)
 }
 

@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, post, put} from "@/plugins/request"
 
 const namespaceUrl = (cluster_name) => {
     return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces`
@@ -32,5 +32,5 @@ export function deleteNamespace(cluster_name, name) {
 }
 
 export function updateNamespace(cluster_name, name, data) {
-    return patch(`${namespaceUrl(cluster_name)}/${name}`, data)
+    return put(`${namespaceUrl(cluster_name)}/${name}`, data)
 }

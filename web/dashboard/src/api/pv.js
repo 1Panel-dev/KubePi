@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const pvUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/persistentvolumes`
@@ -38,5 +38,5 @@ export function createPv (cluster_name, data) {
 }
 
 export function updatePv (cluster_name, data, name) {
-  return patch(`${pvUrl(cluster_name,)}/${name}`, data)
+  return put(`${pvUrl(cluster_name,)}/${name}`, data)
 }

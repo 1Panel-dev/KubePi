@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 
 const networkPolicyUrl = (cluster_name) => {
@@ -38,5 +38,5 @@ export function getNetworkPolicy (cluster_name, namespace, name) {
 }
 
 export function updateNetworkPolicy (cluster_name, namespace, name, data) {
-  return patch(`${namespaceNetworkPolicyUrlUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceNetworkPolicyUrlUrl(cluster_name, namespace)}/${name}`, data)
 }

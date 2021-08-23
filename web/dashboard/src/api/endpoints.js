@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 
 const endpointUrl = (cluster_name) => {
@@ -38,5 +38,5 @@ export function getEndPoint (cluster_name, namespace, name) {
 }
 
 export function updateEndPoint (cluster_name, namespace, name, data) {
-  return patch(`${namespaceEndpointUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceEndpointUrl(cluster_name, namespace)}/${name}`, data)
 }

@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 const pvcUrl = (cluster_name) => {
     return `/api/v1/proxy/${cluster_name}/k8s/api/v1/persistentvolumeclaims`
@@ -40,5 +40,5 @@ export function createPvc (cluster_name, namespace, data) {
 }
 
 export function editPvc (cluster_name, namespace, data) {
-    return patch(`${namespacePvcUrl(cluster_name, namespace)}`, data)
+    return put(`${namespacePvcUrl(cluster_name, namespace)}`, data)
 }

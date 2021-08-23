@@ -1,4 +1,4 @@
-import {del, get, patch, post} from "@/plugins/request"
+import {del, get, put, post} from "@/plugins/request"
 
 
 const ingressUrl = (cluster_name) => {
@@ -38,5 +38,5 @@ export function createIngress (cluster_name, namespace, data) {
 }
 
 export function updateIngress (cluster_name, namespace, name, data) {
-  return patch(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`, data)
+  return put(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`, data)
 }
