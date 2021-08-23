@@ -71,7 +71,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      updateNamespace(this.cluster, this.item.metadata.name, data).then(() => {
+      updateNamespace(this.cluster, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),
