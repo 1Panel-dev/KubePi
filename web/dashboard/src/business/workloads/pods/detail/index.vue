@@ -56,41 +56,7 @@
       </el-card>
       <el-tabs style="margin-top:20px" type="border-card" v-model="activeName">
         <el-tab-pane lazy :label="$t('business.workload.container')" name="Containers">
-          <complex-table :data="form.status.containerStatuses">
-            <el-table-column sortable :label="$t('commons.table.status')" min-width="35">
-              <template v-slot:default="{row}">
-                <el-button v-if="row.state.running" type="success" size="mini" plain round>
-                  {{ $t('commons.status.Running') }}
-                </el-button>
-                <el-button v-if="!row.state.running" type="warning" size="mini" plain round>
-                  {{ $t('commons.status.Failed') }}
-                </el-button>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('business.pod.ready')" prop="ready" min-width="40">
-              <template v-slot:default="{row}">
-                <i class="el-icon-check" v-if="row.ready" />
-                <i class="el-icon-close" v-if="!row.ready" />
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="50" show-overflow-tooltip />
-            <el-table-column sortable :label="$t('business.pod.image')" min-width="170" show-overflow-tooltip>
-              <template v-slot:default="{row}">
-                <div class="myTag">
-                  <el-tag type="info" size="small">
-                    {{ row.image }}
-                  </el-tag>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('business.workload.restarts')" prop="restartCount" min-width="30" />
-            <el-table-column sortable :label="$t('commons.table.created_time')" min-width="70">
-              <template v-slot:default="{row}">
-                <span v-if="row.started">{{ row.state.running.startedAt | age }}</span>
-                <span v-if="!row.started">-</span>
-              </template>
-            </el-table-column>
-          </complex-table>
+          <ko-detail-containers :cluster="clusterName" :namespace="namespace" :name="name" />
         </el-tab-pane>
         <el-tab-pane :label="$t('business.common.conditions')" name="Conditions">
           <ko-detail-conditions :conditions="form.status.conditions" />
@@ -111,11 +77,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import { getWorkLoadByName } from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailConditions from "@/components/detail/detail-conditions"
-import ComplexTable from "@/components/complex-table"
+import KoDetailContainers from "@/components/detail/detail-containers"
 
 export default {
   name: "PodDetail",
-  components: { LayoutContent, ComplexTable, YamlEditor, KoDetailConditions },
+  components: { LayoutContent, YamlEditor, KoDetailConditions, KoDetailContainers },
   props: {
     name: String,
     namespace: String,
@@ -131,7 +97,6 @@ export default {
           containerStatuses: [],
         },
       },
-      pods: [],
       yamlShow: false,
       activeName: "Containers",
       loading: false,

@@ -6,17 +6,17 @@
           <span slot="label"><i class="el-icon-date"></i>{{item.name}}</span>
         </el-tab-pane>
       </el-tabs>
+      <div class="terminalOption">
+        <span class="spanClass">{{$t('business.workload.container')}}</span>
+        <el-select class="interval" @change="changeConditions(currentTerminal)" size="mini" v-model="currentTerminal.container">
+          <el-option v-for="c in currentTerminal.containers" :key="c" :label="c" :value="c" />
+        </el-select>
+      </div>
       <div v-if="currentTerminal.type ==='logs'" style="background-color: #000000; display:inline">
         <div class="terminalOption">
           <span class="spanClass">{{$t('business.pod.lines')}}</span>
           <el-select class="interval" @change="changeConditions(currentTerminal)" size="mini" v-model="tailLines">
             <el-option v-for="l in tailLinesOptions" :key="l.label" :label="l.label" :value="l.value" />
-          </el-select>
-        </div>
-        <div class="terminalOption">
-          <span class="spanClass">{{$t('business.workload.container')}}</span>
-          <el-select class="interval" @change="changeConditions(currentTerminal)" size="mini" v-model="currentTerminal.container">
-            <el-option v-for="c in currentTerminal.containers" :key="c" :label="c" :value="c" />
           </el-select>
         </div>
         <div style="margin-top: 15px; margin-bottom: 10px; float: left">

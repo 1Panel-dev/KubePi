@@ -56,7 +56,7 @@
                       <el-button @click="openTerminalLogs(row, c)" type="text">{{c}}</el-button>
                     </p>
                   </div>
-                  <el-dropdown-item slot="reference" icon="el-icon-date" command="logs">
+                  <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
                     {{$t("commons.button.logs")}}
                     <i class="el-icon-arrow-right" />
                   </el-dropdown-item>
@@ -64,7 +64,7 @@
               </div>
               <div v-if="row.containers.length == 1">
                 <el-dropdown-item icon="el-icon-date" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-date" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-notebook-2" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">{{$t("commons.button.delete")}}</el-dropdown-item>
             </el-dropdown-menu>
@@ -81,6 +81,7 @@ import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import { checkPermissions } from "@/utils/permission"
+import { randomNum } from "@/utils/randomNum"
 
 export default {
   name: "Pods",
@@ -134,12 +135,13 @@ export default {
       let existTerminals = this.$store.getters.terminals
       const item = {
         type: "terminal",
-        key: this.randomNum(8),
+        key: randomNum(8),
         name: row.metadata.name,
         cluster: this.clusterName,
         namespace: row.metadata.namespace,
         pod: row.metadata.name,
         container: c,
+        containers: row.containers,
       }
       existTerminals.push(item)
       this.$store.commit("terminal/TERMINALS", existTerminals)
@@ -154,7 +156,7 @@ export default {
       let existTerminals = this.$store.getters.terminals
       const item = {
         type: "logs",
-        key: this.randomNum(8),
+        key: randomNum(8),
         name: row.metadata.name,
         cluster: this.clusterName,
         namespace: row.metadata.namespace,
@@ -241,11 +243,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-    randomNum(n) {
-      var rnd = ""
-      for (var i = 0; i < n; i++) rnd += Math.floor(Math.random() * 10)
-      return rnd
     },
   },
   mounted() {
