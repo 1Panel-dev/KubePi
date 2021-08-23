@@ -29,8 +29,8 @@
       </el-col>
     </el-row>
     <br>
-    <el-row :gutter="24" class="resources">
-      <el-col :span="4" v-for="resource in resources" v-bind:key="resource.name">
+    <el-row :gutter="20" class="resources">
+      <el-col v-for="resource in resources" v-bind:key="resource.name" :xs="8" :sm="8" :lg="6">
         <el-card :body-style="{padding: '0px'}" @click.native="jumpTo(resource.name)" class="d-card">
           <el-row :gutter="24">
             <el-col :span="10">
