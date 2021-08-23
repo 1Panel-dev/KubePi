@@ -21,7 +21,7 @@
               <span class="title">{{ $t("commons.table.created_time") }}</span>
               <div class="line"></div>
               <div style="text-align: center">
-                <h1>{{ fromNow(cluster.createAt) }} Days</h1>
+                <h1>{{ cluster.createAt | age }} </h1>
               </div>
             </el-col>
           </el-row>
@@ -120,12 +120,6 @@ export default {
     }
   },
   methods: {
-
-    fromNow (date) {
-      const a = new Date(date)
-      const b = new Date()
-      return parseInt(Math.abs(b - a) / 1000 / 60 / 60 / 24)
-    },
     jumpTo(val) {
       this.$router.push({ name: val })
     },
