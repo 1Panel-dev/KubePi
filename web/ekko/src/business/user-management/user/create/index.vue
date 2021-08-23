@@ -75,7 +75,7 @@ export default {
         callback(new Error(this.$t('business.user.please_input_password')));
       } else {
         if (this.form.password !== '') {
-          this.$refs.ruleForm.validateField('checkPass');
+          this.$refs.form.validateField('checkPass');
         }
         callback();
       }
