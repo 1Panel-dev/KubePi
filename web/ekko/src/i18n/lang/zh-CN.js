@@ -191,8 +191,17 @@ const message = {
 }
 
 
+const description = {
+    i18n_user_administrator: "超级管理员,拥有所有对象的权限",
+    i18n_user_manage_cluster: "集群管理员,拥有集群对象的所有权限",
+    i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
+    i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
+    i18n_user_common_user: "普通用户，只拥有集群对象访问权限"
+}
+
 export default {
     ...el,
     ...fu,
     ...message,
+    ...description
 }

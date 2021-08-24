@@ -147,8 +147,18 @@ const message = {
     },
 }
 
+const description = {
+    i18n_user_administrator: "Super administrator, with permissions for all objects.",
+    i18n_user_manage_cluster: "The Cluster Administrator has all the permissions of the cluster object.",
+    i18n_user_manage_rbac: "Role and user administrators have all the permissions of role and user objects.",
+    i18n_user_manage_readonly: "Read only user with access to all objects only,",
+    i18n_user_common_user: "Ordinary users only have access to cluster objects"
+}
+
+
 export default {
     ...el,
     ...fu,
-    ...message
+    ...message,
+    ...description
 };
