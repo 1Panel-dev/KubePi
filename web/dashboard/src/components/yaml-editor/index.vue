@@ -93,31 +93,11 @@ export default {
   },
   watch: {
     value: function (newValue) {
-      if (newValue !== undefined) {
-        let yaml = require("js-yaml")
-        this.oldValue = yaml.dump(newValue)
-        this.$refs.editor.codemirror.setValue(yaml.dump(newValue))
-        //折叠一些无用的key
-        const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
-        if (cursor.findNext()) {
-          this.$refs.editor.codemirror.foldCode(cursor.from())
-        }
-        this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
-      }
+      this.initData(newValue)
     }
   },
   mounted () {
-    if (this.value !== undefined) {
-      let yaml = require("js-yaml")
-      this.$refs.editor.codemirror.setValue(yaml.dump(this.value))
-      this.oldValue = yaml.dump(this.value)
-      //折叠一些无用的key
-      const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
-      if (cursor.findNext()) {
-        this.$refs.editor.codemirror.foldCode(cursor.from())
-      }
-      this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
-    }
+    this.initData(this.value)
   },
   methods: {
     getValue () {
@@ -142,6 +122,25 @@ export default {
     },
     changeValue () {
       this.changed = true
+    },
+    foldCode (key) {
+      const cursor = this.$refs.editor.codemirror.getSearchCursor(key)
+      if (cursor.findNext()) {
+        this.$refs.editor.codemirror.foldCode(cursor.from())
+      }
+    },
+    initData (value) {
+      if (value !== undefined) {
+        let yaml = require("js-yaml")
+        this.oldValue = yaml.dump(value)
+        this.$refs.editor.codemirror.setValue(yaml.dump(value))
+        //折叠一些无用的key
+        const keys = ["managedFields", "status"]
+        for (let i = 0; i < keys.length; i++) {
+          this.foldCode(keys[i])
+        }
+        this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
+      }
     }
   },
 }
@@ -168,7 +167,7 @@ export default {
   }
 
   .CodeMirror-merge-r-chunk-end {
-     border-bottom: unset;
+    border-bottom: unset;
   }
 
   .CodeMirror-merge-r-chunk-start {

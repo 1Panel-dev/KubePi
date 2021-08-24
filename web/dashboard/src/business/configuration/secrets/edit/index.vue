@@ -34,7 +34,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick" v-if="Object.keys(item.data).length!==0">
+                       @tab-click="handleClick" v-if="Object.keys(item.metadata).length!==0">
                 <el-tab-pane key="data" :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
@@ -140,7 +140,13 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm () {
-      this.showYaml = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.item))

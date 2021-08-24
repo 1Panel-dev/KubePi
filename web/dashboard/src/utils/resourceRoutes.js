@@ -37,6 +37,13 @@ export const mixin = {
             query: { yamlShow: false }
           })
           break
+        case "Endpoints":
+          this.$router.push({
+            name: "EndpointDetail",
+            params: { namespace: namespace, name: name },
+            query: { yamlShow: false }
+          })
+          break
         default:
           break
       }

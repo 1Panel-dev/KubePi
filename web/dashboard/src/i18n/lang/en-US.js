@@ -32,6 +32,7 @@ const message = {
       back_detail: "Back to Details",
       submit: "Submit",
       show_diff: "Diff Contrast",
+      continue_edit: "Continue Edit",
       terminal: "Terminal",
       logs: "Log",
     },
@@ -192,7 +193,7 @@ const message = {
       pull_policy: "Pull Policy",
       pull_secrets: "Pull Secrets",
 
-			port: "Port",
+      port: "Port",
       service_type: "Service Type",
       not_create: "Not Create A Service",
       cluster_ip: "Cluster IP",
@@ -206,7 +207,7 @@ const message = {
       listening_port: "Listening Port",
       host_ip: "Host IP",
 
-			command: "Command",
+      command: "Command",
       entry_point: "Entrypoint",
       arguments: "Arguments",
       working_dir: "WorkingDir",

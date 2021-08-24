@@ -63,8 +63,8 @@ export default {
               query: { yamlShow: false }
             })
           },
-          disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })
+          disabled: (row) => {
+            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
           }
         },
         {
@@ -77,8 +77,8 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })
+          disabled: (row) => {
+            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
           }
         },
         {

@@ -31,7 +31,7 @@
           </el-row>
           <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
-            <el-tab-pane lazy :label="$t('commons.table.status')">
+            <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form]">
                 <el-table-column sortable :label="$t('business.storage.provisioner')" min-width="30"
                                  prop="provisioner"/>
@@ -89,7 +89,13 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm() {
-      this.yamlShow = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.yamlShow = false
+      })
     },
     search() {
       getStorageClass(this.cluster, this.name).then(res => {

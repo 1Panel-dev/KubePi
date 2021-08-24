@@ -30,7 +30,7 @@
           <div class="bottom-button">
             <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
             <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-            <el-button v-if="showYaml" @click="showYaml=false">{{ $t("commons.button.back_form") }}</el-button>
+            <el-button v-if="showYaml" @click="backToForm">{{ $t("commons.button.back_form") }}</el-button>
             <el-button v-loading="loading" @click="onSubmit" type="primary">
               {{ $t("commons.button.submit") }}
             </el-button>
@@ -81,6 +81,15 @@ export default {
       this.showYaml = true
       this.yaml = this.transformYaml()
     },
+    backToForm () {
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
+    },
     onSubmit () {
       if (this.showYaml) {
         this.onUpdate(this.$refs.yaml_editor.getValue())
@@ -114,12 +123,14 @@ export default {
       this.loading = true
       getRole(this.cluster, this.namespace, this.name).then(res => {
         this.form = res
+        this.yaml = this.transformYaml()
         this.loading = false
       })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow === "true"
     this.getDetail()
   }
 }

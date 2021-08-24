@@ -3,6 +3,9 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'create'}">
+            {{ $t("commons.button.create") }}
+          </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
@@ -32,9 +35,10 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <el-table-column min-width="25" :label="$t('commons.table.action')">
+      <el-table-column min-width="45" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-dropdown @command="handleClick($event,row)" :hide-on-click="false">
+          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'update'}" />
+          <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-download" command="download">{{$t("commons.button.download_yaml")}}</el-dropdown-item>
@@ -56,7 +60,7 @@
                       <el-button @click="openTerminalLogs(row, c)" type="text">{{c}}</el-button>
                     </p>
                   </div>
-                  <el-dropdown-item slot="reference" icon="el-icon-date" command="logs">
+                  <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
                     {{$t("commons.button.logs")}}
                     <i class="el-icon-arrow-right" />
                   </el-dropdown-item>
@@ -64,7 +68,7 @@
               </div>
               <div v-if="row.containers.length == 1">
                 <el-dropdown-item icon="el-icon-date" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-date" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-notebook-2" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">{{$t("commons.button.delete")}}</el-dropdown-item>
             </el-dropdown-menu>
@@ -81,6 +85,7 @@ import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import { checkPermissions } from "@/utils/permission"
+import { randomNum } from "@/utils/randomNum"
 
 export default {
   name: "Pods",
@@ -124,6 +129,9 @@ export default {
           break
       }
     },
+    onEdit(row) {
+      this.$router.push({name: "PodEdit", params: {namespace: row.metadata.namespace, name: row.metadata.name}})
+    },
     openTerminal(row, container) {
       let c
       if (container) {
@@ -134,12 +142,13 @@ export default {
       let existTerminals = this.$store.getters.terminals
       const item = {
         type: "terminal",
-        key: this.randomNum(8),
+        key: randomNum(8),
         name: row.metadata.name,
         cluster: this.clusterName,
         namespace: row.metadata.namespace,
         pod: row.metadata.name,
         container: c,
+        containers: row.containers,
       }
       existTerminals.push(item)
       this.$store.commit("terminal/TERMINALS", existTerminals)
@@ -154,7 +163,7 @@ export default {
       let existTerminals = this.$store.getters.terminals
       const item = {
         type: "logs",
-        key: this.randomNum(8),
+        key: randomNum(8),
         name: row.metadata.name,
         cluster: this.clusterName,
         namespace: row.metadata.namespace,
@@ -195,6 +204,9 @@ export default {
             })
         }
       })
+    },
+    onCreate() {
+      this.$router.push({ name: "PodCreate" })
     },
     getPodStatus(row) {
       if (row.status.containerStatuses) {
@@ -241,11 +253,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-    randomNum(n) {
-      var rnd = ""
-      for (var i = 0; i < n; i++) rnd += Math.floor(Math.random() * 10)
-      return rnd
     },
   },
   mounted() {

@@ -33,6 +33,7 @@ const message = {
       back_detail: "返回详情",
       submit: "提交",
       show_diff: "差异对比",
+      continue_edit: "继续编辑",
       terminal: "终端",
       logs: "日志",
     },
@@ -45,7 +46,8 @@ const message = {
       time: "时间",
       message: "消息",
       lastUpdateTime: "更新时间",
-      type: "类型"
+      type: "类型",
+      resourceInformation: "资源信息"
     },
     status: {
       Running: "运行中",

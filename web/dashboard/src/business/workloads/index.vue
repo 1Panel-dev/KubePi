@@ -197,7 +197,7 @@ export default {
         apiVersion: "",
         kind: "",
         metadata: {
-          name: "my-test",
+          name: "",
           namespace: "",
         },
         spec: {
@@ -361,6 +361,8 @@ export default {
         metadata: {
           name: this.form.metadata.name,
           namespace: this.form.metadata.namespace,
+          labels: this.form.metadata.labels,
+          annotations: this.form.metadata.annotations,
         },
         spec: {
           replicas: this.form.spec.replicas,
@@ -490,7 +492,7 @@ export default {
           .then(() => {
             this.$message({
               type: "success",
-              message: this.$t("commons.msg.edit_success"),
+              message: this.$t("commons.msg.update_success"),
             })
             this.$router.push({ name: this.toggleCase() + "s" })
           })
