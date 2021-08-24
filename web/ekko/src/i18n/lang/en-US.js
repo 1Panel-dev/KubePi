@@ -4,13 +4,13 @@ import fu from "fit2cloud-ui/src/locale/lang/en_US" // 加载fit2cloud的内容
 const message = {
     commons: {
         message_box: {
-            alert: "alter",
-            confirm: "confirm",
-            prompt: "prompt",
+            alert: "Alter",
+            confirm: "Confirm",
+            prompt: "Prompt",
         },
         personal: {
-            profile: "profile",
-            exit: "logout"
+            profile: "Profile",
+            exit: "Logout"
         },
         button: {
             detail: "Detail",
@@ -89,13 +89,13 @@ const message = {
             label: "label",
             description: "description",
             cluster_detail: "Detail",
-            connect_setting: "connect setting",
-            connect_direction: "connect direction",
-            connect_forward: "forward",
-            connect_backward: "backward",
-            authenticate_setting: "authenticate setting",
-            certificate: "certificate",
-            authenticate_mode: "authenticate mode",
+            connect_setting: "Connect setting",
+            connect_direction: "Connect direction",
+            connect_forward: "Forward",
+            connect_backward: "Backward",
+            authenticate_setting: "Authenticate setting",
+            certificate: "Certificate",
+            authenticate_mode: "Authenticate mode",
             expect: "expect",
             management: "management",
             open_dashboard: "Console",
@@ -106,10 +106,14 @@ const message = {
             viewer: "viewer",
             custom: "custom",
             rule: "rule",
-            config_file: "config file",
-            config_content: "config content",
+            config_file: "Config file",
+            config_content: "Config content",
             hidden_cluster: "hide inaccessible clusters",
-            namespace_role_form_check_msg: "namespace or role list cannot be empty"
+            namespace_role_form_check_msg: "namespace or role list cannot be empty",
+            api_group: "API Groups",
+            resource: "resources",
+            verb: "verbs",
+            cluster_role_form_check_msg: "api groups,resources or verbs  list cannot be empty"
         },
         cluster_role: {
             none: "无",

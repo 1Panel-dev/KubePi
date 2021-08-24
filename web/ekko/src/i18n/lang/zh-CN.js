@@ -128,7 +128,11 @@ const message = {
             config_file: "config 文件",
             config_content: "config 内容",
             hidden_cluster: "隐藏不可访问的集群",
-            namespace_role_form_check_msg: "命名空间或者角色列表不能为空"
+            namespace_role_form_check_msg: "命名空间或者角色列表不能为空",
+            api_group: "API 组",
+            resource: "资源",
+            verb: "动作",
+            cluster_role_form_check_msg: "API组,资源,动作不为空",
         },
         namespace: {
             description: "描述"
@@ -170,7 +174,7 @@ const message = {
             role: "角色",
             template: "模版",
             base_on_exists_role: "基于已有角色",
-            permission:"权限",
+            permission: "权限",
             permission_setting: "权限设置",
             password: "密码",
             confirm_password: "确认密码",
