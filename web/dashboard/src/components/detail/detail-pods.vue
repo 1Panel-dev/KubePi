@@ -16,8 +16,8 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName"  show-overflow-tooltip/>
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" show-overflow-tooltip />
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip />
       <el-table-column sortable :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
@@ -27,22 +27,25 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="50" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </div>
 </template>
 
 <script>
 import ComplexTable from "@/components/complex-table"
+import KoTableOperations from "@/components/ko-table-operations"
 import { listPodsWithNsSelector } from "@/api/pods"
+import { randomNum } from "@/utils/randomNum"
 
 export default {
   name: "KoDetailPods",
-  components: { ComplexTable },
+  components: { ComplexTable, KoTableOperations },
   props: {
     cluster: String,
     namespace: String,
@@ -69,6 +72,22 @@ export default {
   },
   data() {
     return {
+      buttons: [
+        {
+          label: this.$t("commons.button.terminal"),
+          icon: "el-icon-date",
+          click: (row) => {
+            this.openTerminal(row)
+          },
+        },
+        {
+          label: this.$t("commons.button.logs"),
+          icon: "el-icon-notebook-2",
+          click: (row) => {
+            this.openTerminalLogs(row)
+          },
+        },
+      ],
       loading: false,
       pods: [],
     }
@@ -88,26 +107,43 @@ export default {
         query: { yamlShow: false },
       })
     },
-    getPodStatus(row) {
-      if (row.status.containerStatuses) {
-        let readyCount = 0
-        for (const c of row.status.containerStatuses) {
-          if (c.ready) {
-            readyCount++
-          }
-        }
-        return readyCount + "/" + row.status.containerStatuses.length
+    openTerminal(row) {
+      let containers = []
+      for (const c of row.spec.containers) {
+        containers.push(c.name)
       }
+      let existTerminals = this.$store.getters.terminals
+      const item = {
+        type: "terminal",
+        key: randomNum(8),
+        name: row.metadata.name,
+        cluster: this.cluster,
+        namespace: row.metadata.namespace,
+        pod: row.metadata.name,
+        container: containers[0],
+        containers: containers,
+      }
+      existTerminals.push(item)
+      this.$store.commit("terminal/TERMINALS", existTerminals)
     },
-    getRestartTimes(row) {
-      if (row.status.containerStatuses) {
-        let restartCount = 0
-        for (const c of row.status.containerStatuses) {
-          restartCount += c.restartCount
-        }
-        return restartCount
+    openTerminalLogs(row) {
+      let containers = []
+      for (const c of row.spec.containers) {
+        containers.push(c.name)
       }
-      return 0
+      let existTerminals = this.$store.getters.terminals
+      const item = {
+        type: "logs",
+        key: randomNum(8),
+        name: row.metadata.name,
+        cluster: this.cluster,
+        namespace: row.metadata.namespace,
+        pod: row.metadata.name,
+        container: containers[0],
+        containers: containers,
+      }
+      existTerminals.push(item)
+      this.$store.commit("terminal/TERMINALS", existTerminals)
     },
   },
 }
