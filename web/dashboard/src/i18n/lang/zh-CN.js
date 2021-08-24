@@ -33,6 +33,7 @@ const message = {
       back_detail: "返回详情",
       submit: "提交",
       show_diff: "差异对比",
+      continue_edit: "继续编辑",
       terminal: "终端",
       logs: "日志",
     },
