@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       v-if="Object.keys(form.metadata).length!==0">>
+                       v-if="Object.keys(form.metadata).length!==0">
                 <el-tab-pane :label="$t('business.access_control.authorized')">
                   <ko-role-object :cluster-name="cluster" :namespace="form.metadata.namespace"
                                   :role-ref-obj.sync="form.roleRef"
@@ -114,7 +114,13 @@ export default {
       this.showYaml = true
     },
     backToForm () {
-      this.showYaml = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.form))

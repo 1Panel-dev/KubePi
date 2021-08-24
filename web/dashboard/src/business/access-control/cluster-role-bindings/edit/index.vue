@@ -19,9 +19,9 @@
                 </el-tab-pane>
                 <el-tab-pane :label="$t('business.workload.labels_annotations')">
                   <ko-key-value :title="$t('business.workload.label')"
-                                :value.sync="form.metadata.labels"></ko-key-value>
+                                :value.sync="item.metadata.labels"></ko-key-value>
                   <ko-key-value :title="$t('business.workload.annotations')"
-                                :value.sync="form.metadata.annotations"></ko-key-value>
+                                :value.sync="item.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
             </el-col>
@@ -103,7 +103,13 @@ export default {
       this.showYaml = true
     },
     backToForm () {
-      this.showYaml = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     transformYaml () {
       return JSON.parse(JSON.stringify(this.item))

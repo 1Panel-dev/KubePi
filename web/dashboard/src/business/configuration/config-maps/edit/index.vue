@@ -112,7 +112,13 @@ export default {
       this.yaml = this.transformYaml()
     },
     backToForm () {
-      this.yamlShow = false
+      this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.showYaml = false
+      })
     },
     onCancel () {
       this.$router.push({ name: "ConfigMaps" })
