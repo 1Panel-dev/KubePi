@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 	"time"
 )
 
@@ -145,6 +146,10 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 func (h *Handler) ListClusterRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
+		scope := ""
+		if ctx.URLParamExists("scope") {
+			scope = ctx.URLParam("scope")
+		}
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -158,7 +163,16 @@ func (h *Handler) ListClusterRoles() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get kubernetes client failed: %s", err.Error()))
 			return
 		}
-		items, err := client.RbacV1().ClusterRoles().List(goContext.TODO(), metav1.ListOptions{LabelSelector: "kubeoperator.io/manage=ekko"})
+		labels := []string{
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+		}
+		if scope != "" {
+			labels = append(labels, fmt.Sprintf("%s=%s", "kubeoperator.io/role-type", scope))
+		}
+
+		items, err := client.RbacV1().ClusterRoles().List(goContext.TODO(), metav1.ListOptions{
+			LabelSelector: strings.Join(labels, ","),
+		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster roles failed: %s", err.Error()))

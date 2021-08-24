@@ -12,6 +12,14 @@ const EmailRule = {
     trigger: ['blur', 'change']
 }
 
+const PasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@#$%^&*]{8,30}$/
+
+const PasswordRule = {
+    required: true,
+    pattern: PasswordPattern,
+    message: i18n.t("commons.validate.password_help"),
+    trigger: "blur"
+}
 
 const NumberRule = {
     required: true,
@@ -20,8 +28,28 @@ const NumberRule = {
     type: "number",
     message: i18n.t("commons.validate.number_limit")
 }
+
+const LengthRule = {
+    min: 1,
+    max: 30,
+    message: i18n.t("commons.validate.limit", [1, 30]),
+    trigger: "blur"
+}
+const NamePattern = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
+
+const CommonNameRule = {
+    required: true,
+    pattern: NamePattern,
+    message: i18n.t("commons.validate.name_not_compliant"),
+    trigger: "blur"
+}
+
+
 export default {
     RequiredRule,
     NumberRule,
-    EmailRule
+    EmailRule,
+    PasswordRule,
+    CommonNameRule,
+    LengthRule
 }

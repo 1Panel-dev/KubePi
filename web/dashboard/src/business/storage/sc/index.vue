@@ -71,17 +71,6 @@ export default {
           }
         },
         {
-          label: this.$t("commons.button.view_yaml"),
-          icon: "el-icon-view",
-          click: (row) => {
-            this.$router.push({
-              name: "StorageClassDetail",
-              params: {name: row.metadata.name},
-              query: {yamlShow: true}
-            })
-          }
-        },
-        {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {

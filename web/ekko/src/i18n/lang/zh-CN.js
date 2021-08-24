@@ -62,6 +62,8 @@ const message = {
             select: "请选择{0}",
             required: "必填项",
             email: "请输入有效的电子邮箱",
+            password_help: "有效密码:8-30位,英文字母+数字+特殊字符(可选)",
+            name_not_compliant: "该名称不符合命名规范",
         },
         msg: {
             create_success: "创建成功",
@@ -128,7 +130,11 @@ const message = {
             config_file: "config 文件",
             config_content: "config 内容",
             hidden_cluster: "隐藏不可访问的集群",
-            namespace_role_form_check_msg: "命名空间或者角色列表不能为空"
+            namespace_role_form_check_msg: "命名空间或者角色列表不能为空",
+            api_group: "API 组",
+            resource: "资源",
+            verb: "动作",
+            cluster_role_form_check_msg: "API组,资源,动作不为空",
         },
         namespace: {
             description: "描述"
@@ -170,7 +176,7 @@ const message = {
             role: "角色",
             template: "模版",
             base_on_exists_role: "基于已有角色",
-            permission:"权限",
+            permission: "权限",
             permission_setting: "权限设置",
             password: "密码",
             confirm_password: "确认密码",
@@ -187,8 +193,17 @@ const message = {
 }
 
 
+const description = {
+    i18n_user_administrator: "超级管理员,拥有所有对象的权限",
+    i18n_user_manage_cluster: "集群管理员,拥有集群对象的所有权限",
+    i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
+    i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
+    i18n_user_common_user: "普通用户，只拥有集群对象访问权限"
+}
+
 export default {
     ...el,
     ...fu,
     ...message,
+    ...description
 }

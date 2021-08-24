@@ -36,7 +36,7 @@ var CreateAdministrator = migrations.Migration{
 			},
 			Metadata: v1.Metadata{
 				Name:        "Administrator",
-				Description: "",
+				Description: "i18n_user_administrator",
 				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
@@ -56,8 +56,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name: "Manage Clusters",
-				UUID: uuid.New().String(),
+				Name:        "Manage Clusters",
+				UUID:        uuid.New().String(),
+				Description: "i18n_user_manage_cluster",
 			},
 			Rules: []v1Role.PolicyRule{
 				{
@@ -75,8 +76,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name: "Manage RBAC",
-				UUID: uuid.New().String(),
+				Name:        "Manage RBAC",
+				Description: "i18n_user_manage_rbac",
+				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
 				{
@@ -94,8 +96,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name: "ReadOnly",
-				UUID: uuid.New().String(),
+				Name:        "ReadOnly",
+				Description: "i18n_user_manage_readonly",
+				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
 				{
@@ -113,8 +116,9 @@ var CreateAdministrator = migrations.Migration{
 				UpdateAt:   time.Now(),
 			},
 			Metadata: v1.Metadata{
-				Name: "Common User",
-				UUID: uuid.New().String(),
+				Name:        "Common User",
+				Description: "i18n_user_common_user",
+				UUID:        uuid.New().String(),
 			},
 			Rules: []v1Role.PolicyRule{
 				{

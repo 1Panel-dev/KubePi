@@ -53,14 +53,39 @@ const Clusters = {
                     },
                 },
                 {
-                    path: "clusterroles",
+                    path: "roles",
                     props: true,
-                    component: () => import("@/business/cluster-management/detail/clusterroles"),
+                    component: () => import("@/business/cluster-management/detail/roles"),
                     hidden: true,
                     name: "ClusterRoles",
                     meta: {
                         activeMenu: "/clusters",
                     },
+                    children: [
+                        {
+                            path: "",
+                            redirect: "cluster"
+                        },
+                        {
+                            path: "cluster",
+                            props: true,
+                            component: () => import("@/business/cluster-management/detail/roles/cluster"),
+                            hidden: true,
+                            name: "ClusterClusterRoles",
+                            meta: {
+                                activeMenu: "/clusters",
+                            }
+                        }, {
+                            path: "namespace",
+                            props: true,
+                            component: () => import("@/business/cluster-management/detail/roles/namespace"),
+                            hidden: true,
+                            name: "NamespaceClusterRoles",
+                            meta: {
+                                activeMenu: "/clusters",
+                            }
+                        }
+                    ],
                 },
             ]
         }

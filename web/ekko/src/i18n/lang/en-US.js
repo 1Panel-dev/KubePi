@@ -4,13 +4,13 @@ import fu from "fit2cloud-ui/src/locale/lang/en_US" // 加载fit2cloud的内容
 const message = {
     commons: {
         message_box: {
-            alert: "alter",
-            confirm: "confirm",
-            prompt: "prompt",
+            alert: "Alter",
+            confirm: "Confirm",
+            prompt: "Prompt",
         },
         personal: {
-            profile: "profile",
-            exit: "logout"
+            profile: "Profile",
+            exit: "Logout"
         },
         button: {
             detail: "Detail",
@@ -41,7 +41,7 @@ const message = {
             help_doc: "document",
             support: "support",
             guide: "guide",
-            guide_text: "感谢选择本产品, 是否立即开始注册您的第一个集群?",
+            guide_text: "Thank you for choosing this product. Would you like to register your first cluster now?"
         },
         bool: {
             true: "true",
@@ -56,6 +56,8 @@ const message = {
             select: "please select {0}",
             required: "required",
             email: "please input a valid email",
+            password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (optional)",
+            name_not_compliant: "The name does not conform to the naming convention!",
         },
         msg: {
             create_success: "create success",
@@ -89,13 +91,13 @@ const message = {
             label: "label",
             description: "description",
             cluster_detail: "Detail",
-            connect_setting: "connect setting",
-            connect_direction: "connect direction",
-            connect_forward: "forward",
-            connect_backward: "backward",
-            authenticate_setting: "authenticate setting",
-            certificate: "certificate",
-            authenticate_mode: "authenticate mode",
+            connect_setting: "Connect setting",
+            connect_direction: "Connect direction",
+            connect_forward: "Forward",
+            connect_backward: "Backward",
+            authenticate_setting: "Authenticate setting",
+            certificate: "Certificate",
+            authenticate_mode: "Authenticate mode",
             expect: "expect",
             management: "management",
             open_dashboard: "Console",
@@ -106,10 +108,14 @@ const message = {
             viewer: "viewer",
             custom: "custom",
             rule: "rule",
-            config_file: "config file",
-            config_content: "config content",
+            config_file: "Config file",
+            config_content: "Config content",
             hidden_cluster: "hide inaccessible clusters",
-            namespace_role_form_check_msg: "namespace or role list cannot be empty"
+            namespace_role_form_check_msg: "namespace or role list cannot be empty",
+            api_group: "API Groups",
+            resource: "resources",
+            verb: "verbs",
+            cluster_role_form_check_msg: "api groups,resources or verbs  list cannot be empty"
         },
         cluster_role: {
             none: "无",
@@ -143,8 +149,18 @@ const message = {
     },
 }
 
+const description = {
+    i18n_user_administrator: "Super administrator, with permissions for all objects.",
+    i18n_user_manage_cluster: "The Cluster Administrator has all the permissions of the cluster object.",
+    i18n_user_manage_rbac: "Role and user administrators have all the permissions of role and user objects.",
+    i18n_user_manage_readonly: "Read only user with access to all objects only,",
+    i18n_user_common_user: "Ordinary users only have access to cluster objects"
+}
+
+
 export default {
     ...el,
     ...fu,
-    ...message
+    ...message,
+    ...description
 };

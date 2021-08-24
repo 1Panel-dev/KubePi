@@ -1,4 +1,4 @@
-<template xmlns:el-col="http://www.w3.org/1999/html">
+<template>
   <layout-content :header="$t('business.cluster.cluster')">
 
     <div style="float: right">

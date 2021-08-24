@@ -48,7 +48,7 @@ instance.interceptors.request.use(
 const checkAuth = response => {
     // 请根据实际需求修改
     if (response.status === 401) {
-        let message = i18n.t("login.expires")
+        let message = i18n.t("commons.login.expires")
         $alert(message, () => {
             store.dispatch("user/logout").then(() => {
                 location.reload()

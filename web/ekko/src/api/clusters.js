@@ -47,8 +47,13 @@ export function deleteClusterMember(name, memberName, kind) {
     return del(`${baseUrl}/${name}/members/${memberName}?kind=${kind}`)
 }
 
-export function listClusterRoles(name) {
-    return get(`${baseUrl}/${name}/clusterroles`)
+export function listClusterRoles(name, scope) {
+
+    let url = `${baseUrl}/${name}/clusterroles`
+    if (scope) {
+        url += `?scope=${scope}`
+    }
+    return get(url)
 }
 
 export function createClusterRole(name, clusterRole) {

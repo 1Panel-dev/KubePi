@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.namespace">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Bound'" type="success" size="mini" plain round>
+          <el-button v-if="row.status.phase ==='Bound' || row.status.phase ==='Available'" type="success" size="mini" plain round>
             {{ row.status.phase }}
           </el-button>
           <el-button v-else type="" size="mini" plain round>

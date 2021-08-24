@@ -1,8 +1,11 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster_detail')" :back-to="{ name: 'Clusters' }">
-    <el-menu class="menuClass" router :default-active="$route.path" mode="horizontal" >
-      <el-menu-item :index="'/clusters/detail/'+name+'/members'">{{ $t('business.cluster.member') }}</el-menu-item>
-      <el-menu-item :index="'/clusters/detail/'+name+'/clusterroles'">{{ $t('business.cluster.role') }}</el-menu-item>
+<!--    <el-menu class="menuClass" router :default-active="activeRoute()" mode="horizontal" background-color="#222629">-->
+<!--    </el-menu>-->
+
+    <el-menu class="menuClass" router :default-active="activeRoute()" mode="horizontal"  background-color="#222629">
+      <el-menu-item :index="membersPath">{{ $t('business.cluster.member') }}</el-menu-item>
+      <el-menu-item :index="rolesPath">{{ $t('business.cluster.role') }}</el-menu-item>
     </el-menu>
     <br/>
     <div class="detailClass">
@@ -20,29 +23,24 @@ export default {
   props: ["name"],
   components: {LayoutContent},
   data() {
-    return {}
+    return {
+      membersPath: `/clusters/detail/${this.name}/members`,
+      rolesPath: `/clusters/detail/${this.name}/roles`,
+    }
   },
-  methods: {},
+  methods: {
+
+    activeRoute() {
+      if (this.$route.path.indexOf(this.rolesPath) !== -1) {
+        return this.rolesPath
+      }
+      return this.$route.path
+    }
+
+  },
 }
 </script>
 
 <style scoped>
-.menuClass {
-  position: fixed;
-  z-index: 1;
-  width: calc(100vw - 330px);
-}
 
-.detailClass {
-  margin-top: 60px;
-  height: calc(100% - 140px);
-  overflow: auto;
-}
-.el-menu-item:hover{
-    background-color: #19191c !important;
-}
-
-.el-menu-item.is-active {
-    background-color: #19191c !important;
-}
 </style>
