@@ -14,7 +14,7 @@
 <script>
 import YamlEditor from "@/components/yaml-editor";
 import LayoutContent from "@/components/layout/LayoutContent";
-import {editgetStorageClass, getStorageClass} from "@/api/storageclass";
+import {updateStorageClass, getStorageClass} from "@/api/storageclass";
 
 export default {
   name: "StorageClassEdit",
@@ -50,7 +50,7 @@ export default {
     onSubmit() {
       const data = this.$refs.yaml_editor.getValue()
       this.loading = true
-      editgetStorageClass(this.cluster, this.name, data).then(() => {
+      updateStorageClass(this.cluster, this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
