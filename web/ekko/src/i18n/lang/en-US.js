@@ -41,7 +41,7 @@ const message = {
             help_doc: "document",
             support: "support",
             guide: "guide",
-            guide_text: "感谢选择本产品, 是否立即开始注册您的第一个集群?",
+            guide_text: "Thank you for choosing this product. Would you like to register your first cluster now?"
         },
         bool: {
             true: "true",
@@ -56,6 +56,7 @@ const message = {
             select: "please select {0}",
             required: "required",
             email: "please input a valid email",
+            password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (optional)",
         },
         msg: {
             create_success: "create success",

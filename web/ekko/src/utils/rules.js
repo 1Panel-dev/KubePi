@@ -12,6 +12,14 @@ const EmailRule = {
     trigger: ['blur', 'change']
 }
 
+const PasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@#$%^&*]{8,30}$/
+
+const PasswordRule = {
+    required: true,
+    pattern: PasswordPattern,
+    message: i18n.t("commons.validate.password_help"),
+    trigger: "blur"
+}
 
 const NumberRule = {
     required: true,
@@ -23,5 +31,6 @@ const NumberRule = {
 export default {
     RequiredRule,
     NumberRule,
-    EmailRule
+    EmailRule,
+    PasswordRule
 }

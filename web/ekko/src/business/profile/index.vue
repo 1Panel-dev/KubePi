@@ -130,10 +130,12 @@ export default {
         ],
         newPassword: [
           Rules.RequiredRule,
+          Rules.PasswordRule,
           {validator: validatePass, trigger: 'blur'},
         ],
         confirmPassword: [
           Rules.RequiredRule,
+          Rules.PasswordRule,
           {validator: validatePass2, trigger: 'blur'}
         ]
       }

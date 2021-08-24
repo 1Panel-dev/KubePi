@@ -105,9 +105,11 @@ export default {
           Rules.EmailRule
         ],
         password: [
+          Rules.PasswordRule,
           {validator: validatePass, trigger: 'blur'},
         ],
         confirmPassword: [
+          Rules.PasswordRule,
           {validator: validatePass2, trigger: 'blur'}
         ],
       },
