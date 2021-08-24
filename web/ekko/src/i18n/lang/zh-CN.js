@@ -62,6 +62,7 @@ const message = {
             select: "请选择{0}",
             required: "必填项",
             email: "请输入有效的电子邮箱",
+            password_help: "有效密码:8-30位,英文字母+数字+特殊字符(可选)",
         },
         msg: {
             create_success: "创建成功",
@@ -191,8 +192,17 @@ const message = {
 }
 
 
+const description = {
+    i18n_user_administrator: "超级管理员,拥有所有对象的权限",
+    i18n_user_manage_cluster: "集群管理员,拥有集群对象的所有权限",
+    i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
+    i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
+    i18n_user_common_user: "普通用户，只拥有集群对象访问权限"
+}
+
 export default {
     ...el,
     ...fu,
     ...message,
+    ...description
 }

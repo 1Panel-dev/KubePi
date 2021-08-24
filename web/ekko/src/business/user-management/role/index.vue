@@ -19,6 +19,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ translate(row.description) }}
+        </template>
+      </el-table-column>
+
       <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ $t("commons.bool." + row.builtIn) }}
@@ -93,6 +99,10 @@ export default {
     onCreate() {
       this.$router.push({name: "RoleCreate"})
 
+    },
+
+    translate(a) {
+      return a.startsWith("i18n_") ? this.$t(a) : a
     },
 
     onDetail(name) {

@@ -63,6 +63,10 @@ const Clusters = {
                     },
                     children: [
                         {
+                            path: "",
+                            redirect: "cluster"
+                        },
+                        {
                             path: "cluster",
                             props: true,
                             component: () => import("@/business/cluster-management/detail/roles/cluster"),
