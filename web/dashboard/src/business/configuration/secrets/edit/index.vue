@@ -34,7 +34,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick" v-if="Object.keys(item.data).length!==0">
+                       @tab-click="handleClick" v-if="Object.keys(item.metadata).length!==0">
                 <el-tab-pane key="data" :label="$t('business.configuration.data')" v-if="item.type==='Opaque'">
                   <ko-secret-data :dataObj.sync="item.data"></ko-secret-data>
                 </el-tab-pane>
