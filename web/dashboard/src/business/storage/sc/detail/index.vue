@@ -31,7 +31,7 @@
           </el-row>
           <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
-            <el-tab-pane lazy :label="$t('commons.table.status')">
+            <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form]">
                 <el-table-column sortable :label="$t('business.storage.provisioner')" min-width="30"
                                  prop="provisioner"/>

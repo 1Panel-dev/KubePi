@@ -12,7 +12,7 @@
           </el-row>
           <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
-            <el-tab-pane lazy :label="$t('commons.table.status')">
+            <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form.status]">
                 <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
                   <template v-slot:default="{row}">
