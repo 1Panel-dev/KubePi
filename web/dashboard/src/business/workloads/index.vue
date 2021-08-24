@@ -361,6 +361,8 @@ export default {
         metadata: {
           name: this.form.metadata.name,
           namespace: this.form.metadata.namespace,
+          labels: this.form.metadata.labels,
+          annotations: this.form.metadata.annotations,
         },
         spec: {
           replicas: this.form.spec.replicas,
