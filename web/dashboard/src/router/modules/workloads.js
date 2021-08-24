@@ -25,6 +25,36 @@ const Workloads = {
       },
     },
     {
+      path: "/pods/create",
+      requirePermission: {
+        apiGroup: "core",
+        resource: "pods",
+        verb: "create",
+      },
+      name: "PodCreate",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/create"),
+      props: true,
+      meta: {
+        activeMenu: "/pods",
+      },
+    },
+    {
+      path: "pods/:namespace/:name",
+      requirePermission: {
+        apiGroup: "apps",
+        resource: "pods",
+        verb: "update",
+      },
+      name: "PodEdit",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/edit"),
+      props: true,
+      meta: {
+        activeMenu: "/pods",
+      },
+    },
+    {
       path: "/pods/detail/:namespace/:name",
       requirePermission: {
         apiGroup: "core",

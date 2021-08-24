@@ -1,4 +1,4 @@
-import {get, del} from "@/plugins/request"
+import {get, del, post, put} from "@/plugins/request"
 
 const podUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/pods`
@@ -41,4 +41,12 @@ export function deletePod (cluster_name, pod) {
 
 export function getPodLogsByName (cluster_name, namespace, pod, paramInfo) {
   return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log` + paramInfo)
+}
+
+export function createPod (cluster_name, namespace, pod) {
+  return post(`${podUrlWithNs(cluster_name, namespace)}`, pod)
+}
+
+export function updatePod (cluster_name, namespace,name, pod) {
+  return put(`${podUrlWithNs(cluster_name, namespace)}/${name}`, pod)
 }

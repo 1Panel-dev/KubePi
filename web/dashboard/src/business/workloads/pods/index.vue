@@ -3,6 +3,9 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'create'}">
+            {{ $t("commons.button.create") }}
+          </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
@@ -32,9 +35,10 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <el-table-column min-width="25" :label="$t('commons.table.action')">
+      <el-table-column min-width="45" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-dropdown @command="handleClick($event,row)" :hide-on-click="false">
+          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit" v-has-permissions="{apiGroup:'core',resource:'pods',verb:'update'}" />
+          <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-download" command="download">{{$t("commons.button.download_yaml")}}</el-dropdown-item>
@@ -125,6 +129,9 @@ export default {
           break
       }
     },
+    onEdit(row) {
+      this.$router.push({name: "PodEdit", params: {namespace: row.metadata.namespace, name: row.metadata.name}})
+    },
     openTerminal(row, container) {
       let c
       if (container) {
@@ -197,6 +204,9 @@ export default {
             })
         }
       })
+    },
+    onCreate() {
+      this.$router.push({ name: "PodCreate" })
     },
     getPodStatus(row) {
       if (row.status.containerStatuses) {
