@@ -197,7 +197,7 @@ export default {
         apiVersion: "",
         kind: "",
         metadata: {
-          name: "my-test",
+          name: "",
           namespace: "",
         },
         spec: {
