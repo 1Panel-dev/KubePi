@@ -94,34 +94,10 @@ export default {
   watch: {
     value: function (newValue) {
       this.initData(newValue)
-
-      // if (newValue !== undefined) {
-      //   let yaml = require("js-yaml")
-      //   this.oldValue = yaml.dump(newValue)
-      //   this.$refs.editor.codemirror.setValue(yaml.dump(newValue))
-      //   //折叠一些无用的key
-      //   const keys = ["managedFields","status"]
-      //   for (let i = 0; i < keys.length; i++) {
-      //     this.foldCode(keys[i])
-      //   }
-      //   this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
-      // }
     }
   },
   mounted () {
     this.initData(this.value)
-
-    // if (this.value !== undefined) {
-    //   let yaml = require("js-yaml")
-    //   this.$refs.editor.codemirror.setValue(yaml.dump(this.value))
-    //   this.oldValue = yaml.dump(this.value)
-    //   //折叠一些无用的key
-    //   const keys = ["managedFields","status"]
-    //   for (let i = 0; i < keys.length; i++) {
-    //     this.foldCode(keys[i])
-    //   }
-    //   this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
-    // }
   },
   methods: {
     getValue () {
@@ -153,13 +129,13 @@ export default {
         this.$refs.editor.codemirror.foldCode(cursor.from())
       }
     },
-    initData(value){
+    initData (value) {
       if (value !== undefined) {
         let yaml = require("js-yaml")
         this.oldValue = yaml.dump(value)
         this.$refs.editor.codemirror.setValue(yaml.dump(value))
         //折叠一些无用的key
-        const keys = ["managedFields","status"]
+        const keys = ["managedFields", "status"]
         for (let i = 0; i < keys.length; i++) {
           this.foldCode(keys[i])
         }
