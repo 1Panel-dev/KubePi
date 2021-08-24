@@ -492,7 +492,7 @@ export default {
           .then(() => {
             this.$message({
               type: "success",
-              message: this.$t("commons.msg.edit_success"),
+              message: this.$t("commons.msg.update_success"),
             })
             this.$router.push({ name: this.toggleCase() + "s" })
           })
