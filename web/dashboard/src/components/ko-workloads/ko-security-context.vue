@@ -101,30 +101,12 @@ export default {
       if (!parentFrom.securityContext) {
         parentFrom.securityContext = {}
       }
-      if (this.form.privileged !== null) {
-        parentFrom.securityContext.privileged = this.form.privileged
-      }
-      if (this.form.allowPrivilegeEscalation !== null) {
-        parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation
-      }
-      if (this.form.runAsNonRoot !== null) {
-        parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot
-      }
-      if (this.form.readOnlyRootFilesystem !== null) {
-        parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem
-      }
-      if (this.form.runAsUser) {
-        parentFrom.securityContext.runAsUser = this.form.runAsUser
-      }
-      if (this.form.capabilities.add.length !== 0 || this.form.capabilities.drop.length !== 0) {
-        parentFrom.securityContext.capabilities = {}
-        if (this.form.capabilities.add.length !== 0) {
-          parentFrom.securityContext.capabilities.add = this.form.capabilities.add
-        }
-        if (this.form.capabilities.drop.length !== 0) {
-          parentFrom.securityContext.capabilities.drop = this.form.capabilities.drop
-        }
-      }
+      parentFrom.securityContext.privileged = this.form.privileged || undefined
+      parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation || undefined
+      parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
+      parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem || undefined
+      parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
+      parentFrom.securityContext.capabilities = { add: this.form.capabilities.add, drop: this.form.capabilities.drop }
     },
   },
   mounted() {

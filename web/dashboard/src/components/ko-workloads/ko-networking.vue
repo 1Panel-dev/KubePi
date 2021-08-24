@@ -216,47 +216,26 @@ export default {
       this.form.hostAliases.push(item)
     },
     transformation(parentFrom) {
-      if (this.form.subdomain) {
-        parentFrom.subdomain = this.form.subdomain
+      parentFrom.subdomain = this.form.subdomain || undefined
+      parentFrom.dnsPolicy = this.form.dnsPolicy || undefined
+      parentFrom.hostname = this.form.hostname || undefined
+      parentFrom.hostNetwork = this.form.hostNetwork
+
+      let aliases = []
+      for (const item of this.form.hostAliases) {
+        aliases.push({
+          ip: item.ip || undefined,
+          hostnames: item.hostnames ? item.hostnames.split(",") : [],
+        })
       }
-      if (this.form.dnsPolicy) {
-        parentFrom.dnsPolicy = this.form.dnsPolicy
+      parentFrom.hostAliases = aliases
+
+      parentFrom.dnsConfig = parentFrom.dnsConfig || { nameservers: [], searches: [], options: this.form.dnsConfig.options }
+      for (const item of this.form.dnsConfig.nameservers) {
+        parentFrom.dnsConfig.nameservers.push(item.value)
       }
-      if (this.form.hostname) {
-        parentFrom.hostname = this.form.hostname
-      }
-      if (this.form.hostNetwork) {
-        parentFrom.hostNetwork = true
-      }
-      if (this.form.hostAliases.length !== 0) {
-        let aliases = []
-        for (const item of this.form.hostAliases) {
-          aliases.push({
-            ip: item.ip,
-            hostnames: item.hostnames.split(","),
-          })
-        }
-        parentFrom.hostAliases = aliases
-      }
-      if (this.form.dnsConfig.nameservers.length !== 0 || this.form.dnsConfig.searches.length !== 0 || this.form.dnsConfig.options.length !== 0) {
-        parentFrom.dnsConfig = {}
-        if (this.form.dnsConfig.nameservers.length !== 0) {
-          let nameservers = []
-          for (const item of this.form.dnsConfig.nameservers) {
-            nameservers.push(item.value)
-          }
-          parentFrom.dnsConfig.nameservers = nameservers
-        }
-        if (this.form.dnsConfig.searches.length !== 0) {
-          let searches = []
-          for (const item of this.form.dnsConfig.searches) {
-            searches.push(item.value)
-          }
-          parentFrom.dnsConfig.searches = searches
-        }
-        if (this.form.dnsConfig.options.length !== 0) {
-          parentFrom.dnsConfig.options = this.form.dnsConfig.options
-        }
+      for (const item of this.form.dnsConfig.searches) {
+        parentFrom.dnsConfig.searches.push(item.value)
       }
     },
   },
@@ -275,6 +254,7 @@ export default {
         this.hostNetwork = true
       }
       if (this.networkingParentObj.hostAliases) {
+        this.form.hostAliases = []
         for (const item of this.networkingParentObj.hostAliases) {
           this.form.hostAliases.push({
             ip: item.ip,
@@ -284,17 +264,19 @@ export default {
       }
       if (this.networkingParentObj.dnsConfig) {
         if (this.networkingParentObj.dnsConfig.nameservers) {
+          this.form.dnsConfig.nameservers = []
           for (const item of this.networkingParentObj.dnsConfig.nameservers) {
             this.form.dnsConfig.nameservers.push({ value: item })
           }
         }
         if (this.networkingParentObj.dnsConfig.searches) {
+          this.form.dnsConfig.searches = []
           for (const item of this.networkingParentObj.dnsConfig.searches) {
             this.form.dnsConfig.searches.push({ value: item })
           }
         }
         if (this.networkingParentObj.dnsConfig.options) {
-          this.form.dnsConfig.options = this.networkingParentObj.dnsConfig.option
+          this.form.dnsConfig.options = this.networkingParentObj.dnsConfig.options
         }
       }
     }

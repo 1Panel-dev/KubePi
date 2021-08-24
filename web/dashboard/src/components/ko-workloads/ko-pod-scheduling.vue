@@ -22,7 +22,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item :label="$t('business.workload.namespace_operation')">
-                  <ko-form-item itemType="select" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
+                  <ko-form-item itemType="select" :noClear="true" v-model="item.namespaceOperation" :selections="namespace_operation_list" />
                 </el-form-item>
               </el-col>
               <el-col :span="12" v-if="item.namespaceOperation === 'selectNamespace'">
@@ -189,14 +189,14 @@ export default {
       for (const rule of schedule.rules) {
         if (rule.value) {
           matchs.push({
-            key: rule.key,
-            operator: rule.operator,
-            values: rule.value.split(","),
+            key: rule.key || undefined,
+            operator: rule.operator || undefined,
+            values: rule.value ? rule.value.split(",") : [],
           })
         } else {
           matchs.push({
-            key: rule.key,
-            operator: rule.operator,
+            key: rule.key || undefined,
+            operator: rule.operator || undefined,
           })
         }
       }
@@ -204,7 +204,7 @@ export default {
     },
     checkIsValid() {
       let isValid = true
-      for(const po of this.podSchedulings) {
+      for (const po of this.podSchedulings) {
         if (po.topologyKey === "") {
           isValid = false
         }
@@ -212,44 +212,36 @@ export default {
       return isValid
     },
     transformation(parentFrom) {
-      parentFrom.affinity = {}
+      if (!parentFrom.affinity) {
+        parentFrom.affinity = {}
+      }
       if (this.podSchedulings.length !== 0) {
         for (const pS of this.podSchedulings) {
           let itemAdd = {}
-          if (pS.namespaceOperation === "selectNamespace" && pS.namespaces.length !== 0) {
-            itemAdd.namespaces = pS.namespaces
+          if (pS.namespaceOperation === "selectNamespace") {
+            itemAdd.namespaces = pS.namespaces || undefined
           }
-          if (pS.topologyKey) {
-            itemAdd.topologyKey = pS.topologyKey
-          }
+          itemAdd.topologyKey = pS.topologyKey || undefined
           const matchs = this.getMatchExpress(pS)
           switch (pS.type + "+" + pS.priority) {
             case "Affinity+Required":
               if (!parentFrom.affinity.podAffinity) {
                 parentFrom.affinity.podAffinity = {}
               }
-              if (!parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-              }
+              parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.labelSelector = {}
-              if (matchs.length !== 0) {
-                itemAdd.labelSelector.matchExpressions = matchs
-              }
+              itemAdd.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Affinity+Preferred":
               if (!parentFrom.affinity.podAffinity) {
                 parentFrom.affinity.podAffinity = {}
               }
-              if (!parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-                parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              }
+              parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.podAffinityTerm = {}
               itemAdd.weight = 1
               itemAdd.podAffinityTerm.labelSelector = {}
-              if (matchs.length !== 0) {
-                itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
-              }
+              itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Required":
@@ -261,25 +253,19 @@ export default {
               }
               itemAdd._anti = true
               itemAdd.labelSelector = {}
-              if (matchs.length !== 0) {
-                itemAdd.labelSelector.matchExpressions = matchs
-              }
+              itemAdd.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Preferred":
               if (!parentFrom.affinity.podAntiAffinity) {
                 parentFrom.affinity.podAntiAffinity = {}
               }
-              if (!parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-                parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              }
+              parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
               itemAdd._anti = true
               itemAdd.podAffinityTerm = {}
               itemAdd.weight = 1
               itemAdd.podAffinityTerm.labelSelector = {}
-              if (matchs.length !== 0) {
-                itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
-              }
+              itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
           }

@@ -234,40 +234,40 @@ export default {
       for (const volume of this.volumes) {
         let item = {}
         if (volume.name) {
-          item.name = volume.name
+          item.name = volume.name || undefined
         }
         switch (volume.type) {
           case "ConfigMap":
             item.configMap = {}
             if (volume.defaultMode) {
-              item.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
+              item.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8) || undefined
             }
             if (volume.resource) {
-              item.configMap.name = volume.resource
+              item.configMap.name = volume.resource || undefined
             }
             if (volume.optional !== null) {
-              item.configMap.optional = volume.optional
+              item.configMap.optional = volume.optional || undefined
             }
             break
           case "Secret":
             item.secret = {}
             if (volume.defaultMode) {
-              item.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
+              item.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8) || undefined
             }
             if (volume.resource) {
-              item.secret.secretName = volume.resource
+              item.secret.secretName = volume.resource || undefined
             }
             if (volume.optional !== null) {
-              item.secret.optional = volume.optional
+              item.secret.optional = volume.optional || undefined
             }
             break
           case "PVC":
             item.persistentVolumeClaim = {}
             if (volume.resource) {
-              item.persistentVolumeClaim.name = volume.resource
+              item.persistentVolumeClaim.name = volume.resource || undefined
             }
             if (volume.readOnly !== null) {
-              item.persistentVolumeClaim.readOnly = volume.readOnly
+              item.persistentVolumeClaim.readOnly = volume.readOnly || undefined
             }
             break
         }

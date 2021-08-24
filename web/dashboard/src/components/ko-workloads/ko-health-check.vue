@@ -6,7 +6,7 @@
           <el-col :span="12">
             <el-row>
               <el-form-item :label="$t('business.workload.check_type')">
-                <ko-form-item itemType="select" v-model="check_type" :selections="type_list" />
+                <ko-form-item itemType="select" :noClear="true" v-model="check_type" :selections="type_list" />
               </el-form-item>
             </el-row>
             <div v-if="check_type === 'httpGet' || check_type == 'httpsGet'">
@@ -156,74 +156,52 @@ export default {
         return
       }
       let childForm = {}
-      if (this.form.periodSeconds) {
-        childForm.periodSeconds = this.form.periodSeconds
-      }
-      if (this.form.initialDelaySeconds) {
-        childForm.initialDelaySeconds = this.form.initialDelaySeconds
-      }
-      if (this.form.timeoutSeconds) {
-        childForm.timeoutSeconds = this.form.timeoutSeconds
-      }
-      if (this.form.successThreshold) {
-        childForm.successThreshold = this.form.successThreshold
-      }
-      if (this.form.failureThreshold) {
-        childForm.failureThreshold = this.form.failureThreshold
-      }
-      if (this.form.httpHeaders.length !== 0) {
-        let obj = {}
-        for (let i = 0; i < this.form.httpHeaders.length; i++) {
-          if (this.form.httpHeaders[i].key !== "") {
-            obj[this.form.httpHeaders[i].key] = this.form.httpHeaders[i].value
-          }
+      childForm.periodSeconds = this.form.periodSeconds || undefined
+      childForm.initialDelaySeconds = this.form.initialDelaySeconds || undefined
+      childForm.timeoutSeconds = this.form.timeoutSeconds || undefined
+      childForm.successThreshold = this.form.successThreshold || undefined
+      childForm.failureThreshold = this.form.failureThreshold || undefined
+      
+      let obj = {}
+      for (let i = 0; i < this.form.httpHeaders.length; i++) {
+        if (this.form.httpHeaders[i].key !== "") {
+          obj[this.form.httpHeaders[i].key] = this.form.httpHeaders[i].value
         }
-        childForm.httpHeaders = obj
       }
+      childForm.httpHeaders = obj
+      
       switch (this.check_type) {
         case "httpGet":
           childForm.httpGet = {}
           childForm.httpGet.scheme = "HTTP"
-          if (this.form.httpGet.path) {
-            childForm.httpGet.path = this.form.httpGet.path
-          }
-          if (this.form.httpGet.port) {
-            childForm.httpGet.port = this.form.httpGet.port
-          }
+          childForm.httpGet.path = this.form.httpGet.path || undefined
+          childForm.httpGet.port = this.form.httpGet.port || undefined
           break
         case "httpsGet":
           childForm.httpGet = {}
           childForm.httpGet.scheme = "HTTPS"
-          if (this.form.httpGet.path) {
-            childForm.httpGet.path = this.form.httpGet.path
-          }
-          if (this.form.httpGet.port) {
-            childForm.httpGet.port = this.form.httpGet.port
-          }
+          childForm.httpGet.path = this.form.httpGet.path || undefined
+          childForm.httpGet.port = this.form.httpGet.port || undefined
           break
         case "tcpSocket":
           childForm.tcpSocket = {}
-          if (this.form.tcpSocket.port) {
-            childForm.tcpSocket.port = this.form.tcpSocket.port
-          }
+          childForm.tcpSocket.port = this.form.tcpSocket.port || undefined
           break
         case "exec":
           childForm.exec = {}
-          if (this.form.exec.command) {
-            childForm.exec.command = this.form.exec.command.split(",")
-          }
+          childForm.exec.command = this.form.exec.command ? this.form.exec.command.split(",") : []
           break
         default:
           break
       }
       switch (this.health_check_type) {
-        case this.$t('business.workload.readiness_check'):
+        case this.$t("business.workload.readiness_check"):
           parentFrom.readinessProbe = childForm
           break
-        case this.$t('business.workload.liveness_check'):
+        case this.$t("business.workload.liveness_check"):
           parentFrom.livenessProbe = childForm
           break
-        case this.$t('business.workload.startup_check'):
+        case this.$t("business.workload.startup_check"):
           parentFrom.startupProbe = childForm
           break
       }
@@ -233,13 +211,13 @@ export default {
     if (this.healthCheckParentObj) {
       let prodeForm = {}
       switch (this.health_check_type) {
-        case this.$t('business.workload.readiness_check'):
+        case this.$t("business.workload.readiness_check"):
           prodeForm = this.healthCheckParentObj.readinessProbe
           break
-        case this.$t('business.workload.liveness_check'):
+        case this.$t("business.workload.liveness_check"):
           prodeForm = this.healthCheckParentObj.livenessProbe
           break
-        case this.$t('business.workload.startup_check'):
+        case this.$t("business.workload.startup_check"):
           prodeForm = this.healthCheckParentObj.startupProbe
           break
       }

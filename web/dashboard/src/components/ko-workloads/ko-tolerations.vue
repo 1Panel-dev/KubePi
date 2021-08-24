@@ -96,8 +96,15 @@ export default {
       this.tolerations.splice(index, 1)
     },
     transformation(parentFrom) {
-      if (this.tolerations.length !== 0) {
-        parentFrom.tolerations = this.tolerations
+      parentFrom.tolerations = []
+      for (const item of this.tolerations) {
+        parentFrom.tolerations.push({
+          key: item.key || undefined,
+          operator: item.operator || undefined,
+          value: item.value || undefined,
+          effect: item.effect || undefined,
+          tolerationSeconds: item.tolerationSeconds || undefined,
+        })
       }
     },
   },

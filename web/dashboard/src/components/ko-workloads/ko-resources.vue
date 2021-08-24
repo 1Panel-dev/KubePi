@@ -59,27 +59,11 @@ export default {
   },
   methods: {
     transformation(parentFrom) {
-      if (!parentFrom.resources) {
-        parentFrom.resources = {}
-      }
-      if (this.form.requests.memory || this.form.requests.cpu) {
-        parentFrom.resources.requests = {}
-        if (this.form.requests.memory) {
-          parentFrom.resources.requests.memory = this.form.requests.memory + "Mi"
-        }
-        if (this.form.requests.cpu) {
-          parentFrom.resources.requests.cpu = this.form.requests.cpu + "m"
-        }
-      }
-      if (this.form.limits.memory || this.form.limits.cpu) {
-        parentFrom.resources.limits = {}
-        if (this.form.limits.memory) {
-          parentFrom.resources.limits.memory = this.form.limits.memory + "Mi"
-        }
-        if (this.form.limits.cpu) {
-          parentFrom.resources.limits.cpu = this.form.limits.cpu + "m"
-        }
-      }
+      parentFrom.resources = { requests: {}, limits: {} }
+      parentFrom.resources.requests.memory = this.form.requests.memory ? this.form.requests.memory + "Mi" : undefined
+      parentFrom.resources.requests.cpu = this.form.requests.cpu ? this.form.requests.cpu + "m" : undefined
+      parentFrom.resources.limits.memory = this.form.limits.memory ? this.form.limits.memory + "Mi" : undefined
+      parentFrom.resources.limits.cpu = this.form.limits.cpu ? this.form.limits.cpu + "m" : undefined
     },
   },
   mounted() {

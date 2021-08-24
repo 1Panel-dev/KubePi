@@ -186,47 +186,33 @@ export default {
 
     transformation(parentFrom) {
       if (this.scheduling_type === "specific_node") {
-        parentFrom.nodeName = this.nodeName
+        parentFrom.nodeName = this.nodeName || undefined
       }
       if (this.scheduling_type === "matching_rules") {
+        parentFrom.nodeAffinity = {}
         if (this.nodeSchedulings.length !== 0) {
           for (const nS of this.nodeSchedulings) {
             const matchs = this.getMatchExpress(nS)
             let itemAdd = {}
             switch (nS.priority) {
               case "Preferred":
-                if (!parentFrom.nodeAffinity) {
-                  parentFrom.nodeAffinity = {}
-                }
                 parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
                 itemAdd.weight = 1
                 itemAdd.preference = {}
-                if (matchs.length !== 0) {
-                  itemAdd.preference.matchExpressions = matchs
-                }
+                itemAdd.preference.matchExpressions = matchs
                 parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
                 break
               case "Required":
-                if (!parentFrom.nodeAffinity) {
-                  parentFrom.nodeAffinity = {}
-                }
                 if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
                   parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
                 }
                 parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
-                if (matchs.length !== 0) {
-                  itemAdd.matchExpressions = matchs
-                }
+                itemAdd.matchExpressions = matchs
                 parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
                 break
               case "None":
-                if (!parentFrom.nodeAffinity) {
-                  parentFrom.nodeAffinity = {}
-                }
                 parentFrom.nodeAffinity.required.nodeSelectorTerms = []
-                if (matchs.length !== 0) {
-                  itemAdd.matchExpressions = matchs
-                }
+                itemAdd.matchExpressions = matchs
                 parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
                 break
             }
