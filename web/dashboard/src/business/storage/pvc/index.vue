@@ -24,10 +24,13 @@
       </el-table-column>
       <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Bound'" type="success" size="mini" plain round>
+          <el-button v-if="row.status.phase && row.status.phase === 'Bound'" type="success" size="mini" plain round>
             {{ row.status.phase }}
           </el-button>
-          <el-button v-else type="" size="mini" plain round>
+          <el-button v-if="row.status.phase && row.status.phase === 'Available'" type="success" size="mini" plain round>
+            {{ row.status.phase }}
+          </el-button>
+          <el-button v-if="row.status.phase && row.status.phase === 'Pending'" type="warning" size="mini" plain round>
             {{ row.status.phase }}
           </el-button>
         </template>
@@ -74,17 +77,6 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PersistentVolumeClaimEdit",
-              params: {name: row.metadata.name, namespace: row.metadata.namespace},
-              query: {yamlShow: true}
-            })
-          }
-        },
-        {
-          label: this.$t("commons.button.view_yaml"),
-          icon: "el-icon-view",
-          click: (row) => {
-            this.$router.push({
-              name: "PersistentVolumeClaimDetail",
               params: {name: row.metadata.name, namespace: row.metadata.namespace},
               query: {yamlShow: true}
             })
