@@ -14,7 +14,7 @@
 <script>
 import YamlEditor from "@/components/yaml-editor";
 import LayoutContent from "@/components/layout/LayoutContent";
-import {creategetStorageClass} from "@/api/storageclass";
+import {createStorageClass} from "@/api/storageclass";
 
 export default {
   name: "StorageClassCreate",
@@ -39,7 +39,7 @@ export default {
     onSubmit() {
       const data = this.$refs.yaml_editor.getValue()
       this.loading = true
-      creategetStorageClass(this.cluster, data).then(() => {
+      createStorageClass(this.cluster, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),

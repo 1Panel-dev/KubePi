@@ -31,10 +31,10 @@ export function getStorageClass (cluster_name, name) {
   return get(`${scUrl(cluster_name,)}/${name}`)
 }
 
-export function creategetStorageClass (cluster_name, data) {
+export function createStorageClass (cluster_name, data) {
   return post(`${scUrl(cluster_name,)}`, data)
 }
 
-export function editgetStorageClass (cluster_name, name, data) {
+export function updateStorageClass (cluster_name, name, data) {
   return put(`${scUrl(cluster_name,)}/${name}`, data)
 }

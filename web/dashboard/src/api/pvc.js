@@ -39,6 +39,6 @@ export function createPvc (cluster_name, namespace, data) {
     return post(`${namespacePvcUrl(cluster_name, namespace)}`, data)
 }
 
-export function editPvc (cluster_name, namespace, data) {
-    return put(`${namespacePvcUrl(cluster_name, namespace)}`, data)
+export function updatePvc (cluster_name, namespace, data, name) {
+    return put(`${namespacePvcUrl(cluster_name, namespace)}/${name}`, data)
 }

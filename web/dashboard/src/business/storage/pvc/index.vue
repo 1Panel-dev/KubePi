@@ -69,6 +69,17 @@ export default {
       loading: false,
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "PersistentVolumeClaimEdit",
+              params: {name: row.metadata.name, namespace: row.metadata.namespace},
+              query: {yamlShow: true}
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
           click: (row) => {
