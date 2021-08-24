@@ -14,7 +14,7 @@ const Workloads = {
     {
       path: "/pods",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "pods",
         verb: "list",
       },
