@@ -8,7 +8,6 @@
         <div style="float: right;margin-top: 10px">
           <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
           <el-button v-if="!yamlShow" @click="onEditYaml()">{{ $t("commons.button.yaml") }}</el-button>
-          <el-button v-if="yamlShow" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
           <el-button v-loading="loading" @click="onSubmit" type="primary">
             {{ $t("commons.button.submit") }}
           </el-button>
@@ -84,9 +83,6 @@ export default {
     onEditYaml () {
       this.yamlShow = true
       this.yaml = this.transformYaml()
-    },
-    backToForm () {
-      this.yamlShow = false
     },
     onSubmit () {
       let data = {}
