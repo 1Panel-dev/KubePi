@@ -117,22 +117,16 @@ export default {
   data() {
     return {
       clusterRoleFormDialogOpened: false,
-      // apiGroupResources: {
-      //   "core": ["namespaces", "nodes", "events", "persistentvolumes", "services", "endpoints",
-      //     "configmaps", "secrets", "resourcequotas", "limitranges", "persistentvolumeclaims",
-      //     "pods", "containers", "serviceaccounts"
-      //   ],
-      //   "apps": ["deployments", "daemonsets", "replicasets", "statefulsets"],
-      //   "batch": ["jobs", "cronjobs"],
-      //   "autoscaling": ["horizontalpodautoscalers"],
-      //   "networking.k8s.io": ["ingresses", "networkpolicies"],
-      //   "storage.k8s.io": ["storageclasses"],
-      //   "rbac.authorization.k8s.io": ["clusterroles", "clusterrolebindings"]
-      // },
       apiGroupResources: {
-        "core": ["namespaces", "nodes", "persistentvolumes"],
-        "storage.k8s.io": ["storageclasses"],
-        "rbac.authorization.k8s.io": ["clusterroles", "clusterrolebindings"]
+        "core": ["events", "services", "endpoints",
+          "configmaps", "secrets", "resourcequotas", "limitranges", "persistentvolumeclaims",
+          "pods", "containers", "serviceaccounts"
+        ],
+        "apps": ["deployments", "daemonsets", "replicasets", "statefulsets"],
+        "batch": ["jobs", "cronjobs"],
+        "autoscaling": ["horizontalpodautoscalers"],
+        "networking.k8s.io": ["ingresses", "networkpolicies"],
+        "rbac.authorization.k8s.io": ["role", "rolebinding"]
       },
       operation: "",
       verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
