@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Events">
-    <complex-table :data="data" @search="search()" v-loading="loading">
+    <complex-table :data="data" @search="search()" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #toolbar>
       </template>
       <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
@@ -34,9 +34,10 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          <span v-if="row.eventTime">{{ row.eventTime | age }}</span>
-          <span v-else-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>
-          <span v-else-if="row.firstTimestamp">{{ row.firstTimestamp | age }}</span>
+          <span>{{row.metadata.creationTimestamp | age}}</span>
+<!--          <span v-if="row.eventTime">{{ row.eventTime | age }}</span>-->
+<!--          <span v-else-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>-->
+<!--          <span v-else-if="row.firstTimestamp">{{ row.firstTimestamp | age }}</span>-->
         </template>
       </el-table-column>
     </complex-table>
@@ -58,16 +59,24 @@ export default {
       data: [],
       loading: false,
       clusterName: "",
-      searchName: "",
       namespaces: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      }
     }
   },
   methods: {
     search () {
       this.loading = true
-      listEvents(this.clusterName, this.searchName).then(res => {
+      listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.loading = false
         this.data = res.items
+        this.paginationConfig.total = res.total
       })
     },
   },
