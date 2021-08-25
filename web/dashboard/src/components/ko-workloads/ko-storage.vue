@@ -109,8 +109,11 @@
         </div>
         <el-row>
           <el-col :span="12">
-            <el-dropdown split-button @command="handleVolumeAdd">
-              {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
+            <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
+              <el-button class="search-btn">
+                {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
