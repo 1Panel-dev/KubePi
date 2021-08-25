@@ -190,7 +190,7 @@ export default {
   created() {
     this.onVueCreated()
   }, destroyed() {
-    this.timer.clearInterval()
+    clearInterval(this.timer)
   }
 }
 </script>
