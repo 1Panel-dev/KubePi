@@ -47,7 +47,8 @@ const message = {
       message: "消息",
       lastUpdateTime: "更新时间",
       type: "类型",
-      resourceInformation: "资源信息"
+      resourceInformation: "资源信息",
+      empty_text: "没有内容显示",
     },
     status: {
       Running: "运行中",

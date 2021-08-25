@@ -45,7 +45,9 @@ const message = {
       time: "Time",
       message: "Message",
       lastUpdateTime: "Update Time",
-      type: "Type"
+      type: "Type",
+      resourceInformation: "Resource Information",
+      empty_text: "There are no rows to show.",
     },
     statu: {
       Running: "Running",
