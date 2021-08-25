@@ -27,7 +27,7 @@ const Workloads = {
     {
       path: "/pods/create",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "pods",
         verb: "create",
       },
@@ -42,7 +42,7 @@ const Workloads = {
     {
       path: "pods/:namespace/:name",
       requirePermission: {
-        apiGroup: "apps",
+        apiGroup: "",
         resource: "pods",
         verb: "update",
       },
@@ -57,7 +57,7 @@ const Workloads = {
     {
       path: "/pods/detail/:namespace/:name",
       requirePermission: {
-        apiGroup: "core",
+        apiGroup: "",
         resource: "pods",
         verb: "get",
       },

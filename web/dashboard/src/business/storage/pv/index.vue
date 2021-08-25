@@ -1,16 +1,12 @@
 <template>
   <layout-content header="Persistent Volumes">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
-                   :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small"
-                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumes',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumes',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small"
-                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumes',verb:'delete'}"
-                     :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumes',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -33,7 +29,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.storage.accessModes')" prop="metadata.labels">
         <template v-slot:default="{row}">
-          <el-tag  v-for="(name,index) in row.spec.accessModes " :key="index" type="info" size="mini">{{ name }}</el-tag>
+          <el-tag v-for="(name,index) in row.spec.accessModes " :key="index" type="info" size="mini">{{ name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.storage.capacity')" prop="metadata.labels">
@@ -54,13 +50,14 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
-import {downloadYaml} from "@/utils/actions"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deletePvs, listPvs} from "@/api/pv";
+import { deletePvs, listPvs } from "@/api/pv"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "PersistentVolumes",
-  components: {ComplexTable, LayoutContent, KoTableOperations},
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data() {
     return {
       data: [],
@@ -75,10 +72,13 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PersistentVolumeEdit",
-              params: {name: row.metadata.name},
-              query: {yamlShow: false}
+              params: { name: row.metadata.name },
+              query: { yamlShow: false },
             })
-          }
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -86,24 +86,30 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PersistentVolumeEdit",
-              params: {name: row.metadata.name},
-              query: {yamlShow: true}
+              params: { name: row.metadata.name },
+              query: { yamlShow: true },
             })
-          }
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", row)
-          }
+          },
         },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
-          }
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "delete" })
+          },
         },
       ],
       paginationConfig: {
@@ -112,15 +118,15 @@ export default {
         total: 0,
       },
       searchConfig: {
-        keywords: ""
+        keywords: "",
       },
     }
   },
   methods: {
     search() {
       this.loading = true
-      const {currentPage, pageSize} = this.paginationConfig
-      listPvs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
+      const { currentPage, pageSize } = this.paginationConfig
+      listPvs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then((res) => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
@@ -129,17 +135,15 @@ export default {
     onCreate() {
       this.$router.push({
         name: "PersistentVolumeCreate",
-        query: {yamlShow: false}
+        query: { yamlShow: false },
       })
     },
     onDelete(row) {
-      this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deletePvs(this.cluster, row.metadata.name))
@@ -152,34 +156,33 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search()
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search()
-              })
+            })
+            .catch(() => {
+              this.search()
+            })
         }
       })
     },
     openDetail(row) {
       this.$router.push({
         name: "PersistentVolumeDetail",
-        params: {name: row.metadata.name},
-        query: {yamlShow: false}
+        params: { name: row.metadata.name },
+        query: { yamlShow: false },
       })
     },
   },
   created() {
     this.cluster = this.$route.query.cluster
     this.search()
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 </style>
