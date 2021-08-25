@@ -221,6 +221,7 @@ export default {
       }
       return true
     },
+    // 先直接去掉支持的三种类型，然后再往里push
     transformation(parentFrom) {
       if (!parentFrom.volumes) {
         parentFrom.volumes = []
@@ -230,7 +231,9 @@ export default {
           parentFrom.volumes.splice(i, 1)
         }
       }
-      parentFrom.containers[this.containerIndex].volumeMounts = []
+      if (!parentFrom.containers[this.containerIndex].volumeMounts) {
+        parentFrom.containers[this.containerIndex].volumeMounts = []
+      }
       for (const volume of this.volumes) {
         let item = {}
         if (volume.name) {
