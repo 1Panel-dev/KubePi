@@ -1,20 +1,19 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2474164 */
-  src: url('iconfont.woff2?t=1627546170843') format('woff2'),
-       url('iconfont.woff?t=1627546170843') format('woff'),
-       url('iconfont.ttf?t=1627546170843') format('truetype');
+  src: url('iconfont.woff2?t=1629882629724') format('woff2'),
+       url('iconfont.woff?t=1629882629724') format('woff'),
+       url('iconfont.ttf?t=1629882629724') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.iconcommand-line:before {
-  content: "\e665";
+.iconline-terminalzhongduan:before {
+  content: "\e6f3";
 }
 
 .iconnetwork:before {

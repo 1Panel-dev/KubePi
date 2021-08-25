@@ -75,14 +75,14 @@ export default {
       buttons: [
         {
           label: this.$t("commons.button.terminal"),
-          icon: "el-icon-date",
+          icon: "iconfont iconline-terminalzhongduan",
           click: (row) => {
             this.openTerminal(row)
           },
         },
         {
           label: this.$t("commons.button.logs"),
-          icon: "el-icon-notebook-2",
+          icon: "el-icon-tickets",
           click: (row) => {
             this.openTerminalLogs(row)
           },
@@ -150,4 +150,8 @@ export default {
 </script>
 
 <style scoped>
+.btnSize {
+  width: 28px;
+  height: 28px;
+}
 </style>

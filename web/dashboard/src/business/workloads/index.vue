@@ -233,25 +233,30 @@ export default {
       }
     },
     search() {
-      getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name).then((res) => {
-        this.form = res
-        if (!this.isCronJob()) {
-          this.podSpec = this.form.spec.template.spec
-          this.podMetadata = this.form.spec.template.metadata
-        } else {
-          this.podSpec = this.form.spec.jobTemplate.spec.template.spec
-          this.podMetadata = this.form.spec.jobTemplate.spec.template.metadata
-        }
-        if (this.isStatefulSet()) {
-          this.loadServicesWithNs()
-        }
-        this.loadSecretsWithNs()
-        this.loadConfigMapsWithNs()
-        this.yaml = res
-        this.currentContainerIndex = 0
-        this.currentContainer = this.podSpec.containers[0]
-        this.isRefresh = !this.isRefresh
-      })
+      this.loading = true
+      getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name)
+        .then((res) => {
+          this.form = res
+          if (!this.isCronJob()) {
+            this.podSpec = this.form.spec.template.spec
+            this.podMetadata = this.form.spec.template.metadata
+          } else {
+            this.podSpec = this.form.spec.jobTemplate.spec.template.spec
+            this.podMetadata = this.form.spec.jobTemplate.spec.template.metadata
+          }
+          if (this.isStatefulSet()) {
+            this.loadServicesWithNs()
+          }
+          this.loadSecretsWithNs()
+          this.loadConfigMapsWithNs()
+          this.yaml = res
+          this.currentContainerIndex = 0
+          this.currentContainer = this.podSpec.containers[0]
+          this.isRefresh = !this.isRefresh
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     loadNamespace() {
       this.namespace_list = []
