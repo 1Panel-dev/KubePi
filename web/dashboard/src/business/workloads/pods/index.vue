@@ -67,8 +67,8 @@
                 </el-popover>
               </div>
               <div v-if="row.containers.length == 1">
-                <el-dropdown-item icon="el-icon-date" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-notebook-2" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
+                <el-dropdown-item icon="iconfont iconline-terminalzhongduan" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-tickets" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">{{$t("commons.button.delete")}}</el-dropdown-item>
             </el-dropdown-menu>

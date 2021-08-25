@@ -6,11 +6,11 @@
   "description": "KubeOperator UI",
   "glyphs": [
     {
-      "icon_id": "10330790",
-      "name": "command-line",
-      "font_class": "command-line",
-      "unicode": "e665",
-      "unicode_decimal": 58981
+      "icon_id": "21400863",
+      "name": "line-terminal（终端）",
+      "font_class": "line-terminalzhongduan",
+      "unicode": "e6f3",
+      "unicode_decimal": 59123
     },
     {
       "icon_id": "14560260",
