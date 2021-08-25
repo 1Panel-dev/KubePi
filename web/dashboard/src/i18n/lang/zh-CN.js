@@ -365,6 +365,7 @@ const message = {
       many_read_write: "多节点读写",
     },
     network: {
+      service_discovery: "服务发现",
       network: "网络",
       protocol: "协议",
       port: "端口",
@@ -376,7 +377,6 @@ const message = {
       service_port: "Service 端口",
       target: "目标",
       pod_selector: "Pod 选择器",
-      service_ports: "服务端口",
       port_name: "端口名称",
       listening_port: "监听端口",
       target_port: "目标端口",

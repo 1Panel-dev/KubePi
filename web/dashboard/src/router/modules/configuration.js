@@ -3,7 +3,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 const Configuration = {
   path: "/configuration",
   parent: true,
-  sort: 3,
+  sort: 4,
   component: Layout,
   name: "Configuration",
   meta: {
