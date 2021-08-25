@@ -176,8 +176,8 @@ export default {
     },
 
     transformation(parentFrom) {
-      parentFrom.command = this.form.command ? this.form.command.split(",") : []
-      parentFrom.args = this.form.args ? this.form.args.split(",") : []
+      parentFrom.command = this.form.command ? this.form.command.split(",") : undefined
+      parentFrom.args = this.form.args ? this.form.args.split(",") : undefined
       parentFrom.workingDir = this.form.workingDir || undefined
       if (this.form.stdin) {
         switch (this.form.stdin) {
@@ -273,8 +273,8 @@ export default {
           }
         }
       }
-      parentFrom.env = envList
-      parentFrom.envFrom = envFromList
+      parentFrom.env = envList.length !== 0 ? envList : undefined
+      parentFrom.envFrom = envFromList.length !== 0 ? envFromList : undefined
     },
   },
   mounted() {

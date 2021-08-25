@@ -106,7 +106,10 @@ export default {
       parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
       parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem || undefined
       parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
-      parentFrom.securityContext.capabilities = { add: this.form.capabilities.add, drop: this.form.capabilities.drop }
+      parentFrom.securityContext.capabilities = {
+        add: this.form.capabilities.add.length !== 0 ? this.form.capabilities.add : undefined,
+        drop: this.form.capabilities.drop.length !== 0 ? this.form.capabilities.drop : undefined,
+      }
     },
   },
   mounted() {

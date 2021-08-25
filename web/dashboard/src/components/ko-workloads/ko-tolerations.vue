@@ -96,7 +96,7 @@ export default {
       this.tolerations.splice(index, 1)
     },
     transformation(parentFrom) {
-      parentFrom.tolerations = []
+      let tolerations = []
       for (const item of this.tolerations) {
         parentFrom.tolerations.push({
           key: item.key || undefined,
@@ -106,6 +106,7 @@ export default {
           tolerationSeconds: item.tolerationSeconds || undefined,
         })
       }
+      parentFrom.tolerations = tolerations.length !== 0 ? tolerations : undefined
     },
   },
   mounted() {

@@ -64,10 +64,41 @@
               </tr>
               <tr>
                 <td align="left">
-                  <el-button @click="handleMatchAdd(item)">{{ $t("commons.button.add") }}</el-button>
+                  <el-button @click="handleMatchAdd(item)">{{ $t("commons.button.add") }}{{$t("business.workload.match_expressions")}}</el-button>
                 </td>
               </tr>
             </table>
+
+            <table style="width: 98%; margin-top: 5px" class="tab-table">
+              <tr>
+                <th scope="col" width="48%" align="left">
+                  <label>{{$t('business.workload.key')}}</label>
+                </th>
+                <th scope="col" width="48%" align="left">
+                  <label>{{$t('business.workload.value')}}</label>
+                </th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="(row, index) in item.labelRules" v-bind:key="index">
+                <td>
+                  <ko-form-item itemType="input" v-model="row.key" />
+                </td>
+                <td>
+                  <ko-form-item itemType="input" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleMatchLabelDelete(item, index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleMatchLabelAdd(item)">{{ $t("commons.button.add") }}{{$t("business.workload.match_labels")}}</el-button>
+                </td>
+              </tr>
+            </table>
+
             <el-row style="margin-top: 10px">
               <el-col :span=24>
                 <el-form-item :label="$t('business.workload.topology_key')" required>
@@ -137,6 +168,7 @@ export default {
         namespaceOperation: "podNamespace",
         namespaces: "",
         rules: [],
+        labelRules: [],
         topologyKey: "",
       }
       this.podSchedulings.push(item)
@@ -156,6 +188,18 @@ export default {
     handleMatchDelete(schedulingItem, index) {
       schedulingItem.rules.splice(index, 1)
     },
+
+    handleMatchLabelAdd(schedulingItem) {
+      var item = {
+        key: "",
+        value: "",
+      }
+      schedulingItem.labelRules.push(item)
+    },
+    handleMatchLabelDelete(schedulingItem, index) {
+      schedulingItem.labelRules.splice(index, 1)
+    },
+
     valueTrans(type, priority, s) {
       let namespaceOperation,
         namespaces = ""
@@ -167,8 +211,19 @@ export default {
       }
       let rules = []
       if (s.labelSelector.matchExpressions) {
-        for (const express of s.matchExpressions) {
+        for (const express of s.labelSelector.matchExpressions) {
           rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+        }
+      }
+      let labelRules = []
+      if (s.labelSelector.matchLabels) {
+        for (const key in s.labelSelector.matchLabels) {
+          if (Object.prototype.hasOwnProperty.call(s.labelSelector.matchLabels, key)) {
+            labelRules.push({
+              key: key,
+              value: s.labelSelector.matchLabels[key],
+            })
+          }
         }
       }
       const topologyKey = s.topologyKey ? s.topologyKey : ""
@@ -178,29 +233,35 @@ export default {
         namespaceOperation: namespaceOperation,
         namespaces: namespaces,
         rules: rules,
+        labelRules: labelRules,
         topologyKey: topologyKey,
       })
     },
     getMatchExpress(schedule) {
-      let matchs = []
       if (schedule.rules.length === 0) {
-        return matchs
+        return undefined
       }
+      let matchs = []
       for (const rule of schedule.rules) {
-        if (rule.value) {
-          matchs.push({
-            key: rule.key || undefined,
-            operator: rule.operator || undefined,
-            values: rule.value ? rule.value.split(",") : [],
-          })
-        } else {
-          matchs.push({
-            key: rule.key || undefined,
-            operator: rule.operator || undefined,
-          })
-        }
+        matchs.push({
+          key: rule.key || undefined,
+          operator: rule.operator || undefined,
+          values: rule.value ? rule.value.split(",") : undefined,
+        })
       }
       return matchs
+    },
+    getMatchLabels(schedule) {
+      if (schedule.labelRules.length === 0) {
+        return undefined
+      }
+      let obj = {}
+      for (let i = 0; i < schedule.labelRules.length; i++) {
+        if (schedule.labelRules[i].key !== "") {
+          obj[schedule.labelRules[i].key] = schedule.labelRules[i].value
+        }
+      }
+      return obj
     },
     checkIsValid() {
       let isValid = true
@@ -223,14 +284,14 @@ export default {
           }
           itemAdd.topologyKey = pS.topologyKey || undefined
           const matchs = this.getMatchExpress(pS)
+          const labelMatchs = this.getMatchLabels(pS)
           switch (pS.type + "+" + pS.priority) {
             case "Affinity+Required":
               if (!parentFrom.affinity.podAffinity) {
                 parentFrom.affinity.podAffinity = {}
               }
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.labelSelector = {}
-              itemAdd.labelSelector.matchExpressions = matchs
+              itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Affinity+Preferred":
@@ -238,22 +299,16 @@ export default {
                 parentFrom.affinity.podAffinity = {}
               }
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.podAffinityTerm = {}
+              itemAdd.podAffinityTerm = { labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
               itemAdd.weight = 1
-              itemAdd.podAffinityTerm.labelSelector = {}
-              itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Required":
               if (!parentFrom.affinity.podAntiAffinity) {
                 parentFrom.affinity.podAntiAffinity = {}
               }
-              if (!parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-              }
-              itemAdd._anti = true
-              itemAdd.labelSelector = {}
-              itemAdd.labelSelector.matchExpressions = matchs
+              parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
+              itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Preferred":
@@ -261,11 +316,8 @@ export default {
                 parentFrom.affinity.podAntiAffinity = {}
               }
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd._anti = true
-              itemAdd.podAffinityTerm = {}
+              itemAdd.podAffinityTerm = { labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
               itemAdd.weight = 1
-              itemAdd.podAffinityTerm.labelSelector = {}
-              itemAdd.podAffinityTerm.labelSelector.matchExpressions = matchs
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
           }

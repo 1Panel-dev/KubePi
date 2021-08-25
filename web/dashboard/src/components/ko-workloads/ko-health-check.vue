@@ -168,7 +168,7 @@ export default {
           obj[this.form.httpHeaders[i].key] = this.form.httpHeaders[i].value
         }
       }
-      childForm.httpHeaders = obj
+      childForm.httpHeaders = this.form.httpHeaders.length !== 0 ? obj : undefined
       
       switch (this.check_type) {
         case "httpGet":
@@ -189,7 +189,7 @@ export default {
           break
         case "exec":
           childForm.exec = {}
-          childForm.exec.command = this.form.exec.command ? this.form.exec.command.split(",") : []
+          childForm.exec.command = this.form.exec.command ? this.form.exec.command.split(",") : undefined
           break
         default:
           break

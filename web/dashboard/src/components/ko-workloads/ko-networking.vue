@@ -225,17 +225,23 @@ export default {
       for (const item of this.form.hostAliases) {
         aliases.push({
           ip: item.ip || undefined,
-          hostnames: item.hostnames ? item.hostnames.split(",") : [],
+          hostnames: item.hostnames ? item.hostnames.split(",") : undefined,
         })
       }
-      parentFrom.hostAliases = aliases
+      parentFrom.hostAliases = aliases.length !== 0 ? aliases : undefined
 
-      parentFrom.dnsConfig = parentFrom.dnsConfig || { nameservers: [], searches: [], options: this.form.dnsConfig.options }
+      let nameservers = []
       for (const item of this.form.dnsConfig.nameservers) {
-        parentFrom.dnsConfig.nameservers.push(item.value)
+        nameservers.push(item.value)
       }
+      let searches = []
       for (const item of this.form.dnsConfig.searches) {
-        parentFrom.dnsConfig.searches.push(item.value)
+        searches.push(item.value)
+      }
+      parentFrom.dnsConfig = parentFrom.dnsConfig || {
+        nameservers: nameservers.length !== 0 ? nameservers : undefined,
+        searches: searches.length !== 0 ? searches : undefined,
+        options: this.form.dnsConfig.options.length !== 0 ? this.form.dnsConfig.options : undefined,
       }
     },
   },

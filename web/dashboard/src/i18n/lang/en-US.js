@@ -269,6 +269,8 @@ const message = {
       operator: "Operator",
       topology_key: "Topology Key",
       node_selector: " Node Selector",
+      match_expressions: " Match Expression",
+      match_labels: " Match Label",
 
       node_schedule: "Node Scheduling",
       schedule_type: "Scheduling Type",
