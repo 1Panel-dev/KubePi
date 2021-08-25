@@ -88,15 +88,9 @@ export default {
       return isValid
     },
     transformation(parentFrom) {
-      if (this.form.name) {
-        parentFrom.name = this.form.name
-      }
-      if (this.form.image) {
-        parentFrom.image = this.form.image
-      }
-      if (this.form.imagePullPolicy) {
-        parentFrom.imagePullPolicy = this.form.imagePullPolicy
-      }
+      parentFrom.name = this.form.name || undefined
+      parentFrom.image = this.form.image || undefined
+      parentFrom.imagePullPolicy = this.form.imagePullPolicy || undefined
     },
   },
   mounted() {

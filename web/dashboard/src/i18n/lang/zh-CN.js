@@ -272,6 +272,8 @@ const message = {
       operator: "运算符",
       topology_key: "拓扑键",
       node_selector: "节点选择器",
+      match_expressions: "表达式",
+      match_labels: "标签选择",
 
       node_schedule: "节点调度",
       schedule_type: "调度类型",

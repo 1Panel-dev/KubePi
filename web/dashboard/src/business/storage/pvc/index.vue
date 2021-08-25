@@ -1,17 +1,12 @@
 <template>
   <layout-content header="Persistent Volume Claims">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
-                   :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small"
-                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'create'}"
-                     @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small"
-                     v-has-permissions="{apiGroup:'core',resource:'persistentvolumeclaims',verb:'delete'}"
-                     :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -35,15 +30,15 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
+      <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace" />
       <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName">
         <template v-slot:default="{row}">
           <el-link @click="openPvDetail(row)">{{ row.spec.volumeName }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
-      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
-      <el-table-column label="volumeMode" prop="spec.volumeMode"/>
+      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage" />
+      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName" />
+      <el-table-column label="volumeMode" prop="spec.volumeMode" />
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -57,13 +52,14 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
-import {downloadYaml} from "@/utils/actions"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deletePvcs, listPvcs} from "@/api/pvc";
+import { deletePvcs, listPvcs } from "@/api/pvc"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "PersistentVolumeClaim",
-  components: {ComplexTable, LayoutContent, KoTableOperations},
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data() {
     return {
       data: [],
@@ -77,24 +73,30 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PersistentVolumeClaimEdit",
-              params: {name: row.metadata.name, namespace: row.metadata.namespace},
-              query: {yamlShow: true}
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true },
             })
-          }
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "persistentvolumeclaims", verb: "update" })
+          },
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", row)
-          }
+          },
         },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row)
-          }
+          },
+          disabled: () => {
+            return !checkPermissions({ apiGroup: "", resource: "persistentvolumeclaims", verb: "delete" })
+          },
         },
       ],
       paginationConfig: {
@@ -103,15 +105,15 @@ export default {
         total: 0,
       },
       searchConfig: {
-        keywords: ""
+        keywords: "",
       },
     }
   },
   methods: {
     search() {
       this.loading = true
-      const {currentPage, pageSize} = this.paginationConfig
-      listPvcs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
+      const { currentPage, pageSize } = this.paginationConfig
+      listPvcs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then((res) => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
@@ -120,17 +122,15 @@ export default {
     onCreate() {
       this.$router.push({
         name: "PersistentVolumeClaimCreate",
-        query: {yamlShow: false}
+        query: { yamlShow: false },
       })
     },
     onDelete(row) {
-      this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deletePvcs(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -143,16 +143,16 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search()
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search()
-              })
+            })
+            .catch(() => {
+              this.search()
+            })
         }
       })
     },
@@ -161,28 +161,27 @@ export default {
         name: "PersistentVolumeClaimDetail",
         params: {
           name: row.metadata.name,
-          namespace: row.metadata.namespace
+          namespace: row.metadata.namespace,
         },
-        query: {yamlShow: false}
+        query: { yamlShow: false },
       })
     },
-    openPvDetail(row){
+    openPvDetail(row) {
       this.$router.push({
         name: "PersistentVolumeDetail",
         params: {
           name: row.spec.volumeName,
         },
-        query: {yamlShow: false}
+        query: { yamlShow: false },
       })
     },
   },
   created() {
     this.cluster = this.$route.query.cluster
     this.search()
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 </style>

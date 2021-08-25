@@ -109,8 +109,11 @@
         </div>
         <el-row>
           <el-col :span="12">
-            <el-dropdown split-button @command="handleVolumeAdd">
-              {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
+            <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
+              <el-button class="search-btn">
+                {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -221,6 +224,7 @@ export default {
       }
       return true
     },
+    // 先直接去掉支持的三种类型，然后再往里push
     transformation(parentFrom) {
       if (!parentFrom.volumes) {
         parentFrom.volumes = []
@@ -230,44 +234,46 @@ export default {
           parentFrom.volumes.splice(i, 1)
         }
       }
-      parentFrom.containers[this.containerIndex].volumeMounts = []
+      if (!parentFrom.containers[this.containerIndex].volumeMounts) {
+        parentFrom.containers[this.containerIndex].volumeMounts = []
+      }
       for (const volume of this.volumes) {
         let item = {}
         if (volume.name) {
-          item.name = volume.name
+          item.name = volume.name || undefined
         }
         switch (volume.type) {
           case "ConfigMap":
             item.configMap = {}
             if (volume.defaultMode) {
-              item.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
+              item.configMap.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8) || undefined
             }
             if (volume.resource) {
-              item.configMap.name = volume.resource
+              item.configMap.name = volume.resource || undefined
             }
             if (volume.optional !== null) {
-              item.configMap.optional = volume.optional
+              item.configMap.optional = volume.optional || undefined
             }
             break
           case "Secret":
             item.secret = {}
             if (volume.defaultMode) {
-              item.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8)
+              item.secret.defaultMode = parseInt("0" + volume.defaultMode.toString(), 8) || undefined
             }
             if (volume.resource) {
-              item.secret.secretName = volume.resource
+              item.secret.secretName = volume.resource || undefined
             }
             if (volume.optional !== null) {
-              item.secret.optional = volume.optional
+              item.secret.optional = volume.optional || undefined
             }
             break
           case "PVC":
             item.persistentVolumeClaim = {}
             if (volume.resource) {
-              item.persistentVolumeClaim.name = volume.resource
+              item.persistentVolumeClaim.name = volume.resource || undefined
             }
             if (volume.readOnly !== null) {
-              item.persistentVolumeClaim.readOnly = volume.readOnly
+              item.persistentVolumeClaim.readOnly = volume.readOnly || undefined
             }
             break
         }

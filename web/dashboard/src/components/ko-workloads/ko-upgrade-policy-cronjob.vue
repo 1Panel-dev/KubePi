@@ -122,40 +122,18 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      if (this.form.jobTemplate.spec.activeDeadlineSeconds) {
-        grandFrom.jobTemplate.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.activeDeadlineSeconds
-      }
-      if (this.form.jobTemplate.spec.backoffLimit) {
-        grandFrom.jobTemplate.spec.backoffLimit = this.form.jobTemplate.spec.backoffLimit
-      }
-      if (this.form.jobTemplate.spec.completions) {
-        grandFrom.jobTemplate.spec.completions = this.form.jobTemplate.spec.completions
-      }
-      if (this.form.jobTemplate.spec.parallelism) {
-        grandFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism
-      }
-      if (this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
-      }
-      if (this.form.jobTemplate.spec.template.spec.restartPolicy) {
-        parentFrom.restartPolicy = this.form.jobTemplate.spec.template.spec.restartPolicy
-      }
+      grandFrom.jobTemplate.spec.activeDeadlineSeconds = this.form.jobTemplate.spec.activeDeadlineSeconds || undefined
+      grandFrom.jobTemplate.spec.backoffLimit = this.form.jobTemplate.spec.backoffLimit || undefined
+      grandFrom.jobTemplate.spec.completions = this.form.jobTemplate.spec.completions || undefined
+      grandFrom.jobTemplate.spec.parallelism = this.form.jobTemplate.spec.parallelism || undefined
+      parentFrom.terminationGracePeriodSeconds = this.form.jobTemplate.spec.template.spec.terminationGracePeriodSeconds || undefined
+      parentFrom.restartPolicy = this.form.jobTemplate.spec.template.spec.restartPolicy || undefined
 
-      if (this.form.concurrencyPolicy) {
-        grandFrom.concurrencyPolicy = this.form.concurrencyPolicy
-      }
-      if (this.form.successfulJobsHistoryLimit) {
-        grandFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit
-      }
-      if (this.form.failedJobsHistoryLimit) {
-        grandFrom.failedJobsHistoryLimit = this.form.failedJobsHistoryLimit
-      }
-      if (this.form.startingDeadlineSeconds) {
-        grandFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds
-      }
-      if (this.form.suspend !== undefined) {
-        grandFrom.suspend = this.form.suspend
-      }
+      grandFrom.concurrencyPolicy = this.form.concurrencyPolicy || undefined
+      grandFrom.successfulJobsHistoryLimit = this.form.successfulJobsHistoryLimit || undefined
+      grandFrom.failedJobsHistoryLimit = this.form.failedJobsHistoryLimit || undefined
+      grandFrom.startingDeadlineSeconds = this.form.startingDeadlineSeconds || undefined
+      grandFrom.suspend = this.form.suspend || undefined
     },
   },
   mounted() {

@@ -19,7 +19,7 @@
             <el-form-item :label="$t('business.workload.max_surge')" prop="strategy.rollingUpdate.maxSurge">
               <el-input type="number" v-model.number="form.strategy.rollingUpdate.maxSurge">
                 <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxSurgeUnit">
-                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
+                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item.label" :value="item.value" />
                 </el-select>
               </el-input>
             </el-form-item>
@@ -28,7 +28,7 @@
             <el-form-item :label="$t('business.workload.max_unavaliable')" prop="strategy.rollingUpdate.maxUnavailable">
               <el-input type="number" clearable v-model.number="form.strategy.rollingUpdate.maxUnavailable">
                 <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxUnavailableUnit">
-                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
+                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item.label" :value="item.value" />
                 </el-select>
               </el-input>
             </el-form-item>
@@ -84,7 +84,10 @@ export default {
         { label: "OnFailure", value: "OnFailure" },
         { label: "Never", value: "Never" },
       ],
-      devider_list: ["Pods", "%"],
+      devider_list: [
+        { label: "Pods", value: "" },
+        { label: "%", value: "%" },
+      ],
       form: {
         strategy: {
           type: "Recreate",
@@ -109,7 +112,9 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      grandFrom.strategy = {}
+      if (!grandFrom.strategy) {
+        grandFrom.strategy = {}
+      }
       switch (this.form.strategy.type) {
         case "Recreate":
           grandFrom.strategy.type = "Recreate"
@@ -117,35 +122,23 @@ export default {
         case "RollingUpdate":
           grandFrom.strategy.type = "RollingUpdate"
           grandFrom.strategy.rollingUpdate = {}
-          if (this.form.strategy.rollingUpdate.maxUnavailable) {
-            if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
-              this.form.strategy.rollingUpdate.maxUnavailable += "%"
-            }
-            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
+          if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
+            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable ? this.form.strategy.rollingUpdate.maxUnavailable + "%" : undefined
+          } else {
+            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable ? this.form.strategy.rollingUpdate.maxUnavailable : undefined
           }
-          if (this.form.strategy.rollingUpdate.maxSurge) {
-            if (this.form.strategy.rollingUpdate.maxSurgeUnit === "%") {
-              this.form.strategy.rollingUpdate.maxSurge += "%"
-            }
-            grandFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge
+          if (this.form.strategy.rollingUpdate.maxSurgeUnit === "%") {
+            grandFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge ? this.form.strategy.rollingUpdate.maxSurge + "%" : undefined
+          } else {
+            grandFrom.strategy.rollingUpdate.maxSurge = this.form.strategy.rollingUpdate.maxSurge ? this.form.strategy.rollingUpdate.maxSurge : undefined
           }
           break
       }
-      if (this.form.minReadySeconds) {
-        grandFrom.minReadySeconds = this.form.minReadySeconds
-      }
-      if (this.form.revisionHistoryLimit) {
-        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
-      }
-      if (this.form.progressDeadlineSeconds) {
-        grandFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds
-      }
-      if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
-      }
-      if (this.form.template.spec.restartPolicy) {
-        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
-      }
+      grandFrom.minReadySeconds = this.form.minReadySeconds || undefined
+      grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit || undefined
+      grandFrom.progressDeadlineSeconds = this.form.progressDeadlineSeconds || undefined
+      parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds || undefined
+      parentFrom.restartPolicy = this.form.template.spec.restartPolicy || undefined
     },
   },
   mounted() {
@@ -160,7 +153,7 @@ export default {
               this.form.strategy.rollingUpdate.maxUnavailableUnit = "%"
               this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable.replace("%", ""))
             } else {
-              this.form.strategy.rollingUpdate.maxUnavailableUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = ""
               this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxUnavailable)
             }
           }
@@ -169,7 +162,7 @@ export default {
               this.form.strategy.rollingUpdate.maxSurgeUnit = "%"
               this.form.strategy.rollingUpdate.maxSurge = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge.replace("%", ""))
             } else {
-              this.form.strategy.rollingUpdate.maxSurgeUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxSurgeUnit = ""
               this.form.strategy.rollingUpdate.maxSurge = Number(this.upgradePolicyParentObj.strategy.rollingUpdate.maxSurge)
             }
           }
