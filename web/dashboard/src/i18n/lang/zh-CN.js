@@ -54,6 +54,7 @@ const message = {
       Succeeded: "成功",
       Failed: "失败",
       Warninng: "警告",
+      Pending: "等待"
     },
     search: {
       quickSearch: "搜索"

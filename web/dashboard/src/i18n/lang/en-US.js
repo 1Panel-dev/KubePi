@@ -52,6 +52,7 @@ const message = {
       Succeeded: "Succeeded",
       Failed: "Failed",
       Warninng: "Warninng",
+      Pending: "Pending"
     },
     search: {
       quickSearch: "Search"
