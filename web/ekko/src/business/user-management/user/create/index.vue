@@ -6,27 +6,27 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
 
-            <el-form-item :label="$t('business.user.username')" prop="name" required>
+            <el-form-item :label="$t('business.user.username')" prop="name" >
               <el-input v-model="form.name"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.nickname')" prop="nickname" required>
+            <el-form-item :label="$t('business.user.nickname')" prop="nickname" >
               <el-input v-model="form.nickname"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.email')" prop="email" required>
+            <el-form-item :label="$t('business.user.email')" prop="email" >
               <el-input v-model="form.email"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.password')" prop="password" required>
+            <el-form-item :label="$t('business.user.password')" prop="password" >
               <el-input type="password" v-model="form.password"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.confirm_password')" prop="confirmPassword" required>
+            <el-form-item :label="$t('business.user.confirm_password')" prop="confirmPassword" >
               <el-input type="password" v-model="form.confirmPassword"></el-input>
             </el-form-item>
 
