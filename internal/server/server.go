@@ -157,7 +157,7 @@ func (e *EkkoSerer) setUpErrHandler() {
 		}
 		msg := translateMessage
 		if err != nil {
-			e.Logger().Error(err)
+			e.Logger().Warn(err)
 			msg = originMessage
 		}
 		er := iris.Map{

@@ -100,9 +100,15 @@ func (h *Handler) CreateCluster() iris.Handler {
 			"roles":            {"get", "post", "delete"},
 			"rolebindings":     {"get", "post", "delete"},
 		}
-		if err := checkRequiredPermissions(client, requiredPermissions); err != nil {
+		notAllowed, err := checkRequiredPermissions(client, requiredPermissions)
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if notAllowed != "" {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
 		if err := client.CreateOrUpdateClusterRoleBinding("admin-cluster", profile.Name, true); err != nil {
@@ -170,7 +176,7 @@ func (h *Handler) createClusterUser(client kubernetes.Interface, username string
 	return nil
 }
 
-func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions map[string][]string) error {
+func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions map[string][]string) (string, error) {
 	wg := sync.WaitGroup{}
 	errCh := make(chan error)
 	resultCh := make(chan kubernetes.PermissionCheckResult)
@@ -203,15 +209,15 @@ func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions m
 		case <-doneCh:
 			goto end
 		case err := <-errCh:
-			return err
+			return "", err
 		case b := <-resultCh:
 			if !b.Allowed {
-				return fmt.Errorf("permission %s-%s  not allowed", b.Resource.Resource, b.Resource.Verb)
+				return fmt.Sprintf("%s-%s"), nil
 			}
 		}
 	}
 end:
-	return nil
+	return "", nil
 }
 
 func (h *Handler) SearchClusters() iris.Handler {
