@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'PDBs'}"
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'PSPs'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
     <div class="bottom-button">
@@ -14,21 +14,23 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getPDB, updatePDB} from "@/api/poddisruptionbudgets"
+import {createPSP} from "@/api/podsecuritypolicies"
 
 export default {
-  name: "PDBEdit",
+  name: "PSPCreate",
   components: { YamlEditor, LayoutContent },
-  props: {
-    name: String,
-    namespace: String,
-  },
+  props: {},
   data () {
     return {
       loading: false,
       form: {
-        metadata: {},
-        spec: {}
+        apiVersion: "policy/v1beta1",
+        kind: "PodSecurityPolicy",
+        metadata: {
+          name: ""
+        },
+        spec: {
+        }
       },
       cluster: ""
     }
@@ -37,28 +39,22 @@ export default {
     onSubmit () {
       const data = this.$refs.yaml_editor.getValue()
       this.loading = true
-      updatePDB(this.cluster, data.metadata.namespace, this.name, data).then(() => {
+      createPSP(this.cluster, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.update_success"),
+          message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({ name: "PDBs" })
+        this.$router.push({ name: "PSPs" })
       }).finally(() => {
         this.loading = false
       })
     },
     onCancel () {
-      this.$router.push({ name: "PDBs" })
-    },
-    getDetail () {
-      getPDB(this.cluster, this.namespace, this.name).then(res => {
-        this.form = res
-      })
+      this.$router.push({ name: "PSPs" })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.getDetail()
   }
 }
 </script>
