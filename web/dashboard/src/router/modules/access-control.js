@@ -76,8 +76,6 @@ const AccessControl = {
         global: false,
       },
     },
-
-
     {
       path: "/roles",
       requirePermission: {
@@ -331,6 +329,64 @@ const AccessControl = {
         activeMenu: "/clusterrolebindings",
         global: false,
       },
+    },
+    {
+      path: "/podsecuritypolicies",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "podsecuritypolicies",
+        verb: "list",
+      },
+      component: () => import("@/business/access-control/pod-security-policies"),
+      name: "PSPs",
+      meta: {
+        title: "Pod Security Policies",
+      }
+    },
+    {
+      path: "/podsecuritypolicies/:name/detail",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "podsecuritypolicies",
+        verb: "get",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/access-control/pod-security-policies/detail"),
+      name: "PSPDetail",
+      meta: {
+        activeMenu: "/podsecuritypolicies"
+      }
+    },
+    {
+      path: "/podsecuritypolicies/create",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "podsecuritypolicies",
+        verb: "create",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/access-control/pod-security-policies/create"),
+      name: "PSPCreate",
+      meta: {
+        activeMenu: "/podsecuritypolicies"
+      }
+    },
+    {
+      path: "/podsecuritypolicies/:name/edit",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "podsecuritypolicies",
+        verb: "get",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/access-control/pod-security-policies/edit"),
+      name: "PSPEdit",
+      meta: {
+        activeMenu: "/podsecuritypolicies"
+      }
     },
   ],
 };
