@@ -2,12 +2,12 @@ import Layout from "@/business/app-layout/horizontal-layout"
 
 const Network = {
   path: "/network",
-  sort: 4,
+  sort: 3,
   parent: true,
   component: Layout,
   name: "Network",
   meta: {
-    title: "business.network.network",
+    title: "business.network.service_discovery",
     icon: "iconfont iconnetwork"
   },
   children: [

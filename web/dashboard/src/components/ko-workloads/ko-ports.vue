@@ -104,31 +104,21 @@ export default {
         parentFrom.ports = []
         for (const po of this.ports) {
           var itemPo = {}
-          if (po.name) {
-            itemPo.name = po.name
-          }
-          if (po.expose) {
-            itemPo.expose = po.expose
-          }
-          if (po.protocol) {
-            itemPo.protocol = po.protocol
-          }
-          if (po.containerPort) {
-            itemPo.containerPort = po.containerPort
-          }
-          if (po._serviceType) {
-            itemPo._serviceType = po._serviceType
-          }
+          itemPo.name = po.name || undefined
+          itemPo.expose = po.expose || undefined
+          itemPo.protocol = po.protocol || undefined
+          itemPo.containerPort = po.containerPort || undefined
+          itemPo._serviceType = po._serviceType || undefined
           if (po.expose) {
             switch (po._serviceType) {
               case "":
               case "ClusterIP":
-                itemPo.hostPort = po.hostPort
-                itemPo.hostIP = po.hostIP
+                itemPo.hostPort = po.hostPort || undefined
+                itemPo.hostIP = po.hostIP || undefined
                 break
               case "NodePort":
               case "LoadBalancer":
-                itemPo._listeningPort = po._listeningPort
+                itemPo._listeningPort = po._listeningPort || undefined
                 break
             }
           }

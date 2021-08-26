@@ -1,18 +1,18 @@
 <template>
   <div style="margin-top: 20px">
     <ko-card :title="$t('business.workload.resource')">
-      <table style="width: 100%" class="tab-table">
+      <table style="width: 98%" class="tab-table">
         <tr>
-          <th scope="col" width="20%" align="left">
+          <th scope="col" width="30%" align="left">
             <label>{{ $t("business.network.verbs") }}</label>
           </th>
-          <th scope="col" width="20%" align="left">
+          <th scope="col" width="30%" align="left">
             <label>{{ $t("business.workload.resource") }}</label>
           </th>
           <th scope="col" width="20%" align="left">
             <label>{{ $t("business.network.non_resource_url") }}</label>
           </th>
-          <th scope="col" width="20%" align="left">
+          <th scope="col" width="15%" align="left">
             <label>{{ $t("business.network.api_group") }}</label>
           </th>
           <th align="left"></th>
@@ -31,14 +31,10 @@
             </el-select>
           </td>
           <td>
-            <el-input v-model="resources[index]"
-                      :placeholder="$t('business.access_control.resource_helper')"
-                      @change="changeResource(row,index)"></el-input>
+            <el-input v-model="resources[index]" :placeholder="$t('business.access_control.resource_helper')" @change="changeResource(row,index)"></el-input>
           </td>
           <td>
-            <el-input v-model="nonResourceURLs[index]"
-                      :placeholder="$t('business.access_control.resource_helper')"
-                      @change="changeNonResourceURLs(row,index)"></el-input>
+            <el-input v-model="nonResourceURLs[index]" :placeholder="$t('business.access_control.resource_helper')" @change="changeNonResourceURLs(row,index)"></el-input>
           </td>
           <td>
             <el-select multiple v-model="rules[index].groups" style="width: 100%">
@@ -51,27 +47,28 @@
             </el-button>
           </td>
         </tr>
+        <tr>
+          <td align="left">
+            <el-button style="margin-top: 5px" @click="addResource()"> {{$t("commons.button.add")}}{{ $t("business.workload.resource") }}</el-button>
+          </td>
+        </tr>
       </table>
-      <el-button style="margin-top: 5px" @click="addResource()"> {{
-          $t("commons.button.add")
-        }}{{ $t("business.workload.resource") }}
-      </el-button>
     </ko-card>
   </div>
 </template>
 
 <script>
 import KoCard from "@/components/ko-card"
-import {listApis} from "@/api/apis"
+import { listApis } from "@/api/apis"
 
 export default {
   name: "KoGrantResource",
   components: { KoCard },
   props: {
     rulesArray: Array,
-    cluster: String
+    cluster: String,
   },
-  data () {
+  data() {
     return {
       rules: [],
       resources: [],
@@ -80,12 +77,12 @@ export default {
     }
   },
   methods: {
-    removeResource (index) {
+    removeResource(index) {
       this.resources.splice(index, 1)
       this.nonResourceURLs.splice(index, 1)
       this.rules.splice(index, 1)
     },
-    addResource () {
+    addResource() {
       this.rules.push({
         verbs: [],
         resources: [],
@@ -94,7 +91,7 @@ export default {
       this.resources.push("")
       this.nonResourceURLs.push("")
     },
-    changeResource (row, index) {
+    changeResource(row, index) {
       if (this.resources[index].indexOf(",") > 0) {
         row.resources = this.resources[index].split(",")
       } else {
@@ -102,7 +99,7 @@ export default {
       }
       this.deleteAttributes(row)
     },
-    changeNonResourceURLs (row, index) {
+    changeNonResourceURLs(row, index) {
       if (this.nonResourceURLs[index].indexOf(",") > 0) {
         row.nonResourceURLs = this.nonResourceURLs[index].split(",")
       } else {
@@ -110,7 +107,7 @@ export default {
       }
       this.deleteAttributes(row)
     },
-    transform (array, resource) {
+    transform(array, resource) {
       let valueString = ""
       for (let i = 0; i < array?.length; i++) {
         const valueArray = array[i]
@@ -119,7 +116,7 @@ export default {
       valueString = valueString.substr(0, valueString.length - 1)
       resource.push(valueString)
     },
-    deleteAttributes (row) {
+    deleteAttributes(row) {
       if (row.nonResourceURLs?.length === 0 && row.resources?.length !== 0) {
         delete row.nonResourceURLs
       }
@@ -127,7 +124,7 @@ export default {
         delete row.resources
       }
     },
-    changeVerbs (row) {
+    changeVerbs(row) {
       if (row.verbs.length > 0) {
         for (let i = 0; i < row.verbs.length; i++) {
           if (row.verbs[i] === "*") {
@@ -136,9 +133,9 @@ export default {
           }
         }
       }
-    }
+    },
   },
-  created () {
+  created() {
     if (this.rulesArray && this.rulesArray.length > 0) {
       this.rules = this.rulesArray
       for (let i = 0; i < this.rulesArray.length; i++) {
@@ -156,7 +153,7 @@ export default {
       this.$emit("update:rulesArray", this.rules)
     }
     if (this.cluster) {
-      listApis(this.cluster).then(res => {
+      listApis(this.cluster).then((res) => {
         this.groups = res.groups
       })
     }
@@ -165,5 +162,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

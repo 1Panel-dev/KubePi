@@ -80,20 +80,14 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      grandFrom.updateStrategy = {}
-      grandFrom.updateStrategy.type = this.form.updateStrategy.type
-      if (this.form.podManagementPolicy) {
-        grandFrom.podManagementPolicy = this.form.podManagementPolicy
+      if (!grandFrom.updateStrategy) {
+        grandFrom.updateStrategy = {}
       }
-      if (this.form.revisionHistoryLimit) {
-        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
-      }
-      if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
-      }
-      if (this.form.template.spec.restartPolicy) {
-        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
-      }
+      grandFrom.updateStrategy.type = this.form.updateStrategy.type || undefined
+      grandFrom.podManagementPolicy = this.form.podManagementPolicy || undefined
+      grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit || undefined
+      parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds || undefined
+      parentFrom.restartPolicy = this.form.template.spec.restartPolicy || undefined
     },
   },
   mounted() {

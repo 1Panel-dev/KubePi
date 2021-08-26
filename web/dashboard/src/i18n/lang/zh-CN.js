@@ -47,13 +47,15 @@ const message = {
       message: "消息",
       lastUpdateTime: "更新时间",
       type: "类型",
-      resourceInformation: "资源信息"
+      resourceInformation: "资源信息",
+      empty_text: "没有内容显示",
     },
     status: {
       Running: "运行中",
       Succeeded: "成功",
       Failed: "失败",
       Warninng: "警告",
+      Pending: "等待"
     },
     search: {
       quickSearch: "搜索"
@@ -271,6 +273,8 @@ const message = {
       operator: "运算符",
       topology_key: "拓扑键",
       node_selector: "节点选择器",
+      match_expressions: "表达式",
+      match_labels: "标签选择",
 
       node_schedule: "节点调度",
       schedule_type: "调度类型",
@@ -361,6 +365,7 @@ const message = {
       many_read_write: "多节点读写",
     },
     network: {
+      service_discovery: "服务发现",
       network: "网络",
       protocol: "协议",
       port: "端口",
@@ -372,7 +377,6 @@ const message = {
       service_port: "Service 端口",
       target: "目标",
       pod_selector: "Pod 选择器",
-      service_ports: "服务端口",
       port_name: "端口名称",
       listening_port: "监听端口",
       target_port: "目标端口",

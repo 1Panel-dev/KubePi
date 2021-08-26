@@ -233,25 +233,30 @@ export default {
       }
     },
     search() {
-      getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name).then((res) => {
-        this.form = res
-        if (!this.isCronJob()) {
-          this.podSpec = this.form.spec.template.spec
-          this.podMetadata = this.form.spec.template.metadata
-        } else {
-          this.podSpec = this.form.spec.jobTemplate.spec.template.spec
-          this.podMetadata = this.form.spec.jobTemplate.spec.template.metadata
-        }
-        if (this.isStatefulSet()) {
-          this.loadServicesWithNs()
-        }
-        this.loadSecretsWithNs()
-        this.loadConfigMapsWithNs()
-        this.yaml = res
-        this.currentContainerIndex = 0
-        this.currentContainer = this.podSpec.containers[0]
-        this.isRefresh = !this.isRefresh
-      })
+      this.loading = true
+      getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name)
+        .then((res) => {
+          this.form = res
+          if (!this.isCronJob()) {
+            this.podSpec = this.form.spec.template.spec
+            this.podMetadata = this.form.spec.template.metadata
+          } else {
+            this.podSpec = this.form.spec.jobTemplate.spec.template.spec
+            this.podMetadata = this.form.spec.jobTemplate.spec.template.metadata
+          }
+          if (this.isStatefulSet()) {
+            this.loadServicesWithNs()
+          }
+          this.loadSecretsWithNs()
+          this.loadConfigMapsWithNs()
+          this.yaml = res
+          this.currentContainerIndex = 0
+          this.currentContainer = this.podSpec.containers[0]
+          this.isRefresh = !this.isRefresh
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     loadNamespace() {
       this.namespace_list = []
@@ -354,98 +359,70 @@ export default {
         return
       }
     },
-    newFormItem() {
-      return {
-        apiVersion: "",
-        kind: this.form.kind,
-        metadata: {
-          name: this.form.metadata.name,
-          namespace: this.form.metadata.namespace,
-          labels: this.form.metadata.labels,
-          annotations: this.form.metadata.annotations,
-        },
-        spec: {
-          replicas: this.form.spec.replicas,
-          schedule: this.form.spec.schedule,
-          serviceName: this.form.spec.serviceName,
-          template: {
-            metadata: {},
-            spec: {},
-          },
-        },
-      }
-    },
     gatherFormData() {
-      var tempForm = this.newFormItem()
-      var tempContainer = {}
-      var tempPodSpec = { containers: this.podSpec.containers, initContainers: this.podSpec.initContainers }
-      this.$refs.ko_container.transformation(tempContainer)
-      this.$refs.ko_ports.transformation(tempContainer)
-      this.$refs.ko_command.transformation(tempContainer)
-      this.$refs.ko_resource.transformation(tempContainer)
+      this.$refs.ko_container.transformation(this.currentContainer)
+      this.$refs.ko_ports.transformation(this.currentContainer)
+      this.$refs.ko_command.transformation(this.currentContainer)
+      this.$refs.ko_resource.transformation(this.currentContainer)
       if (this.currentContainerType === "standardContainers") {
-        this.$refs.ko_health_readiness_check.transformation(tempContainer)
-        this.$refs.ko_health_liveness_check.transformation(tempContainer)
-        this.$refs.ko_health_startup_check.transformation(tempContainer)
+        this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
+        this.$refs.ko_health_startup_check.transformation(this.currentContainer)
       }
-      this.$refs.ko_security_context.transformation(tempContainer)
-      this.$refs.ko_networking.transformation(tempPodSpec)
-      this.$refs.ko_pod_scheduling.transformation(tempPodSpec)
-      this.$refs.ko_node_scheduling.transformation(tempPodSpec)
-      this.$refs.ko_toleration.transformation(tempPodSpec)
+      this.$refs.ko_security_context.transformation(this.currentContainer)
+      this.$refs.ko_networking.transformation(this.podSpec)
+      this.$refs.ko_pod_scheduling.transformation(this.podSpec)
+      this.$refs.ko_node_scheduling.transformation(this.podSpec)
+      this.$refs.ko_toleration.transformation(this.podSpec)
       switch (this.type) {
         case "deployments":
-          tempForm.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy.transformation(tempForm.spec, tempPodSpec)
+          this.form.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
           break
         case "statefulsets":
-          tempForm.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy_statefulset.transformation(tempForm.spec, tempPodSpec)
-          this.$refs.ko_volume_claim.transformation(tempForm.spec)
+          this.form.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
+          this.$refs.ko_volume_claim.transformation(this.form.spec)
           break
         case "cronjobs":
-          tempForm.apiVersion = "batch/v1beta1"
-          this.$refs.ko_upgrade_policy_cronjob.transformation(tempForm.spec, tempPodSpec)
+          this.form.apiVersion = "batch/v1beta1"
+          this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
           break
         case "jobs":
-          tempForm.apiVersion = "batch/v1"
-          this.$refs.ko_upgrade_policy_job.transformation(tempForm.spec, tempPodSpec)
+          this.form.apiVersion = "batch/v1"
+          this.$refs.ko_upgrade_policy_job.transformation(this.form.spec, this.podSpec)
           break
         case "daemonsets":
-          tempForm.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy_daemonset.transformation(tempForm.spec, tempPodSpec)
+          this.form.apiVersion = "apps/v1"
+          this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec, this.podSpec)
           break
       }
-      this.$refs.ko_storage.transformation(tempPodSpec)
+      this.$refs.ko_storage.transformation(this.podSpec)
 
-      this.currentContainer = tempContainer
       if (this.currentContainerType === "initContainers") {
-        tempPodSpec.initContainers[this.currentContainerIndex] = tempContainer
+        this.podSpec.initContainers[this.currentContainerIndex] = this.currentContainer
       } else {
-        tempPodSpec.containers[this.currentContainerIndex] = tempContainer
+        this.podSpec.containers[this.currentContainerIndex] = this.currentContainer
       }
       if (!this.isReplicasShow()) {
-        delete tempForm.spec.replicas
+        delete this.form.spec.replicas
       }
       if (!this.isStatefulSet()) {
-        delete tempForm.spec.serviceName
+        delete this.form.spec.serviceName
       }
       if (this.isCronJob()) {
-        delete tempForm.spec.template
-        tempForm.spec.jobTemplate = { spec: { template: { spec: tempPodSpec, metadata: this.podMetadata } } }
+        delete this.form.spec.template
+        this.form.spec.jobTemplate = { spec: { template: { spec: this.podSpec, metadata: this.podMetadata } } }
       } else {
-        delete tempForm.spec.schedule
-        tempForm.spec.template.spec = tempPodSpec
-        tempForm.spec.template.metadata = this.podMetadata
+        delete this.form.spec.schedule
+        this.form.spec.template.spec = this.podSpec
+        this.form.spec.template.metadata = this.podMetadata
       }
       this.podMetadata.labels = this.podMetadata.labels || { app: this.form.metadata.name }
       if (!this.isJob()) {
-        tempForm.spec.selector = { matchLabels: this.podMetadata.labels }
+        this.form.spec.selector = { matchLabels: this.podMetadata.labels }
       }
-      this.podSpec = tempPodSpec
-      let returnForm = JSON.parse(JSON.stringify(tempForm))
-      this.form = returnForm
-      return returnForm
+      return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow() {
       return this.type === "deployments" || this.type === "statefulsets"

@@ -129,7 +129,7 @@ export default {
     },
 
     transformation(parentFrom) {
-      parentFrom.volumeClaimTemplates = []
+      let volumeClaimTemplates = []
       for (const volume of this.volumeClaimTemplates) {
         let item = {
           type: "persistentvolumeclaim",
@@ -147,8 +147,9 @@ export default {
         } else {
           item.spec.volumeName = volume.volumeName
         }
-        parentFrom.volumeClaimTemplates.push(item)
+        volumeClaimTemplates.push(item)
       }
+      parentFrom.volumeClaimTemplates = volumeClaimTemplates.length !== 0 ? volumeClaimTemplates : undefined
     },
   },
   mounted() {

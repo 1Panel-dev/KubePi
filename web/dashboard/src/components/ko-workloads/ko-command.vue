@@ -44,7 +44,7 @@
           </tr>
           <tr v-for="(row, index) in form.envResource" v-bind:key="index">
             <td>
-              <ko-form-item itemType="select2" v-model="row.type" :selections="type_list" />
+              <ko-form-item itemType="select2" :noClear="true" v-model="row.type" :selections="type_list" />
             </td>
             <td>
               <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
@@ -176,32 +176,27 @@ export default {
     },
 
     transformation(parentFrom) {
-      if (this.form.command) {
-        parentFrom.command = this.form.command.split(",")
-      }
-      if (this.form.args) {
-        parentFrom.args = this.form.args.split(",")
-      }
-      if (this.form.workingDir) {
-        parentFrom.workingDir = this.form.workingDir
-      }
+      parentFrom.command = this.form.command ? this.form.command.split(",") : undefined
+      parentFrom.args = this.form.args ? this.form.args.split(",") : undefined
+      parentFrom.workingDir = this.form.workingDir || undefined
       if (this.form.stdin) {
         switch (this.form.stdin) {
           case this.$t("business.workload.no"):
             parentFrom.stdin = false
             break
-          case "Yes":
+          case this.$t("business.workload.yes"):
             parentFrom.stdin = true
             break
-          case "Ones":
+          case this.$t("business.workload.once"):
             parentFrom.stdin = true
             parentFrom.stdinOnce = true
             break
         }
+      } else {
+        delete parentFrom.stdin
+        delete parentFrom.stdinOnce
       }
-      if (this.form.tty) {
-        parentFrom.tty = this.form.tty
-      }
+      parentFrom.tty = this.form.tty || false
       let envList = []
       let envFromList = []
       if (this.form.envResource) {
@@ -278,12 +273,8 @@ export default {
           }
         }
       }
-      if (envList.length !== 0) {
-        parentFrom.env = envList
-      }
-      if (envFromList.length !== 0) {
-        parentFrom.envFrom = envFromList
-      }
+      parentFrom.env = envList.length !== 0 ? envList : undefined
+      parentFrom.envFrom = envFromList.length !== 0 ? envFromList : undefined
     },
   },
   mounted() {

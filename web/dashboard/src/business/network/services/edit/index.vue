@@ -34,7 +34,7 @@
                 <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
-                <el-tab-pane name="ServicePorts" :label="$t('business.network.service_ports')" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="ServicePorts" :label="$t('business.network.service_port')" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-ports :ports.sync="form.spec.ports"></ko-service-ports>
                 </el-tab-pane>
                 <el-tab-pane name="Selectors" :label="$t('business.network.selector')" v-if="form.spec.type!=='ExternalName'">

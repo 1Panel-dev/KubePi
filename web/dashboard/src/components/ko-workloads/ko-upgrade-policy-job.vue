@@ -76,24 +76,12 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      if (this.form.activeDeadlineSeconds) {
-        grandFrom.activeDeadlineSeconds = this.form.activeDeadlineSeconds
-      }
-      if (this.form.backoffLimit) {
-        grandFrom.backoffLimit = this.form.backoffLimit
-      }
-      if (this.form.completions) {
-        grandFrom.completions = this.form.completions
-      }
-      if (this.form.parallelism) {
-        grandFrom.parallelism = this.form.parallelism
-      }
-      if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
-      }
-      if (this.form.template.spec.restartPolicy) {
-        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
-      }
+      grandFrom.activeDeadlineSeconds = this.form.activeDeadlineSeconds || undefined
+      grandFrom.backoffLimit = this.form.backoffLimit || undefined
+      grandFrom.completions = this.form.completions || undefined
+      grandFrom.parallelism = this.form.parallelism || undefined
+      parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds || undefined
+      parentFrom.restartPolicy = this.form.template.spec.restartPolicy || undefined
     },
   },
   mounted() {

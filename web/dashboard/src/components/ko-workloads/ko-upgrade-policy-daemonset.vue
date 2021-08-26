@@ -15,11 +15,11 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="12" v-if="form.strategy.type === 'RollingUpdate'">
             <el-form-item :label="$t('business.workload.max_unavaliable')" prop="strategy.rollingUpdate.maxUnavailable">
               <el-input type="number" v-model.number="form.strategy.rollingUpdate.maxUnavailable">
                 <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxUnavailableUnit">
-                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item" :value="item" />
+                  <el-option v-for="(item, index) in devider_list" :key="index" :label="item.label" :value="item.value" />
                 </el-select>
               </el-input>
             </el-form-item>
@@ -68,7 +68,10 @@ export default {
         { label: "OnFailure", value: "OnFailure" },
         { label: "Never", value: "Never" },
       ],
-      devider_list: ["Pods", "%"],
+      devider_list: [
+        { label: "Pods", value: "" },
+        { label: "%", value: "%" },
+      ],
       form: {
         strategy: {
           type: "Recreate",
@@ -90,34 +93,27 @@ export default {
   },
   methods: {
     transformation(grandFrom, parentFrom) {
-      grandFrom.strategy = {}
+      if (!grandFrom.strategy) {
+        grandFrom.updateStrategy = {}
+      }
       switch (this.form.strategy.type) {
         case "Recreate":
-          grandFrom.strategy.type = "Recreate"
+          grandFrom.updateStrategy.type = "Recreate"
           break
         case "RollingUpdate":
-          grandFrom.strategy.type = "RollingUpdate"
-          grandFrom.strategy.rollingUpdate = {}
-          if (this.form.strategy.rollingUpdate.maxUnavailable) {
-            if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
-              this.form.strategy.rollingUpdate.maxUnavailable += "%"
-            }
-            grandFrom.strategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable
+          grandFrom.updateStrategy.type = "RollingUpdate"
+          grandFrom.updateStrategy.rollingUpdate = {}
+          if (this.form.strategy.rollingUpdate.maxUnavailableUnit === "%") {
+            grandFrom.updateStrategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable ? this.form.strategy.rollingUpdate.maxUnavailable + "%" : undefined
+          } else {
+            grandFrom.updateStrategy.rollingUpdate.maxUnavailable = this.form.strategy.rollingUpdate.maxUnavailable ? this.form.strategy.rollingUpdate.maxUnavailable : undefined
           }
           break
       }
-      if (this.form.minReadySeconds) {
-        grandFrom.minReadySeconds = this.form.minReadySeconds
-      }
-      if (this.form.revisionHistoryLimit) {
-        grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit
-      }
-      if (this.form.template.spec.terminationGracePeriodSeconds) {
-        parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds
-      }
-      if (this.form.template.spec.restartPolicy) {
-        parentFrom.restartPolicy = this.form.template.spec.restartPolicy
-      }
+      grandFrom.minReadySeconds = this.form.minReadySeconds || undefined
+      grandFrom.revisionHistoryLimit = this.form.revisionHistoryLimit || undefined
+      parentFrom.terminationGracePeriodSeconds = this.form.template.spec.terminationGracePeriodSeconds || undefined
+      parentFrom.restartPolicy = this.form.template.spec.restartPolicy || undefined
     },
   },
   mounted() {
@@ -132,7 +128,7 @@ export default {
               this.form.strategy.rollingUpdate.maxUnavailableUnit = "%"
               this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable.replace("%", ""))
             } else {
-              this.form.strategy.rollingUpdate.maxUnavailableUnit = "Pods"
+              this.form.strategy.rollingUpdate.maxUnavailableUnit = ""
               this.form.strategy.rollingUpdate.maxUnavailable = Number(this.upgradePolicyParentObj.updateStrategy.rollingUpdate.maxUnavailable)
             }
           }
