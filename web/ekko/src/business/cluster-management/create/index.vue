@@ -6,7 +6,7 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
 
-            <el-form-item :label="$t('commons.table.name')" prop="name" required>
+            <el-form-item :label="$t('commons.table.name')" prop="name">
               <el-input v-model="form.name" clearable></el-input>
             </el-form-item>
 
@@ -31,25 +31,25 @@
               </el-radio>
             </el-form-item>
             <div v-if="form.direction==='forward'&&form.authenticationMode!=='configFile'">
-              <el-form-item label="API Server" prop="apiServer" required>
+              <el-form-item label="API Server" prop="apiServer">
                 <el-input v-model="form.apiServer" clearable></el-input>
               </el-form-item>
               <div v-if="!form.apiServerInsecure">
-                <el-form-item label="Ca Certificate" prop="caDataStr" required>
+                <el-form-item label="Ca Certificate" prop="caDataStr">
                   <el-input type="textarea" v-model="form.caDataStr" clearable></el-input>
                 </el-form-item>
               </div>
             </div>
             <div v-if="form.authenticationMode==='bearer'">
-              <el-form-item label="Bearer Token" prop="token" required>
+              <el-form-item label="Bearer Token" prop="token">
                 <el-input type="textarea" v-model="form.token" clearable></el-input>
               </el-form-item>
             </div>
             <div v-if="form.authenticationMode==='certificate'">
-              <el-form-item label="Certificate" prop="certDataStr" required>
+              <el-form-item label="Certificate" prop="certDataStr">
                 <el-input type="textarea" v-model="form.certDataStr" clearable></el-input>
               </el-form-item>
-              <el-form-item label="Certificate Key" prop="keyDataStr" required>
+              <el-form-item label="Certificate Key" prop="keyDataStr">
                 <el-input type="textarea" v-model="form.keyDataStr" clearable></el-input>
               </el-form-item>
             </div>
