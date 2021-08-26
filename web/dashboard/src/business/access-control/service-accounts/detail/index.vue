@@ -3,7 +3,7 @@
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form" :read-only="true"></yaml-editor>
     <div class="bottom-button">
-      <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
+      <el-button @click="onCancel()">{{ $t("commons.button.back_detail") }}</el-button>
     </div>
   </layout-content>
 </template>

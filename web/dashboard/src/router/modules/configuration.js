@@ -245,7 +245,7 @@ const Configuration = {
         activeMenu: "/limitranges"
       }
     },
-    
+
     {
       path: "/horizontalpodautoscalers",
       requirePermission: {
@@ -302,7 +302,68 @@ const Configuration = {
       meta: {
         activeMenu: "/horizontalpodautoscalers"
       }
-    }
+    },
+    {
+      path: "/poddisruptionbudgets",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "poddisruptionbudgets",
+        verb: "list",
+      },
+      component: () => import("@/business/configuration/pdb"),
+      name: "PDBs",
+      meta: {
+        title: "Pod Disruption Budget",
+      }
+    },
+    {
+      path: "/poddisruptionbudgets/create",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "poddisruptionbudgets",
+        verb: "create",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/configuration/pdb/create"),
+      name: "PDBCreate",
+      meta: {
+        title: "Pod Disruption Budget",
+        activeMenu: "/poddisruptionbudgets"
+      }
+    },
+    {
+      path: "/poddisruptionbudgets/:namespace/:name/edit",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "poddisruptionbudgets",
+        verb: "update",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/configuration/pdb/edit"),
+      name: "PDBEdit",
+      meta: {
+        title: "Pod Disruption Budget",
+        activeMenu: "/poddisruptionbudgets"
+      }
+    },
+    {
+      path: "/poddisruptionbudgets/:namespace/:name/detail",
+      requirePermission: {
+        apiGroup: "policy",
+        resource: "poddisruptionbudgets",
+        verb: "get",
+      },
+      hidden: true,
+      props: true,
+      component: () => import("@/business/configuration/pdb/detail"),
+      name: "PDBDetail",
+      meta: {
+        title: "Pod Disruption Budget",
+        activeMenu: "/poddisruptionbudgets"
+      }
+    },
   ]
 }
 

@@ -1,6 +1,9 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ResourceQuotas'}" v-loading="loading">
     <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+    <div class="bottom-button">
+      <el-button @click="onCancel()">{{ $t("commons.button.back_detail") }}</el-button>
+    </div>
   </layout-content>
 </template>
 
@@ -32,6 +35,9 @@ export default {
         this.yaml = JSON.parse(JSON.stringify(this.item))
         this.loading = false
       })
+    },
+    onCancel () {
+      this.$router.push({ name: "ResourceQuotas" })
     }
   },
   created () {

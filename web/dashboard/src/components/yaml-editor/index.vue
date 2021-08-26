@@ -135,9 +135,9 @@ export default {
         this.oldValue = yaml.dump(value)
         this.$refs.editor.codemirror.setValue(yaml.dump(value))
         //折叠一些无用的key
-        const keys = ["managedFields", "status"]
-        for (let i = 0; i < keys.length; i++) {
-          this.foldCode(keys[i])
+        const cursor = this.$refs.editor.codemirror.getSearchCursor("managedFields")
+        if (cursor.findNext()) {
+          this.$refs.editor.codemirror.foldCode(cursor.from())
         }
         this.$refs.editor.codemirror.setOption("readOnly", this.readOnly)
       }

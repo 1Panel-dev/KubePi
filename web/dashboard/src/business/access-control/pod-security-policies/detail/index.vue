@@ -1,22 +1,21 @@
 <template>
-    <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'LimitRanges'}"  v-loading="loading">
-      <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
-      <div class="bottom-button">
-        <el-button @click="onCancel()">{{ $t("commons.button.back_detail") }}</el-button>
-      </div>
-    </layout-content>
+  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PSPs'}"  v-loading="loading">
+    <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+    <div class="bottom-button">
+      <el-button @click="onCancel()">{{ $t("commons.button.back_detail") }}</el-button>
+    </div>
+  </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getLimitRange} from "@/api/limitranges"
 import YamlEditor from "@/components/yaml-editor"
+import {getPSP} from "@/api/podsecuritypolicies"
 export default {
-  name: "LimitRangeDetail",
+  name: "PSPDetail",
   components: { YamlEditor, LayoutContent },
   props: {
     name: String,
-    namespace: String,
   },
   data () {
     return {
@@ -29,14 +28,14 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      getLimitRange(this.cluster, this.namespace, this.name).then(res => {
+      getPSP(this.cluster, this.name).then(res => {
         this.item = res
         this.yaml = JSON.parse(JSON.stringify(this.item))
         this.loading = false
       })
     },
     onCancel() {
-      this.$router.push({ name: "LimitRanges" })
+      this.$router.push({ name: "PSPs" })
     }
   },
   created () {
