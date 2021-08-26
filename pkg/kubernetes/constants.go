@@ -220,7 +220,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "manage-network",
+			Name: "manage-service-discovery",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
@@ -245,7 +245,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "view-network",
+			Name: "view-service-discovery",
 			Annotations: map[string]string{
 				"builtin":    "true",
 				"created-at": time.Now().Format("2006-01-02 15:04:05"),
