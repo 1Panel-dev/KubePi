@@ -42,7 +42,7 @@
         </el-form>
       </div>
       <div v-if="yamlShow">
-        <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+        <yaml-editor :value="yaml" ref="yaml_editor" :read-only="true"></yaml-editor>
         <div class="bottom-button">
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
