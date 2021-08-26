@@ -3,9 +3,6 @@
     <div v-if="!yamlShow">
       <el-card>
         <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
-        <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
-        </div>
       </el-card>
       <el-row>
         <el-col :span="24">
