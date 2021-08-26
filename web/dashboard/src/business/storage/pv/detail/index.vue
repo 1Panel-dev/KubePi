@@ -2,7 +2,7 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
     <el-row :gutter="24">
       <div v-if="!yamlShow">
-        <el-col :span="16">
+        <el-col :span="24">
           <el-card>
             <table style="width: 100%" class="myTable">
               <tr>

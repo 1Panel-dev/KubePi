@@ -60,10 +60,11 @@ import YamlEditor from "@/components/yaml-editor"
 import {getStorageClass} from "@/api/storageclass";
 import KoDetailBasic from "@/components/detail/detail-basic"
 import ComplexTable from "@/components/complex-table"
+import KoCard from "@/components/ko-card"
 
 export default {
   name: "StorageClassDetail",
-  components: {YamlEditor, LayoutContent, KoDetailBasic, ComplexTable},
+  components: { KoCard, YamlEditor, LayoutContent, KoDetailBasic, ComplexTable},
   props: {
     name: String,
   },
@@ -71,7 +72,9 @@ export default {
     return {
       loading: false,
       yamlShow: false,
-      form: {},
+      form: {
+        metadata:{}
+      },
       activeName: "",
       yaml: {},
       cluster: "",
