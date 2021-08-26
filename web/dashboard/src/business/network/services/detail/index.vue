@@ -18,15 +18,15 @@
               </tr>
               <tr>
                 <td>{{ $t("business.configuration.type") }}</td>
-                <td>{{ item.spec.type }}</td>
+                <td colspan="4">{{ item.spec.type }}</td>
               </tr>
               <tr>
                 <td>{{ $t("business.configuration.cluster_ip") }}</td>
-                <td>{{ item.spec.clusterIP }}</td>
+                <td colspan="4">{{ item.spec.clusterIP }}</td>
               </tr>
               <tr>
                 <td>Session Affinity</td>
-                <td>{{ item.spec.sessionAffinity }}</td>
+                <td colspan="4">{{ item.spec.sessionAffinity }}</td>
               </tr>
               <tr>
                 <td>{{ $t("business.configuration.selector") }}</td>
