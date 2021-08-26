@@ -7,7 +7,7 @@
           <slot name="header"></slot>
         </layout-header>
         <div style="width:100%;height:100%;">
-          <fu-split-pane :bottom="buttomHeight" :resizable="false" direction="vertical" resizer-type="line" :resizer-style="{background:'#424649',height:'2px'}">
+          <fu-split-pane :bottom="buttomHeight" :resizable="buttomHeight !== '40' && buttomHeight !== '0'" direction="vertical" resizer-type="line" :resizer-style="{background:'#424649',height:'2px'}">
             <div slot="top">
               <layout-view />
             </div>
@@ -36,7 +36,7 @@ export default {
   components: { LayoutView, LayoutFooter, LayoutHeader, LayoutMain, LayoutSidebar, FuSplitPane },
   computed: {
     buttomHeight() {
-      return this.$store.state.app.buttomHeight
+      return this.$store.state.terminal.buttomHeight
     },
   },
 }
