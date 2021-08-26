@@ -83,6 +83,7 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import {createCluster} from "@/api/clusters"
 import Rule from "@/utils/rules"
+import {trim} from "@/utils/string"
 
 export default {
   name: "ClusterCreate",
@@ -168,7 +169,7 @@ export default {
       const req = {
         apiVersion: "v1",
         kind: "Cluster",
-        name: this.form.name,
+        name: trim(this.form.name),
         spec: {
           connect: {
             direction: this.form.direction
@@ -184,21 +185,21 @@ export default {
       }
       if (this.form.direction === 'forward') {
         const forwardConfig = {}
-        forwardConfig.apiServer = this.form.apiServer
+        forwardConfig.apiServer = trim(this.form.apiServer)
         if (this.form.proxyEnable) {
-          forwardConfig.proxy.username = this.form.proxyUsername
-          forwardConfig.proxy.password = this.form.proxyPassword
-          forwardConfig.proxy.url = this.form.proxyServer
+          forwardConfig.proxy.username = trim(this.form.proxyUsername)
+          forwardConfig.proxy.password = trim(this.form.proxyPassword)
+          forwardConfig.proxy.url = trim(this.form.proxyServer)
         }
         req.spec.connect.forward = forwardConfig
       }
       switch (this.form.authenticationMode) {
         case "bearer":
-          req.spec.authentication.bearerToken = this.form.token
+          req.spec.authentication.bearerToken = trim(this.form.token)
           break
         case "certificate":
-          req.certDataStr = this.form.certDataStr
-          req.keyDataStr = this.form.keyDataStr
+          req.certDataStr = trim(this.form.certDataStr)
+          req.keyDataStr = trim(this.form.keyDataStr)
           break
         case "configFile":
           req.configContentStr = this.form.configContent

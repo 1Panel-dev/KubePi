@@ -1,7 +1,6 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ServiceAccounts'}"
-                  v-loading="loading">
-    <yaml-editor ref="yaml_editor" :value="form" :read-only="true"></yaml-editor>
+  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PSPs'}"  v-loading="loading">
+    <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
     <div class="bottom-button">
       <el-button @click="onCancel()">{{ $t("commons.button.back_detail") }}</el-button>
     </div>
@@ -11,33 +10,32 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getServiceAccount} from "@/api/serviceaccounts"
-
+import {getPSP} from "@/api/podsecuritypolicies"
 export default {
-  name: "ServiceAccountDetail",
+  name: "PSPDetail",
   components: { YamlEditor, LayoutContent },
   props: {
     name: String,
-    namespace: String
   },
   data () {
     return {
       loading: false,
-      form: {},
-      cluster: ""
+      cluster: "",
+      item: {},
+      yaml: {}
     }
   },
   methods: {
-    onCancel () {
-      this.$router.push({ name: "ServiceAccounts" })
-    },
-    getDetail () {
+    getDetail() {
       this.loading = true
-      getServiceAccount(this.cluster, this.namespace, this.name).then(res => {
-        this.form = res
-      }).finally(() => {
+      getPSP(this.cluster, this.name).then(res => {
+        this.item = res
+        this.yaml = JSON.parse(JSON.stringify(this.item))
         this.loading = false
       })
+    },
+    onCancel() {
+      this.$router.push({ name: "PSPs" })
     }
   },
   created () {
