@@ -192,6 +192,20 @@ const message = {
     },
 }
 
+const apiObjects = {
+    users: "用户",
+    roles: "角色",
+    clusters: "集群",
+}
+
+const apiVerbs = {
+    "update": "编辑",
+    "delete": "删除",
+    "get": "详情",
+    "list": "列表",
+    "create": "创建"
+}
+
 
 const description = {
     i18n_user_administrator: "超级管理员,拥有所有对象的权限",
@@ -205,5 +219,8 @@ export default {
     ...el,
     ...fu,
     ...message,
+    ...apiObjects,
+    ...apiVerbs,
     ...description
+
 }

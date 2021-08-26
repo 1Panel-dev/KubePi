@@ -16,6 +16,7 @@ type Cluster struct {
 type Spec struct {
 	Connect        Connect        `json:"connect" storm:"inline"`
 	Authentication Authentication `json:"authentication" storm:"inline"`
+	Local          bool           `json:"local"`
 }
 
 type Connect struct {

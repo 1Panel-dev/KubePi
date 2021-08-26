@@ -157,10 +157,26 @@ const description = {
     i18n_user_common_user: "Ordinary users only have access to cluster objects"
 }
 
+const apiObjects = {
+    users: "users",
+    roles: "roles",
+    clusters: "clusters",
+}
+
+const apiVerbs = {
+    "update": "update",
+    "delete": "delete",
+    "get": "get",
+    "list": "list",
+    "create": "create"
+}
+
 
 export default {
     ...el,
     ...fu,
     ...message,
+    ...apiObjects,
+    ...apiVerbs,
     ...description
 };
