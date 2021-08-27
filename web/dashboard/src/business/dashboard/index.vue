@@ -50,7 +50,7 @@
     </el-row>
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
       <h3>Events</h3>
-      <complex-table :data="events" @search="search()" v-loading="loading">
+      <complex-table :data="events" @search="search()" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
         <el-table-column label="Reason" prop="reason" fix max-width="50px">
           <template v-slot:default="{row}">
             {{ row.reason }}
@@ -111,11 +111,15 @@ export default {
       cluster: null,
       clusterName: "",
       resources: [],
-      page: {
-        pageSize: 10,
-        nextToken: ""
-      },
       events: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      },
       loading: false
     }
   },
@@ -225,9 +229,10 @@ export default {
     search () {
       this.loading = true
       if (checkPermissions({ apiGroup: "", resource: "events", verb: "list" })) {
-        listEvents(this.clusterName).then(res => {
+        listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
           this.loading = false
           this.events = res.items
+          this.paginationConfig.total = res.total
         })
       }
     },
