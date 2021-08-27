@@ -92,6 +92,22 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+
+		binding := v1Cluster.Binding{
+			BaseModel: v1.BaseModel{
+				Kind: "ClusterBinding",
+			},
+			Metadata: v1.Metadata{
+				Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
+			},
+			UserRef:    profile.Name,
+			ClusterRef: req.Name,
+		}
+		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		requiredPermissions := map[string][]string{
 			"namespaces":       {"get", "post", "delete"},
 			"clusterroles":     {"get", "post", "delete"},
@@ -133,7 +149,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
 				return
 			}
-			if err := h.createClusterUser(client, profile.Name, req.Name); err != nil {
+			if err := h.updateUserCert(client, &binding); err != nil {
 				req.Status.Phase = clusterStatusFailed
 				req.Status.Message = err.Error()
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
@@ -153,23 +169,13 @@ func (h *Handler) CreateCluster() iris.Handler {
 	}
 }
 
-func (h *Handler) createClusterUser(client kubernetes.Interface, username string, clusterName string) error {
-	binding := v1Cluster.Binding{
-		BaseModel: v1.BaseModel{
-			Kind: "ClusterBinding",
-		},
-		Metadata: v1.Metadata{
-			Name: fmt.Sprintf("%s-%s-cluster-binding", clusterName, username),
-		},
-		UserRef:    username,
-		ClusterRef: clusterName,
-	}
-	csr, err := client.CreateCommonUser(username)
+func (h *Handler) updateUserCert(client kubernetes.Interface, binding *v1Cluster.Binding) error {
+	csr, err := client.CreateCommonUser(binding.UserRef)
 	if err != nil {
 		return err
 	}
 	binding.Certificate = csr
-	if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+	if err := h.clusterBindingService.UpdateClusterBinding(binding.Name, binding, common.DBOptions{}); err != nil {
 		return err
 	}
 	return nil
