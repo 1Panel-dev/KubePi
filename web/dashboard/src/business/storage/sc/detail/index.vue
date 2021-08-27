@@ -10,42 +10,32 @@
               </el-card>
             </el-col>
             <el-col :span="10">
-              <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                       @tab-click="handleClick">
-
-                <div style="margin-top: 20px">
-                  <ko-card>
-                    <table style="width: 100%" class="myTable">
-                      <th scope="col" width="60%" align="left">
-                        <h3>{{ $t('commons.form.parameters') }}</h3>
-                      </th>
-                      <tr v-for="(k,v,index) in form.parameters" :key="index">
-                        <td>{{ v }}</td>
-                        <td colspan="1">{{ k }}</td>
-                      </tr>
-                    </table>
-                  </ko-card>
-                </div>
-              </el-tabs>
+              <el-card>
+                <table style="width: 100%" class="myTable">
+                  <th scope="col" width="60%" align="left">
+                    <h3>{{ $t('commons.form.parameters') }}</h3>
+                  </th>
+                  <tr v-for="(k,v,index) in form.parameters" :key="index">
+                    <td>{{ v }}</td>
+                    <td colspan="1">{{ k }}</td>
+                  </tr>
+                </table>
+              </el-card>
             </el-col>
           </el-row>
-          <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
-                   @tab-click="handleClick">
+          <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick">
             <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form]">
-                <el-table-column sortable :label="$t('business.storage.provisioner')" min-width="30"
-                                 prop="provisioner"/>
-                <el-table-column sortable :label="$t('business.storage.reclaimPolicy')" min-width="30"
-                                 prop="reclaimPolicy"/>
-                <el-table-column sortable :label="$t('business.storage.volumeBindingMode')" min-width="30"
-                                 prop="volumeBindingMode"/>
+                <el-table-column sortable :label="$t('business.storage.provisioner')" min-width="30" prop="provisioner" />
+                <el-table-column sortable :label="$t('business.storage.reclaimPolicy')" min-width="30" prop="reclaimPolicy" />
+                <el-table-column sortable :label="$t('business.storage.volumeBindingMode')" min-width="30" prop="volumeBindingMode" />
               </complex-table>
             </el-tab-pane>
           </el-tabs>
         </el-form>
       </div>
       <div v-if="yamlShow">
-        <yaml-editor :value="yaml" ref="yaml_editor"></yaml-editor>
+        <yaml-editor :value="yaml" ref="yaml_editor" :read-only="true"></yaml-editor>
         <div class="bottom-button">
           <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
@@ -57,13 +47,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getStorageClass} from "@/api/storageclass";
+import { getStorageClass } from "@/api/storageclass"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "StorageClassDetail",
-  components: {YamlEditor, LayoutContent, KoDetailBasic, ComplexTable},
+  components: { YamlEditor, LayoutContent, KoDetailBasic, ComplexTable },
   props: {
     name: String,
   },
@@ -71,7 +61,9 @@ export default {
     return {
       loading: false,
       yamlShow: false,
-      form: {},
+      form: {
+        metadata: {},
+      },
       activeName: "",
       yaml: {},
       cluster: "",
@@ -82,7 +74,7 @@ export default {
       this.activeName = tab.index
     },
     onCancel() {
-      this.$router.push({name: "StorageClasses"})
+      this.$router.push({ name: "StorageClasses" })
     },
     onEditYaml() {
       this.yamlShow = true
@@ -98,12 +90,14 @@ export default {
       })
     },
     search() {
-      getStorageClass(this.cluster, this.name).then(res => {
-        this.form = res
-        this.yaml = JSON.parse(JSON.stringify(this.form))
-      }).finally(() => {
-        this.loading = false
-      })
+      getStorageClass(this.cluster, this.name)
+        .then((res) => {
+          this.form = res
+          this.yaml = JSON.parse(JSON.stringify(this.form))
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     transformYaml() {
       let formData = {}
@@ -111,15 +105,15 @@ export default {
       return formData
     },
     setStorageCapacity() {
-      this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + 'Gi'
-    }
+      this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + "Gi"
+    },
   },
   watch: {
     yamlShow: function (newValue) {
       this.$router.push({
         name: "StorageClassDetail",
-        params: {name: this.name},
-        query: {yamlShow: newValue}
+        params: { name: this.name },
+        query: { yamlShow: newValue },
       })
     },
   },
@@ -127,6 +121,6 @@ export default {
     this.cluster = this.$route.query.cluster
     this.yamlShow = this.$route.query.yamlShow === "true"
     this.search()
-  }
+  },
 }
 </script>
