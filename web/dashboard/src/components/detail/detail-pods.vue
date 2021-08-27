@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div>
     <complex-table :data="pods" v-loading="loading" @search="search()">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
