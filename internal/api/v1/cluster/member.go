@@ -235,15 +235,19 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 		err := ctx.ReadJSON(&req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("create cluster member failed: %s", err.Error()))
+			ctx.Values().Set("message", err.Error())
 			return
 		}
 		if req.Name == "" {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Errorf("invalid username %s", req.Name))
+			ctx.Values().Set("message", fmt.Sprintf("username can not be none"))
 			return
 		}
-
+		if len(req.ClusterRoles) == 0 && len(req.NamespaceRoles) == 0 {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("must select one role"))
+			return
+		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		binding := v1Cluster.Binding{

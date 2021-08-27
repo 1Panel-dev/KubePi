@@ -12,7 +12,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('commons.table.description')" prop="description">
-              {{ role.description }}
+              {{ translate(role.description) }}
             </el-form-item>
 
 
@@ -22,16 +22,18 @@
                   v-loading="loading"
                   style="width: 100%">
                 <el-table-column
-                    prop="name"
                     :label="$t('business.user.resource_name')"
                     min-width="180">
+                  <template v-slot:default="{row}">
+                    {{ $t(row.name) }}
+                  </template>
                 </el-table-column>
                 <el-table-column>
                   <template slot-scope="scope">
                     <div v-for="(item,index) in scope.row.verbs" :key="index">
                       <el-checkbox disabled
                                    v-model="item.enable">
-                        {{ item.name }}
+                        {{ $t(item.name) }}
                       </el-checkbox>
                     </div>
                   </template>
@@ -74,7 +76,9 @@ export default {
     }
   },
   methods: {
-
+    translate(a) {
+      return a.startsWith("i18n_") ? this.$t(a) : a
+    },
     checkPermissions(r) {
       return checkPermissions(r)
     },

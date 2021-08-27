@@ -8,7 +8,7 @@
           <el-form ref="form" :model="role" :rules="rules" label-width="150px" label-position="left">
 
             <el-form-item :label="$t('commons.table.name')" prop="name" required>
-              {{role.name}}
+              {{ role.name }}
             </el-form-item>
 
             <el-form-item :label="$t('commons.table.description')" prop="description">
@@ -22,9 +22,11 @@
                   v-loading="loading"
                   style="width: 100%">
                 <el-table-column
-                    prop="name"
                     :label="$t('business.user.resource_name')"
                     min-width="180">
+                  <template v-slot:default="{row}">
+                    {{ $t(row.name) }}
+                  </template>
                 </el-table-column>
                 <el-table-column>
                   <template #header>
@@ -39,13 +41,14 @@
                     <div v-for="(item,index) in scope.row.verbs" :key="index">
                       <el-checkbox
                           v-model="item.enable">
-                        {{ item.name }}
+                        {{ $t(item.name) }}
                       </el-checkbox>
                     </div>
                   </template>
                 </el-table-column>
               </el-table>
             </el-form-item>
+
             <el-form-item style="float: right">
               <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
               <el-button type="primary" @click="onConfirm">{{ $t("commons.button.confirm") }}</el-button>

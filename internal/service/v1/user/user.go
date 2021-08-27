@@ -21,14 +21,31 @@ type Service interface {
 	Search(num, size int, pattern string, options common.DBOptions) ([]v1User.User, int, error)
 	Update(name string, u *v1User.User, options common.DBOptions) error
 	UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error
+	ResetPassword(name string, newPassword string, options common.DBOptions) error
 }
 
 func NewService() Service {
-	return &service{}
+	return &service{
+	}
 }
 
 type service struct {
 	common.DefaultDBService
+}
+
+func (u *service) ResetPassword(name string, newPassword string, options common.DBOptions) error {
+	cu, err := u.GetByNameOrEmail(name, options)
+	if err != nil {
+		return err
+	}
+	bs, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	cu.Authenticate.Password = string(bs)
+	cu.UpdateAt = time.Now()
+	db := u.GetDB(options)
+	return db.Update(cu)
 }
 
 func (u *service) UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error {
