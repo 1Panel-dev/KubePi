@@ -16,7 +16,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
-	"strings"
 	"sync"
 )
 
@@ -257,41 +256,32 @@ func (h *Handler) GetCluster() iris.Handler {
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
-		showAll := true
-		if ctx.URLParamExists("all") {
-			text := ctx.URLParam("all")
-			if strings.ToLower(text) == "false" || strings.ToLower(text) == "no" {
-				showAll = false
-			}
-		}
-
 		clusters, err := h.clusterService.List(common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
 			return
 		}
-		var resultClusters []v1Cluster.Cluster
-		if !showAll {
-			u := ctx.Values().Get("profile")
-			profile := u.(session.UserProfile)
-			for i := range clusters {
-				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-				if err != nil {
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.Values().Set("message", err)
-					return
-				}
-				for j := range mbs {
-					if mbs[j].UserRef == profile.Name {
-						resultClusters = append(resultClusters, clusters[i])
-					}
+		var resultClusters []Cluster
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		for i := range clusters {
+			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", err)
+				return
+			}
+			rc := Cluster{
+				Cluster: clusters[i],
+			}
+			for j := range mbs {
+				if mbs[j].UserRef == profile.Name {
+					rc.Accessable = true
 				}
 			}
-		} else {
-			resultClusters = clusters
+			resultClusters = append(resultClusters, rc)
 		}
-
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", resultClusters)
 	}

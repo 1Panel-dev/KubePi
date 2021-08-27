@@ -18,6 +18,7 @@ type Cluster struct {
 	CertDataStr          string `json:"certDataStr"`
 	CaDataStr            string `json:"caDataStr"`
 	ConfigFileContentStr string `json:"configContentStr"`
+	Accessable           bool `json:"accessable"`
 }
 
 type NamespaceRoles struct {

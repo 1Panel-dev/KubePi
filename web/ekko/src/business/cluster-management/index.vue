@@ -1,18 +1,14 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster')">
 
-    <div style="float: right">
-      <el-switch
-          v-model="hiddenUnAccessCluster"
-          @change="onHiddenUnAccessClusterChange"
-          :active-text="$t('business.cluster.hidden_cluster')">
-      </el-switch>
-    </div>
     <br>
     <el-row>
-      <el-col :span="4" v-for="(item,index) in items" :key="index">
-        <el-card class="card_header box-card cluster-card" style=""
-                 shadow="hover">
+      <span v-for="(item,index) in items" :key="index">
+      <el-col :span="4">
+        <el-card
+            v-if="item.accessable || canDo({resource: 'clusters', verb: 'update'}) || canDo({resource: 'clusters', verb: 'delete'})"
+            class="card_header box-card cluster-card" style=""
+            shadow="hover">
           <div>
             <div slot="header" class="clearfix">
               <b style="font-size: 20px">{{ item.name }}</b>
@@ -58,7 +54,7 @@
             </div>
             <div class="bottom clearfix">
               <el-button type="text" size="large" class="bottom-button"
-                         v-has-permissions="{resource:'clusters',verb:'get'}"
+                         v-if="item.accessable &&canDo({resource:'clusters',verb:'get'})"
                          @click="onGotoDashboard(item.name)">
                 {{ $t('business.cluster.open_dashboard') }}>
               </el-button>
@@ -70,6 +66,8 @@
 
 
       </el-col>
+      </span>
+
       <el-col :span="4">
         <el-card v-has-permissions="{resource:'clusters',verb:'update'}" class="card_header box-card cluster-card"
                  shadow="hover">
@@ -122,7 +120,6 @@ export default {
     return {
       guideDialogVisible: false,
       items: [],
-      hiddenUnAccessCluster: false,
       timer: null,
     }
   },
@@ -161,24 +158,26 @@ export default {
         })
       });
     },
+    canDo(rq) {
+      return checkPermissions(rq)
+    },
+
+
     onGotoDashboard(name) {
       window.open(`/dashboard?cluster=${name}`, "_self")
-    },
-    onHiddenUnAccessClusterChange() {
-      this.onVueCreated()
     },
     onGuildSubmit() {
       this.$router.push({name: "ClusterCreate"})
     },
     pullingClusterStatus() {
       this.timer = setInterval(() => {
-        listClusters(!this.hiddenUnAccessCluster).then(data => {
+        listClusters().then(data => {
           this.items = data.data;
         })
       }, 3000)
     },
     onVueCreated() {
-      listClusters(!this.hiddenUnAccessCluster).then(data => {
+      listClusters().then(data => {
         this.items = data.data;
         if (this.items.length === 0 && checkPermissions({resource: 'clusters', verb: 'create'})) {
           this.guideDialogVisible = true

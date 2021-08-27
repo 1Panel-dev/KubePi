@@ -4,6 +4,8 @@ import (
 	"errors"
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/ekko/internal/service/v1/role"
+	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
 	costomStorm "github.com/KubeOperator/ekko/pkg/storm"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
@@ -31,6 +33,8 @@ func NewService() Service {
 
 type service struct {
 	common.DefaultDBService
+	rolebindingService rolebinding.Service
+	roleService        role.Service
 }
 
 func (u *service) ResetPassword(name string, newPassword string, options common.DBOptions) error {
