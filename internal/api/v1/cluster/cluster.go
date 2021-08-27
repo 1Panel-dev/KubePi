@@ -347,6 +347,19 @@ func (h *Handler) DeleteCluster() iris.Handler {
 	}
 }
 
+func (h *Handler) Privilege() iris.Handler {
+	return func(ctx *context.Context) {
+		var req Privilege
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err)
+			return
+		}
+		ctx.Redirect(req.Url)
+		return
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/clusters")
@@ -369,5 +382,5 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
-
+	sp.Post("/privilege", handler.Privilege())
 }

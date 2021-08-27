@@ -1,6 +1,8 @@
 import store from '@/store'
 
 export const checkPermissions = function (...ps) {
+
+    console.log(ps)
     const userResourcePermissions = store.getters && store.getters.permissions
     for (const p of ps) {
         if (userResourcePermissions["*"] || userResourcePermissions[p.resource]) {

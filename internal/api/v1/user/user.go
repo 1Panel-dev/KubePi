@@ -45,7 +45,24 @@ func (h *Handler) SearchUsers() iris.Handler {
 				return
 			}
 		}
-		ctx.Values().Set("data", pkgV1.Page{Items: users, Total: total})
+		us := make([]User, 0)
+		for i := range users {
+			bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: users[i].Name}, common.DBOptions{})
+			if err != nil && !errors.As(err, &storm.ErrNotFound) {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			roles := collectons.NewStringSet()
+			for i := range bindings {
+				roles.Add(bindings[i].RoleRef)
+			}
+			us = append(us, User{
+				User:  users[i],
+				Roles: roles.ToSlice(),
+			})
+		}
+		ctx.Values().Set("data", pkgV1.Page{Items: us, Total: total})
 	}
 }
 
@@ -110,6 +127,15 @@ func (h *Handler) CreateUser() iris.Handler {
 func (h *Handler) DeleteUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
+
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+
+		if userName == profile.Name {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Errorf("can not delete yourself"))
+			return
+		}
 		tx, _ := server.DB().Begin(true)
 		txOptions := common.DBOptions{DB: tx}
 
@@ -201,7 +227,15 @@ func (h *Handler) UpdateUser() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-
+		if req.Password != "" {
+			if err := h.userService.ResetPassword(userName, req.Password, common.DBOptions{}); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			ctx.Values().Set("data", "ok")
+			return
+		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		tx, err := server.DB().Begin(true)

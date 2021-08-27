@@ -14,9 +14,9 @@ const (
 
 type Cluster struct {
 	v1Cluster.Cluster
-	KeyDataStr       string `json:"keyDataStr"`
-	CertDataStr      string `json:"certDataStr"`
-	CaDataStr        string `json:"caDataStr"`
+	KeyDataStr           string `json:"keyDataStr"`
+	CertDataStr          string `json:"certDataStr"`
+	CaDataStr            string `json:"caDataStr"`
 	ConfigFileContentStr string `json:"configContentStr"`
 }
 
@@ -31,4 +31,8 @@ type Member struct {
 	BindingName    string           `json:"bindingName"`
 	CreateAt       time.Time        `json:"createAt"`
 	NamespaceRoles []NamespaceRoles `json:"namespaceRoles"`
+}
+
+type Privilege struct {
+	Url string `json:"url"`
 }
