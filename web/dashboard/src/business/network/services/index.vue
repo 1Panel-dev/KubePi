@@ -27,12 +27,15 @@
           {{ row.spec.type }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.configuration.cluster_ip')" prop="spec.clusterIP">
+      <el-table-column :label="$t('business.network.target_port')" min-width="200px" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          {{ row.spec.clusterIP }}
+          <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
+            <span style="font-size: 12px"> {{ row.spec.clusterIP || "" }}:{{ value.port }} /{{ value.protocol }} > {{ value.targetPort }}</span>
+            <br>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.configuration.selector')" prop="spec.selector" min-width="200px">
+      <el-table-column :label="$t('business.network.selector')" prop="spec.selector" min-width="200px">
         <template v-slot:default="{row}">
           <el-tag v-for="(value,key,index) in row.spec.selector" v-bind:key="index" type="info" size="mini">
             {{ key }}={{ value }}
