@@ -22,7 +22,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.user.role')" min-width="100" fix>
         <template v-slot:default="{row}">
-          <el-tag size="small" v-for="(item,key) in row.roles" :key="key">{{ item }}</el-tag>
+          <el-tag style="margin-left: 5px" size="small" v-for="(item,key) in row.roles" :key="key">{{ item }}</el-tag>
         </template>
       </el-table-column>
 

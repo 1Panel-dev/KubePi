@@ -11,7 +11,7 @@
       </template>
       <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.name }}
+          <el-link @click="onOpenDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
 
@@ -44,9 +44,9 @@
           <table border="1" cellspacing="0" style="width: 80%">
             <thead style="background-color: #1d3e4d">
             <tr>
-              <th style="width: 30%">{{$t('business.cluster.api_group')}}</th>
-              <th style="width: 30%">{{$t('business.cluster.resource')}}</th>
-              <th style="width: 30%">{{$t('business.cluster.verb')}}</th>
+              <th style="width: 30%">{{ $t('business.cluster.api_group') }}</th>
+              <th style="width: 30%">{{ $t('business.cluster.resource') }}</th>
+              <th style="width: 30%">{{ $t('business.cluster.verb') }}</th>
               <th>{{ $t('commons.table.action') }}</th>
             </tr>
             </thead>
@@ -96,6 +96,48 @@
                 <el-button type="primary" @click="onConfirm">{{ $t('commons.button.confirm') }}</el-button>
             </span>
     </el-dialog>
+
+    <el-dialog :title="$t('business.cluster.role')"
+               :visible.sync="clusterDetailDialogOpened"
+               width="70%"
+               center z-index="10">
+      <el-form :model="detailForm" label-position="left" label-width="144px">
+        <el-form-item :label="$t('commons.table.name')">
+          {{ detailForm.name }}
+        </el-form-item>
+
+        <el-form-item :label="$t('business.cluster.rule')">
+          <table border="1" cellspacing="0" style="width: 80%">
+            <thead style="background-color: #1d3e4d">
+            <tr>
+              <th style="width: 30%">{{ $t('business.cluster.api_group') }}</th>
+              <th style="width: 30%">{{ $t('business.cluster.resource') }}</th>
+              <th style="width: 30%">{{ $t('business.cluster.verb') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-if="detailForm.rules.length===0">
+              <td style="text-align: center" colspan="4">{{ $t('commons.msg.no_data') }}</td>
+            </tr>
+            <tr v-for="(item,index) in detailForm.rules" :key="index">
+              <td style="text-align: center">
+                {{ item.apiGroups }}
+              </td>
+              <td style="text-align: center">
+                {{ item.resources }}
+              </td>
+              <td style="text-align: center">
+                {{ item.verbs }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </el-form-item>
+      </el-form>
+
+
+    </el-dialog>
+
   </layout-content>
 </template>
 
@@ -117,18 +159,11 @@ export default {
   data() {
     return {
       clusterRoleFormDialogOpened: false,
-      // apiGroupResources: {
-      //   "core": ["namespaces", "nodes", "events", "persistentvolumes", "services", "endpoints",
-      //     "configmaps", "secrets", "resourcequotas", "limitranges", "persistentvolumeclaims",
-      //     "pods", "containers", "serviceaccounts"
-      //   ],
-      //   "apps": ["deployments", "daemonsets", "replicasets", "statefulsets"],
-      //   "batch": ["jobs", "cronjobs"],
-      //   "autoscaling": ["horizontalpodautoscalers"],
-      //   "networking.k8s.io": ["ingresses", "networkpolicies"],
-      //   "storage.k8s.io": ["storageclasses"],
-      //   "rbac.authorization.k8s.io": ["clusterroles", "clusterrolebindings"]
-      // },
+      clusterDetailDialogOpened: false,
+      detailForm: {
+        name: "",
+        rules: []
+      },
       apiGroupResources: {
         "core": ["namespaces", "nodes", "persistentvolumes"],
         "storage.k8s.io": ["storageclasses"],
@@ -179,7 +214,21 @@ export default {
         this.data = data.data
       })
     },
-
+    onOpenDetail(item) {
+      this.detailForm = {
+        name: item.metadata.name,
+        rules: item.rules
+      }
+      for (const rule of this.detailForm.rules) {
+        for (let i = 0; i < rule.apiGroups.length; i++) {
+          console.log(rule)
+          if (rule.apiGroups[i] === "") {
+            rule.apiGroups[i] = "core"
+          }
+        }
+      }
+      this.clusterDetailDialogOpened = true
+    },
     onCreate() {
       this.operation = "create"
       this.clusterRoleForm = {
