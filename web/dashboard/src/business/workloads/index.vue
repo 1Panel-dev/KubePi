@@ -4,14 +4,15 @@
     <div v-if="!showYaml">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
-          <el-col :span="5">
-            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
-              <ko-form-item :disabled="readOnly" :noClear="true" @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
-            </el-form-item>
-          </el-col>
           <el-col :span="7">
             <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="nameRules">
               <ko-form-item :disabled="readOnly" itemType="input" v-model="form.metadata.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
+<!--              <ko-form-item :disabled="readOnly" :noClear="true" @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />-->
+              <ko-select :disabled="readOnly" @changeFunc="changeNs" :namespace.sync="form.metadata.namespace" ></ko-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="isReplicasShow()">
@@ -141,9 +142,11 @@ import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
 import { listNsServices } from "@/api/services"
 import { listPvcs } from "@/api/pvc"
+import KoSelect from "@/components/ko-select"
 
 export default {
   components: {
+    KoSelect,
     LayoutContent,
     KoFormItem,
     YamlEditor,
