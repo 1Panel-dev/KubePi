@@ -196,7 +196,7 @@ export default {
         data = this.transformYaml()
       }
       this.loading = true
-      createPvc(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createPvc(this.cluster, data.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
