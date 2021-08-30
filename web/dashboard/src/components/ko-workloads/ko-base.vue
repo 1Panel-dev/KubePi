@@ -74,24 +74,13 @@ export default {
       this.selectContainerIndex = isChangeType ? 0 : this.selectContainerIndex
       if (this.selectContainerType === "initContainers") {
         if (!this.initContainers || this.initContainers.length === 0) {
-          this.$confirm(this.$t("commons.confirm_message.add_init_container"), this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          })
-            .then(() => {
-              const itemContainer = { name: "initContainer-0", image: "", imagePullPolicy: "ifNotPresent" }
-              this.initContainers = [itemContainer]
-              this.currentContainerType = this.selectContainerType
-              this.currentContainerIndex = this.selectContainerIndex
-              this.currentContainer = this.initContainers[this.currentContainerIndex]
-              this.$emit("addContainer", this.currentContainerType, itemContainer)
-              this.$emit("refreshContainer", this.currentContainerType, this.currentContainerIndex, this.currentContainer)
-            })
-            .catch(() => {
-              this.selectContainerType = this.currentContainerType
-              this.selectContainerIndex = this.currentContainerIndex
-            })
+          const itemContainer = { name: "initContainer-0", image: "", imagePullPolicy: "ifNotPresent" }
+          this.initContainers = [itemContainer]
+          this.currentContainerType = this.selectContainerType
+          this.currentContainerIndex = this.selectContainerIndex
+          this.currentContainer = this.initContainers[this.currentContainerIndex]
+          this.$emit("addContainer", this.currentContainerType, itemContainer)
+          this.$emit("refreshContainer", this.currentContainerType, this.currentContainerIndex, this.currentContainer)
         } else {
           this.currentContainerType = this.selectContainerType
           this.currentContainerIndex = this.selectContainerIndex
