@@ -15,9 +15,14 @@
               <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="isReplicasShow()">
+          <el-col :span="6" v-if="isReplicasShow()">
             <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
               <ko-form-item :disabled="readOnly" placeholder="Any text you want that better describes this resource" itemType="number" v-model.number="form.spec.replicas" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isStatefulSet()">
+            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName">
+              <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="isCronJob()">
@@ -29,11 +34,6 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
-          </el-col>
-          <el-col :span="12" v-if="isStatefulSet()">
-            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName" :rules="selectRules">
-              <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="service_list_of_ns" />
-            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -191,7 +191,7 @@ export default {
       node_list: [],
       sc_list: [],
       pvc_list: [],
-      service_list_of_ns: [],
+      headless_service: [],
       // base form
       activeName: "General",
       isValid: true,
@@ -295,10 +295,12 @@ export default {
       })
     },
     loadServicesWithNs(ns) {
-      this.service_list_of_ns = []
+      this.headless_service = []
       listNsServices(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
-          this.service_list_of_ns.push(item.metadata.name)
+          if (item.spec.clusterIP === "None") {
+            this.headless_service.push(item.metadata.name)
+          }
         })
       })
     },

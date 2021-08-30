@@ -180,6 +180,7 @@ const message = {
       replicas: "副本数",
       container: "容器",
       initContainer: "初始化容器",
+      standardContainer: "标准容器",
       schedule: "调度",
       lastScheduleTime: "最后的调度",
       suspend: "暂停",
@@ -188,8 +189,6 @@ const message = {
       restarts: "重启",
       current: "当前调度",
       desired: "期望期望",
-      init: "初始化",
-      standard: "标准",
 
       general: "基础信息",
       container_name: "容器名称",

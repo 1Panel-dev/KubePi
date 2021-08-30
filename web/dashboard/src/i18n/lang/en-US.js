@@ -179,6 +179,7 @@ const message = {
       replicas: "Replicas",
       container: "Container",
       initContainer: "InitContainer",
+      standardContainer: "StandardContainer",
       schedule: "Schedule",
       lastScheduleTime: "Last Schedule Time",
       suspend: "Suspend",
@@ -187,8 +188,6 @@ const message = {
       restarts: "Restarts",
       current: "Current",
       desired: "Desired",
-      init: "Init",
-      standard: "Standard",
 
       general: "General",
       container_name: "Container Name",
