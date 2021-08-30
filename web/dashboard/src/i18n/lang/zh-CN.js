@@ -196,7 +196,7 @@ const message = {
       pull_policy: "拉取策略",
       pull_secrets: "拉取密钥",
 
-      port: "端口",
+      port: "端口映射",
       service_type: "服务类型",
       not_create: "不创建服务",
       cluster_ip: "集群 IP",
