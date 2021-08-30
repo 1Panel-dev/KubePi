@@ -1,82 +1,61 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster')">
+    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
+                   :pagination-config="paginationConfig" @search="search">
+      <template #header>
+        <el-button-group>
+          <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small"
+                     @click="onCreate">
+            {{ $t("commons.button.create") }}
+          </el-button>
+        </el-button-group>
+      </template>
 
-    <br>
-    <el-row>
-      <span v-for="(item,index) in items" :key="index">
-      <el-col :span="4">
-        <el-card
-            v-if="item.accessable || canDo({resource: 'clusters', verb: 'update'}) || canDo({resource: 'clusters', verb: 'delete'})"
-            class="card_header box-card cluster-card" style=""
-            shadow="hover">
-          <div>
-            <div slot="header" class="clearfix">
-              <b style="font-size: 20px">{{ item.name }}</b>
-              <div style="float: right">
-                <el-dropdown trigger="click" @command="handleCommand">
-                  <el-button type="text" size="large" class="bottom-button"><i
-                      class="el-icon-more"></i></el-button>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ row.name }}
+        </template>
+      </el-table-column>
 
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'update'}"
-                                      :command="{name:item.name,action:'manage'}">
-                      {{ $t('business.cluster.management') }}
-                    </el-dropdown-item>
-                    <el-dropdown-item v-has-permissions="{resource:'clusters',verb:'delete'}"
-                                      :command="{name:item.name,action:'delete'}">
-                      {{ $t('commons.button.delete') }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-
-              </div>
-              <hr style="border-color: gray"/>
-            </div>
-            <div>
-              <el-row>
-                <el-col :span="4" style="padding-top: 10px">
-                  <img height="48px" src="~@/assets/kubernetes.png" alt="kubernetes.png">
-                </el-col>
-                <el-col :span="20">
-                  <div style="margin-top: 20px"
-                       v-if="item.status.phase!=='Initializing' && item.status.phase!=='Failed' ">
-                    <ul>
-                      <li style="list-style-type: none;margin: 5px">
-                        {{ $t('business.cluster.cluster_version') }}:{{ item.status.version }}
-                      </li>
-                    </ul>
-                  </div>
-                  <div v-if="item.status.phase==='Initializing'" style="margin-left: 30px;margin-top: 28px">
-                    <i class="el-icon-loading"></i>初始化中...
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-            <div class="bottom clearfix">
-              <el-button type="text" size="large" class="bottom-button"
-                         v-if="item.accessable &&canDo({resource:'clusters',verb:'get'})"
-                         @click="onGotoDashboard(item.name)">
-                {{ $t('business.cluster.open_dashboard') }}>
-              </el-button>
-            </div>
-
-          </div>
-
-        </el-card>
+      <el-table-column :label="$t('business.cluster.node')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          <el-tag>
+            {{ row.extraClusterInfo.readyNodeNum }} / {{ row.extraClusterInfo.totalNodeNum }}
+          </el-tag>
+        </template>
+      </el-table-column>
 
 
-      </el-col>
-      </span>
+      <el-table-column min-width="200" fix>
+        <template v-slot:default="{row}">
+          cpu
+          <el-progress type="dashboard" :width="60" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
+          <el-progress type="dashboard" :width="60" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
+          memory
+        </template>
+      </el-table-column>
 
-      <el-col :span="4">
-        <el-card v-has-permissions="{resource:'clusters',verb:'update'}" class="card_header box-card cluster-card"
-                 shadow="hover">
-          <div @click="onCreate" style="text-align: center;padding-top: 45px;font-size: 36px;cursor: pointer">
-            <i class="el-icon-plus"></i>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+      <el-table-column :label="$t('business.cluster.version')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          <el-tag>
+            {{ row.status.version }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+
+      <el-table-column :label="$t('commons.table.creat_by')" prop="createdBy" min-width="100"
+                       fix/>
+
+
+      <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ row.createAt | datetimeFormat }}
+        </template>
+      </el-table-column>
+
+      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
+    </complex-table>
 
     <el-dialog
         :title="$t('commons.header.guide')"
@@ -109,22 +88,77 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listClusters, deleteCluster} from "@/api/clusters"
+import {listClusters, deleteCluster, searchClusters} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission";
+import ComplexTable from "@/components/complex-table";
 
 
 export default {
   name: "ClusterList",
-  components: {LayoutContent},
+  components: {LayoutContent, ComplexTable},
   data() {
     return {
       guideDialogVisible: false,
       items: [],
       timer: null,
+      data: [],
+      selects: [],
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      colors: [
+        {color: '#1989fa', percentage: 0},
+      ],
+      searchConfig: {
+        keywords: ""
+      },
+      buttons: [
+        {
+          label: this.$t("business.cluster.open_dashboard"),
+          icon: "el-icon-s-platform",
+          click: (row) => {
+            this.onGotoDashboard(row.name)
+          },
+          disabled: () => {
+            return !checkPermissions({resource: "clusters", verb: "get"})
+          },
+        },
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.onDetail(row.name)
+          },
+          disabled: () => {
+            return !checkPermissions({resource: "clusters", verb: "update"})
+          }
+        },
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.onDelete(row.name)
+          },
+          disabled: () => {
+            return !checkPermissions({resource: "clusters", verb: "delete"})
+          },
+        },
+      ],
     }
   },
+  computed: {},
   methods: {
-
+    search() {
+      this.loading = true
+      const {currentPage, pageSize} = this.paginationConfig
+      searchClusters(currentPage, pageSize,).then(data => {
+        this.loading = false
+        this.data = data.data.items
+        this.paginationConfig.total = data.data.total
+      })
+    },
     handleCommand(command) {
       const name = command.name
       switch (command.action) {
@@ -136,9 +170,12 @@ export default {
           break
       }
     },
-
+    onGoMemberDetail(name) {
+      this.$router.push({name: "ClusterMembers", params: {name: name}})
+    },
     onCreate() {
       this.$router.push({name: "ClusterCreate"})
+      this.search()
     },
     onDetail(name) {
       this.$router.push({name: "ClusterMembers", params: {name: name}})
@@ -166,6 +203,17 @@ export default {
     onGotoDashboard(name) {
       window.open(`/dashboard?cluster=${name}`, "_self")
     },
+
+    getCpuUsed(item) {
+      const r = Math.round((item.extraClusterInfo.cpuRequested / item.extraClusterInfo.cpuAllocatable) * 100)
+      return r > 100 ? 100 : r
+    },
+
+    getMemoryUsed(item) {
+      const r = Math.round((item.extraClusterInfo.memoryRequested / item.extraClusterInfo.memoryAllocatable) * 100)
+      return r > 100 ? 100 : r
+    },
+
     onGuildSubmit() {
       this.$router.push({name: "ClusterCreate"})
     },
@@ -187,7 +235,8 @@ export default {
     }
   },
   created() {
-    this.onVueCreated()
+    this.search()
+    // this.onVueCreated()
   }, destroyed() {
     clearInterval(this.timer)
   }
