@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :title="$t('business.network.service_ports')">
+    <ko-card :title="$t('business.network.service_port')">
       <table style="width: 100%;padding: 0" class="tab-table">
         <tr>
           <th scope="col" width="30%" align="left">

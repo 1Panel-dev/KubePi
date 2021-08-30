@@ -11,14 +11,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required>
-                <el-select v-model="form.metadata.namespace">
-                  <el-option
-                      v-for="(item, index) in namespace_list"
-                      :key="index"
-                      :label="item"
-                      :value="item">
-                  </el-option>
-                </el-select>
+                <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -51,7 +44,7 @@
                 <ko-card title="Volume Claim">
                   <el-row :gutter="24">
                     <el-col :span="6">
-                      <el-form-item v-if="currentVolumeClaimSource == 'sc'" :label="$t('business.storage.assignSc')">
+                      <el-form-item v-if="currentVolumeClaimSource === 'sc'" :label="$t('business.storage.assignSc')">
                         <el-select v-model="form.spec.storageClassName">
                           <el-option v-for="(sc, index) in storageClasses"
                                      :key="index"
@@ -60,7 +53,7 @@
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item v-if="currentVolumeClaimSource == 'pv'" :label="$t('business.storage.assignPv')">
+                      <el-form-item v-if="currentVolumeClaimSource === 'pv'" :label="$t('business.storage.assignPv')">
                         <el-select v-model="form.spec.volumeName">
                           <el-option v-for="(sc, index) in persistentVolumeList"
                                      :key="index"
@@ -72,7 +65,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                      <el-form-item v-if="currentVolumeClaimSource == 'sc'" :label="$t('business.storage.capacity')"
+                      <el-form-item v-if="currentVolumeClaimSource === 'sc'" :label="$t('business.storage.capacity')"
                                     required>
                         <el-input-number :min="1" :step="2" @change="setStorageCapacity" clearable
                                          v-model="currentStorageCapacity"></el-input-number>
@@ -110,10 +103,12 @@ import {createPvc} from "@/api/pvc"
 import KoCard from "@/components/ko-card/index";
 import {listStorageClasses} from "@/api/storageclass";
 import {listNamespace} from "@/api/namespaces"
+import KoSelect from "@/components/ko-select"
+
 
 export default {
   name: "PersistentVolumeClaimCreate",
-  components: {KoCard, YamlEditor, LayoutContent},
+  components: {KoCard, YamlEditor, LayoutContent,KoSelect},
   data() {
     return {
       loading: false,
@@ -139,7 +134,6 @@ export default {
           },
         }
       },
-      namespace_list: [],
       activeName: "",
       yaml: {},
       cluster: "",

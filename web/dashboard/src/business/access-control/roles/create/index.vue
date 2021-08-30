@@ -11,13 +11,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
-                <el-select v-model="form.metadata.namespace">
-                  <el-option v-for="namespace in namespaces"
-                             :key="namespace"
-                             :label="namespace"
-                             :value="namespace">
-                  </el-option>
-                </el-select>
+                <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -61,11 +55,11 @@ import Rule from "@/utils/rules"
 import {createRole} from "@/api/roles"
 import KoGrantResource from "@/components/ko-rbac/grant-resource"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
-import {getNamespaces} from "@/api/auth"
+import KoSelect from "@/components/ko-select"
 
 export default {
   name: "RoleCreate",
-  components: { KoKeyValue, KoGrantResource, LayoutContent, YamlEditor },
+  components: { KoKeyValue, KoGrantResource, LayoutContent, YamlEditor,KoSelect },
   props: {},
   data () {
     return {
@@ -89,7 +83,6 @@ export default {
           namespace: [Rule.RequiredRule]
         }
       },
-      namespaces: []
     }
   },
   methods: {
@@ -141,10 +134,6 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    getNamespaces(this.cluster).then(res => {
-      this.namespaces = res.data
-      this.form.metadata.namespace = this.namespaces[0]
-    })
   }
 }
 </script>

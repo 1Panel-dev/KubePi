@@ -11,13 +11,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item :label="$t('business.namespace.namespace')" required>
-                <el-select v-model="form.metadata.namespace">
-                  <el-option v-for="namespace in namespaces"
-                             :key="namespace"
-                             :label="namespace"
-                             :value="namespace">
-                  </el-option>
-                </el-select>
+                <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -60,12 +54,12 @@ import KoData from "@/components/ko-workloads/ko-data"
 import YamlEditor from "@/components/yaml-editor"
 import {createConfigMap} from "@/api/configmaps"
 import Rule from "@/utils/rules"
-import {getNamespaces} from "@/api/auth"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
+import KoSelect from "@/components/ko-select"
 
 export default {
   name: "ConfigMapCreate",
-  components: { KoKeyValue, YamlEditor, KoData, LayoutContent },
+  components: { KoKeyValue, YamlEditor, KoData, LayoutContent,KoSelect },
   props: {},
   data () {
     return {
@@ -82,7 +76,6 @@ export default {
         },
         data: {}
       },
-      namespaces: [],
       activeName: "",
       yaml: {},
       cluster: "",
@@ -143,10 +136,6 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    getNamespaces(this.cluster).then(res => {
-      this.namespaces = res.data
-      this.form.metadata.namespace = this.namespaces[0]
-    })
   }
 }
 </script>
