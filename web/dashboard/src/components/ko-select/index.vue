@@ -1,9 +1,10 @@
 <template>
-  <el-select v-model="namespaceStr" v-bind="$attrs" v-on="$listeners">
+  <el-select v-model="namespaceStr" v-bind="$attrs" v-on="$listeners" :disabled="disabled">
     <el-option v-for="namespace in namespaces"
                :key="namespace"
                :label="namespace"
-               :value="namespace">
+               :value="namespace"
+               >
     </el-option>
   </el-select>
 </template>
@@ -20,17 +21,27 @@ export default {
   data () {
     return {
       namespaceStr: "",
-      namespaces: []
+      namespaces: [],
+      disabled: false
     }
   },
   methods: {
     initData (namespaces) {
       this.namespaces = namespaces
-      this.namespaceStr = namespaces.find(item => item==='default')
-      if (this.namespaceStr === undefined || this.namespaceStr === "" ) {
+      if (this.namespace !== "") {
+        this.namespaceStr = this.namespace
+        return
+      }
+      this.namespaceStr = namespaces.find(item => item === "default")
+      if (this.namespaceStr === undefined || this.namespaceStr === "") {
         this.namespaceStr = namespaces[0]
       }
       this.$emit("update:namespace", this.namespaceStr)
+    },
+  },
+  watch: {
+    namespaceStr: function (newValue) {
+      this.$emit("update:namespace", newValue)
     }
   },
   created () {
@@ -39,7 +50,9 @@ export default {
       getNamespaces(cluster).then(res => {
         this.initData(res.data)
       })
+      this.disabled = false
     } else {
+      this.disabled = true
       this.initData([sessionStorage.getItem("namespace")])
     }
   }
