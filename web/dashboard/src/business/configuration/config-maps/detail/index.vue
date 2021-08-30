@@ -11,8 +11,17 @@
         </div>
         <div>
           <div v-if="item.data">
-            <json-editor :value="item.data">
-            </json-editor>
+            <div v-for="(value,key) in item.data" v-bind:key="key">
+              <ko-data :title="key">
+                <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
+                             theme="jv-dark" :expanded="true" :expand-depth="4"></json-viewer>
+                <el-card v-else  style="background: #112234;border: 0;">
+                  <div style="white-space: pre-line;">
+                    <span>{{ getValue(value)}} </span>
+                  </div>
+                </el-card>
+              </ko-data>
+            </div>
           </div>
           <div v-else-if="item.binaryData">
             <span> Binary Data: {{ bystesLength(item.binaryData.content) }} bytes</span>
@@ -38,10 +47,12 @@ import {getConfigMap} from "@/api/configmaps"
 import JsonEditor from "@/components/json-editor"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailBasic from "@/components/detail/detail-basic"
+import KoData from "@/components/ko-data"
+import {isJSON} from "@/utils/data"
 
 export default {
   name: "ConfigMapDetail",
-  components: { KoDetailBasic, YamlEditor, JsonEditor, LayoutContent },
+  components: { KoDetailBasic, YamlEditor, JsonEditor, LayoutContent ,KoData},
   props: {
     name: String,
     namespace: String,
@@ -79,6 +90,18 @@ export default {
       }
       return count
     },
+    getContent (value) {
+      return JSON.parse(value)
+    },
+    jsonV (str) {
+      return isJSON(str)
+    },
+    getValue (value) {
+      if (value instanceof Object) {
+        return JSON.parse(value)
+      }
+      return  value
+    }
   },
   watch: {
     yamlShow: function (newValue) {

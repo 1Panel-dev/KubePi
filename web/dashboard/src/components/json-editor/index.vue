@@ -1,5 +1,6 @@
 <template>
   <div class="yaml-editor">
+    <h4>{{ key }}</h4>
     <codemirror ref="editor" v-model="content" :options="options"></codemirror>
   </div>
 </template>
@@ -14,10 +15,11 @@ export default {
   props: {
     value: {
       type: Object,
-      default: function () {
-        return {}
-      }
     },
+    key: {
+      type: String,
+      default: "",
+    }
   },
   data () {
     return {
@@ -29,7 +31,7 @@ export default {
         tabSize: 2,
         readOnly: true,
         lineWrapping: true,
-        gutters: ['CodeMirror-lint-markers'],
+        gutters: ["CodeMirror-lint-markers"],
       },
       content: "",
       file: File
@@ -39,16 +41,16 @@ export default {
     value: function (newValue) {
       let content = JSON.stringify(newValue, null, "\t")
       this.$refs.editor.codemirror.setValue(content)
-      if (content.indexOf('\\n') > -1) {
-        this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+      if (content.indexOf("\\n") > -1) {
+        this.$refs.editor.codemirror.setOption("lineSeparator", "\\n")
       }
     }
   },
   mounted () {
     let content = JSON.stringify(this.value, null, "\t")
     this.$refs.editor.codemirror.setValue(content)
-    if (content.indexOf('\\n') > -1) {
-      this.$refs.editor.codemirror.setOption("lineSeparator", '\\n')
+    if (content.indexOf("\\n") > -1) {
+      this.$refs.editor.codemirror.setOption("lineSeparator", "\\n")
     }
   }
 }
