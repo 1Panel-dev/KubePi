@@ -44,6 +44,13 @@ export const mixin = {
             query: { yamlShow: false }
           })
           break
+        case "PodDisruptionBudget":
+          this.$router.push({
+            name: "PDBDetail",
+            params: { namespace: namespace, name: name },
+            query: { yamlShow: false }
+          })
+          break
         default:
           break
       }
