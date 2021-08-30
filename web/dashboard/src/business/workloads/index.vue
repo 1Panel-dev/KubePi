@@ -6,13 +6,13 @@
         <el-row :gutter="20">
           <el-col :span="7">
             <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="nameRules">
-              <ko-form-item :disabled="readOnly" itemType="input" v-model="form.metadata.name" />
+              <ko-form-item :disabled="readOnly || !isCreateOperation()" itemType="input" v-model="form.metadata.name" />
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
-<!--              <ko-form-item :disabled="readOnly" :noClear="true" @change="changeNs" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />-->
-              <ko-select :disabled="readOnly" @changeFunc="changeNs" :namespace.sync="form.metadata.namespace" ></ko-select>
+              <ko-select v-if="isCreateOperation()" style="width: 100%" @change="changeNs" :namespace.sync="form.metadata.namespace"></ko-select>
+              <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="isReplicasShow()">
@@ -240,6 +240,7 @@ export default {
       getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name)
         .then((res) => {
           this.form = res
+          this.changeNs(this.form.metadata.namespace)
           if (!this.isCronJob()) {
             this.podSpec = this.form.spec.template.spec
             this.podMetadata = this.form.spec.template.metadata
@@ -267,11 +268,19 @@ export default {
         for (const ns of res.items) {
           this.namespace_list.push(ns.metadata.name)
         }
+        if (this.isCreateOperation()) {
+          const p = sessionStorage.getItem("namespace")
+          if (p !== null) {
+            this.changeNs(p)
+          } else {
+            this.changeNs(this.namespace_list[0])
+          }
+        }
       })
     },
-    loadSecretsWithNs() {
+    loadSecretsWithNs(ns) {
       this.secret_list_of_ns = []
-      listSecretsWithNs(this.clusterName, this.form.metadata.namespace).then((res) => {
+      listSecretsWithNs(this.clusterName, ns).then((res) => {
         this.secret_list_of_ns = res.items
       })
     },
@@ -285,24 +294,24 @@ export default {
         this.pvc_list = res.items
       })
     },
-    loadServicesWithNs() {
+    loadServicesWithNs(ns) {
       this.service_list_of_ns = []
-      listNsServices(this.clusterName, this.form.metadata.namespace).then((res) => {
+      listNsServices(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
           this.service_list_of_ns.push(item.metadata.name)
         })
       })
     },
-    loadConfigMapsWithNs() {
+    loadConfigMapsWithNs(ns) {
       this.config_map_list_of_ns = []
-      listConfigMapsWithNs(this.clusterName, this.form.metadata.namespace).then((res) => {
+      listConfigMapsWithNs(this.clusterName, ns).then((res) => {
         this.config_map_list_of_ns = res.items
       })
     },
-    changeNs() {
-      this.loadSecretsWithNs()
-      this.loadConfigMapsWithNs()
-      this.loadServicesWithNs()
+    changeNs(val) {
+      this.loadSecretsWithNs(val)
+      this.loadConfigMapsWithNs(val)
+      this.loadServicesWithNs(val)
     },
     loadNodes() {
       this.node_list = []
@@ -442,6 +451,9 @@ export default {
     isStandardContainer() {
       return this.currentContainerType === "standardContainers"
     },
+    isCreateOperation() {
+      return this.operation === "create"
+    },
     onCancel() {
       this.$router.push({ name: this.toggleCase() + "s" })
     },
@@ -458,7 +470,7 @@ export default {
         data = this.gatherFormData()
       }
       this.loading = true
-      if (this.operation === "create") {
+      if (this.isCreateOperation()) {
         createWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, data)
           .then(() => {
             this.$message({
@@ -538,7 +550,7 @@ export default {
     this.clusterName = this.$route.query.cluster
     this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
-    if (this.operation === "edit") {
+    if (!this.isCreateOperation()) {
       this.name = this.$route.params.name
       this.search()
     } else {
