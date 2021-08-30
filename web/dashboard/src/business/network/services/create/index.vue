@@ -12,13 +12,6 @@
             <el-col :span="3">
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
                 <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
-<!--                <el-select v-model="form.metadata.namespace">-->
-<!--                  <el-option v-for="namespace in namespaces"-->
-<!--                             :key="namespace"-->
-<!--                             :label="namespace"-->
-<!--                             :value="namespace">-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
               </el-form-item>
             </el-col>
             <el-col :span="3">
