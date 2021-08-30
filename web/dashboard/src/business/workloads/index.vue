@@ -45,7 +45,7 @@
           <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
 
-        <el-tab-pane :label="$t('business.workload.health_check')" name="Health Check">
+        <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')" name="Health Check">
           <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
           <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
           <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
@@ -229,10 +229,10 @@ export default {
   },
   methods: {
     updateContainerList(val) {
-      if (this.currentContainerType === "initContainers") {
-        this.podSpec.initContainers[this.currentContainerIndex].name = val
-      } else {
+      if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex].name = val
+      } else {
+        this.podSpec.initContainers[this.currentContainerIndex].name = val
       }
     },
     search() {
@@ -367,7 +367,7 @@ export default {
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_resource.transformation(this.currentContainer)
-      if (this.currentContainerType === "standardContainers") {
+      if (this.isStandardContainer()) {
         this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
         this.$refs.ko_health_liveness_check.transformation(this.currentContainer)
         this.$refs.ko_health_startup_check.transformation(this.currentContainer)
@@ -402,10 +402,10 @@ export default {
       }
       this.$refs.ko_storage.transformation(this.podSpec)
 
-      if (this.currentContainerType === "initContainers") {
-        this.podSpec.initContainers[this.currentContainerIndex] = this.currentContainer
-      } else {
+      if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex] = this.currentContainer
+      } else {
+        this.podSpec.initContainers[this.currentContainerIndex] = this.currentContainer
       }
       if (!this.isReplicasShow()) {
         delete this.form.spec.replicas
@@ -438,6 +438,9 @@ export default {
     },
     isJob() {
       return this.type === "jobs"
+    },
+    isStandardContainer() {
+      return this.currentContainerType === "standardContainers"
     },
     onCancel() {
       this.$router.push({ name: this.toggleCase() + "s" })
