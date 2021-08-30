@@ -130,7 +130,7 @@ export default {
     },
     onCreate (data) {
       this.loading = true
-      createIngress(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createIngress(this.cluster, data.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),

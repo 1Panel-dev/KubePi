@@ -169,7 +169,7 @@ export default {
     },
     onCreate (data) {
       this.loading = true
-      createSecret(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createSecret(this.cluster, data.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),

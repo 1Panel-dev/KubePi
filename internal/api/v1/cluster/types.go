@@ -14,11 +14,22 @@ const (
 
 type Cluster struct {
 	v1Cluster.Cluster
-	KeyDataStr           string `json:"keyDataStr"`
-	CertDataStr          string `json:"certDataStr"`
-	CaDataStr            string `json:"caDataStr"`
-	ConfigFileContentStr string `json:"configContentStr"`
-	Accessable           bool `json:"accessable"`
+	KeyDataStr           string           `json:"keyDataStr"`
+	CertDataStr          string           `json:"certDataStr"`
+	CaDataStr            string           `json:"caDataStr"`
+	ConfigFileContentStr string           `json:"configContentStr"`
+	Accessable           bool             `json:"accessable"`
+	MemberCount          int              `json:"memberCount"`
+	ExtraClusterInfo     ExtraClusterInfo `json:"extraClusterInfo"`
+}
+
+type ExtraClusterInfo struct {
+	TotalNodeNum      int     `json:"totalNodeNum"`
+	ReadyNodeNum      int     `json:"readyNodeNum"`
+	CPUAllocatable    float64 `json:"cpuAllocatable"`
+	CPURequested      float64 `json:"cpuRequested"`
+	MemoryAllocatable float64 `json:"memoryAllocatable"`
+	MemoryRequested   float64 `json:"memoryRequested"`
 }
 
 type NamespaceRoles struct {

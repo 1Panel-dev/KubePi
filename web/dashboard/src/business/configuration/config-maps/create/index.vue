@@ -120,7 +120,7 @@ export default {
     },
     onCreate (data) {
       this.loading = true
-      createConfigMap(this.cluster, this.form.metadata.namespace, data).then(() => {
+      createConfigMap(this.cluster, data.metadata.namespace, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),

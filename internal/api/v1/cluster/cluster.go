@@ -1,6 +1,7 @@
 package cluster
 
 import (
+	goContext "context"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
@@ -16,6 +17,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync"
 )
 
@@ -229,6 +231,8 @@ func (h *Handler) SearchClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
+		showExtra := ctx.URLParamExists("showExtra")
+
 		var conditions pkgV1.Conditions
 		if ctx.GetContentLength() > 0 {
 			if err := ctx.ReadJSON(&conditions); err != nil {
@@ -243,9 +247,92 @@ func (h *Handler) SearchClusters() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		ctx.Values().Set("data", pkgV1.Page{Items: clusters, Total: total})
+		result := make([]Cluster, 0)
+		for i := range clusters {
+			c := Cluster{Cluster: clusters[i]}
+			bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			c.MemberCount = len(bs)
+			result = append(result, c)
+		}
+		if showExtra {
+			wg := &sync.WaitGroup{}
+			for i := range result {
+				c := kubernetes.NewKubernetes(&result[i].Cluster)
+				wg.Add(1)
+				i := i
+				go func() {
+					info, _ := getExtraClusterInfo(c)
+					result[i].ExtraClusterInfo = info
+					wg.Done()
+				}()
+			}
+			wg.Wait()
+		}
+		ctx.Values().Set("data", pkgV1.Page{Items: result, Total: total})
 	}
 }
+func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) {
+	c, err := client.Client()
+	if err != nil {
+		return ExtraClusterInfo{}, err
+	}
+
+	nodesList, err := c.CoreV1().Nodes().List(goContext.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return ExtraClusterInfo{}, err
+	}
+	nodes := nodesList.Items
+
+	totalCpu := float64(0)
+	totalMemory := float64(0)
+	usedCpu := float64(0)
+	usedMemory := float64(0)
+	readyNodes := 0
+	for i := range nodes {
+		conditions := nodes[i].Status.Conditions
+		for i := range conditions {
+			if conditions[i].Type == "Ready" {
+				if conditions[i].Status == "True" {
+					readyNodes += 1
+				}
+			}
+		}
+		cpu := nodes[i].Status.Allocatable.Cpu().AsApproximateFloat64()
+		totalCpu += cpu
+		memory := nodes[i].Status.Allocatable.Memory().AsApproximateFloat64()
+		totalMemory += memory
+	}
+	podsList, err := c.CoreV1().Pods("").List(goContext.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return ExtraClusterInfo{}, err
+	}
+	pods := podsList.Items
+	for i := range pods {
+		for j := range pods[i].Spec.Containers {
+			cpu := pods[i].Spec.Containers[j].Resources.Requests.Cpu().AsApproximateFloat64()
+			usedCpu += cpu
+			memory := pods[i].Spec.Containers[j].Resources.Requests.Memory().AsApproximateFloat64()
+			usedMemory += memory
+
+		}
+	}
+	result := ExtraClusterInfo{
+		TotalNodeNum:      len(nodes),
+		ReadyNodeNum:      readyNodes,
+		CPUAllocatable:    totalCpu,
+		CPURequested:      usedCpu,
+		MemoryAllocatable: totalMemory,
+		MemoryRequested:   usedMemory,
+	}
+	return result, nil
+
+}
+
 func (h *Handler) GetCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")

@@ -99,6 +99,7 @@ const message = {
             dashboard: "概览"
         },
         cluster: {
+            node: "节点",
             cluster: "集群",
             namespace: "命名空间",
             scope: "作用域",
