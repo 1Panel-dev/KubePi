@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="3">
               <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
-                <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
+                <ko-select  :namespace.sync="form.metadata.namespace"></ko-select>
               </el-form-item>
             </el-col>
             <el-col :span="3">
