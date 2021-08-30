@@ -70,6 +70,18 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
+
+		if req.Name == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("username can not be none"))
+			return
+		}
+		if len(req.Rules) == 0 {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("must select one rule"))
+			return
+		}
+
 		for i := range req.Rules {
 			for j := range req.Rules[i].APIGroups {
 				if req.Rules[i].APIGroups[j] == "core" {

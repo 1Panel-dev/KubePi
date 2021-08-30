@@ -141,6 +141,9 @@ func getVerbByRoute(path, method string) string {
 	case "post":
 		if strings.HasSuffix(path, "search") {
 			return "list"
+		}
+		if strings.HasSuffix(path, "privilege") {
+			return "privilege"
 		} else {
 			return "create"
 		}

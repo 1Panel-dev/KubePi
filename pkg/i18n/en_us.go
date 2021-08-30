@@ -6,4 +6,8 @@ var enUSMapping = TextMapping{
 	"Unauthorized":               "authorized error",
 	"permission %s required":     "permission forbidden: %s",
 	"please login":               "session already  expired, please login",
+	"can not delete yourself":    "can not delete yourself",
+	"username can not be none":   "username can not be none",
+	"must select one role":       "you must have one role",
+	"must select one rule":       "you must create one rule",
 }

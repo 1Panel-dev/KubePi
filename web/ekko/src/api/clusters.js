@@ -6,14 +6,8 @@ export function createCluster(data) {
     return post(baseUrl, data)
 }
 
-export function listClusters(showAll) {
-    let u = baseUrl
-    if (showAll) {
-        u = `${baseUrl}?all=true`
-    } else {
-        u = `${baseUrl}?all=false`
-    }
-    return get(u)
+export function listClusters() {
+    return get(baseUrl)
 }
 
 export function deleteCluster(name) {

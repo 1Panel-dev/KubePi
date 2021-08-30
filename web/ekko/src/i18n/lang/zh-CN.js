@@ -199,17 +199,18 @@ const apiObjects = {
 }
 
 const apiVerbs = {
-    "update": "编辑",
-    "delete": "删除",
-    "get": "详情",
-    "list": "列表",
-    "create": "创建"
+    update: "编辑",
+    delete: "删除",
+    get: "详情",
+    list: "列表",
+    create: "创建",
+    privilege: "特权"
 }
 
 
 const description = {
-    i18n_user_administrator: "超级管理员,拥有所有对象的权限",
-    i18n_user_manage_cluster: "集群管理员,拥有集群对象的所有权限",
+    i18n_user_administrator: "超级管理员，拥有所有对象的权限",
+    i18n_user_manage_cluster: "集群管理员，拥有集群对象的所有权限",
     i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
     i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
     i18n_user_common_user: "普通用户，只拥有集群对象访问权限"

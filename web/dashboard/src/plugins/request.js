@@ -60,7 +60,7 @@ const checkAuth = response => {
 const checkPermission = response => {
     // 请根据实际需求修改
     if (response.status === 403) {
-        location.href = "/403"
+        location.href = "/ekko/403"
     }
 }
 

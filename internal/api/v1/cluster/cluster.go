@@ -16,7 +16,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
-	"strings"
 	"sync"
 )
 
@@ -93,6 +92,22 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+
+		binding := v1Cluster.Binding{
+			BaseModel: v1.BaseModel{
+				Kind: "ClusterBinding",
+			},
+			Metadata: v1.Metadata{
+				Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
+			},
+			UserRef:    profile.Name,
+			ClusterRef: req.Name,
+		}
+		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		requiredPermissions := map[string][]string{
 			"namespaces":       {"get", "post", "delete"},
 			"clusterroles":     {"get", "post", "delete"},
@@ -134,7 +149,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
 				return
 			}
-			if err := h.createClusterUser(client, profile.Name, req.Name); err != nil {
+			if err := h.updateUserCert(client, &binding); err != nil {
 				req.Status.Phase = clusterStatusFailed
 				req.Status.Message = err.Error()
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
@@ -154,23 +169,13 @@ func (h *Handler) CreateCluster() iris.Handler {
 	}
 }
 
-func (h *Handler) createClusterUser(client kubernetes.Interface, username string, clusterName string) error {
-	binding := v1Cluster.Binding{
-		BaseModel: v1.BaseModel{
-			Kind: "ClusterBinding",
-		},
-		Metadata: v1.Metadata{
-			Name: fmt.Sprintf("%s-%s-cluster-binding", clusterName, username),
-		},
-		UserRef:    username,
-		ClusterRef: clusterName,
-	}
-	csr, err := client.CreateCommonUser(username)
+func (h *Handler) updateUserCert(client kubernetes.Interface, binding *v1Cluster.Binding) error {
+	csr, err := client.CreateCommonUser(binding.UserRef)
 	if err != nil {
 		return err
 	}
 	binding.Certificate = csr
-	if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+	if err := h.clusterBindingService.UpdateClusterBinding(binding.Name, binding, common.DBOptions{}); err != nil {
 		return err
 	}
 	return nil
@@ -257,41 +262,32 @@ func (h *Handler) GetCluster() iris.Handler {
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
-		showAll := true
-		if ctx.URLParamExists("all") {
-			text := ctx.URLParam("all")
-			if strings.ToLower(text) == "false" || strings.ToLower(text) == "no" {
-				showAll = false
-			}
-		}
-
 		clusters, err := h.clusterService.List(common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
 			return
 		}
-		var resultClusters []v1Cluster.Cluster
-		if !showAll {
-			u := ctx.Values().Get("profile")
-			profile := u.(session.UserProfile)
-			for i := range clusters {
-				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-				if err != nil {
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.Values().Set("message", err)
-					return
-				}
-				for j := range mbs {
-					if mbs[j].UserRef == profile.Name {
-						resultClusters = append(resultClusters, clusters[i])
-					}
+		var resultClusters []Cluster
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		for i := range clusters {
+			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", err)
+				return
+			}
+			rc := Cluster{
+				Cluster: clusters[i],
+			}
+			for j := range mbs {
+				if mbs[j].UserRef == profile.Name {
+					rc.Accessable = true
 				}
 			}
-		} else {
-			resultClusters = clusters
+			resultClusters = append(resultClusters, rc)
 		}
-
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", resultClusters)
 	}
@@ -347,6 +343,19 @@ func (h *Handler) DeleteCluster() iris.Handler {
 	}
 }
 
+func (h *Handler) Privilege() iris.Handler {
+	return func(ctx *context.Context) {
+		var req Privilege
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err)
+			return
+		}
+		ctx.Redirect(req.Url)
+		return
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/clusters")
@@ -369,5 +378,5 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
-
+	sp.Post("/privilege", handler.Privilege())
 }

@@ -62,7 +62,7 @@
             <el-tab-pane label="Plugin Configuration">
               <div style="margin-top: 20px">
                 <ko-card title="Plugin Configuration">
-                  <el-form v-if="currentStorageType == 'NFS'">
+                  <el-form v-if="currentStorageType === 'NFS'">
                     <el-row :gutter="24">
                       <el-col :span="8">
                         <el-form-item label="PATH" required>
@@ -83,14 +83,14 @@
                     </el-row>
 
                   </el-form>
-                  <el-form v-if="currentStorageType == 'Local'">
+                  <el-form v-if="currentStorageType === 'Local'">
                     <el-col :span="8">
                       <el-form-item label="Path on the Node" required>
                         <el-input clearable placeholder="eg: /data" v-model="form.spec.local.path"></el-input>
                       </el-form-item>
                     </el-col>
                   </el-form>
-                  <el-form v-if="currentStorageType == 'Host'">
+                  <el-form v-if="currentStorageType === 'Host'">
                     <el-row :gutter="24">
                       <el-col :span="8">
                         <el-form-item label="PATH" required>
@@ -253,7 +253,7 @@ export default {
       } else {
         data = this.transformYaml()
       }
-      if (data.spec.nodeAffinity?.required.nodeSelectorTerms.length === 0) {
+      if (data.spec.nodeAffinity?.required?.nodeSelectorTerms?.length === 0) {
         delete data.spec.nodeAffinity
       }
       this.loading = true

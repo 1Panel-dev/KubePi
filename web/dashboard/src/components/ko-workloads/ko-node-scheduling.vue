@@ -211,7 +211,9 @@ export default {
                 parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
                 break
               case "None":
-                parentFrom.nodeAffinity.required.nodeSelectorTerms = []
+                parentFrom.nodeAffinity.required = {
+                  nodeSelectorTerms: []
+                }
                 itemAdd.matchExpressions = matchs
                 parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
                 break

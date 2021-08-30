@@ -4,7 +4,7 @@
                    :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="[{resource:'roles',verb:'create'}]" type="primary"
+          <el-button v-has-permissions="{resource:'roles',verb:'create'}" type="primary"
                      size="small"
                      @click="onCreate">
             {{ $t("commons.button.create") }}
@@ -59,7 +59,7 @@ export default {
             this.onEdit(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions([{resource: 'roles', verb: 'update'}])
+            return row.builtIn || !checkPermissions({resource: 'roles', verb: 'update'})
           }
         },
         {
@@ -69,7 +69,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions([{resource: 'roles', verb: 'delete'}])
+            return row.builtIn || !checkPermissions({resource: 'roles', verb: 'delete'})
           }
         },
       ],

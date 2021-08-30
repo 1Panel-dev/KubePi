@@ -4,7 +4,7 @@
                    :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="[{resource:'users',verb:'create'}]" type="primary" size="small"
+          <el-button v-has-permissions="{resource:'users',verb:'create'}" type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
@@ -20,11 +20,18 @@
           {{ row.nickName }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('business.user.role')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          <el-tag style="margin-left: 5px" size="small" v-for="(item,key) in row.roles" :key="key">{{ item }}</el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column :label="$t('business.user.email')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ row.email }}
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ $t("commons.bool." + row.builtIn) }}
