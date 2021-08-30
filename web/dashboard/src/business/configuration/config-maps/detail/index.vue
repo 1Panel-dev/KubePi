@@ -44,7 +44,6 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getConfigMap} from "@/api/configmaps"
-import JsonEditor from "@/components/json-editor"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoData from "@/components/ko-data"
@@ -52,7 +51,7 @@ import {isJSON} from "@/utils/data"
 
 export default {
   name: "ConfigMapDetail",
-  components: { KoDetailBasic, YamlEditor, JsonEditor, LayoutContent ,KoData},
+  components: { KoDetailBasic, YamlEditor, LayoutContent ,KoData},
   props: {
     name: String,
     namespace: String,
