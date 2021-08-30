@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="namespaceStr" :disabled="disabled" @change="changeNamespace">
+  <el-select v-model="namespaceStr" v-bind="$attrs" v-on="$listeners">
     <el-option v-for="namespace in namespaces"
                :key="namespace"
                :label="namespace"
@@ -20,7 +20,6 @@ export default {
   data () {
     return {
       namespaceStr: "",
-      disabled: false,
       namespaces: []
     }
   },
@@ -32,9 +31,6 @@ export default {
         this.namespaceStr = namespaces[0]
       }
       this.$emit("update:namespace", this.namespaceStr)
-    },
-    changeNamespace () {
-      this.$emit("changeFunc")
     }
   },
   created () {
@@ -42,11 +38,9 @@ export default {
       const cluster = this.$route.query.cluster
       getNamespaces(cluster).then(res => {
         this.initData(res.data)
-        this.disabled = false
       })
     } else {
       this.initData([sessionStorage.getItem("namespace")])
-      this.disabled = true
     }
   }
 }
