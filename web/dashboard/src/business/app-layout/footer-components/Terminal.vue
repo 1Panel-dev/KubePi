@@ -4,7 +4,7 @@
       <el-row>
         <el-tabs class="TabsWithoutContant" style="min-height: 35px;background-color: #1f2224" type="border-card" v-model="currentTab" @tab-click="handleClick" closable @tab-remove="removeTab">
           <el-tab-pane v-for="item in terminalTabs" :label="item.name" :key="item.key" :name="item.key">
-            <span slot="label"><i class="iconfont iconline-terminalzhongduan" style="color: white;border: 4"></i>  {{item.name}}</span>
+            <span slot="label"><i class="iconfont iconline-terminalzhongduan" style="color: white;border: 4"></i> {{item.name}}</span>
           </el-tab-pane>
         </el-tabs>
         <div class="terminalOption">
@@ -31,10 +31,12 @@
         </div>
       </el-row>
       <el-row>
-        <div v-for="item in terminalTabs" :key="item.key">
+        <div>
           <div class="example" :style="{height: terminalHeight}">
             <el-scrollbar style="height:100%">
-              <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 800px;border: 0"></iframe>
+              <div v-for="item in terminalTabs" :key="item.key">
+                <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 800px;border: 0"></iframe>
+              </div>
             </el-scrollbar>
           </div>
         </div>
@@ -120,8 +122,10 @@ export default {
     handleResize(operation) {
       switch (operation) {
         case "expand":
-          this.$store.commit("terminal/CHANGE_BOTTOM_HEIGHT", "400")
-          this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", "400")
+          if (this.$store.state.terminal.buttomHeight === '0') {
+            this.$store.commit("terminal/CHANGE_BOTTOM_HEIGHT", "400")
+            this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", "400")
+          }
           this.expand = true
           break
         case "shrink":
