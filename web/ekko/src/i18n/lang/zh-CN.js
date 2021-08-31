@@ -136,6 +136,9 @@ const message = {
             resource: "资源",
             verb: "动作",
             cluster_role_form_check_msg: "API组,资源,动作不为空",
+            user_not_in_cluster: "您不是此集群的成员，无法访问此集群的控制台，请联系管理员添加您为集群成员",
+            ready: "正常",
+            not_ready: "异常",
         },
         namespace: {
             description: "描述"
@@ -214,7 +217,35 @@ const description = {
     i18n_user_manage_cluster: "集群管理员，拥有集群对象的所有权限",
     i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
     i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
-    i18n_user_common_user: "普通用户，只拥有集群对象访问权限"
+    i18n_user_common_user: "普通用户，只拥有集群对象访问权限",
+
+
+    i18n_cluster_owner: "集群拥有者,拥有所有对象权限",
+    i18n_cluster_viewer: "集群只读用户,拥有所有对象的只读权限",
+    i18n_manage_cluster_rbac: "集群访问控制管理员, 拥有 ClusterRole、ClusterRoleBinding 对象的所有权限",
+    i18n_view_cluster_rbac: "集群访问控制只读用户, 拥有 ClusterRole、ClusterRoleBinding 对象的只读权限",
+    i18n_manage_cluster_storage: "集群存储管理员,拥有 StorageClass、PersistentVolume 对象的所有权限",
+    i18n_view_cluster_storage: "集群存储只读用户,拥有 StorageClass、PersistentVolume 对象的只读权限",
+    i18n_manage_namespaces: "命名空间管理员,拥有对 Namespace 对象的所有权限",
+    i18n_view_namespaces: "命名空间只读用户,拥有对 Namespace 对象的所有权限",
+    i18n_view_events: "集群事件只读用户, 拥有 Events 对象的只读权限",
+    i18n_view_nodes: "节点只读用户,拥有 Node 的只读权限",
+
+
+    i18n_manage_config: "配置管理员, 拥有当前命名空间 ConfigMap、Secret、ResourceQuotas、LimitRanges、HorizontalPodAutoscalers 和 PodDisruptionBudget 对象的所有权限",
+    i18n_view_config: "配置只读用户, 拥有当前命名空间 ConfigMap、Secret、ResourceQuotas、LimitRanges、HorizontalPodAutoscalers 和 PodDisruptionBudget 对象的只读权限",
+    i18n_namespace_owner: "命名空间拥有者，拥有当前命名空间内的所有对象的所有权限",
+    i18n_namespace_viewer: "命名空间只读用户，拥有当前命名空间内的所有对象的只读权限",
+    i18n_view_workload: "工作负载只读用户，拥有当前命名空间内 DaemonSet、StatefulSet、Deployment、Job、CronJob和Pod的只读权限",
+    i18n_manage_workload: "工作负载管理员,工作负载只读用户，拥有当前命名空间内 DaemonSet、StatefulSet、Deployment、Job、CronJob和Pod的所有权限",
+    i18n_manage_storage: "存储管理员，拥有当前命名空间内 PersistentVolumeClaim 对象的所有权限",
+    i18n_view_storage: "存储只读用户，拥有当前命名空间内 PersistentVolumeClaim 对象的只读权限",
+    i18n_view_service_discovery: "服务发现只读用户,拥有当前命名空间内 Service、Endpoint、Ingress和NetworkPolicy 对象的只读权限",
+    i18n_manage_service_discovery: "服务发现管理员,拥有当前命名空间内 Service、Endpoint、Ingress和NetworkPolicy 对象的所有权限",
+    i18n_manage_rbac: "命名空间访问控制,拥有当前命名空间内 Role、RoleBinding 和 ServiceAccount 对象的所有权限",
+    i18n_view_rbac: "命名空间访问控制 只读用户,拥有当前命名空间内 Role、RoleBinding 和 ServiceAccount 对象的只读权限"
+
+
 }
 
 export default {

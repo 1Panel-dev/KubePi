@@ -50,6 +50,7 @@ func (h *Handler) UpdateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
+		instance.Annotations["description"] = req.Annotations["description"]
 		instance.Rules = req.Rules
 		resp, err := client.RbacV1().ClusterRoles().Update(goContext.TODO(), instance, metav1.UpdateOptions{})
 		if err != nil {
@@ -102,10 +103,8 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		req.Annotations = map[string]string{
-			"builtin":    "false",
-			"created-at": time.Now().Format("2006-01-02 15:04:05"),
-		}
+		req.Annotations["builtin"] = "false"
+		req.Annotations["created-at"] = time.Now().Format("2006-01-02 15:04:05")
 		req.Labels[kubernetes.LabelManageKey] = "ekko"
 		resp, err := client.RbacV1().ClusterRoles().Create(goContext.TODO(), &req, metav1.CreateOptions{})
 		if err != nil {

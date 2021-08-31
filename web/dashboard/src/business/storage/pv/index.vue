@@ -3,13 +3,18 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumes',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumes',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" min-width="200px" prop="metadata.name" show-overflow-tooltip>
@@ -77,7 +82,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "update" })
+            return !checkPermissions({ scope: "cluster",apiGroup: "", resource: "persistentvolumes", verb: "update" })
           },
         },
         {
@@ -91,7 +96,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "update" })
+            return !checkPermissions({ scope: "cluster",apiGroup: "", resource: "persistentvolumes", verb: "update" })
           },
         },
         {
@@ -108,7 +113,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "delete" })
+            return !checkPermissions({ scope: "cluster",apiGroup: "", resource: "persistentvolumes", verb: "delete" })
           },
         },
       ],
@@ -136,6 +141,12 @@ export default {
       this.$router.push({
         name: "PersistentVolumeCreate",
         query: { yamlShow: false },
+      })
+    },
+    yamlCreate() {
+      this.$router.push({
+        name: "PersistentVolumeCreate",
+        query: { yamlShow: true },
       })
     },
     onDelete(row) {

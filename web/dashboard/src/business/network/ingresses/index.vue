@@ -5,14 +5,19 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -84,7 +89,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
+            return !checkPermissions({ scope: "namespace",apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
           }
         },
         {
@@ -98,7 +103,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
+            return !checkPermissions({scope: "namespace", apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
           }
         },
         {
@@ -115,7 +120,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "delete" })
+            return !checkPermissions({ scope: "namespace",apiGroup: "networking.k8s.io", resource: "ingresses", verb: "delete" })
           }
         },
       ],
@@ -143,7 +148,12 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "IngressCreate",
+        name: "IngressCreate",query: {yamlShow:false}
+      })
+    },
+    yamlCreate() {
+      this.$router.push({
+        name: "IngressCreate", query: {yamlShow:true}
       })
     },
     onDelete (row) {

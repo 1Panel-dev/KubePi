@@ -11,6 +11,13 @@
         </el-button-group>
       </template>
 
+      <el-table-column min-width="20px" fix>
+        <template v-slot:default="{row}">
+          <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
+          <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ row.name }}
@@ -53,6 +60,13 @@
           {{ row.createAt | datetimeFormat }}
         </template>
       </el-table-column>
+
+      <el-table-column label=" " width="90">
+        <template v-slot:default="{row}">
+          <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
+        </template>
+      </el-table-column>
+
 
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
@@ -116,16 +130,6 @@ export default {
       },
       buttons: [
         {
-          label: this.$t("business.cluster.open_dashboard"),
-          icon: "el-icon-s-platform",
-          click: (row) => {
-            this.onGotoDashboard(row.name)
-          },
-          disabled: () => {
-            return !checkPermissions({resource: "clusters", verb: "get"})
-          },
-        },
-        {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
@@ -153,7 +157,7 @@ export default {
     search() {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchClusters(currentPage, pageSize,).then(data => {
+      searchClusters(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
@@ -191,7 +195,7 @@ export default {
             type: 'success',
             message: this.$t("commons.msg.delete_success"),
           });
-          this.onVueCreated()
+          this.search()
         })
       });
     },
@@ -200,8 +204,12 @@ export default {
     },
 
 
-    onGotoDashboard(name) {
-      window.open(`/dashboard?cluster=${name}`, "_self")
+    onGotoDashboard(row) {
+      if (row.accessable) {
+        window.open(`/dashboard?cluster=${row.name}`, "_self")
+      } else {
+        this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
+      }
     },
 
     getCpuUsed(item) {

@@ -17,11 +17,12 @@ const Configuration = {
         apiGroup: "",
         resource: "configmaps",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/config-maps"),
       name: "ConfigMaps",
       meta: {
-        title: "ConfigMaps",
+        title: "Config Maps",
       }
     },
     {
@@ -30,6 +31,7 @@ const Configuration = {
         apiGroup: "",
         resource: "configmaps",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/config-maps/create"),
       name: "ConfigMapCreate",
@@ -45,6 +47,7 @@ const Configuration = {
         apiGroup: "",
         resource: "configmaps",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/config-maps/detail"),
       name: "ConfigMapDetail",
@@ -59,6 +62,7 @@ const Configuration = {
         apiGroup: "",
         resource: "configmaps",
         verb: "edit",
+        scope:"namespace"
       },
       path: "/configmaps/edit/:namespace/:name",
       component: () => import("@/business/configuration/config-maps/edit"),
@@ -76,6 +80,7 @@ const Configuration = {
         apiGroup: "",
         resource: "secrets",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/secrets"),
       name: "Secrets",
@@ -89,6 +94,7 @@ const Configuration = {
         apiGroup: "",
         resource: "secrets",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/secrets/detail"),
       name: "SecretDetail",
@@ -104,6 +110,7 @@ const Configuration = {
         apiGroup: "",
         resource: "secrets",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/secrets/create"),
       name: "SecretCreate",
@@ -119,6 +126,7 @@ const Configuration = {
         apiGroup: "",
         resource: "secrets",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/secrets/edit"),
       name: "SecretEdit",
@@ -135,6 +143,7 @@ const Configuration = {
         apiGroup: "",
         resource: "resourcequotas",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/resource-quotas"),
       name: "ResourceQuotas",
@@ -148,6 +157,7 @@ const Configuration = {
         apiGroup: "",
         resource: "resourcequotas",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/resource-quotas/detail"),
       name: "ResourceQuotaDetail",
@@ -163,6 +173,7 @@ const Configuration = {
         apiGroup: "",
         resource: "resourcequotas",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/resource-quotas/create"),
       name: "ResourceQuotaCreate",
@@ -178,6 +189,7 @@ const Configuration = {
         apiGroup: "",
         resource: "resourcequotas",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/resource-quotas/edit"),
       name: "ResourceQuotaEdit",
@@ -194,6 +206,7 @@ const Configuration = {
         apiGroup: "",
         resource: "limitranges",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/limit-ranges"),
       name: "LimitRanges",
@@ -207,6 +220,7 @@ const Configuration = {
         apiGroup: "",
         resource: "limitranges",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/limit-ranges/create"),
       name: "LimitRangeCreate",
@@ -221,6 +235,7 @@ const Configuration = {
         apiGroup: "",
         resource: "limitranges",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/limit-ranges/detail"),
       name: "LimitRangeDetail",
@@ -236,6 +251,7 @@ const Configuration = {
         apiGroup: "",
         resource: "limitranges",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/limit-ranges/edit"),
       name: "LimitRangeEdit",
@@ -252,11 +268,12 @@ const Configuration = {
         apiGroup: "autoscaling",
         resource: "horizontalpodautoscalers",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
-        title: "Horizontal Pod Autoscaler",
+        title: "Horizontal Pod Autoscalers",
       }
     },
     {
@@ -265,6 +282,7 @@ const Configuration = {
         apiGroup: "autoscaling",
         resource: "horizontalpodautoscalers",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/hpa/detail"),
       name: "HPADetail",
@@ -280,6 +298,7 @@ const Configuration = {
         apiGroup: "autoscaling",
         resource: "horizontalpodautoscalers",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/hpa/create"),
       name: "HPACreate",
@@ -294,6 +313,7 @@ const Configuration = {
         apiGroup: "autoscaling",
         resource: "horizontalpodautoscalers",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/hpa/edit"),
       name: "HPAEdit",
@@ -309,11 +329,12 @@ const Configuration = {
         apiGroup: "policy",
         resource: "poddisruptionbudgets",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/configuration/pdb"),
       name: "PDBs",
       meta: {
-        title: "Pod Disruption Budget",
+        title: "Pod Disruption Budgets",
       }
     },
     {
@@ -322,6 +343,7 @@ const Configuration = {
         apiGroup: "policy",
         resource: "poddisruptionbudgets",
         verb: "create",
+        scope:"namespace"
       },
       hidden: true,
       props: true,
@@ -338,6 +360,7 @@ const Configuration = {
         apiGroup: "policy",
         resource: "poddisruptionbudgets",
         verb: "update",
+        scope:"namespace"
       },
       hidden: true,
       props: true,
@@ -354,6 +377,7 @@ const Configuration = {
         apiGroup: "policy",
         resource: "poddisruptionbudgets",
         verb: "get",
+        scope:"namespace"
       },
       hidden: true,
       props: true,

@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="RoleBindings">
+  <layout-content header="Role Bindings">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
@@ -87,7 +87,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -101,7 +101,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -118,7 +118,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
+            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
           }
         },
       ],

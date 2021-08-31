@@ -1,10 +1,10 @@
 <template>
-  <layout-content header="CustomResourceDefinitions">
+  <layout-content header="Custom Resource Definitions">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'create'}">
-            {{ $t("commons.button.create") }}
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
             {{ $t("commons.button.delete") }}
@@ -70,7 +70,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
           }
         },
         {
@@ -87,7 +87,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
           }
         },
       ],

@@ -128,7 +128,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
-		if err := client.CreateOrUpdateClusterRoleBinding("admin-cluster", profile.Name, true); err != nil {
+		if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -232,16 +232,12 @@ func (h *Handler) SearchClusters() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		showExtra := ctx.URLParamExists("showExtra")
+		keywords := ctx.URLParam("keywords")
 
-		var conditions pkgV1.Conditions
-		if ctx.GetContentLength() > 0 {
-			if err := ctx.ReadJSON(&conditions); err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-		clusters, total, err := h.clusterService.Search(pageNum, pageSize, conditions, common.DBOptions{})
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+
+		clusters, total, err := h.clusterService.Search(pageNum, pageSize, keywords, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -257,6 +253,18 @@ func (h *Handler) SearchClusters() iris.Handler {
 				return
 			}
 			c.MemberCount = len(bs)
+			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", err)
+				return
+			}
+			for j := range mbs {
+				if mbs[j].UserRef == profile.Name {
+					c.Accessable = true
+				}
+			}
+
 			result = append(result, c)
 		}
 		if showExtra {
@@ -277,6 +285,10 @@ func (h *Handler) SearchClusters() iris.Handler {
 	}
 }
 func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) {
+	err := client.Ping()
+	if err != nil {
+		return ExtraClusterInfo{Health: false}, nil
+	}
 	c, err := client.Client()
 	if err != nil {
 		return ExtraClusterInfo{}, err
@@ -322,6 +334,7 @@ func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) 
 		}
 	}
 	result := ExtraClusterInfo{
+		Health:            true,
 		TotalNodeNum:      len(nodes),
 		ReadyNodeNum:      readyNodes,
 		CPUAllocatable:    totalCpu,

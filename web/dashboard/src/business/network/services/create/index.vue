@@ -16,8 +16,9 @@
             </el-col>
             <el-col :span="3">
               <el-form-item :label="$t('business.configuration.type')" required>
-                <el-select v-model="form.spec.type" @change="changeType">
+                <el-select v-model="type" @change="changeType">
                   <el-option label="Cluster IP" value="ClusterIP"></el-option>
+                  <el-option label="Headless" value="Headless"></el-option>
                   <el-option label="External Name" value="ExternalName"></el-option>
                   <el-option label="Load Balancer" value="LoadBalancer"></el-option>
                   <el-option label="Node Port" value="NodePort"></el-option>
@@ -37,10 +38,10 @@
                   <ko-key-value :title="$t('business.network.selector')" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
                 <el-tab-pane name="SessionAffinity" label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
-                  <ko-service-session-affinity :specObj="form.spec"></ko-service-session-affinity>
+                  <ko-service-session-affinity :specObj.sync="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
                 <el-tab-pane name="IPAddresses" :label="$t('business.network.ip_address')">
-                  <ko-service-ip-addresses :specObj="form.spec"></ko-service-ip-addresses>
+                  <ko-service-ip-addresses :type="type" :specObj="form.spec"></ko-service-ip-addresses>
                 </el-tab-pane>
                 <el-tab-pane name="Labels" :label="$t('business.workload.labels_annotations')">
                   <ko-key-value :title="$t('business.workload.label')"
@@ -118,7 +119,8 @@ export default {
           name: [Rule.RequiredRule],
           namespace: [Rule.RequiredRule],
         }
-      }
+      },
+      type: "ClusterIP"
     }
   },
   methods: {
@@ -142,7 +144,16 @@ export default {
       })
     },
     transformYaml () {
-      return JSON.parse(JSON.stringify(this.form))
+      let data = JSON.parse(JSON.stringify(this.form))
+      if (data.spec.type === 'ExternalName') {
+        delete data.spec.ports
+        delete data.spec.sessionAffinity
+        delete data.spec.sessionAffinityConfig
+        delete data.spec.clusterIP
+      }else {
+        delete data.spec.externalName
+      }
+      return data
     },
     onSubmit () {
       if (this.showYaml) {
@@ -168,10 +179,14 @@ export default {
       })
     },
     changeType (type) {
-      this.form.spec = {
-        type: type
+
+      if (type === 'Headless') {
+        this.form.spec.type  = "ClusterIP"
+        this.form.spec.clusterIP = 'None'
+      }else {
+        this.form.spec.type  = type
       }
-      if (type === "ExternalName") {
+      if (type === 'ExternalName') {
         this.activeName = "ExternalName"
       } else {
         this.activeName = "ServicePorts"
@@ -180,6 +195,7 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow === "true"
   }
 }
 </script>

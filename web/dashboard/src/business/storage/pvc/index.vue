@@ -3,13 +3,18 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column sortable type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -78,7 +83,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "persistentvolumeclaims", verb: "update" })
+            return !checkPermissions({ scope: "namespace",apiGroup: "", resource: "persistentvolumeclaims", verb: "update" })
           },
         },
         {
@@ -95,7 +100,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "persistentvolumeclaims", verb: "delete" })
+            return !checkPermissions({ scope: "namespace",apiGroup: "", resource: "persistentvolumeclaims", verb: "delete" })
           },
         },
       ],
@@ -123,6 +128,12 @@ export default {
       this.$router.push({
         name: "PersistentVolumeClaimCreate",
         query: { yamlShow: false },
+      })
+    },
+    yamlCreate() {
+      this.$router.push({
+        name: "PersistentVolumeClaimCreate",
+        query: { yamlShow: true },
       })
     },
     onDelete(row) {

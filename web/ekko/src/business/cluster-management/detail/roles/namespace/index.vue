@@ -15,6 +15,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ $t(row.metadata.annotations["description"]) }}
+        </template>
+      </el-table-column>
+
       <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ $t('commons.bool.' + row.metadata.annotations["builtin"]) }}

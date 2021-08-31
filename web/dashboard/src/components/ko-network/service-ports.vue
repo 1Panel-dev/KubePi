@@ -22,7 +22,7 @@
             <el-input v-model="row.name" ></el-input>
           </td>
           <td>
-            <el-input v-model.number="row.port" ></el-input>
+            <el-input v-model.number="row.port" placeholder="8080"></el-input>
           </td>
           <td>
             <el-select v-model="row.protocol" style="width: 100%" >
@@ -67,7 +67,7 @@ export default {
     handleAdd () {
       const item = {
         name: "",
-        port: 8080,
+        port: "",
         protocol: "TCP",
         targetPort: ""
       }
@@ -87,7 +87,7 @@ export default {
     if (!this.ports) {
       this.servicePorts.push({
         name: "",
-        port: 8080,
+        port: "",
         protocol: "TCP",
         targetPort: ""
       })

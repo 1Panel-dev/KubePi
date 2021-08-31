@@ -17,12 +17,13 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumeclaims",
                 verb: "list",
+                scope:"namespace"
             },
             component: () => import("@/business/storage/pvc/"),
             name: "PersistentVolumeClaim",
             props: true,
             meta: {
-                title: "Persistent Volume Claim",
+                title: "Persistent Volume Claims",
                 activeMenu: "/persistentVolumeClaim",
             }
         }, {
@@ -31,6 +32,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumeclaims",
                 verb: "create",
+                scope:"namespace"
             },
             component: () => import("@/business/storage/pvc/create"),
             name: "PersistentVolumeClaimCreate",
@@ -45,6 +47,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumeclaims",
                 verb: "get",
+                scope:"namespace"
             },
             component: () => import("@/business/storage/pvc/detail"),
             name: "PersistentVolumeClaimDetail",
@@ -60,6 +63,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumeclaims",
                 verb: "update",
+                scope:"namespace"
             },
             component: () => import("@/business/storage/pvc/edit"),
             name: "PersistentVolumeClaimEdit",
@@ -76,11 +80,12 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumes",
                 verb: "list",
+                scope:"cluster"
             },
             component: () => import("@/business/storage/pv"),
             name: "PersistentVolumes",
             meta: {
-                title: "Persistent Volume",
+                title: "Persistent Volumes",
             },
         },
         {
@@ -89,6 +94,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumes",
                 verb: "create",
+                scope:"cluster"
             },
             component: () => import("@/business/storage/pv/create"),
             name: "PersistentVolumeCreate",
@@ -104,6 +110,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumes",
                 verb: "update",
+                scope:"cluster"
             },
             component: () => import("@/business/storage/pv/edit"),
             name: "PersistentVolumeEdit",
@@ -120,6 +127,7 @@ const Storage = {
                 apiGroup: "",
                 resource: "persistentvolumes",
                 verb: "get",
+                scope:"cluster"
             },
             component: () => import("@/business/storage/pv/detail"),
             name: "PersistentVolumeDetail",
@@ -136,6 +144,7 @@ const Storage = {
                 apiGroup: "storage.k8s.io",
                 resource: "storageclasses",
                 verb: "list",
+                scope:"cluster"
             },
             component: () => import("@/business/storage/sc"),
             name: "StorageClasses",
@@ -190,7 +199,7 @@ const Storage = {
                 title: "Storage Classes Detail",
                 activeMenu: "/storageclasses",
             }
-        }, 
+        },
     ]
 }
 

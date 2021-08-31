@@ -61,7 +61,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
           }
         },
         {
@@ -75,7 +75,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
           }
         },
         {
@@ -92,7 +92,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"delete"})
           }
         },
       ],

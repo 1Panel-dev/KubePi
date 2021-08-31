@@ -1,15 +1,15 @@
 <template>
-  <layout-content header="NetworkPolicies">
+  <layout-content header="Network Policies">
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
-            {{ $t("commons.button.create") }}
+                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -71,7 +71,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "update" })
+            return !checkPermissions({ scope: "namespace",apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "update" })
           }
         },
         {
@@ -88,7 +88,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "delete" })
+            return !checkPermissions({scope: "namespace", apiGroup: "networking.k8s.io", resource: "networkpolicies", verb: "delete" })
           }
         },
       ],

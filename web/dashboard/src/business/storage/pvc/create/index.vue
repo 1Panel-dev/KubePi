@@ -208,7 +208,7 @@ export default {
     },
     transformYaml() {
       let formData = {}
-      if (this.form.spec.storageClassName == 'Default StorageClass') {
+      if (this.form.spec.storageClassName === 'Default StorageClass') {
         this.form.spec.storageClassName = ''
       }
       formData = JSON.parse(JSON.stringify(this.form))
@@ -220,6 +220,7 @@ export default {
   },
   created() {
     this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow === "true"
     this.search()
   }
 }

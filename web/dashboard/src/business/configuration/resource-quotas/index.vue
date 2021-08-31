@@ -1,14 +1,14 @@
 <template>
-  <layout-content header="ResourceQuotas">
+  <layout-content header="Resource Quotas">
     <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'',resource:'resourcequotas',verb:'create'}">
-            {{ $t("commons.button.create") }}
+                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'',resource:'resourcequotas',verb:'delete'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -85,7 +85,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"resourcequotas",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"resourcequotas",verb:"update"})
           }
         },
         {
@@ -102,7 +102,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"resourcequotas",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"resourcequotas",verb:"delete"})
           }
         },
       ],

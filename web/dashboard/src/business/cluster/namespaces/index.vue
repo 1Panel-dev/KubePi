@@ -4,15 +4,22 @@
                    :data="data" @search="search()">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'create'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                     type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'delete'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'delete'}"
+                     type="primary" size="small"
                      :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
@@ -62,8 +69,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "NamespaceList",
-  components: {KoTableOperations, ComplexTable, LayoutContent},
-  data() {
+  components: { KoTableOperations, ComplexTable, LayoutContent },
+  data () {
     return {
       buttons: [
         {
@@ -72,23 +79,23 @@ export default {
           click: (row) => {
             this.$router.push({
               path: "/namespaces/edit/" + row.metadata.name,
-              query: {yamlShow: false}
+              query: { yamlShow: false }
             })
           },
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "update"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "namespaces", verb: "update" })
           }
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "update"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "namespaces", verb: "update" })
           },
           click: (row) => {
             this.$router.push({
               path: "/namespaces/edit/" + row.metadata.name,
-              query: {yamlShow: true}
+              query: { yamlShow: true }
             })
 
           }
@@ -97,7 +104,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "get"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "namespaces", verb: "get" })
           },
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", row)
@@ -107,7 +114,7 @@ export default {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "delete"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "namespaces", verb: "delete" })
           },
           click: (row) => {
             this.onDelete(row)
@@ -129,10 +136,13 @@ export default {
     }
   },
   methods: {
-    onCreate() {
-      this.$router.push({name: "NamespaceCreate"})
+    onCreate () {
+      this.$router.push({ name: "NamespaceCreate", query: { yamlShow: false } })
     },
-    search(resetPage) {
+    yamlCreate () {
+      this.$router.push({ name: "NamespaceCreate", query: { yamlShow: true } })
+    },
+    search (resetPage) {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
@@ -146,17 +156,17 @@ export default {
         this.loading = false
       })
     },
-    openDetail(row) {
-      this.$router.push({name: "NamespaceDetail", params: {name: row.metadata.name}})
+    openDetail (row) {
+      this.$router.push({ name: "NamespaceDetail", params: { name: row.metadata.name } })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteNamespace(this.clusterName, row.metadata.name))
@@ -169,21 +179,21 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search()
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search()
-              })
+            })
+            .catch(() => {
+              this.search()
+            })
         }
       })
     }
   },
-  created() {
+  created () {
     this.clusterName = this.$route.query.cluster
     this.search()
   }
