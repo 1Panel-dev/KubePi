@@ -302,6 +302,11 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				Resources: []string{"horizontalpodautoscalers"},
 				Verbs:     []string{"*"},
 			},
+			{
+				APIGroups: []string{"policy"},
+				Resources: []string{"poddisruptionbudgets"},
+				Verbs:     []string{"*"},
+			},
 		},
 	},
 	{
@@ -325,6 +330,11 @@ var initClusterRoles = []rbacV1.ClusterRole{
 			{
 				APIGroups: []string{"autoscaling"},
 				Resources: []string{"horizontalpodautoscalers"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+			{
+				APIGroups: []string{"policy"},
+				Resources: []string{"poddisruptionbudgets"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 		},
@@ -455,6 +465,11 @@ var initClusterRoles = []rbacV1.ClusterRole{
 			{
 				APIGroups: []string{""},
 				Resources: []string{"serviceaccounts"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+			{
+				APIGroups: []string{"policy"},
+				Resources: []string{"podsecuritypolicies"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
