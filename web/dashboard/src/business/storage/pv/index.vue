@@ -10,6 +10,11 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" min-width="200px" prop="metadata.name" show-overflow-tooltip>
@@ -136,6 +141,12 @@ export default {
       this.$router.push({
         name: "PersistentVolumeCreate",
         query: { yamlShow: false },
+      })
+    },
+    yamlCreate() {
+      this.$router.push({
+        name: "PersistentVolumeCreate",
+        query: { yamlShow: true },
       })
     },
     onDelete(row) {

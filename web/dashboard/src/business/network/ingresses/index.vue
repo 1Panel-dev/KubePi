@@ -13,6 +13,11 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -143,7 +148,12 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "IngressCreate",
+        name: "IngressCreate",query: {yamlShow:false}
+      })
+    },
+    yamlCreate() {
+      this.$router.push({
+        name: "IngressCreate", query: {yamlShow:true}
       })
     },
     onDelete (row) {
