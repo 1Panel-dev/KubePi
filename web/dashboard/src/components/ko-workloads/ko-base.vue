@@ -1,31 +1,33 @@
 <template>
-  <el-row>
-    <el-col :span="6">
-      <el-radio-group style="margin-top: 33px;width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
-        <el-radio-button :disabled="isReadOnly && initContainers === null" style="width: 50%" v-for="(item, index) in type_list" :key="index" :label="item.value">{{item.label}}</el-radio-button>
-      </el-radio-group>
-    </el-col>
-    <el-col :span="14" :key="isRefresh">
-      <el-form-item :label="$t('business.workload.container')">
-        <el-select v-if="selectContainerType === 'standardContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
-          <el-option v-for="(item, index) in containers" :key="index" :label="item.name" :value="index" />
-        </el-select>
-        <el-select v-if="selectContainerType === 'initContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
-          <el-option v-for="(item, index) in initContainers" :key="index" :label="item.name" :value="index" />
-        </el-select>
-      </el-form-item>
-    </el-col>
-    <el-col :span="2">
-      <div style="margin-top: 33px">
-        <el-button :disabled="isReadOnly" style="width:100%" @click="handleAddContainer">+</el-button>
-      </div>
-    </el-col>
-    <el-col :span="2">
-      <div style="margin-top: 33px">
-        <el-button :disabled="isReadOnly" style="width:100%" @click="handleDeleteContainer">-</el-button>
-      </div>
-    </el-col>
-  </el-row>
+  <el-form>
+    <el-row style="margin-top: 20px;">
+      <el-col :span="6">
+        <el-radio-group style="width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
+          <el-radio-button :disabled="isReadOnly && initContainers === null" style="width: 50%" v-for="(item, index) in type_list" :key="index" :label="item.value">{{item.label}}</el-radio-button>
+        </el-radio-group>
+      </el-col>
+      <el-col :span="14" :key="isRefresh">
+        <el-form-item>
+          <el-select v-if="selectContainerType === 'standardContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
+            <el-option v-for="(item, index) in containers" :key="index" :label="item.name" :value="index" />
+          </el-select>
+          <el-select v-if="selectContainerType === 'initContainers'" @change="selectContainer(false)" style="width:100%" v-model="selectContainerIndex">
+            <el-option v-for="(item, index) in initContainers" :key="index" :label="item.name" :value="index" />
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="2">
+        <div>
+          <el-button :disabled="isReadOnly" style="width:100%" @click="handleAddContainer">+</el-button>
+        </div>
+      </el-col>
+      <el-col :span="2">
+        <div>
+          <el-button :disabled="isReadOnly" style="width:100%" @click="handleDeleteContainer">-</el-button>
+        </div>
+      </el-col>
+    </el-row>
+  </el-form>
 </template>
  
 <script>
