@@ -58,8 +58,8 @@ export default {
       initContainers: null,
       containers: [],
       type_list: [
-        { label: this.$t("business.workload.init"), value: "initContainers" },
-        { label: this.$t("business.workload.standard"), value: "standardContainers" },
+        { label: this.$t("business.workload.initContainer"), value: "initContainers" },
+        { label: this.$t("business.workload.standardContainer"), value: "standardContainers" },
       ],
       selectContainerIndex: 0,
       currentContainerIndex: 0,
@@ -116,8 +116,8 @@ export default {
     },
     handleDeleteContainer() {
       this.selectContainerIndex = 0
-      this.$emit("deleteContainer", this.currentContainerType, this.currentContainerIndex)
       if (this.selectContainerType === "initContainers") {
+        this.$emit("deleteContainer", this.currentContainerType, this.currentContainerIndex)
         if (this.initContainers.length <= this.currentContainerIndex) {
           return
         }
@@ -134,6 +134,7 @@ export default {
         if (this.containers.length <= this.currentContainerIndex || this.containers.length === 1) {
           return
         } else {
+          this.$emit("deleteContainer", this.currentContainerType, this.currentContainerIndex)
           this.containers.splice(this.currentContainerIndex, 1)
           this.currentContainer = this.containers[0]
         }

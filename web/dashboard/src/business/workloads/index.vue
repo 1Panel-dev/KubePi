@@ -15,9 +15,14 @@
               <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="isReplicasShow()">
+          <el-col :span="6" v-if="isReplicasShow()">
             <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
               <ko-form-item :disabled="readOnly" placeholder="Any text you want that better describes this resource" itemType="number" v-model.number="form.spec.replicas" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6" v-if="isStatefulSet()">
+            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName">
+              <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="isCronJob()">
@@ -30,11 +35,6 @@
           <el-col :span="12">
             <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
           </el-col>
-          <el-col :span="12" v-if="isStatefulSet()">
-            <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName" :rules="selectRules">
-              <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="service_list_of_ns" />
-            </el-form-item>
-          </el-col>
         </el-row>
       </el-form>
 
@@ -42,7 +42,8 @@
         <el-tab-pane :label="$t('business.workload.general')" name="General">
           <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
           <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer" />
-          <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" />
+          <ko-environment :isReadOnly="readOnly" ref="ko_environment" :envParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
 
         <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')" name="Health Check">
@@ -85,7 +86,7 @@
         </el-tab-pane>
 
         <el-tab-pane :label="$t('business.workload.storage')" name="Storage">
-          <ko-storage :isReadOnly="readOnly" ref="ko_storage" :storageParentObj="podSpec" :currentContainerIndex="currentContainerIndex" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+          <ko-storage :isReadOnly="readOnly" ref="ko_storage" :storageParentObj="podSpec" :currentContainer="currentContainer" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
         </el-tab-pane>
 
         <el-tab-pane v-if="isStatefulSet()" :label="$t('business.workload.volume_claim_template')" name="Volume Claim Templates">
@@ -114,6 +115,7 @@ import KoBase from "@/components/ko-workloads/ko-base.vue"
 import KoContainer from "@/components/ko-workloads/ko-container.vue"
 import KoPorts from "@/components/ko-workloads/ko-ports.vue"
 import KoCommand from "@/components/ko-workloads/ko-command.vue"
+import KoEnvironment from "@/components/ko-workloads/ko-environment.vue"
 import KoResources from "@/components/ko-workloads/ko-resources.vue"
 import KoHealthCheck from "@/components/ko-workloads/ko-health-check.vue"
 import KoSecurityContext from "@/components/ko-workloads/ko-security-context.vue"
@@ -154,6 +156,7 @@ export default {
     KoContainer,
     KoPorts,
     KoCommand,
+    KoEnvironment,
     KoResources,
     KoHealthCheck,
     KoSecurityContext,
@@ -191,7 +194,7 @@ export default {
       node_list: [],
       sc_list: [],
       pvc_list: [],
-      service_list_of_ns: [],
+      headless_service: [],
       // base form
       activeName: "General",
       isValid: true,
@@ -295,10 +298,12 @@ export default {
       })
     },
     loadServicesWithNs(ns) {
-      this.service_list_of_ns = []
+      this.headless_service = []
       listNsServices(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
-          this.service_list_of_ns.push(item.metadata.name)
+          if (item.spec.clusterIP === "None") {
+            this.headless_service.push(item.metadata.name)
+          }
         })
       })
     },
@@ -375,6 +380,7 @@ export default {
       this.$refs.ko_container.transformation(this.currentContainer)
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
+      this.$refs.ko_environment.transformation(this.currentContainer)
       this.$refs.ko_resource.transformation(this.currentContainer)
       if (this.isStandardContainer()) {
         this.$refs.ko_health_readiness_check.transformation(this.currentContainer)
@@ -409,7 +415,7 @@ export default {
           this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec, this.podSpec)
           break
       }
-      this.$refs.ko_storage.transformation(this.podSpec)
+      this.$refs.ko_storage.transformation(this.podSpec, this.currentContainer)
 
       if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex] = this.currentContainer

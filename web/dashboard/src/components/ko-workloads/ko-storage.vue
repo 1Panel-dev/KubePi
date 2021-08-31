@@ -134,17 +134,18 @@ export default {
   components: { KoFormItem, KoCard },
   props: {
     storageParentObj: Object,
-    currentContainerIndex: Number,
+    currentContainer: Object,
     configMapList: Array,
     secretList: Array,
     isReadOnly: Boolean,
   },
   watch: {
-    currentContainerIndex: {
+    currentContainer: {
       handler(newName) {
-        this.containerIndex = newName
+        this.currentContainer = newName
       },
       immediate: true,
+      deep: true,
     },
     configMapList: {
       handler(newName) {
@@ -225,7 +226,7 @@ export default {
       return true
     },
     // 先直接去掉支持的三种类型，然后再往里push
-    transformation(parentFrom) {
+    transformation(parentFrom, currentContainer) {
       if (!parentFrom.volumes) {
         parentFrom.volumes = []
       }
@@ -234,8 +235,8 @@ export default {
           parentFrom.volumes.splice(i, 1)
         }
       }
-      if (!parentFrom.containers[this.containerIndex].volumeMounts) {
-        parentFrom.containers[this.containerIndex].volumeMounts = []
+      if (!currentContainer.volumeMounts) {
+        currentContainer.volumeMounts = []
       }
       for (const volume of this.volumes) {
         let item = {}
@@ -280,10 +281,10 @@ export default {
         parentFrom.volumes.push(item)
         if (volume.volumeMounts.length !== 0) {
           for (const mount of volume.volumeMounts) {
-            parentFrom.containers[this.containerIndex].volumeMounts.push({ name: item.name, mountPath: mount.mountPath, subPath: mount.subPath, readOnly: mount.readOnly })
+            currentContainer.volumeMounts.push({ name: item.name, mountPath: mount.mountPath, subPath: mount.subPath, readOnly: mount.readOnly })
           }
         } else {
-          parentFrom.containers[this.containerIndex].volumeMounts.push({ name: item.name })
+          currentContainer.volumeMounts.push({ name: item.name })
         }
       }
     },
@@ -291,10 +292,8 @@ export default {
   mounted() {
     this.volumes = []
     let volumeMounts = []
-    if (this.storageParentObj.containers.length - 1 >= this.containerIndex) {
-      if (this.storageParentObj.containers[this.containerIndex].volumeMounts) {
-        volumeMounts = this.storageParentObj.containers[this.containerIndex].volumeMounts
-      }
+    if (this.currentContainer.volumeMounts) {
+      volumeMounts = this.currentContainer.volumeMounts
     }
     if (this.storageParentObj.volumes) {
       for (const volume of this.storageParentObj.volumes) {
@@ -305,41 +304,41 @@ export default {
             if (mount.name === volume.name) {
               item.volumeMounts.push(mount)
             }
-            if (volume.name) {
-              item.name = volume.name
+          }
+          if (volume.name) {
+            item.name = volume.name
+          }
+          if (volume.configMap) {
+            item.type = "ConfigMap"
+            if (volume.configMap.defaultMode) {
+              item.defaultMode = volume.configMap.defaultMode.toString(8)
             }
-            if (volume.configMap) {
-              item.type = "ConfigMap"
-              if (volume.configMap.defaultMode) {
-                item.defaultMode = volume.configMap.defaultMode.toString(8)
-              }
-              if (volume.configMap.optional !== undefined) {
-                item.optional = volume.configMap.optional
-              }
-              if (volume.configMap.name) {
-                item.resource = volume.configMap.name
-              }
+            if (volume.configMap.optional !== undefined) {
+              item.optional = volume.configMap.optional
             }
-            if (volume.secret) {
-              item.type = "Secret"
-              if (volume.secret.defaultMode) {
-                item.defaultMode = volume.secret.defaultMode.toString(8)
-              }
-              if (volume.secret.optional !== undefined) {
-                item.optional = volume.secret.optional
-              }
-              if (volume.secret.secretName) {
-                item.resource = volume.secret.secretName
-              }
+            if (volume.configMap.name) {
+              item.resource = volume.configMap.name
             }
-            if (volume.persistentVolumeClaim) {
-              item.type = "PVC"
-              if (volume.persistentVolumeClaim.name) {
-                item.resource = volume.persistentVolumeClaim.name
-              }
-              if (volume.persistentVolumeClaim.readOnly !== undefined) {
-                item.readOnly = volume.persistentVolumeClaim.readOnly
-              }
+          }
+          if (volume.secret) {
+            item.type = "Secret"
+            if (volume.secret.defaultMode) {
+              item.defaultMode = volume.secret.defaultMode.toString(8)
+            }
+            if (volume.secret.optional !== undefined) {
+              item.optional = volume.secret.optional
+            }
+            if (volume.secret.secretName) {
+              item.resource = volume.secret.secretName
+            }
+          }
+          if (volume.persistentVolumeClaim) {
+            item.type = "PVC"
+            if (volume.persistentVolumeClaim.name) {
+              item.resource = volume.persistentVolumeClaim.name
+            }
+            if (volume.persistentVolumeClaim.readOnly !== undefined) {
+              item.readOnly = volume.persistentVolumeClaim.readOnly
             }
           }
           this.volumes.push(item)

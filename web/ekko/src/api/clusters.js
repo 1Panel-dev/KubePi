@@ -15,7 +15,7 @@ export function deleteCluster(name) {
 }
 
 export function searchClusters(page, size, conditions) {
-    return post(`${baseUrl}/search?pageNum=${page}&pageSize=${size}`, conditions)
+    return post(`${baseUrl}/search?pageNum=${page}&pageSize=${size}&showExtra=true`, conditions)
 }
 
 
