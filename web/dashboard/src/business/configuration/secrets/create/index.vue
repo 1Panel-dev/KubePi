@@ -185,6 +185,7 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
+    this.showYaml = this.$route.query.yamlShow === "true"
   }
 }
 </script>

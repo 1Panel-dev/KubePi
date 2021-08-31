@@ -13,6 +13,11 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}"
+                   type="primary" size="small" class="yaml-button"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -122,7 +127,10 @@ export default {
       })
     },
     onCreate () {
-      this.$router.push({ name: "SecretCreate" })
+      this.$router.push({ name: "SecretCreate" ,query:{yamlShow:false}})
+    },
+    yamlCreate() {
+      this.$router.push({ name: "SecretCreate" ,query:{yamlShow:true}})
     },
     onDelete (row) {
       this.$confirm(

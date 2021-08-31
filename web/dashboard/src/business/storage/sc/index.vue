@@ -4,7 +4,7 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
-            {{ $t("commons.button.create") }}
+            YAML
           </el-button>
           <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}

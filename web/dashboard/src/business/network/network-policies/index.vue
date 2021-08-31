@@ -6,7 +6,7 @@
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
                      v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
-            {{ $t("commons.button.create") }}
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                      v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">

@@ -4,7 +4,7 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'policy',resource:'poddisruptionbudgets',verb:'create'}">
-            {{ $t("commons.button.create") }}
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'policy',resource:'poddisruptionbudgets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
