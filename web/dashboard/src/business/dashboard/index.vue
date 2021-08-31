@@ -50,7 +50,8 @@
     </el-row>
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
       <h3>Events</h3>
-      <complex-table :data="events" @search="search()" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+      <complex-table :data="events" @search="search()" v-loading="loading" :pagination-config="paginationConfig"
+                     :search-config="searchConfig">
         <el-table-column label="Reason" prop="reason" fix max-width="50px">
           <template v-slot:default="{row}">
             {{ row.reason }}
@@ -68,7 +69,8 @@
         </el-table-column>
         <el-table-column label="Resource" prop="resource" fix min-width="200px" show-overflow-tooltip>
           <template v-slot:default="{row}">
-            <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">{{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
+            <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">
+              {{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
             </el-link>
           </template>
         </el-table-column>
@@ -104,9 +106,9 @@ import {mixin} from "@/utils/resourceRoutes"
 
 export default {
   name: "Dashboard",
-  components: { ComplexTable, KoCharts, LayoutContent },
+  components: {ComplexTable, KoCharts, LayoutContent},
   mixins: [mixin],
-  data () {
+  data() {
     return {
       cluster: null,
       clusterName: "",
@@ -125,13 +127,13 @@ export default {
   },
   methods: {
     jumpTo(val) {
-      this.$router.push({ name: val })
+      this.$router.push({name: val})
     },
-    listResources () {
+    listResources() {
       getCluster(this.clusterName).then(res => {
         this.cluster = res.data
       })
-      if (checkPermissions({ apiGroup: "", resource: "nodes", verb: "list" })) {
+      if (checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"})) {
         listNodes(this.clusterName).then(res => {
           const nodes = {
             name: "Nodes",
@@ -141,7 +143,7 @@ export default {
           this.resources.push(nodes)
         })
       }
-      if (checkPermissions({ apiGroup: "", resource: "namespaces", verb: "list" })) {
+      if (checkPermissions({scope: 'cluster', apiGroup: "", resource: "namespaces", verb: "list"})) {
         listNamespace(this.clusterName).then(res => {
           const namespaces = {
             name: "Namespaces",
@@ -151,7 +153,7 @@ export default {
           this.resources.push(namespaces)
         })
       }
-      if (checkPermissions({ apiGroup: "networking.k8s.io", resource: "ingresses", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "networking.k8s.io", resource: "ingresses", verb: "list"})) {
         listIngresses(this.clusterName).then(res => {
           const ingresses = {
             name: "Ingresses",
@@ -164,7 +166,7 @@ export default {
           this.resources.push(ingresses)
         })
       }
-      if (checkPermissions({ apiGroup: "", resource: "persistentvolumes", verb: "list" })) {
+      if (checkPermissions({scope: "cluster", apiGroup: "", resource: "persistentvolumes", verb: "list"})) {
         listPvs(this.clusterName).then(res => {
           const persistentVolumes = {
             name: "PersistentVolumes",
@@ -174,7 +176,7 @@ export default {
           this.resources.push(persistentVolumes)
         })
       }
-      if (checkPermissions({ apiGroup: "apps", resource: "deployments", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "apps", resource: "deployments", verb: "list"})) {
         listDeployments(this.clusterName).then(res => {
           const deployments = {
             name: "Deployments",
@@ -184,7 +186,7 @@ export default {
           this.resources.push(deployments)
         })
       }
-      if (checkPermissions({ apiGroup: "apps", resource: "statefulsets", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "apps", resource: "statefulsets", verb: "list"})) {
         listStatefulSets(this.clusterName).then(res => {
           const statefulSets = {
             name: "StatefulSets",
@@ -194,7 +196,7 @@ export default {
           this.resources.push(statefulSets)
         })
       }
-      if (checkPermissions({ apiGroup: "batch", resource: "jobs", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "batch", resource: "jobs", verb: "list"})) {
         listJobs(this.clusterName).then(res => {
           const jobs = {
             name: "Jobs",
@@ -204,7 +206,7 @@ export default {
           this.resources.push(jobs)
         })
       }
-      if (checkPermissions({ apiGroup: "apps", resource: "daemonsets", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "apps", resource: "daemonsets", verb: "list"})) {
         listDaemonSets(this.clusterName).then(res => {
           const daemonSets = {
             name: "DaemonSets",
@@ -214,7 +216,7 @@ export default {
           this.resources.push(daemonSets)
         })
       }
-      if (checkPermissions({ apiGroup: "", resource: "services", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "services", verb: "list"})) {
         listServices(this.clusterName).then(res => {
           const services = {
             name: "Services",
@@ -226,9 +228,9 @@ export default {
       }
       this.search()
     },
-    search () {
+    search() {
       this.loading = true
-      if (checkPermissions({ apiGroup: "", resource: "events", verb: "list" })) {
+      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "events", verb: "list"})) {
         listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
           this.loading = false
           this.events = res.items
@@ -236,7 +238,7 @@ export default {
         })
       }
     },
-    getData (items, keys) {
+    getData(items, keys) {
       let key = []
       let result = []
       for (const item of items) {
@@ -264,7 +266,7 @@ export default {
       }
       return result
     },
-    traverse (obj, keys) {
+    traverse(obj, keys) {
       if (keys === "status.conditions.type") {
         if (obj.status.conditions[0].type && obj.status.conditions[0].status === "True") {
           return obj.status.conditions[0].type
@@ -288,7 +290,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.clusterName = this.$route.query.cluster
     this.listResources()
   }
@@ -296,33 +298,33 @@ export default {
 </script>
 
 <style scoped>
-    .line {
-        float: left;
-        margin-top: 10px;
-        width: 1px;
-        height: 80px;
-        background: #3884c5;
-    }
+.line {
+  float: left;
+  margin-top: 10px;
+  width: 1px;
+  height: 80px;
+  background: #3884c5;
+}
 
-    .title {
-        margin-left: 10px;
-        color: #a1a9ae;
-    }
+.title {
+  margin-left: 10px;
+  color: #a1a9ae;
+}
 
-    .d-card {
-        height: 90px;
-        background-color: #1d3e4d;
-        margin-top: 10px;
-    }
+.d-card {
+  height: 90px;
+  background-color: #1d3e4d;
+  margin-top: 10px;
+}
 
-    .card-content {
-        margin-top: 10px;
-        margin-right: 10px;
-        text-align: center;
-        float: right;
-    }
+.card-content {
+  margin-top: 10px;
+  margin-right: 10px;
+  text-align: center;
+  float: right;
+}
 
-    .card-content > span:first-child {
-        color: #a1a9ae;
-    }
+.card-content > span:first-child {
+  color: #a1a9ae;
+}
 </style>

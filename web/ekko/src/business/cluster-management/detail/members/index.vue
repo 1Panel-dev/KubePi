@@ -183,7 +183,7 @@ export default {
     getClusterRolesOptions() {
       return this.clusterRolesOptions.filter((cr) => {
         if (this.memberForm.roleType === 'custom') {
-          return !["admin-cluster", "view-cluster"].includes(cr.metadata.name)
+          return !["cluster-owner", "cluster-viewer"].includes(cr.metadata.name)
         }
         return true
       })
@@ -236,9 +236,9 @@ export default {
         this.memberForm.userName = data.data.name
         console.log(data.data)
         if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && data.data.namespaceRoles.length === 0) {
-          if (data.data.clusterRoles[0] === 'admin-cluster') {
+          if (data.data.clusterRoles[0] === 'cluster-owner') {
             this.memberForm.roleType = 'admin'
-          } else if (data.data.clusterRoles[0] === 'view-cluster') {
+          } else if (data.data.clusterRoles[0] === 'cluster-viewer') {
             this.memberForm.roleType = 'viewer'
           }
         } else {
@@ -289,10 +289,10 @@ export default {
       }
       switch (this.memberForm.roleType) {
         case "admin":
-          req.clusterRoles = ["admin-cluster"]
+          req.clusterRoles = ["cluster-owner"]
           break
         case "viewer":
-          req.clusterRoles = ["view-cluster"]
+          req.clusterRoles = ["cluster-viewer"]
           break
         case "custom":
           req.clusterRoles = this.memberForm.customClusterRoles

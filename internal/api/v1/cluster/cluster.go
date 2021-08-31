@@ -128,7 +128,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
-		if err := client.CreateOrUpdateClusterRoleBinding("admin-cluster", profile.Name, true); err != nil {
+		if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

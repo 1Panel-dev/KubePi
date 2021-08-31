@@ -5,11 +5,11 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'create'}">
+                     v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'delete'}">
+                     v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterrolebindings',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -86,6 +86,7 @@ export default {
           },
           disabled: () => {
             return !checkPermissions({
+              scope:'cluster',
               apiGroup: "rbac.authorization.k8s.io",
               resource: "clusterrolebindings",
               verb: "update"
@@ -97,6 +98,7 @@ export default {
           icon: "el-icon-edit",
           disabled: () => {
             return !checkPermissions({
+              scope:'cluster',
               apiGroup: "rbac.authorization.k8s.io",
               resource: "clusterrolebindings",
               verb: "update"
@@ -125,6 +127,7 @@ export default {
           },
           disabled: () => {
             return !checkPermissions({
+              scope:'cluster',
               apiGroup: "rbac.authorization.k8s.io",
               resource: "clusterrolebindings",
               verb: "delete"

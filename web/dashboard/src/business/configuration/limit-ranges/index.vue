@@ -60,7 +60,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"limitranges",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"limitranges",verb:"update"})
           }
         },
         {
@@ -77,7 +77,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"",resource:"limitranges",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"limitranges",verb:"delete"})
           }
         },
       ],

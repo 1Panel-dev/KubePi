@@ -17,6 +17,8 @@ const Workloads = {
         apiGroup: "",
         resource: "pods",
         verb: "list",
+        scope:"namespace"
+
       },
       component: () => import("@/business/workloads/pods"),
       name: "Pods",
@@ -30,6 +32,7 @@ const Workloads = {
         apiGroup: "",
         resource: "pods",
         verb: "create",
+        scope:"namespace"
       },
       name: "PodCreate",
       hidden: true,
@@ -45,6 +48,7 @@ const Workloads = {
         apiGroup: "",
         resource: "pods",
         verb: "update",
+        scope:"namespace"
       },
       name: "PodEdit",
       hidden: true,
@@ -60,6 +64,7 @@ const Workloads = {
         apiGroup: "",
         resource: "pods",
         verb: "get",
+        scope:"namespace"
       },
       name: "PodDetail",
       hidden: true,
@@ -76,6 +81,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "deployments",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/workloads/deployments"),
       name: "Deployments",
@@ -89,6 +95,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "deployments",
         verb: "get",
+        scope:"namespace"
       },
       name: "DeploymentDetail",
       hidden: true,
@@ -104,6 +111,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "deployments",
         verb: "create",
+        scope:"namespace"
       },
       name: "DeploymentCreate",
       hidden: true,
@@ -118,6 +126,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "deployments",
         verb: "update",
+        scope:"namespace"
       },
       name: "DeploymentEdit",
       hidden: true,
@@ -133,6 +142,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "daemonsets",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/workloads/daemonsets"),
       name: "DaemonSets",
@@ -146,6 +156,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "daemonsets",
         verb: "get",
+        scope:"namespace"
       },
       name: "DaemonSetDetail",
       hidden: true,
@@ -161,6 +172,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "daemonsets",
         verb: "create",
+        scope:"namespace"
       },
       name: "DaemonSetCreate",
       hidden: true,
@@ -175,6 +187,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "daemonsets",
         verb: "update",
+        scope:"namespace"
       },
       name: "DaemonSetEdit",
       hidden: true,
@@ -190,6 +203,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "statefulsets",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/workloads/statefulsets"),
       name: "StatefulSets",
@@ -203,6 +217,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "statefulsets",
         verb: "get",
+        scope:"namespace"
       },
       name: "StatefulSetDetail",
       hidden: true,
@@ -218,6 +233,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "statefulsets",
         verb: "create",
+        scope:"namespace"
       },
       name: "StatefulSetCreate",
       hidden: true,
@@ -232,6 +248,7 @@ const Workloads = {
         apiGroup: "apps",
         resource: "statefulsets",
         verb: "update",
+        scope:"namespace"
       },
       name: "StatefulSetEdit",
       hidden: true,
@@ -247,6 +264,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "jobs",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/workloads/jobs"),
       name: "Jobs",
@@ -260,6 +278,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "jobs",
         verb: "get",
+        scope:"namespace"
       },
       name: "JobDetail",
       hidden: true,
@@ -275,6 +294,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "jobs",
         verb: "create",
+        scope:"namespace"
       },
       name: "JobCreate",
       hidden: true,
@@ -289,6 +309,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "jobs",
         verb: "update",
+        scope:"namespace"
       },
       name: "JobEdit",
       hidden: true,
@@ -304,6 +325,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "cronjobs",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/workloads/cronjobs"),
       name: "CronJobs",
@@ -317,6 +339,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "cronjobs",
         verb: "get",
+        scope:"namespace"
       },
       name: "CronJobDetail",
       hidden: true,
@@ -332,6 +355,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "cronjobs",
         verb: "create",
+        scope:"namespace"
       },
       name: "CronJobCreate",
       hidden: true,
@@ -346,6 +370,7 @@ const Workloads = {
         apiGroup: "batch",
         resource: "cronjobs",
         verb: "update",
+        scope:"namespace"
       },
       name: "CronJobEdit",
       hidden: true,

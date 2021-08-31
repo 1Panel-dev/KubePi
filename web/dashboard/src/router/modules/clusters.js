@@ -18,6 +18,7 @@ const Clusters = {
                 apiGroup: "",
                 resource: "nodes",
                 verb: "list",
+                scope: "cluster"
             },
             component: () => import("@/business/cluster/nodes"),
             name: "Nodes",
@@ -43,6 +44,7 @@ const Clusters = {
                 apiGroup: "",
                 resource: "namespaces",
                 verb: "list",
+                scope: "cluster"
             },
             meta: {
                 title: "Namespaces"
@@ -85,6 +87,7 @@ const Clusters = {
                 apiGroup: "",
                 resource: "events",
                 verb: "list",
+                scope: "cluster"
             },
             meta: {
                 title: "Events",

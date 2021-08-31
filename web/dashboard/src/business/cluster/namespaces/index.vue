@@ -4,11 +4,13 @@
                    :data="data" @search="search()">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'create'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                     type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button v-has-permissions="{apiGroup:'',resource:'namespaces',verb:'delete'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'delete'}"
+                     type="primary" size="small"
                      :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
@@ -76,14 +78,14 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "update"})
+            return !checkPermissions({scope:'namespace',apiGroup: "", resource: "namespaces", verb: "update"})
           }
         },
         {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "update"})
+            return !checkPermissions({scope:'namespace',apiGroup: "", resource: "namespaces", verb: "update"})
           },
           click: (row) => {
             this.$router.push({
@@ -97,7 +99,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "get"})
+            return !checkPermissions({scope:'namespace',apiGroup: "", resource: "namespaces", verb: "get"})
           },
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", row)
@@ -107,7 +109,7 @@ export default {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           disabled: () => {
-            return !checkPermissions({apiGroup: "", resource: "namespaces", verb: "delete"})
+            return !checkPermissions({scope:'namespace',apiGroup: "", resource: "namespaces", verb: "delete"})
           },
           click: (row) => {
             this.onDelete(row)

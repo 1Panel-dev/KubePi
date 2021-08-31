@@ -15,6 +15,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column :label="$t('commons.table.description')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ $t(row.metadata.annotations["description"]) }}
+        </template>
+      </el-table-column>
+
       <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ $t('commons.bool.' + row.metadata.annotations["builtin"]) }}
@@ -37,6 +43,10 @@
       <el-form :model="clusterRoleForm" label-position="left" label-width="144px">
         <el-form-item :label="$t('commons.table.name')">
           <el-input v-model="clusterRoleForm.name" style="width: 80%"></el-input>
+        </el-form-item>
+
+        <el-form-item :label="$t('commons.table.description')">
+          <el-input v-model="clusterRoleForm.description" style="width: 80%"></el-input>
         </el-form-item>
 
         <el-form-item :label="$t('business.cluster.rule')">
@@ -106,6 +116,15 @@
           {{ detailForm.name }}
         </el-form-item>
 
+        <el-form-item :label="$t('commons.table.description')">
+          <span v-if="detailForm.description.startsWith('i18n')">
+            {{ $t(detailForm.description) }}
+          </span>
+          <span v-if="!detailForm.description.startsWith('i18n')">
+            {{ detailForm.description }}
+          </span>
+        </el-form-item>
+
         <el-form-item :label="$t('business.cluster.rule')">
           <table border="1" cellspacing="0" style="width: 80%">
             <thead style="background-color: #1d3e4d">
@@ -162,6 +181,7 @@ export default {
       clusterDetailDialogOpened: false,
       detailForm: {
         name: "",
+        description: "",
         rules: []
       },
       apiGroupResources: {
@@ -174,6 +194,7 @@ export default {
       clusterRoleForm: {
         name: "",
         rules: [],
+        description: ""
       },
       buttons: [
         {
@@ -217,6 +238,7 @@ export default {
     onOpenDetail(item) {
       this.detailForm = {
         name: item.metadata.name,
+        description: item.metadata.annotations["description"],
         rules: item.rules
       }
       for (const rule of this.detailForm.rules) {
@@ -233,6 +255,7 @@ export default {
       this.operation = "create"
       this.clusterRoleForm = {
         name: "",
+        description: "",
         rules: [],
       }
       this.clusterRoleFormDialogOpened = true
@@ -264,6 +287,7 @@ export default {
     onEdit(row) {
       this.operation = "edit"
       this.clusterRoleForm.name = row.metadata.name
+      this.clusterRoleForm.description = row.metadata.annotations["description"]
       this.clusterRoleForm.rules = []
       for (const rule of row.rules) {
         const r = {
@@ -299,6 +323,9 @@ export default {
       const req = {
         metadata: {
           name: this.clusterRoleForm.name,
+          annotations: {
+            "description": this.clusterRoleForm.description
+          },
           labels: {
             "kubeoperator.io/role-type": "cluster",
           }

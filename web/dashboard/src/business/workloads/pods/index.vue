@@ -3,10 +3,10 @@
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'pods',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'pods',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column min-width="45" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit" v-has-permissions="{apiGroup:'',resource:'pods',verb:'update'}" />
+          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'update'}" />
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini" />
             <el-dropdown-menu slot="dropdown">
@@ -111,7 +111,7 @@ export default {
       this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     onCheckPermissions() {
-      checkPermissions({ apiGroup: "", resource: "jobs", verb: "delete" })
+      checkPermissions({scope: "namespace", apiGroup: "", resource: "jobs", verb: "delete" })
     },
     handleClick(btn, row) {
       switch (btn) {

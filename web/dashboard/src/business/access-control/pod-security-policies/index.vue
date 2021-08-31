@@ -55,7 +55,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"policy",resource:"poddisruptionbudgets",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"policy",resource:"poddisruptionbudgets",verb:"update"})
           }
         },
         {
@@ -72,7 +72,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"policy",resource:"poddisruptionbudgets",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"policy",resource:"poddisruptionbudgets",verb:"delete"})
           }
         },
       ],

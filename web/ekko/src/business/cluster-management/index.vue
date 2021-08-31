@@ -121,8 +121,8 @@ export default {
           click: (row) => {
             this.onGotoDashboard(row.name)
           },
-          disabled: () => {
-            return !checkPermissions({resource: "clusters", verb: "get"})
+          disabled: (row) => {
+            return row.status.phase === 'Initializing' || !checkPermissions({resource: "clusters", verb: "get"})
           },
         },
         {
@@ -191,7 +191,7 @@ export default {
             type: 'success',
             message: this.$t("commons.msg.delete_success"),
           });
-          this.onVueCreated()
+          this.search()
         })
       });
     },

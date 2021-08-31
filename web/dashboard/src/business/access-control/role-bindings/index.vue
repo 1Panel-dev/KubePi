@@ -87,7 +87,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -101,7 +101,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
           }
         },
         {
@@ -118,7 +118,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
+            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
           }
         },
       ],

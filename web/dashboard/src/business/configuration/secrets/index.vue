@@ -5,11 +5,11 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'',resource:'secrets',verb:'create'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'',resource:'secrets',verb:'delete'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -64,7 +64,7 @@ export default {
             })
           },
           disabled: (row) => {
-            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
+            return !checkPermissions({ scope:'namespace',apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
           }
         },
         {
@@ -78,7 +78,7 @@ export default {
             })
           },
           disabled: (row) => {
-            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
+            return !checkPermissions({ scope:'namespace',apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
           }
         },
         {
@@ -95,7 +95,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "", resource: "secrets", verb: "delete" })
+            return !checkPermissions({scope:'namespace', apiGroup: "", resource: "secrets", verb: "delete" })
           }
         },
       ],
