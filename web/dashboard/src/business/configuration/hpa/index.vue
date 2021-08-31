@@ -1,15 +1,16 @@
 <template>
   <layout-content header="HorizontalPodAutoscalers">
-    <complex-table :data="data" @search="search" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig"
+    <complex-table :data="data" @search="search" v-loading="loading" :selects.sync="selects"
+                   :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
+                     v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -77,8 +78,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "HPA",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       page: {
@@ -95,12 +96,17 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "HPAEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              query: {yamlShow: false}
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "update" })
+            return !checkPermissions({
+              scope: 'namespace',
+              apiGroup: "autoscaling",
+              resource: "horizontalpodautoscalers",
+              verb: "update"
+            })
           }
         },
         {
@@ -109,12 +115,17 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "HPAEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
+              params: {name: row.metadata.name, namespace: row.metadata.namespace},
+              query: {yamlShow: true}
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "update" })
+            return !checkPermissions({
+              scope: 'namespace',
+              apiGroup: "autoscaling",
+              resource: "horizontalpodautoscalers",
+              verb: "update"
+            })
           }
         },
         {
@@ -131,7 +142,12 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "autoscaling", resource: "horizontalpodautoscalers", verb: "delete" })
+            return !checkPermissions({
+              scope: 'namespace',
+              apiGroup: "autoscaling",
+              resource: "horizontalpodautoscalers",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -146,7 +162,7 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -157,19 +173,19 @@ export default {
         this.paginationConfig.total = res.total
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "HPACreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteHpa(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -182,28 +198,28 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "HPADetail",
-        params: { namespace: row.metadata.namespace, name: row.metadata.name },
-        query: { yamlShow: false }
+        params: {namespace: row.metadata.namespace, name: row.metadata.name},
+        query: {yamlShow: false}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }

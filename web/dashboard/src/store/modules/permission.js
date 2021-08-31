@@ -1,4 +1,5 @@
 import {rolesRoutes, constantRoutes} from "@/router"
+import {checkPermissions} from "@/utils/permission"
 
 const state = {
     routes: [],
@@ -7,20 +8,7 @@ const state = {
 
 function hasPermission(clusterRoles, route) {
     if (route.requirePermission) {
-        for (const clusterRole of clusterRoles) {
-            if (clusterRole.rules.length > 0) {
-                for (const rule of clusterRole.rules) {
-                    if (rule.apiGroups.includes("*") || rule.apiGroups.includes(route.requirePermission.apiGroup)) {
-                        if (rule.resources.includes("*") || rule.resources.includes(route.requirePermission.resource)) {
-                            if (rule.verbs.includes("*") || rule.verbs.includes(route.requirePermission.verb)) {
-                                return true
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false
+        return checkPermissions(route.requirePermission)
     }
     return true
 }

@@ -70,7 +70,7 @@ export default {
             })
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
+            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
           }
         },
         {
@@ -87,7 +87,7 @@ export default {
             this.onDelete(row)
           },
           disabled:()=>{
-            return !checkPermissions({apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
+            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
           }
         },
       ],

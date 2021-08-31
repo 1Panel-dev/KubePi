@@ -3,10 +3,10 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
+          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -66,7 +66,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "update" })
+            return !checkPermissions({scope:'cluster', apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "update" })
           },
         },
         {
@@ -83,7 +83,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "delete" })
+            return !checkPermissions({ scope:'cluster',apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "delete" })
           },
         },
       ],

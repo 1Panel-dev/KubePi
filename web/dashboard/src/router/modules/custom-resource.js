@@ -13,6 +13,7 @@ const CustomResource = {
         apiGroup: "apiextensions.k8s.io",
         resource: "customresourcedefinitions",
         verb: "list",
+        scope:"cluster"
       },
       component: () => import("@/business/custom-resource"),
       name: "CustomResourceDefinitions",

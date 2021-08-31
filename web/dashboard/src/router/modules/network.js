@@ -17,6 +17,7 @@ const Network = {
         apiGroup: "",
         resource: "services",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/network/services"),
       name: "Services",
@@ -30,6 +31,7 @@ const Network = {
         apiGroup: "",
         resource: "services",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/network/services/detail"),
       name: "ServiceDetail",
@@ -45,6 +47,7 @@ const Network = {
         apiGroup: "",
         resource: "services",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/network/services/create"),
       name: "ServiceCreate",
@@ -59,6 +62,7 @@ const Network = {
         apiGroup: "",
         resource: "services",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/network/services/edit"),
       name: "ServiceEdit",
@@ -75,6 +79,7 @@ const Network = {
         apiGroup: "",
         resource: "endpoints",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/network/endpoints"),
       name: "Endpoints",
@@ -88,6 +93,7 @@ const Network = {
         apiGroup: "",
         resource: "endpoints",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/network/endpoints/detail"),
       name: "EndpointDetail",
@@ -103,6 +109,7 @@ const Network = {
         apiGroup: "",
         resource: "endpoints",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/network/endpoints/create"),
       name: "EndpointCreate",
@@ -117,6 +124,7 @@ const Network = {
         apiGroup: "",
         resource: "endpoints",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/network/endpoints/edit"),
       name: "EndpointEdit",
@@ -133,6 +141,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "ingresses",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",
@@ -146,6 +155,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "ingresses",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/network/ingresses/detail"),
       name: "IngressDetail",
@@ -161,6 +171,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "ingresses",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/network/ingresses/edit"),
       name: "IngressEdit",
@@ -176,6 +187,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "ingresses",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/network/ingresses/create"),
       name: "IngressCreate",
@@ -192,6 +204,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "networkpolicies",
         verb: "list",
+        scope:"namespace"
       },
       component: () => import("@/business/network/network-policies"),
       name: "NetworkPolicies",
@@ -205,6 +218,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "networkpolicies",
         verb: "create",
+        scope:"namespace"
       },
       component: () => import("@/business/network/network-policies/create"),
       name: "NetworkPolicyCreate",
@@ -219,6 +233,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "networkpolicies",
         verb: "get",
+        scope:"namespace"
       },
       component: () => import("@/business/network/network-policies/detail"),
       name: "NetworkPolicyDetail",
@@ -234,6 +249,7 @@ const Network = {
         apiGroup: "networking.k8s.io",
         resource: "networkpolicies",
         verb: "update",
+        scope:"namespace"
       },
       component: () => import("@/business/network/network-policies/edit"),
       name: "NetworkPolicyEdit",
