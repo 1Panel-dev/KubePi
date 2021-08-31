@@ -30,6 +30,7 @@ type ExtraClusterInfo struct {
 	CPURequested      float64 `json:"cpuRequested"`
 	MemoryAllocatable float64 `json:"memoryAllocatable"`
 	MemoryRequested   float64 `json:"memoryRequested"`
+	Health            bool    `json:"health"`
 }
 
 type NamespaceRoles struct {

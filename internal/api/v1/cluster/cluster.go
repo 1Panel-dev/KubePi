@@ -234,6 +234,9 @@ func (h *Handler) SearchClusters() iris.Handler {
 		showExtra := ctx.URLParamExists("showExtra")
 		keywords := ctx.URLParam("keywords")
 
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+
 		clusters, total, err := h.clusterService.Search(pageNum, pageSize, keywords, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -250,6 +253,18 @@ func (h *Handler) SearchClusters() iris.Handler {
 				return
 			}
 			c.MemberCount = len(bs)
+			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", err)
+				return
+			}
+			for j := range mbs {
+				if mbs[j].UserRef == profile.Name {
+					c.Accessable = true
+				}
+			}
+
 			result = append(result, c)
 		}
 		if showExtra {
@@ -270,6 +285,10 @@ func (h *Handler) SearchClusters() iris.Handler {
 	}
 }
 func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) {
+	err := client.Ping()
+	if err != nil {
+		return ExtraClusterInfo{Health: false}, nil
+	}
 	c, err := client.Client()
 	if err != nil {
 		return ExtraClusterInfo{}, err
@@ -315,6 +334,7 @@ func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) 
 		}
 	}
 	result := ExtraClusterInfo{
+		Health:            true,
 		TotalNodeNum:      len(nodes),
 		ReadyNodeNum:      readyNodes,
 		CPUAllocatable:    totalCpu,
