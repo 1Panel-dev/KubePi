@@ -34,12 +34,11 @@
 </template>
 
 <script>
-import KoFormItem from "@/components/ko-form-item"
 import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoServiceIpAddresses",
-  components: { KoCard, KoFormItem },
+  components: { KoCard },
   props: {
     specObj: Object,
     type: String
