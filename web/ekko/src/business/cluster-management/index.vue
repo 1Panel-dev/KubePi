@@ -153,7 +153,7 @@ export default {
     search() {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchClusters(currentPage, pageSize,).then(data => {
+      searchClusters(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total

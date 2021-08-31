@@ -3,7 +3,8 @@ package cluster
 import (
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
+	"github.com/KubeOperator/ekko/pkg/storm"
+	storm2 "github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"time"
 )
@@ -15,7 +16,7 @@ type Service interface {
 	Get(name string, options common.DBOptions) (*v1Cluster.Cluster, error)
 	List(options common.DBOptions) ([]v1Cluster.Cluster, error)
 	Delete(name string, options common.DBOptions) error
-	Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
+	Search(num, size int, keywords string, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewService() Service {
@@ -66,9 +67,16 @@ func (c *cluster) List(options common.DBOptions) ([]v1Cluster.Cluster, error) {
 	return clusters, nil
 }
 
-func (c *cluster) Search(num, size int, conditions pkgV1.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
+func (c *cluster) Search(num, size int, keywords string, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
 	db := c.GetDB(options)
-	query := db.Select().Limit(size).Skip((num - 1) * size)
+
+	query := func() storm2.Query {
+		if keywords != "" {
+			return db.Select(storm.Like("Name", keywords)).Limit(size).Skip((num - 1) * size)
+		} else {
+			return db.Select().Limit(size).Skip((num - 1) * size)
+		}
+	}()
 	count, err := query.Count(&v1Cluster.Cluster{})
 	if err != nil {
 		return nil, 0, err

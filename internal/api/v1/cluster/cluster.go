@@ -232,16 +232,9 @@ func (h *Handler) SearchClusters() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		showExtra := ctx.URLParamExists("showExtra")
+		keywords := ctx.URLParam("keywords")
 
-		var conditions pkgV1.Conditions
-		if ctx.GetContentLength() > 0 {
-			if err := ctx.ReadJSON(&conditions); err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-		}
-		clusters, total, err := h.clusterService.Search(pageNum, pageSize, conditions, common.DBOptions{})
+		clusters, total, err := h.clusterService.Search(pageNum, pageSize, keywords, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
