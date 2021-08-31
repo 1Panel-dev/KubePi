@@ -1,9 +1,9 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="sessionAffinity">
+    <ko-card title="Session Affinity">
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-radio-group v-model="spec.sessionAffinity" @change="changeType">
+          <el-radio-group v-model="specObj.sessionAffinity" @change="changeType(specObj.sessionAffinity)" :key="key">
             <div style="margin-top: 5px">
               <el-radio label="None">None</el-radio>
             </div>
@@ -12,10 +12,10 @@
             </div>
           </el-radio-group>
         </el-col>
-        <div v-if="spec.sessionAffinity === 'ClientIP'">
+        <div v-if="specObj.sessionAffinity === 'ClientIP'">
           <el-col :span="11">
             <div>Session Sticky Time</div>
-            <el-input v-model.number="spec.sessionAffinityConfig.clientIP.timeoutSeconds">
+            <el-input v-model.number="specObj.sessionAffinityConfig.clientIP.timeoutSeconds" @input="$forceUpdate()">
               <template slot="append">Seconds</template>
             </el-input>
           </el-col>
@@ -36,33 +36,24 @@ export default {
   },
   data () {
     return {
-      spec: {
-        sessionAffinity: "None",
-        sessionAffinityConfig: {
-          clientIP: {
-            timeoutSeconds: 10800
-          }
-        }
-      }
+      key: 0
     }
   },
   methods: {
     changeType (value) {
-      this.specObj.sessionAffinity = value
+      this.key ++
       if (value === "ClientIP") {
-        this.spec.sessionAffinityConfig.clientIP.timeoutSeconds = 10800
+        this.specObj.sessionAffinityConfig.clientIP.timeoutSeconds = 10800
       } else {
-        delete this.spec.sessionAffinityConfig.clientIP.timeoutSeconds
+        delete this.specObj.sessionAffinityConfig.clientIP.timeoutSeconds
       }
     }
   },
   created () {
-    if (this.specObj) {
-      this.spec.sessionAffinity = this.specObj.sessionAffinity ? this.specObj.sessionAffinity : this.specObj.sessionAffinity = "None"
-      this.spec.sessionAffinityConfig = this.specObj.sessionAffinityConfig ? this.specObj.sessionAffinityConfig : this.specObj.sessionAffinityConfig = {
-        clientIP: {
-          timeoutSeconds: 10800
-        }
+    if (!this.specObj?.sessionAffinityConfig) {
+      this.specObj.sessionAffinity = "None"
+      this.specObj.sessionAffinityConfig = {
+        clientIP: {}
       }
     }
   }

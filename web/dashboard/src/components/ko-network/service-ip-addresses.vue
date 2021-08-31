@@ -1,19 +1,21 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :title="$t('business.network.ip_address')">
-      <el-form ref="form" label-position="top" :model="spec">
-        <el-row v-if="spec.type === 'ClusterIP'">
+    <ko-card :title="title">
+      <div v-if="type === 'ClusterIP' || type === 'LoadBalancer' || type === 'NodePort'">
+        <el-row>
           <el-col :span="12">
-            <ko-form-item placeholder="e.g. 10.1.1.1" itemType="input" v-model="spec.clusterIP"
-                          @change.native="transformation" @clear="transformation"/>
+            <el-input placeholder="e.g. 10.1.1.1" v-model="specObj.clusterIP" @input="$forceUpdate()"></el-input>
           </el-col>
         </el-row>
-        <h2 v-if="spec.type === 'ClusterIP'">{{$t('business.network.external_ip')}}</h2>
-        <div v-for="(row, index) in spec.externalIPs" v-bind:key="index" style="margin-top: 5px">
+        <h2>{{ $t("business.network.external_ip") }}</h2>
+      </div>
+      <div :key="key">
+        <div v-for="(row, index) in specObj.externalIPs" style="margin-top: 5px" v-bind:key="index">
           <span v-if="false">{{ row }}</span>
           <el-row :gutter="20">
             <el-col :span="12">
-              <ko-form-item placeholder="e.g. 10.1.1.1" itemType="input" v-model="spec.externalIPs[index]"/>
+              <el-input placeholder="e.g. 10.1.1.1" v-model="specObj.externalIPs[index]"
+                        @input="$forceUpdate()"></el-input>
             </el-col>
             <el-col :span="2">
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -22,10 +24,11 @@
             </el-col>
           </el-row>
         </div>
-        <div style="margin-top: 5px">
-          <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-        </div>
-      </el-form>
+
+      </div>
+      <div style="margin-top: 5px">
+        <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+      </div>
     </ko-card>
   </div>
 </template>
@@ -38,33 +41,44 @@ export default {
   name: "KoServiceIpAddresses",
   components: { KoCard, KoFormItem },
   props: {
-    specObj: Object
+    specObj: Object,
+    type: String
   },
   data () {
     return {
-      spec: {
-        clusterIP: "",
-        externalIPs: []
-      }
+      title: this.$t("business.network.ip_address"),
+      key: 0
     }
   },
   methods: {
     transformation () {
-      this.specObj.clusterIP = this.spec.clusterIP
     },
     handleDelete (index) {
-      this.spec.externalIPs.splice(index, 1)
+      this.specObj.externalIPs.splice(index, 1)
+      this.key = Math.random()
     },
     handleAdd () {
-      this.spec.externalIPs.push("")
+      this.specObj.externalIPs.push("")
+      this.key = Math.random()
     },
   },
   created () {
     if (this.specObj) {
-      if (this.specObj.type === 'ClusterIP') {
-        this.spec.clusterIP = this.specObj.clusterIP ? this.specObj.clusterIP : this.specObj.clusterIP = ""
+      if (!this.specObj.externalIPs) {
+        this.specObj.externalIPs = []
       }
-      this.spec.externalIPs = this.specObj.externalIPs ? this.specObj.externalIPs : this.specObj.externalIPs = []
+      if (!this.specObj.clusterIP) {
+        this.specObj.clusterIP = ""
+      }
+    }
+  },
+  watch: {
+    type: function (newValue) {
+      if (newValue === "ExternalName" || newValue === "Headless") {
+        this.title = this.$t("business.network.external_ip")
+      } else {
+        this.title = this.$t("business.network.ip_address")
+      }
     }
   }
 }
