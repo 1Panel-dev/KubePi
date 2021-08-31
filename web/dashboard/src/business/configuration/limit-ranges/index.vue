@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="LimitRanges">
+  <layout-content header="Limit Ranges">
     <complex-table  :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>

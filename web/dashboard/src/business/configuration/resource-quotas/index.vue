@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="ResourceQuotas">
+  <layout-content header="Resource Quotas">
     <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
         <el-button-group>

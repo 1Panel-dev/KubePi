@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="ConfigMaps">
+  <layout-content header="Config Maps">
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>

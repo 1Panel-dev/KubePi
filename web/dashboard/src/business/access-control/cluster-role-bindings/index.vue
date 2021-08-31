@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="ClusterRoleBindings">
+  <layout-content header="Cluster Role Bindings">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
