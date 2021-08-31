@@ -23,7 +23,7 @@ const Storage = {
             name: "PersistentVolumeClaim",
             props: true,
             meta: {
-                title: "Persistent Volume Claim",
+                title: "Persistent Volume Claims",
                 activeMenu: "/persistentVolumeClaim",
             }
         }, {
@@ -85,7 +85,7 @@ const Storage = {
             component: () => import("@/business/storage/pv"),
             name: "PersistentVolumes",
             meta: {
-                title: "Persistent Volume",
+                title: "Persistent Volumes",
             },
         },
         {
@@ -199,7 +199,7 @@ const Storage = {
                 title: "Storage Classes Detail",
                 activeMenu: "/storageclasses",
             }
-        }, 
+        },
     ]
 }
 

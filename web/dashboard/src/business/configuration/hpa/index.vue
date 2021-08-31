@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="HorizontalPodAutoscalers">
+  <layout-content header="Horizontal Pod Autoscalers">
     <complex-table :data="data" @search="search" v-loading="loading" :selects.sync="selects"
                    :pagination-config="paginationConfig"
                    :search-config="searchConfig">

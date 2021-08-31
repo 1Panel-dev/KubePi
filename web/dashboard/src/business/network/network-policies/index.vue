@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="NetworkPolicies">
+  <layout-content header="Network Policies">
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>

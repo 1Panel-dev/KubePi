@@ -22,7 +22,7 @@ const Configuration = {
       component: () => import("@/business/configuration/config-maps"),
       name: "ConfigMaps",
       meta: {
-        title: "ConfigMaps",
+        title: "Config Maps",
       }
     },
     {
@@ -273,7 +273,7 @@ const Configuration = {
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
-        title: "Horizontal Pod Autoscaler",
+        title: "Horizontal Pod Autoscalers",
       }
     },
     {
@@ -334,7 +334,7 @@ const Configuration = {
       component: () => import("@/business/configuration/pdb"),
       name: "PDBs",
       meta: {
-        title: "Pod Disruption Budget",
+        title: "Pod Disruption Budgets",
       }
     },
     {
