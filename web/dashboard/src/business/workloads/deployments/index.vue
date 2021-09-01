@@ -2,17 +2,16 @@
   <layout-content header="Deployments">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button-group>
+          <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}" type="primary" size="small"  @click="yamlCreate">
+            YAML
+          </el-button>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
-        </el-button-group>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}" type="primary" size="small" class="yaml-button" @click="yamlCreate">
-          YAML
-        </el-button>
+
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>

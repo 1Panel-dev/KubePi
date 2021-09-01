@@ -2,14 +2,12 @@
   <layout-content header="Pods">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button-group>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
-            {{ $t("commons.button.create") }}
+            YAML
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
-        </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
