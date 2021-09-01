@@ -3,7 +3,7 @@
     <br>
     <div v-if="!showYaml">
       <el-row :gutter="10" class="row-box">
-        <el-col :span="8">
+        <el-col :span="spanWidth">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.general')}}</span>
             <el-form label-position="top" ref="form" :model="form">
@@ -36,13 +36,13 @@
             </el-form>
           </el-card>
         </el-col>
-        <el-col :span="8" v-if="isStatefulSet()">
+        <el-col :span="spanWidth" v-if="isStatefulSet()">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume_claim_template')}}</span>
             <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :pvcList="pvc_list" :scList="sc_list" />
           </el-card>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="spanWidth">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume')}}</span>
             <ko-volume @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume" :volumeParentObj="podSpec" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
@@ -199,6 +199,7 @@ export default {
       type: "",
       operation: "",
       readOnly: false,
+      spanWidth: 12,
       // yaml
       showYaml: false,
       yaml: {},
@@ -633,6 +634,7 @@ export default {
       this.isRefresh = !this.isRefresh
     }
     this.form.kind = this.toggleCase()
+    this.spanWidth = this.isStatefulSet() ? 8 : 12
   },
 }
 </script>

@@ -67,12 +67,6 @@ export default {
   computed: {
     terminalTabs: {
       get() {
-        const terminals = this.$store.state.terminal.terminals || []
-        if (terminals.length == 0) {
-          this.handleResize("close")
-        } else {
-          this.handleResize("expand")
-        }
         return this.$store.state.terminal.terminals
       },
       set() {
@@ -86,6 +80,7 @@ export default {
   watch: {
     terminalTabs: function (val) {
       if (val && val.length > 0) {
+        this.handleResize("expand")
         for (const item of val) {
           item.show = false
         }
@@ -93,6 +88,8 @@ export default {
         val[val.length - 1].url = this.getTerminalUrl(val[val.length - 1])
         this.currentTab = val[val.length - 1].key
         this.currentTerminal = val[val.length - 1]
+      } else {
+        this.handleResize("close")
       }
     },
   },
@@ -122,10 +119,8 @@ export default {
     handleResize(operation) {
       switch (operation) {
         case "expand":
-          if (this.$store.state.terminal.buttomHeight === '0') {
-            this.$store.commit("terminal/CHANGE_BOTTOM_HEIGHT", "400")
-            this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", "400")
-          }
+          this.$store.commit("terminal/CHANGE_BOTTOM_HEIGHT", "400")
+          this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", "400")
           this.expand = true
           break
         case "shrink":

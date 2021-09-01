@@ -1,18 +1,18 @@
 <template>
   <layout-content header="Jobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'delete'}">
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}" class="yaml-button">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="140" show-overflow-tooltip>
@@ -20,7 +20,7 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace"/>
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
       <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
           {{ row.spec.completions }} / {{ row.spec.parallelism }}
@@ -43,15 +43,15 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listWorkLoads, deleteWorkLoad} from "@/api/workloads"
-import {downloadYaml} from "@/utils/actions"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
-import {checkPermissions} from "@/utils/permission"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "Jobs",
-  components: {LayoutContent, ComplexTable, KoTableOperations},
+  components: { LayoutContent, ComplexTable, KoTableOperations },
   data() {
     return {
       buttons: [
@@ -61,12 +61,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "JobEdit",
-              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: false, readOnly: true},
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false, readOnly: true },
             })
           },
           disabled: () => {
-            return !checkPermissions({scope: "namespace",apiGroup: "batch", resource: "jobs", verb: "update"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "batch", resource: "jobs", verb: "update" })
           },
         },
         {
@@ -75,12 +75,12 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "JobEdit",
-              params: {operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: true},
+              params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: true },
             })
           },
           disabled: () => {
-            return !checkPermissions({scope: "namespace",apiGroup: "batch", resource: "jobs", verb: "update"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "batch", resource: "jobs", verb: "update" })
           },
         },
         {
@@ -97,7 +97,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({scope: "namespace",apiGroup: "batch", resource: "jobs", verb: "delete"})
+            return !checkPermissions({ scope: "namespace", apiGroup: "batch", resource: "jobs", verb: "delete" })
           },
         },
       ],
@@ -117,14 +117,17 @@ export default {
   },
   methods: {
     onCreate() {
-      this.$router.push({name: "JobCreate", params: {operation: "create"}, query: {yamlShow: false}})
+      this.$router.push({ name: "JobCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
     openDetail(row) {
       this.$router.push({
         name: "JobDetail",
-        params: {namespace: row.metadata.namespace, name: row.metadata.name},
-        query: {yamlShow: false}
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false },
       })
+    },
+    yamlCreate() {
+      this.$router.push({ name: "JobCreate", params: { operation: "create" }, query: { yamlShow: true } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
@@ -144,16 +147,16 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search(true)
-              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
         }
       })
     },
@@ -168,16 +171,16 @@ export default {
         this.paginationConfig.currentPage = 1
       }
       listWorkLoads(this.clusterName, "jobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
-          .then((res) => {
-            this.data = res.items
-            this.paginationConfig.total = res.total
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        .then((res) => {
+          this.data = res.items
+          this.paginationConfig.total = res.total
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
   mounted() {

@@ -10,6 +10,9 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}" type="primary" size="small" class="yaml-button" @click="yamlCreate">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
@@ -64,7 +67,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({  scope: "namespace",apiGroup: "batch", resource: "cronjobs", verb: "update" })
+            return !checkPermissions({ scope: "namespace", apiGroup: "batch", resource: "cronjobs", verb: "update" })
           },
         },
         {
@@ -123,6 +126,9 @@ export default {
         params: { namespace: row.metadata.namespace, name: row.metadata.name },
         query: { yamlShow: false },
       })
+    },
+    yamlCreate() {
+      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: true } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

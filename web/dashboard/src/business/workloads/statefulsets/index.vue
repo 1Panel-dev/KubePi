@@ -10,6 +10,9 @@
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
+        <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}" class="yaml-button">
+          YAML
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
@@ -113,6 +116,9 @@ export default {
     },
     openDetail(row) {
       this.$router.push({ name: "StatefulSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    },
+    yamlCreate() {
+      this.$router.push({ name: "StatefulSetCreate", params: { operation: "create" }, query: { yamlShow: true } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
