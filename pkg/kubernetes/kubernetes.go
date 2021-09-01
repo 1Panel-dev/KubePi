@@ -260,8 +260,8 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		return nil, err
 	}
 	all := false
-	if len(options) > 0 {
-		all = options[0].(bool)
+	if len(options) > 0 && options[0].(bool) {
+		all = true
 	} else {
 		all, err = k.CanVisitAllNamespace(username)
 		if err != nil {
