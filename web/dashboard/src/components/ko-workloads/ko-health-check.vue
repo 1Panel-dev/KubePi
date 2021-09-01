@@ -27,9 +27,29 @@
               </el-form-item>
             </el-row>
             <el-row v-if="check_type === 'exec'">
-              <el-form-item :label="$t('business.workload.check_cmd')" prop="exec.command">
-                <ko-form-item placeholder="e.g. cat /tmp/health" itemType="input" v-model="form.exec.command" />
-              </el-form-item>
+              <table style="width: 98%" class="tab-table">
+                <tr>
+                  <th scope="col" width="93%" align="left">
+                    <label>{{$t('business.workload.check_cmd')}}</label>
+                  </th>
+                  <th align="left"></th>
+                </tr>
+                <tr v-for="row in form.exec.command" v-bind:key="row.index">
+                  <td>
+                    <ko-form-item placeholder="e.g. /tmp/health" itemType="textarea" v-model="row.value" />
+                  </td>
+                  <td>
+                    <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
+                      {{ $t("commons.button.delete") }}
+                    </el-button>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="left">
+                    <el-button @click="handleCommandAdd">{{$t('business.workload.add')}}</el-button>
+                  </td>
+                </tr>
+              </table>
             </el-row>
           </el-col>
           <el-col :span="12" v-if="check_type !== 'None' && check_type !== ''">
@@ -132,7 +152,7 @@ export default {
         failureThreshold: 3,
         httpHeaders: [],
         exec: {
-          command: "",
+          command: [],
         },
         tcpSocket: {
           port: "",
@@ -141,6 +161,15 @@ export default {
     }
   },
   methods: {
+    handleCommandAdd() {
+      var item = {
+        value: "",
+      }
+      this.form.exec.command.push(item)
+    },
+    handleCommandDelete(index) {
+      this.form.exec.command.splice(index, 1)
+    },
     handleDelete(index) {
       this.form.httpHeaders.splice(index, 1)
     },
@@ -161,7 +190,7 @@ export default {
       childForm.timeoutSeconds = this.form.timeoutSeconds || undefined
       childForm.successThreshold = this.form.successThreshold || undefined
       childForm.failureThreshold = this.form.failureThreshold || undefined
-      
+
       let obj = {}
       for (let i = 0; i < this.form.httpHeaders.length; i++) {
         if (this.form.httpHeaders[i].key !== "") {
@@ -169,7 +198,7 @@ export default {
         }
       }
       childForm.httpHeaders = this.form.httpHeaders.length !== 0 ? obj : undefined
-      
+      let commands = []
       switch (this.check_type) {
         case "httpGet":
           childForm.httpGet = {}
@@ -188,8 +217,10 @@ export default {
           childForm.tcpSocket.port = this.form.tcpSocket.port || undefined
           break
         case "exec":
-          childForm.exec = {}
-          childForm.exec.command = this.form.exec.command ? this.form.exec.command.split(",") : undefined
+          for (const cmd of this.form.exec.command) {
+            commands.push(cmd.value)
+          }
+          childForm.exec = { command: commands.length !== 0 ? commands : undefined }
           break
         default:
           break
@@ -246,7 +277,10 @@ export default {
         } else if (prodeForm.exec) {
           this.check_type = "exec"
           if (prodeForm.exec.command) {
-            this.form.exec.command = prodeForm.exec.command.join(",")
+            this.form.exec.command = []
+            for (const cmd of prodeForm.exec.command) {
+              this.form.exec.command.push({ value: cmd })
+            }
           }
         }
 

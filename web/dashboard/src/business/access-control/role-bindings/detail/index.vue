@@ -1,9 +1,9 @@
 <template>
   <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'RoleBindings'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="row-box">
         <el-col :span="15">
-          <el-card>
+          <el-card class="el-card">
             <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>

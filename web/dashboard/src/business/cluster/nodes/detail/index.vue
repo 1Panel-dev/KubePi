@@ -1,14 +1,14 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{ name: 'Nodes' }" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="row-box">
         <el-col :span="15">
-          <el-card>
+          <el-card class="el-card" >
             <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
-          <el-card>
+          <el-card class="el-card" >
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" width="30%" align="left">

@@ -1,15 +1,16 @@
 <template>
   <layout-content header="Limit Ranges">
-    <complex-table  :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create'}">
-            YAML
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create'}">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -42,7 +43,7 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "LimitRanges",
-  components: { ComplexTable, LayoutContent ,KoTableOperations},
+  components: { ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
@@ -56,11 +57,11 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "LimitRangeEdit",
-              params: {namespace:row.metadata.namespace,name:row.metadata.name}
+              params: { namespace: row.metadata.namespace, name: row.metadata.name }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"limitranges",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "limitranges", verb: "update" })
           }
         },
         {
@@ -76,8 +77,8 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"limitranges",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "limitranges", verb: "delete" })
           }
         },
       ],
@@ -97,7 +98,7 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listLimitRanges(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listLimitRanges(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.paginationConfig.total = res.total
         this.loading = false
@@ -144,7 +145,7 @@ export default {
     openDetail (row) {
       this.$router.push({
         name: "LimitRangeDetail",
-        params: {namespace:row.metadata.namespace,name:row.metadata.name}
+        params: { namespace: row.metadata.namespace, name: row.metadata.name }
       })
     }
   },

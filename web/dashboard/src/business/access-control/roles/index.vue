@@ -1,15 +1,21 @@
 <template>
   <layout-content header="Roles">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                   type="primary" size="small"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -17,7 +23,8 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="50px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="50px"
+                       show-overflow-tooltip>
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
@@ -60,8 +67,13 @@ export default {
               query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "roles",
+              verb: "update"
+            })
           }
         },
         {
@@ -74,8 +86,13 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "roles",
+              verb: "update"
+            })
           }
         },
         {
@@ -91,8 +108,13 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"roles",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "roles",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -112,7 +134,7 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listRoles(this.cluster, "",true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listRoles(this.cluster, "", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.paginationConfig.total = res.total
         this.loading = false
@@ -120,8 +142,11 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "RoleCreate",
+        name: "RoleCreate", query: { yamlShow: false }
       })
+    },
+    yamlCreate () {
+      this.$router.push({ name: "RoleCreate", query: { yamlShow: true } })
     },
     onDelete (row) {
       this.$confirm(

@@ -2,14 +2,15 @@
   <layout-content header="StatefulSets">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button-group>
+          <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}">
+            YAML
+          </el-button>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
-        </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
@@ -113,6 +114,9 @@ export default {
     },
     openDetail(row) {
       this.$router.push({ name: "StatefulSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    },
+    yamlCreate() {
+      this.$router.push({ name: "StatefulSetCreate", params: { operation: "create" }, query: { yamlShow: true } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

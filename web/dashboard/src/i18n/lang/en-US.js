@@ -190,6 +190,9 @@ const message = {
       desired: "Desired",
 
       general: "General",
+      volume_claim_template: "Volume Claim Template",
+      volume: "Volume",
+      spec: "Spec",
       container_name: "Container Name",
       container_image: "Container Image",
       pull_policy: "Pull Policy",
@@ -210,7 +213,7 @@ const message = {
       host_ip: "Host IP",
 
       command: "Command",
-      entry_point: "Entrypoint",
+      commands: "Commands",
       arguments: "Arguments",
       working_dir: "WorkingDir",
       once: "Once",
@@ -343,7 +346,6 @@ const message = {
       pvc: "PVC",
       volume_name: "Volume Name",
       volume_mount: "Valume Mount",
-      volume: " Valume",
       mount: "Mount",
       default_mode: "Default Mode",
       optional: "Optional",
@@ -351,7 +353,6 @@ const message = {
       sub_path_in_volume: "Sub Path In Volume",
       read_only: "Read Only",
 
-      volume_claim_template: "Volume Claim Templates",
       pv_name: "Persistent Volume Name",
       new_pv: "Use a storage class to provision a new persistent volume",
       existing_pv: "Use an existing persistent volume",
@@ -388,6 +389,7 @@ const message = {
     },
     storage: {
       provisioner: "Provisioner",
+      path_or_node: "Path Or Node",
       storage: "Storage",
       accessModes: "AccessModes",
       capacity: "Capacity",

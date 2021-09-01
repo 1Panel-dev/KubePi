@@ -1,48 +1,56 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'CronJobs'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-card>
-        <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
-      </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
-        <el-tab-pane label="Jobs" name="Jobs" >
-          <complex-table :data="jobs">
-            <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
-              <template v-slot:default="{row}">
-                <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
-                  {{ $t('commons.status.Succeeded') }}
-                </el-button>
-                <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
-                  {{ $t('commons.status.Succeeded') }}
-                </el-button>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
-              <template v-slot:default="{row}">
-                <el-link @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{ row.metadata.name }}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
-              <template v-slot:default="{row}">
-                {{ row.spec.completions }} / {{ row.spec.parallelism }}
-              </template>
-            </el-table-column>
-            <el-table-column sortable :label="$t('business.workload.duration')" min-width="40">
-              <template v-slot:default="{row}">
-                {{ getDuration(row) }}S
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
-              <template v-slot:default="{row}">
-                {{ row.metadata.creationTimestamp | age }}
-              </template>
-            </el-table-column>
-          </complex-table>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('business.event.event')" name="Events">
-          <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
-        </el-tab-pane>
-      </el-tabs>
+      <el-row class="row-box">
+        <el-card class="el-card">
+          <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
+        </el-card>
+      </el-row>
+      <el-row>
+        <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
+          <el-tab-pane label="Jobs" name="Jobs">
+            <complex-table :data="jobs">
+              <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
+                <template v-slot:default="{row}">
+                  <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
+                    {{ $t("commons.status.Succeeded") }}
+                  </el-button>
+                  <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
+                    {{ $t("commons.status.Succeeded") }}
+                  </el-button>
+                </template>
+              </el-table-column>
+              <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
+                <template v-slot:default="{row}">
+                  <el-link @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{
+                      row.metadata.name
+                    }}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+                <template v-slot:default="{row}">
+                  {{ row.spec.completions }} / {{ row.spec.parallelism }}
+                </template>
+              </el-table-column>
+              <el-table-column sortable :label="$t('business.workload.duration')" min-width="40">
+                <template v-slot:default="{row}">
+                  {{ getDuration(row) }}S
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('commons.table.created_time')" min-width="60"
+                               prop="metadata.creationTimestamp" fix>
+                <template v-slot:default="{row}">
+                  {{ row.metadata.creationTimestamp | age }}
+                </template>
+              </el-table-column>
+            </complex-table>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('business.event.event')" name="Events">
+            <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors"/>
+          </el-tab-pane>
+        </el-tabs>
+      </el-row>
     </div>
     <div v-if="yamlShow">
       <yaml-editor :value="form" :read-only="true"></yaml-editor>
@@ -55,11 +63,11 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getWorkLoadByName } from "@/api/workloads"
-import { listJobsWithNsSelector } from "@/api/jobs"
+import {getWorkLoadByName} from "@/api/workloads"
+import {listJobsWithNsSelector} from "@/api/jobs"
 import YamlEditor from "@/components/yaml-editor"
 import ComplexTable from "@/components/complex-table"
-import { mixin } from "@/utils/resourceRoutes"
+import {mixin} from "@/utils/resourceRoutes"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoDetailEvents from "@/components/detail/detail-events"
 
@@ -71,7 +79,7 @@ export default {
     name: String,
     namespace: String,
   },
-  data() {
+  data () {
     return {
       form: {
         metadata: {
@@ -100,7 +108,7 @@ export default {
     },
   },
   methods: {
-    getDetail() {
+    getDetail () {
       this.loading = true
       this.events = []
       getWorkLoadByName(this.clusterName, "cronjobs", this.namespace, this.name).then((res) => {
@@ -121,13 +129,13 @@ export default {
         this.loading = false
       })
     },
-    getDuration(row) {
+    getDuration (row) {
       let startTime = new Date(row.status.startTime)
       let endTime = new Date(row.status.completionTime)
       return Math.floor((endTime - startTime) / 1000)
     },
   },
-  created() {
+  created () {
     this.clusterName = this.$route.query.cluster
     this.getDetail()
   },

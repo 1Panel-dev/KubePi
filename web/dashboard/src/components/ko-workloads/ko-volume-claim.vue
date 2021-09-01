@@ -1,69 +1,48 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :title="$t('business.workload.volume_claim_template')">
-      <el-form label-position="top" :disabled="isReadOnly">
-        <div v-for="(item, index) in volumeClaimTemplates" :key="index">
-          <el-card style="margin-top: 10px">
-            <div slot="header" class="clearfix">
-              <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
-            </div>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item :label="$t('business.workload.pv_name')">
-                  <ko-form-item itemType="input" v-model="item.name" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item :label="$t('business.workload.type')">
-                  <ko-form-item itemType="radio" v-model="item.type" :radios="type_list" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" v-if="item.type === 'new'">
-              <el-col :span="12">
-                <el-form-item :label="$t('business.workload.storage_class')">
-                  <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12" v-if="item.type === 'new'">
-                <el-form-item :label="$t('business.workload.size')">
-                  <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" v-if="item.type === 'existing'">
-              <el-col :span="12">
-                <el-form-item :label="$t('business.workload.pvc')">
-                  <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-form-item :label="$t('business.workload.access_modes')">
-                <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
-              </el-form-item>
-            </el-row>
-          </el-card>
+    <el-form label-position="top" :disabled="isReadOnly">
+      <div v-for="(item, index) in volumeClaimTemplates" :key="index">
+        <div style="margin-top: 20px">
+          <span>{{index + 1}}</span>
+          <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
+          <el-divider />
+          <el-form-item :label="$t('business.workload.pv_name')">
+            <ko-form-item itemType="input" @change="changeName" v-model="item.name" />
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.type')">
+            <ko-form-item itemType="radio" radioLayout="vertical" v-model="item.type" :radios="type_list" />
+          </el-form-item>
+          <div v-if="item.type === 'new'">
+            <el-form-item :label="$t('business.workload.storage_class')">
+              <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
+            </el-form-item>
+            <el-form-item :label="$t('business.workload.size')" v-if="item.type === 'new'">
+              <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
+            </el-form-item>
+          </div>
+          <el-form-item v-if="item.type === 'existing'" :label="$t('business.workload.pvc')">
+            <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.access_modes')">
+            <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
+          </el-form-item>
         </div>
-        <el-row>
-          <el-col :span="12">
-            <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}{{$t('business.workload.volume_claim_template')}}</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </ko-card>
+      </div>
+      <el-row>
+        <el-col :span="12">
+          <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoVolumeClaim",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     volumeClaimParentObj: Object,
     currentNamespace: String,
@@ -123,16 +102,21 @@ export default {
         accessModes: [],
         storage: 10,
       })
+      this.$emit("loadVolumes", "VolumeClaimTemplates", [], this.volumeClaimTemplates)
     },
     handleVolumeDelete(index) {
       this.volumeClaimTemplates.splice(index, 1)
+      this.$emit("loadVolumes", "VolumeClaimTemplates", [], this.volumeClaimTemplates)
+    },
+    changeName() {
+      this.$emit("loadVolumes", "VolumeClaimTemplates", [], this.volumeClaimTemplates)
     },
 
     transformation(parentFrom) {
       let volumeClaimTemplates = []
       for (const volume of this.volumeClaimTemplates) {
         let item = {
-          type: "persistentvolumeclaim",
+          kind: "PersistentVolumeClaim",
           metadata: {
             namespace: this.currentNamespace,
             name: volume.name,
@@ -142,7 +126,7 @@ export default {
           },
         }
         if (volume.type === "new") {
-          item.spec.resources = {requests: {storage: volume.storage.toString() + "Gi"}}
+          item.spec.resources = { requests: { storage: volume.storage.toString() + "Gi" } }
           item.spec.storageClassName = volume.storageClass
         } else {
           item.spec.volumeName = volume.volumeName

@@ -1,15 +1,20 @@
 <template>
   <layout-content header="CronJobs">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
+        <el-button v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}"
+                   type="primary" size="small"  @click="yamlCreate">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
@@ -17,9 +22,10 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule" />
-      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="70" prop="status.lastScheduleTime">
+      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace"/>
+      <el-table-column sortable :label="$t('business.workload.schedule')" min-width="40" prop="spec.schedule"/>
+      <el-table-column sortable :label="$t('business.workload.lastScheduleTime')" min-width="70"
+                       prop="status.lastScheduleTime">
         <template v-slot:default="{row}">
           {{ row.status.lastScheduleTime | age }}
         </template>
@@ -41,16 +47,16 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
-import { downloadYaml } from "@/utils/actions"
+import {listWorkLoads, deleteWorkLoad} from "@/api/workloads"
+import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
-import { checkPermissions } from "@/utils/permission"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "CronJobs",
   components: { LayoutContent, ComplexTable, KoTableOperations },
-  data() {
+  data () {
     return {
       buttons: [
         {
@@ -64,7 +70,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({  scope: "namespace",apiGroup: "batch", resource: "cronjobs", verb: "update" })
+            return !checkPermissions({ scope: "namespace", apiGroup: "batch", resource: "cronjobs", verb: "update" })
           },
         },
         {
@@ -114,17 +120,20 @@ export default {
     }
   },
   methods: {
-    onCreate() {
+    onCreate () {
       this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "CronJobDetail",
         params: { namespace: row.metadata.namespace, name: row.metadata.name },
         query: { yamlShow: false },
       })
     },
-    onDelete(row) {
+    yamlCreate () {
+      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: true } })
+    },
+    onDelete (row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -155,7 +164,7 @@ export default {
         }
       })
     },
-    search(resetPage) {
+    search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -173,7 +182,7 @@ export default {
         })
     },
   },
-  mounted() {
+  mounted () {
     this.clusterName = this.$route.query.cluster
     this.search()
   },
