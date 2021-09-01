@@ -32,7 +32,7 @@
       </div>
       <el-row>
         <el-col :span="12">
-          <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}{{$t('business.workload.volume_claim_template')}}</el-button>
+          <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}</el-button>
         </el-col>
       </el-row>
     </el-form>

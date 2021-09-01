@@ -34,7 +34,7 @@
         </tr>
         <tr>
           <td align="left">
-            <el-button @click="handleMountAdd()">{{$t('business.workload.add')}}{{$t('business.workload.mount')}}</el-button>
+            <el-button @click="handleMountAdd()">{{$t('business.workload.add')}}</el-button>
           </td>
         </tr>
       </table>
