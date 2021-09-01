@@ -20,14 +20,12 @@
               <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
             </el-form-item>
           </div>
-          <div v-if="item.type === 'existing'">
-            <el-form-item :label="$t('business.workload.pvc')">
-              <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
-            </el-form-item>
-            <el-form-item :label="$t('business.workload.access_modes')">
-              <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
-            </el-form-item>
-          </div>
+          <el-form-item v-if="item.type === 'existing'" :label="$t('business.workload.pvc')">
+            <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.access_modes')">
+            <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
+          </el-form-item>
         </div>
       </div>
       <el-row>
@@ -118,7 +116,7 @@ export default {
       let volumeClaimTemplates = []
       for (const volume of this.volumeClaimTemplates) {
         let item = {
-          type: "persistentvolumeclaim",
+          kind: "PersistentVolumeClaim",
           metadata: {
             namespace: this.currentNamespace,
             name: volume.name,
