@@ -1,15 +1,21 @@
 <template>
   <layout-content header="Cluster Roles">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                   type="primary" size="small"
+                   @click="yamlCreate">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
@@ -51,12 +57,17 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ClusterRoleEdit",
-              params: {name: row.metadata.name },
+              params: { name: row.metadata.name },
               query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "update"
+            })
           }
         },
         {
@@ -65,12 +76,17 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ClusterRoleEdit",
-              params: {name: row.metadata.name },
+              params: { name: row.metadata.name },
               query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "update"
+            })
           }
         },
         {
@@ -86,8 +102,13 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -115,8 +136,11 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "ClusterRoleCreate",
+        name: "ClusterRoleCreate", query: { yamlShow: false }
       })
+    },
+    yamlCreate () {
+      this.$router.push({ name: "ClusterRoleCreate", query: { yamlShow: true } })
     },
     onDelete (row) {
       this.$confirm(

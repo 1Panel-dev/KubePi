@@ -2,14 +2,17 @@
   <layout-content header="Role Bindings">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                     type="primary" size="small"
+                     @click="yamlCreate">
+            YAML
+          </el-button>
           <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
             {{ $t("commons.button.create") }}
           </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
-        </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -146,8 +149,11 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "RoleBindingCreate",
+        name: "RoleBindingCreate", query: { yamlShow: false }
       })
+    },
+    yamlCreate () {
+      this.$router.push({ name: "RoleBindingCreate", query: { yamlShow: true } })
     },
     onDelete (row) {
       this.$confirm(

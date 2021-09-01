@@ -1,15 +1,16 @@
 <template>
   <layout-content header="Service Accounts">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate"   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -17,7 +18,8 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="50px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="50px"
+                       show-overflow-tooltip>
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
@@ -42,8 +44,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ServiceAccounts",
-  components: {ComplexTable, LayoutContent, KoTableOperations},
-  data() {
+  components: { ComplexTable, LayoutContent, KoTableOperations },
+  data () {
     return {
       data: [],
       selects: [],
@@ -56,11 +58,11 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ServiceAccountEdit",
-              params: {namespace: row.metadata.namespace, name: row.metadata.name},
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"serviceaccounts",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "serviceaccounts", verb: "update" })
           }
         },
         {
@@ -76,8 +78,8 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"",resource:"serviceaccounts",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "serviceaccounts", verb: "delete" })
           }
         },
       ],
@@ -92,30 +94,30 @@ export default {
     }
   },
   methods: {
-    search(resetPage) {
+    search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listServiceAccounts(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listServiceAccounts(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({
         name: "ServiceAccountCreate",
       })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteServiceAccount(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -128,27 +130,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search(true)
-              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
         }
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "ServiceAccountDetail",
-        params: {namespace: row.metadata.namespace, name: row.metadata.name}
+        params: { namespace: row.metadata.namespace, name: row.metadata.name }
       })
     }
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.search()
   }
