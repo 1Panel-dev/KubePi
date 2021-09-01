@@ -4,20 +4,19 @@
                    :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
-                   @click="yamlCreate">
+        <el-button
+                v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}"
+                type="primary" size="small"
+                @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
@@ -83,8 +82,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "HPA",
-  components: {ComplexTable, LayoutContent, KoTableOperations},
-  data() {
+  components: { ComplexTable, LayoutContent, KoTableOperations },
+  data () {
     return {
       data: [],
       page: {
@@ -101,13 +100,13 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "HPAEdit",
-              params: {namespace: row.metadata.namespace, name: row.metadata.name},
-              query: {yamlShow: false}
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
             })
           },
           disabled: () => {
             return !checkPermissions({
-              scope: 'namespace',
+              scope: "namespace",
               apiGroup: "autoscaling",
               resource: "horizontalpodautoscalers",
               verb: "update"
@@ -120,13 +119,13 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "HPAEdit",
-              params: {name: row.metadata.name, namespace: row.metadata.namespace},
-              query: {yamlShow: true}
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true }
             })
           },
           disabled: () => {
             return !checkPermissions({
-              scope: 'namespace',
+              scope: "namespace",
               apiGroup: "autoscaling",
               resource: "horizontalpodautoscalers",
               verb: "update"
@@ -148,7 +147,7 @@ export default {
           },
           disabled: () => {
             return !checkPermissions({
-              scope: 'namespace',
+              scope: "namespace",
               apiGroup: "autoscaling",
               resource: "horizontalpodautoscalers",
               verb: "delete"
@@ -167,7 +166,7 @@ export default {
     }
   },
   methods: {
-    search(resetPage) {
+    search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -178,24 +177,24 @@ export default {
         this.paginationConfig.total = res.total
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({
-        name: "HPACreate", query:{yamlShow:false}
+        name: "HPACreate", query: { yamlShow: false }
       })
     },
-    yamlCreate() {
+    yamlCreate () {
       this.$router.push({
-        name: "HPACreate", query:{yamlShow:true}
+        name: "HPACreate", query: { yamlShow: true }
       })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(
-          this.$t("commons.confirm_message.delete"),
-          this.$t("commons.message_box.prompt"), {
-            confirmButtonText: this.$t("commons.button.confirm"),
-            cancelButtonText: this.$t("commons.button.cancel"),
-            type: "warning",
-          }).then(() => {
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteHpa(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -208,28 +207,28 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-              .then(() => {
-                this.search(true)
-                this.$message({
-                  type: "success",
-                  message: this.$t("commons.msg.delete_success"),
-                })
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
               })
-              .catch(() => {
-                this.search(true)
-              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
         }
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "HPADetail",
-        params: {namespace: row.metadata.namespace, name: row.metadata.name},
-        query: {yamlShow: false}
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false }
       })
     }
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.search()
   }

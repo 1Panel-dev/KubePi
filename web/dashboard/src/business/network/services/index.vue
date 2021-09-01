@@ -1,19 +1,20 @@
 <template>
   <layout-content header="Services">
-    <complex-table  :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
         <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
+                   type="primary" size="small"
                    @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
@@ -35,7 +36,9 @@
       <el-table-column :label="$t('business.network.target_port')" min-width="200px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
-            <span style="font-size: 12px"> {{ row.spec.clusterIP || "" }}:{{ value.port }} /{{ value.protocol }} > {{ value.targetPort }}</span>
+            <span style="font-size: 12px"> {{ row.spec.clusterIP || "" }}:{{ value.port }} /{{
+                value.protocol
+              }} > {{ value.targetPort }}</span>
             <br>
           </div>
         </template>
@@ -85,8 +88,8 @@ export default {
               query: { yamlShow: false }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope: "namespace",apiGroup:"",resource:"services",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "update" })
           }
         },
         {
@@ -99,8 +102,8 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope: "namespace",apiGroup:"",resource:"services",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "update" })
           }
         },
         {
@@ -116,8 +119,8 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope: "namespace",apiGroup:"",resource:"services",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "delete" })
           }
         },
       ],
@@ -145,12 +148,12 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "ServiceCreate",query: {yamlShow:false}
+        name: "ServiceCreate", query: { yamlShow: false }
       })
     },
-    yamlCreate() {
+    yamlCreate () {
       this.$router.push({
-        name: "ServiceCreate",query: {yamlShow:true}
+        name: "ServiceCreate", query: { yamlShow: true }
       })
     },
     onDelete (row) {

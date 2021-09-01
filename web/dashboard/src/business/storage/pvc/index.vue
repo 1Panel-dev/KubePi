@@ -1,19 +1,22 @@
 <template>
   <layout-content header="Persistent Volume Claims">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}" @click="onCreate">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
         <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
+                   type="primary" size="small"
                    @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button type="primary" size="small"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
+                   @click="onCreate">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}"
+                   :disabled="selects.length===0" @click="onDelete()">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column sortable type="selection" fix></el-table-column>
@@ -35,15 +38,15 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace" />
+      <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
       <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName">
         <template v-slot:default="{row}">
           <el-link @click="openPvDetail(row)">{{ row.spec.volumeName }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage" />
-      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName" />
-      <el-table-column label="volumeMode" prop="spec.volumeMode" />
+      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
+      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
+      <el-table-column label="volumeMode" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -57,15 +60,15 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
-import { downloadYaml } from "@/utils/actions"
+import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import { deletePvcs, listPvcs } from "@/api/pvc"
-import { checkPermissions } from "@/utils/permission"
+import {deletePvcs, listPvcs} from "@/api/pvc"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "PersistentVolumeClaim",
   components: { ComplexTable, LayoutContent, KoTableOperations },
-  data() {
+  data () {
     return {
       data: [],
       selects: [],
@@ -83,7 +86,12 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace",apiGroup: "", resource: "persistentvolumeclaims", verb: "update" })
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "",
+              resource: "persistentvolumeclaims",
+              verb: "update"
+            })
           },
         },
         {
@@ -100,7 +108,12 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace",apiGroup: "", resource: "persistentvolumeclaims", verb: "delete" })
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "",
+              resource: "persistentvolumeclaims",
+              verb: "delete"
+            })
           },
         },
       ],
@@ -115,7 +128,7 @@ export default {
     }
   },
   methods: {
-    search() {
+    search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
       listPvcs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then((res) => {
@@ -124,19 +137,19 @@ export default {
         this.paginationConfig.total = res.total
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({
         name: "PersistentVolumeClaimCreate",
         query: { yamlShow: false },
       })
     },
-    yamlCreate() {
+    yamlCreate () {
       this.$router.push({
         name: "PersistentVolumeClaimCreate",
         query: { yamlShow: true },
       })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -167,7 +180,7 @@ export default {
         }
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "PersistentVolumeClaimDetail",
         params: {
@@ -177,7 +190,7 @@ export default {
         query: { yamlShow: false },
       })
     },
-    openPvDetail(row) {
+    openPvDetail (row) {
       this.$router.push({
         name: "PersistentVolumeDetail",
         params: {
@@ -187,7 +200,7 @@ export default {
       })
     },
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.search()
   },
