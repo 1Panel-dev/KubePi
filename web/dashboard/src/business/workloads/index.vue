@@ -18,6 +18,14 @@
                   <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
                 </el-form-item>
               </el-row>
+              <el-row>
+                <span style="line-height: 32px;font-size: 14px;color: #ebeef5;">{{$t('business.workload.annotations')}}</span>
+                <ko-kv-table @updateKvDatas="updateKvDatas" kvType="annotation" :isReadOnly="readOnly" :dataObj="form.metadata.annotations" />
+              </el-row>
+              <el-row style="margin-top:10px; margin-bottom:10px">
+                <span style="line-height: 32px;font-size: 14px;color: #ebeef5;">{{$t('business.workload.label')}}</span>
+                <ko-kv-table @updateKvDatas="updateKvDatas" :resourceName="form.metadata.name" kvType="label" :isReadOnly="readOnly" :dataObj="form.metadata.labels" />
+              </el-row>
               <el-row v-if="isReplicasShow()">
                 <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
                   <ko-form-item :disabled="readOnly" placeholder="Any text you want that better describes this resource" itemType="number" v-model.number="form.spec.replicas" />
@@ -25,7 +33,7 @@
               </el-row>
               <el-row v-if="isStatefulSet()">
                 <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName">
-                  <ko-form-item :disabled="readOnly" :noClear="true" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service" />
+                  <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service" />
                 </el-form-item>
               </el-row>
               <el-row v-if="isCronJob()">
@@ -39,7 +47,7 @@
         <el-col :span="spanWidth" v-if="isStatefulSet()">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume_claim_template')}}</span>
-            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :currentNamespace="form.metadata.namespace" :pvcList="pvc_list" :scList="sc_list" />
+            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :pvcList="pvc_list" :scList="sc_list" />
           </el-card>
         </el-col>
         <el-col :span="spanWidth">
@@ -69,13 +77,6 @@
             <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
             <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
             <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
-          </el-tab-pane>
-
-          <el-tab-pane :label="$t('business.workload.labels_annotations')" name="Labels/Annotations">
-            <ko-labels :isReadOnly="readOnly" :label-obj.sync="form.metadata.labels" :labelTitle="$t('business.workload.label')" />
-            <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="form.metadata.annotations" :annotationsTitle="$t('business.workload.annotations')" />
-            <ko-labels :isReadOnly="readOnly" :label-obj.sync="podMetadata.labels" :labelTitle="'Pod ' + $t('business.workload.label')" />
-            <ko-annotations :isReadOnly="readOnly" :annotations-obj.sync="podMetadata.annotations" :annotationsTitle="'Pod ' + $t('business.workload.annotations')" />
           </el-tab-pane>
 
           <el-tab-pane :label="$t('business.workload.network')" name="Networking">
@@ -130,6 +131,7 @@ import KoFormItem from "@/components/ko-form-item/index"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
 
+import KoKvTable from "@/components/ko-workloads/ko-kv-table.vue"
 import KoBase from "@/components/ko-workloads/ko-base.vue"
 import KoVolume from "@/components/ko-workloads/ko-volume.vue"
 import KoVolumeClaim from "@/components/ko-workloads/ko-volume-claim.vue"
@@ -149,8 +151,6 @@ import KoUpgradePolicyStatefulset from "@/components/ko-workloads/ko-upgrade-pol
 import KoUpgradePolicyDaemonset from "@/components/ko-workloads/ko-upgrade-policy-daemonset.vue"
 import KoUpgradePolicyCronjob from "@/components/ko-workloads/ko-upgrade-policy-cronjob.vue"
 import KoUpgradePolicyJob from "@/components/ko-workloads/ko-upgrade-policy-job.vue"
-import KoLabels from "@/components/ko-workloads/ko-labels.vue"
-import KoAnnotations from "@/components/ko-workloads/ko-annotations.vue"
 import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import { getWorkLoadByName, createWorkLoad, updateWorkLoad } from "@/api/workloads"
@@ -169,6 +169,7 @@ export default {
     LayoutContent,
     KoFormItem,
     YamlEditor,
+    KoKvTable,
     KoBase,
     KoVolumeClaim,
     KoVolume,
@@ -188,13 +189,10 @@ export default {
     KoUpgradePolicyDaemonset,
     KoUpgradePolicyCronjob,
     KoUpgradePolicyJob,
-    KoLabels,
-    KoAnnotations,
     KoVolumeMount,
   },
   data() {
     return {
-      activeItems: ["1"],
       name: "",
       type: "",
       operation: "",
@@ -226,6 +224,8 @@ export default {
         metadata: {
           name: "",
           namespace: "",
+          labels: { "k8s.kubepi.cn/name": "" },
+          annotations: {},
         },
         spec: {
           replicas: 1,
@@ -337,7 +337,7 @@ export default {
     },
     loadVolumes(type, volumes, volumeClaimTemplates) {
       if (type !== "All") {
-        this.volume_list =  this.volume_list.filter(item => {
+        this.volume_list = this.volume_list.filter((item) => {
           return item.belongTo !== type
         })
         for (const vo of volumes) {
@@ -409,6 +409,17 @@ export default {
         this.podSpec.initContainers.splice(index, 1)
       } else {
         this.podSpec.containers.splice(index, 1)
+      }
+    },
+    updateKvDatas(type, datas) {
+      if (type === "label") {
+        this.form.metadata.labels = datas
+        this.podMetadata.labels = datas
+        if (!this.isJob()) {
+          this.form.spec.selector = { matchLabels: datas }
+        }
+      } else {
+        this.form.metadata.annotations = datas
       }
     },
     gatherFormValid() {
@@ -494,10 +505,6 @@ export default {
         delete this.form.spec.schedule
         this.form.spec.template.spec = this.podSpec
         this.form.spec.template.metadata = this.podMetadata
-      }
-      this.podMetadata.labels = this.podMetadata.labels || { app: this.form.metadata.name }
-      if (!this.isJob()) {
-        this.form.spec.selector = { matchLabels: this.podMetadata.labels }
       }
       return JSON.parse(JSON.stringify(this.form))
     },
