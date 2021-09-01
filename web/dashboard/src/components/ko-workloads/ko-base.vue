@@ -76,7 +76,7 @@ export default {
       this.selectContainerIndex = isChangeType ? 0 : this.selectContainerIndex
       if (this.selectContainerType === "initContainers") {
         if (!this.initContainers || this.initContainers.length === 0) {
-          const itemContainer = { name: "initContainer-0", image: "", imagePullPolicy: "ifNotPresent" }
+          const itemContainer = { name: "initContainer-0", image: "", imagePullPolicy: "IfNotPresent" }
           this.initContainers = [itemContainer]
           this.currentContainerType = this.selectContainerType
           this.currentContainerIndex = this.selectContainerIndex
@@ -101,7 +101,7 @@ export default {
     handleAddContainer() {
       let itemContainer = {}
       itemContainer.image = ""
-      itemContainer.imagePullPolicy = "ifNotPresent"
+      itemContainer.imagePullPolicy = "IfNotPresent"
       if (this.selectContainerType === "initContainers") {
         if (this.initContainers) {
           itemContainer.name = "init_container-" + this.initContainers.length.toString()

@@ -4,17 +4,57 @@
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.commands')" prop="command">
-              <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="form.command" />
-            </el-form-item>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="93%" align="left">
+                  <label>{{$t('business.workload.commands')}}</label>
+                </th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="row in form.command" v-bind:key="row.index">
+                <td>
+                  <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleCommandAdd">{{$t('business.workload.add')}}</el-button>
+                </td>
+              </tr>
+            </table>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.arguments')" prop="args">
-              <ko-form-item placeholder="e.g. /usr/sbin/httpd -f httpd.conf" itemType="textarea" v-model="form.args" />
-            </el-form-item>
+            <table style="width: 98%" class="tab-table">
+              <tr>
+                <th scope="col" width="93%" align="left">
+                  <label>{{$t('business.workload.arguments')}}</label>
+                </th>
+                <th align="left"></th>
+              </tr>
+              <tr v-for="row in form.args" v-bind:key="row.index">
+                <td>
+                  <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+                </td>
+                <td>
+                  <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(row.index)">
+                    {{ $t("commons.button.delete") }}
+                  </el-button>
+                </td>
+              </tr>
+              <tr>
+                <td align="left">
+                  <el-button @click="handleArgsAdd">{{$t('business.workload.add')}}</el-button>
+                </td>
+              </tr>
+            </table>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="20" style="margin-top: 10px">
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.working_dir')" prop="workingDir">
               <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
@@ -50,8 +90,8 @@ export default {
   data() {
     return {
       form: {
-        args: "",
-        command: "",
+        args: [],
+        command: [],
         workingDir: "",
         stdin: null,
         tty: false,
@@ -65,9 +105,36 @@ export default {
     }
   },
   methods: {
+    handleCommandAdd() {
+      var item = {
+        value: "",
+      }
+      this.form.command.push(item)
+    },
+    handleCommandDelete(index) {
+      this.form.command.splice(index, 1)
+    },
+    handleArgsAdd() {
+      var item = {
+        value: "",
+      }
+      this.form.args.push(item)
+    },
+    handleArgsDelete(index) {
+      this.form.args.splice(index, 1)
+    },
+
     transformation(parentFrom) {
-      parentFrom.command = this.form.command ? this.form.command.split(",") : undefined
-      parentFrom.args = this.form.args ? this.form.args.split(",") : undefined
+      let commands = []
+      for (const cmd of this.form.command) {
+        commands.push(cmd.value)
+      }
+      let args = []
+      for (const arg of this.form.args) {
+        args.push(arg.value)
+      }
+      parentFrom.command = commands.length !== 0 ? commands : undefined
+      parentFrom.args = args.length !== 0 ? args : undefined
       parentFrom.workingDir = this.form.workingDir || undefined
       if (this.form.stdin) {
         switch (this.form.stdin) {
@@ -92,10 +159,16 @@ export default {
   mounted() {
     if (this.commandParentObj) {
       if (this.commandParentObj.command) {
-        this.form.command = this.commandParentObj.command.join(",")
+        this.form.command = []
+        for (const item of this.commandParentObj.command) {
+          this.form.command.push({ value: item })
+        }
       }
       if (this.commandParentObj.args) {
-        this.form.args = this.commandParentObj.args.join(",")
+        this.form.args = []
+        for (const item of this.commandParentObj.args) {
+          this.form.args.push({ value: item })
+        }
       }
       if (this.commandParentObj.workingDir) {
         this.form.workingDir = this.commandParentObj.workingDir
