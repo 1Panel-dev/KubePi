@@ -1,20 +1,24 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Jobs'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-card>
-        <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
-      </el-card>
-      <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
-        <el-tab-pane label="Pods" name="Pods">
-          <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('business.common.conditions')" name="Conditions">
-          <ko-detail-conditions :conditions="form.status.conditions" />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('business.event.event')" name="Events">
-          <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
-        </el-tab-pane>
-      </el-tabs>
+      <el-row class="row-box">
+        <el-card class="el-card">
+          <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
+        </el-card>
+      </el-row>
+      <el-row>
+        <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
+          <el-tab-pane label="Pods" name="Pods">
+            <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('business.common.conditions')" name="Conditions">
+            <ko-detail-conditions :conditions="form.status.conditions"/>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('business.event.event')" name="Events">
+            <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors"/>
+          </el-tab-pane>
+        </el-tabs>
+      </el-row>
     </div>
     <div v-if="yamlShow">
       <yaml-editor :value="form" :read-only="true"></yaml-editor>
@@ -27,7 +31,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { getWorkLoadByName } from "@/api/workloads"
+import {getWorkLoadByName} from "@/api/workloads"
 import YamlEditor from "@/components/yaml-editor"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoDetailPods from "@/components/detail/detail-pods"
@@ -41,7 +45,7 @@ export default {
     name: String,
     namespace: String,
   },
-  data() {
+  data () {
     return {
       form: {
         metadata: {},
@@ -67,7 +71,7 @@ export default {
     },
   },
   methods: {
-    getDetail() {
+    getDetail () {
       this.loading = true
       getWorkLoadByName(this.clusterName, "jobs", this.namespace, this.name).then((res) => {
         this.form = res
@@ -85,7 +89,7 @@ export default {
       })
     },
   },
-  created() {
+  created () {
     this.clusterName = this.$route.query.cluster
     this.getDetail()
   },

@@ -3,9 +3,9 @@
     <div class="grid-content bg-purple-light">
       <div v-if="!yamlShow">
         <el-form label-position="top" :model="form">
-          <el-row :gutter="20">
+          <el-row :gutter="20" class="row-box">
             <el-col :span="24">
-              <el-card>
+              <el-card class="el-card">
                 <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
               </el-card>
             </el-col>

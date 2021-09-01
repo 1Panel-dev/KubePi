@@ -1,9 +1,9 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
-    <el-row :gutter="24">
-      <div v-if="!yamlShow">
+    <div v-if="!yamlShow">
+      <el-row :gutter="24" class="row-box">
         <el-col :span="24">
-          <el-card>
+          <el-card class="el-card">
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" align="left">
@@ -16,7 +16,7 @@
                 <td colspan="3">{{ item.metadata.name }}</td>
               </tr>
               <tr>
-                <td>状态</td>
+                <td>{{ $t('commons.table.status')}}</td>
                 <td colspan="3">
                   <el-button v-if="item.status.phase === 'Bound'" type="success" size="mini" plain round>
                     {{ item.status.phase }}
@@ -27,11 +27,11 @@
                 </td>
               </tr>
               <tr>
-                <td>{{ this.$t('business.storage.capacity') }}</td>
+                <td>{{ this.$t("business.storage.capacity") }}</td>
                 <td colspan="3">{{ item.spec.capacity.storage }}</td>
               </tr>
               <tr>
-                <td>{{ this.$t('business.storage.accessModes') }}</td>
+                <td>{{ this.$t("business.storage.accessModes") }}</td>
                 <td colspan="3">
                   <div v-for="(value,index) in item.spec.accessModes" v-bind:key="index" class="myTag">
                     <el-tag type="info" size="small">
@@ -41,11 +41,11 @@
                 </td>
               </tr>
               <tr>
-                <td>{{ this.$t('business.storage.storageClass') }}</td>
+                <td>{{ this.$t("business.storage.storageClass") }}</td>
                 <td colspan="3">{{ item.spec.storageClassName }}</td>
               </tr>
               <tr>
-                <td>{{ this.$t('business.storage.reclaimPolicy') }}</td>
+                <td>{{ this.$t("business.storage.reclaimPolicy") }}</td>
                 <td colspan="3">{{ item.spec.persistentVolumeReclaimPolicy }}</td>
               </tr>
               <tr>
@@ -76,19 +76,19 @@
         <el-col :span="8">
           <el-card v-if="item.spec.claimRef !== undefined">
             <div class="card_title">
-              <h3>{{ this.$t('business.storage.claim') }}</h3>
+              <h3>{{ this.$t("business.storage.claim") }}</h3>
             </div>
-            <table  class="myTable">
+            <table class="myTable">
               <tr>
-                <td>{{ this.$t('business.configuration.type') }}</td>
+                <td>{{ this.$t("business.configuration.type") }}</td>
                 <td colspan="3">{{ item.spec.claimRef.kind }}</td>
               </tr>
               <tr>
-                <td>{{ this.$t('commons.table.name') }}</td>
+                <td>{{ this.$t("commons.table.name") }}</td>
                 <td colspan="3">{{ item.spec.claimRef.name }}</td>
               </tr>
               <tr>
-                <td>{{ this.$t('business.namespace.namespace') }}</td>
+                <td>{{ this.$t("business.namespace.namespace") }}</td>
                 <td colspan="3">{{ item.spec.claimRef.namespace }}</td>
               </tr>
             </table>
@@ -115,7 +115,9 @@
             </table>
           </el-card>
         </el-col>
-      </div>
+      </el-row>
+    </div>
+    <el-row>
       <div v-if="yamlShow">
         <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
         <div class="bottom-button">
@@ -127,76 +129,76 @@
 </template>
 
 <script>
-  import LayoutContent from "@/components/layout/LayoutContent";
-  import {isJSON} from "@/utils/data"
-  import {getPv} from "@/api/pv"
-  import YamlEditor from "@/components/yaml-editor"
+import LayoutContent from "@/components/layout/LayoutContent"
+import {isJSON} from "@/utils/data"
+import {getPv} from "@/api/pv"
+import YamlEditor from "@/components/yaml-editor"
 
-  export default {
-    name: "PersistentVolumeDetail",
-    components: {YamlEditor, LayoutContent},
-    props: {
-      name: String,
-    },
-    data() {
-      return {
-        item: {
-          metadata: {},
-          spec: {
-            capacity: {
-              storage: ''
-            }
-          },
-          status: {}
-        },
-        cluster: "",
-        yamlShow: false,
-        loading: false,
-        yaml: {}
-      }
-    },
-    methods: {
-      getDetail() {
-        this.loading = true
-        getPv(this.cluster, this.name).then(res => {
-          this.loading = false
-          this.item = res
-          if (this.yamlShow) {
-            this.yaml = JSON.parse(JSON.stringify(this.item))
+export default {
+  name: "PersistentVolumeDetail",
+  components: { YamlEditor, LayoutContent },
+  props: {
+    name: String,
+  },
+  data () {
+    return {
+      item: {
+        metadata: {},
+        spec: {
+          capacity: {
+            storage: ""
           }
-        })
+        },
+        status: {}
       },
-      getContent(value) {
-        const {Base64} = require("js-base64")
-        const content = Base64.decode(value)
-        return JSON.parse(content)
-      },
-      jsonV(str) {
-        const {Base64} = require("js-base64")
-        const content = Base64.decode(str)
-        return isJSON(content)
-      },
-      getValue(value) {
-        const {Base64} = require("js-base64")
-        return Base64.decode(value)
-      }
+      cluster: "",
+      yamlShow: false,
+      loading: false,
+      yaml: {}
+    }
+  },
+  methods: {
+    getDetail () {
+      this.loading = true
+      getPv(this.cluster, this.name).then(res => {
+        this.loading = false
+        this.item = res
+        if (this.yamlShow) {
+          this.yaml = JSON.parse(JSON.stringify(this.item))
+        }
+      })
     },
-    watch: {
-      yamlShow: function (newValue) {
-        this.$router.push({
-          name: "PersistentVolumeDetail",
-          params: {name: this.name},
-          query: {yamlShow: newValue}
-        })
-        this.getDetail()
-      }
+    getContent (value) {
+      const { Base64 } = require("js-base64")
+      const content = Base64.decode(value)
+      return JSON.parse(content)
     },
-    created() {
-      this.cluster = this.$route.query.cluster
-      this.yamlShow = this.$route.query.yamlShow === "true"
+    jsonV (str) {
+      const { Base64 } = require("js-base64")
+      const content = Base64.decode(str)
+      return isJSON(content)
+    },
+    getValue (value) {
+      const { Base64 } = require("js-base64")
+      return Base64.decode(value)
+    }
+  },
+  watch: {
+    yamlShow: function (newValue) {
+      this.$router.push({
+        name: "PersistentVolumeDetail",
+        params: { name: this.name },
+        query: { yamlShow: newValue }
+      })
       this.getDetail()
     }
+  },
+  created () {
+    this.cluster = this.$route.query.cluster
+    this.yamlShow = this.$route.query.yamlShow === "true"
+    this.getDetail()
   }
+}
 </script>
 
 <style scoped>
