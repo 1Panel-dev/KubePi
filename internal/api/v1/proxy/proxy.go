@@ -67,7 +67,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		// 生成transport
-		ts, err := h.generateTLSTransport(c, profile.Name)
+		ts, err := h.generateTLSTransport(c, profile)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
@@ -92,13 +92,17 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		canVisitAll, err := k.CanVisitAllNamespace(profile.Name)
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
+		canVisitAll := false
+		if profile.IsAdministrator {
+			canVisitAll = true
+		} else {
+			canVisitAll, err = k.CanVisitAllNamespace(profile.Name)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err)
+				return
+			}
 		}
-		//
 		apiUrl, err := url.Parse(fmt.Sprintf("%s%s", c.Spec.Connect.Forward.ApiServer, proxyPath))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -304,8 +308,18 @@ func fetchMultiNamespaceResource(client *http.Client, namespaces []string, apiUr
 	return &mergedContainer, nil
 }
 
-func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, username string) (http.RoundTripper, error) {
-	binding, err := h.clusterBindingService.GetBindingByClusterNameAndUserName(c.Name, username, common.DBOptions{})
+func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, profile session.UserProfile) (http.RoundTripper, error) {
+	if profile.IsAdministrator {
+		c := kubernetes.NewKubernetes(c)
+		adminConfig, err := c.Config()
+		if err != nil {
+			return nil, err
+		}
+		return rest.TransportFor(adminConfig)
+
+	}
+
+	binding, err := h.clusterBindingService.GetBindingByClusterNameAndUserName(c.Name, profile.Name, common.DBOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -317,11 +331,7 @@ func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, username string) (h
 			KeyData:  pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey}),
 		},
 	}
-	ts, err := rest.TransportFor(kubeConf)
-	if err != nil {
-		return nil, err
-	}
-	return ts, nil
+	return rest.TransportFor(kubeConf)
 }
 
 func ensureProxyPathValid(path string) string {

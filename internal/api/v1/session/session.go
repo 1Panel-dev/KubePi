@@ -86,6 +86,7 @@ func (h *Handler) Login() iris.Handler {
 			Email:               u.Email,
 			Language:            u.Language,
 			ResourcePermissions: permissions,
+			IsAdministrator:     u.IsAdmin,
 		}
 		session.Set("profile", profile)
 		ctx.StatusCode(iris.StatusOK)
@@ -174,12 +175,7 @@ func (h *Handler) GetProfile() iris.Handler {
 			ctx.Values().Set("message", "can not parse to session user")
 			return
 		}
-		permissions, err := h.aggregateResourcePermissions(p.Name)
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
+
 		user, err := h.userService.GetByNameOrEmail(p.Name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -187,13 +183,21 @@ func (h *Handler) GetProfile() iris.Handler {
 			return
 		}
 		p = UserProfile{
-			Name:                user.Name,
-			NickName:            user.NickName,
-			Email:               user.Email,
-			Language:            user.Language,
-			ResourcePermissions: permissions,
+			Name:            user.Name,
+			NickName:        user.NickName,
+			Email:           user.Email,
+			Language:        user.Language,
+			IsAdministrator: user.IsAdmin,
 		}
-
+		if !user.IsAdmin {
+			permissions, err := h.aggregateResourcePermissions(p.Name)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			p.ResourcePermissions = permissions
+		}
 		session.Set("profile", p)
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", p)
@@ -214,7 +218,7 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 		profile := u.(UserProfile)
 
 		k := kubernetes.NewKubernetes(c)
-		ns, err := k.GetUserNamespaceNames(profile.Name)
+		ns, err := k.GetUserNamespaceNames(profile.Name, profile.IsAdministrator)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)
@@ -295,7 +299,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			UserProfile:  profile,
 			ClusterRoles: roles,
 		}
-		if len(roles) <= 0 {
+		if len(roles) <= 0 && !profile.IsAdministrator {
 			ctx.StatusCode(iris.StatusForbidden)
 			return
 		}

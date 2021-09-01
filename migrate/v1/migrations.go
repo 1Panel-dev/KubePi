@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
 	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
 	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
@@ -26,26 +25,7 @@ var CreateAdministrator = migrations.Migration{
 	Handler: func(db storm.Node) error {
 		//
 
-		roleAdmin := v1Role.Role{
-			BaseModel: v1.BaseModel{
-				ApiVersion: "v1",
-				Kind:       "Role",
-				BuiltIn:    true,
-				CreateAt:   time.Now(),
-				UpdateAt:   time.Now(),
-			},
-			Metadata: v1.Metadata{
-				Name:        "Administrator",
-				Description: "i18n_user_administrator",
-				UUID:        uuid.New().String(),
-			},
-			Rules: []v1Role.PolicyRule{
-				{
-					Resource: []string{"*"},
-					Verbs:    []string{"*"},
-				},
-			},
-		}
+
 
 		roleManageClusters := v1Role.Role{
 			BaseModel: v1.BaseModel{
@@ -151,27 +131,9 @@ var CreateAdministrator = migrations.Migration{
 			},
 		}
 		// 创建绑定关系
-		binding := v1Role.Binding{
-			BaseModel: v1.BaseModel{
-				ApiVersion: "v1",
-				Kind:       "RoleBinding",
-				BuiltIn:    true,
-				CreateAt:   time.Now(),
-				UpdateAt:   time.Now()},
-			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("ekko:role-binding:%s-%s", roleAdmin.Name, userAdmin.Name),
-				UUID: uuid.New().String(),
-			},
-			Subject: v1Role.Subject{
-				Kind: "User",
-				Name: userAdmin.Name,
-			},
-			RoleRef: roleAdmin.Name,
-		}
 		dbObjects := []interface{}{
-			&roleAdmin, &roleManageClusters, &roleCommonUser, &roleManageRBAC, &roleReadOnly,
+			&roleManageClusters, &roleCommonUser, &roleManageRBAC, &roleReadOnly,
 			&userAdmin,
-			&binding,
 		}
 		for i := range dbObjects {
 			if err := db.Save(dbObjects[i]); err != nil {

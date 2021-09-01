@@ -11,7 +11,7 @@
         </el-button-group>
       </template>
 
-      <el-table-column min-width="20px" fix>
+      <el-table-column min-width="60px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -131,7 +131,7 @@ export default {
       buttons: [
         {
           label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
+          icon: "el-icon-user",
           click: (row) => {
             this.onDetail(row.name)
           },
@@ -234,7 +234,17 @@ export default {
     },
     onVueCreated() {
       listClusters().then(data => {
-        this.items = data.data;
+        this.items = data.data.filter((item) => {
+          if (this.$store.getters.isAdmin) {
+            return true
+          }
+          if (!checkPermissions({resource: "clusters", verb: "create"}) && !checkPermissions({
+            resource: "clusters",
+            verb: "delete"
+          })) {
+            return item.accessable
+          }
+        });
         if (this.items.length === 0 && checkPermissions({resource: 'clusters', verb: 'create'})) {
           this.guideDialogVisible = true
         }

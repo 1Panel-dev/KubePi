@@ -11,6 +11,7 @@ const state = {
     roles: [],
     cluster: "",
     clusterRoles: [],
+    isAdmin: false,
 }
 
 const mutations = {
@@ -32,6 +33,9 @@ const mutations = {
     },
     SET_ROLES: (state, roles) => {
         state.roles = roles
+    },
+    SET_ADMINISTRATOR: (state, isAdmin) => {
+        state.isAdmin = isAdmin
     },
     SET_CURRENT_CLUSTER: (state, name) => {
         state.cluster = name
@@ -91,13 +95,13 @@ const actions = {
             getCurrentClusterUser(clusterName).then(data => {
                 const user = data.data
                 user["roles"] = ["ADMIN"]
-                const {name, nickName, roles,language, clusterRoles} = user
+                const {name, nickName, roles, language, isAdministrator, clusterRoles} = user
                 commit("SET_NAME", name)
                 commit("SET_ROLES", roles)
                 commit("SET_CLUSTER_ROLES", clusterRoles)
                 commit("SET_NICK_NAME", nickName)
                 commit("SET_LANGUAGE", language)
-
+                commit("SET_ADMINISTRATOR", isAdministrator)
                 resolve(user)
             }).catch(error => {
                 reject(error)

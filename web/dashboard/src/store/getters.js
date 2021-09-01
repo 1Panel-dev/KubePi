@@ -11,6 +11,8 @@ const getters = {
     nickName: state => state.user.nickName,
     buttom_height: state => state.terminal.buttomHeight,
     terminal_height: state => state.terminal.terminalHeight,
-    terminals: state => state.terminal.terminals
+    terminals: state => state.terminal.terminals,
+    isAdmin: state => state.user.isAdmin,
+
 }
 export default getters

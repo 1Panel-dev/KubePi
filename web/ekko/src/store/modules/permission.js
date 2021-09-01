@@ -5,14 +5,17 @@ const state = {
     addRoutes: []
 }
 
-function hasPermission(permissions, route) {
+function hasPermission(user, route) {
+    if (user.isAdministrator) {
+        return true
+    }
     if (route.requirePermission) {
-        for (const resource of Object.keys(permissions)) {
+        for (const resource of Object.keys(user.resourcePermissions)) {
             if (resource === "*") {
                 return true
             }
             if (route.requirePermission && route.requirePermission.resource === resource) {
-                for (const verb of permissions[resource]) {
+                for (const verb of user.resourcePermissions[resource]) {
                     if (verb === "*") {
                         return true
                     }
@@ -28,13 +31,13 @@ function hasPermission(permissions, route) {
 }
 
 
-export function filterRolesRoutes(routes, permissions) {
+export function filterRolesRoutes(routes, user) {
     const res = []
     routes.forEach(route => {
         const tmp = {...route}
-        if (hasPermission(permissions, tmp)) {
+        if (hasPermission(user, tmp)) {
             if (tmp.children) {
-                tmp.children = filterRolesRoutes(tmp.children, permissions)
+                tmp.children = filterRolesRoutes(tmp.children, user)
             }
             res.push(tmp)
         }
@@ -51,11 +54,10 @@ const mutations = {
 }
 
 const actions = {
-    generateRoutes({commit}, p) {
+    generateRoutes({commit}, user) {
         return new Promise(resolve => {
-            const permissions = p
             let accessedRoutes
-            accessedRoutes = filterRolesRoutes(rolesRoutes, permissions)
+            accessedRoutes = filterRolesRoutes(rolesRoutes, user)
             commit("SET_ROUTES", accessedRoutes)
             resolve(accessedRoutes)
         })

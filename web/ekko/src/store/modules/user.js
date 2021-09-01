@@ -6,7 +6,8 @@ const state = {
     login: false,
     name: "",
     language: getLanguage(),
-    permissions: {}
+    permissions: {},
+    isAdmin: false,
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
     SET_LANGUAGE: (state, language) => {
         state.language = language
         setLanguage(language)
+    },
+    SET_ADMINISTRATOR: (state, isAdministrator) => {
+        state.isAdmin = isAdministrator
     },
     SET_RESOURCE_PERMISSIONS: (state, permissions) => {
         state.permissions = permissions
@@ -76,9 +80,10 @@ const actions = {
         return new Promise((resolve, reject) => {
             getCurrentUser().then(data => {
                 const user = data.data
-                const {name, resourcePermissions, language, nickName} = user
+                const {name, isAdministrator, resourcePermissions, language, nickName} = user
                 commit("SET_NAME", name)
                 commit("SET_RESOURCE_PERMISSIONS", resourcePermissions)
+                commit("SET_ADMINISTRATOR", isAdministrator)
                 commit("SET_NICK_NAME", nickName)
                 commit("SET_LANGUAGE", language)
                 resolve(user)
