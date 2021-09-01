@@ -3,22 +3,20 @@
     <complex-table :selects.sync="selects" :pagination-config="paginationConfig" :search-config="searchConfig"
                    :data="data" @search="search()">
       <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
-                     type="primary" size="small"
-                     @click="onCreate">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'delete'}"
-                     type="primary" size="small"
-                     :disabled="selects.length===0" @click="onDelete()">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
         <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
+                   type="primary" size="small"
                    @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+                   type="primary" size="small"
+                   @click="onCreate">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'delete'}"
+                   type="primary" size="small"
+                   :disabled="selects.length===0" @click="onDelete()">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>

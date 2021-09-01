@@ -2,14 +2,12 @@
   <layout-content header="Storage Class">
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
           <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
             YAML
           </el-button>
           <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
             {{ $t("commons.button.delete") }}
           </el-button>
-        </el-button-group>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>

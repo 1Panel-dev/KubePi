@@ -3,20 +3,18 @@
     <complex-table :data="data" :selects.sync="selects" @search="search"
                    v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
         <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
+                   type="primary" size="small"
                    @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
@@ -69,7 +67,12 @@ export default {
             })
           },
           disabled: (row) => {
-            return !checkPermissions({ scope:'namespace',apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "",
+              resource: "secrets",
+              verb: "update"
+            }) || row.type === "kubernetes.io/service-account-token"
           }
         },
         {
@@ -83,7 +86,12 @@ export default {
             })
           },
           disabled: (row) => {
-            return !checkPermissions({ scope:'namespace',apiGroup: "", resource: "secrets", verb: "update" })  || row.type === 'kubernetes.io/service-account-token'
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "",
+              resource: "secrets",
+              verb: "update"
+            }) || row.type === "kubernetes.io/service-account-token"
           }
         },
         {
@@ -100,7 +108,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({scope:'namespace', apiGroup: "", resource: "secrets", verb: "delete" })
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "secrets", verb: "delete" })
           }
         },
       ],
@@ -127,10 +135,10 @@ export default {
       })
     },
     onCreate () {
-      this.$router.push({ name: "SecretCreate" ,query:{yamlShow:false}})
+      this.$router.push({ name: "SecretCreate", query: { yamlShow: false } })
     },
-    yamlCreate() {
-      this.$router.push({ name: "SecretCreate" ,query:{yamlShow:true}})
+    yamlCreate () {
+      this.$router.push({ name: "SecretCreate", query: { yamlShow: true } })
     },
     onDelete (row) {
       this.$confirm(

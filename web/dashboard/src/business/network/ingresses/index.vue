@@ -3,20 +3,19 @@
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate"
-                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                     v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}"
-                   type="primary" size="small" class="yaml-button"
-                   @click="yamlCreate">
+        <el-button
+                v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}"
+                type="primary" size="small"
+                @click="yamlCreate">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
@@ -27,7 +26,8 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
       </el-table-column>
-      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="200px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="200px"
+                       show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
             <div v-for="(path,index) in rule.http.paths" :key="index">
@@ -89,7 +89,12 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace",apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "networking.k8s.io",
+              resource: "ingresses",
+              verb: "update"
+            })
           }
         },
         {
@@ -103,7 +108,12 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({scope: "namespace", apiGroup: "networking.k8s.io", resource: "ingresses", verb: "update" })
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "networking.k8s.io",
+              resource: "ingresses",
+              verb: "update"
+            })
           }
         },
         {
@@ -120,7 +130,12 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace",apiGroup: "networking.k8s.io", resource: "ingresses", verb: "delete" })
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "networking.k8s.io",
+              resource: "ingresses",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -148,12 +163,12 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "IngressCreate",query: {yamlShow:false}
+        name: "IngressCreate", query: { yamlShow: false }
       })
     },
-    yamlCreate() {
+    yamlCreate () {
       this.$router.push({
-        name: "IngressCreate", query: {yamlShow:true}
+        name: "IngressCreate", query: { yamlShow: true }
       })
     },
     onDelete (row) {
