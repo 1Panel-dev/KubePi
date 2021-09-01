@@ -45,7 +45,7 @@
         <el-col :span="12">
           <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
             <el-button class="search-btn">
-              {{$t('business.workload.add')}}{{$t('business.workload.volume')}}
+              {{$t('business.workload.add')}}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">

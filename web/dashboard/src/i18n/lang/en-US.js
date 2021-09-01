@@ -213,7 +213,7 @@ const message = {
       host_ip: "Host IP",
 
       command: "Command",
-      entry_point: "Entrypoint",
+      commands: "Commands",
       arguments: "Arguments",
       working_dir: "WorkingDir",
       once: "Once",

@@ -4,8 +4,8 @@
       <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.entry_point')" prop="command">
-              <ko-form-item placeholder="e.g. /bin/sh" itemType="input" v-model="form.command" />
+            <el-form-item :label="$t('business.workload.commands')" prop="command">
+              <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="form.command" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
