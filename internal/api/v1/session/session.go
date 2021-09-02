@@ -249,6 +249,15 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		u := session.Get("profile")
 		profile := u.(UserProfile)
 
+		if profile.IsAdministrator {
+			crp := ClusterUserProfile{
+				UserProfile:  profile,
+				ClusterRoles: []v1.ClusterRole{},
+			}
+			ctx.Values().Set("data", &crp)
+			return
+		}
+
 		labels := []string{
 			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
 			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
@@ -295,11 +304,12 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			}
 			roles = append(roles, *r)
 		}
+
 		crp := ClusterUserProfile{
 			UserProfile:  profile,
 			ClusterRoles: roles,
 		}
-		if len(roles) <= 0 && !profile.IsAdministrator {
+		if len(roles) <= 0 {
 			ctx.StatusCode(iris.StatusForbidden)
 			return
 		}
