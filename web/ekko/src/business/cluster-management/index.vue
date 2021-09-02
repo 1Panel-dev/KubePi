@@ -1,7 +1,8 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster')">
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" @search="search">
+                   :pagination-config="paginationConfig" @search="search"
+                   element-loading-background="rgba(0, 0, 0, 0.8)">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small"
@@ -11,7 +12,7 @@
         </el-button-group>
       </template>
 
-      <el-table-column min-width="60px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="60px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -131,7 +132,7 @@ export default {
       },
       buttons: [
         {
-          label: this.$t("commons.button.manage"),
+          label: this.$t("commons.button.rbac_manage"),
           icon: "el-icon-user",
           click: (row) => {
             this.onDetail(row.name)

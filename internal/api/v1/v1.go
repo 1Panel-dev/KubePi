@@ -207,7 +207,7 @@ func roleAccessHandler() iris.Handler {
 				resourceMatched, methodMatch := matchRoles(requestResource, requestVerb, roles)
 				if !(resourceMatched && methodMatch) {
 					ctx.StopWithStatus(iris.StatusForbidden)
-					ctx.Values().Set("message", fmt.Sprintf("user %s has can't access  resource %s  method %s", u.Name, requestResource, requestVerb))
+					ctx.Values().Set("message", []string{"user %s can not access resource %s %s", u.Name, requestResource, requestVerb})
 					return
 				}
 			}

@@ -29,7 +29,7 @@ const message = {
             all_select: "全选",
             upload: "上传文件",
             search: "搜索",
-            manage: "管理"
+            rbac_manage: "授权"
 
         },
         table: {
