@@ -76,6 +76,13 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 		// 生成httpClient
 		httpClient := http.Client{Transport: ts}
 		k := kubernetes.NewKubernetes(c)
+		clusterVersionMinor, err := k.VersionMinor()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err)
+			return
+		}
+		compatibleClusterVersion(clusterVersionMinor, &proxyPath)
 
 		//判断是否已经包含了namespace的查询
 		hasNsFilter := hasNamespaceFilter(proxyPath)
@@ -206,6 +213,16 @@ type fieldMatcher interface {
 type namespaceAndNameMatcher struct {
 	Namespace string
 	Name      string
+}
+
+func compatibleClusterVersion(minor int, path *string) {
+	p := *path
+	if minor <= 18 {
+		if strings.Contains(p, "networking.k8s.io/v1") && strings.Contains(p, "ingresses") {
+			p = strings.Replace(p, "networking.k8s.io/v1", "networking.k8s.io/v1beta1", -1)
+		}
+	}
+	*path = p
 }
 
 func hasNamespaceFilter(path string) bool {

@@ -1,9 +1,7 @@
 package kubernetes
 
 import (
-	"context"
 	"fmt"
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"testing"
@@ -16,7 +14,7 @@ func TestNewKubernetes(t *testing.T) {
 	//}
 
 	cs := rest.Config{
-		Host: "https://127.0.0.1:55155",
+		Host: "https://127.0.0.1:51584",
 		TLSClientConfig: rest.TLSClientConfig{
 			Insecure: true,
 		},
@@ -27,23 +25,7 @@ func TestNewKubernetes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
-	reader, err := cls.CoreV1().Pods("kube-system").GetLogs("coredns-54d67798b7-tlghr", &v1.PodLogOptions{
-		Follow:     true,
-	}).Stream(context.TODO())
-	if err != nil {
-		t.Error(err)
-	}
-	for {
-		buf := make([]byte, 2048)
-		numBytes, err := reader.Read(buf)
-		if numBytes > 0 {
-			message := string(buf[:numBytes])
-			fmt.Print(message)
-		}
-		if err != nil {
-			break
-		}
-	}
+	v, _ := cls.ServerVersion()
+	fmt.Println(v.String())
 
 }
