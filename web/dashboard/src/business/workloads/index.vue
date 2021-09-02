@@ -470,6 +470,7 @@ export default {
           break
         case "cronjobs":
           this.form.apiVersion = "batch/v1beta1"
+          this.form.spec.jobTemplate = { spec: {} }
           this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
           break
         case "jobs":
@@ -493,7 +494,7 @@ export default {
       }
       if (this.isCronJob()) {
         delete this.form.spec.template
-        this.form.spec.jobTemplate = { spec: { template: { spec: this.podSpec, metadata: this.podMetadata } } }
+        this.form.spec.jobTemplate.spec = { template: { spec: this.podSpec, metadata: this.podMetadata } }
       } else {
         delete this.form.spec.schedule
         this.form.spec.template.spec = this.podSpec
