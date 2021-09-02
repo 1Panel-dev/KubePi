@@ -7,13 +7,13 @@ import Layout from "@/business/app-layout/horizontal-layout"
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 const generateRoutes = async (to, from, next) => {
-    const hasRoles = store.getters.clusterRoles && store.getters.clusterRoles.length > 0
+    const hasRoles = store.getters.isAdmin || (store.getters.clusterRoles && store.getters.clusterRoles.length > 0)
     if (hasRoles) {
         next()
     } else {
         try {
-            const {clusterRoles} = await store.dispatch("user/getCurrentUser")
-            const accessRoutes = await store.dispatch("permission/generateRoutes", clusterRoles)
+            const user = await store.dispatch("user/getCurrentUser")
+            const accessRoutes = await store.dispatch("permission/generateRoutes", user)
             if (accessRoutes.length > 0) {
                 const root = {
                     path: "/",

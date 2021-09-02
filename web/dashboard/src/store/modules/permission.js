@@ -6,7 +6,7 @@ const state = {
     addRoutes: []
 }
 
-function hasPermission(clusterRoles, route) {
+function hasPermission(user, route) {
     if (route.requirePermission) {
         return checkPermissions(route.requirePermission)
     }
@@ -14,13 +14,13 @@ function hasPermission(clusterRoles, route) {
 }
 
 
-export function filterRolesRoutes(routes, clusterRoles) {
+export function filterRolesRoutes(routes, user) {
     const res = []
     routes.forEach(route => {
         const tmp = {...route}
-        if (hasPermission(clusterRoles, tmp)) {
+        if (hasPermission(user, tmp)) {
             if (tmp.children) {
-                tmp.children = filterRolesRoutes(tmp.children, clusterRoles)
+                tmp.children = filterRolesRoutes(tmp.children, user)
             }
             res.push(tmp)
         }
@@ -37,12 +37,11 @@ const mutations = {
 }
 
 const actions = {
-    generateRoutes({commit}, p) {
+    generateRoutes({commit}, user) {
         return new Promise((resolve, reject) => {
-            const clusterRoles = p
             let accessedRoutes
             try {
-                accessedRoutes = filterRolesRoutes(rolesRoutes, clusterRoles)
+                accessedRoutes = filterRolesRoutes(rolesRoutes, user)
                 for (const route of accessedRoutes) {
                     if (route.parent) {
                         let hidden = true

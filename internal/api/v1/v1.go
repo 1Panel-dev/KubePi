@@ -91,6 +91,11 @@ func roleHandler() iris.Handler {
 		// 查询角色的 rolebinding 获取 roles
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
+
+		if u.IsAdministrator {
+			ctx.Next()
+			return
+		}
 		roleBindingService := v1RoleBindingService.NewService()
 		rbs, err := roleBindingService.GetRoleBindingBySubject(v1Role.Subject{
 			Kind: "User",
@@ -142,11 +147,8 @@ func getVerbByRoute(path, method string) string {
 		if strings.HasSuffix(path, "search") {
 			return "list"
 		}
-		if strings.HasSuffix(path, "privilege") {
-			return "privilege"
-		} else {
-			return "create"
-		}
+		return "create"
+
 	}
 	return ""
 }
@@ -209,6 +211,11 @@ func roleAccessHandler() iris.Handler {
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
 		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") {
+			// 放通admin权限
+			if u.IsAdministrator {
+				ctx.Next()
+				return
+			}
 			rs := ctx.Values().Get("roles")
 			roles := rs.([]v1Role.Role)
 			requestResource := ctx.Values().GetString("resource")

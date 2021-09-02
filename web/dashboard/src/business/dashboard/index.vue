@@ -1,8 +1,8 @@
 <template>
   <layout-content :header="$t('business.dashboard.dashboard')">
-    <el-row :gutter="24">
+    <el-row :gutter="24" class="row-box">
       <el-col :span="24">
-        <el-card v-if="cluster" shadow="always" style="background-color: #243441;height: 120px">
+        <el-card v-if="cluster" class="el-card" shadow="always" style="background-color: #243441;height: 120px">
           <el-row :gutter="24">
             <el-col :span="8">
               <span class="title">{{ $t("commons.table.name") }}</span>
@@ -29,13 +29,13 @@
       </el-col>
     </el-row>
     <br>
-    <el-row :gutter="20" class="resources">
-      <el-col v-for="resource in resources" v-bind:key="resource.name" :xs="8" :sm="8" :lg="6">
-        <el-card :body-style="{padding: '0px'}" @click.native="jumpTo(resource.name)" class="d-card">
+    <el-row :gutter="20" class="resources row-box">
+      <el-col v-for="(resource,index) in resources" v-bind:key="resource.name" :xs="8" :sm="8" :lg="6">
+        <el-card :body-style="{padding: '0px'}" @click.native="jumpTo(resource.name)" class="d-card el-card">
           <el-row :gutter="24">
             <el-col :span="10">
               <div>
-                <ko-charts :chart-data="resource" :key="resource.name"></ko-charts>
+                <ko-charts :chart-data="resource" :key="resource.name" :index="index"></ko-charts>
               </div>
             </el-col>
             <el-col :span="14">

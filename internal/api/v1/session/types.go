@@ -25,6 +25,7 @@ type UserProfile struct {
 	Email               string              `json:"email"`
 	Language            string              `json:"language"`
 	ResourcePermissions map[string][]string `json:"resourcePermissions"`
+	IsAdministrator     bool                `json:"isAdministrator"`
 }
 
 type ClusterUserProfile struct {

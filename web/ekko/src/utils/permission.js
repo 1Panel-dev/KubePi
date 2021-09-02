@@ -2,6 +2,10 @@ import store from '@/store'
 
 export const checkPermissions = function (...ps) {
     const userResourcePermissions = store.getters && store.getters.permissions
+    const isAdmin = store.getters && store.getters.isAdmin
+    if (isAdmin) {
+        return true
+    }
     for (const p of ps) {
         if (userResourcePermissions["*"] || userResourcePermissions[p.resource]) {
             if (userResourcePermissions["*"]) {

@@ -1,14 +1,15 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'HPA'}" v-loading="loading">
-    <el-row :gutter="20">
-      <div v-if="!yamlShow">
+    <div v-if="!yamlShow">
+
+      <el-row :gutter="20" class="row-box">
         <el-col :span="15">
-          <el-card>
+          <el-card class="el-card">
             <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
-          <el-card>
+          <el-card class="el-card">
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" width="30%" align="left">
@@ -17,19 +18,19 @@
                 <th scope="col"></th>
               </tr>
               <tr>
-                <td>{{$t('business.workload.workload')}}</td>
+                <td>{{ $t("business.workload.workload") }}</td>
                 <td>{{ item.spec.scaleTargetRef.kind }}/{{ item.spec.scaleTargetRef.name }}</td>
               </tr>
               <tr>
-                <td>{{$t('business.configuration.min_replicas')}}</td>
+                <td>{{ $t("business.configuration.min_replicas") }}</td>
                 <td>{{ item.spec.minReplicas }}</td>
               </tr>
               <tr>
-                <td>{{$t('business.configuration.max_replicas')}}</td>
+                <td>{{ $t("business.configuration.max_replicas") }}</td>
                 <td>{{ item.spec.maxReplicas }}</td>
               </tr>
               <tr>
-                <td>{{$t('business.configuration.current_replicas')}}</td>
+                <td>{{ $t("business.configuration.current_replicas") }}</td>
                 <td>{{ item.status.currentReplicas }}</td>
               </tr>
             </table>
@@ -94,15 +95,18 @@
                 </el-row>
               </div>
             </el-tab-pane>
-            <el-tab-pane  :label="$t('business.common.conditions')">
+            <el-tab-pane :label="$t('business.common.conditions')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
             <el-tab-pane label="Events">
-              <ko-detail-events :namespace="namespace" :cluster="cluster" :selector="'involvedObject.kind=HorizontalPodAutoscaler,involvedObject.name='+name"></ko-detail-events>
+              <ko-detail-events :namespace="namespace" :cluster="cluster"
+                                :selector="'involvedObject.kind=HorizontalPodAutoscaler,involvedObject.name='+name"></ko-detail-events>
             </el-tab-pane>
           </el-tabs>
         </el-col>
-      </div>
+      </el-row>
+    </div>
+    <el-row>
       <div v-if="yamlShow">
         <yaml-editor :value="item" :read-only="true"></yaml-editor>
         <div class="bottom-button">

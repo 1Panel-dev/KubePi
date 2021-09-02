@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
-    <el-row>
-      <el-card v-if="!yamlShow">
+    <el-row class="row-box">
+      <el-card v-if="!yamlShow" class="el-card">
         <el-col :span="24">
           <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
         </el-col>

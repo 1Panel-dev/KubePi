@@ -135,38 +135,48 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		_ = tx.Commit()
-		go func() {
-			req.Status.Phase = clusterStatusInitializing
-			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-				server.Logger().Errorf("cna not update cluster status %s", err)
-				return
-			}
-			if err := client.CreateDefaultClusterRoles(); err != nil {
-				req.Status.Phase = clusterStatusFailed
-				req.Status.Message = err.Error()
+
+		if !profile.IsAdministrator {
+			go func() {
+				req.Status.Phase = clusterStatusInitializing
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
 					server.Logger().Errorf("cna not update cluster status %s", err)
 					return
 				}
-				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
-				return
-			}
-			if err := h.updateUserCert(client, &binding); err != nil {
-				req.Status.Phase = clusterStatusFailed
-				req.Status.Message = err.Error()
+				if err := client.CreateDefaultClusterRoles(); err != nil {
+					req.Status.Phase = clusterStatusFailed
+					req.Status.Message = err.Error()
+					if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+						server.Logger().Errorf("cna not update cluster status %s", err)
+						return
+					}
+					server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+					return
+				}
+				if err := h.updateUserCert(client, &binding); err != nil {
+					req.Status.Phase = clusterStatusFailed
+					req.Status.Message = err.Error()
+					if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+						server.Logger().Errorf("cna not update cluster status %s", err)
+						return
+					}
+					server.Logger().Errorf("cna not create cluster user  %s", err)
+					return
+				}
+				req.Status.Phase = clusterStatusCompleted
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
 					server.Logger().Errorf("cna not update cluster status %s", err)
 					return
 				}
-				server.Logger().Errorf("cna not create cluster user  %s", err)
-				return
-			}
+			}()
+		} else {
 			req.Status.Phase = clusterStatusCompleted
 			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
 				server.Logger().Errorf("cna not update cluster status %s", err)
 				return
 			}
-		}()
+		}
+
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -245,26 +255,30 @@ func (h *Handler) SearchClusters() iris.Handler {
 		}
 		result := make([]Cluster, 0)
 		for i := range clusters {
+
 			c := Cluster{Cluster: clusters[i]}
-			bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
-			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			c.MemberCount = len(bs)
-			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-			if err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err)
-				return
-			}
-			for j := range mbs {
-				if mbs[j].UserRef == profile.Name {
-					c.Accessable = true
+			if profile.IsAdministrator {
+				c.Accessable = true
+			} else {
+				bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
+				if err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
+				}
+				c.MemberCount = len(bs)
+				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+				if err != nil {
+					ctx.StatusCode(iris.StatusBadRequest)
+					ctx.Values().Set("message", err)
+					return
+				}
+				for j := range mbs {
+					if mbs[j].UserRef == profile.Name {
+						c.Accessable = true
+					}
 				}
 			}
-
 			result = append(result, c)
 		}
 		if showExtra {
@@ -478,5 +492,4 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
-	sp.Post("/privilege", handler.Privilege())
 }

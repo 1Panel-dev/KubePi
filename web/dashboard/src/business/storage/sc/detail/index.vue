@@ -2,15 +2,14 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'StorageClasses'}" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <div v-if="!yamlShow">
-        <el-form label-position="top" :model="form">
-          <el-row :gutter="24">
+          <el-row :gutter="24" class="row-box">
             <el-col :span="14">
-              <el-card>
+              <el-card class="el-card">
                 <ko-detail-basic :item="form" :yaml-show.sync="yamlShow"></ko-detail-basic>
               </el-card>
             </el-col>
             <el-col :span="10">
-              <el-card>
+              <el-card class="el-card">
                 <table style="width: 100%" class="myTable">
                   <th scope="col" width="60%" align="left">
                     <h3>{{ $t('commons.form.parameters') }}</h3>
@@ -32,7 +31,6 @@
               </complex-table>
             </el-tab-pane>
           </el-tabs>
-        </el-form>
       </div>
       <div v-if="yamlShow">
         <yaml-editor :value="yaml" ref="yaml_editor" :read-only="true"></yaml-editor>

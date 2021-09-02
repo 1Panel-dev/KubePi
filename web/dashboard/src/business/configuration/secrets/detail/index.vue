@@ -1,15 +1,15 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Secrets'}" v-loading="loading">
-    <el-row :gutter="20">
+    <el-row :gutter="20"  class="row-box">
       <div v-if="!yamlShow">
         <el-col :span="24">
-          <el-card>
+          <el-card class="el-card">
             <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="24">
           <br>
-          <el-card>
+          <el-card class="el-card">
             <div class="card_title">
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>

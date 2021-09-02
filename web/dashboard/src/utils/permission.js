@@ -2,6 +2,10 @@ import store from '@/store'
 
 export const checkPermissions = function (p) {
     const userClusterRoles = store.getters && store.getters.clusterRoles
+    const isAdmin = store.getters && store.getters.isAdmin
+    if (isAdmin) {
+        return true
+    }
     for (const clusterRole of userClusterRoles) {
         const scope = clusterRole.metadata.labels["kubeoperator.io/role-type"]
         if (clusterRole.rules.length > 0) {

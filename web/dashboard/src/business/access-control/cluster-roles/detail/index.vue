@@ -1,9 +1,11 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ClusterRoles'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-card>
-        <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
-      </el-card>
+      <el-row class="row-box">
+        <el-card class="el-card">
+          <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
+        </el-card>
+      </el-row>
       <el-row>
         <el-col :span="24">
           <br>

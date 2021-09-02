@@ -1,36 +1,38 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'ConfigMaps'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-card>
-        <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
-      </el-card>
-      <br>
-      <el-card>
-        <div class="card_title">
-          <h3>{{ $t("business.configuration.data") }}</h3>
-        </div>
-        <div>
-          <div v-if="item.data">
-            <div v-for="(value,key) in item.data" v-bind:key="key">
-              <ko-data :title="key">
-                <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
-                             theme="jv-dark" :expanded="true" :expand-depth="4"></json-viewer>
-                <el-card v-else  style="background: #112234;border: 0;">
-                  <div style="white-space: pre-line;">
-                    <span>{{ getValue(value)}} </span>
-                  </div>
-                </el-card>
-              </ko-data>
+      <el-row class="row-box">
+        <el-card class="el-card">
+          <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
+        </el-card>
+        <br>
+        <el-card>
+          <div class="card_title">
+            <h3>{{ $t("business.configuration.data") }}</h3>
+          </div>
+          <div>
+            <div v-if="item.data">
+              <div v-for="(value,key) in item.data" v-bind:key="key">
+                <ko-data :title="key">
+                  <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
+                               theme="jv-dark" :expanded="true" :expand-depth="4"></json-viewer>
+                  <el-card v-else style="background: #112234;border: 0;">
+                    <div style="white-space: pre-line;">
+                      <span>{{ getValue(value) }} </span>
+                    </div>
+                  </el-card>
+                </ko-data>
+              </div>
+            </div>
+            <div v-else-if="item.binaryData">
+              <span> Binary Data: {{ bystesLength(item.binaryData.content) }} bytes</span>
+            </div>
+            <div v-else>
+              <span>{{ $t("business.configuration.no_data") }}</span>
             </div>
           </div>
-          <div v-else-if="item.binaryData">
-            <span> Binary Data: {{ bystesLength(item.binaryData.content) }} bytes</span>
-          </div>
-          <div v-else>
-            <span>{{ $t("business.configuration.no_data") }}</span>
-          </div>
-        </div>
-      </el-card>
+        </el-card>
+      </el-row>
     </div>
     <div v-if="yamlShow">
       <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
@@ -51,7 +53,7 @@ import {isJSON} from "@/utils/data"
 
 export default {
   name: "ConfigMapDetail",
-  components: { KoDetailBasic, YamlEditor, LayoutContent ,KoData},
+  components: { KoDetailBasic, YamlEditor, LayoutContent, KoData },
   props: {
     name: String,
     namespace: String,
@@ -99,7 +101,7 @@ export default {
       if (value instanceof Object) {
         return JSON.parse(value)
       }
-      return  value
+      return value
     }
   },
   watch: {

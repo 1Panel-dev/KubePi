@@ -29,7 +29,7 @@ type Interface interface {
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
 	CreateCommonUser(commonName string) ([]byte, error)
 	CreateDefaultClusterRoles() error
-	GetUserNamespaceNames(username string) ([]string, error)
+	GetUserNamespaceNames(username string, options ...interface{}) ([]string, error)
 	CanVisitAllNamespace(username string) (bool, error)
 	IsNamespacedResource(resourceName string) (bool, error)
 	CleanManagedClusterRole() error
@@ -254,15 +254,21 @@ func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
 	}
 	return false, nil
 }
-func (k *Kubernetes) GetUserNamespaceNames(username string) ([]string, error) {
+func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface{}) ([]string, error) {
 	client, err := k.Client()
 	if err != nil {
 		return nil, err
 	}
-	all, err := k.CanVisitAllNamespace(username)
-	if err != nil {
-		return nil, err
+	all := false
+	if len(options) > 0 && options[0].(bool) {
+		all = true
+	} else {
+		all, err = k.CanVisitAllNamespace(username)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	namespaceSet := collectons.NewStringSet()
 	if all {
 		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
