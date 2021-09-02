@@ -24,7 +24,7 @@
         <template v-slot:default="{row}">
           <el-tag style="margin-left: 5px" size="small" v-for="(item,key) in row.roles" :key="key">{{ item }}</el-tag>
 
-          <el-tag v-if="row.roles.length===0 && row.isAdmin">Supper User</el-tag>
+          <el-tag style="margin-left: 5px" size="small" v-if="row.roles.length===0 && row.isAdmin">Supper User</el-tag>
 
 
         </template>
