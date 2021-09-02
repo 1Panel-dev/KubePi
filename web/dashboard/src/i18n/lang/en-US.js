@@ -249,6 +249,11 @@ const message = {
       label: "Label",
       annotations: "Annotations",
       key: "key",
+      selector: "Selector",
+      edit_option: "Edit Option",
+      edit: "Edit",
+      notice: "Notice",
+      recreate_tips: "is not allowed to change after creation, so this operation is actually deleted and then created, and your application will be unavailable in the meantime",
 
       network: "Networking",
       add: "Add",
