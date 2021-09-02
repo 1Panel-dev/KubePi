@@ -47,7 +47,7 @@ export default {
             data: this.chartData.data,
             itemStyle: {
               normal: {
-                color: function (p) {
+                color: function () {
                   const colors = ['#fee82c','#abcd2c','#db2d45','#cd4d89','#1491d1','#f17f43','#108774','#7c4899','#282a88']
                   return [colors[index]]
                 }
