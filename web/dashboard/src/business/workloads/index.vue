@@ -33,7 +33,7 @@
               </el-row>
               <el-row v-if="isStatefulSet()">
                 <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName">
-                  <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service" />
+                  <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service_of_ns" />
                 </el-form-item>
               </el-row>
               <el-row v-if="isCronJob()">
@@ -47,7 +47,7 @@
         <el-col :span="spanWidth" v-if="isStatefulSet()">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume_claim_template')}}</span>
-            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :pvcList="pvc_list" :scList="sc_list" />
+            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :pvcList="pvc_list_of_ns" :scList="sc_list" />
           </el-card>
         </el-col>
         <el-col :span="spanWidth">
@@ -159,8 +159,8 @@ import { listNodes } from "@/api/nodes"
 import { listSecretsWithNs } from "@/api/secrets"
 import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
-import { listNsServices } from "@/api/services"
-import { listPvcs } from "@/api/pvc"
+import { listServicesWithNs } from "@/api/services"
+import { listPvcsWithNs } from "@/api/pvc"
 import KoSelect from "@/components/ko-select"
 
 export default {
@@ -206,13 +206,13 @@ export default {
       currentContainerType: "standardContainers",
       currentContainer: {},
       // resources
+      node_list: [],
       namespace_list: [],
       secret_list_of_ns: [],
       config_map_list_of_ns: [],
-      node_list: [],
       sc_list: [],
-      pvc_list: [],
-      headless_service: [],
+      pvc_list_of_ns: [],
+      headless_service_of_ns: [],
       volume_list: [],
       // base form
       activeName: "General",
@@ -314,17 +314,17 @@ export default {
         this.sc_list = res.items
       })
     },
-    loadPvcs() {
-      listPvcs(this.clusterName).then((res) => {
-        this.pvc_list = res.items
+    loadPvcsWithNs(ns) {
+      listPvcsWithNs(this.clusterName, ns).then((res) => {
+        this.pvc_list_of_ns = res.items
       })
     },
     loadServicesWithNs(ns) {
-      this.headless_service = []
-      listNsServices(this.clusterName, ns).then((res) => {
+      this.headless_service_of_ns = []
+      listServicesWithNs(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
           if (item.spec.clusterIP === "None") {
-            this.headless_service.push(item.metadata.name)
+            this.headless_service_of_ns.push(item.metadata.name)
           }
         })
       })
@@ -379,7 +379,11 @@ export default {
     changeNs(val) {
       this.loadSecretsWithNs(val)
       this.loadConfigMapsWithNs(val)
-      this.loadServicesWithNs(val)
+      if (this.isStatefulSet()) {
+        this.loadServicesWithNs(val)
+        this.loadPvcsWithNs(val)
+        this.loadStorageClass()
+      }
     },
     loadNodes() {
       this.node_list = []
@@ -609,10 +613,6 @@ export default {
     },
   },
   mounted() {
-    if (this.isStatefulSet) {
-      this.loadStorageClass()
-      this.loadPvcs()
-    }
     this.loadNamespace()
     this.loadNodes()
   },
