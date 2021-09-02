@@ -72,9 +72,9 @@ func (c *cluster) Search(num, size int, keywords string, options common.DBOption
 
 	query := func() storm2.Query {
 		if keywords != "" {
-			return db.Select(storm.Like("Name", keywords)).Limit(size).Skip((num - 1) * size)
+			return db.Select(storm.Like("Name", keywords)).Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		} else {
-			return db.Select().Limit(size).Skip((num - 1) * size)
+			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		}
 	}()
 	count, err := query.Count(&v1Cluster.Cluster{})

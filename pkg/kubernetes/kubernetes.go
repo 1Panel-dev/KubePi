@@ -9,6 +9,7 @@ import (
 	"github.com/KubeOperator/ekko/pkg/collectons"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
+	certv1beta1 "k8s.io/api/certificates/v1beta1"
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
@@ -24,6 +25,7 @@ import (
 type Interface interface {
 	Ping() error
 	Version() (*version.Info, error)
+	VersionMinor() (int, error)
 	Config() (*rest.Config, error)
 	Client() (*kubernetes.Clientset, error)
 	HasPermission(attributes v1.ResourceAttributes) (PermissionCheckResult, error)
@@ -42,6 +44,15 @@ type Interface interface {
 
 type Kubernetes struct {
 	*v1Cluster.Cluster
+}
+
+func (k *Kubernetes) VersionMinor() (int, error) {
+	v, err := k.Version()
+	if err != nil {
+		return 0, err
+	}
+	minor, err := strconv.Atoi(v.Minor)
+	return minor, nil
 }
 
 func (k *Kubernetes) CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error {
@@ -358,56 +369,115 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	csr := certv1.CertificateSigningRequest{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
-		},
-		Spec: certv1.CertificateSigningRequestSpec{
-			SignerName: "kubernetes.io/kube-apiserver-client",
-			Request:    cert,
-			Groups: []string{
-				"system:authenticated",
-			},
-			Usages: []certv1.KeyUsage{
-				"client auth",
-			},
-		},
-	}
+
 	client, err := k.Client()
 	if err != nil {
 		return nil, err
 	}
-	createResp, err := client.CertificatesV1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
+	v, err := client.ServerVersion()
 	if err != nil {
 		return nil, err
 	}
-	// 审批证书
-	createResp.Status.Conditions = append(createResp.Status.Conditions, certv1.CertificateSigningRequestCondition{
-		Reason:         "Approved by Ekko",
-		Type:           certv1.CertificateApproved,
-		LastUpdateTime: metav1.Now(),
-		Status:         "True",
-	})
-
-	updateResp, err := client.CertificatesV1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp.Name, createResp, metav1.UpdateOptions{})
+	minor, err := strconv.Atoi(v.Minor)
 	if err != nil {
 		return nil, err
 	}
-
 	var data []byte
-	for i := 0; i < 10; i++ {
-		time.Sleep(1 * time.Second)
-		getResp, err := client.CertificatesV1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
+	if minor > 18 {
+		csr := certv1.CertificateSigningRequest{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
+			},
+			Spec: certv1.CertificateSigningRequestSpec{
+				SignerName: "kubernetes.io/kube-apiserver-client",
+				Request:    cert,
+				Groups: []string{
+					"system:authenticated",
+				},
+				Usages: []certv1.KeyUsage{
+					"client auth",
+				},
+			},
+		}
+		createResp, err := client.CertificatesV1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err
 		}
-		if getResp.Status.Certificate != nil {
-			data = getResp.Status.Certificate
-			break
+		// 审批证书
+		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1.CertificateSigningRequestCondition{
+			Reason:         "Approved by Ekko",
+			Type:           certv1.CertificateApproved,
+			LastUpdateTime: metav1.Now(),
+			Status:         "True",
+		})
+
+		updateResp, err := client.CertificatesV1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp.Name, createResp, metav1.UpdateOptions{})
+		if err != nil {
+			return nil, err
 		}
-	}
-	if data == nil {
-		return nil, errors.New("csr approve time out")
+
+		for i := 0; i < 10; i++ {
+			time.Sleep(1 * time.Second)
+			getResp, err := client.CertificatesV1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+			if getResp.Status.Certificate != nil {
+				data = getResp.Status.Certificate
+				break
+			}
+		}
+		if data == nil {
+			return nil, errors.New("csr approve time out")
+		}
+	} else {
+		name := "kubernetes.io/kube-apiserver-client"
+		csr := certv1beta1.CertificateSigningRequest{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
+			},
+			Spec: certv1beta1.CertificateSigningRequestSpec{
+				SignerName: &name,
+				Request:    cert,
+				Groups: []string{
+					"system:authenticated",
+				},
+				Usages: []certv1beta1.KeyUsage{
+					"client auth",
+				},
+			},
+		}
+		createResp, err := client.CertificatesV1beta1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
+		if err != nil {
+			return nil, err
+		}
+		// 审批证书
+		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1beta1.CertificateSigningRequestCondition{
+			Reason:         "Approved by Ekko",
+			Type:           certv1beta1.CertificateApproved,
+			LastUpdateTime: metav1.Now(),
+			Status:         "True",
+		})
+
+		updateResp, err := client.CertificatesV1beta1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp, metav1.UpdateOptions{})
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < 10; i++ {
+			time.Sleep(1 * time.Second)
+			getResp, err := client.CertificatesV1beta1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+			if getResp.Status.Certificate != nil {
+				data = getResp.Status.Certificate
+				break
+			}
+		}
+		if data == nil {
+			return nil, errors.New("csr approve time out")
+		}
 	}
 
 	return data, nil

@@ -250,6 +250,11 @@ const message = {
       label: "标签",
       annotations: "注释",
       key: "键",
+      selector: "选择器",
+      edit_option: "编辑选项",
+      edit: "修改",
+      notice: "请注意：",
+      recreate_tips: "在创建后不允许修改，所以此操作实际是先删后创建，您的应用程序在此期间将会不可用",
 
       network: "网络",
       add: "添加",

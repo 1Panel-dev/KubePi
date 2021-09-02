@@ -25,5 +25,16 @@ func Translate(lang string, key string, v ...interface{}) (string, error) {
 	if msg == "" {
 		return "", fmt.Errorf("can not find i18n key %s", key)
 	}
-	return fmt.Sprintf(msg, v...), nil
+	if len(v) > 0 {
+		ks := v[0].([]string)
+
+		var iks []interface{}
+		for i := range ks {
+			iks = append(iks, ks[i])
+		}
+		return fmt.Sprintf(msg, iks...), nil
+	} else {
+		return msg, nil
+	}
+
 }
