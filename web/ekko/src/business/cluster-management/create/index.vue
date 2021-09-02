@@ -108,7 +108,7 @@ export default {
         configContent: ""
       },
       rules: {
-        name: [Rule.RequiredRule, Rule.CommonNameRule, Rule.LengthRule],
+        name: [Rule.RequiredRule, Rule.LengthRule],
         apiServer: [Rule.RequiredRule],
         token: [Rule.RequiredRule],
         certDataStr: [Rule.RequiredRule],

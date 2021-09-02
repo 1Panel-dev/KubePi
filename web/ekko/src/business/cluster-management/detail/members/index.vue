@@ -216,7 +216,9 @@ export default {
       this.memberForm.namespaceRoles = []
       this.listClusterRoles()
       listUsers().then(data => {
-        this.userOptions = data.data;
+        this.userOptions = data.data.filter(d => {
+          return !d.isAdmin
+        });
       })
       listNamespaces(this.name).then(data => {
         this.namespaceOptions = data.data;

@@ -216,7 +216,7 @@ func (h *Handler) ListClusterMembers() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		var members []Member
+		members := make([]Member, 0)
 		for i := range bindings {
 			members = append(members, Member{
 				Name:        bindings[i].UserRef,

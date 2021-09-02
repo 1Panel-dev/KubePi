@@ -1,17 +1,18 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster')">
-    <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" @search="search">
+    <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
+                   :pagination-config="paginationConfig" @search="search"
+                   element-loading-background="rgba(0, 0, 0, 0.8)">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small"
                      @click="onCreate">
-            {{ $t("commons.button.create") }}
+            {{ $t("commons.button.add") }}
           </el-button>
         </el-button-group>
       </template>
 
-      <el-table-column min-width="60px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="60px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -112,6 +113,7 @@ export default {
   components: {LayoutContent, ComplexTable},
   data() {
     return {
+      loading: false,
       guideDialogVisible: false,
       items: [],
       timer: null,
@@ -130,7 +132,7 @@ export default {
       },
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
+          label: this.$t("commons.button.rbac_manage"),
           icon: "el-icon-user",
           click: (row) => {
             this.onDetail(row.name)
@@ -163,20 +165,6 @@ export default {
         this.paginationConfig.total = data.data.total
       })
     },
-    handleCommand(command) {
-      const name = command.name
-      switch (command.action) {
-        case "manage":
-          this.onDetail(name)
-          break
-        case "delete":
-          this.onDelete(name)
-          break
-      }
-    },
-    onGoMemberDetail(name) {
-      this.$router.push({name: "ClusterMembers", params: {name: name}})
-    },
     onCreate() {
       this.$router.push({name: "ClusterCreate"})
       this.search()
@@ -199,11 +187,6 @@ export default {
         })
       });
     },
-    canDo(rq) {
-      return checkPermissions(rq)
-    },
-
-
     onGotoDashboard(row) {
       if (row.accessable) {
         window.open(`/dashboard?cluster=${row.name}`, "_self")
