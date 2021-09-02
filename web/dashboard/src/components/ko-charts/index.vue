@@ -8,10 +8,16 @@
 export default {
   name: "KoCharts",
   props: {
-    chartData: Object
+    chartData: Object,
+    index: Number
   },
+  data() {
+    return {
+    }
+  },
+
   methods: {
-    initCharts() {
+    initCharts(index) {
       const echarts = require('echarts');
       let myChart = echarts.init(document.getElementById(this.chartData.name));
       let option = {
@@ -41,12 +47,9 @@ export default {
             data: this.chartData.data,
             itemStyle: {
               normal: {
-                color: function (p) {
-                  if (p.data.value > 0) {
-                    return ['#158fd2']
-                  }else {
-                    return ['#CCCCCC']
-                  }
+                color: function () {
+                  const colors = ['#fee82c','#abcd2c','#db2d45','#cd4d89','#1491d1','#f17f43','#108774','#7c4899','#282a88']
+                  return [colors[index]]
                 }
               }
             },
@@ -60,13 +63,13 @@ export default {
   watch: {
     chartData: {
       handler() {
-        this.initCharts();
+        this.initCharts(this.index);
       },
       deep:true
     }
   },
   mounted () {
-    this.initCharts();
+    this.initCharts(this.index);
   }
 }
 </script>

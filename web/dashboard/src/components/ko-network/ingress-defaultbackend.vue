@@ -31,7 +31,7 @@
 
 <script>
 import KoCard from "@/components/ko-card"
-import {listNsServices} from "@/api/services"
+import {listServicesWithNs} from "@/api/services"
 
 export default {
   name: "KoIngressDefaultBackend",
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     getServices () {
-      listNsServices(this.cluster, this.namespace).then(res => {
+      listServicesWithNs(this.cluster, this.namespace).then(res => {
         this.services = res.items
       })
     },

@@ -40,8 +40,8 @@ export default {
   data() {
     return {
       title: 'FIT2CLOUD',
-      logo: require('@/assets/KubeOperator-white.png'),
-      collapseLogo: require('@/assets/KubeOperator-assist-white.png')
+      logo: require('@/assets/KubePi-white.png'),
+      collapseLogo: require('@/assets/KubePi-assist-white.png')
     }
   }
 }
@@ -75,7 +75,9 @@ export default {
 
       & .sidebar-logo {
         height: $logo-height;
+        //height: 40px;
         vertical-align: middle;
+        //width: 200px;
       }
     }
 

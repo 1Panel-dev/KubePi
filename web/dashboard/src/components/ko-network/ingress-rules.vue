@@ -91,7 +91,7 @@
 <script>
 
 import KoCard from "@/components/ko-card"
-import {listNsServices} from "@/api/services"
+import {listServicesWithNs} from "@/api/services"
 
 export default {
   name: "KoIngressRule",
@@ -162,7 +162,7 @@ export default {
       this.form.rules[ind].http.paths.splice(index, 1)
     },
     getServices () {
-      listNsServices(this.cluster, this.namespace).then(res => {
+      listServicesWithNs(this.cluster, this.namespace).then(res => {
         this.services = res.items
       })
     }

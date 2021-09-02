@@ -231,7 +231,7 @@ export default {
     }
 
     .login-image {
-      background: url(../../assets/KobeOperator-login.jpg) no-repeat;
+      background: url(../../assets/KubePi-login.jpg) no-repeat;
       background-size: cover;
       width: 100%;
       height: 480px;
