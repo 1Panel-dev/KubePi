@@ -175,24 +175,6 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				}
 			}
 		}
-		rs := ctx.Values().Get("roles")
-		roles := rs.([]v1Role.Role)
-
-		for k, _ := range resourceMap {
-			requestResource := k
-			verbs := resourceMap[k].ToSlice()
-			for i := range verbs {
-				requestMethod := verbs[i]
-				resourceMatched, methodMatched := matchRoles(requestResource, requestMethod, roles)
-				if !resourceMatched {
-					delete(resourceMap, requestResource)
-				} else {
-					if !methodMatched {
-						resourceMap[k].Delete(requestMethod)
-					}
-				}
-			}
-		}
 		displayMap := map[string][]string{}
 		for k, _ := range resourceMap {
 			verbs := resourceMap[k]
