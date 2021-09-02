@@ -25,7 +25,7 @@ export function listServices (cluster_name, search, keywords, pageNum, pageSize)
   return get(url,params)
 }
 
-export function listNsServices (cluster_name, namespace) {
+export function listServicesWithNs (cluster_name, namespace) {
   let url = namespaceServiceUrl(cluster_name, namespace)
   return get(url)
 }

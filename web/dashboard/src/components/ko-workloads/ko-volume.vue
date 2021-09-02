@@ -162,7 +162,6 @@ export default {
       for (const volume of this.volumes) {
         let item = {}
         let itemClild = {}
-        console.log(volume)
         item.name = volume.name || undefined
         itemClild.defaultMode = volume.defaultMode ? parseInt("0" + volume.defaultMode.toString(), 8) : undefined
         itemClild.optional = volume.optional !== null ? volume.optional : undefined

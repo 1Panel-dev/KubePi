@@ -45,18 +45,11 @@ export default {
   components: { KoFormItem },
   props: {
     volumeClaimParentObj: Object,
-    currentNamespace: String,
     scList: Array,
     pvcList: Array,
     isReadOnly: Boolean,
   },
   watch: {
-    currentNamespace: {
-      handler(newName) {
-        this.namespace = newName
-      },
-      immediate: true,
-    },
     scList: {
       handler(newName) {
         this.sc_list = []
@@ -78,7 +71,6 @@ export default {
   },
   data() {
     return {
-      namespace: "",
       volumeClaimTemplates: [],
       sc_list: [],
       pvc_list: [],
@@ -98,7 +90,7 @@ export default {
       this.volumeClaimTemplates.push({
         name: "",
         type: "new",
-        storageClass: "",
+        storageClass: null,
         accessModes: [],
         storage: 10,
       })
@@ -116,9 +108,7 @@ export default {
       let volumeClaimTemplates = []
       for (const volume of this.volumeClaimTemplates) {
         let item = {
-          kind: "PersistentVolumeClaim",
           metadata: {
-            namespace: this.currentNamespace,
             name: volume.name,
           },
           spec: {
@@ -127,7 +117,7 @@ export default {
         }
         if (volume.type === "new") {
           item.spec.resources = { requests: { storage: volume.storage.toString() + "Gi" } }
-          item.spec.storageClassName = volume.storageClass
+          item.spec.storageClassName = volume.storageClass || undefined
         } else {
           item.spec.volumeName = volume.volumeName
         }

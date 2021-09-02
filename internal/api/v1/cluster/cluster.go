@@ -95,21 +95,6 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 
-		binding := v1Cluster.Binding{
-			BaseModel: v1.BaseModel{
-				Kind: "ClusterBinding",
-			},
-			Metadata: v1.Metadata{
-				Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
-			},
-			UserRef:    profile.Name,
-			ClusterRef: req.Name,
-		}
-		if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
 		requiredPermissions := map[string][]string{
 			"namespaces":       {"get", "post", "delete"},
 			"clusterroles":     {"get", "post", "delete"},
@@ -128,15 +113,28 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
-		if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		_ = tx.Commit()
-
 		if !profile.IsAdministrator {
+			binding := v1Cluster.Binding{
+				BaseModel: v1.BaseModel{
+					Kind: "ClusterBinding",
+				},
+				Metadata: v1.Metadata{
+					Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
+				},
+				UserRef:    profile.Name,
+				ClusterRef: req.Name,
+			}
+			if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
+				_ = tx.Rollback()
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
 			go func() {
 				req.Status.Phase = clusterStatusInitializing
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
@@ -171,12 +169,12 @@ func (h *Handler) CreateCluster() iris.Handler {
 			}()
 		} else {
 			req.Status.Phase = clusterStatusCompleted
-			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+			if e := h.clusterService.Update(req.Name, &req.Cluster, txOptions); e != nil {
 				server.Logger().Errorf("cna not update cluster status %s", err)
 				return
 			}
 		}
-
+		_ = tx.Commit()
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -446,12 +444,7 @@ func (h *Handler) DeleteCluster() iris.Handler {
 			}
 		}
 		k := kubernetes.NewKubernetes(c)
-		if err := k.CleanAllRBACResource(); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
-		}
+		_ = k.CleanAllRBACResource()
 		_ = tx.Commit()
 		ctx.StatusCode(iris.StatusOK)
 	}
