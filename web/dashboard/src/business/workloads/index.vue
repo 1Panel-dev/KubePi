@@ -198,7 +198,7 @@ export default {
       spanWidth: 12,
       // yaml
       showYaml: false,
-      yaml: {},
+      yaml: undefined,
       // containers
       currentContainerIndex: 0,
       currentContainerType: "standardContainers",

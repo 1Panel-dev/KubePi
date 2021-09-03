@@ -49,7 +49,7 @@ export default {
     value: {
       type: Object,
       default: function () {
-        return {}
+        return undefined
       }
     },
     readOnly: {
@@ -155,11 +155,13 @@ export default {
   .CodeMirror {
     border: 1px solid #eee;
     height: auto;
+    min-height: 300px;
   }
 
   .CodeMirror-merge {
     border: 1px solid #eee;
     height: auto;
+    min-height: 300px;
   }
 
   .CodeMirror-merge-r-chunk {

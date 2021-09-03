@@ -80,7 +80,7 @@ export default {
         }
       },
       activeName: "",
-      yaml: {}
+      yaml: undefined
     }
   },
   methods: {

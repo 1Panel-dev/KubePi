@@ -122,7 +122,7 @@ export default {
         type: "Opaque"
       },
       showYaml: false,
-      yaml: {},
+      yaml: undefined,
       activeName: "",
       messages: [],
       rules: {
