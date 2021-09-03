@@ -13,18 +13,18 @@
           </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="140" show-overflow-tooltip>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
+      <el-table-column :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
           {{ row.spec.completions }} / {{ row.spec.parallelism }}
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.workload.duration')" min-width="30">
+      <el-table-column :label="$t('business.workload.duration')" min-width="30">
         <template v-slot:default="{row}">
           {{ getDuration(row) }}S
         </template>
@@ -68,13 +68,13 @@ export default {
           },
         },
         {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
+          label: this.$t("commons.button.view_yaml"),
+          icon: "el-icon-view",
           click: (row) => {
             this.$router.push({
               name: "JobEdit",
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: true },
+              query: { yamlShow: true, readOnly: true },
             })
           },
           disabled: () => {

@@ -62,6 +62,7 @@ export default {
         name: "",
         image: "",
         imagePullPolicy: "",
+        imagePullSecrets: "",
       },
       rules: {
         name: [Rule.CommonNameRule],
@@ -87,10 +88,11 @@ export default {
       })
       return isValid
     },
-    transformation(parentFrom) {
+    transformation(parentFrom, specForm) {
       parentFrom.name = this.form.name || undefined
       parentFrom.image = this.form.image || undefined
       parentFrom.imagePullPolicy = this.form.imagePullPolicy || undefined
+      specForm.imagePullSecrets = this.form.imagePullSecrets || undefined
     },
   },
   mounted() {

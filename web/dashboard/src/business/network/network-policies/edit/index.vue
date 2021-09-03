@@ -31,7 +31,7 @@ export default {
         kind: "NetworkPolicy",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
         spec: {}
       },

@@ -89,7 +89,7 @@ export default {
         apiVersion: "networking.k8s.io/v1",
         kind: "Ingress",
         metadata: {
-          namespace: "default",
+          namespace: "",
         },
         spec: {}
       },

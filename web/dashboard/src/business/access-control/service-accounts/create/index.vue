@@ -29,7 +29,7 @@ export default {
         kind: "ServiceAccount",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
           labels: {},
           annotations: {},
         },

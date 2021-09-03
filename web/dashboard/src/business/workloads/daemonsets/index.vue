@@ -13,15 +13,15 @@
           </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('business.pod.ready')" min-width="40" prop="status.numberReady" />
-      <el-table-column sortable :label="$t('business.workload.current')" min-width="40" prop="status.currentNumberScheduled" />
-      <el-table-column sortable :label="$t('business.workload.desired')" min-width="40" prop="status.desiredNumberScheduled" />
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
+      <el-table-column :label="$t('business.pod.ready')" min-width="40" prop="status.numberReady" />
+      <el-table-column :label="$t('business.workload.current')" min-width="40" prop="status.currentNumberScheduled" />
+      <el-table-column :label="$t('business.workload.desired')" min-width="40" prop="status.desiredNumberScheduled" />
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
