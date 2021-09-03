@@ -187,7 +187,7 @@ export default {
       },
       namespaces: [],
       activeName: "",
-      yaml: {},
+      yaml: undefined,
       cluster: "",
       storageTypes: [{
         value: "NFS",

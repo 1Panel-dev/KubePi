@@ -67,7 +67,7 @@ export default {
       },
       loading: false,
       showYaml: false,
-      yaml: {},
+      yaml: undefined,
       resourceLimit: {
         limitsCpu: "",
         limitsMemory: "",

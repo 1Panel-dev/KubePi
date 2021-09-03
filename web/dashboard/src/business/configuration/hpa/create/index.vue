@@ -81,7 +81,7 @@ export default {
       showYaml: false,
       cluster: "",
       activeName: "",
-      yaml: {},
+      yaml: undefined,
       rules: {
         metadata: {
           name: [Rule.RequiredRule],

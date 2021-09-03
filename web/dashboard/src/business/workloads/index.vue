@@ -18,14 +18,11 @@
                   <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
                 </el-form-item>
               </el-row>
+
               <el-row>
-                <span style="line-height: 32px;font-size: 14px;color: #ebeef5;">{{$t('business.workload.annotations')}}</span>
-                <ko-kv-table @updateKvDatas="updateKvDatas" kvType="annotation" :isReadOnly="readOnly" :dataObj="form.metadata.annotations" />
+                <ko-kv-table @changeCreateMode="changeCreateMode" :key="isRefresh" ref="ko_annotation_label" :isReadOnly="readOnly" :resourceName="form.metadata.name" :metadataObj="form.metadata" :selectorObj="form.spec.selector" :isCreate="isCreateOperation()" />
               </el-row>
-              <el-row style="margin-top:10px; margin-bottom:10px">
-                <span style="line-height: 32px;font-size: 14px;color: #ebeef5;">{{$t('business.workload.label')}}</span>
-                <ko-kv-table @updateKvDatas="updateKvDatas" :resourceName="form.metadata.name" kvType="label" :isReadOnly="readOnly" :dataObj="form.metadata.labels" />
-              </el-row>
+
               <el-row v-if="isReplicasShow()">
                 <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
                   <ko-form-item :disabled="readOnly" placeholder="Any text you want that better describes this resource" itemType="number" v-model.number="form.spec.replicas" />
@@ -153,7 +150,7 @@ import KoUpgradePolicyCronjob from "@/components/ko-workloads/ko-upgrade-policy-
 import KoUpgradePolicyJob from "@/components/ko-workloads/ko-upgrade-policy-job.vue"
 import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
-import { getWorkLoadByName, createWorkLoad, updateWorkLoad } from "@/api/workloads"
+import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
 import { listNamespace } from "@/api/namespaces"
 import { listNodes } from "@/api/nodes"
 import { listSecretsWithNs } from "@/api/secrets"
@@ -196,11 +193,12 @@ export default {
       name: "",
       type: "",
       operation: "",
+      recreate: false,
       readOnly: false,
       spanWidth: 12,
       // yaml
       showYaml: false,
-      yaml: {},
+      yaml: undefined,
       // containers
       currentContainerIndex: 0,
       currentContainerType: "standardContainers",
@@ -224,13 +222,12 @@ export default {
         metadata: {
           name: "",
           namespace: "",
-          labels: { "k8s.kubepi.cn/name": "" },
-          annotations: {},
         },
         spec: {
           replicas: 1,
           schedule: "",
           serviceName: "",
+          selector: {},
           template: {
             metadata: {},
             spec: {},
@@ -415,16 +412,8 @@ export default {
         this.podSpec.containers.splice(index, 1)
       }
     },
-    updateKvDatas(type, datas) {
-      if (type === "label") {
-        this.form.metadata.labels = datas
-        this.podMetadata.labels = datas
-        if (!this.isJob()) {
-          this.form.spec.selector = { matchLabels: datas }
-        }
-      } else {
-        this.form.metadata.annotations = datas
-      }
+    changeCreateMode(val) {
+      this.recreate = val
     },
     gatherFormValid() {
       this.$refs["form"].validate((valid) => {
@@ -450,6 +439,7 @@ export default {
       }
     },
     gatherFormData() {
+      this.$refs.ko_annotation_label.transformation(this.form, this.podMetadata)
       this.$refs.ko_volume.transformation(this.podSpec)
       this.$refs.ko_container.transformation(this.currentContainer)
       this.$refs.ko_ports.transformation(this.currentContainer)
@@ -466,18 +456,21 @@ export default {
       this.$refs.ko_pod_scheduling.transformation(this.podSpec)
       this.$refs.ko_node_scheduling.transformation(this.podSpec)
       this.$refs.ko_toleration.transformation(this.podSpec)
+
       switch (this.type) {
         case "deployments":
           this.form.apiVersion = "apps/v1"
           this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
           break
         case "statefulsets":
+          delete this.form.spec.serviceName
           this.form.apiVersion = "apps/v1"
           this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
           this.$refs.ko_volume_claim.transformation(this.form.spec)
           break
         case "cronjobs":
           this.form.apiVersion = "batch/v1beta1"
+          this.form.spec.jobTemplate = { spec: {} }
           this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
           break
         case "jobs":
@@ -499,12 +492,9 @@ export default {
       if (!this.isReplicasShow()) {
         delete this.form.spec.replicas
       }
-      if (!this.isStatefulSet()) {
-        delete this.form.spec.serviceName
-      }
       if (this.isCronJob()) {
         delete this.form.spec.template
-        this.form.spec.jobTemplate = { spec: { template: { spec: this.podSpec, metadata: this.podMetadata } } }
+        this.form.spec.jobTemplate.spec = { template: { spec: this.podSpec, metadata: this.podMetadata } }
       } else {
         delete this.form.spec.schedule
         this.form.spec.template.spec = this.podSpec
@@ -547,30 +537,50 @@ export default {
       }
       this.loading = true
       if (this.isCreateOperation()) {
-        createWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, data)
-          .then(() => {
-            this.$message({
-              type: "success",
-              message: this.$t("commons.msg.create_success"),
-            })
-            this.$router.push({ name: this.toggleCase() + "s" })
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        this.onCreate(data)
       } else {
-        updateWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, this.form.metadata.name, data)
-          .then(() => {
-            this.$message({
-              type: "success",
-              message: this.$t("commons.msg.update_success"),
-            })
-            this.$router.push({ name: this.toggleCase() + "s" })
-          })
-          .finally(() => {
-            this.loading = false
-          })
+        if (!this.recreate) {
+          this.onEdit(data)
+        } else {
+          this.onRecreate(data)
+        }
       }
+    },
+    onCreate(data) {
+      createWorkLoad(this.clusterName, this.type, data.metadata.namespace, data)
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.create_success"),
+          })
+          this.$router.push({ name: this.toggleCase() + "s" })
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    onEdit(data) {
+      updateWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name, data)
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.update_success"),
+          })
+          this.$router.push({ name: this.toggleCase() + "s" })
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    onRecreate(data) {
+      deleteWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name)
+        .then(() => {
+          delete data.metadata.resourceVersion
+          this.onCreate(data)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     onEditYaml() {
       this.gatherFormValid()
@@ -626,6 +636,7 @@ export default {
       this.name = this.$route.params.name
       this.search()
     } else {
+      this.form.metadata.labels = { "k8s.kubepi.cn/name": "" }
       this.podSpec = {
         containers: [
           {

@@ -135,7 +135,7 @@ export default {
         }
       },
       activeName: "",
-      yaml: {},
+      yaml: undefined,
       cluster: "",
       persistentVolumeList: [],
       currentStorageCapacity: 1,
