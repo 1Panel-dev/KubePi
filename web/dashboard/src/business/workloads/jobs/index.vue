@@ -68,13 +68,13 @@ export default {
           },
         },
         {
-          label: this.$t("commons.button.edit_yaml"),
-          icon: "el-icon-edit",
+          label: this.$t("commons.button.view_yaml"),
+          icon: "el-icon-view",
           click: (row) => {
             this.$router.push({
               name: "JobEdit",
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: true },
+              query: { yamlShow: true, readOnly: true },
             })
           },
           disabled: () => {
