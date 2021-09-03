@@ -29,11 +29,31 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
+
+    <el-dialog :title="$t('commons.button.scale')" width="70%" :close-on-click-modal="false" :visible.sync="dialogModifyVersionVisible">
+      <complex-table :data="form.imagesData" v-loading="loading">
+        <el-table-column :label="$t('business.workload.container_type')" prop="type" min-width="10" />
+        <el-table-column :label="$t('business.workload.name')" prop="name" min-width="20" show-overflow-tooltip />
+        <el-table-column :label="$t('business.workload.container_image')" prop="image" min-width="40" show-overflow-tooltip />
+        <el-table-column :label="$t('business.workload.current_version')" prop="version" min-width="15" />
+        <el-table-column :label="$t('business.workload.new_version')" prop="newVersion" min-width="20">
+          <template v-slot:default="{row}">
+            <ko-form-item itemType="input" v-model="row.newVersion" />
+          </template>
+        </el-table-column>
+      </complex-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogModifyVersionVisible = false">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button size="small" @click="onModifyVersionSubmit">{{ $t("commons.button.confirm") }}</el-button>
+      </div>
+    </el-dialog>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
+import KoFormItem from "@/components/ko-form-item/index"
+import { patchDaemonset } from "@/api/daemonsets"
 import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
@@ -42,7 +62,7 @@ import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "DaemonSets",
-  components: { LayoutContent, ComplexTable, KoTableOperations },
+  components: { LayoutContent, ComplexTable, KoTableOperations, KoFormItem },
   data() {
     return {
       buttons: [
@@ -55,6 +75,26 @@ export default {
               params: { operation: "edit", namespace: row.metadata.namespace, name: row.metadata.name },
               query: { yamlShow: false },
             })
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "daemonsets", verb: "update" })
+          },
+        },
+        {
+          label: this.$t("commons.button.modifying_version"),
+          icon: "el-icon-edit-outline",
+          click: (row) => {
+            this.onModifyVersion(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "daemonsets", verb: "update" })
+          },
+        },
+        {
+          label: this.$t("commons.button.restart"),
+          icon: "el-icon-refresh-right",
+          click: (row) => {
+            this.onRestart(row)
           },
           disabled: () => {
             return !checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "daemonsets", verb: "update" })
@@ -99,6 +139,14 @@ export default {
         pageSize: 10,
         total: 0,
       },
+      dialogScaleVisible: false,
+      form: {
+        name: "",
+        namespace: "",
+        replicas: 1,
+        imagesData: [],
+      },
+      dialogModifyVersionVisible: false,
       searchConfig: {
         keywords: "",
       },
@@ -146,6 +194,80 @@ export default {
             })
         }
       })
+    },
+    onModifyVersion(row) {
+      this.form.imagesData = []
+      this.form.name = row.metadata.name
+      this.form.namespace = row.metadata.namespace
+      if (row.spec.template.spec.initContainers) {
+        for (const c of row.spec.template.spec.containers) {
+          let index = c.image.lastIndexOf(":")
+          this.form.imagesData.push({
+            type: this.$t("business.workload.initContainer"),
+            name: c.name,
+            image: index !== -1 ? c.image.substring(0, index) : "",
+            version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
+            newVersion: "",
+          })
+        }
+      }
+      for (const c of row.spec.template.spec.containers) {
+        let index = c.image.lastIndexOf(":")
+        this.form.imagesData.push({
+          type: this.$t("business.workload.standardContainer"),
+          name: c.name,
+          image: index !== -1 ? c.image.substring(0, index) : "",
+          version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
+          newVersion: "",
+        })
+      }
+      this.dialogModifyVersionVisible = true
+    },
+    onModifyVersionSubmit() {
+      this.loading = true
+      let containers = []
+      let initContainers = []
+      for (const c of this.form.imagesData) {
+        if (c.type === this.$t("business.workload.initContainer")) {
+          initContainers.push({
+            name: c.name,
+            image: c.image + ":" + (c.newVersion !== "" ? c.newVersion : c.version),
+          })
+        } else {
+          containers.push({
+            name: c.name,
+            image: c.image + ":" + (c.newVersion !== "" ? c.newVersion : c.version),
+          })
+        }
+      }
+      let data = { spec: { template: { spec: { containers: containers, initContainers: initContainers } } } }
+      patchDaemonset(this.clusterName, this.form.namespace, this.form.name, data)
+        .then(() => {
+          this.dialogModifyVersionVisible = false
+          this.loading = true
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.operation_success"),
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    onRestart(row) {
+      let data = { spec: { template: { metadata: { annotations: { "kubectl.kubernetes.io/restartedAt": new Date() } } } } }
+      patchDaemonset(this.clusterName, row.metadata.namespace, row.metadata.name, data)
+        .then(() => {
+          this.dialogModifyVersionVisible = false
+          this.loading = true
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.operation_success"),
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     search(resetPage) {
       this.loading = true

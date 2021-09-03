@@ -1,4 +1,4 @@
-import { get, del, post, put } from "@/plugins/request";
+import { get, patch } from "@/plugins/request";
 
 const statefulsetUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/statefulsets`;
@@ -23,18 +23,10 @@ export function listStatefulSets(cluster_name,  search, keywords, pageNum, pageS
   return get(url,params);
 }
 
-export function getStatefulSetByName(cluster_name, namespace, statefulset) {
-  return get(`${statefulsetUrlWithNs(cluster_name, namespace)}/${statefulset}`);
+export function scaleStatefulset(cluster_name, namespace, statefulset, data) {
+  return patch(`${statefulsetUrlWithNs(cluster_name, namespace)}/${statefulset}/scale`, data);
 }
 
-export function deleteStatefulSet(cluster_name, statefulset) {
-  return del(`${statefulsetUrl(cluster_name)}/${statefulset}`);
-}
-
-export function createStatefulSet(cluster_name, statefulset) {
-  return post(`${statefulsetUrl(cluster_name)}/${statefulset}`);
-}
-
-export function updateStatefulSet(cluster_name, statefulset) {
-  return put(`${statefulsetUrlWithNs(cluster_name)}/${statefulset}`);
+export function patchStatefulset(cluster_name, namespace, statefulset, data) {
+  return patch(`${statefulsetUrlWithNs(cluster_name, namespace)}/${statefulset}`, data);
 }
