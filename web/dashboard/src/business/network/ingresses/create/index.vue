@@ -90,7 +90,7 @@ export default {
       },
       rules: {},
       activeName: "",
-      yaml: {},
+      yaml: undefined,
       showYaml: false
     }
   },

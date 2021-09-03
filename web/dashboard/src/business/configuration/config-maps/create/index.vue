@@ -77,7 +77,7 @@ export default {
         data: {}
       },
       activeName: "",
-      yaml: {},
+      yaml: undefined,
       cluster: "",
       rules: {
         metadata: {

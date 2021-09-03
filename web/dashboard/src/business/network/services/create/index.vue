@@ -112,7 +112,7 @@ export default {
         },
       },
       showYaml: false,
-      yaml: {},
+      yaml: undefined,
       activeName: "ServicePorts",
       rules: {
         metadata: {
