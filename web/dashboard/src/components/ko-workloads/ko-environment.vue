@@ -7,7 +7,7 @@
             <th scope="col" width="15%" align="left"><label>{{$t('business.workload.type')}}</label></th>
             <th scope="col" width="30%" align="left"><label>{{$t('business.workload.prefix_variable')}}</label></th>
             <th scope="col" width="20%" align="left"><label>{{$t('business.workload.source')}}</label></th>
-            <th scope="col" width="28%" align="left"><label>{{$t('business.workload.value')}}</label></th>
+            <th scope="col" width="29%" align="left"><label>{{$t('business.workload.value')}}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in form.envResource" v-bind:key="index">
@@ -20,15 +20,15 @@
             <td>
               <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
               <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
-              <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row.source)" :selections="config_map_name_list" />
+              <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row)" :selections="config_map_name_list" />
               <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
-              <ko-form-item v-if="row.type === 'Secret' || row.type === 'Secret key'" itemType="select2" v-model="row.source" :selections="secret_list" />
+              <ko-form-item v-if="row.type === 'Secret'" itemType="select2" v-model="row.source" :selections="secret_name_list" />
+              <ko-form-item v-if="row.type === 'Secret key'" itemType="select2" @change="changeSecret(row)" v-model="row.source" :selections="secret_name_list" />
             </td>
             <td>
               <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
               <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
-              <ko-form-item v-if="row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="config_map_value_list" />
-              <ko-form-item v-if="row.type ==='Secret key'" itemType="select2" v-model="row.value" :selections="secret_value_list" />
+              <ko-form-item v-if="row.type ==='Secret key' || row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="row.value_list" />
               <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
             </td>
             <td>
@@ -83,9 +83,10 @@ export default {
     },
     secretList: {
       handler(newName) {
-        this.secret_list = []
+        this.secret_list = newName
+        this.secret_name_list = []
         for (const s of newName) {
-          this.secret_list.push(s.metadata.name)
+          this.secret_name_list.push(s.metadata.name)
         }
       },
       immediate: true,
@@ -99,22 +100,31 @@ export default {
       },
       reFresh: false,
       namespace: "",
-      config_map_name_list: [],
       config_map_list: [],
-      config_map_value_list: [],
+      config_map_name_list: [],
       secret_list: [],
-      resource_value_list: ["limits.cpu", "limits.ephemeral-storage", "limits.memory", "requests.cpu", "requests.ephemeral-storage", "requests.memory"],
-      secret_value_list: ["ca.crt", "namespace", "token"],
+      secret_name_list: [],
+      resource_value_list: ["limits.cpu", "limits.memory", "requests.cpu", "requests.memory"],
       type_list: ["Key/Value Pair", "Pod Field", "Resource", "ConfigMap key", "Secret key", "Secret", "ConfigMap"],
     }
   },
   methods: {
-    changeConfigMap(comfigmap) {
-      this.config_map_value_list = []
+    changeConfigMap(row) {
+      row.value_list = []
       for (const cm of this.config_map_list) {
-        if (comfigmap === cm.metadata.name && cm.metadata.namespace === this.namespace) {
+        if (row.source === cm.metadata.name && cm.metadata.namespace === this.namespace) {
           for (const item of Object.keys(cm.data)) {
-            this.config_map_value_list.push(item)
+            row.value_list.push(item)
+          }
+        }
+      }
+    },
+    changeSecret(row) {
+      row.value_list = []
+      for (const se of this.secret_list) {
+        if (row.source === se.metadata.name && se.metadata.namespace === this.namespace) {
+          for (const item of Object.keys(se.data)) {
+            row.value_list.push(item)
           }
         }
       }
@@ -126,6 +136,7 @@ export default {
         prefix_or_alias: "",
         source: "",
         value: "",
+        value_list: [],
       }
       this.form.envResource.push(item)
     },
@@ -161,7 +172,6 @@ export default {
                   configMapKeyRef: {
                     name: en.source,
                     key: en.value,
-                    optional: false, // 这个false是什么意思不知道
                   },
                 },
               })
@@ -173,7 +183,6 @@ export default {
                   secretKeyRef: {
                     name: en.source,
                     key: en.value,
-                    optional: false,
                   },
                 },
               })
@@ -194,7 +203,6 @@ export default {
                 prefix: en.prefix_or_alias,
                 secretRef: {
                   name: en.source,
-                  optional: false,
                 },
               })
               break
@@ -203,7 +211,6 @@ export default {
                 prefix: en.prefix_or_alias,
                 configMapRef: {
                   name: en.source,
-                  optional: false,
                 },
               })
               break
