@@ -28,7 +28,7 @@ export default {
         kind: "ResourceQuota",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
         spec: {
           hard: {}

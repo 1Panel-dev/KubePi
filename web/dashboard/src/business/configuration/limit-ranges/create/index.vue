@@ -28,7 +28,7 @@ export default {
         kind: "LimitRange",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
         spec: {
         }

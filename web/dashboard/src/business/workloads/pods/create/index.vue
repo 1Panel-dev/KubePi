@@ -27,7 +27,7 @@ export default {
         kind: "Pod",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
         },
         spec: {
         },
