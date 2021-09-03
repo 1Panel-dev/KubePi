@@ -2,6 +2,7 @@ package cluster
 
 import (
 	goContext "context"
+	"errors"
 	"fmt"
 	"github.com/KubeOperator/ekko/internal/api/v1/session"
 	v1 "github.com/KubeOperator/ekko/internal/model/v1"
@@ -429,7 +430,7 @@ func (h *Handler) DeleteCluster() iris.Handler {
 			return
 		}
 		clusterBindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, txOptions)
-		if err != nil {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
@@ -447,19 +448,6 @@ func (h *Handler) DeleteCluster() iris.Handler {
 		_ = k.CleanAllRBACResource()
 		_ = tx.Commit()
 		ctx.StatusCode(iris.StatusOK)
-	}
-}
-
-func (h *Handler) Privilege() iris.Handler {
-	return func(ctx *context.Context) {
-		var req Privilege
-		if err := ctx.ReadJSON(&req); err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", err)
-			return
-		}
-		ctx.Redirect(req.Url)
-		return
 	}
 }
 
