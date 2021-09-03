@@ -547,7 +547,7 @@ export default {
       }
     },
     onCreate(data) {
-      createWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, data)
+      createWorkLoad(this.clusterName, this.type, data.metadata.namespace, data)
         .then(() => {
           this.$message({
             type: "success",
@@ -560,7 +560,7 @@ export default {
         })
     },
     onEdit(data) {
-      updateWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, this.form.metadata.name, data)
+      updateWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name, data)
         .then(() => {
           this.$message({
             type: "success",
@@ -573,7 +573,7 @@ export default {
         })
     },
     onRecreate(data) {
-      deleteWorkLoad(this.clusterName, this.type, this.form.metadata.namespace, this.form.metadata.name)
+      deleteWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name)
         .then(() => {
           delete data.metadata.resourceVersion
           this.onCreate(data)
