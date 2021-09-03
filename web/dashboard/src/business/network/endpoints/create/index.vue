@@ -28,7 +28,7 @@ export default {
         kind: "Endpoints",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
       },
       cluster: ""

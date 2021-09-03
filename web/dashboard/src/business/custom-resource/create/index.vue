@@ -28,7 +28,7 @@ export default {
         kind: "CustomResourceDefinition",
         metadata: {
           name: "",
-          namespace: "default"
+          namespace: ""
         },
         spec: {}
       },

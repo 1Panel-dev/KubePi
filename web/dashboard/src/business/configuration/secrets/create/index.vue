@@ -114,7 +114,7 @@ export default {
         kind: "Secret",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
           labels: {},
           annotations: {},
         },

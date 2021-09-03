@@ -123,7 +123,7 @@ export default {
         kind: "PersistentVolumeClaim",
         metadata: {
           name: "",
-          namespace: "default",
+          namespace: "",
         },
         spec: {
           accessModes: [],
