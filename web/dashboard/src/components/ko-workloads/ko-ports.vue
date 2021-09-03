@@ -4,20 +4,14 @@
       <el-form :disabled="isReadOnly">
         <table style="width: 98%" class="tab-table">
           <tr>
-            <th scope="col" width="16%" align="left"><label>{{$t('business.workload.service_type')}}</label></th>
-            <th scope="col" width="16%" align="left"><label>{{$t('business.workload.name')}}</label></th>
-            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
-            <th scope="col" width="8%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
-            <th scope="col" width="5%" align="left"><label>{{$t('business.workload.expose')}}</label></th>
-            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
-            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.listening_port')}}</label></th>
-            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.host_ip')}}</label></th>
+            <th scope="col" width="40%" align="left"><label>{{$t('business.workload.name')}}</label></th>
+            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
+            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
+            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.expose')}}</label></th>
+            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in ports" v-bind:key="index">
-            <td>
-              <ko-form-item itemType="select" v-model="row._serviceType" :selections="service_type_list" />
-            </td>
             <td>
               <ko-form-item itemType="input" v-model="row.name" />
             </td>
@@ -31,13 +25,7 @@
               <el-switch v-model="row.expose" />
             </td>
             <td>
-              <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
-            </td>
-            <td>
-              <ko-form-item :disabled="row._serviceType === 'ClusterIP' || row._serviceType === '' || !row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row._listeningPort" />
-            </td>
-            <td>
-              <ko-form-item :disabled="row._serviceType === 'NodePort' || row._serviceType === 'LoadBalancer' || !row.expose" placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.hostIP" />
+              <ko-form-item :disabled="!row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -90,9 +78,6 @@ export default {
         protocol: "TCP",
         containerPort: 80,
         hostPort: "",
-        hostIP: "",
-        _serviceType: "",
-        _listeningPort: "",
       }
       this.ports.push(item)
     },
@@ -108,22 +93,11 @@ export default {
           itemPo.expose = po.expose || undefined
           itemPo.protocol = po.protocol || undefined
           itemPo.containerPort = po.containerPort || undefined
-          itemPo._serviceType = po._serviceType || undefined
           if (po.expose) {
-            switch (po._serviceType) {
-              case "":
-              case "ClusterIP":
-                itemPo.hostPort = po.hostPort || undefined
-                itemPo.hostIP = po.hostIP || undefined
-                break
-              case "NodePort":
-              case "LoadBalancer":
-                itemPo._listeningPort = po._listeningPort || undefined
-                break
-            }
+            itemPo.hostPort = po.hostPort || undefined
           }
-          parentFrom.ports.push(itemPo)
         }
+        parentFrom.ports.push(itemPo)
       }
     },
   },
@@ -139,19 +113,8 @@ export default {
           }
           itemPo.protocol = po.protocol
           itemPo.containerPort = po.containerPort
-          itemPo._serviceType = po._serviceType ? po._serviceType : ""
           if (po.expose) {
-            switch (po._serviceType) {
-              case "":
-              case "ClusterIP":
-                itemPo.hostPort = po.hostPort
-                itemPo.hostIP = po.hostIP
-                break
-              case "NodePort":
-              case "LoadBalancer":
-                itemPo._listeningPort = po._listeningPort
-                break
-            }
+            itemPo.hostPort = po.hostPort
           }
           this.ports.push(itemPo)
         }
