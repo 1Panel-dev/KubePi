@@ -175,6 +175,7 @@ func (e *EkkoSerer) runMigrations() {
 
 func (e *EkkoSerer) bootstrap() *EkkoSerer {
 	e.Application = iris.New()
+	e.Application.Use(iris.Compression)
 	e.setUpStaticFile()
 	e.setUpConfig()
 	e.setUpLogger()
