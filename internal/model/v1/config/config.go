@@ -1,6 +1,6 @@
 package config
 
-import v1 "github.com/KubeOperator/ekko/internal/model/v1"
+import v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 
 type Config struct {
 	v1.BaseModel

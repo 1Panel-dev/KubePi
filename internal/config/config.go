@@ -3,9 +3,9 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
-	"github.com/KubeOperator/ekko/internal/model/v1/config"
-	"github.com/KubeOperator/ekko/pkg/file"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+	"github.com/KubeOperator/kubepi/internal/model/v1/config"
+	"github.com/KubeOperator/kubepi/pkg/file"
 	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/spf13/viper"
 )
@@ -15,7 +15,7 @@ const configReadErr = "can not read config file %s ,%s"
 const configMergeErr = "can not merge config file, %s"
 
 var configFilePaths = []string{
-	"~/.ekko/conf",
+	"/etc/kubepi",
 }
 
 func ReadConfig(path ...string) (config.Config, error) {
@@ -77,7 +77,7 @@ func defaultConfig() config.Config {
 				},
 			},
 			DB: config.DBConfig{
-				Path: "~/.ekko/db",
+				Path: "/var/lib/kubepi/db",
 			},
 			Logger: config.LoggerConfig{Level: "debug"},
 		},

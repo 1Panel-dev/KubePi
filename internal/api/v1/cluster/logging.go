@@ -1,9 +1,9 @@
 package cluster
 
 import (
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
-	"github.com/KubeOperator/ekko/pkg/logging"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/pkg/logging"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )

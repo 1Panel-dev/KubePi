@@ -26,7 +26,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster,
 			},
 		},
@@ -47,7 +47,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -67,7 +67,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -87,7 +87,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -107,7 +107,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -127,7 +127,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -147,7 +147,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -167,7 +167,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -187,7 +187,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -212,7 +212,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeCluster},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -237,7 +237,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -263,7 +263,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -288,7 +288,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -318,7 +318,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace},
 		},
 		Rules: []rbacV1.PolicyRule{
@@ -348,7 +348,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -369,7 +369,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -390,7 +390,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -421,7 +421,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -452,7 +452,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -488,7 +488,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -519,7 +519,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},
@@ -540,7 +540,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
 			},
 			Labels: map[string]string{
-				LabelManageKey:   "ekko",
+				LabelManageKey:   "kubepi",
 				LabelRoleTypeKey: RoleTypeNamespace,
 			},
 		},

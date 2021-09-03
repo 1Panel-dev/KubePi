@@ -2,8 +2,8 @@ package migrate
 
 import (
 	"errors"
-	"github.com/KubeOperator/ekko/migrate/migrations"
-	v1 "github.com/KubeOperator/ekko/migrate/v1"
+	"github.com/KubeOperator/kubepi/migrate/migrations"
+	v1 "github.com/KubeOperator/kubepi/migrate/v1"
 	"github.com/asdine/storm/v3"
 	"github.com/sirupsen/logrus"
 	"os"
