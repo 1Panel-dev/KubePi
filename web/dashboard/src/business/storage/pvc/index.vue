@@ -19,13 +19,13 @@
           {{ $t("commons.button.delete") }}
         </el-button>
       </template>
-      <el-table-column sortable type="selection" fix></el-table-column>
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('commons.table.status')" prop="status.phase">
+      <el-table-column :label="$t('commons.table.status')" prop="status.phase">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase && row.status.phase === 'Bound'" type="success" size="mini" plain round>
             {{ row.status.phase }}
@@ -39,13 +39,13 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
-      <el-table-column sortable show-overflow-tooltip label="Volume" prop="spec.volumeName">
+      <el-table-column show-overflow-tooltip label="Volume" prop="spec.volumeName">
         <template v-slot:default="{row}">
           <el-link @click="openPvDetail(row)">{{ row.spec.volumeName }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
-      <el-table-column sortable :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
+      <el-table-column :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
+      <el-table-column :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
       <el-table-column label="volumeMode" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">

@@ -10,24 +10,24 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <el-link @click="openDetail(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace" />
+      <el-table-column :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
           {{getPodStatus(row)}}
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.workload.restarts')" min-width="35">
+      <el-table-column :label="$t('business.workload.restarts')" min-width="35">
         <template v-slot:default="{row}">
           {{getRestartTimes(row)}}
         </template>
       </el-table-column>
-      <el-table-column sortable label="IP" min-width="40" prop="status.podIP" />
-      <el-table-column sortable :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName" />
+      <el-table-column label="IP" min-width="40" prop="status.podIP" />
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName" />
       <el-table-column :label="$t('commons.table.created_time')" min-width="35" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}

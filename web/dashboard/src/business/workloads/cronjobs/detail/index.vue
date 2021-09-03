@@ -10,7 +10,7 @@
         <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
           <el-tab-pane label="Jobs" name="Jobs">
             <complex-table :data="jobs">
-              <el-table-column sortable :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
+              <el-table-column :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
                 <template v-slot:default="{row}">
                   <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
                     {{ $t("commons.status.Succeeded") }}
@@ -20,7 +20,7 @@
                   </el-button>
                 </template>
               </el-table-column>
-              <el-table-column sortable :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
+              <el-table-column :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
                 <template v-slot:default="{row}">
                   <el-link @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{
                       row.metadata.name
@@ -28,12 +28,12 @@
                   </el-link>
                 </template>
               </el-table-column>
-              <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+              <el-table-column :label="$t('commons.table.status')" min-width="40">
                 <template v-slot:default="{row}">
                   {{ row.spec.completions }} / {{ row.spec.parallelism }}
                 </template>
               </el-table-column>
-              <el-table-column sortable :label="$t('business.workload.duration')" min-width="40">
+              <el-table-column :label="$t('business.workload.duration')" min-width="40">
                 <template v-slot:default="{row}">
                   {{ getDuration(row) }}S
                 </template>

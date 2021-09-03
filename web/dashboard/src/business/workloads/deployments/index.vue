@@ -13,13 +13,13 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
-      <el-table-column sortable :label="$t('commons.table.status')" min-width="40">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
+      <el-table-column :label="$t('commons.table.status')" min-width="40">
         <template v-slot:default="{row}">
           {{ row.status.readyReplicas || 0 }} / {{ row.status.replicas }}
         </template>
