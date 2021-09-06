@@ -158,7 +158,20 @@ const description = {
     i18n_user_manage_cluster: "The Cluster Administrator has all the permissions of the cluster object.",
     i18n_user_manage_rbac: "Role and user administrators have all the permissions of role and user objects.",
     i18n_user_manage_readonly: "Read only user with access to all objects only,",
-    i18n_user_common_user: "Ordinary users only have access to cluster objects"
+    i18n_user_common_user: "Ordinary users only have access to cluster objects",
+
+    i18n_manage_config: "The configuration administrator has all permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
+    i18n_view_config: "Configure a read-only user with read-only permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
+    i18n_namespace_owner: "The namespace owner has all permissions on all objects in the current namespace",
+    i18n_namespace_viewer: "Namespace read-only user with read-only permission for all objects in the current namespace",
+    i18n_view_workload: "Workload read-only user with read-only permissions for daemonset, statefulset, deployment, job, cronjob and pod in the current namespace",
+    i18n_manage_workload: "Workload administrator, read-only user of workload, with all permissions of daemonset, statefulset, deployment, job, cronjob and pod in the current namespace",
+    i18n_manage_storage: "Storage administrator who has all permissions on the persistentvolumeclaim object in the current namespace",
+    i18n_view_storage: "Stores a read-only user with read-only permissions on the persistentvolumeclaim object in the current namespace",
+    i18n_view_service_discovery: "The service found a read-only user with read-only permissions on service, endpoint, progress and networkpolicy objects in the current namespace",
+    i18n_manage_service_discovery: "The service discovery administrator has all permissions on service, endpoint, ingress and networkpolicy objects in the current namespace",
+    i18n_manage_rbac: "The service discovery administrator has all permissions on service, endpoint, ingress and networkpolicy objects in the current namespace",
+    i18n_view_rbac: "Namespace access control read-only user with read-only permissions for role, rolebinding and serviceaccount objects in the current namespace"
 }
 
 const apiObjects = {
