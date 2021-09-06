@@ -114,42 +114,44 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
-		if !profile.IsAdministrator {
-			binding := v1Cluster.Binding{
-				BaseModel: v1.BaseModel{
-					Kind: "ClusterBinding",
-				},
-				Metadata: v1.Metadata{
-					Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
-				},
-				UserRef:    profile.Name,
-				ClusterRef: req.Name,
-			}
-			if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
+		_ = tx.Commit()
+		ctx.Values().Set("data", &req)
+		go func() {
+			req.Status.Phase = clusterStatusInitializing
+			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+				server.Logger().Errorf("cna not update cluster status %s", err)
 				return
 			}
-			if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
-				_ = tx.Rollback()
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			go func() {
-				req.Status.Phase = clusterStatusInitializing
+			if err := client.CreateDefaultClusterRoles(); err != nil {
+				req.Status.Phase = clusterStatusFailed
+				req.Status.Message = err.Error()
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
 					server.Logger().Errorf("cna not update cluster status %s", err)
 					return
 				}
-				if err := client.CreateDefaultClusterRoles(); err != nil {
-					req.Status.Phase = clusterStatusFailed
-					req.Status.Message = err.Error()
-					if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-						server.Logger().Errorf("cna not update cluster status %s", err)
-						return
-					}
-					server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+				return
+			}
+			if !profile.IsAdministrator {
+				binding := v1Cluster.Binding{
+					BaseModel: v1.BaseModel{
+						Kind: "ClusterBinding",
+					},
+					Metadata: v1.Metadata{
+						Name: fmt.Sprintf("%s-%s-cluster-binding", req.Name, profile.Name),
+					},
+					UserRef:    profile.Name,
+					ClusterRef: req.Name,
+				}
+				if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
+				}
+				if err := client.CreateOrUpdateClusterRoleBinding("cluster-owner", profile.Name, true); err != nil {
+					_ = tx.Rollback()
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
 					return
 				}
 				if err := h.updateUserCert(client, &binding); err != nil {
@@ -167,16 +169,14 @@ func (h *Handler) CreateCluster() iris.Handler {
 					server.Logger().Errorf("cna not update cluster status %s", err)
 					return
 				}
-			}()
-		} else {
-			req.Status.Phase = clusterStatusCompleted
-			if e := h.clusterService.Update(req.Name, &req.Cluster, txOptions); e != nil {
-				server.Logger().Errorf("cna not update cluster status %s", err)
-				return
+			} else {
+				req.Status.Phase = clusterStatusCompleted
+				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
+					server.Logger().Errorf("cna not update cluster status %s", err)
+					return
+				}
 			}
-		}
-		_ = tx.Commit()
-		ctx.Values().Set("data", &req)
+		}()
 	}
 }
 
@@ -260,20 +260,14 @@ func (h *Handler) SearchClusters() iris.Handler {
 				c.Accessable = true
 			} else {
 				bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
-				if err != nil {
+				if err != nil && !errors.Is(err, storm.ErrNotFound) {
 					ctx.StatusCode(iris.StatusInternalServerError)
 					ctx.Values().Set("message", err.Error())
 					return
 				}
 				c.MemberCount = len(bs)
-				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-				if err != nil {
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.Values().Set("message", err)
-					return
-				}
-				for j := range mbs {
-					if mbs[j].UserRef == profile.Name {
+				for j := range bs {
+					if bs[j].UserRef == profile.Name {
 						c.Accessable = true
 					}
 				}

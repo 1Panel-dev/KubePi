@@ -10,4 +10,4 @@ spec:
       certificate:
       certificateKey:
   db:
-    path: /var/lib/ekko/db/ekko.db
+    path: /var/lib/kubepi/db/kukbepi.db

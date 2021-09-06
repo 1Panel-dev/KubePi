@@ -4,7 +4,7 @@ $--color-success: #87CB16;
 $--color-warning: #FFA534;
 $--color-danger: #FB404B;
 $--color-info: #0033FF;
-$--color-ekko: #3884c5;
+$--color-kubepi: #3884c5;
 
 $--box-shadow-light: 0 1px 4px 0 rgba(0, 0, 0, .14);
 
@@ -22,7 +22,7 @@ $sidebar-bg-gradient: linear-gradient(to bottom right, #30373D, #3E3E3D);
 /* menu */
 $menu-height: 50px; // 菜单项高度
 $menu-bg-color: transparent; // 菜单项背景
-$menu-bg-color-hover: mix($--color-ekko, #000, 90%); // 菜单项hover背景
+$menu-bg-color-hover: mix($--color-kubepi, #000, 90%); // 菜单项hover背景
 $menu-color: #B6C0CD; // 菜单项字体颜色
 $menu-open-bg-color: #252B2F; // 菜单项展开背景
 $menu-active-color: #3884c5; // 菜单项激活时颜色
@@ -58,7 +58,7 @@ $--input-placeholder-color: #C0C4CC;
 }
 
 #nprogress .bar {
-  background: $--color-ekko !important; //自定义颜色
+  background: $--color-kubepi !important; //自定义颜色
 }
 
 

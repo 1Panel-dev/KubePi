@@ -52,7 +52,7 @@ const message = {
       resourceInformation: "Resource Information",
       empty_text: "There are no rows to show.",
     },
-    statu: {
+    status: {
       Running: "Running",
       Succeeded: "Succeeded",
       Failed: "Failed",

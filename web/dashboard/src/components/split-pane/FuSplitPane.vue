@@ -131,7 +131,6 @@ export default {
         const value = this.oldValue + offset
         if (value > this.percentToValue(this.min) && value < this.outerWrapperSize - this.percentToValue(this.min)) {
           this.valueL = value
-          this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", this.screenHeight - this.valueL)
           this.writeValue()
         }
       }

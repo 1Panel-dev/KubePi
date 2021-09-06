@@ -2,7 +2,7 @@
 
 ## 获取 apiserver 地址:
 
-    cat .kube/config | grep server: | awk '{print $2}'
+    cat /root/.kube/config | grep server: | awk '{print $2}'
 
 > 注意: 如果 server IP 为 127.0.0.1，需要将 IP 替换为任意 master 节点 IP
 

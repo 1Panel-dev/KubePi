@@ -4,7 +4,7 @@ LABEL stage=stage-web-build
 
 RUN apk add make python
 
-WORKDIR /build/ekko/web
+WORKDIR /build/kubepi/web
 
 COPY . .
 
@@ -23,9 +23,9 @@ ENV GO111MODULE=on
 
 LABEL stage=stage-bin-build
 
-WORKDIR /build/ekko/bin
+WORKDIR /build/kubepi/bin
 
-COPY --from=stage-web-build /build/ekko/web .
+COPY --from=stage-web-build /build/kubepi/web .
 
 
 RUN go mod download
@@ -36,10 +36,10 @@ FROM alpine:3.14
 
 WORKDIR /
 
-COPY --from=stage-bin-build /build/ekko/bin/dist/usr /usr
+COPY --from=stage-bin-build /build/kubepi/bin/dist/usr /usr
 
 EXPOSE 2019
 
 USER root
 
-CMD ["ekko-server"]
+CMD ["kubepi-server"]

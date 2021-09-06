@@ -25,7 +25,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('business.cluster.node')" min-width="100" fix>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="100" fix>
         <template v-slot:default="{row}">
           <el-tag>
             {{ row.extraClusterInfo.readyNodeNum }} / {{ row.extraClusterInfo.totalNodeNum }}
@@ -62,7 +62,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label=" " width="90">
+      <el-table-column label=" " width="100">
         <template v-slot:default="{row}">
           <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
         </template>

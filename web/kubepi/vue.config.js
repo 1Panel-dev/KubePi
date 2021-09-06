@@ -5,7 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../../cmd/server/web/ekko'),
+    outputDir: path.resolve(__dirname, '../../cmd/server/web/kubepi'),
     productionSourceMap: true,
     devServer: {
         port: 4300,
@@ -39,5 +39,5 @@ module.exports = {
             }
         }
     },
-    publicPath: '/ekko/',
+    publicPath: '/kubepi/',
 };
