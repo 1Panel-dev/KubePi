@@ -10,7 +10,6 @@ const getters = {
     clusterRoles: state => state.user.clusterRoles,
     nickName: state => state.user.nickName,
     buttom_height: state => state.terminal.buttomHeight,
-    terminal_height: state => state.terminal.terminalHeight,
     terminals: state => state.terminal.terminals,
     isAdmin: state => state.user.isAdmin,
 

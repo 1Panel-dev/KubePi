@@ -32,12 +32,8 @@
       </el-row>
       <el-row>
         <div>
-          <div class="example" :style="{height: terminalHeight}">
-            <el-scrollbar style="height:100%">
-              <div v-for="item in terminalTabs" :key="item.key">
-                <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 800px;border: 0"></iframe>
-              </div>
-            </el-scrollbar>
+          <div v-for="item in terminalTabs" :key="item.key">
+            <iframe v-show="item.show" :src="item.url" style="width: 100%;height: 100%;min-height: 308px;border: 0"></iframe>
           </div>
         </div>
       </el-row>
@@ -72,9 +68,6 @@ export default {
       set() {
         this.$store.commit("terminal/TERMINALS", this.terminalTabs)
       },
-    },
-    terminalHeight() {
-      return this.$store.state.terminal.terminalHeight - 90 + "px"
     },
   },
   watch: {
@@ -120,7 +113,6 @@ export default {
       switch (operation) {
         case "expand":
           this.$store.commit("terminal/CHANGE_BOTTOM_HEIGHT", "400")
-          this.$store.commit("terminal/CHANGE_TERMINAL_HEIGHT", "400")
           this.expand = true
           break
         case "shrink":
@@ -166,13 +158,12 @@ export default {
 .interval {
   margin-left: 10px;
 }
-.example {
-  ul {
-    height: 20px;
+/deep/ .scrollbar {
+  .el-scrollbar__thumb {
+    background-color: black;
   }
-  /deep/ .el-scrollbar__wrap {
-    height: 100%;
-    overflow-x: hidden;
+  .el-table__body-wrapper::-webkit-scrollbar {
+    width: 3px;
   }
 }
 </style>
