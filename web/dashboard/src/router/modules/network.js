@@ -92,7 +92,7 @@ const Network = {
       requirePermission: {
         apiGroup: "",
         resource: "endpoints",
-        verb: "update",
+        verb: "get",
         scope:"namespace"
       },
       component: () => import("@/business/network/endpoints/detail"),
@@ -197,7 +197,7 @@ const Network = {
         activeMenu: "/ingresses"
       }
     },
-    
+
     {
       path: "/networkpolicies",
       requirePermission: {

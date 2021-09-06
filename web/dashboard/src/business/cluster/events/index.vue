@@ -1,6 +1,7 @@
 <template>
   <layout-content header="Events">
-    <complex-table :data="data" @search="search()" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search()" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #toolbar>
       </template>
       <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
@@ -28,16 +29,17 @@
       <el-table-column :label="$t('business.event.resource')" prop="resource" fix min-width="200px"
                        show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">{{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
+          <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">
+            {{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
           </el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
-          <span>{{row.metadata.creationTimestamp | age}}</span>
-<!--          <span v-if="row.eventTime">{{ row.eventTime | age }}</span>-->
-<!--          <span v-else-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>-->
-<!--          <span v-else-if="row.firstTimestamp">{{ row.firstTimestamp | age }}</span>-->
+          <!--          <span>{{row.metadata.creationTimestamp | age}}</span>-->
+          <!--          <span v-else-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>-->
+          <span v-if="row.lastTimestamp">{{ row.lastTimestamp | age }}</span>
+          <span v-else-if="row.metadata.creationTimestamp">{{ row.metadata.creationTimestamp | age }}</span>
         </template>
       </el-table-column>
     </complex-table>
