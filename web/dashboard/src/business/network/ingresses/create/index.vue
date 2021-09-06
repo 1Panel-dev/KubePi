@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="24">
             <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                     @tab-click="handleClick" ref=tabs>
+                     @tab-click="handleClick" ref=tabs v-if="form.metadata.namespace!==''">
               <el-tab-pane :label="$t('business.network.rule')">
                 <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace"
                                  :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
