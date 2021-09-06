@@ -63,7 +63,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteIngress, listIngresses} from "@/api/ingress"
+import {deleteIngress, getIngress, listIngresses} from "@/api/ingress"
 import {mixin} from "@/utils/resourceRoutes"
 import {checkPermissions} from "@/utils/permission"
 
@@ -120,7 +120,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getIngress(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

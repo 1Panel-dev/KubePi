@@ -79,7 +79,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
+import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import { checkPermissions } from "@/utils/permission"
@@ -114,7 +114,7 @@ export default {
     handleClick(btn, row) {
       switch (btn) {
         case "download":
-          downloadYaml(row.metadata.name + ".yml", row)
+          downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
           break
         case "terminal":
           this.openTerminal(row)

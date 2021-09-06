@@ -77,7 +77,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteHpa, listHpas} from "@/api/hpa"
+import {deleteHpa, getHpa, listHpas} from "@/api/hpa"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -136,7 +136,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getHpa(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

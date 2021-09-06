@@ -39,7 +39,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
-import {deletePDB, listPDBs} from "@/api/poddisruptionbudgets"
+import {deletePDB, getPDB, listPDBs} from "@/api/poddisruptionbudgets"
 
 export default {
   name: "PDBs",
@@ -73,7 +73,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getPDB(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

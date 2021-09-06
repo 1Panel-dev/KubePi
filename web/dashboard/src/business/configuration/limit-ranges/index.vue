@@ -36,7 +36,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {deleteLimitRange, listLimitRanges} from "@/api/limitranges"
+import {deleteLimitRange, getLimitRange, listLimitRanges} from "@/api/limitranges"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
@@ -68,7 +68,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getLimitRange(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

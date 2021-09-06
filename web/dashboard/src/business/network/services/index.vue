@@ -63,7 +63,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
-import {deleteService, listServices} from "@/api/services"
+import {deleteService, getService, listServices} from "@/api/services"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
@@ -110,7 +110,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getService(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

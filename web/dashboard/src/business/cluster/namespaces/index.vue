@@ -59,7 +59,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNamespace, deleteNamespace} from "@/api/namespaces"
+import {listNamespace, deleteNamespace, getNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
 import {downloadYaml} from "@/utils/actions"
 import {checkPermissions} from "@/utils/permission"
@@ -105,7 +105,7 @@ export default {
             return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "namespaces", verb: "get" })
           },
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getNamespace(this.clusterName,row.metadata.name))
           }
         },
         {

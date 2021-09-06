@@ -51,7 +51,7 @@ import {downloadYaml} from "@/utils/actions"
 import {listNamespace} from "@/api/namespaces"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteEndPoint, listEndPoints} from "@/api/endpoints"
+import {deleteEndPoint, getEndPoint, listEndPoints} from "@/api/endpoints"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -82,7 +82,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getEndPoint(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

@@ -41,7 +41,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
+import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -85,7 +85,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "jobs", row.metadata.namespace, row.metadata.name))
           },
         },
         {

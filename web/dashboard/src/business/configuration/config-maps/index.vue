@@ -44,7 +44,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {deleteConfigMap, listConfigMaps} from "@/api/configmaps"
+import {deleteConfigMap, getConfigMap, listConfigMaps} from "@/api/configmaps"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {downloadYaml} from "@/utils/actions"
@@ -92,7 +92,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getConfigMap(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

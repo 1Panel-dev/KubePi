@@ -45,7 +45,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteCustomResource, listCustomResources} from "@/api/customresourcedefinitions"
+import {deleteCustomResource, getCustomResource, listCustomResources} from "@/api/customresourcedefinitions"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -75,7 +75,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getCustomResource(this.clusterName,row.metadata.name))
           }
         },
         {

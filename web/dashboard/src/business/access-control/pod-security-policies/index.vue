@@ -34,7 +34,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
-import {deletePSP, listPSPs} from "@/api/podsecuritypolicies"
+import {deletePSP, getPSP, listPSPs} from "@/api/podsecuritypolicies"
 
 export default {
   name: "PSPs",
@@ -68,7 +68,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", getPSP(this.cluster,row.metadata.name))
           }
         },
         {
