@@ -1,0 +1,27 @@
+# Copyright (c) 2019 the Octant contributors. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  labels:
+    project: octant
+spec:
+  selector:
+    matchLabels:
+      name: fluentd
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+        - name: fluentd
+          image: gcr.io/google-containers/fluentd-elasticsearch:1.20
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi

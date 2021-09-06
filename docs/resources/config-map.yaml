@@ -1,0 +1,16 @@
+# Copyright (c) 2019 the Octant contributors. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-config
+data:
+  app.config: |
+    {
+      "app_Name": "example app",
+      "users": [
+        "user1",
+        "user2"
+      ]
+    }
