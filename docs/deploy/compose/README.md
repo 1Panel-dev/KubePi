@@ -1,3 +1,5 @@
+# 使用 docker-compose 部署
+
 ## 快速开始
 
 ```sh
@@ -7,6 +9,6 @@
   docker-compose up -d
 ```
 
-- 环境地址：http://localhost:2019
+- 环境地址：http://x.x.x.x:2019
 - 用户名：admin
 - 密码：admin123

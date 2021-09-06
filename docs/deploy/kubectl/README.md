@@ -1,3 +1,5 @@
+# 使用 YAML 文件部署
+
 ## 快速开始
 
     sudo kubectl apply -f ./kubectl.yaml
