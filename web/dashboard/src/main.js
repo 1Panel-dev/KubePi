@@ -16,7 +16,7 @@ import icons from './icons'
 import VueCodemirror from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import "./permission"
-import "@/styles/common/ekko.css"
+import "@/styles/common/kubepi.css"
 import filters from "./filters";
 import JsonViewer from 'vue-json-viewer'
 import directives from "./directive";

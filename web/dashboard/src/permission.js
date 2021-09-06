@@ -42,14 +42,14 @@ router.beforeEach(async (to, from, next) => {
                 next({path: to.path, query: q})
                 NProgress.done()
             } else {
-                window.open("/ekko", '_self');
+                window.open("/kubepi", '_self');
             }
         } else {
             await store.dispatch("user/setCurrentCluster", to.query["cluster"])
         }
         await generateRoutes(to, from, next)
     } else {
-        window.open("/ekko", '_self');
+        window.open("/kubepi", '_self');
         NProgress.done()
     }
 })

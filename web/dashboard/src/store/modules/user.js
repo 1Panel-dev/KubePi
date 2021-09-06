@@ -2,7 +2,7 @@ import {login, isLogin, logout, getCurrentClusterUser} from "@/api/auth"
 import {resetRouter} from "@/router"
 import {getLanguage, setLanguage} from "@/i18n"
 import store from "../../store"
-import {updateProfile} from "../../../../ekko/src/api/auth";
+import {updateProfile} from "../../../../kubepi/src/api/auth";
 
 const state = {
     login: false,
