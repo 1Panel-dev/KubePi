@@ -408,7 +408,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 		}
 		// 审批证书
 		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1.CertificateSigningRequestCondition{
-			Reason:         "Approved by Ekko",
+			Reason:         "Approved by KubePi",
 			Type:           certv1.CertificateApproved,
 			LastUpdateTime: metav1.Now(),
 			Status:         "True",
@@ -456,7 +456,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 		}
 		// 审批证书
 		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1beta1.CertificateSigningRequestCondition{
-			Reason:         "Approved by Ekko",
+			Reason:         "Approved by KubePi",
 			Type:           certv1beta1.CertificateApproved,
 			LastUpdateTime: metav1.Now(),
 			Status:         "True",

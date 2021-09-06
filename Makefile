@@ -6,25 +6,25 @@ GOOS=$(shell go env GOOS )
 
 BASEPATH := $(shell pwd)
 BUILDDIR=$(BASEPATH)/dist/usr/local/bin
-EKKODIR=$(BASEPATH)/web/ekko
+KUBEPIDIR=$(BASEPATH)/web/kubepi
 DASHBOARDDIR=$(BASEPATH)/web/dashboard
 TERMINALDIR=$(BASEPATH)/web/terminal
 
 
 MAIN= $(BASEPATH)/cmd/server/main.go
 
-APP_NAME=ekko-server
+APP_NAME=kubepi-server
 
 GOPROXY="https://goproxy.cn,direct"
 
-build_web_ekko:
-	cd $(EKKODIR) && npm install && npm run-script build
+build_web_kubepi:
+	cd $(KUBEPIDIR) && npm install && npm run-script build
 build_web_dashboard:
 	cd $(DASHBOARDDIR) && npm install && npm run-script build
 build_web_terminal:
 	cd $(TERMINALDIR) && npm install && npm run-script build
 
-build_web: build_web_ekko build_web_dashboard build_web_terminal
+build_web: build_web_kubepi build_web_dashboard build_web_terminal
 
 build_bin:
 	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -trimpath  -ldflags "-s -w"  -o $(BUILDDIR)/$(APP_NAME) $(MAIN)
