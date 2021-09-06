@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
 	"github.com/KubeOperator/ekko/pkg/certificate"
 	"github.com/KubeOperator/ekko/pkg/collectons"
@@ -17,9 +21,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type Interface interface {
@@ -287,7 +288,9 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 			return nil, err
 		}
 		for i := range ns.Items {
-			namespaceSet.Add(ns.Items[i].Name)
+			if ns.Items[i].Status.Phase == "Active" {
+				namespaceSet.Add(ns.Items[i].Name)
+			}
 		}
 	} else {
 		rbs, err := client.RbacV1().RoleBindings("").List(context.TODO(), metav1.ListOptions{})
