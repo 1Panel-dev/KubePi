@@ -114,6 +114,8 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
 		}
+		_ = tx.Commit()
+		ctx.Values().Set("data", &req)
 		go func() {
 			req.Status.Phase = clusterStatusInitializing
 			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
@@ -169,14 +171,12 @@ func (h *Handler) CreateCluster() iris.Handler {
 				}
 			} else {
 				req.Status.Phase = clusterStatusCompleted
-				if e := h.clusterService.Update(req.Name, &req.Cluster, txOptions); e != nil {
+				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
 					server.Logger().Errorf("cna not update cluster status %s", err)
 					return
 				}
 			}
 		}()
-		_ = tx.Commit()
-		ctx.Values().Set("data", &req)
 	}
 }
 
