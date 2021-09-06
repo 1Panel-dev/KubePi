@@ -25,7 +25,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('business.cluster.node')" min-width="100" fix>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="100" fix>
         <template v-slot:default="{row}">
           <el-tag>
             {{ row.extraClusterInfo.readyNodeNum }} / {{ row.extraClusterInfo.totalNodeNum }}

@@ -25,7 +25,8 @@ const message = {
             edit: "Edit",
             all_select: "All",
             upload: "Upload",
-            search: "Search"
+            search: "Search",
+            rbac_manage: "RBAC Manage"
         },
         table: {
             name: "name",
