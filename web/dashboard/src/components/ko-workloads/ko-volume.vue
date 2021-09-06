@@ -1,9 +1,9 @@
 <template>
   <div style="margin-top: 20px">
     <el-collapse v-model="activeName">
-      <el-collapse-item style="margin-top: 20px" :title="item.name + '(' + item.type + ')'" :name="index" v-for="(item, index) in volumes" :key="index">
+      <el-collapse-item style="margin-top: 10px" :title="item.name + '(' + item.type + ')'" :name="index" v-for="(item, index) in volumes" :key="index">
         <el-form label-position="top" :disabled="isReadOnly">
-          <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
+          <el-button style="float: right;margin-top: 5px;margin-right: 20px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
           <el-form-item :label="$t('business.workload.volume_name')" required>
             <ko-form-item itemType="input" v-model="item.name" @change="changeName" />
           </el-form-item>
@@ -11,15 +11,41 @@
             <ko-form-item itemType="number" placeholder="644" v-model.number="item.defaultMode" />
           </el-form-item>
           <el-form-item :label="item.type" v-if="hasResource(item.type)">
-            <ko-form-item v-if="item.type === 'ConfigMap'" itemType="select2" v-model="item.resource" :selections="config_map_name_list" />
-            <ko-form-item v-if="item.type === 'Secret'" itemType="select2" v-model="item.resource" :selections="secret_list" />
+            <ko-form-item v-if="item.type === 'ConfigMap'" itemType="select2" v-model="item.resource" :selections="config_map_name_list" @change="changeConfigMap(item)" />
+            <ko-form-item v-if="item.type === 'Secret'" itemType="select2" v-model="item.resource" :selections="secret_name_list" @change="changeSecret(item)" />
             <ko-form-item v-if="item.type === 'PVC'" itemType="select2" v-model="item.resource" :selections="pvc_list" />
           </el-form-item>
-          <el-form-item :label="$t('business.workload.optional')" v-if="hasOptional(item.type)">
+          <table v-if="hasKvData(item.type)" style="width: 98%" class="tab-table">
+            <tr>
+              <th scope="col" width="43%" align="left">
+                <label>{{$t('business.workload.key')}}</label>
+              </th>
+              <th scope="col" width="43%" align="left">
+                <label>{{$t('business.workload.path')}}</label>
+              </th>
+              <th align="left"></th>
+            </tr>
+            <tr v-for="(row, index) in item.items" v-bind:key="index">
+              <td>
+                <ko-form-item itemType="select2" :selections="item.options" v-model="row.key" />
+              </td>
+              <td>
+                <ko-form-item itemType="input" v-model="row.path" />
+              </td>
+              <td>
+                <el-button type="text" style="font-size: 10px" @click="handleDelete(item, index)">
+                  {{ $t("commons.button.delete") }}
+                </el-button>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <el-button :disabled="item.resource === ''" @click="handleAdd(item)">{{ $t("commons.button.add") }}</el-button>
+              </td>
+            </tr>
+          </table>
+          <el-form-item label="Optional" v-if="hasOptional(item.type)">
             <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
-          </el-form-item>
-          <el-form-item :label="$t('business.workload.read_only')" v-if="hasReadOnly(item.type)">
-            <ko-form-item itemType="radio" v-model="item.readOnly" :radios="optional_list" />
           </el-form-item>
           <div v-if="item.type === 'NFS'">
             <el-form-item label="Path">
@@ -40,7 +66,7 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
-    <el-row style="margin-top: 20px">
+    <el-row style="margin-top: 10px">
       <el-col :span="12">
         <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
           <el-button class="search-btn">
@@ -72,8 +98,10 @@ export default {
     configMapList: {
       handler(newName) {
         this.config_map_name_list = []
+        this.config_map_list = []
         for (const cm of newName) {
           this.config_map_name_list.push(cm.metadata.name)
+          this.config_map_list.push(cm)
         }
       },
       immediate: true,
@@ -81,9 +109,10 @@ export default {
     },
     secretList: {
       handler(newName) {
-        this.secret_list = []
+        this.secret_list = newName
+        this.secret_name_list = []
         for (const s of newName) {
-          this.secret_list.push(s.metadata.name)
+          this.secret_name_list.push(s.metadata.name)
         }
       },
       immediate: true,
@@ -96,8 +125,10 @@ export default {
       containerIndex: 0,
       volumes: [],
       pvc_list: [],
-      secret_list: [],
+      config_map_list: [],
       config_map_name_list: [],
+      secret_list: [],
+      secret_name_list: [],
       volume_type_list: [
         { label: "NFS", value: "NFS" },
         { label: "PVC", value: "PVC" },
@@ -114,6 +145,38 @@ export default {
     }
   },
   methods: {
+    handleAdd(row) {
+      const item = {
+        key: "",
+        path: "",
+      }
+      row.items.push(item)
+    },
+    handleDelete(row, index) {
+      row.items.splice(index, 1)
+    },
+    changeConfigMap(row) {
+      row.options = []
+      for (const cm of this.config_map_list) {
+        if (row.resource === cm.metadata.name) {
+          for (const item of Object.keys(cm.data)) {
+            row.options.push(item)
+          }
+        }
+      }
+      console.log(row)
+    },
+    changeSecret(row) {
+      row.options = []
+      for (const se of this.secret_list) {
+        if (row.resource === se.metadata.name) {
+          for (const item of Object.keys(se.data)) {
+            row.options.push(item)
+          }
+        }
+      }
+    },
+
     handleVolumeAdd(type) {
       this.volumes.push({
         type: type,
@@ -121,10 +184,11 @@ export default {
         resource: "",
         defaultMode: null,
         optional: null,
-        readOnly: null,
         path: null,
         server: null,
         hostType: null,
+        options: [],
+        items: [],
       })
       this.activeName = this.volumes.length - 1
       this.$emit("loadVolumes", "volume", this.volumes, [])
@@ -143,8 +207,8 @@ export default {
     hasOptional(type) {
       return type === "ConfigMap" || type === "Secret"
     },
-    hasReadOnly(type) {
-      return type === "NFS" || type === "PVC"
+    hasKvData(type) {
+      return type === "ConfigMap" || type === "Secret"
     },
     hasDefaultMode(type) {
       return type === "ConfigMap" || type === "Secret"
@@ -166,17 +230,22 @@ export default {
         item.name = volume.name || undefined
         itemClild.defaultMode = volume.defaultMode ? parseInt("0" + volume.defaultMode.toString(), 8) : undefined
         itemClild.optional = volume.optional !== null ? volume.optional : undefined
-        itemClild.readOnly = volume.readOnly !== null ? volume.readOnly : undefined
         itemClild.path = volume.path || undefined
         itemClild.server = volume.server || undefined
         itemClild.type = volume.hostType || undefined
 
         switch (volume.type) {
           case "ConfigMap":
+            if (volume.items.length !== 0) {
+              item.items = volume.items
+            }
             item.configMap = itemClild
             item.configMap.name = volume.resource || undefined
             break
           case "Secret":
+            if (volume.items.length !== 0) {
+              item.items = volume.items
+            }
             item.secret = itemClild
             item.secret.secretName = volume.resource || undefined
             break
@@ -210,10 +279,12 @@ export default {
           let itemClild = {}
           if (volume.configMap) {
             item.type = "ConfigMap"
+            item.items = volume.items || []
             itemClild = volume.configMap
           }
           if (volume.secret) {
             item.type = "Secret"
+            item.items = volume.items || []
             itemClild = volume.secret
           }
           if (volume.persistentVolumeClaim) {
@@ -241,9 +312,6 @@ export default {
           }
           if (itemClild.name) {
             item.resource = itemClild.name
-          }
-          if (itemClild.readOnly !== undefined) {
-            item.readOnly = itemClild.readOnly
           }
           if (itemClild.path) {
             item.path = itemClild.path

@@ -355,6 +355,7 @@ const message = {
       storage: "Storage",
       yes: "Yes",
       pvc: "PVC",
+      path: "Target Path",
       volume_name: "Volume Name",
       volume_mount: "Valume Mount",
       mount: "Mount",

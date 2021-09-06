@@ -356,6 +356,7 @@ const message = {
       storage: "存储",
       yes: "是",
       pvc: "持久卷",
+      path: "映射目标路径",
       volume_name: "卷名称",
       volume_mount: "挂载卷",
       mount: "挂载点",

@@ -1,7 +1,7 @@
 <template>
   <div style="margin-top: 20px">
     <el-collapse v-model="activeName">
-      <el-collapse-item style="margin-top: 20px" :title="item.name" :name="index" v-for="(item, index) in volumeClaimTemplates" :key="index">
+      <el-collapse-item style="margin-top: 10px" :title="item.name" :name="index" v-for="(item, index) in volumeClaimTemplates" :key="index">
         <el-form label-position="top" :disabled="isReadOnly">
           <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
           <el-form-item :label="$t('business.workload.pv_name')">
@@ -27,7 +27,7 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
-    <el-row style="margin-top : 20px">
+    <el-row style="margin-top : 10px">
       <el-col :span="12">
         <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}</el-button>
       </el-col>
