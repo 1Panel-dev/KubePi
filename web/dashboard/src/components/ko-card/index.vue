@@ -20,7 +20,6 @@ export default {
   name: "KoCard",
   props: {
     title: String,
-    description: String,
   },
   data() {
     return {

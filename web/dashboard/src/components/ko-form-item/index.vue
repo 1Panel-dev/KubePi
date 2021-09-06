@@ -16,7 +16,7 @@
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
-    <el-input type="number" v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
+    <el-input v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 

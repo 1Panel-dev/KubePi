@@ -3,32 +3,32 @@
     <el-form label-position="top" :disabled="isReadOnly">
       <div v-for="(item, index) in volumeClaimTemplates" :key="index">
         <div style="margin-top: 20px">
-          <span>{{index + 1}}</span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
-          <el-divider />
-          <el-form-item :label="$t('business.workload.pv_name')">
-            <ko-form-item itemType="input" @change="changeName" v-model="item.name" />
-          </el-form-item>
-          <el-form-item :label="$t('business.workload.type')">
-            <ko-form-item itemType="radio" radioLayout="vertical" v-model="item.type" :radios="type_list" />
-          </el-form-item>
-          <div v-if="item.type === 'new'">
-            <el-form-item :label="$t('business.workload.storage_class')">
-              <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
+          <ko-card :title="item.name">
+            <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
+            <el-form-item :label="$t('business.workload.pv_name')">
+              <ko-form-item itemType="input" @change="changeName" v-model="item.name" />
             </el-form-item>
-            <el-form-item :label="$t('business.workload.size')" v-if="item.type === 'new'">
-              <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
+            <el-form-item :label="$t('business.workload.type')">
+              <ko-form-item itemType="radio" radioLayout="vertical" v-model="item.type" :radios="type_list" />
             </el-form-item>
-          </div>
-          <el-form-item v-if="item.type === 'existing'" :label="$t('business.workload.pvc')">
-            <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
-          </el-form-item>
-          <el-form-item :label="$t('business.workload.access_modes')">
-            <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
-          </el-form-item>
+            <div v-if="item.type === 'new'">
+              <el-form-item :label="$t('business.workload.storage_class')">
+                <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
+              </el-form-item>
+              <el-form-item :label="$t('business.workload.size')" v-if="item.type === 'new'">
+                <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
+              </el-form-item>
+            </div>
+            <el-form-item v-if="item.type === 'existing'" :label="$t('business.workload.pvc')">
+              <ko-form-item itemType="select2" v-model="item.volumeName" :selections="pvc_list" />
+            </el-form-item>
+            <el-form-item :label="$t('business.workload.access_modes')">
+              <ko-form-item itemType="checkbox" v-model="item.accessModes" :checks="access_mode_list" />
+            </el-form-item>
+          </ko-card>
         </div>
       </div>
-      <el-row>
+      <el-row style="margin-top : 20px">
         <el-col :span="12">
           <el-button @click="handleVolumeAdd">{{$t('business.workload.add')}}</el-button>
         </el-col>
@@ -39,10 +39,11 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
+import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoVolumeClaim",
-  components: { KoFormItem },
+  components: { KoFormItem, KoCard },
   props: {
     volumeClaimParentObj: Object,
     scList: Array,

@@ -1,13 +1,22 @@
 <template>
   <div v-if="!loading">
-    <complex-table :data="form.status.containerStatuses">
+    <complex-table :data="data">
       <el-table-column :label="$t('commons.table.status')" min-width="35">
         <template v-slot:default="{row}">
           <el-button v-if="row.state.running" type="success" size="mini" plain round>
-            {{ $t('commons.status.Running') }}
+            Running
           </el-button>
-          <el-button v-if="!row.state.running" type="warning" size="mini" plain round>
-            {{ $t('commons.status.Failed') }}
+          <el-button v-if="row.state.waiting" type="primary" size="mini" plain round>
+            Waiting
+          </el-button>
+          <el-button v-if="row.state.pending" type="warning" size="mini" plain round>
+            Pending
+          </el-button>
+          <el-button v-if="row.state.terminated" type="warning" size="mini" plain round>
+            Terminated
+          </el-button>
+          <el-button v-if="row.state.failed" type="danger" size="mini" plain round>
+            Failed
           </el-button>
         </template>
       </el-table-column>
@@ -56,7 +65,7 @@ export default {
   watch: {
     name: {
       handler(newVal) {
-        if(newVal) {
+        if (newVal) {
           this.search()
         }
       },
@@ -81,23 +90,25 @@ export default {
           },
         },
       ],
+      data: [],
       loading: false,
-      form: {
-        metadata: {},
-        spec: {
-          nodeName: "",
-        },
-        status: {
-          containerStatuses: [],
-        },
-      },
     }
   },
   methods: {
     search() {
       this.loading = true
       getWorkLoadByName(this.cluster, "pods", this.namespace, this.name).then((res) => {
-        this.form = res
+        this.data = []
+        if (res.status.containerStatuses) {
+          for (const c of res.status.containerStatuses) {
+            this.data.push(c)
+          }
+        }
+        if (res.status.initContainerStatuses) {
+          for (const c of res.status.initContainerStatuses) {
+            this.data.push(c)
+          }
+        }
         this.loading = false
       })
     },

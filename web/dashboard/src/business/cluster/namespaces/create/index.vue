@@ -102,6 +102,7 @@ export default {
           message: this.$t("commons.msg.create_success"),
         })
         this.$router.push({ name: "Namespaces" })
+        location.reload()
       }).finally(() => {
         this.loading = false
       })

@@ -183,6 +183,7 @@ export default {
                 type: "success",
                 message: this.$t("commons.msg.delete_success"),
               })
+              location.reload()
             })
             .catch(() => {
               this.search()

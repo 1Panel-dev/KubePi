@@ -25,7 +25,7 @@
 
               <el-row v-if="isReplicasShow()">
                 <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
-                  <ko-form-item :disabled="readOnly" placeholder="Any text you want that better describes this resource" itemType="number" v-model.number="form.spec.replicas" />
+                  <ko-form-item :disabled="readOnly" itemType="number" v-model.number="form.spec.replicas" />
                 </el-form-item>
               </el-row>
               <el-row v-if="isStatefulSet()">
