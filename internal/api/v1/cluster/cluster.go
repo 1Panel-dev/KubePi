@@ -260,20 +260,14 @@ func (h *Handler) SearchClusters() iris.Handler {
 				c.Accessable = true
 			} else {
 				bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
-				if err != nil {
+				if err != nil && !errors.Is(err, storm.ErrNotFound) {
 					ctx.StatusCode(iris.StatusInternalServerError)
 					ctx.Values().Set("message", err.Error())
 					return
 				}
 				c.MemberCount = len(bs)
-				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-				if err != nil {
-					ctx.StatusCode(iris.StatusBadRequest)
-					ctx.Values().Set("message", err)
-					return
-				}
-				for j := range mbs {
-					if mbs[j].UserRef == profile.Name {
+				for j := range bs {
+					if bs[j].UserRef == profile.Name {
 						c.Accessable = true
 					}
 				}
