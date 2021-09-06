@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'Secrets'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'Services'}" v-loading="loading">
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
