@@ -62,7 +62,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label=" " width="90">
+      <el-table-column label=" " width="100">
         <template v-slot:default="{row}">
           <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
         </template>

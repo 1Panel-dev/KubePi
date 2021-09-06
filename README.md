@@ -10,7 +10,7 @@ KubePi 是一款开源的容器管理平台。它允许用户管理 Kubernetes �
 
 ## 快速开始
 
-    sudo docker run -v ./kubepi/:/var/lib/kubepi -p 2019:2019 kubeoperator/kubepi-server:v1.0
+    sudo docker run -d -v /root/kubepi/:/var/lib/kubepi -p 2019:2019 kubeoperator/kubepi-server
 
 - 环境地址：http://x.x.x.x:2019
 - 用户名：admin
