@@ -1,3 +1,5 @@
+# 导入集群
+
 ## 获取 apiserver 地址:
 
     cat .kube/config | grep server: | awk '{print $2}'

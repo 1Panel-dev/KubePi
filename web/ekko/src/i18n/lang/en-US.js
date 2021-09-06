@@ -25,7 +25,8 @@ const message = {
             edit: "Edit",
             all_select: "All",
             upload: "Upload",
-            search: "Search"
+            search: "Search",
+            rbac_manage: "RBAC Manage"
         },
         table: {
             name: "name",
@@ -66,7 +67,7 @@ const message = {
             no_data: "no data",
         },
         confirm_message: {
-            delete: "此操作不可撤销, 是否继续?",
+            delete: "This operation cannot be undone. Do you want to continue?",
             create_success: "create success",
             save_success: "save success",
         },
@@ -75,7 +76,7 @@ const message = {
             password: "password",
             title: "login EKKO",
             welcome: "Welcome back, please enter your user name and password to log in",
-            expires: "认证信息已过期，请重新登录",
+            expires: "The authentication information has expired. Please log in again."
         },
     },
     business: {
@@ -115,12 +116,15 @@ const message = {
             api_group: "API Groups",
             resource: "resources",
             verb: "verbs",
-            cluster_role_form_check_msg: "api groups,resources or verbs  list cannot be empty"
+            cluster_role_form_check_msg: "api groups,resources or verbs  list cannot be empty",
+            user_not_in_cluster: "You are not a member of this cluster and cannot access the console of this cluster. Please contact the administrator to add you as a cluster member.",
+            ready: "Ready",
+            not_ready: "NotReady"
         },
         cluster_role: {
-            none: "无",
-            cluster_administrator: "集群管理员",
-            cluster_viewer: "只读用户",
+            none: "None",
+            cluster_administrator: "Administrator",
+            cluster_viewer: "Viewer",
         },
         user: {
             user_management: "RBAC",

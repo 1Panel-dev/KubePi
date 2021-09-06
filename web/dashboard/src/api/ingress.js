@@ -22,11 +22,11 @@ export function listIngresses (cluster_name, search, keywords, pageNum, pageSize
       params["pageSize"] = pageSize
     }
   }
-  return get(url,params)
+  return get(url, params)
 }
 
-export function deleteIngress (cluster_name, name) {
-  return del(`${namespaceIngressUrl(cluster_name)}/${name}`)
+export function deleteIngress (cluster_name, namespace, name) {
+  return del(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`)
 }
 
 export function getIngress (cluster_name, namespace, name) {
