@@ -1,8 +1,3 @@
-# Copyright (c) 2019 the Octant contributors. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
-
-# For local tests, enable metrics server first https://github.com/kubernetes-incubator/metrics-server
-# and update metric-server deployment as described in the README
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:

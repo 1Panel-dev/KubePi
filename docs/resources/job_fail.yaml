@@ -1,12 +1,9 @@
-# Copyright (c) 2019 the Octant contributors. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
-
 apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: job-fail-
   labels:
-    octant-scenario: failed-job
+    kubepi-scenario: failed-job
 spec:
   template:
     spec:
