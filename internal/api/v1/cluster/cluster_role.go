@@ -3,8 +3,8 @@ package cluster
 import (
 	goContext "context"
 	"fmt"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	rbacV1 "k8s.io/api/rbac/v1"
@@ -105,7 +105,7 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 		}
 		req.Annotations["builtin"] = "false"
 		req.Annotations["created-at"] = time.Now().Format("2006-01-02 15:04:05")
-		req.Labels[kubernetes.LabelManageKey] = "ekko"
+		req.Labels[kubernetes.LabelManageKey] = "kubepi"
 		resp, err := client.RbacV1().ClusterRoles().Create(goContext.TODO(), &req, metav1.CreateOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -175,7 +175,7 @@ func (h *Handler) ListClusterRoles() iris.Handler {
 			return
 		}
 		labels := []string{
-			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "kubepi"),
 		}
 		if scope != "" {
 			labels = append(labels, fmt.Sprintf("%s=%s", "kubeoperator.io/role-type", scope))

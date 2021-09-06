@@ -52,6 +52,7 @@ import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
+import {getCronJobByName} from "@/api/cronjobs"
 
 export default {
   name: "CronJobs",
@@ -91,7 +92,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getCronJobByName(this.clusterName,row.metadata.namespace,row.metadata.name))
           },
         },
         {

@@ -66,7 +66,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteRoleBinding, listRoleBindings} from "@/api/rolebings"
+import {deleteRoleBinding, getRoleBinding, listRoleBindings} from "@/api/rolebings"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -111,7 +111,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", getRoleBinding(this.cluster,row.metadata.namespace,row.metadata.name ))
           }
         },
         {

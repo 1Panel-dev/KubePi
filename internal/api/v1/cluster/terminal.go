@@ -1,9 +1,9 @@
 package cluster
 
 import (
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
-	"github.com/KubeOperator/ekko/pkg/terminal"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/pkg/terminal"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"k8s.io/client-go/tools/remotecommand"

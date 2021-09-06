@@ -46,7 +46,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deletePolicyUrl, listNetworkPolicies} from "@/api/networkpolicy"
+import {deletePolicyUrl, getNetworkPolicy, listNetworkPolicies} from "@/api/networkpolicy"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -81,7 +81,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getNetworkPolicy(this.clusterName,row.metadata.namespace,row.metadata.name))
           }
         },
         {

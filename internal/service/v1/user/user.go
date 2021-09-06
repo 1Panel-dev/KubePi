@@ -2,11 +2,11 @@ package user
 
 import (
 	"errors"
-	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/role"
-	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
-	costomStorm "github.com/KubeOperator/ekko/pkg/storm"
+	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/internal/service/v1/role"
+	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
+	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"

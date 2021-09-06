@@ -40,7 +40,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {deleteSecrets, listSecrets} from "@/api/secrets"
+import {deleteSecrets, getSecret, listSecrets} from "@/api/secrets"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
@@ -98,7 +98,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml", getSecret(this.cluster,row.metadata.namespace,row.metadata.name))
           }
         },
         {

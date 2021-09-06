@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
-	"github.com/KubeOperator/ekko/pkg/certificate"
-	"github.com/KubeOperator/ekko/pkg/collectons"
+	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	"github.com/KubeOperator/kubepi/pkg/certificate"
+	"github.com/KubeOperator/kubepi/pkg/collectons"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
 	certv1beta1 "k8s.io/api/certificates/v1beta1"
@@ -63,7 +63,7 @@ func (k *Kubernetes) CreateOrUpdateClusterRoleBinding(clusterRoleName string, us
 	}
 	name := fmt.Sprintf("%s:%s:%s", username, clusterRoleName, k.UUID)
 	labels := map[string]string{
-		LabelManageKey: "ekko",
+		LabelManageKey: "kubepi",
 		LabelClusterId: k.UUID,
 		LabelUsername:  username,
 	}
@@ -114,7 +114,7 @@ func (k *Kubernetes) CreateOrUpdateRolebinding(namespace string, clusterRoleName
 		return err
 	}
 	labels := map[string]string{
-		LabelManageKey: "ekko",
+		LabelManageKey: "kubepi",
 		LabelClusterId: k.UUID,
 		LabelUsername:  username,
 	}
@@ -168,7 +168,7 @@ func (k *Kubernetes) CleanManagedClusterRole() error {
 	}
 
 	labels := []string{
-		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelManageKey, "kubepi"),
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 	}
 	return client.RbacV1().ClusterRoles().DeleteCollection(context.TODO(), metav1.DeleteOptions{}, metav1.ListOptions{
@@ -182,7 +182,7 @@ func (k *Kubernetes) CleanManagedClusterRoleBinding(username string) error {
 		return err
 	}
 	labels := []string{
-		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelManageKey, "kubepi"),
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 	}
 	if username != "" {
@@ -203,7 +203,7 @@ func (k *Kubernetes) CleanManagedRoleBinding(username string) error {
 		return err
 	}
 	labels := []string{
-		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelManageKey, "kubepi"),
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 	}
 	if username != "" {
@@ -240,7 +240,7 @@ func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
 	}
 	roleSet := collectons.NewStringSet()
 	labels := []string{
-		fmt.Sprintf("%s=%s", LabelManageKey, "ekko"),
+		fmt.Sprintf("%s=%s", LabelManageKey, "kubepi"),
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
 		fmt.Sprintf("%s=%s", LabelUsername, username),
 	}
@@ -389,7 +389,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	if minor > 18 {
 		csr := certv1.CertificateSigningRequest{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
+				Name: fmt.Sprintf("%s-%s-%d", commonName, "kubepi", time.Now().Unix()),
 			},
 			Spec: certv1.CertificateSigningRequestSpec{
 				SignerName: "kubernetes.io/kube-apiserver-client",
@@ -437,7 +437,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 		name := "kubernetes.io/kube-apiserver-client"
 		csr := certv1beta1.CertificateSigningRequest{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("%s-%s-%d", commonName, "ekko", time.Now().Unix()),
+				Name: fmt.Sprintf("%s-%s-%d", commonName, "kubepi", time.Now().Unix()),
 			},
 			Spec: certv1beta1.CertificateSigningRequestSpec{
 				SignerName: &name,

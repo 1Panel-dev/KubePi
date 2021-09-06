@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 .idea
+.DS_Store
 dist
 *.exe
 *.exe~
@@ -7,6 +8,7 @@ dist
 *.so
 *.dylib
 cmd/server/web
+.DS_Store
 
 # Test binary, built with `go test -c`
 *.test

@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
+	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
 	"time"
 )
 

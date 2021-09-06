@@ -2,8 +2,8 @@ package rolebinding
 
 import (
 	"errors"
-	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"

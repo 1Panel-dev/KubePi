@@ -1,7 +1,7 @@
 package route
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/api/v1"
+	v1 "github.com/KubeOperator/kubepi/internal/api/v1"
 	"github.com/kataras/iris/v12"
 )
 

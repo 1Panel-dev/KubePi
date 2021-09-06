@@ -1,10 +1,10 @@
 package v1
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
-	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
-	v1User "github.com/KubeOperator/ekko/internal/model/v1/user"
-	"github.com/KubeOperator/ekko/migrate/migrations"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/migrate/migrations"
 	"github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"

@@ -62,7 +62,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deletePvs, listPvs} from "@/api/pv"
+import {deletePvs, getPv, listPvs} from "@/api/pv"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -108,7 +108,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", row)
+            downloadYaml(row.metadata.name + ".yml",getPv(this.clusterName,row.metadata.name))
           },
         },
         {

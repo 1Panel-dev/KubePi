@@ -1,6 +1,6 @@
 package project
 
-import v1 "github.com/KubeOperator/ekko/internal/model/v1"
+import v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 
 type Project struct {
 	v1.BaseModel `storm:"inline"`

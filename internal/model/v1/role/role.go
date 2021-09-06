@@ -1,6 +1,6 @@
 package role
 
-import v1 "github.com/KubeOperator/ekko/internal/model/v1"
+import v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 
 type PolicyRule struct {
 	Resource      []string `json:"resource"`
