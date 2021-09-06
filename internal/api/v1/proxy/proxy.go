@@ -5,12 +5,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strings"
-	"sync"
-
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
@@ -20,8 +14,15 @@ import (
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"io/ioutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
+	"net/http"
+	"net/url"
+	"sort"
+	"strings"
+	"sync"
+	"time"
 )
 
 type Handler struct {
@@ -166,6 +167,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 				ctx.Values().Set("message", err)
 				return
 			}
+			listObj.Sort()
 			if keywords != "" {
 				listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
 			}
@@ -189,12 +191,63 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 	}
 }
 
-type K8sListObj struct {
-	Kind       string        `json:"kind"`
-	ApiVersion string        `json:"apiVersion"`
-	Metadata   interface{}   `json:"metadata"`
-	Items      []interface{} `json:"items"`
+var timeTemplate = "2006-01-02T15:04:05Z"
+
+func getTime(obj interface{}) time.Time {
+	//判断是否存在lasttime
+	o := obj.(map[string]interface{})
+	if o["lastTimestamp"] != nil {
+		strTime := o["lastTimestamp"].(string)
+		t, err := time.ParseInLocation(timeTemplate, strTime, time.Local)
+		if err != nil {
+			return time.Time{}
+		}
+		return t
+	}
+	if o["metadata"].(map[string]interface{}) != nil {
+		metadata := o["metadata"].(map[string]interface{})
+		if metadata["creationTimestamp"] != nil {
+			strTime := metadata["creationTimestamp"].(string)
+			t, err := time.ParseInLocation(timeTemplate, strTime, time.Local)
+			if err != nil {
+				return time.Time{}
+			}
+			return t
+		}
+	}
+	return time.Time{}
 }
+
+type ItemList []interface{}
+
+type Item struct {
+	Metadata metav1.ObjectMeta `json:"metadata"`
+}
+
+func (a ItemList) Len() int {
+	return len(a)
+}
+
+func (a ItemList) Less(i, j int) bool {
+	o1 := a[i].(map[string]interface{})
+	o2 := a[j].(map[string]interface{})
+	return getTime(o1).Unix() > getTime(o2).Unix()
+}
+func (a ItemList) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+type K8sListObj struct {
+	Kind       string      `json:"kind"`
+	ApiVersion string      `json:"apiVersion"`
+	Metadata   interface{} `json:"metadata"`
+	Items      ItemList    `json:"items"`
+}
+
+func (k K8sListObj) Sort() {
+	sort.Sort(k.Items)
+}
+
 type pageItem struct {
 	Metadata interface{} `json:"metadata"`
 	Spec     interface{} `json:"spec"`
