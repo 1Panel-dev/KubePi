@@ -1,70 +1,67 @@
 <template>
   <div style="margin-top: 20px">
-    <el-form label-position="top" :disabled="isReadOnly">
-      <div v-for="(item, index) in volumes" :key="index">
-        <div style="margin-top: 20px">
-          <ko-card :title="item.name + '(' + item.type + ')'">
-            <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
-            <el-form-item :label="$t('business.workload.volume_name')" required>
-              <ko-form-item itemType="input" v-model="item.name" @change="changeName" />
+    <el-collapse v-model="activeName">
+      <el-collapse-item style="margin-top: 20px" :title="item.name + '(' + item.type + ')'" :name="index" v-for="(item, index) in volumes" :key="index">
+        <el-form label-position="top" :disabled="isReadOnly">
+          <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
+          <el-form-item :label="$t('business.workload.volume_name')" required>
+            <ko-form-item itemType="input" v-model="item.name" @change="changeName" />
+          </el-form-item>
+          <el-form-item v-if="hasDefaultMode(item.type)" :label="$t('business.workload.default_mode')">
+            <ko-form-item itemType="number" placeholder="644" v-model.number="item.defaultMode" />
+          </el-form-item>
+          <el-form-item :label="item.type" v-if="hasResource(item.type)">
+            <ko-form-item v-if="item.type === 'ConfigMap'" itemType="select2" v-model="item.resource" :selections="config_map_name_list" />
+            <ko-form-item v-if="item.type === 'Secret'" itemType="select2" v-model="item.resource" :selections="secret_list" />
+            <ko-form-item v-if="item.type === 'PVC'" itemType="select2" v-model="item.resource" :selections="pvc_list" />
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.optional')" v-if="hasOptional(item.type)">
+            <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.read_only')" v-if="hasReadOnly(item.type)">
+            <ko-form-item itemType="radio" v-model="item.readOnly" :radios="optional_list" />
+          </el-form-item>
+          <div v-if="item.type === 'NFS'">
+            <el-form-item label="Path">
+              <ko-form-item itemType="input" v-model="item.path" />
             </el-form-item>
-            <el-form-item v-if="hasDefaultMode(item.type)" :label="$t('business.workload.default_mode')">
-              <ko-form-item itemType="number" placeholder="644" v-model.number="item.defaultMode" />
+            <el-form-item label="Server">
+              <ko-form-item itemType="input" v-model="item.server" />
             </el-form-item>
-            <el-form-item :label="item.type" v-if="hasResource(item.type)">
-              <ko-form-item v-if="item.type === 'ConfigMap'" itemType="select2" v-model="item.resource" :selections="config_map_name_list" />
-              <ko-form-item v-if="item.type === 'Secret'" itemType="select2" v-model="item.resource" :selections="secret_list" />
-              <ko-form-item v-if="item.type === 'PVC'" itemType="select2" v-model="item.resource" :selections="pvc_list" />
+          </div>
+          <div v-if="item.type === 'HostPath'">
+            <el-form-item :label="$t('business.storage.path_or_node')" required>
+              <ko-form-item itemType="input" v-model="item.path" />
             </el-form-item>
-            <el-form-item :label="$t('business.workload.optional')" v-if="hasOptional(item.type)">
-              <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
+            <el-form-item :label="$t('business.workload.type')">
+              <ko-form-item v-model="item.hostType" itemType="select2" :selections="host_path_list" />
             </el-form-item>
-            <el-form-item :label="$t('business.workload.read_only')" v-if="hasReadOnly(item.type)">
-              <ko-form-item itemType="radio" v-model="item.readOnly" :radios="optional_list" />
-            </el-form-item>
-            <div v-if="item.type === 'NFS'">
-              <el-form-item label="Path">
-                <ko-form-item itemType="input" v-model="item.path" />
-              </el-form-item>
-              <el-form-item label="Server">
-                <ko-form-item itemType="input" v-model="item.server" />
-              </el-form-item>
-            </div>
-            <div v-if="item.type === 'HostPath'">
-              <el-form-item :label="$t('business.storage.path_or_node')" required>
-                <ko-form-item itemType="input" v-model="item.path" />
-              </el-form-item>
-              <el-form-item :label="$t('business.workload.type')">
-                <ko-form-item v-model="item.hostType" itemType="select2" :selections="host_path_list" />
-              </el-form-item>
-            </div>
-          </ko-card>
-        </div>
-      </div>
-      <el-row style="margin-top: 20px">
-        <el-col :span="12">
-          <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
-            <el-button class="search-btn">
-              {{$t('business.workload.add')}}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </el-col>
-      </el-row>
-    </el-form>
+          </div>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row style="margin-top: 20px">
+      <el-col :span="12">
+        <el-dropdown placement="bottom" trigger="click" @command="handleVolumeAdd">
+          <el-button class="search-btn">
+            {{$t('business.workload.add')}}
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="(item, index) in volume_type_list" :key="index" :command="item.value">{{item.label}}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoStorage",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     volumeParentObj: Object,
     configMapList: Array,
@@ -95,6 +92,7 @@ export default {
   },
   data() {
     return {
+      activeName: [],
       containerIndex: 0,
       volumes: [],
       pvc_list: [],
@@ -128,10 +126,12 @@ export default {
         server: null,
         hostType: null,
       })
+      this.activeName = this.volumes.length - 1
       this.$emit("loadVolumes", "volume", this.volumes, [])
     },
     handleVolumeDelete(index) {
       this.volumes.splice(index, 1)
+      this.activeName = this.volumes.length - 1
       this.$emit("loadVolumes", "volume", this.volumes, [])
     },
     changeName() {

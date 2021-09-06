@@ -43533,8 +43533,8 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  height: 30px;
-  line-height: 30px;
+  height: 34px;
+  line-height: 34px;
   background-color: #232529;
   color: #f2f6fc;
   cursor: pointer;
@@ -43568,7 +43568,7 @@
   border-bottom: 1px solid #232529; }
 
 .el-collapse-item__content {
-  padding-bottom: 25px;
+  padding-bottom: 10px;
   font-size: 13px;
   color: #f2f6fc;
   line-height: 1.769230769230769; }
