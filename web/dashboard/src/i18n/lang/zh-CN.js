@@ -167,7 +167,7 @@ const message = {
       size: "大小",
       resource: "资源信息",
       address: "地址",
-      watch: "监听",
+      watch: "追踪",
       lines: "行数",
       last_20_lines: "最后20行",
       last_100_lines: "最后100行",

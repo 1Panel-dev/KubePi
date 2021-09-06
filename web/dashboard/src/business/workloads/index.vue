@@ -441,7 +441,7 @@ export default {
     gatherFormData() {
       this.$refs.ko_annotation_label.transformation(this.form, this.podMetadata)
       this.$refs.ko_volume.transformation(this.podSpec)
-      this.$refs.ko_container.transformation(this.currentContainer)
+      this.$refs.ko_container.transformation(this.currentContainer, this.podSpec)
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_environment.transformation(this.currentContainer)

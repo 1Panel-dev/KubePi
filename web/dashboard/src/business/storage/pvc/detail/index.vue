@@ -14,7 +14,7 @@
                    @tab-click="handleClick">
             <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form.status]">
-                <el-table-column sortable :label="$t('commons.table.status')" min-width="30">
+                <el-table-column :label="$t('commons.table.status')" min-width="30">
                   <template v-slot:default="{row}">
                     <el-button v-if="row.phase && row.phase === 'Bound'" type="success" size="mini" plain round>
                       {{ row.phase }}
@@ -27,9 +27,9 @@
                     </el-button>
                   </template>
                 </el-table-column>
-                <el-table-column sortable :label="$t('business.storage.capacity')" min-width="30"
+                <el-table-column :label="$t('business.storage.capacity')" min-width="30"
                                  prop="capacity.storage"/>
-                <el-table-column sortable :label="$t('business.storage.accessModes')" min-width="30">
+                <el-table-column :label="$t('business.storage.accessModes')" min-width="30">
                   <template v-slot:default="{row}">
                     <div v-for="(name,index) in row.accessModes " :key="index" style="display:inline-block">
                       <el-tag>{{ name }}</el-tag>

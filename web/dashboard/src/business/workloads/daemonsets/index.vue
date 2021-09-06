@@ -1,33 +1,27 @@
 <template>
   <layout-content header="DaemonSets">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'create'}"
-                   type="primary" size="small" @click="yamlCreate">
-          YAML
-        </el-button>
-        <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'create'}">
-          {{ $t("commons.button.create") }}
-        </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
+          <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'create'}" type="primary" size="small"  @click="yamlCreate">
+            YAML
+          </el-button>
+          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'create'}">
+            {{ $t("commons.button.create") }}
+          </el-button>
+          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'daemonsets',verb:'delete'}">
+            {{ $t("commons.button.delete") }}
+          </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column sortable :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column sortable :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace"/>
-      <el-table-column sortable :label="$t('business.pod.ready')" min-width="40" prop="status.numberReady"/>
-      <el-table-column sortable :label="$t('business.workload.current')" min-width="40"
-                       prop="status.currentNumberScheduled"/>
-      <el-table-column sortable :label="$t('business.workload.desired')" min-width="40"
-                       prop="status.desiredNumberScheduled"/>
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="80" prop="metadata.namespace" />
+      <el-table-column :label="$t('business.pod.ready')" min-width="40" prop="status.numberReady" />
+      <el-table-column :label="$t('business.workload.current')" min-width="40" prop="status.currentNumberScheduled" />
+      <el-table-column :label="$t('business.workload.desired')" min-width="40" prop="status.desiredNumberScheduled" />
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -36,25 +30,20 @@
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
 
-    <el-dialog :title="$t('commons.button.scale')" width="70%" :close-on-click-modal="false"
-               :visible.sync="dialogModifyVersionVisible">
+    <el-dialog :title="$t('commons.button.scale')" width="70%" :close-on-click-modal="false" :visible.sync="dialogModifyVersionVisible">
       <complex-table :data="form.imagesData" v-loading="loading">
-        <el-table-column :label="$t('business.workload.container_type')" prop="type" min-width="10"/>
-        <el-table-column :label="$t('business.workload.name')" prop="name" min-width="20" show-overflow-tooltip/>
-        <el-table-column :label="$t('business.workload.container_image')" prop="image" min-width="40"
-                         show-overflow-tooltip/>
-        <el-table-column :label="$t('business.workload.current_version')" prop="version" min-width="15"/>
+        <el-table-column :label="$t('business.workload.container_type')" prop="type" min-width="10" />
+        <el-table-column :label="$t('business.workload.name')" prop="name" min-width="20" show-overflow-tooltip />
+        <el-table-column :label="$t('business.workload.container_image')" prop="image" min-width="40" show-overflow-tooltip />
+        <el-table-column :label="$t('business.workload.current_version')" prop="version" min-width="15" />
         <el-table-column :label="$t('business.workload.new_version')" prop="newVersion" min-width="20">
           <template v-slot:default="{row}">
-            <ko-form-item itemType="input" v-model="row.newVersion"/>
+            <ko-form-item itemType="input" v-model="row.newVersion" />
           </template>
         </el-table-column>
       </complex-table>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogModifyVersionVisible = false">{{
-            $t("commons.button.cancel")
-          }}
-        </el-button>
+        <el-button size="small" @click="dialogModifyVersionVisible = false">{{ $t("commons.button.cancel") }}</el-button>
         <el-button size="small" @click="onModifyVersionSubmit">{{ $t("commons.button.confirm") }}</el-button>
       </div>
     </el-dialog>
@@ -64,17 +53,17 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import KoFormItem from "@/components/ko-form-item/index"
-import {patchDaemonset} from "@/api/daemonsets"
-import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
-import {downloadYaml} from "@/utils/actions"
+import { patchDaemonset } from "@/api/daemonsets"
+import { listWorkLoads, deleteWorkLoad } from "@/api/workloads"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
-import {checkPermissions} from "@/utils/permission"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "DaemonSets",
   components: { LayoutContent, ComplexTable, KoTableOperations, KoFormItem },
-  data () {
+  data() {
     return {
       buttons: [
         {
@@ -129,7 +118,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "daemonsets", row.metadata.namespace, row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", row)
           },
         },
         {
@@ -166,20 +155,16 @@ export default {
     }
   },
   methods: {
-    onCreate () {
+    onCreate() {
       this.$router.push({ name: "DaemonSetCreate", params: { operation: "create" }, query: { yamlShow: false } })
     },
-    openDetail (row) {
-      this.$router.push({
-        name: "DaemonSetDetail",
-        params: { namespace: row.metadata.namespace, name: row.metadata.name },
-        query: { yamlShow: false }
-      })
+    openDetail(row) {
+      this.$router.push({ name: "DaemonSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
-    yamlCreate () {
+    yamlCreate() {
       this.$router.push({ name: "DaemonSetCreate", params: { operation: "create" }, query: { yamlShow: true } })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -210,7 +195,7 @@ export default {
         }
       })
     },
-    onModifyVersion (row) {
+    onModifyVersion(row) {
       this.form.imagesData = []
       this.form.name = row.metadata.name
       this.form.namespace = row.metadata.namespace
@@ -238,7 +223,7 @@ export default {
       }
       this.dialogModifyVersionVisible = true
     },
-    onModifyVersionSubmit () {
+    onModifyVersionSubmit() {
       this.loading = true
       let containers = []
       let initContainers = []
@@ -269,7 +254,7 @@ export default {
           this.loading = false
         })
     },
-    onRestart (row) {
+    onRestart(row) {
       let data = { spec: { template: { metadata: { annotations: { "kubectl.kubernetes.io/restartedAt": new Date() } } } } }
       patchDaemonset(this.clusterName, row.metadata.namespace, row.metadata.name, data)
         .then(() => {
@@ -284,7 +269,7 @@ export default {
           this.loading = false
         })
     },
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -302,7 +287,7 @@ export default {
         })
     },
   },
-  mounted () {
+  mounted() {
     this.clusterName = this.$route.query.cluster
     this.search()
   },

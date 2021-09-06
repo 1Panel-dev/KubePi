@@ -4,13 +4,13 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
-	"github.com/KubeOperator/ekko/internal/api/v1/session"
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/server"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/collectons"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/internal/api/v1/session"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/collectons"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -66,7 +66,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 						Namespace: req.NamespaceRoles[i].Namespace,
 						Name:      fmt.Sprintf("%s-%s-%s", name, req.Name, req.NamespaceRoles[i].Roles[j]),
 						Labels: map[string]string{
-							kubernetes.LabelManageKey: "ekko",
+							kubernetes.LabelManageKey: "kubepi",
 							kubernetes.LabelClusterId: c.UUID,
 							kubernetes.LabelUsername:  req.Name,
 						},
@@ -99,7 +99,7 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("%s-%s-%s", name, req.Name, req.ClusterRoles[i]),
 					Labels: map[string]string{
-						kubernetes.LabelManageKey: "ekko",
+						kubernetes.LabelManageKey: "kubepi",
 						kubernetes.LabelClusterId: c.UUID,
 						kubernetes.LabelUsername:  req.Name,
 					},
@@ -156,7 +156,7 @@ func (h *Handler) GetClusterMember() iris.Handler {
 			return
 		}
 		labels := []string{
-			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "kubepi"),
 			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
 			fmt.Sprintf("%s=%s", kubernetes.LabelUsername, binding.UserRef),
 		}

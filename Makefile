@@ -32,4 +32,4 @@ build_bin:
 build_all: build_web build_bin
 
 build_docker:
-	docker build -t kubeoperator/ekko-server:master .
+	docker build -t KubeOperator/kubepi-server:master .

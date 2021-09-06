@@ -54,7 +54,7 @@ export default {
       expand: false,
       tabIndex: 1,
 
-      follow: false,
+      follow: true,
       tailLines: 20,
       tailLinesOptions: [
         { label: this.$t("business.pod.last_20_lines"), value: 20 },

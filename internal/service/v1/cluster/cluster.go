@@ -1,9 +1,9 @@
 package cluster
 
 import (
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/storm"
+	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/storm"
 	storm2 "github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"time"

@@ -11,13 +11,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/KubeOperator/ekko/internal/api/v1/session"
-	v1Cluster "github.com/KubeOperator/ekko/internal/model/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/service/v1/clusterbinding"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	pkgV1 "github.com/KubeOperator/ekko/pkg/api/v1"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/internal/api/v1/session"
+	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterbinding"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -210,9 +210,8 @@ type fieldMatcher interface {
 	Match(item interface{}) bool
 }
 
-type namespaceAndNameMatcher struct {
-	Namespace string
-	Name      string
+type keywordsMatcher struct {
+	keywords string
 }
 
 func compatibleClusterVersion(minor int, path *string) {
@@ -235,15 +234,23 @@ func hasNamespaceFilter(path string) bool {
 	return false
 }
 
-func (n namespaceAndNameMatcher) Match(item interface{}) bool {
+func (n keywordsMatcher) Match(item interface{}) bool {
 	pageItem := item.(map[string]interface{})
-	return (pageItem["metadata"].(map[string]interface{})["namespace"] != nil && pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.Namespace) || strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.Name)
+	if pageItem["metadata"].(map[string]interface{})["namespace"] != nil && pageItem["metadata"].(map[string]interface{})["namespace"].(string) == n.keywords {
+		return true
+	}
+	if strings.Contains(pageItem["metadata"].(map[string]interface{})["name"].(string), n.keywords) {
+		return true
+	}
+	if pageItem["message"] != nil && strings.Contains(strings.ToLower(pageItem["message"].(string)), strings.ToLower(n.keywords)) {
+		return true
+	}
+	return false
 }
 
 func withNamespaceAndNameMatcher(keywords string) fieldMatcher {
-	return &namespaceAndNameMatcher{
-		Namespace: keywords,
-		Name:      keywords,
+	return &keywordsMatcher{
+		keywords: keywords,
 	}
 }
 

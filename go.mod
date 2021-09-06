@@ -1,4 +1,4 @@
-module github.com/KubeOperator/ekko
+module github.com/KubeOperator/kubepi
 
 go 1.16
 

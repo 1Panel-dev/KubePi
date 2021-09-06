@@ -2,8 +2,8 @@ package cluster
 
 import (
 	"fmt"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"

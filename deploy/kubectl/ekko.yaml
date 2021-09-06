@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: ekko
-          image: kubeoperator/ekko-server:latest
+          image: KubeOperator/kubepi-server:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 2019

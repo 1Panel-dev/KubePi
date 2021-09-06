@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" show-overflow-tooltip />
       <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip />
-      <el-table-column sortable :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
             <el-tag type="info" size="small">

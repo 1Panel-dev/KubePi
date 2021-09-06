@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	v1 "github.com/KubeOperator/ekko/internal/model/v1"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 )
 
 type Cluster struct {

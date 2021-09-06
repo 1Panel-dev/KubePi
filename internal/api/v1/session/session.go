@@ -4,14 +4,14 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
-	v1Role "github.com/KubeOperator/ekko/internal/model/v1/role"
-	"github.com/KubeOperator/ekko/internal/service/v1/cluster"
-	"github.com/KubeOperator/ekko/internal/service/v1/common"
-	"github.com/KubeOperator/ekko/internal/service/v1/role"
-	"github.com/KubeOperator/ekko/internal/service/v1/rolebinding"
-	"github.com/KubeOperator/ekko/internal/service/v1/user"
-	"github.com/KubeOperator/ekko/pkg/collectons"
-	"github.com/KubeOperator/ekko/pkg/kubernetes"
+	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/internal/service/v1/role"
+	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
+	"github.com/KubeOperator/kubepi/internal/service/v1/user"
+	"github.com/KubeOperator/kubepi/pkg/collectons"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -259,7 +259,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		}
 
 		labels := []string{
-			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "ekko"),
+			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "kubepi"),
 			fmt.Sprintf("%s=%s", kubernetes.LabelClusterId, c.UUID),
 			fmt.Sprintf("%s=%s", kubernetes.LabelUsername, profile.Name),
 		}
