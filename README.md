@@ -17,8 +17,8 @@ KubePi 是一款开源的容器管理平台。它允许用户管理 Kubernetes �
 
 ## 其他安装方式
 
-- [kubernetes](docs/deploy/kubectl/kubectl.md)
-- [docker-compose](docs/deploy/compose/compose.md)
+- [kubernetes](docs/deploy/kubectl/README.md)
+- [docker-compose](docs/deploy/compose/README.md)
 
 ### 微信交流群
 
