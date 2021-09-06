@@ -93,7 +93,7 @@ const message = {
     login: {
       username: "用户名",
       password: "密码",
-      title: "登录 EKKO",
+      title: "登录 KubePi",
       welcome: "欢迎回来，请输入用户名和密码登录",
       expires: "认证信息已过期，请重新登录",
       table: {

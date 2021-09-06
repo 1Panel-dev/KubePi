@@ -92,7 +92,7 @@ const message = {
     login: {
       username: "Username",
       password: "Password",
-      title: "Log in to EKKO",
+      title: "Log in to KubePi",
       welcome: "Welcome back, please enter your username and password to log in",
       expires: "The authentication information has expired, please log in again",
       table: {
