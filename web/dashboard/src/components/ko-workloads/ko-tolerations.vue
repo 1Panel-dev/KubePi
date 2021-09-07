@@ -98,7 +98,7 @@ export default {
     transformation(parentFrom) {
       let tolerations = []
       for (const item of this.tolerations) {
-        parentFrom.tolerations.push({
+        tolerations.push({
           key: item.key || undefined,
           operator: item.operator || undefined,
           value: item.value || undefined,
