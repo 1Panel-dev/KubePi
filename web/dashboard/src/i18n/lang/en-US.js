@@ -139,7 +139,8 @@ const message = {
       type: "Type",
       time: "Time",
       resource: "Resource",
-      message: "Message"
+      message: "Message",
+      restart: "Count"
     },
     node: {
       ready: "Ready",
@@ -355,6 +356,7 @@ const message = {
       storage: "Storage",
       yes: "Yes",
       pvc: "PVC",
+      path: "Target Path",
       volume_name: "Volume Name",
       volume_mount: "Valume Mount",
       mount: "Mount",

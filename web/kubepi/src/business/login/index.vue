@@ -102,7 +102,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch("user/login", this.form).then(() => {
-            this.$router.push({ path: this.redirect || "/", query: this.otherQuery })
+            this.$router.push({ path: "/" })
             this.loading = false
           }).catch(() => {
             this.loading = false

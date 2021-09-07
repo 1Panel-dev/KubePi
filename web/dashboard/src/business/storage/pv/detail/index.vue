@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PersistentVolumes'}" v-loading="loading">
     <div v-if="!yamlShow">
-      <el-row :gutter="24" class="row-box">
+      <el-row :gutter="24">
         <el-col :span="24">
           <el-card class="el-card">
             <table style="width: 100%" class="myTable">
@@ -73,12 +73,14 @@
             </div>
           </el-card>
         </el-col>
+      </el-row>
+      <el-row style="margin-top: 20px" class="row-box" :gutter="10">
         <el-col :span="8">
           <el-card v-if="item.spec.claimRef !== undefined">
             <div class="card_title">
               <h3>{{ this.$t("business.storage.claim") }}</h3>
             </div>
-            <table class="myTable">
+            <table style="width: 100%" class="myTable">
               <tr>
                 <td>{{ this.$t("business.configuration.type") }}</td>
                 <td colspan="3">{{ item.spec.claimRef.kind }}</td>
@@ -94,12 +96,12 @@
             </table>
           </el-card>
         </el-col>
-        <el-col :span="24">
-          <el-card style="margin-top: 20px" v-if="'nfs' in item.spec">
+        <el-col :span="16">
+          <el-card v-if="'nfs' in item.spec">
             <div class="card_title">
               <h3>Network File System</h3>
             </div>
-            <table style="width: 90%" class="myTable">
+            <table style="width: 100%" class="myTable">
               <tr>
                 <td>Server</td>
                 <td colspan="3">{{ item.spec.nfs.server }}</td>
@@ -130,8 +132,8 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {isJSON} from "@/utils/data"
-import {getPv} from "@/api/pv"
+import { isJSON } from "@/utils/data"
+import { getPv } from "@/api/pv"
 import YamlEditor from "@/components/yaml-editor"
 
 export default {
@@ -140,27 +142,27 @@ export default {
   props: {
     name: String,
   },
-  data () {
+  data() {
     return {
       item: {
         metadata: {},
         spec: {
           capacity: {
-            storage: ""
-          }
+            storage: "",
+          },
         },
-        status: {}
+        status: {},
       },
       cluster: "",
       yamlShow: false,
       loading: false,
-      yaml: {}
+      yaml: {},
     }
   },
   methods: {
-    getDetail () {
+    getDetail() {
       this.loading = true
-      getPv(this.cluster, this.name).then(res => {
+      getPv(this.cluster, this.name).then((res) => {
         this.loading = false
         this.item = res
         if (this.yamlShow) {
@@ -168,39 +170,38 @@ export default {
         }
       })
     },
-    getContent (value) {
+    getContent(value) {
       const { Base64 } = require("js-base64")
       const content = Base64.decode(value)
       return JSON.parse(content)
     },
-    jsonV (str) {
+    jsonV(str) {
       const { Base64 } = require("js-base64")
       const content = Base64.decode(str)
       return isJSON(content)
     },
-    getValue (value) {
+    getValue(value) {
       const { Base64 } = require("js-base64")
       return Base64.decode(value)
-    }
+    },
   },
   watch: {
     yamlShow: function (newValue) {
       this.$router.push({
         name: "PersistentVolumeDetail",
         params: { name: this.name },
-        query: { yamlShow: newValue }
+        query: { yamlShow: newValue },
       })
       this.getDetail()
-    }
+    },
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.yamlShow = this.$route.query.yamlShow === "true"
     this.getDetail()
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 </style>

@@ -16,8 +16,8 @@
                 <ko-data :title="key">
                   <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
                                theme="jv-dark" :expanded="true" :expand-depth="4"></json-viewer>
-                  <el-card v-else style="background: #112234;border: 0;">
-                    <div style="white-space: pre-line;">
+                  <el-card v-else style="background: #202124;border: 0;">
+                    <div style="white-space: pre-line;background: #202124;">
                       <span>{{ getValue(value) }} </span>
                     </div>
                   </el-card>

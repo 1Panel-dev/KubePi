@@ -140,7 +140,8 @@ const message = {
       type: "类型",
       time: "时间",
       resource: "对象",
-      message: "消息"
+      message: "消息",
+      count: "次数"
     },
     node: {
       ready: "准备就绪",
@@ -356,6 +357,7 @@ const message = {
       storage: "存储",
       yes: "是",
       pvc: "持久卷",
+      path: "映射目标路径",
       volume_name: "卷名称",
       volume_mount: "挂载卷",
       mount: "挂载点",

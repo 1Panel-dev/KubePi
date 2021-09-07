@@ -108,7 +108,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getPv(this.clusterName,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml",getPv(this.cluster,row.metadata.name))
           },
         },
         {
