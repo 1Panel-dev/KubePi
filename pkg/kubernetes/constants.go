@@ -120,6 +120,66 @@ var initClusterRoles = []rbacV1.ClusterRole{
 	},
 	{
 		ObjectMeta: metav1.ObjectMeta{
+			Name: "manage-nodes",
+			Annotations: map[string]string{
+				"description": "i18n_manage_nodes",
+				"builtin":     "true",
+				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "kubepi",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{""},
+				Resources: []string{"nodes"},
+				Verbs:     []string{"*"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "view-crd",
+			Annotations: map[string]string{
+				"description": "i18n_view_crd",
+				"builtin":     "true",
+				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "kubepi",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{"apiextensions.k8s.io"},
+				Resources: []string{"nodes"},
+				Verbs:     []string{"list", "get", "watch"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "manage-crd",
+			Annotations: map[string]string{
+				"description": "i18n_manage_crd",
+				"builtin":     "true",
+				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "kubepi",
+				LabelRoleTypeKey: RoleTypeCluster},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{"apiextensions.k8s.io"},
+				Resources: []string{"nodes"},
+				Verbs:     []string{"*"},
+			},
+		},
+	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
 			Name: "view-events",
 			Annotations: map[string]string{
 				"description": "i18n_view_events",

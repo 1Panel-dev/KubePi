@@ -231,7 +231,11 @@ const description = {
     i18n_manage_namespaces: "命名空间管理员,拥有对 Namespace 对象的所有权限",
     i18n_view_namespaces: "命名空间只读用户,拥有对 Namespace 对象的所有权限",
     i18n_view_events: "集群事件只读用户, 拥有 Events 对象的只读权限",
-    i18n_view_nodes: "节点只读用户,拥有 Node 的只读权限",
+    i18n_view_nodes: "节点只读用户,拥有 Node 对象的只读权限",
+
+    i18n_manage_nodes: "节点管理员,拥有 Node 对象的只读权限",
+    i18n_manage_crd: "自定义资源管理员,拥有 CustomResourceDefinition 对象的所有权限",
+    i18n_view_crd: "自定义资源管理员,拥有 CustomResourceDefinition 对象的只读权限",
 
 
     i18n_manage_config: "配置管理员, 拥有当前命名空间 ConfigMap、Secret、ResourceQuotas、LimitRanges、HorizontalPodAutoscalers 和 PodDisruptionBudget 对象的所有权限",

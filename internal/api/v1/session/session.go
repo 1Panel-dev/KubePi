@@ -59,7 +59,7 @@ func (h *Handler) Login() iris.Handler {
 		if err != nil {
 			if errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", fmt.Sprintf("user %s: not Found", loginCredential.Username))
+				ctx.Values().Set("message", "username or password error")
 				return
 			}
 			ctx.StatusCode(iris.StatusInternalServerError)

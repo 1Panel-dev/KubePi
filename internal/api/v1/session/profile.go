@@ -44,6 +44,7 @@ func (h Handler) UpdateProfile() iris.Handler {
 			Email:               user.Email,
 			Language:            user.Language,
 			ResourcePermissions: profile.ResourcePermissions,
+			IsAdministrator:     user.IsAdmin,
 		}
 		session.Set("profile", profile)
 		ctx.Values().Set("data", "ok")
