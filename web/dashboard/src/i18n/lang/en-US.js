@@ -139,7 +139,8 @@ const message = {
       type: "Type",
       time: "Time",
       resource: "Resource",
-      message: "Message"
+      message: "Message",
+      restart: "Count"
     },
     node: {
       ready: "Ready",

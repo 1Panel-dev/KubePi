@@ -140,7 +140,8 @@ const message = {
       type: "类型",
       time: "时间",
       resource: "对象",
-      message: "消息"
+      message: "消息",
+      count: "次数"
     },
     node: {
       ready: "准备就绪",
