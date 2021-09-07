@@ -40,8 +40,8 @@ export default {
   data() {
     return {
       title: 'FIT2CLOUD',
-      logo: require('@/assets/KubePi-white.png'),
-      collapseLogo: require('@/assets/KubePi-assist-white.png')
+      logo: require('@/assets/KubePi-red.png'),
+      collapseLogo: require('@/assets/KubePi-assist-red.png')
     }
   }
 }
