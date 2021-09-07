@@ -37,7 +37,8 @@
             <el-input v-model="nonResourceURLs[index]" :placeholder="$t('business.access_control.resource_helper')" @change="changeNonResourceURLs(row,index)"></el-input>
           </td>
           <td>
-            <el-select multiple v-model="rules[index].groups" style="width: 100%">
+<!--            {{rules[index].apiGroups}}-->
+            <el-select multiple v-model="rules[index].apiGroups" style="width: 100%">
               <el-option v-for="(row,index) in groups" :label="row.name" :key="index" :value="row.name"></el-option>
             </el-select>
           </td>
