@@ -330,7 +330,7 @@ const message = {
       allow_run: "允许多个 CronJobs 同时运行",
       skip_if_not_finish: "如果当前 Job 没结束，则跳过",
       replace_if_not_finish: "如果当前 Job 没结束，则替换运行",
-      completions: "完成次数",
+      completions: "完成情况",
       parallelism: "并发数",
       back_off_limit: "重试次数",
       active_deadline: "活跃终止时间",

@@ -2,15 +2,15 @@
   <layout-content header="Jobs">
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <template #header>
-          <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
-            YAML
-          </el-button>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
+        <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140" show-overflow-tooltip>
@@ -19,14 +19,21 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
-      <el-table-column :label="$t('commons.table.status')" min-width="30">
+      <el-table-column :label="$t('business.workload.completions')" min-width="30">
         <template v-slot:default="{row}">
           {{ row.spec.completions }} / {{ row.spec.parallelism }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('commons.table.status')" min-width="60">
+        <template v-slot:default="{row}">
+          <el-tag style="margin-left: 5px" v-if="row.status.active" type="info">active: *{{row.status.active}}</el-tag>
+          <el-tag style="margin-left: 5px" v-if="row.status.succeeded" type="success">succeeded: {{row.status.succeeded}}</el-tag>
+          <el-tag style="margin-left: 5px" v-if="row.status.failed" type="danger">failed: {{row.status.failed}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('business.workload.duration')" min-width="30">
         <template v-slot:default="{row}">
-          {{ getDuration(row) }}S
+          {{ getDuration(row) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
@@ -41,7 +48,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
+import { listWorkLoads, deleteWorkLoad, getWorkLoadByName } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
@@ -160,8 +167,19 @@ export default {
     },
     getDuration(row) {
       let startTime = new Date(row.status.startTime)
-      let endTime = new Date(row.status.completionTime)
-      return Math.floor((endTime - startTime) / 1000)
+      if (!row.status.completionTime) {
+        return "/"
+      } else {
+        let endTime = new Date(row.status.completionTime)
+        let t = Math.floor((endTime - startTime) / 1000)
+        if (t % 60 !== 0) {
+          return (t % 60) + " mins ago"
+        }
+        if (t % 3600 !== 0) {
+          return (t % 60) + " hours ago"
+        }
+        return Math.floor((endTime - startTime) / 1000) + "S"
+      }
     },
     search(resetPage) {
       this.loading = true
