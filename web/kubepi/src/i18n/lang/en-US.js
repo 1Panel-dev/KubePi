@@ -159,6 +159,9 @@ const description = {
     i18n_user_manage_rbac: "Role and user administrators have all the permissions of role and user objects.",
     i18n_user_manage_readonly: "Read only user with access to all objects only,",
     i18n_user_common_user: "Ordinary users only have access to cluster objects",
+    i18n_manage_nodes: "The node administrator has read-only permissions on node objects",
+    i18n_manage_crd: "The custom resource administrator has all the permissions of the CustomResourceDefinition objec",
+    i18n_view_crd: "User defined resource administrator with read-only permission on CustomResourceDefinition object",
 
     i18n_manage_config: "The configuration administrator has all permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
     i18n_view_config: "Configure a read-only user with read-only permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
