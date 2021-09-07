@@ -68,9 +68,8 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {cordonNode, listNodes} from "@/api/nodes"
 import KoTableOperations from "@/components/ko-table-operations"
-import {evictionPod, listPods, listPodsWithNsSelector} from "@/api/pods"
+import {evictionPod, listPodsWithNsSelector} from "@/api/pods"
 import {checkPermissions} from "@/utils/permission"
-import {deleteNamespace} from "@/api/namespaces"
 
 export default {
   name: "NodeList",
