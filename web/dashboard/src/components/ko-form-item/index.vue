@@ -16,7 +16,7 @@
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
-    <el-input type="number" v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
+    <el-input onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-if="itemType==='number'" v-bind="$attrs" v-on="$listeners">
       <template v-if="deviderName" slot="append">{{ deviderName }}</template>
     </el-input>
 
