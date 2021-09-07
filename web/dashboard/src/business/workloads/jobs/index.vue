@@ -21,7 +21,7 @@
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" />
       <el-table-column :label="$t('business.workload.completions')" min-width="30">
         <template v-slot:default="{row}">
-          {{ row.spec.completions }} / {{ row.spec.parallelism }}
+          {{ row.spec.completions }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" min-width="60">

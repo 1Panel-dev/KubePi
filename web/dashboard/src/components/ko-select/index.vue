@@ -37,6 +37,7 @@ export default {
         this.namespaceStr = namespaces[0]
       }
       this.$emit("update:namespace", this.namespaceStr)
+      this.$emit("change", this.namespaceStr)
     },
   },
   watch: {

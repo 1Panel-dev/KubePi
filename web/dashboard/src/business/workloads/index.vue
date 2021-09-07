@@ -15,7 +15,7 @@
               <el-row>
                 <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
                   <ko-select v-if="isCreateOperation()" style="width: 100%" @change="changeNs" :namespace.sync="form.metadata.namespace"></ko-select>
-                  <ko-form-item v-else disabled :noClear="true" itemType="select2" :selections="namespace_list" v-model="form.metadata.namespace" />
+                  <ko-form-item v-else disabled itemType="select2" :selections="[]" v-model="form.metadata.namespace" />
                 </el-form-item>
               </el-row>
 
@@ -82,7 +82,7 @@
 
           <el-tab-pane :label="$t('business.workload.schedule')" name="Scheduling">
             <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec" :namespaceList="namespace_list" />
-            <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" :nodeList="node_list" />
+            <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" />
             <ko-tolerations ref="ko_toleration" :tolerationsParentObj="podSpec" />
           </el-tab-pane>
 
@@ -151,8 +151,6 @@ import KoUpgradePolicyJob from "@/components/ko-workloads/ko-upgrade-policy-job.
 import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
-import { listNamespace } from "@/api/namespaces"
-import { listNodes } from "@/api/nodes"
 import { listSecretsWithNs } from "@/api/secrets"
 import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
@@ -204,7 +202,6 @@ export default {
       currentContainerType: "standardContainers",
       currentContainer: {},
       // resources
-      node_list: [],
       namespace_list: [],
       secret_list_of_ns: [],
       config_map_list_of_ns: [],
@@ -283,22 +280,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-    loadNamespace() {
-      this.namespace_list = []
-      listNamespace(this.clusterName).then((res) => {
-        for (const ns of res.items) {
-          this.namespace_list.push(ns.metadata.name)
-        }
-        if (this.isCreateOperation()) {
-          const p = sessionStorage.getItem("namespace")
-          if (p !== null) {
-            this.changeNs(p)
-          } else {
-            this.changeNs(this.namespace_list[0])
-          }
-        }
-      })
     },
     loadSecretsWithNs(ns) {
       this.secret_list_of_ns = []
@@ -381,12 +362,6 @@ export default {
         this.loadPvcsWithNs(val)
         this.loadStorageClass()
       }
-    },
-    loadNodes() {
-      this.node_list = []
-      listNodes(this.clusterName).then((res) => {
-        this.node_list = res.items
-      })
     },
 
     refreshContainer(type, index, item) {
@@ -622,10 +597,6 @@ export default {
       }
     },
   },
-  mounted() {
-    this.loadNamespace()
-    this.loadNodes()
-  },
   created() {
     this.readOnly = this.$route.query.readOnly && this.$route.query.readOnly === "true"
     this.showYaml = this.$route.query.yamlShow === "true"
@@ -649,7 +620,6 @@ export default {
       }
       this.currentContainerIndex = 0
       this.currentContainer = this.podSpec.containers[0]
-      this.isRefresh = !this.isRefresh
     }
     this.form.kind = this.toggleCase()
     this.spanWidth = this.isStatefulSet() ? 8 : 12
