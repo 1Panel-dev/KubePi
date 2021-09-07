@@ -4,14 +4,17 @@
                    :search-config="searchConfig">
       <template #header>
         <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || selects[0].spec.unschedulable"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
                    @click="cordon(selects[0],true)" icon="el-icon-video-pause">
            Cordon
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || !selects[0].spec.unschedulable"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
                    @click="cordon(selects[0],false)" icon="el-icon-video-play">
           Uncordon
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length !== 1"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
                    @click="drain(selects[0])" icon="el-icon-refresh-right">
           Drain
         </el-button>
