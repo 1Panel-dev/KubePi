@@ -105,7 +105,7 @@ const Clusters = {
                 scope:"cluster"
             },
             meta: {
-                title: "CRDs",
+                title: "CRD",
             },
         },
         {
