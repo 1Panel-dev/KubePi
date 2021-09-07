@@ -45,6 +45,7 @@ import YamlEditor from "@/components/yaml-editor"
 import {createNamespace} from "@/api/namespaces"
 import Rule from "@/utils/rules"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
+import Bus from "@/utils/bus"
 
 export default {
   name: "NamespaceCreate",
@@ -102,7 +103,7 @@ export default {
           message: this.$t("commons.msg.create_success"),
         })
         this.$router.push({ name: "Namespaces" })
-        location.reload()
+        Bus.$emit("refresh","refresh")
       }).finally(() => {
         this.loading = false
       })
