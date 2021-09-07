@@ -34,6 +34,9 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('business.event.count')" prop="count"
+                       show-overflow-tooltip>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           <!--          <span>{{row.metadata.creationTimestamp | age}}</span>-->
