@@ -3,7 +3,7 @@
     <el-collapse v-model="activeName">
       <el-collapse-item style="margin-top: 10px" :title="item.name" :name="index" v-for="(item, index) in volumeClaimTemplates" :key="index">
         <el-form label-position="top" :disabled="isReadOnly">
-          <el-button style="float: right;margin-top: 5px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
+          <el-button style="float: right;margin-top: 5px;margin-right: 20px; padding: 3px 0" type="text" @click="handleVolumeDelete(index)">{{$t("commons.button.delete")}}</el-button>
           <el-form-item :label="$t('business.workload.pv_name')">
             <ko-form-item itemType="input" @change="changeName" v-model="item.name" />
           </el-form-item>

@@ -2,9 +2,6 @@
   <layout-content header="Custom Resource Definitions">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'create'}">
-            YAML
-          </el-button>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
             {{ $t("commons.button.delete") }}
           </el-button>
@@ -75,7 +72,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getCustomResource(this.clusterName,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml",getCustomResource(this.cluster,row.metadata.name))
           }
         },
         {
