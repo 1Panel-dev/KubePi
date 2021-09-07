@@ -7,7 +7,7 @@
             <th scope="col" width="15%" align="left"><label>{{$t('business.workload.type')}}</label></th>
             <th scope="col" width="30%" align="left"><label>{{$t('business.workload.prefix_variable')}}</label></th>
             <th scope="col" width="20%" align="left"><label>{{$t('business.workload.source')}}</label></th>
-            <th scope="col" width="29%" align="left"><label>{{$t('business.workload.value')}}</label></th>
+            <th scope="col" width="30%" align="left"><label>{{$t('business.workload.value')}}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in form.envResource" v-bind:key="index">

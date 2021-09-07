@@ -4,10 +4,9 @@
       <el-form :disabled="isReadOnly">
         <table style="width: 98%" class="tab-table">
           <tr>
-            <th scope="col" width="40%" align="left"><label>{{$t('business.workload.name')}}</label></th>
+            <th scope="col" width="50%" align="left"><label>{{$t('business.workload.name')}}</label></th>
             <th scope="col" width="15%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
             <th scope="col" width="15%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
-            <th scope="col" width="10%" align="left"><label>{{$t('business.workload.expose')}}</label></th>
             <th scope="col" width="15%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
             <th align="left"></th>
           </tr>
@@ -22,10 +21,7 @@
               <ko-form-item itemType="select" v-model="row.protocol" :selections="protocol_list" />
             </td>
             <td>
-              <el-switch v-model="row.expose" />
-            </td>
-            <td>
-              <ko-form-item :disabled="!row.expose" placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
+              <ko-form-item placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
             </td>
             <td>
               <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -74,7 +70,6 @@ export default {
     handleAdd() {
       var item = {
         name: "",
-        expose: false,
         protocol: "TCP",
         containerPort: 80,
         hostPort: "",
@@ -90,12 +85,9 @@ export default {
         for (const po of this.ports) {
           var itemPo = {}
           itemPo.name = po.name || undefined
-          itemPo.expose = po.expose || undefined
           itemPo.protocol = po.protocol || undefined
           itemPo.containerPort = po.containerPort || undefined
-          if (po.expose) {
-            itemPo.hostPort = po.hostPort || undefined
-          }
+          itemPo.hostPort = po.hostPort || undefined
         }
         parentFrom.ports.push(itemPo)
       }
@@ -108,14 +100,9 @@ export default {
         for (const po of this.portParentObj.ports) {
           var itemPo = {}
           itemPo.name = po.name
-          if (po.expose !== undefined) {
-            itemPo.expose = po.expose
-          }
           itemPo.protocol = po.protocol
           itemPo.containerPort = po.containerPort
-          if (po.expose) {
-            itemPo.hostPort = po.hostPort
-          }
+          itemPo.hostPort = po.hostPort
           this.ports.push(itemPo)
         }
       }
