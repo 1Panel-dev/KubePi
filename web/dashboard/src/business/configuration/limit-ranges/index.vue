@@ -4,11 +4,11 @@
                    :search-config="searchConfig">
       <template #header>
         <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create'}">
+                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create',scope:'namespace'}">
           YAML
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'delete'}">
+                   v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'delete',scope:'namespace'}">
           {{ $t("commons.button.delete") }}
         </el-button>
       </template>
@@ -43,8 +43,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "LimitRanges",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       selects: [],
@@ -57,18 +57,18 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "LimitRangeEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name}
             })
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "limitranges", verb: "update" })
+            return !checkPermissions({scope: "namespace", apiGroup: "", resource: "limitranges", verb: "update"})
           }
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getLimitRange(this.clusterName,row.metadata.namespace,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getLimitRange(this.cluster, row.metadata.namespace, row.metadata.name))
           }
         },
         {
@@ -78,7 +78,7 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "limitranges", verb: "delete" })
+            return !checkPermissions({scope: "namespace", apiGroup: "", resource: "limitranges", verb: "delete"})
           }
         },
       ],
@@ -93,7 +93,7 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -104,19 +104,19 @@ export default {
         this.loading = false
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "LimitRangeCreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteLimitRange(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -129,27 +129,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "LimitRangeDetail",
-        params: { namespace: row.metadata.namespace, name: row.metadata.name }
+        params: {namespace: row.metadata.namespace, name: row.metadata.name}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }

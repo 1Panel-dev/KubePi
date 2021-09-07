@@ -100,6 +100,9 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
+		if strings.Contains(proxyPath, "namespaces") {
+			namespaced = false
+		}
 		canVisitAll := false
 		if profile.IsAdministrator {
 			canVisitAll = true

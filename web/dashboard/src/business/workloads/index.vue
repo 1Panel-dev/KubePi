@@ -116,7 +116,7 @@
         <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
         <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.edit_yaml") }}</el-button>
         <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-        <el-button v-loading="operationLoading" @click="onSubmit()" type="primary">{{ $t("commons.button.confirm") }}</el-button>
+        <el-button v-loading="operationLoading" v-if="!readOnly" @click="onSubmit()" type="primary">{{ $t("commons.button.confirm") }}</el-button>
       </div>
     </div>
   </layout-content>

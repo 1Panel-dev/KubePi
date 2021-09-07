@@ -24,12 +24,15 @@
 
 
     <el-dialog
+        :close-on-click-modal="false"
         :title="$t('commons.button.'+operation)+$t('business.cluster.member')"
         :visible.sync="formDialogOpened"
         z-index="10"
         width="60%"
         center>
-      <el-form :model="memberForm" label-position="left" label-width="144px">
+      <el-form v-loading="isSubmitGoing" element-loading-spinner="el-icon-loading"
+               element-loading-background="rgba(0, 0, 0, 0.8)" :model="memberForm" label-position="left"
+               label-width="144px">
         <el-form-item :label="$t('business.user.user')+$t('commons.table.name')">
           <el-select v-model="memberForm.userName" style="width: 80%" :disabled="operation==='edit'">
             <el-option v-for="(item, index) in getUserOptions" :key="index" :value="item.name">
@@ -74,6 +77,7 @@
 
               <tr v-for="(item, index) in memberForm.namespaceRoles" :key="index">
                 <td style="text-align: center">
+                  <div v-if="item.roleType ==='custom'" style="height: 28px"></div>
                   <el-select v-model="item.namespace" style="width:100%">
                     <el-option v-for="(item,index) in getNamespaceOptions"
                                :key="index"
@@ -83,13 +87,20 @@
                   </el-select>
                 </td>
                 <td>
-                  <el-select multiple v-model="item.roles" style="width:100%">
-                    <el-option v-for="(item,index) in namespaceRoleOptions"
-                               :key="index"
-                               :value="item.metadata.name">
-                      {{ item.metadata.name }}
-                    </el-option>
-                  </el-select>
+                  <el-radio-group v-model="item.roleType" @change="onNamespaceRoleTypeChange(item)">
+                    <el-radio label="admin">{{ $t('business.cluster.administrator') }}</el-radio>
+                    <el-radio label="viewer">{{ $t('business.cluster.viewer') }}</el-radio>
+                    <el-radio label="custom">{{ $t('business.cluster.custom') }}</el-radio>
+                  </el-radio-group>
+                  <div v-if="item.roleType==='custom'">
+                    <el-select multiple v-model="item.roles" style="width:100%">
+                      <el-option v-for="(item,index) in getNamespaceRolesOptions"
+                                 :key="index"
+                                 :value="item.metadata.name">
+                        {{ item.metadata.name }}
+                      </el-option>
+                    </el-select>
+                  </div>
                 </td>
                 <td style="text-align: center">
                   <el-button @click="onNamespaceRoleDelete(index)" icon="el-icon-delete" size="mini" circle></el-button>
@@ -123,7 +134,7 @@ export default {
   components: {LayoutContent, ComplexTable},
   data() {
     return {
-
+      isSubmitGoing: false,
       formDialogOpened: false,
       editDialogOpened: false,
       operation: "create",
@@ -187,6 +198,11 @@ export default {
         }
         return true
       })
+    },
+    getNamespaceRolesOptions() {
+      return this.namespaceRoleOptions.filter((cr) => {
+        return !["namespace-owner", "namespace-viewer"].includes(cr.metadata.name)
+      })
     }
   },
   methods: {
@@ -236,16 +252,24 @@ export default {
       })
       getClusterMember(this.name, row.name).then(data => {
         this.memberForm.userName = data.data.name
-        console.log(data.data)
-        if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && data.data.namespaceRoles.length === 0) {
-          if (data.data.clusterRoles[0] === 'cluster-owner') {
-            this.memberForm.roleType = 'admin'
-          } else if (data.data.clusterRoles[0] === 'cluster-viewer') {
-            this.memberForm.roleType = 'viewer'
-          }
+        if (data.data.clusterRoles.length === 1 && data.data.clusterRoles[0] === 'cluster-owner') {
+          this.memberForm.roleType = 'admin'
+        } else if (data.data.clusterRoles.length === 1 && data.data.clusterRoles[0] === 'cluster-viewer') {
+          this.memberForm.roleType = 'viewer'
         } else {
           this.memberForm.roleType = 'custom'
           this.memberForm.customClusterRoles = data.data.clusterRoles
+          data.data.namespaceRoles.forEach(nr => {
+            if (nr.roles.length === 1 && nr.roles[0] === 'namespace-owner') {
+              nr.roles = []
+              nr.roleType = "admin"
+            } else if (nr.roles.length === 1 && nr.roles[0] === 'namespace-viewer') {
+              nr.roles = []
+              nr.roleType = "viewer"
+            } else {
+              nr.roleType = "custom"
+            }
+          })
           this.memberForm.namespaceRoles = data.data.namespaceRoles
         }
       })
@@ -255,6 +279,11 @@ export default {
       if (this.memberForm.roleType === 'admin' || this.memberForm.roleType === 'viewer') {
         this.memberForm.customClusterRoles = []
         this.memberForm.namespaceRoles = []
+      }
+    },
+    onNamespaceRoleTypeChange(item) {
+      if (item.roleType !== 'custom') {
+        item.roles = []
       }
     },
     onDelete(raw) {
@@ -271,7 +300,7 @@ export default {
     },
     onNamespaceRoleCreate() {
       for (const nr of this.memberForm.namespaceRoles) {
-        if (!nr.namespace || nr.roles.length === 0) {
+        if (!nr.namespace || (nr.roleType === 'custom' && nr.roles.length === 0)) {
           this.$message.error(this.$t('business.cluster.namespace_role_form_check_msg'))
           return
         }
@@ -279,12 +308,17 @@ export default {
       this.memberForm.namespaceRoles.push({
         namespace: "",
         roles: [],
+        roleType: "admin",
       })
     },
     onNamespaceRoleDelete(index) {
       this.memberForm.namespaceRoles.splice(index, 1)
     },
     onConfirm() {
+      if (this.isSubmitGoing) {
+        return
+      }
+      this.isSubmitGoing = true
       let req = {
         name: this.memberForm.userName,
         namespaceRoles: this.memberForm.namespaceRoles,
@@ -298,25 +332,40 @@ export default {
           break
         case "custom":
           req.clusterRoles = this.memberForm.customClusterRoles
+          req.namespaceRoles.forEach(nr => {
+            switch (nr.roleType) {
+              case "admin":
+                nr.roles = ["namespace-owner"]
+                break
+              case "viewer":
+                nr.roles = ["namespace-viewer"]
+                break
+            }
+          })
           break
       }
       switch (this.operation) {
         case "create":
           createClusterMember(this.name, req).then(() => {
+            this.$message.success(this.$t('commons.msg.create_success'))
             this.formDialogOpened = false
             this.list()
+          }).finally(() => {
+            this.isSubmitGoing = false
           })
           break;
         case "edit":
-          console.log(req)
           updateClusterMember(this.name, this.memberForm.userName, req).then(() => {
+            this.$message.success(this.$t('commons.msg.update_success'))
             this.formDialogOpened = false
             this.list()
+          }).finally(() => {
+            this.isSubmitGoing = false
           })
+
       }
     },
-  }
-  ,
+  },
   created() {
     this.list()
   }

@@ -102,7 +102,54 @@ const Clusters = {
             meta: {
                 title: "Events",
             }
-        }
+        },
+
+        {
+            path: "/customResources",
+            component: () => import("@/business/custom-resource"),
+            name: "CustomResourceDefinitions",
+            requirePermission: {
+                apiGroup: "apiextensions.k8s.io",
+                resource: "customresourcedefinitions",
+                verb: "list",
+                scope:"cluster"
+            },
+            meta: {
+                title: "CRD",
+            },
+        },
+        {
+            path: "/customResources/:name/detail",
+            component: () => import("@/business/custom-resource/detail"),
+            hidden: true,
+            props: true,
+            name: "CustomResourceDefinitionDetail",
+            requirePermission: {
+                apiGroup: "apiextensions.k8s.io",
+                resource: "customresourcedefinitions",
+                verb: "get",
+                scope:"namespace"
+            },
+            meta: {
+                activeMenu: "/customResources",
+            },
+        },
+        {
+            path: "/customResources/:name/edit",
+            component: () => import("@/business/custom-resource/edit"),
+            hidden: true,
+            props: true,
+            name: "CustomResourceDefinitionEdit",
+            requirePermission: {
+                apiGroup: "apiextensions.k8s.io",
+                resource: "customresourcedefinitions",
+                verb: "update",
+                scope:"namespace"
+            },
+            meta: {
+                activeMenu: "/customResources",
+            },
+        },
     ]
 }
 
