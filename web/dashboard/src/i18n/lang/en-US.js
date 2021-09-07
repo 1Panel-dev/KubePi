@@ -152,7 +152,15 @@ const message = {
       container: "Container",
       kubelet_version: "Kubelet Version",
       kubeProxy_version: "KubeProxy Version",
-      allocation: "Allocation"
+      allocation: "Allocation",
+      mode: "Mode",
+      safe: "Safety",
+      force: "Compulsory",
+      safe_cordon_help: "If a node has an independent Pod or temporary data, it will be quarantined but will not be dispelled.",
+      force_drain_help1: "delete permanently：",
+      force_drain_help2: "1. Independent Pods and their data",
+      force_drain_help3: "2. Pods configured with Empty Dir volume and their data",
+      drain_success: "Drain Node Success",
     },
     pod: {
       image: "Image",
