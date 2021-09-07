@@ -16,7 +16,7 @@ module.exports = {
         },
         proxy: {
             '/api': {
-                target: 'http://0.0.0.0:2019',
+                target: 'http://0.0.0.0:80',
                 ws: true,
                 secure: false,
             },

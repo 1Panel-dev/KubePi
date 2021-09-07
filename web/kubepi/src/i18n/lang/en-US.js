@@ -109,7 +109,7 @@ const message = {
             viewer: "viewer",
             custom: "custom",
             rule: "rule",
-            config_file: "Config file",
+            config_file: "kubeconfig file",
             config_content: "Config content",
             hidden_cluster: "hide inaccessible clusters",
             namespace_role_form_check_msg: "namespace or role list cannot be empty",

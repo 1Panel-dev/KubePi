@@ -130,7 +130,7 @@ const message = {
             viewer: "只读者",
             custom: "自定义",
             rule: "规则",
-            config_file: "config 文件",
+            config_file: "kubeconfig 文件",
             config_content: "config 内容",
             hidden_cluster: "隐藏不可访问的集群",
             namespace_role_form_check_msg: "命名空间或者角色列表不能为空",

@@ -17,6 +17,7 @@
 <script>
 
 import {getNamespaces} from '@/api/auth'
+import Bus from "@/utils/bus"
 
 export default {
   name: "ProjectSwitch",
@@ -39,12 +40,20 @@ export default {
         sessionStorage.setItem("namespace", command)
       }
       location.reload()
+    },
+    getNamespaceList() {
+      const cluster = this.$store.getters.cluster
+      getNamespaces(cluster).then((data) => {
+        this.namespaceOptions = data.data
+      })
     }
   },
   created() {
-    const cluster = this.$store.getters.cluster
-    getNamespaces(cluster).then((data) => {
-      this.namespaceOptions = data.data
+    this.getNamespaceList()
+  },
+  mounted: function () {
+    Bus.$on('refresh',() => {
+      this.getNamespaceList()
     })
   }
 }

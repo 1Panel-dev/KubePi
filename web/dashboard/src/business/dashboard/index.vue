@@ -138,7 +138,9 @@ export default {
           const nodes = {
             name: "Nodes",
             count: res.items.length,
-            data: this.getData(res.items, "status.phase")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(nodes)
         })
@@ -148,7 +150,9 @@ export default {
           const namespaces = {
             name: "Namespaces",
             count: res.items.length,
-            data: this.getData(res.items, "status.phase")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(namespaces)
         })
@@ -171,7 +175,9 @@ export default {
           const persistentVolumes = {
             name: "PersistentVolumes",
             count: res.items.length,
-            data: this.getData(res.items, "status.phase")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(persistentVolumes)
         })
@@ -181,7 +187,9 @@ export default {
           const deployments = {
             name: "Deployments",
             count: res.items.length,
-            data: this.getData(res.items, "status.conditions.type")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(deployments)
         })
@@ -191,7 +199,9 @@ export default {
           const statefulSets = {
             name: "StatefulSets",
             count: res.items.length,
-            data: this.getData(res.items, "status.replicas")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(statefulSets)
         })
@@ -201,7 +211,9 @@ export default {
           const jobs = {
             name: "Jobs",
             count: res.items.length,
-            data: this.getData(res.items, "metadata.status.active")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(jobs)
         })
@@ -211,7 +223,9 @@ export default {
           const daemonSets = {
             name: "DaemonSets",
             count: res.items.length,
-            data: this.getData(res.items, "status.numberUnavailable")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(daemonSets)
         })
@@ -221,7 +235,9 @@ export default {
           const services = {
             name: "Services",
             count: res.items.length,
-            data: this.getData(res.items, "status.loadBalancer")
+            data: [{
+              value: res.items.length
+            }]
           }
           this.resources.push(services)
         })

@@ -38,7 +38,7 @@ WORKDIR /
 
 COPY --from=stage-bin-build /build/kubepi/bin/dist/usr /usr
 
-EXPOSE 2019
+EXPOSE 80
 
 USER root
 

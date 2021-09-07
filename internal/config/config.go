@@ -70,7 +70,7 @@ func defaultConfig() config.Config {
 			Server: config.ServerConfig{
 				Bind: config.BindConfig{
 					Host: "0.0.0.0",
-					Port: 2019,
+					Port: 80,
 				},
 				SSL: config.SSLConfig{
 					Enable: false,
