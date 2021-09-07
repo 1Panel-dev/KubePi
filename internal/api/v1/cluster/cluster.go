@@ -143,7 +143,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 					UserRef:    profile.Name,
 					ClusterRef: req.Name,
 				}
-				if err := h.clusterBindingService.CreateClusterBinding(&binding, txOptions); err != nil {
+				if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
 					ctx.StatusCode(iris.StatusInternalServerError)
 					ctx.Values().Set("message", err.Error())
 					return

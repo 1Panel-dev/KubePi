@@ -252,12 +252,10 @@ export default {
       })
       getClusterMember(this.name, row.name).then(data => {
         this.memberForm.userName = data.data.name
-        if (data.data.clusterRoles && data.data.clusterRoles.length === 1 && data.data.namespaceRoles.length === 0) {
-          if (data.data.clusterRoles[0] === 'cluster-owner') {
-            this.memberForm.roleType = 'admin'
-          } else if (data.data.clusterRoles[0] === 'cluster-viewer') {
-            this.memberForm.roleType = 'viewer'
-          }
+        if (data.data.clusterRoles.length === 1 && data.data.clusterRoles[0] === 'cluster-owner') {
+          this.memberForm.roleType = 'admin'
+        } else if (data.data.clusterRoles.length === 1 && data.data.clusterRoles[0] === 'cluster-viewer') {
+          this.memberForm.roleType = 'viewer'
         } else {
           this.memberForm.roleType = 'custom'
           this.memberForm.customClusterRoles = data.data.clusterRoles
