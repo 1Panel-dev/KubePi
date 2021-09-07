@@ -153,7 +153,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{"apiextensions.k8s.io"},
-				Resources: []string{"nodes"},
+				Resources: []string{"customresourcedefinitions"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 		},
@@ -173,7 +173,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{"apiextensions.k8s.io"},
-				Resources: []string{"nodes"},
+				Resources: []string{"customresourcedefinitions"},
 				Verbs:     []string{"*"},
 			},
 		},
