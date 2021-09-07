@@ -120,18 +120,16 @@ export default {
       this.events = []
       getWorkLoadByName(this.clusterName, "cronjobs", this.namespace, this.name).then((res) => {
         this.form = res
-        if (this.form.spec.jobTemplate.spec.template.metadata.labels) {
-          let selectors = ""
-          for (const key in this.form.spec.jobTemplate.spec.template.metadata.labels) {
-            if (Object.prototype.hasOwnProperty.call(this.form.spec.jobTemplate.spec.template.metadata.labels, key)) {
-              selectors += key + "=" + this.form.spec.jobTemplate.spec.template.metadata.labels[key] + ","
+        this.loading = false
+      })
+      listJobsWithNsSelector(this.clusterName, this.namespace).then((res) => {
+        this.jobs = []
+        for (const job of res.items) {
+          if (job.metadata.name.indexOf("-") !== -1) {
+            if (job.metadata.name.substring(0, job.metadata.name.lastIndexOf("-")) === this.name) {
+              this.jobs.push(job)
             }
           }
-          selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listJobsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
-            this.jobs = res.items
-          })
-          this.eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
         }
         this.loading = false
       })
