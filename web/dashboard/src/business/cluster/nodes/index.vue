@@ -1,7 +1,25 @@
 <template>
   <layout-content header="Nodes">
-    <complex-table :data="data" v-loading="loading" :pagination-config="paginationConfig" @search="search()"
+    <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search()"
                    :search-config="searchConfig">
+      <template #header>
+        <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || selects[0].spec.unschedulable"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
+                   @click="cordon(selects[0],true)" icon="el-icon-video-pause">
+           Cordon
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || !selects[0].spec.unschedulable"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
+                   @click="cordon(selects[0],false)" icon="el-icon-video-play">
+          Uncordon
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length !== 1"
+                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
+                   @click="drain(selects[0])" icon="el-icon-refresh-right">
+          Drain
+        </el-button>
+      </template>
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix max-width="30px">
         <template v-slot:default="{row}">
           <el-link @click="onDetail(row)"> {{ row.metadata.name }}</el-link>
@@ -14,11 +32,21 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.node.ready')" prop="status.conditions" max-width="30px">
+<!--      <el-table-column :label="$t('business.node.ready')" prop="status.conditions" max-width="30px">-->
+<!--        <template v-slot:default="{row}">-->
+<!--          <div v-for="(condition,index) in row.status.conditions" v-bind:key="index">-->
+<!--            <span v-if="condition.type === 'Ready'">{{ condition.status }}</span>-->
+<!--          </div>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column :label="$t('commons.table.status')">
         <template v-slot:default="{row}">
-          <div v-for="(condition,index) in row.status.conditions" v-bind:key="index">
-            <span v-if="condition.type === 'Ready'">{{ condition.status }}</span>
-          </div>
+          <el-button v-if="row.spec.unschedulable === true" type="warning" size="mini" plain round>
+            Cordoned
+          </el-button>
+          <el-button v-else type="success" size="mini" plain round>
+            Active
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.node.role')" prop="metadata.labels" min-width="180px" show-overflow-tooltip>
@@ -38,13 +66,15 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listNodes} from "@/api/nodes"
+import {cordonNode, listNodes} from "@/api/nodes"
 import KoTableOperations from "@/components/ko-table-operations"
+import {evictionPod, listPodsWithNsSelector} from "@/api/pods"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "NodeList",
-  components: {KoTableOperations, ComplexTable, LayoutContent},
-  data() {
+  components: { KoTableOperations, ComplexTable, LayoutContent },
+  data () {
     return {
       data: [],
       loading: false,
@@ -58,32 +88,110 @@ export default {
       searchConfig: {
         keywords: ""
       },
+      selects: [],
       buttons: [
+        {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              path: "/nodes/edit/" + row.metadata.name,
+              query: { yamlShow: false }
+            })
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "cluster", apiGroup: "", resource: "nodes", verb: "update" })
+          }
+        },
         {
           label: this.$t("commons.button.view_yaml"),
           icon: "el-icon-view",
           click: (row) => {
-            this.$router.push({path: "/nodes/detail/" + row.metadata.name, query: {yamlShow: "true"}})
+            this.$router.push({ path: "/nodes/detail/" + row.metadata.name, query: { yamlShow: "true" } })
           }
         },
       ]
     }
   },
   methods: {
-    search() {
+    search () {
       this.loading = true
-      const {currentPage, pageSize} = this.paginationConfig
+      const { currentPage, pageSize } = this.paginationConfig
       listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.loading = false
         this.data = res.items
         this.paginationConfig.total = res.total
       })
     },
-    onDetail(row) {
-      this.$router.push({path: "/nodes/detail/" + row.metadata.name, query: {yamlShow: "false"}})
+    onDetail (row) {
+      this.$router.push({ path: "/nodes/detail/" + row.metadata.name, query: { yamlShow: "false" } })
+    },
+
+
+    cordon(row,isCordon) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        let data = { spec: { unschedulable: isCordon } }
+        cordonNode(this.clusterName, row.metadata.name, data).then(() => {
+          this.$message({ type: "success", message: this.$t("commons.msg.operation_success") })
+          this.search()
+        })
+      })
+    },
+    drain(row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        let data = { spec: { unschedulable: true } }
+        cordonNode(this.clusterName, row.metadata.name, data).then(() => {
+          listPodsWithNsSelector(this.clusterName,"","","spec.nodeName="+row.metadata.name).then(res => {
+            this.batchDeletePod(res.items, row.metadata.name)
+          })
+        })
+      })
+    },
+    batchDeletePod (items, nodeName) {
+      const ps = []
+      for (const pod of items) {
+        if (pod.spec.nodeName === nodeName && pod.metadata.ownerReferences.kind !== "daemonset") {
+          const rmPod = {
+            apiVersion: "policy/v1beta1",
+            kind: "Eviction",
+            metadata: {
+              name: pod.metadata.name,
+              namespace: pod.metadata.namespace,
+              creationTimestamp: null,
+            },
+            deleteOptions: {},
+          }
+          console.log(pod.spec.nodeName)
+          ps.push(evictionPod(this.clusterName, pod.metadata.namespace, pod.metadata.name, rmPod))
+        }
+      }
+      Promise.all(ps)
+        .then(() => {
+          this.search()
+          this.$message({
+            type: "success",
+            message: this.$t("business.node.drain_success"),
+          })
+        })
+        .catch(() => {
+          this.search()
+        })
     }
+
   },
-  created() {
+  created () {
     this.clusterName = this.$route.query.cluster
     this.search()
   }

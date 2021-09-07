@@ -153,7 +153,15 @@ const message = {
       container: "容器 runtime 版本",
       kubelet_version: "kubelet 版本",
       kubeProxy_version: "kubeProxy 版本",
-      allocation: "分配"
+      allocation: "分配",
+      mode: "模式",
+      safe: "安全",
+      force: "强制",
+      safe_cordon_help: "如果节点拥有独立的 Pod 或临时的数据，它将被隔离但不会被驱散。",
+      force_drain_help1: "永久删除：",
+      force_drain_help2: "1.  独立 Pods 和它们的数据",
+      force_drain_help3: "2.  配置了Empty Dir卷的Pods和它们的数据",
+      drain_success: "排空节点成功",
     },
     pod: {
       image: "镜像",

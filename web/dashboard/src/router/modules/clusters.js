@@ -36,6 +36,16 @@ const Clusters = {
                 activeMenu: "/nodes",
             }
         },
+      {
+        path: "/nodes/edit/:name",
+        component: () => import("@/business/cluster/nodes/edit"),
+        name: "NodeEdit",
+        props: true,
+        hidden: true,
+        meta: {
+          activeMenu: "/nodes",
+        }
+      },
         {
             path: "/namespaces",
             component: () => import("@/business/cluster/namespaces"),
