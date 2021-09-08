@@ -1,18 +1,22 @@
 <template>
   <layout-content header="Role Bindings">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig">
       <template #header>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
-                     type="primary" size="small"
-                     @click="yamlCreate">
-            YAML
-          </el-button>
-          <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
-            {{ $t("commons.button.create") }}
-          </el-button>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
+        <el-button
+            v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}"
+            type="primary" size="small"
+            @click="yamlCreate">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
+          {{ $t("commons.button.create") }}
+        </el-button>
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'delete'}">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -27,27 +31,27 @@
       </el-table-column>
       <el-table-column label="Role" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <span>{{row.roleRef.kind}}/{{row.roleRef.name}}</span>
+          <span>{{ row.roleRef.kind }}/{{ row.roleRef.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Users" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
-            <span v-if="subject.kind === 'User'">{{subject.name}}</span>
+            <span v-if="subject.kind === 'User'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
       <el-table-column label="Groups" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
-            <span v-if="subject.kind === 'Group'">{{subject.name}}</span>
+            <span v-if="subject.kind === 'Group'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
       <el-table-column label="ServiceAccounts" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
-            <span v-if="subject.kind === 'ServiceAccount'">{{subject.name}}</span>
+            <span v-if="subject.kind === 'ServiceAccount'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
@@ -71,8 +75,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "RoleBindings",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       selects: [],
@@ -85,12 +89,17 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "RoleBindingEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
               query: {yamlShow: false}
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: 'namespace',
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "update"
+            })
           }
         },
         {
@@ -99,19 +108,24 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "RoleBindingEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              params: {namespace: row.metadata.namespace, name: row.metadata.name},
               query: {yamlShow: true}
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: 'cluster',
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "update"
+            })
           }
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", getRoleBinding(this.cluster,row.metadata.namespace,row.metadata.name ))
+            downloadYaml(row.metadata.name + ".yml", getRoleBinding(this.cluster, row.metadata.namespace, row.metadata.name))
           }
         },
         {
@@ -120,8 +134,13 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'cluster',apiGroup:"rbac.authorization.k8s.io",resource:"clusterroles",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: 'cluster',
+              apiGroup: "rbac.authorization.k8s.io",
+              resource: "clusterroles",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -136,33 +155,33 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listRoleBindings(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listRoleBindings(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
-        name: "RoleBindingCreate", query: { yamlShow: false }
+        name: "RoleBindingCreate", query: {yamlShow: false}
       })
     },
-    yamlCreate () {
-      this.$router.push({ name: "RoleBindingCreate", query: { yamlShow: true } })
+    yamlCreate() {
+      this.$router.push({name: "RoleBindingCreate", query: {yamlShow: true}})
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteRoleBinding(this.cluster, row.metadata.name))
@@ -175,27 +194,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "RoleBindingDetail",
-        params: { name: row.metadata.name, namespace: row.metadata.namespace }
+        params: {name: row.metadata.name, namespace: row.metadata.namespace}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }
