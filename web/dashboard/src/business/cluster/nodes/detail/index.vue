@@ -42,7 +42,7 @@
             </table>
           </el-card>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
           <br>
             <el-row :gutter="20">
               <el-col :span="9">
@@ -123,7 +123,7 @@
         <el-col :span="24">
           <br>
           <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
-            <el-tab-pane label="Pods">
+            <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
               <ko-detail-pods :cluster="cluster" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
             </el-tab-pane>
             <el-tab-pane :label="$t('business.common.conditions')">
@@ -141,7 +141,7 @@
                 </tr>
               </table>
             </el-tab-pane>
-            <el-tab-pane :label="$t('business.pod.resource')">
+            <el-tab-pane :label="$t('business.pod.resource')" >
               <table style="width: 100%" class="myTable">
                 <tr>
                   <td>Pod CIDR</td>
@@ -178,6 +178,7 @@ import YamlEditor from "@/components/yaml-editor"
 import KoDetailConditions from "@/components/detail/detail-conditions"
 import KoDetailPods from "@/components/detail/detail-pods"
 import KoDetailBasic from "@/components/detail/detail-basic"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "NodeDetail",
@@ -247,6 +248,9 @@ export default {
       })
     },
     listPodsByNodeName () {
+      if (!checkPermissions({scope: 'namespace', apiGroup: "", resource: "pods", verb: "list"})) {
+        return
+      }
       listPodsWithNsSelector(this.cluster, "", "", "spec.nodeName=" + this.item.metadata.name).then(res => {
         this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
         this.podsData.podsCount = res.items.length
