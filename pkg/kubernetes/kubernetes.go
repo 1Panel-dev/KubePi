@@ -310,6 +310,9 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 }
 
 func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
+	if resourceName == "events" {
+		return false, nil
+	}
 	client, err := k.Client()
 	if err != nil {
 		return false, err
