@@ -3,14 +3,14 @@
     <div class="grid-content bg-purple-light">
       <el-row :gutter="20">
         <div v-if="!showYaml">
-          <el-form label-position="top" :model="form" :rules="rules" ref="form">
+          <el-form label-position="top" :model="form" ref="form" :rules="rules">
             <el-col :span="6">
-              <el-form-item :label="$t('commons.table.name')" required>
+              <el-form-item :label="$t('commons.table.name')"   prop="metadata.name" required>
                 <el-input clearable v-model="form.metadata.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item :label="$t('business.namespace.namespace')" required>
+              <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" required>
                 <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
               </el-form-item>
             </el-col>
@@ -59,7 +59,7 @@ import KoSelect from "@/components/ko-select"
 
 export default {
   name: "ConfigMapCreate",
-  components: { KoKeyValue, YamlEditor, KoData, LayoutContent,KoSelect },
+  components: { KoKeyValue, YamlEditor, KoData, LayoutContent, KoSelect },
   props: {},
   data () {
     return {
