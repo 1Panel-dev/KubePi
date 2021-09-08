@@ -55,7 +55,7 @@
         </el-col>
       </el-row>
 
-      <el-card style="margin-top: 20px" class="el-card">
+      <el-card style="margin-top: 20px;border: 0" class="el-card">
         <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.spec')}}</span>
         <el-row :gutter="20">
           <el-col :span="18">
@@ -438,7 +438,6 @@ export default {
           this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
           break
         case "statefulsets":
-          delete this.form.spec.serviceName
           this.form.apiVersion = "apps/v1"
           this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
           this.$refs.ko_volume_claim.transformation(this.form.spec)
@@ -449,6 +448,7 @@ export default {
           this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
           break
         case "jobs":
+          delete this.form.spec.selector
           this.form.apiVersion = "batch/v1"
           this.$refs.ko_upgrade_policy_job.transformation(this.form.spec, this.podSpec)
           break
@@ -458,7 +458,10 @@ export default {
           break
       }
       this.$refs.ko_volume_mount.transformation(this.currentContainer)
-
+      
+      if (!this.isStatefulSet()) {
+        delete this.form.spec.serviceName
+      } 
       if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex] = this.currentContainer
       } else {
