@@ -12,10 +12,10 @@
             <complex-table :data="jobs">
               <el-table-column :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
                 <template v-slot:default="{row}">
-                  <el-button v-if="row.status.succeeded ===1" type="success" size="mini" plain round>
+                  <el-button v-if="row.status.succeeded" type="success" size="mini" plain round>
                     Succeeded
                   </el-button>
-                  <el-button v-if="row.status.succeeded ===2" type="warning" size="mini" plain round>
+                  <el-button v-else type="warning" size="mini" plain round>
                     Failed
                   </el-button>
                 </template>
@@ -28,18 +28,25 @@
                   </el-link>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('commons.table.status')" min-width="40">
+
+              <el-table-column :label="$t('business.workload.completions')" min-width="30">
                 <template v-slot:default="{row}">
-                  {{ row.spec.completions }} / {{ row.spec.parallelism }}
+                  {{ row.spec.completions }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('business.workload.duration')" min-width="40">
+              <el-table-column :label="$t('commons.table.status')" min-width="60">
                 <template v-slot:default="{row}">
-                  {{ getDuration(row) }}S
+                  <el-tag style="margin-left: 5px" v-if="row.status.active" type="info">active: *{{row.status.active}}</el-tag>
+                  <el-tag style="margin-left: 5px" v-if="row.status.succeeded" type="success">succeeded: {{row.status.succeeded}}</el-tag>
+                  <el-tag style="margin-left: 5px" v-if="row.status.failed" type="danger">failed: {{row.status.failed}}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('commons.table.created_time')" min-width="60"
-                               prop="metadata.creationTimestamp" fix>
+              <el-table-column :label="$t('business.workload.duration')" min-width="30">
+                <template v-slot:default="{row}">
+                  {{ getDuration(row) }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('commons.table.created_time')" min-width="60" prop="metadata.creationTimestamp" fix>
                 <template v-slot:default="{row}">
                   {{ row.metadata.creationTimestamp | age }}
                 </template>
@@ -47,7 +54,7 @@
             </complex-table>
           </el-tab-pane>
           <el-tab-pane :label="$t('business.event.event')" name="Events">
-            <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors"/>
+            <ko-detail-events :cluster="clusterName" :namespace="namespace" :selector="eventSelectors" />
           </el-tab-pane>
         </el-tabs>
       </el-row>
@@ -63,11 +70,11 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getWorkLoadByName} from "@/api/workloads"
-import {listJobsWithNsSelector} from "@/api/jobs"
+import { getWorkLoadByName } from "@/api/workloads"
+import { listJobsWithNsSelector } from "@/api/jobs"
 import YamlEditor from "@/components/yaml-editor"
 import ComplexTable from "@/components/complex-table"
-import {mixin} from "@/utils/resourceRoutes"
+import { mixin } from "@/utils/resourceRoutes"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoDetailEvents from "@/components/detail/detail-events"
 
@@ -79,7 +86,7 @@ export default {
     name: String,
     namespace: String,
   },
-  data () {
+  data() {
     return {
       form: {
         metadata: {
@@ -108,34 +115,43 @@ export default {
     },
   },
   methods: {
-    getDetail () {
+    getDetail() {
       this.loading = true
       this.events = []
       getWorkLoadByName(this.clusterName, "cronjobs", this.namespace, this.name).then((res) => {
         this.form = res
-        if (this.form.spec.jobTemplate.spec.template.metadata.labels) {
-          let selectors = ""
-          for (const key in this.form.spec.jobTemplate.spec.template.metadata.labels) {
-            if (Object.prototype.hasOwnProperty.call(this.form.spec.jobTemplate.spec.template.metadata.labels, key)) {
-              selectors += key + "=" + this.form.spec.jobTemplate.spec.template.metadata.labels[key] + ","
+        this.loading = false
+      })
+      listJobsWithNsSelector(this.clusterName, this.namespace).then((res) => {
+        this.jobs = []
+        for (const job of res.items) {
+          if (job.metadata.name.indexOf("-") !== -1) {
+            if (job.metadata.name.substring(0, job.metadata.name.lastIndexOf("-")) === this.name) {
+              this.jobs.push(job)
             }
           }
-          selectors = selectors.length !== 0 ? selectors.substring(0, selectors.length - 1) : ""
-          listJobsWithNsSelector(this.clusterName, this.namespace, selectors).then((res) => {
-            this.jobs = res.items
-          })
-          this.eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
         }
         this.loading = false
       })
     },
-    getDuration (row) {
+    getDuration(row) {
       let startTime = new Date(row.status.startTime)
-      let endTime = new Date(row.status.completionTime)
-      return Math.floor((endTime - startTime) / 1000)
+      if (!row.status.completionTime) {
+        return "/"
+      } else {
+        let endTime = new Date(row.status.completionTime)
+        let t = Math.floor((endTime - startTime) / 1000)
+        if (t % 60 !== 0) {
+          return (t % 60) + " mins ago"
+        }
+        if (t % 3600 !== 0) {
+          return (t % 60) + " hours ago"
+        }
+        return Math.floor((endTime - startTime) / 1000) + "S"
+      }
     },
   },
-  created () {
+  created() {
     this.clusterName = this.$route.query.cluster
     this.getDetail()
   },

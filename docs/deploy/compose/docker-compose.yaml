@@ -1,10 +1,10 @@
 version: "2.2"
 services:
-  nginx:
+  kubepi:
     image: kubeoperator/kubepi-server:latest
     container_name: kubepi
-    restart: always
+    restart: unless-stopped
     ports:
-      - 2019:2019
+      - 80:80
     volumes:
       - ./kubepi:/var/lib/kubepi

@@ -1,46 +1,28 @@
-<p align="center"><a href="https://kubeoperator.io"><img src="https://kubeoperator.oss-cn-beijing.aliyuncs.com/img/kubepi-red.png" alt="kubepi" width="300" /></a></p>
-<h3 align="center">开源容器管理平台</h3>
+<p align="center"><a href="https://kubeoperator.io"><img src="https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/logo-red.png" alt="kubepi" width="300" /></a></p>
+<h3 align="center">简单易用的开源 Kubernetes 可视化管理面板</h3>
 <p align="center">
   <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/kubeoperator/kubepi?color=%231890FF&style=flat-square" alt="License: Apache License v2"></a>
   <a href="https://app.codacy.com/gh/kubeoperator/kubepi?utm_source=github.com&utm_medium=referral&utm_content=kubeoperator/kubepi&utm_campaign=Badge_Grade_Dashboard"><img src="https://app.codacy.com/project/badge/Grade/da67574fd82b473992781d1386b937ef" alt="Codacy"></a>
 </p>
 <hr />
 
-KubePi 是一款开源的容器管理平台。它允许用户管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地了解 Kubernetes 集群的复杂性。
+KubePi 是一款简单易用的开源 Kubernetes 可视化管理面板。
 
-### KubePi 的优势：
+KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户。它允许开发人员管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地处理 Kubernetes 集群中的复杂性。
 
-- 多集群管理：集群管理员可以导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户
-- 工作负载可视化：提供了图形化的工作负载编辑界面，用户可轻松完成针对容器的编排任务
-- 日志、终端：支持查看 pod 日志和针对 pod 中的容器执行命令，以便进行故障排除或监控
+### UI 展示
+
+![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/kubepi-demo.gif)
 
 ### 快速开始
 
-    sudo docker run -d -v /root/kubepi/:/var/lib/kubepi -p 2019:2019 kubeoperator/kubepi-server
+    sudo docker run -d --restart=unless-stopped -p 80:80 kubeoperator/kubepi-server
 
-- 环境地址：http://x.x.x.x:2019
-- 用户名：admin
-- 密码：admin123
-
-### 其他安装方式
-
-- [kubernetes](docs/deploy/kubectl)
-- [docker-compose](docs/deploy/compose)
+打开浏览器访问https://localhost
 
 ### 微信交流群
 
 ![wechat-group](https://kubeoperator.io/docs/img/wechat-group.png)
-
-### 版本说明
-
-KubePi 版本号命名规则为：v大版本.功能版本.Bug修复版本。比如：
-
-```
-v1.0.1 是 v1.0.0 之后的Bug修复版本；
-v1.1.0 是 v1.0.0 之后的功能版本。
-```
-
-像其它优秀开源项目一样，KubePi 将每月发布一个功能版本。
 
 ### 致谢
 

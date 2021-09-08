@@ -31,7 +31,7 @@
           <el-col :span="12">
             <table style="width: 98%" class="tab-table">
               <tr>
-                <th scope="col" width="93%" align="left">
+                <th scope="col" width="92%" align="left">
                   <label>{{$t('business.workload.arguments')}}</label>
                 </th>
                 <th align="left"></th>
