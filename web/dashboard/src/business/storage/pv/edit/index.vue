@@ -35,7 +35,7 @@
                   <el-row :gutter="24">
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.assignSc')">
-                        <el-select v-model="form.spec.storageClassName">
+                        <el-select clearable v-model="form.spec.storageClassName">
                           <el-option v-for="(sc, index) in storageClasses"
                                      :key="index"
                                      :label="sc"
@@ -181,7 +181,7 @@ export default {
             storage: ""
           },
           accessModes: [],
-          storageClassName: "None",
+          storageClassName: "",
           nodeAffinity: {
             required: {
               nodeSelectorTerms: [
@@ -301,13 +301,13 @@ export default {
     loadStorageClasses () {
       this.storageClasses = []
       listStorageClasses(this.cluster).then((res) => {
-        this.storageClasses.push("None")
         for (const sc of res.items) {
           this.storageClasses.push(sc.metadata.name)
         }
       })
     },
     transformYaml () {
+      this.form.spec["storageClassName"] = this.form.spec["storageClassName"] || undefined
       switch (this.currentStorageType) {
         case "Local":
           delete this.form.spec["hostPath"]
