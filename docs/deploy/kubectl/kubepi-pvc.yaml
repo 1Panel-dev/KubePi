@@ -47,8 +47,8 @@ spec:
   type: NodePort
   ports:
     - name: http
-      port: 2019
-      targetPort: 2019
+      port: 80
+      targetPort: 80
       protocol: TCP
   selector:
     app.kubernetes.io/name: kubepi
@@ -77,7 +77,7 @@ spec:
           image: kubeoperator/kubepi-server:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 2019
+            - containerPort: 80
               protocol: TCP
           volumeMounts:
             - name: kubepi-persistent-storage

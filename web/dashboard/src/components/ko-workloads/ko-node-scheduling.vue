@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item :label="$t('business.workload.schedule_type')" v-if="enableSchedulingList">
-              <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" :radios="scheduling_type_list" />
+              <ko-form-item radioLayout="vertical" itemType="radio" v-model="scheduling_type" @change="changeType" :radios="scheduling_type_list" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,27 +89,15 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import KoCard from "@/components/ko-card/index"
+import { listNodes } from "@/api/nodes"
 
 export default {
   name: "KoNodeScheduling",
   components: { KoFormItem, KoCard },
   props: {
     nodeSchedulingParentObj: Object,
-    nodeList: Array,
     isReadOnly: Boolean,
     nodeSchedulingType: String,
-  },
-  watch: {
-    nodeList: {
-      handler(newName) {
-        this.node_list = []
-        for (const node of newName) {
-          this.node_list.push(node.metadata.name)
-        }
-      },
-      immediate: true,
-      deep: true,
-    },
   },
   data() {
     return {
@@ -184,6 +172,17 @@ export default {
       return matchs
     },
 
+    changeType() {
+      if (this.scheduling_type === "specific_node") {
+        this.node_list = []
+        listNodes(this.clusterName).then((res) => {
+          for (const node of res.items) {
+            this.node_list.push(node.metadata.name)
+          }
+        })
+      }
+    },
+
     transformation(parentFrom) {
       if (this.scheduling_type === "specific_node") {
         parentFrom.nodeName = this.nodeName || undefined
@@ -212,7 +211,7 @@ export default {
                 break
               case "None":
                 parentFrom.nodeAffinity.required = {
-                  nodeSelectorTerms: []
+                  nodeSelectorTerms: [],
                 }
                 itemAdd.matchExpressions = matchs
                 parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
@@ -224,6 +223,7 @@ export default {
     },
   },
   mounted() {
+    this.clusterName = this.$route.query.cluster
     this.nodeSchedulings = []
     if (this.nodeSchedulingParentObj) {
       if (this.nodeSchedulingParentObj.nodeAffinity) {

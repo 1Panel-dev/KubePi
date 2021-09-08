@@ -68,7 +68,7 @@ export default {
         template: {
           spec: {
             terminationGracePeriodSeconds: null,
-            restartPolicy: "Always",
+            restartPolicy: "OnFailure",
           },
         },
       },
