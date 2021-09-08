@@ -85,6 +85,7 @@ export default {
           value: reader.result,
         }
         this.data.push(item)
+        this.transform()
       }
       return false
     },
