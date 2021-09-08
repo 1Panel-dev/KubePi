@@ -4,11 +4,11 @@
                    :search-config="searchConfig">
       <template #header>
         <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{apiGroup:'policy',resource:'poddisruptionbudgets',verb:'create'}">
+                   v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'create'}">
           YAML
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{apiGroup:'policy',resource:'poddisruptionbudgets',verb:'delete'}">
+                   v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'delete'}">
           {{ $t("commons.button.delete") }}
         </el-button>
       </template>
@@ -43,8 +43,8 @@ import {deletePDB, getPDB, listPDBs} from "@/api/poddisruptionbudgets"
 
 export default {
   name: "PDBs",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
-  data () {
+  components: {ComplexTable, LayoutContent, KoTableOperations},
+  data() {
     return {
       data: [],
       selects: [],
@@ -57,7 +57,7 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "PDBEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: {namespace: row.metadata.namespace, name: row.metadata.name}
             })
           },
           disabled: () => {
@@ -73,7 +73,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getPDB(this.cluster,row.metadata.namespace,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getPDB(this.cluster, row.metadata.namespace, row.metadata.name))
           }
         },
         {
@@ -103,7 +103,7 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -114,19 +114,19 @@ export default {
         this.loading = false
       })
     },
-    onCreate () {
+    onCreate() {
       this.$router.push({
         name: "PDBCreate",
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+          this.$t("commons.confirm_message.delete"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deletePDB(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -139,27 +139,27 @@ export default {
         }
         if (this.ps.length !== 0) {
           Promise.all(this.ps)
-            .then(() => {
-              this.search(true)
-              this.$message({
-                type: "success",
-                message: this.$t("commons.msg.delete_success"),
+              .then(() => {
+                this.search(true)
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.delete_success"),
+                })
               })
-            })
-            .catch(() => {
-              this.search(true)
-            })
+              .catch(() => {
+                this.search(true)
+              })
         }
       })
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "PDBDetail",
-        params: { namespace: row.metadata.namespace, name: row.metadata.name }
+        params: {namespace: row.metadata.namespace, name: row.metadata.name}
       })
     }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.search()
   }
