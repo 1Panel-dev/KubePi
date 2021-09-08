@@ -36,7 +36,7 @@
               </el-form-item>
               <div v-if="!form.apiServerInsecure">
                 <el-form-item label="Ca Certificate" prop="caDataStr">
-                  <el-input type="textarea" v-model="form.caDataStr" clearable></el-input>
+                  <el-input  type="textarea" v-model="form.caDataStr" clearable></el-input>
                 </el-form-item>
               </div>
             </div>
@@ -47,15 +47,15 @@
             </div>
             <div v-if="form.authenticationMode==='certificate'">
               <el-form-item label="Certificate" prop="certDataStr">
-                <el-input type="textarea" v-model="form.certDataStr" clearable></el-input>
+                <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea" v-model="form.certDataStr" clearable></el-input>
               </el-form-item>
               <el-form-item label="Certificate Key" prop="keyDataStr">
-                <el-input type="textarea" v-model="form.keyDataStr" clearable></el-input>
+                <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea" v-model="form.keyDataStr" clearable></el-input>
               </el-form-item>
             </div>
             <div v-if="form.authenticationMode==='configFile'">
               <el-form-item v-if="form.configContent" :label="$t('business.cluster.config_content')">
-                <el-input type="textarea" :rows="20" v-model="form.configContent"></el-input>
+                <el-input type="textarea"  v-model="form.configContent"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-upload :before-upload="readFile" action="" style="display: inline-block;margin-left: 5px">
@@ -102,8 +102,10 @@ export default {
         proxyAuthEnable: false,
         proxyUsername: "",
         proxyPassword: "",
-        certDataStr: "",
-        keyDataStr: "",
+        certDataStr: "-----BEGIN CERTIFICATE-----\n" +
+            "-----END CERTIFICATE-----",
+        keyDataStr: "-----BEGIN RSA PRIVATE KEY-----\n" +
+            "-----END RSA PRIVATE KEY-----",
         caDataStr: "",
         configContent: ""
       },
