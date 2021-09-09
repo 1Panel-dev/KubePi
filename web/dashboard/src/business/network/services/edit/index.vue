@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Secrets'}" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'Services'}" v-loading="loading">
     <div>
       <el-row :gutter="20">
         <div v-if="!showYaml">
@@ -131,7 +131,7 @@ export default {
       this.activeName = tab.name
     },
     onCancel () {
-      this.$router.push({ name: "Secrets" })
+      this.$router.push({ name: "Services" })
     },
     onEditYaml () {
       this.showYaml = true

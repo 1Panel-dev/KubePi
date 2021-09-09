@@ -50,11 +50,11 @@
               </tr>
               <tr>
                 <td>{{ $t("commons.table.created_time") }}</td>
-                <td colspan="3">{{ item.metadata.creationTimestamp | datetimeFormat }}</td>
+                <td colspan="">{{ item.metadata.creationTimestamp | datetimeFormat }}</td>
               </tr>
               <tr>
                 <td>{{ $t("business.common.annotation") }}</td>
-                <td colspan="4">
+                <td colspan="3">
                   <div v-for="(value,key,index) in item.metadata.annotations" v-bind:key="index" class="myTag">
                     <el-tag type="info" size="small" v-if="value.length < 100">
                       {{ key }} = {{ value }}

@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Limit Ranges">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig" :selects.sync="selects"
                    :search-config="searchConfig">
       <template #header>
         <el-button type="primary" size="small" @click="onCreate"
