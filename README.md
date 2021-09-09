@@ -18,7 +18,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
     sudo docker run -d --restart=unless-stopped -p 80:80 kubeoperator/kubepi-server
 
-打开浏览器访问https://localhost
+打开浏览器访问http://localhost
 
 ### 微信交流群
 
