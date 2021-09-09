@@ -3,12 +3,12 @@
     <div v-if="!yamlShow">
       <el-row :gutter="20" class="row-box">
         <el-col :span="15">
-          <el-card class="el-card" >
+          <el-card class="el-card">
             <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
           </el-card>
         </el-col>
         <el-col :span="9">
-          <el-card class="el-card" >
+          <el-card class="el-card">
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" width="30%" align="left">
@@ -44,81 +44,81 @@
         </el-col>
         <el-col :span="24" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
           <br>
-            <el-row :gutter="20">
-              <el-col :span="9">
-                <el-card>
-                  <div slot="header" class="clearfix" style="text-align: center;">
-                    <span>CPU</span>
-                  </div>
-                  <div style="text-align: center;">
-                    <el-row :gutter="20">
-                      <el-col :span="12">
-                        <div>Requests</div>
-                        <br>
-                        <el-progress type="circle" :percentage="cpuResource.requestsUsage"></el-progress>
-                        <br>
-                        <span>Cores:{{ cpuResource.requests }}</span>
-                      </el-col>
-                      <el-col :span="12">
-                        <div>Limits</div>
-                        <br>
-                        <el-progress type="circle"
-                                     :percentage="cpuResource.limitsUsage  >= 100 ? 100: cpuResource.limitsUsage"
-                                     :format="cpuFormat"></el-progress>
-                        <br>
-                        <span>Cores:{{ cpuResource.limits }}</span>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </el-card>
-              </el-col>
-              <el-col :span="9">
-                <el-card>
-                  <div slot="header" class="clearfix" style="text-align: center;">
-                    <span>Memory</span>
-                  </div>
-                  <div style="text-align: center">
-                    <el-row :gutter="20">
-                      <el-col :span="12">
-                        <div>Requests</div>
-                        <br>
-                        <el-progress type="circle" :percentage="memResource.requestsUsage"></el-progress>
-                        <br>
-                        <span>Mib:{{ memResource.requests }}</span>
-                      </el-col>
-                      <el-col :span="12">
-                        <div>Limits</div>
-                        <br>
-                        <el-progress type="circle"
+          <el-row :gutter="20">
+            <el-col :span="9">
+              <el-card>
+                <div slot="header" class="clearfix" style="text-align: center;">
+                  <span>CPU</span>
+                </div>
+                <div style="text-align: center;">
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <div>Requests</div>
+                      <br>
+                      <el-progress type="circle" :percentage="cpuResource.requestsUsage"></el-progress>
+                      <br>
+                      <span>Cores:{{ cpuResource.requests }}</span>
+                    </el-col>
+                    <el-col :span="12">
+                      <div>Limits</div>
+                      <br>
+                      <el-progress type="circle"
+                                   :percentage="cpuResource.limitsUsage  >= 100 ? 100: cpuResource.limitsUsage"
+                                   :format="cpuFormat"></el-progress>
+                      <br>
+                      <span>Cores:{{ cpuResource.limits }}</span>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="9">
+              <el-card>
+                <div slot="header" class="clearfix" style="text-align: center;">
+                  <span>Memory</span>
+                </div>
+                <div style="text-align: center">
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <div>Requests</div>
+                      <br>
+                      <el-progress type="circle" :percentage="memResource.requestsUsage"></el-progress>
+                      <br>
+                      <span>Mib:{{ memResource.requests }}</span>
+                    </el-col>
+                    <el-col :span="12">
+                      <div>Limits</div>
+                      <br>
+                      <el-progress type="circle"
 
-                                     :percentage="memResource.limitsUsage  >= 100 ? 100: memResource.limitsUsage"
-                                     :format="memFormat"></el-progress>
-                        <br>
-                        <span>Mib:{{ memResource.limits }}</span>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </el-card>
-              </el-col>
-              <el-col :span="6">
-                <el-card>
-                  <div slot="header" class="clearfix" style="text-align: center;">
-                    <span>Pods</span>
-                  </div>
-                  <div style="text-align: center">
-                    <el-row :gutter="20">
-                      <el-col>
-                        <div>Allocation</div>
-                        <br>
-                        <el-progress type="circle" :percentage="podsData.usage"></el-progress>
-                        <br>
-                        <span>Pods:{{ podsData.podsCount }}</span>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </el-card>
-              </el-col>
-            </el-row>
+                                   :percentage="memResource.limitsUsage  >= 100 ? 100: memResource.limitsUsage"
+                                   :format="memFormat"></el-progress>
+                      <br>
+                      <span>Mib:{{ memResource.limits }}</span>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card>
+                <div slot="header" class="clearfix" style="text-align: center;">
+                  <span>Pods</span>
+                </div>
+                <div style="text-align: center">
+                  <el-row :gutter="20">
+                    <el-col>
+                      <div>Allocation</div>
+                      <br>
+                      <el-progress type="circle" :percentage="podsData.usage"></el-progress>
+                      <br>
+                      <span>Pods:{{ podsData.podsCount }}</span>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="24">
           <br>
@@ -141,7 +141,7 @@
                 </tr>
               </table>
             </el-tab-pane>
-            <el-tab-pane :label="$t('business.pod.resource')" >
+            <el-tab-pane :label="$t('business.pod.resource')">
               <table style="width: 100%" class="myTable">
                 <tr>
                   <td>Pod CIDR</td>
@@ -248,7 +248,7 @@ export default {
       })
     },
     listPodsByNodeName () {
-      if (!checkPermissions({scope: 'namespace', apiGroup: "", resource: "pods", verb: "list"})) {
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
         return
       }
       listPodsWithNsSelector(this.cluster, "", "", "spec.nodeName=" + this.item.metadata.name).then(res => {

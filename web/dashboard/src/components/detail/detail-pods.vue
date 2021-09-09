@@ -42,6 +42,7 @@ import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import { listPodsWithNsSelector } from "@/api/pods"
 import { randomNum } from "@/utils/randomNum"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "KoDetailPods",
@@ -95,6 +96,9 @@ export default {
   methods: {
     search() {
       this.loading = true
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
+        return
+      }
       listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
         this.loading = false
