@@ -54,6 +54,7 @@
 import KoCard from "@/components/ko-card"
 import {listDeploymentsByNs} from "@/api/deployments"
 import {listNsReplicaSets} from "@/api/replicasets"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "KoHpaTarget",
@@ -95,13 +96,15 @@ export default {
   },
   methods: {
     getReferences () {
-      listDeploymentsByNs(this.cluster, this.namespace).then(res => {
-        this.deploymentItem = {
-          items: res.items,
-          apiVersion: res.apiVersion,
-          kind: "Deployment"
-        }
-      })
+      if (checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "storageclasses", verb: "list" })) {
+        listDeploymentsByNs(this.cluster, this.namespace).then(res => {
+          this.deploymentItem = {
+            items: res.items,
+            apiVersion: res.apiVersion,
+            kind: "Deployment"
+          }
+        })
+      }
       listNsReplicaSets(this.cluster, this.namespace).then(res => {
         this.replicaSetItem = {
           items: res.items,

@@ -91,6 +91,7 @@ import {listClusterRoles} from "@/api/clusterroles"
 import {listNamespaceRoles} from "@/api/roles"
 import {getNamespaces} from "@/api/auth"
 import {listServiceAccountsWithNs} from "@/api/serviceaccounts"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "KoRoleObject",
@@ -131,13 +132,17 @@ export default {
       this.roles = []
       this.roleRef.name = ""
       if (kind === "Role") {
-        listNamespaceRoles(this.clusterName, this.namespace).then(res => {
-          this.roles = res.items
-        })
+        if (checkPermissions({ scope: "namespace", apiGroup: "rbac.authorization.k8s.io", resource: "roles", verb: "list" })) {
+          listNamespaceRoles(this.clusterName, this.namespace).then(res => {
+            this.roles = res.items
+          })
+        }
       } else {
-        listClusterRoles(this.clusterName).then(res => {
-          this.roles = res.items
-        })
+        if (checkPermissions({ scope: "namespace", apiGroup: "rbac.authorization.k8s.io", resource: "clusterroles", verb: "list" })) {
+          listClusterRoles(this.clusterName).then(res => {
+            this.roles = res.items
+          })
+        }
       }
     },
     removeSubject (index) {
@@ -163,10 +168,12 @@ export default {
     },
     changeNamespace (row, index) {
       this.loading = true
-      listServiceAccountsWithNs(this.clusterName, row.namespace).then(res => {
-        this.serviceAccountArray[index] = res.items
-        this.loading = false
-      })
+      if (checkPermissions({ scope: "namespace", apiGroup: "", resource: "serviceaccounts", verb: "list" })) {
+        listServiceAccountsWithNs(this.clusterName, row.namespace).then(res => {
+          this.serviceAccountArray[index] = res.items
+          this.loading = false
+        })
+      }
     }
   },
   created () {

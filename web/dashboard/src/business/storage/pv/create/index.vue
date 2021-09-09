@@ -141,6 +141,7 @@ import {createPv} from "@/api/pv"
 import KoCard from "@/components/ko-card/index";
 import {listStorageClasses} from "@/api/storageclass";
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "PersistentVolumeCreate",
@@ -310,7 +311,9 @@ export default {
   created() {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"
-    this.loadStorageClasses()
+    if (checkPermissions({ scope: "cluster", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
+      this.loadStorageClasses()
+    }
   }
 }
 </script>
