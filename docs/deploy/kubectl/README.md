@@ -17,4 +17,4 @@
 
 - 环境地址：http://$NODE_IP:$NODE_PORT
 - 用户名：admin
-- 密码：admin123
+- 密码：kubepi
