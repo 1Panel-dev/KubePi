@@ -92,6 +92,7 @@ export default {
     volumeParentObj: Object,
     configMapList: Array,
     secretList: Array,
+    pvcList: Array,
     isReadOnly: Boolean,
   },
   watch: {
@@ -118,6 +119,16 @@ export default {
       immediate: true,
       deep: true,
     },
+    pvcList: {
+      handler(newName) {
+        this.pvc_list = []
+        for (const pvc of newName) {
+          this.pvc_list.push(pvc.metadata.name)
+        }
+      },
+      immediate: true,
+      deep: true,
+    }, 
   },
   data() {
     return {
@@ -164,7 +175,6 @@ export default {
           }
         }
       }
-      console.log(row)
     },
     changeSecret(row) {
       row.options = []
@@ -251,7 +261,7 @@ export default {
             break
           case "PVC":
             item.persistentVolumeClaim = itemClild
-            item.persistentVolumeClaim.name = volume.resource || undefined
+            item.persistentVolumeClaim.claimName = volume.resource || undefined
             break
           case "EmptyDir":
             item.emptyDir = {}

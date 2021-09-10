@@ -50,7 +50,7 @@
         <el-col :span="spanWidth">
           <el-card class="el-card">
             <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume')}}</span>
-            <ko-volume @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume" :volumeParentObj="podSpec" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+            <ko-volume @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume" :volumeParentObj="podSpec" :configMapList="config_map_list_of_ns" :pvcList="pvc_list_of_ns" :secretList="secret_list_of_ns" />
           </el-card>
         </el-col>
       </el-row>
@@ -423,9 +423,9 @@ export default {
       if (val) {
         this.loadSecretsWithNs(val)
         this.loadConfigMapsWithNs(val)
+        this.loadPvcsWithNs(val)
         if (this.isStatefulSet()) {
           this.loadServicesWithNs(val)
-          this.loadPvcsWithNs(val)
           this.loadStorageClass()
         }
       }
@@ -489,6 +489,7 @@ export default {
       this.$refs.ko_node_scheduling.transformation(this.podSpec)
       this.$refs.ko_toleration.transformation(this.podSpec)
       this.$refs.ko_spec_security.transformation(this.podSpec)
+      this.$refs.ko_spec_base.transformation(this.podSpec)
 
       this.$refs.ko_container.transformation(this.currentContainer)
       this.$refs.ko_ports.transformation(this.currentContainer)
@@ -683,8 +684,8 @@ export default {
             imagePullPolicy: "IfNotPresent",
           },
         ],
-        restartPolicy: "Always",
       }
+      this.podSpec.restartPolicy = (this.isCronJob() || this.isJob()) ? "Never" : "Always"
       this.currentContainerIndex = 0
       this.currentContainer = this.podSpec.containers[0]
     }

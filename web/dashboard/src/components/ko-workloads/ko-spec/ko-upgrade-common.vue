@@ -78,7 +78,7 @@ export default {
       ],
       strategy_list: [
         { label: this.$t("business.workload.rolling_update"), value: "RollingUpdate" },
-        { label: this.$t("commons.button.delete"), value: "Delete" },
+        { label: this.$t("commons.button.delete"), value: "OnDelete" },
       ],
       pod_management_policy_list: [
         { label: "OrderedReady", value: "OrderedReady" },
