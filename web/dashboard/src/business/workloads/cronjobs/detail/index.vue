@@ -142,7 +142,7 @@ export default {
         let endTime = new Date(row.status.completionTime)
         let t = Math.floor((endTime - startTime) / 1000)
         if (t % 60 !== 0) {
-          return (t % 60) + " mins ago"
+          return (t % 60) + " mins"
         }
         if (t % 3600 !== 0) {
           return (t % 60) + " hours ago"

@@ -56,54 +56,82 @@
       </el-row>
 
       <el-card style="margin-top: 20px;border: 0" class="el-card">
-        <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.spec')}}</span>
-        <el-row :gutter="20">
-          <el-col :span="18">
-            <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
-          </el-col>
-        </el-row>
-        <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeName">
-          <el-tab-pane :label="$t('business.workload.general')" name="General">
-            <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :secretList="secret_list_of_ns" />
-            <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer" />
-            <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" />
-            <ko-environment :isReadOnly="readOnly" ref="ko_environment" :envParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+        <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.containers')}}</span>
+        <el-tabs tabPosition="left" v-model="activeName">
+          <el-tab-pane label="Spec" name="Spec">
+            <el-tabs :key="isRefresh" v-model="activeNameSpec">
+              <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
+                <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job" :upgradePolicyParentObj="form.spec" :resourceType="type" />
+                <ko-upgrade-common v-else :isReadOnly="readOnly" ref="ko_upgrade_common" :upgradePolicyParentObj="form.spec" :resourceType="type" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.node_schedule')" name="NodeSchedule">
+                <ko-node-selector :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.affinity_or_anti')" name="PodSchedule">
+                <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec" :namespaceList="namespace_list" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.toleration')" name="Toleration">
+                <ko-tolerations :isReadOnly="readOnly" ref="ko_toleration" :tolerationsParentObj="podSpec" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.network')" name="Networking">
+                <ko-networking :isReadOnly="readOnly" ref="ko_networking" :networkingParentObj="podSpec" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
+                <ko-spec-security :isReadOnly="readOnly" ref="ko_spec_security" :securityContextParentObj="podSpec" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.others')" name="others">
+                <ko-spec-base :isReadOnly="readOnly" ref="ko_spec_base" :resourceType="type" :specBaseParentObj="podSpec" :serviceList="service_of_ns" :secretList="secret_list_of_ns" />
+              </el-tab-pane>
+            </el-tabs>
           </el-tab-pane>
 
-          <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')" name="Health Check">
-            <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
-            <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
-            <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
-          </el-tab-pane>
+          <el-tab-pane label="Containers" name="Container">
+            <el-row :gutter="20">
+              <el-col :span="18">
+                <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
+              </el-col>
+            </el-row>
+            <el-tabs :key="isRefresh" v-model="activeNameContainers">
+              <el-tab-pane :label="$t('business.workload.general')" name="General">
+                <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.network')" name="Networking">
-            <ko-networking :isReadOnly="readOnly" ref="ko_networking" :networkingParentObj="podSpec" />
-          </el-tab-pane>
+              <el-tab-pane :label="$t('business.workload.command')" name="Command">
+                <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.schedule')" name="Scheduling">
-            <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec" :namespaceList="namespace_list" />
-            <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" />
-            <ko-tolerations ref="ko_toleration" :tolerationsParentObj="podSpec" />
-          </el-tab-pane>
+              <el-tab-pane :label="$t('business.workload.port')" name="Port">
+                <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.resource')" name="Resources">
-            <ko-resources :isReadOnly="readOnly" ref="ko_resource" :resourceParentObj="currentContainer" />
-          </el-tab-pane>
+              <el-tab-pane :label="$t('business.workload.environment_variable')" name="Environment">
+                <ko-environment :isReadOnly="readOnly" ref="ko_environment" :envParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
-            <ko-upgrade-policy :isReadOnly="readOnly" v-if="type === 'deployments'" ref="ko_upgrade_policy" :upgradePolicyParentObj="form.spec" />
-            <ko-upgrade-policy-statefulset :isReadOnly="readOnly" v-if="type === 'statefulsets'" ref="ko_upgrade_policy_statefulset" :upgradePolicyParentObj="form.spec" />
-            <ko-upgrade-policy-cronjob :isReadOnly="readOnly" v-if="type === 'cronjobs'" ref="ko_upgrade_policy_cronjob" :upgradePolicyParentObj="form.spec" />
-            <ko-upgrade-policy-job :isReadOnly="readOnly" v-if="type === 'jobs'" ref="ko_upgrade_policy_job" :upgradePolicyParentObj="form.spec" />
-            <ko-upgrade-policy-daemonset :isReadOnly="readOnly" v-if="type === 'daemonsets'" ref="ko_upgrade_policy_daemonset" :upgradePolicyParentObj="form.spec" />
-          </el-tab-pane>
+              <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')" name="Health Check">
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
-            <ko-security-context :isReadOnly="readOnly" ref="ko_security_context" :securityContextParentObj="currentContainer" />
-          </el-tab-pane>
+              <el-tab-pane :label="$t('business.workload.resource')" name="Resources">
+                <ko-resources :isReadOnly="readOnly" ref="ko_resource" :resourceParentObj="currentContainer" />
+              </el-tab-pane>
 
-          <el-tab-pane :label="$t('business.workload.mount')" name="Mount">
-            <ko-volume-mount :isReadOnly="readOnly" ref="ko_volume_mount" :mountParentObj="currentContainer" :volumeList="volume_list" />
+              <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
+                <ko-security-context :isReadOnly="readOnly" ref="ko_security_context" :securityContextParentObj="currentContainer" />
+              </el-tab-pane>
+
+              <el-tab-pane :label="$t('business.workload.mount')" name="Mount">
+                <ko-volume-mount :isReadOnly="readOnly" ref="ko_volume_mount" :mountParentObj="currentContainer" :volumeList="volume_list" />
+              </el-tab-pane>
+            </el-tabs>
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -129,6 +157,16 @@ import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
 
 import KoKvTable from "@/components/ko-workloads/ko-kv-table.vue"
+
+import KoSpecBase from "@/components/ko-workloads/ko-spec/ko-spec-base.vue"
+import KoNodeSelector from "@/components/ko-workloads/ko-spec/ko-node-selector.vue"
+import KoPodScheduling from "@/components/ko-workloads/ko-spec/ko-pod-scheduling.vue"
+import KoTolerations from "@/components/ko-workloads/ko-spec/ko-tolerations.vue"
+import KoNetworking from "@/components/ko-workloads/ko-spec/ko-networking.vue"
+import KoSpecSecurity from "@/components/ko-workloads/ko-spec/ko-spec-security.vue"
+import KoUpgradeCommon from "@/components/ko-workloads/ko-spec/ko-upgrade-common.vue"
+import KoUpgradeJob from "@/components/ko-workloads/ko-spec/ko-upgrade-job.vue"
+
 import KoBase from "@/components/ko-workloads/ko-base.vue"
 import KoVolume from "@/components/ko-workloads/ko-volume.vue"
 import KoVolumeClaim from "@/components/ko-workloads/ko-volume-claim.vue"
@@ -139,15 +177,6 @@ import KoEnvironment from "@/components/ko-workloads/ko-environment.vue"
 import KoResources from "@/components/ko-workloads/ko-resources.vue"
 import KoHealthCheck from "@/components/ko-workloads/ko-health-check.vue"
 import KoSecurityContext from "@/components/ko-workloads/ko-security-context.vue"
-import KoNetworking from "@/components/ko-workloads/ko-networking.vue"
-import KoPodScheduling from "@/components/ko-workloads/ko-pod-scheduling.vue"
-import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
-import KoTolerations from "@/components/ko-workloads/ko-tolerations.vue"
-import KoUpgradePolicy from "@/components/ko-workloads/ko-upgrade-policy.vue"
-import KoUpgradePolicyStatefulset from "@/components/ko-workloads/ko-upgrade-policy-statefulset.vue"
-import KoUpgradePolicyDaemonset from "@/components/ko-workloads/ko-upgrade-policy-daemonset.vue"
-import KoUpgradePolicyCronjob from "@/components/ko-workloads/ko-upgrade-policy-cronjob.vue"
-import KoUpgradePolicyJob from "@/components/ko-workloads/ko-upgrade-policy-job.vue"
 import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
@@ -156,6 +185,7 @@ import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
 import { listServicesWithNs } from "@/api/services"
 import { listPvcsWithNs } from "@/api/pvc"
+import { getNamespaces } from "@/api/auth"
 import KoSelect from "@/components/ko-select"
 
 export default {
@@ -165,6 +195,12 @@ export default {
     KoFormItem,
     YamlEditor,
     KoKvTable,
+    KoSpecBase,
+    KoSpecSecurity,
+    KoUpgradeCommon,
+    KoUpgradeJob,
+    KoNodeSelector,
+
     KoBase,
     KoVolumeClaim,
     KoVolume,
@@ -177,13 +213,7 @@ export default {
     KoSecurityContext,
     KoNetworking,
     KoPodScheduling,
-    KoNodeScheduling,
     KoTolerations,
-    KoUpgradePolicy,
-    KoUpgradePolicyStatefulset,
-    KoUpgradePolicyDaemonset,
-    KoUpgradePolicyCronjob,
-    KoUpgradePolicyJob,
     KoVolumeMount,
   },
   data() {
@@ -208,9 +238,12 @@ export default {
       sc_list: [],
       pvc_list_of_ns: [],
       headless_service_of_ns: [],
+      service_of_ns: [],
       volume_list: [],
       // base form
-      activeName: "General",
+      activeName: "Spec",
+      activeNameSpec: "Scaling/Upgrade Policy",
+      activeNameContainers: "General",
       isValid: true,
       unValidInfo: "",
       form: {
@@ -299,8 +332,10 @@ export default {
     },
     loadServicesWithNs(ns) {
       this.headless_service_of_ns = []
+      this.service_of_ns = []
       listServicesWithNs(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
+          this.service_of_ns.push(item.metadata.name)
           if (item.spec.clusterIP === "None") {
             this.headless_service_of_ns.push(item.metadata.name)
           }
@@ -311,6 +346,11 @@ export default {
       this.config_map_list_of_ns = []
       listConfigMapsWithNs(this.clusterName, ns).then((res) => {
         this.config_map_list_of_ns = res.items
+      })
+    },
+    loadNamespace() {
+      getNamespaces(this.clusterName).then((res) => {
+        this.namespace_list = res.data
       })
     },
     loadVolumes(type, volumes, volumeClaimTemplates) {
@@ -415,8 +455,15 @@ export default {
     },
     gatherFormData() {
       this.$refs.ko_annotation_label.transformation(this.form, this.podMetadata)
+
       this.$refs.ko_volume.transformation(this.podSpec)
-      this.$refs.ko_container.transformation(this.currentContainer, this.podSpec)
+      this.$refs.ko_networking.transformation(this.podSpec)
+      this.$refs.ko_pod_scheduling.transformation(this.podSpec)
+      this.$refs.ko_node_scheduling.transformation(this.podSpec)
+      this.$refs.ko_toleration.transformation(this.podSpec)
+      this.$refs.ko_spec_security.transformation(this.podSpec)
+
+      this.$refs.ko_container.transformation(this.currentContainer)
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_environment.transformation(this.currentContainer)
@@ -427,41 +474,28 @@ export default {
         this.$refs.ko_health_startup_check.transformation(this.currentContainer)
       }
       this.$refs.ko_security_context.transformation(this.currentContainer)
-      this.$refs.ko_networking.transformation(this.podSpec)
-      this.$refs.ko_pod_scheduling.transformation(this.podSpec)
-      this.$refs.ko_node_scheduling.transformation(this.podSpec)
-      this.$refs.ko_toleration.transformation(this.podSpec)
 
-      switch (this.type) {
-        case "deployments":
-          this.form.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy.transformation(this.form.spec, this.podSpec)
-          break
-        case "statefulsets":
-          this.form.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy_statefulset.transformation(this.form.spec, this.podSpec)
+      if (this.isCronJob()) {
+        delete this.form.spec.template
+        this.form.apiVersion = "batch/v1beta1"
+        this.form.spec.jobTemplate = { spec: {} }
+        this.$refs.ko_upgrade_job.transformation(this.form.spec)
+      } else if (this.isJob()) {
+        this.form.apiVersion = "batch/v1"
+        delete this.form.spec.selector
+        this.$refs.ko_upgrade_job.transformation(this.form.spec)
+      } else {
+        this.form.apiVersion = "apps/v1"
+        this.$refs.ko_upgrade_common.transformation(this.form.spec)
+        if (this.isStatefulSet()) {
           this.$refs.ko_volume_claim.transformation(this.form.spec)
-          break
-        case "cronjobs":
-          this.form.apiVersion = "batch/v1beta1"
-          this.form.spec.jobTemplate = { spec: {} }
-          this.$refs.ko_upgrade_policy_cronjob.transformation(this.form.spec, this.podSpec)
-          break
-        case "jobs":
-          delete this.form.spec.selector
-          this.form.apiVersion = "batch/v1"
-          this.$refs.ko_upgrade_policy_job.transformation(this.form.spec, this.podSpec)
-          break
-        case "daemonsets":
-          this.form.apiVersion = "apps/v1"
-          this.$refs.ko_upgrade_policy_daemonset.transformation(this.form.spec, this.podSpec)
-          break
+        }
       }
       this.$refs.ko_volume_mount.transformation(this.currentContainer)
-      
+
       if (!this.isStatefulSet()) {
         delete this.form.spec.serviceName
-      } 
+      }
       if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex] = this.currentContainer
       } else {
@@ -470,9 +504,10 @@ export default {
       if (!this.isReplicasShow()) {
         delete this.form.spec.replicas
       }
+
       if (this.isCronJob()) {
         delete this.form.spec.template
-        this.form.spec.jobTemplate.spec = { template: { spec: this.podSpec, metadata: this.podMetadata } }
+        this.form.spec.jobTemplate.spec.template = { spec: this.podSpec, metadata: this.podMetadata }
       } else {
         delete this.form.spec.schedule
         this.form.spec.template.spec = this.podSpec
@@ -606,6 +641,7 @@ export default {
     this.clusterName = this.$route.query.cluster
     this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
+    this.loadNamespace()
     if (!this.isCreateOperation()) {
       this.name = this.$route.params.name
       this.search()

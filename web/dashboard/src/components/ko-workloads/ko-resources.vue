@@ -1,44 +1,41 @@
 <template>
-  <div style="margin-top: 20px">
-    <ko-card :title="$t('business.workload.resource')">
-      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item :label="'CPU ' + $t('business.workload.reservation')" prop="requests.cpu">
-              <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.requests.cpu" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')" prop="requests.memory">
-              <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.requests.memory" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item :label="'CPU ' + $t('business.workload.limit')" prop="limits.cpu">
-              <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.limits.cpu" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')" prop="limits.memory">
-              <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.limits.memory" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </ko-card>
+  <div>
+    <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item :label="'CPU ' + $t('business.workload.reservation')" prop="requests.cpu">
+            <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.requests.cpu" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')" prop="requests.memory">
+            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.requests.memory" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item :label="'CPU ' + $t('business.workload.limit')" prop="limits.cpu">
+            <ko-form-item placeholder="e.g. 1000" itemType="number" deviderName="mCPUs" v-model.number="form.limits.cpu" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')" prop="limits.memory">
+            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.limits.memory" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoResources",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     resourceParentObj: Object,
     isReadOnly: Boolean,

@@ -1,52 +1,49 @@
 <template>
-  <div style="margin-top: 20px">
-    <ko-card :title="$t('business.workload.port')">
-      <el-form :disabled="isReadOnly">
-        <table style="width: 98%" class="tab-table">
-          <tr>
-            <th scope="col" width="50%" align="left"><label>{{$t('business.workload.name')}}</label></th>
-            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
-            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
-            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
-            <th align="left"></th>
-          </tr>
-          <tr v-for="(row, index) in ports" v-bind:key="index">
-            <td>
-              <ko-form-item itemType="input" v-model="row.name" />
-            </td>
-            <td>
-              <ko-form-item placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
-            </td>
-            <td>
-              <ko-form-item itemType="select" v-model="row.protocol" :selections="protocol_list" />
-            </td>
-            <td>
-              <ko-form-item placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
-            </td>
-            <td>
-              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-                {{ $t("commons.button.delete") }}
-              </el-button>
-            </td>
-          </tr>
-          <tr>
-            <td align="left">
-              <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-            </td>
-          </tr>
-        </table>
-      </el-form>
-    </ko-card>
+  <div>
+    <el-form :disabled="isReadOnly">
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="45%" align="left"><label>{{$t('business.workload.name')}}</label></th>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="(row, index) in ports" v-bind:key="index">
+          <td>
+            <ko-form-item itemType="input" v-model="row.name" />
+          </td>
+          <td>
+            <ko-form-item placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
+          </td>
+          <td>
+            <ko-form-item itemType="select" v-model="row.protocol" :selections="protocol_list" />
+          </td>
+          <td>
+            <ko-form-item placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
+          </td>
+        </tr>
+      </table>
+    </el-form>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoPorts",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     portParentObj: Object,
     isReadOnly: Boolean,

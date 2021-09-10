@@ -89,6 +89,7 @@
 <script>
 import KoFormItem from "@/components/ko-form-item"
 import { deepClone } from "@/utils/deepClone"
+import { parseObjToArry, parseArryToObj } from "@/utils/objArryParse"
 
 export default {
   name: "KoKvTable",
@@ -194,51 +195,28 @@ export default {
     },
     transformation(parentForm, podMetadata) {
       if (this.isCreate) {
-        let labels = this.parseArryToObj(this.labels)
+        let labels = parseArryToObj(this.labels)
         parentForm.spec.selector = { matchLabels: labels }
         podMetadata.labels = labels
         parentForm.metadata.labels = labels
-        parentForm.metadata.annotations = this.parseArryToObj(this.annotations)
+        parentForm.metadata.annotations = parseArryToObj(this.annotations)
         return
       }
-      let selectors = this.parseArryToObj(this.selectors)
+      let selectors = parseArryToObj(this.selectors)
       parentForm.spec.selector = { matchLabels: selectors }
       podMetadata.labels = selectors
       parentForm.metadata.labels = selectors
-      parentForm.metadata.annotations = this.parseArryToObj(this.annotations)
-      parentForm.metadata.labels = this.parseArryToObj(this.labels)
-    },
-    parseObjToArry(dataObj) {
-      let data = []
-      if (dataObj) {
-        for (const key in dataObj) {
-          if (Object.prototype.hasOwnProperty.call(dataObj, key)) {
-            data.push({
-              key: key,
-              value: dataObj[key],
-            })
-          }
-        }
-      }
-      return data
-    },
-    parseArryToObj(data) {
-      let obj = {}
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].key !== "") {
-          obj[data[i].key] = data[i].value
-        }
-      }
-      return obj
+      parentForm.metadata.annotations = parseArryToObj(this.annotations)
+      parentForm.metadata.labels = parseArryToObj(this.labels)
     },
   },
   mounted() {
     if (this.metadataObj) {
-      this.labels = this.parseObjToArry(this.metadataObj.labels)
-      this.annotations = this.parseObjToArry(this.metadataObj.annotations)
+      this.labels = parseObjToArry(this.metadataObj.labels)
+      this.annotations = parseObjToArry(this.metadataObj.annotations)
     }
     if (this.selectorObj) {
-      this.selectors = this.parseObjToArry(this.selectorObj.matchLabels)
+      this.selectors = parseObjToArry(this.selectorObj.matchLabels)
     }
   },
 }

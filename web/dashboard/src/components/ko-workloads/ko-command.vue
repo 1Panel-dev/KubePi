@@ -1,88 +1,85 @@
 <template>
-  <div style="margin-top: 20px">
-    <ko-card :key="reFresh" :title="$t('business.workload.command')">
-      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <table style="width: 98%" class="tab-table">
-              <tr>
-                <th scope="col" width="93%" align="left">
-                  <label>{{$t('business.workload.commands')}}</label>
-                </th>
-                <th align="left"></th>
-              </tr>
-              <tr v-for="row in form.command" v-bind:key="row.index">
-                <td>
-                  <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
-                </td>
-                <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
-                    {{ $t("commons.button.delete") }}
-                  </el-button>
-                </td>
-              </tr>
-              <tr>
-                <td align="left">
-                  <el-button @click="handleCommandAdd">{{$t('business.workload.add')}}</el-button>
-                </td>
-              </tr>
-            </table>
-          </el-col>
-          <el-col :span="12">
-            <table style="width: 98%" class="tab-table">
-              <tr>
-                <th scope="col" width="92%" align="left">
-                  <label>{{$t('business.workload.arguments')}}</label>
-                </th>
-                <th align="left"></th>
-              </tr>
-              <tr v-for="row in form.args" v-bind:key="row.index">
-                <td>
-                  <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
-                </td>
-                <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(row.index)">
-                    {{ $t("commons.button.delete") }}
-                  </el-button>
-                </td>
-              </tr>
-              <tr>
-                <td align="left">
-                  <el-button @click="handleArgsAdd">{{$t('business.workload.add')}}</el-button>
-                </td>
-              </tr>
-            </table>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" style="margin-top: 10px">
-          <el-col :span="12">
-            <el-form-item :label="$t('business.workload.working_dir')" prop="workingDir">
-              <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item :label="$t('business.workload.stdin')" prop="stdin">
-              <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="TTY" prop="tty">
-              <el-checkbox :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </ko-card>
+  <div>
+    <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
+      <el-row :gutter="20" style="margin-top: 10px">
+        <el-col :span="12">
+          <el-form-item :label="$t('business.workload.working_dir')" prop="workingDir">
+            <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item :label="$t('business.workload.stdin')" prop="stdin">
+            <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="TTY" prop="tty">
+            <el-checkbox :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <table style="width: 100%" class="tab-table">
+            <tr>
+              <th scope="col" width="90%" align="left">
+                <label>{{$t('business.workload.commands')}}</label>
+              </th>
+              <th align="left"></th>
+            </tr>
+            <tr v-for="row in form.command" v-bind:key="row.index">
+              <td>
+                <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+              </td>
+              <td>
+                <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
+                  {{ $t("commons.button.delete") }}
+                </el-button>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <el-button @click="handleCommandAdd">{{$t('business.workload.add')}}</el-button>
+              </td>
+            </tr>
+          </table>
+        </el-col>
+        <el-col :span="12">
+          <table style="width: 100%" class="tab-table">
+            <tr>
+              <th scope="col" width="90%" align="left">
+                <label>{{$t('business.workload.arguments')}}</label>
+              </th>
+              <th align="left"></th>
+            </tr>
+            <tr v-for="row in form.args" v-bind:key="row.index">
+              <td>
+                <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+              </td>
+              <td>
+                <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(row.index)">
+                  {{ $t("commons.button.delete") }}
+                </el-button>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <el-button @click="handleArgsAdd">{{$t('business.workload.add')}}</el-button>
+              </td>
+            </tr>
+          </table>
+        </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoCommand",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     commandParentObj: Object,
     isReadOnly: Boolean,
@@ -99,7 +96,7 @@ export default {
       reFresh: false,
       stdin_list: [
         { label: this.$t("business.workload.no"), value: "No" },
-        { label: this.$t("business.workload.once"), value: "Ones" },
+        { label: this.$t("business.workload.once"), value: "Once" },
         { label: this.$t("business.workload.yes"), value: "Yes" },
       ],
     }
@@ -138,13 +135,13 @@ export default {
       parentFrom.workingDir = this.form.workingDir || undefined
       if (this.form.stdin) {
         switch (this.form.stdin) {
-          case this.$t("business.workload.no"):
+          case "No":
             parentFrom.stdin = false
             break
-          case this.$t("business.workload.yes"):
+          case "Yes":
             parentFrom.stdin = true
             break
-          case this.$t("business.workload.once"):
+          case "Once":
             parentFrom.stdin = true
             parentFrom.stdinOnce = true
             break
@@ -175,7 +172,7 @@ export default {
       }
       if (this.commandParentObj.stdinOnce != undefined) {
         this.form.stdinOnce = true
-        this.form.stdin = "Ones"
+        this.form.stdin = "Once"
       }
       if (this.commandParentObj.stdin != undefined) {
         this.form.stdin = this.commandParentObj.stdin ? "Yes" : "No"

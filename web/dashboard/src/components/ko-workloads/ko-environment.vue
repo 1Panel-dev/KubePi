@@ -1,60 +1,57 @@
 <template>
-  <div style="margin-top: 20px">
-    <ko-card :key="reFresh" :title="$t('business.workload.environment_variable')">
-      <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
-        <table style="width: 98%" class="tab-table">
-          <tr>
-            <th scope="col" width="15%" align="left"><label>{{$t('business.workload.type')}}</label></th>
-            <th scope="col" width="30%" align="left"><label>{{$t('business.workload.prefix_variable')}}</label></th>
-            <th scope="col" width="20%" align="left"><label>{{$t('business.workload.source')}}</label></th>
-            <th scope="col" width="30%" align="left"><label>{{$t('business.workload.value')}}</label></th>
-            <th align="left"></th>
-          </tr>
-          <tr v-for="(row, index) in form.envResource" v-bind:key="index">
-            <td>
-              <ko-form-item itemType="select2" :noClear="true" v-model="row.type" :selections="type_list" />
-            </td>
-            <td>
-              <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
-            </td>
-            <td>
-              <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
-              <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
-              <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row)" :selections="config_map_name_list" />
-              <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
-              <ko-form-item v-if="row.type === 'Secret'" itemType="select2" v-model="row.source" :selections="secret_name_list" />
-              <ko-form-item v-if="row.type === 'Secret key'" itemType="select2" @change="changeSecret(row)" v-model="row.source" :selections="secret_name_list" />
-            </td>
-            <td>
-              <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
-              <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
-              <ko-form-item v-if="row.type ==='Secret key' || row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="row.value_list" />
-              <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
-            </td>
-            <td>
-              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-                {{ $t("commons.button.delete") }}
-              </el-button>
-            </td>
-          </tr>
-          <tr>
-            <td align="left">
-              <el-button @click="handleAdd">{{$t("commons.button.add")}}{{$t("business.workload.variable")}}</el-button>
-            </td>
-          </tr>
-        </table>
-      </el-form>
-    </ko-card>
+  <div>
+    <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
+      <table style="width: 98%" class="tab-table">
+        <tr>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.type')}}</label></th>
+          <th scope="col" width="30%" align="left"><label>{{$t('business.workload.prefix_variable')}}</label></th>
+          <th scope="col" width="20%" align="left"><label>{{$t('business.workload.source')}}</label></th>
+          <th scope="col" width="25%" align="left"><label>{{$t('business.workload.value')}}</label></th>
+          <th align="left"></th>
+        </tr>
+        <tr v-for="(row, index) in form.envResource" v-bind:key="index">
+          <td>
+            <ko-form-item itemType="select2" :noClear="true" v-model="row.type" :selections="type_list" />
+          </td>
+          <td>
+            <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
+          </td>
+          <td>
+            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
+            <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
+            <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row)" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
+            <ko-form-item v-if="row.type === 'Secret'" itemType="select2" v-model="row.source" :selections="secret_name_list" />
+            <ko-form-item v-if="row.type === 'Secret key'" itemType="select2" @change="changeSecret(row)" v-model="row.source" :selections="secret_name_list" />
+          </td>
+          <td>
+            <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
+            <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
+            <ko-form-item v-if="row.type ==='Secret key' || row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="row.value_list" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+          </td>
+          <td>
+            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+              {{ $t("commons.button.delete") }}
+            </el-button>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            <el-button @click="handleAdd">{{$t("commons.button.add")}}{{$t("business.workload.variable")}}</el-button>
+          </td>
+        </tr>
+      </table>
+    </el-form>
   </div>
 </template>
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import KoCard from "@/components/ko-card/index"
 
 export default {
   name: "KoCommand",
-  components: { KoFormItem, KoCard },
+  components: { KoFormItem },
   props: {
     envParentObj: Object,
     currentNamespace: String,
