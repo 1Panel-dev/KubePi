@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Cluster Roles">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+    <complex-table :selects.sync="selects" :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
         <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"

@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Roles">
-    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+    <complex-table :selects.sync="selects" :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #header>
         <el-button v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'create'}"
