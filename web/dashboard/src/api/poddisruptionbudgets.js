@@ -33,8 +33,8 @@ export function getPDB (cluster_name, namespace, name) {
   return get(`${namespacePDBUrl(cluster_name, namespace)}/${name}`)
 }
 
-export function createPDB (cluster_name, data) {
-  return post(`${pdbUrl(cluster_name)}`, data)
+export function createPDB (cluster_name,namespace, data) {
+  return post(`${namespacePDBUrl(cluster_name,namespace)}`, data)
 }
 
 export function deletePDB (cluster_name, namespace, name) {

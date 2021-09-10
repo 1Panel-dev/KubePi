@@ -27,13 +27,13 @@
           </el-card>
         </el-col>
       </div>
-      <div v-if="yamlShow">
-        <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
-        <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
-        </div>
-      </div>
     </el-row>
+    <div v-if="yamlShow">
+      <yaml-editor :value="yaml" :read-only="true"></yaml-editor>
+      <div class="bottom-button">
+        <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
+      </div>
+    </div>
   </layout-content>
 </template>
 

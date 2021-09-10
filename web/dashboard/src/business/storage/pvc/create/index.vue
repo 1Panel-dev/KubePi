@@ -57,7 +57,7 @@
                         <el-select v-model="form.spec.volumeName">
                           <el-option v-for="(sc, index) in persistentVolumeList"
                                      :key="index"
-                                     :disabled="sc.status.phase == 'Bound'"
+                                     :disabled="sc.status.phase === 'Bound'"
                                      :label="sc.metadata.name"
                                      :value="sc.metadata.name">
                           </el-option>
@@ -104,6 +104,7 @@ import KoCard from "@/components/ko-card/index";
 import {listStorageClasses} from "@/api/storageclass";
 import {listNamespace} from "@/api/namespaces"
 import KoSelect from "@/components/ko-select"
+import {checkPermissions} from "@/utils/permission"
 
 
 export default {
@@ -164,8 +165,12 @@ export default {
       })
     },
     search() {
-      this.loadStorageClasses()
-      this.loadNamespace()
+      if (checkPermissions({ scope: "cluster", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
+        this.loadStorageClasses()
+      }
+      if (checkPermissions({ scope: "cluster", apiGroup: "", resource: "namespaces", verb: "list" })) {
+        this.loadNamespace()
+      }
       listPvs(this.cluster, this.conditions).then(res => {
         this.persistentVolumeList = res.items
         this.loading = false

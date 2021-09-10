@@ -11,4 +11,4 @@
 
 - 环境地址：http://localhost
 - 用户名：admin
-- 密码：admin123
+- 密码：kubepi
