@@ -52,7 +52,7 @@ export default {
       handler(newName) {
         this.sc_list = []
         for (const s of newName) {
-          this.sc_list.push(s.provisioner)
+          this.sc_list.push(s.metadata.name)
         }
       },
       immediate: true,

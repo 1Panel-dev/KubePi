@@ -59,7 +59,7 @@
         <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.containers')}}</span>
         <el-tabs tabPosition="left" v-model="activeName">
           <el-tab-pane label="Spec" name="Spec">
-            <el-tabs :key="isRefresh" v-model="activeNameSpec">
+            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameSpec">
               <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
                 <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job" :upgradePolicyParentObj="form.spec" :resourceType="type" />
                 <ko-upgrade-common v-else :isReadOnly="readOnly" ref="ko_upgrade_common" :upgradePolicyParentObj="form.spec" :resourceType="type" />
@@ -97,7 +97,7 @@
                 <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
               </el-col>
             </el-row>
-            <el-tabs :key="isRefresh" v-model="activeNameContainers">
+            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
                 <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" />
               </el-tab-pane>
