@@ -56,7 +56,6 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import { listNodes } from "@/api/nodes"
 
 export default {
   name: "KoNodeScheduling",
@@ -64,7 +63,20 @@ export default {
   props: {
     nodeSchedulingParentObj: Object,
     isReadOnly: Boolean,
+    nodeList: Array,
     nodeSchedulingType: String,
+  },
+  watch: {
+    nodeList: {
+      handler(newName) {
+        this.node_name_list = []
+        this.node_list = []
+        if (newName) {
+          this.loadNodes(newName)
+        }
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -92,24 +104,22 @@ export default {
     handleLabelsDelete(index) {
       this.nodeSelector.splice(index, 1)
     },
-    loadNodes() {
+    loadNodes(datas) {
       this.node_name_list = []
-      listNodes(this.clusterName).then((res) => {
-        this.node_list = res.items
-        let labels = []
-        for (const node of res.items) {
-          this.node_name_list.push(node.metadata.name)
-          for (const key in node.metadata.labels) {
-            if (Object.prototype.hasOwnProperty.call(node.metadata.labels, key)) {
-              labels.push(key + " : " + (node.metadata.labels[key] || ""))
-            }
+      this.node_list = datas
+      let labels = []
+      for (const node of datas) {
+        this.node_name_list.push(node.metadata.name)
+        for (const key in node.metadata.labels) {
+          if (Object.prototype.hasOwnProperty.call(node.metadata.labels, key)) {
+            labels.push(key + " : " + (node.metadata.labels[key] || ""))
           }
         }
-        this.labels = labels.filter((item, index) => {
-          return labels.indexOf(item) === index
-        })
-        this.getMatchNode()
+      }
+      this.labels = labels.filter((item, index) => {
+        return labels.indexOf(item) === index
       })
+      this.getMatchNode()
     },
 
     getMatchNode() {
@@ -153,7 +163,6 @@ export default {
   },
   mounted() {
     this.clusterName = this.$route.query.cluster
-    this.loadNodes()
     this.nodeSelector = []
     if (this.nodeSchedulingParentObj) {
       if (this.nodeSchedulingParentObj.nodeSelector) {

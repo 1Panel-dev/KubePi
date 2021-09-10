@@ -66,7 +66,7 @@
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.node_schedule')" name="NodeSchedule">
-                <ko-node-selector :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" />
+                <ko-node-selector :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" :nodeList="node_list" />
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.affinity_or_anti')" name="PodSchedule">
@@ -185,8 +185,11 @@ import { listConfigMapsWithNs } from "@/api/configmaps"
 import { listStorageClasses } from "@/api/storageclass"
 import { listServicesWithNs } from "@/api/services"
 import { listPvcsWithNs } from "@/api/pvc"
+import { listNodes } from "@/api/nodes"
 import { getNamespaces } from "@/api/auth"
 import KoSelect from "@/components/ko-select"
+
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   components: {
@@ -233,6 +236,7 @@ export default {
       currentContainer: {},
       // resources
       namespace_list: [],
+      node_list: [],
       secret_list_of_ns: [],
       config_map_list_of_ns: [],
       sc_list: [],
@@ -299,11 +303,6 @@ export default {
             this.podSpec = this.form.spec.jobTemplate.spec.template.spec
             this.podMetadata = this.form.spec.jobTemplate.spec.template.metadata
           }
-          if (this.isStatefulSet()) {
-            this.loadServicesWithNs()
-          }
-          this.loadSecretsWithNs()
-          this.loadConfigMapsWithNs()
           this.yaml = res
           this.currentContainerIndex = 0
           this.currentContainer = this.podSpec.containers[0]
@@ -316,16 +315,27 @@ export default {
     },
     loadSecretsWithNs(ns) {
       this.secret_list_of_ns = []
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "secrets", verb: "list" })) {
+        return
+      }
       listSecretsWithNs(this.clusterName, ns).then((res) => {
         this.secret_list_of_ns = res.items
       })
     },
     loadStorageClass() {
+      this.sc_list = []
+      if (!checkPermissions({ scope: "namespace", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
+        return
+      }
       listStorageClasses(this.clusterName).then((res) => {
         this.sc_list = res.items
       })
     },
     loadPvcsWithNs(ns) {
+      this.pvc_list_of_ns = []
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "persistentvolumeclaims", verb: "list" })) {
+        return
+      }
       listPvcsWithNs(this.clusterName, ns).then((res) => {
         this.pvc_list_of_ns = res.items
       })
@@ -333,6 +343,9 @@ export default {
     loadServicesWithNs(ns) {
       this.headless_service_of_ns = []
       this.service_of_ns = []
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "list" })) {
+        return
+      }
       listServicesWithNs(this.clusterName, ns).then((res) => {
         res.items.forEach((item) => {
           this.service_of_ns.push(item.metadata.name)
@@ -344,8 +357,20 @@ export default {
     },
     loadConfigMapsWithNs(ns) {
       this.config_map_list_of_ns = []
+      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "configmaps", verb: "list" })) {
+        return
+      }
       listConfigMapsWithNs(this.clusterName, ns).then((res) => {
         this.config_map_list_of_ns = res.items
+      })
+    },
+    loadNodes() {
+      this.node_list = []
+      if (!checkPermissions({ scope: "cluster", apiGroup: "", resource: "nodes", verb: "list" })) {
+        return
+      }
+      listNodes(this.clusterName).then((res) => {
+        this.node_list = res.items
       })
     },
     loadNamespace() {
@@ -395,12 +420,14 @@ export default {
       }
     },
     changeNs(val) {
-      this.loadSecretsWithNs(val)
-      this.loadConfigMapsWithNs(val)
-      if (this.isStatefulSet()) {
-        this.loadServicesWithNs(val)
-        this.loadPvcsWithNs(val)
-        this.loadStorageClass()
+      if (val) {
+        this.loadSecretsWithNs(val)
+        this.loadConfigMapsWithNs(val)
+        if (this.isStatefulSet()) {
+          this.loadServicesWithNs(val)
+          this.loadPvcsWithNs(val)
+          this.loadStorageClass()
+        }
       }
     },
 
@@ -641,6 +668,7 @@ export default {
     this.clusterName = this.$route.query.cluster
     this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
+    this.loadNodes()
     this.loadNamespace()
     if (!this.isCreateOperation()) {
       this.name = this.$route.params.name
