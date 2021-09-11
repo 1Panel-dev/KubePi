@@ -68,7 +68,7 @@ export default {
       var item = {
         name: "",
         protocol: "TCP",
-        containerPort: 80,
+        containerPort: null,
         hostPort: "",
       }
       this.ports.push(item)

@@ -34,12 +34,12 @@
                   </th>
                   <th align="left"></th>
                 </tr>
-                <tr v-for="row in form.exec.command" v-bind:key="row.index">
+                <tr v-for="(row,index) in form.exec.command" :key="index">
                   <td>
                     <ko-form-item placeholder="e.g. /tmp/health" itemType="textarea" v-model="row.value" />
                   </td>
                   <td>
-                    <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
+                    <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(index)">
                       {{ $t("commons.button.delete") }}
                     </el-button>
                   </td>

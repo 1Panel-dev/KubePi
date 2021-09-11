@@ -27,12 +27,12 @@
               </th>
               <th align="left"></th>
             </tr>
-            <tr v-for="row in form.command" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.command" :key="index">
               <td>
                 <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -52,12 +52,12 @@
               </th>
               <th align="left"></th>
             </tr>
-            <tr v-for="row in form.args" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.args" :key="index">
               <td>
                 <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>

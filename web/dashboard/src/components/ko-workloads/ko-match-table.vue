@@ -50,12 +50,12 @@ export default {
   data() {
     return {
       operator_list: [
-        { label: "<", value: "Lt" },
-        { label: ">", value: "Gt" },
+        { label: "Lt", value: "Lt" },
+        { label: "Gt", value: "Gt" },
         { label: "Exists", value: "Exists" },
-        { label: "Not Exist", value: "DoesNotExist" },
-        { label: "=", value: "In" },
-        { label: "!=", value: "NotIn" },
+        { label: "DoesNotExist", value: "DoesNotExist" },
+        { label: "In", value: "In" },
+        { label: "NotIn", value: "NotIn" },
       ],
       priority: "Preferred",
     }

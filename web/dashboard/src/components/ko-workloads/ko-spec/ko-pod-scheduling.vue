@@ -31,10 +31,10 @@
             </el-col>
           </el-row>
 
-          <div style="margin-top: 20px"><span>表达式匹配 matchExpressions</span></div>
+          <div style="margin-top: 20px"><span>matchExpressions</span></div>
           <ko-match-table :matchTables.sync="item.rules" :isReadOnly="isReadOnly" />
 
-          <div style="margin-top: 20px"><span>标签匹配 matchLabels</span></div>
+          <div style="margin-top: 20px"><span>matchLabels</span></div>
           <table style="width: 100%; margin-top: 5px" class="tab-table">
             <tr v-for="(row, index) in item.labelRules" v-bind:key="'l'+index">
               <td width="48%">
@@ -87,9 +87,9 @@
             </el-col>
           </el-row>
 
-          <div style="margin-top: 20px"><span>标签匹配 matchLabels</span></div>
+          <div style="margin-top: 20px"><span>matchLabels</span></div>
           <ko-match-table :matchTables.sync="item.rules" :isReadOnly="isReadOnly" />
-          <div style="margin-top: 20px"><span>字段匹配 matchFields</span></div>
+          <div style="margin-top: 20px"><span>matchFields</span></div>
           <ko-match-table :matchTables.sync="item.fields" :isReadOnly="isReadOnly" />
         </el-card>
       </div>

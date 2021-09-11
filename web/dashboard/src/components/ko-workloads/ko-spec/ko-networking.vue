@@ -36,12 +36,12 @@
         <el-col :span=12>
           <span>{{$t('business.workload.nameservers')}}</span>
           <table style="width: 100%;margin-top:10px" class="tab-table">
-            <tr v-for="row in form.dnsConfig.nameservers" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.dnsConfig.nameservers" :key="index">
               <td width="90%">
                 <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -56,12 +56,12 @@
         <el-col :span=12>
           <span>{{$t('business.workload.searches')}}</span>
           <table style="width: 100%;margin-top:10px" class="tab-table">
-            <tr v-for="row in form.dnsConfig.searches" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.dnsConfig.searches" :key="index">
               <td width="90%">
                 <ko-form-item placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -84,7 +84,7 @@
               <th scope="col" width="43%" align="left"><label>{{$t('business.workload.value')}}</label></th>
               <th align="left"></th>
             </tr>
-            <tr v-for="row in form.dnsConfig.options" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.dnsConfig.options" :key="index">
               <td>
                 <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.name" />
               </td>
@@ -92,7 +92,7 @@
                 <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>

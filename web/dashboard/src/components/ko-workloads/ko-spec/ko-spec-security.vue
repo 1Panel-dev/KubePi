@@ -11,19 +11,19 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.run_as_user')" prop="runAsUser">
-            <ko-form-item itemType="input" placeholder="runAsUser" v-model="form.runAsUser" />
+            <ko-form-item itemType="number" placeholder="runAsUser" v-model.number="form.runAsUser" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.run_as_group')" prop="runAsGroup">
-            <ko-form-item itemType="input" placeholder="runAsGroup" v-model="form.runAsGroup" />
+            <ko-form-item itemType="number" placeholder="runAsGroup" v-model.number="form.runAsGroup" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="fsGroup" prop="fsGroup">
-            <ko-form-item itemType="input" placeholder="fsGroup" v-model="form.fsGroup" />
+            <ko-form-item itemType="number" placeholder="fsGroup" v-model.number="form.fsGroup" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -32,12 +32,12 @@
         <el-col :span=12>
           <span>{{$t('business.workload.supplemental_groups')}}</span>
           <table style="width: 100%;margin-top:10px" class="tab-table">
-            <tr v-for="row in form.supplementalGroups" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.supplementalGroups" :key="index">
               <td width="96%">
                 <ko-form-item placeholder="supplementalGroups" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleSupplementalGroupsDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleSupplementalGroupsDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -52,7 +52,7 @@
         <el-col :span=12>
           <span>Sysctls</span>
           <table style="width: 100%;margin-top:10px" class="tab-table">
-            <tr v-for="row in form.sysctls" v-bind:key="row.index">
+            <tr v-for="(row,index) in form.sysctls" :key="index">
               <td width="48%">
                 <ko-form-item placeholder="e.g. key" itemType="input" v-model="row.name" />
               </td>
@@ -60,7 +60,7 @@
                 <ko-form-item placeholder="e.g. value" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleSysctlsDelete(row.index)">
+                <el-button type="text" style="font-size: 10px" @click="handleSysctlsDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -192,7 +192,7 @@ export default {
         if (this.securityContextParentObj.securityContext.runAsNonRoot !== undefined) {
           this.form.runAsNonRoot = this.securityContextParentObj.securityContext.runAsNonRoot
         }
-        
+
         if (this.securityContextParentObj.securityContext.runAsUser) {
           this.form.runAsUser = this.securityContextParentObj.securityContext.runAsUser
         }
@@ -204,8 +204,8 @@ export default {
         }
         if (this.securityContextParentObj.securityContext.supplementalGroups) {
           this.form.supplementalGroups = []
-          for(const s of this.securityContextParentObj.securityContext.supplementalGroups) {
-            this.form.supplementalGroups.push({value: s})
+          for (const s of this.securityContextParentObj.securityContext.supplementalGroups) {
+            this.form.supplementalGroups.push({ value: s })
           }
         }
         if (this.securityContextParentObj.securityContext.sysctls) {
