@@ -7,12 +7,12 @@
             <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <el-form-item :label="$t('business.workload.stdin')" prop="stdin">
             <ko-form-item itemType="radio" v-model="form.stdin" :radios="stdin_list" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="4">
           <el-form-item label="TTY" prop="tty">
             <el-checkbox :disabled="form.stdin === 'No'" v-model="form.tty">TTY</el-checkbox>
           </el-form-item>
