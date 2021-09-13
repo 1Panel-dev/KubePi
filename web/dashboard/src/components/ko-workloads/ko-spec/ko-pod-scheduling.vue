@@ -263,7 +263,7 @@ export default {
       if (this.podSchedulings.length !== 0) {
         for (const pS of this.podSchedulings) {
           let itemAdd = {}
-          itemAdd.namespaces = pS.namespaces || undefined
+          itemAdd.namespaces = (pS.namespaces && pS.namespaces.length !== 0) ? pS.namespaces : undefined
           itemAdd.topologyKey = pS.topologyKey || undefined
           const matchs = this.getMatchExpress(pS.rules)
           const labelMatchs = this.getMatchLabels(pS.labelRules)

@@ -161,7 +161,7 @@ export default {
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deletePvcs(this.cluster, select.metadata.name))
+              this.ps.push(deletePvcs(this.cluster, select.metadata.namespace, select.metadata.name))
             }
           }
         }

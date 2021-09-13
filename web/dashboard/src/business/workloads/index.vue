@@ -245,7 +245,7 @@ export default {
       service_of_ns: [],
       volume_list: [],
       // base form
-      activeName: "Spec",
+      activeName: "Container",
       activeNameSpec: "Scaling/Upgrade Policy",
       activeNameContainers: "General",
       isValid: true,

@@ -85,8 +85,8 @@ export default {
           itemPo.protocol = po.protocol || undefined
           itemPo.containerPort = po.containerPort || undefined
           itemPo.hostPort = po.hostPort || undefined
+          parentFrom.ports.push(itemPo)
         }
-        parentFrom.ports.push(itemPo)
       }
     },
   },
