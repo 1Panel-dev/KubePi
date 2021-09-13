@@ -1,16 +1,8 @@
-name: Build production package 
+name: Build production package
 
 on:
-  push:
-    branches:
-      - "*"
-    tags:
-      - "*"
-  pull_request:
-    branches: 
-      - "*"
-    tags:
-      - "*"
+  release:
+    types: [ published ]
 
 jobs:
 
