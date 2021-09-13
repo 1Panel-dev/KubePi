@@ -106,7 +106,7 @@ export default {
       handler(newVal) {
         if (newVal) {
           for (const item of this.labels) {
-            if (item.key === "k8s.kubepi.cn/name") {
+            if (item.key === "kubepi.org/name") {
               item.value = newVal
               break
             }
@@ -188,10 +188,10 @@ export default {
       this.dialogEditVisible = false
     },
     disableOperator(row) {
-      return !this.isCreate || row.key === "k8s.kubepi.cn/name"
+      return !this.isCreate || row.key === "kubepi.org/name"
     },
     disableDialogRowDelete(row) {
-      return row.key === "k8s.kubepi.cn/name"
+      return row.key === "kubepi.org/name"
     },
     transformation(parentForm, podMetadata) {
       if (this.isCreate) {

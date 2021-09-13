@@ -675,7 +675,7 @@ export default {
       this.name = this.$route.params.name
       this.search()
     } else {
-      this.form.metadata.labels = { "k8s.kubepi.cn/name": "" }
+      this.form.metadata.labels = { "kubepi.org/name": "" }
       this.podSpec = {
         containers: [
           {
