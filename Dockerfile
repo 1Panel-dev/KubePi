@@ -2,7 +2,7 @@ FROM node:14-alpine as stage-web-build
 
 LABEL stage=stage-web-build
 
-RUN apk add make python
+RUN apk add make python  gcc g++
 
 WORKDIR /build/kubepi/web
 
