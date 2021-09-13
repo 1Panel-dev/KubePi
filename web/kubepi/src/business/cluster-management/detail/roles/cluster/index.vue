@@ -327,7 +327,7 @@ export default {
             "description": this.clusterRoleForm.description
           },
           labels: {
-            "kubeoperator.io/role-type": "cluster",
+            "kubepi.org/role-type": "cluster",
           }
         },
         rules: []

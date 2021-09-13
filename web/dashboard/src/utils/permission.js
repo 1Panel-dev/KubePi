@@ -7,7 +7,7 @@ export const checkPermissions = function (p) {
         return true
     }
     for (const clusterRole of userClusterRoles) {
-        const scope = clusterRole.metadata.labels["kubeoperator.io/role-type"]
+        const scope = clusterRole.metadata.labels["kubepi.org/role-type"]
         if (clusterRole.rules.length > 0) {
             for (const rule of clusterRole.rules) {
                 if (((scope === p.scope || scope === 'cluster') && rule.apiGroups.includes("*")) || rule.apiGroups.includes(p.apiGroup)) {

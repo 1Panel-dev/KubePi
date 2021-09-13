@@ -315,7 +315,7 @@ export default {
         metadata: {
           name: this.clusterRoleForm.name,
           labels: {
-            "kubeoperator.io/role-type": "namespace",
+            "kubepi.org/role-type": "namespace",
           }
         },
         rules: []

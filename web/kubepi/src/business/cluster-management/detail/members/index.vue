@@ -28,13 +28,13 @@
         :title="$t('commons.button.'+operation)+$t('business.cluster.member')"
         :visible.sync="formDialogOpened"
         z-index="10"
-        width="60%"
+        width="70%"
         center>
       <el-form v-loading="isSubmitGoing" element-loading-spinner="el-icon-loading"
                element-loading-background="rgba(0, 0, 0, 0.8)" :model="memberForm" label-position="left"
                label-width="144px">
         <el-form-item :label="$t('business.user.user')+$t('commons.table.name')">
-          <el-select v-model="memberForm.userName" style="width: 80%" :disabled="operation==='edit'">
+          <el-select v-model="memberForm.userName" style="width: 85%" :disabled="operation==='edit'">
             <el-option v-for="(item, index) in getUserOptions" :key="index" :value="item.name">
               {{ item.name }}
             </el-option>
@@ -49,7 +49,7 @@
         </el-form-item>
         <div v-if="memberForm.roleType==='custom'">
           <el-form-item>
-            <el-select v-model="memberForm.customClusterRoles" multiple style="width: 80%">
+            <el-select v-model="memberForm.customClusterRoles" multiple style="width: 85%">
               <el-option
                   v-for="(item,index) in getClusterRolesOptions"
                   :key="index"
@@ -61,7 +61,7 @@
 
           <el-form-item :label="$t('business.cluster.namespace')+$t('business.cluster.role')">
             <el-button @click="onNamespaceRoleCreate"><i class="el-icon-plus "></i></el-button>
-            <table border="1" cellspacing="0" style="width: 80%">
+            <table border="1" cellspacing="0" style="width: 85%">
               <thead style="background-color: #1d3e4d">
               <tr>
                 <th style="width: 45%">{{ $t('business.cluster.namespace') }}</th>
@@ -216,10 +216,10 @@ export default {
     listClusterRoles() {
       listClusterRoles(this.name).then(data => {
         this.clusterRolesOptions = data.data.filter((r) => {
-          return r.metadata["labels"]["kubeoperator.io/role-type"] === "cluster"
+          return r.metadata["labels"]["kubepi.org/role-type"] === "cluster"
         })
         this.namespaceRoleOptions = data.data.filter((r) => {
-          return r.metadata["labels"]["kubeoperator.io/role-type"] === "namespace"
+          return r.metadata["labels"]["kubepi.org/role-type"] === "namespace"
         })
       })
     },
