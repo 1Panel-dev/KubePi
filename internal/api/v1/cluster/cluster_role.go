@@ -178,7 +178,7 @@ func (h *Handler) ListClusterRoles() iris.Handler {
 			fmt.Sprintf("%s=%s", kubernetes.LabelManageKey, "kubepi"),
 		}
 		if scope != "" {
-			labels = append(labels, fmt.Sprintf("%s=%s", "kubeoperator.io/role-type", scope))
+			labels = append(labels, fmt.Sprintf("%s=%s", "kubepi.org/role-type", scope))
 		}
 
 		items, err := client.RbacV1().ClusterRoles().List(goContext.TODO(), metav1.ListOptions{

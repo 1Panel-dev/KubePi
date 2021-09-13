@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	LabelManageKey   = "kubeoperator.io/manage"
-	LabelRoleTypeKey = "kubeoperator.io/role-type"
-	LabelClusterId   = "kubeoperator.io/cluster-id"
-	LabelUsername    = "kubeoperator.io/username"
+	LabelManageKey   = "kubepi.org/manage"
+	LabelRoleTypeKey = "kubepi.org/role-type"
+	LabelClusterId   = "kubepi.org/cluster-id"
+	LabelUsername    = "kubepi.org/username"
 
 	RoleTypeCluster   = "cluster"
 	RoleTypeNamespace = "namespace"
