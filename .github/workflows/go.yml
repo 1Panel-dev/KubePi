@@ -2,9 +2,15 @@ name: Build production package
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - "*"
+    tags:
+      - "*"
   pull_request:
-    branches: [ master ]
+    branches: 
+      - "*"
+    tags:
+      - "*"
 
 jobs:
 
