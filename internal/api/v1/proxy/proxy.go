@@ -135,7 +135,20 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 				ctx.Values().Set("message", err)
 				return
 			}
-			_, _ = ctx.JSON(resp)
+			klo := K8sListObj{
+				Kind:       resp.Kind,
+				ApiVersion: resp.APIVersion,
+				Metadata:   resp.ListMeta,
+				Items:      resp.Items,
+			}
+
+			p, err := pagerAndSearch(ctx, klo, keywords)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err)
+				return
+			}
+			_, _ = ctx.JSON(p)
 			return
 		}
 		if http.MethodGet == requestMethod && namespaced && namespace != "" && !hasNsFilter {
@@ -162,30 +175,19 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 			resp.StatusCode = http.StatusInternalServerError
 		}
 		if req.Method == http.MethodGet && search {
-			num, err1 := ctx.Values().GetInt("pageNum")
-			size, err2 := ctx.Values().GetInt("pageSize")
 			var listObj K8sListObj
 			if err := json.Unmarshal(rawResp, &listObj); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err)
 				return
 			}
-			listObj.Sort()
-			if keywords != "" {
-				listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
+			p, err := pagerAndSearch(ctx, listObj, keywords)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
 			}
-			total := len(listObj.Items)
-			if err1 == nil && err2 == nil {
-				tt, items, err := pageFilter(num, size, listObj.Items)
-				if err != nil {
-					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err)
-					return
-				}
-				total = tt
-				listObj.Items = items
-			}
-			_, _ = ctx.JSON(pkgV1.Page{Items: listObj.Items, Total: total})
+			_, _ = ctx.JSON(p)
 			return
 		}
 		ctx.StatusCode(resp.StatusCode)
@@ -195,6 +197,29 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 }
 
 var timeTemplate = "2006-01-02T15:04:05Z"
+
+func pagerAndSearch(ctx *context.Context, listObj K8sListObj, keywords string) (*pkgV1.Page, error) {
+	num, err1 := ctx.Values().GetInt("pageNum")
+	size, err2 := ctx.Values().GetInt("pageSize")
+	var p pkgV1.Page
+	listObj.Sort()
+	if keywords != "" {
+		listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
+	}
+	total := len(listObj.Items)
+	if err1 == nil && err2 == nil {
+		tt, items, err := pageFilter(num, size, listObj.Items)
+		if err != nil {
+			return nil, err
+		}
+		total = tt
+		listObj.Items = items
+		p.Total = total
+		p.Items = listObj.Items
+		return &p, nil
+	}
+	return nil, nil
+}
 
 func getTime(obj interface{}) time.Time {
 	//判断是否存在lasttime
