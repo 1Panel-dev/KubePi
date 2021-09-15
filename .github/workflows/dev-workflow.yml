@@ -19,7 +19,7 @@ jobs:
           DOCKER_IMAGE=kubeoperator/kubepi-server
           DOCKER_PLATFORMS=linux/amd64
           TAG_NAME=${GITHUB_REF#refs/*/}
-          DOCKER_IMAGE_TAGS="--tag ${DOCKER_IMAGE}:${TAG_NAME} --tag ${DOCKER_IMAGE}:latest"
+          DOCKER_IMAGE_TAGS="--tag ${DOCKER_IMAGE}:${TAG_NAME}"
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=version::${TAG_NAME}
           echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \

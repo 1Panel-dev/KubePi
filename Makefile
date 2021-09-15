@@ -32,4 +32,4 @@ build_bin:
 build_all: build_web build_bin
 
 build_docker:
-	docker build -t KubeOperator/kubepi-server:master .
+	docker build -t kubeoperator/kubepi-server:master .
