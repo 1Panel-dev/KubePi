@@ -32,7 +32,7 @@
             </el-form-item>
             <div v-if="form.direction==='forward'&&form.authenticationMode!=='configFile'">
               <el-form-item label="API Server" prop="apiServer">
-                <el-input v-model="form.apiServer" clearable></el-input>
+                <el-input v-model="form.apiServer" placeholder="eg: https://127.0.0.1:8443" clearable></el-input>
               </el-form-item>
               <div v-if="!form.apiServerInsecure">
                 <el-form-item label="Ca Certificate" prop="caDataStr">

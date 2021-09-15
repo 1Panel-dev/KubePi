@@ -19,13 +19,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" fix>
         <template v-slot:default="{row}">
           {{ row.name }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="100" fix>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="80" fix>
         <template v-slot:default="{row}">
           <el-tag>
             {{ row.extraClusterInfo.readyNodeNum }} / {{ row.extraClusterInfo.totalNodeNum }}
@@ -52,11 +52,11 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('commons.table.creat_by')" prop="createdBy" min-width="100"
+      <el-table-column :label="$t('commons.table.creat_by')" prop="createdBy" min-width="80"
                        fix/>
 
 
-      <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | datetimeFormat }}
         </template>
