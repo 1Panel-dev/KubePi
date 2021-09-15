@@ -267,7 +267,9 @@ export default {
     getResourcesByApiGroupNames(groupNames) {
       let res = []
       for (const gn of groupNames) {
-        res = res.concat(this.apiGroupResources[gn])
+        if (this.apiGroupResources[gn]) {
+          res = res.concat(this.apiGroupResources[gn])
+        }
       }
       return ["*"].concat(res)
     },
