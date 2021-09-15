@@ -314,6 +314,9 @@ export default {
       const req = {
         metadata: {
           name: this.clusterRoleForm.name,
+          annotations: {
+            "description": this.clusterRoleForm.description
+          },
           labels: {
             "kubepi.org/role-type": "namespace",
           }
