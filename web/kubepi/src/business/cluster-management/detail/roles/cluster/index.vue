@@ -93,7 +93,7 @@
                 </el-select>
               </td>
               <td>
-                <el-button icon="el-icon-delete" size="mini" @click="onRuleDelete(item)" circle></el-button>
+                <el-button icon="el-icon-delete" size="mini" @click="onRuleDelete(index)" circle></el-button>
               </td>
             </tr>
             </tbody>
@@ -270,6 +270,9 @@ export default {
         res = res.concat(this.apiGroupResources[gn])
       }
       return ["*"].concat(res)
+    },
+    onRuleDelete(index) {
+      this.clusterRoleForm.rules.splice(index, 1)
     },
     onRuleCreate() {
       for (const nr of this.clusterRoleForm.rules) {

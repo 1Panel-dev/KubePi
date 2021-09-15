@@ -263,6 +263,9 @@ export default {
       }
       return ["*"].concat(res)
     },
+    onRuleDelete(index) {
+      this.clusterRoleForm.rules.splice(index, 1)
+    },
     onRuleCreate() {
       for (const nr of this.clusterRoleForm.rules) {
         if (nr.apiGroups.length === 0 || nr.resources.length === 0 || nr.verbs.length === 0) {
