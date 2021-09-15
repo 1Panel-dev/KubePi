@@ -189,6 +189,7 @@ export default {
     },
     onGotoDashboard(row) {
       if (row.accessable) {
+        sessionStorage.removeItem("namespace")
         window.open(`/dashboard?cluster=${row.name}`, "_self")
       } else {
         this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
