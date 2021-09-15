@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -52,7 +53,8 @@ func (k *Kubernetes) VersionMinor() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	minor, err := strconv.Atoi(v.Minor)
+	reg := regexp.MustCompile("[^0-9]")
+	minor, err := strconv.Atoi(reg.ReplaceAllString(v.Minor, ""))
 	return minor, nil
 }
 
