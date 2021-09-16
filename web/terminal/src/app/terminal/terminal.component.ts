@@ -22,6 +22,7 @@ export class TerminalComponent implements AfterViewInit {
   term: Terminal;
   podName: string;
   container: string;
+  shell: string;
 
   private readonly namespace_: string
   clusterName: string;
@@ -46,6 +47,7 @@ export class TerminalComponent implements AfterViewInit {
     this.namespace_ = this.activatedRoute_.snapshot.queryParams["namespace"]
     this.podName = this.activatedRoute_.snapshot.queryParams["pod"]
     this.container = this.activatedRoute_.snapshot.queryParams["container"]
+    this.shell = this.activatedRoute_.snapshot.queryParams["shell"]
   }
 
 
@@ -164,7 +166,7 @@ export class TerminalComponent implements AfterViewInit {
     this.connectionClosed_ = false;
 
     try {
-      const {data} = await this.terminalService.createTerminalSession(this.clusterName, this.namespace_, this.podName, this.container).toPromise()
+      const {data} = await this.terminalService.createTerminalSession(this.clusterName, this.namespace_, this.podName, this.container, this.shell).toPromise()
       const id = data.id
       this.conn_ = new SockJS(`/api/v1/ws/terminal/sockjs?${id}`);
       this.conn_.onopen = this.onConnectionOpen.bind(this, id);
@@ -173,7 +175,7 @@ export class TerminalComponent implements AfterViewInit {
 
       this.cdr_.markForCheck();
     } catch (e) {
-      alert(e.error.message)
+      this.term.write(e.error.message)
     }
   }
 
@@ -204,7 +206,7 @@ export class TerminalComponent implements AfterViewInit {
     this.connected_ = false;
     this.connecting_ = false;
     this.connectionClosed_ = true;
-    alert(_evt?.reason)
+    // alert(_evt?.reason)
     this.cdr_.markForCheck();
   }
 
