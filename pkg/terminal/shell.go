@@ -253,15 +253,13 @@ func isValidShell(validShells []string, shell string) bool {
 
 // WaitForTerminal is called from apihandler.handleAttach as a goroutine
 // Waits for the SockJS connection to be opened by the client the session to be Bound in handleTerminalSession
-func WaitForTerminal(k8sClient kubernetes.Interface, cfg *rest.Config, namespace string, podName string, containerName string, sessionId string) {
-	shell := "sh"
-
+func WaitForTerminal(k8sClient kubernetes.Interface, cfg *rest.Config, namespace string, podName string, containerName string, sessionId string, shell string) {
 	select {
 	case <-TerminalSessions.Get(sessionId).Bound:
 		close(TerminalSessions.Get(sessionId).Bound)
 
 		var err error
-		validShells := []string{"bash", "sh", "powershell", "cmd"}
+		validShells := []string{shell}
 
 		if isValidShell(validShells, shell) {
 			cmd := []string{shell}

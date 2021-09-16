@@ -18,6 +18,7 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 		namespace := ctx.URLParam("namespace")
 		podName := ctx.URLParam("podName")
 		containerName := ctx.URLParam("containerName")
+		shell := ctx.URLParam("shell")
 
 		sessionID, err := terminal.GenTerminalSessionId()
 		if err != nil {
@@ -45,12 +46,15 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
+		if shell == "" {
+			shell = "sh"
+		}
 		terminal.TerminalSessions.Set(sessionID, terminal.TerminalSession{
 			Id:       sessionID,
 			Bound:    make(chan error),
 			SizeChan: make(chan remotecommand.TerminalSize),
 		})
-		go terminal.WaitForTerminal(client, conf, namespace, podName, containerName, sessionID)
+		go terminal.WaitForTerminal(client, conf, namespace, podName, containerName, sessionID, shell)
 		resp := TerminalResponse{ID: sessionID}
 		ctx.Values().Set("data", resp)
 	}
