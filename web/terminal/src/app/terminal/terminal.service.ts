@@ -11,9 +11,9 @@ export class TerminalService {
   constructor(private http: HttpClient) {
   }
 
-  createTerminalSession(clusterName: string, namespace: string, podName: string, containerName: string): Observable<any> {
+  createTerminalSession(clusterName: string, namespace: string, podName: string, containerName: string, shell: string): Observable<any> {
     const url = function () {
-      let baseUrl = `/api/v1/clusters/${clusterName}/terminal/session?podName=${podName}&&containerName=${containerName}`
+      let baseUrl = `/api/v1/clusters/${clusterName}/terminal/session?podName=${podName}&&containerName=${containerName}&&shell=${shell}`
       if (namespace) {
         baseUrl = `${baseUrl}&&namespace=${namespace}`
       }
