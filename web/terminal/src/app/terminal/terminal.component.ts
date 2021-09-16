@@ -173,7 +173,7 @@ export class TerminalComponent implements AfterViewInit {
 
       this.cdr_.markForCheck();
     } catch (e) {
-      alert(e.error.message)
+      this.term.write(e.error.message)
     }
   }
 
@@ -204,7 +204,7 @@ export class TerminalComponent implements AfterViewInit {
     this.connected_ = false;
     this.connecting_ = false;
     this.connectionClosed_ = true;
-    alert(_evt?.reason)
+    // alert(_evt?.reason)
     this.cdr_.markForCheck();
   }
 
