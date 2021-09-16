@@ -242,7 +242,13 @@ export default {
           this.yaml = JSON.parse(JSON.stringify(this.item))
         }
         this.listPodsByNodeName()
-        this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
+        console.log(this.item)
+        if (this.item.status.allocatable.cpu.indexOf("m") > 0) {
+          this.cpuResource.total = parseInt(this.item.status.allocatable.cpu)
+        } else {
+          this.cpuResource.total = parseInt(this.item.status.allocatable.cpu) / 1000
+        }
+
         this.memResource.total = parseInt(this.item.status.allocatable.memory) / 1000
         this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
