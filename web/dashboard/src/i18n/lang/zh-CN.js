@@ -417,7 +417,8 @@ const message = {
       default_backend: "默认后端",
       verbs: "动作",
       non_resource_url: "非资源URL",
-      api_group: "API 组"
+      api_group: "API 组",
+      node_port: "节点端口",
     },
     storage: {
       provisioner: "提供商",

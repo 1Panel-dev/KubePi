@@ -416,7 +416,8 @@ const message = {
       default_backend: "Default Backend",
       verbs: "Verbs",
       non_resource_url: "Non Resource URL",
-      api_group: "API Group"
+      api_group: "API Group",
+      node_port: "Node Port",
     },
     storage: {
       provisioner: "Provisioner",

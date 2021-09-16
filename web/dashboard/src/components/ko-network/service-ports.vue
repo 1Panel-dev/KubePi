@@ -3,19 +3,23 @@
     <ko-card :title="$t('business.network.service_port')">
       <table style="width: 100%;padding: 0" class="tab-table">
         <tr>
-          <th scope="col" width="30%" align="left">
+          <th scope="col" width="20%" align="left">
             <label>{{$t('business.network.port_name')}}</label>
           </th>
           <th scope="col" width="20%" align="left">
             <label>{{$t('business.network.listening_port')}}</label>
           </th>
-          <th scope="col" width="20%" align="left">
+          <th scope="col" width="10%" align="left">
             <label>{{$t('business.network.protocol')}}</label>
           </th>
           <th scope="col" width="20%" align="left">
             <label>{{$t('business.network.target_port')}}</label>
           </th>
-          <th></th>
+          <th scope="col"  width="20%" align="left" v-if="type==='NodePort'">
+            <label>{{$t('business.network.node_port')}}</label>
+          </th>
+          <th>
+          </th>
         </tr>
         <tr v-for="(row,index) in servicePorts" v-bind:key="index">
           <td>
@@ -33,6 +37,9 @@
           <td>
             <el-input type="text" v-model="row.targetPort" @change="transformation(index)"></el-input>
           </td>
+          <th  v-if="type==='NodePort'">
+            <el-input type="number" v-model="row.nodePort" @change="transformation(index)"></el-input>
+          </th>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
@@ -56,6 +63,7 @@ export default {
   name: "KoServicePorts",
   components: { KoCard },
   props: {
+    type: String,
     ports: Array
   },
   data () {
@@ -77,10 +85,22 @@ export default {
       this.servicePorts.splice(index, 1)
     },
     transformation (index) {
-      if (index !== undefined && !Number.isNaN(Number(this.servicePorts[index].targetPort))) {
+      if (index !== undefined && this.servicePorts[index].targetPort !== "" &&!Number.isNaN(Number(this.servicePorts[index].targetPort))) {
         this.servicePorts[index].targetPort = parseInt(this.servicePorts[index].targetPort)
       }
+      if (index !== undefined &&this.servicePorts[index].nodePort !== "" && !Number.isNaN(Number(this.servicePorts[index].nodePort))) {
+        this.servicePorts[index].nodePort = parseInt(this.servicePorts[index].nodePort)
+      }
       this.$emit("update:ports", this.servicePorts)
+    }
+  },
+  watch: {
+    type: function (newValue) {
+      if (newValue !== 'NodePort') {
+        for (let i =0;i<this.servicePorts.length;i++) {
+          delete this.servicePorts[i].nodePort
+        }
+      }
     }
   },
   created () {
