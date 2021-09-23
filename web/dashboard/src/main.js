@@ -39,6 +39,12 @@ Vue.use(filters);
 Vue.use(directives)
 Vue.use(JsonViewer)
 
+Vue.directive('title', {
+  inserted: function (el) {
+    document.title = el.dataset.title
+  }
+})
+
 new Vue({
   el: '#app',
   i18n,

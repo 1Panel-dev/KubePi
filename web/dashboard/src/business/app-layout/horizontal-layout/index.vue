@@ -11,12 +11,11 @@
 
 <script>
 import HorizontalHeader from "./HorizontalHeader"
-import HorizontalFooter from "./HorizontalFooter"
 import Layout from "@/components/layout"
 
 export default {
   name: "HorizontalLayout",
-  components: { Layout, HorizontalHeader, HorizontalFooter },
+  components: { Layout, HorizontalHeader },
 }
 </script>
 
