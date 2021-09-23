@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     onCancel() {
-
+      this.$router.push({name: "Charts"})
     },
     onConfirm() {
       if (this.isSubmitGoing) {
