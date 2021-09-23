@@ -14,7 +14,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 ### 组件项目
 
-- **[KubeOperator](https://github.com/KubeOperator/KubeOperator)**: 开源的轻量级 Kubernetes 发行版，专注于帮助企业规划、部署和运营生产级别的 Kubernetes 集群
+- **[KubeOperator](https://github.com/KubeOperator/KubeOperator)**: 轻量级 Kubernetes 发行版，专注于帮助企业规划、部署和运营生产级别的 Kubernetes 集群
 - **[Web Kubectl](https://github.com/KubeOperator/webkubectl)**: 在 Web 浏览器中运行 kubectl 命令
 
 ### UI 展示
