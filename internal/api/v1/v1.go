@@ -3,6 +3,7 @@ package v1
 import (
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
@@ -270,4 +271,5 @@ func AddV1Route(app iris.Party) {
 	role.Install(authParty)
 	proxy.Install(authParty)
 	ws.Install(authParty)
+	chart.Install(authParty)
 }
