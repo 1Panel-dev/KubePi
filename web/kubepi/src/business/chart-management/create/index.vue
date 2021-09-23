@@ -31,7 +31,7 @@
               <el-select v-model="form.spec.authentication.type">
                 <el-option :value="'None'" :label="$t('business.chart.none')"></el-option>
                 <el-option :value="'Basic'" :label="$t('business.chart.basic')"></el-option>
-                <el-option :value="'SSH'" :label="'SSH'"></el-option>
+<!--                <el-option :value="'SSH'" :label="'SSH'"></el-option>-->
               </el-select>
             </el-form-item>
             <div v-if="form.spec.authentication.type==='Basic'">
