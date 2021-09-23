@@ -236,7 +236,7 @@ const description = {
   i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
   i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
   i18n_user_common_user: "普通用户，只拥有集群对象访问权限",
-
+  i18n_user_manage_chart: "Chart仓库管理员， 拥有对Chart仓库的所有权限",
 
   i18n_cluster_owner: "集群拥有者,拥有所有对象权限",
   i18n_cluster_viewer: "集群只读用户,拥有所有对象的只读权限",

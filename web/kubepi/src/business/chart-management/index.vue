@@ -4,8 +4,7 @@
                    :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
-          <!--        v-has-permissions="{resource:'charts',verb:'create'}"-->
-          <el-button type="primary" size="small"
+          <el-button  v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.add") }}
           </el-button>
@@ -50,6 +49,7 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import {deleteChart, searchCharts} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ChartManagement",
@@ -77,9 +77,9 @@ export default {
           click: (row) => {
             this.onDetail(row.name)
           },
-          // disabled: () => {
-          //   return !checkPermissions({resource: "clusters", verb: "update"})
-          // }
+          disabled: () => {
+            return !checkPermissions({resource: "charts", verb: "update"})
+          }
         },
         {
           label: this.$t("commons.button.delete"),
@@ -87,9 +87,9 @@ export default {
           click: (row) => {
             this.onDelete(row.name)
           },
-          // disabled: () => {
-          //   return !checkPermissions({resource: "charts", verb: "delete"})
-          // },
+          disabled: () => {
+            return !checkPermissions({resource: "charts", verb: "delete"})
+          },
         },
       ]
     }

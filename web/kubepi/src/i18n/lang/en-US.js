@@ -178,6 +178,7 @@ const description = {
   i18n_manage_nodes: "The node administrator has read-only permissions on node objects",
   i18n_manage_crd: "The custom resource administrator has all the permissions of the CustomResourceDefinition objec",
   i18n_view_crd: "User defined resource administrator with read-only permission on CustomResourceDefinition object",
+  i18n_user_manage_chart:"Chart warehouse administrator, has all rights to the Chart warehouse",
 
   i18n_manage_config: "The configuration administrator has all permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
   i18n_view_config: "Configure a read-only user with read-only permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
