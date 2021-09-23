@@ -79,11 +79,10 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
+import { listWorkLoads, deleteWorkLoad, getWorkLoadByName } from "@/api/workloads"
 import { downloadYaml } from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import { checkPermissions } from "@/utils/permission"
-import { randomNum } from "@/utils/randomNum"
 
 export default {
   name: "Pods",
@@ -137,19 +136,8 @@ export default {
       } else {
         c = row.containers[0]
       }
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "terminal",
-        key: randomNum(8),
-        name: row.metadata.name,
-        cluster: this.clusterName,
-        namespace: row.metadata.namespace,
-        pod: row.metadata.name,
-        container: c,
-        containers: row.containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.clusterName, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "terminal" } })
+      window.open(routeUrl.href, "_blank")
     },
     openTerminalLogs(row, container) {
       let c
@@ -158,19 +146,8 @@ export default {
       } else {
         c = row.containers[0]
       }
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "logs",
-        key: randomNum(8),
-        name: row.metadata.name,
-        cluster: this.clusterName,
-        namespace: row.metadata.namespace,
-        pod: row.metadata.name,
-        container: c,
-        containers: row.containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.clusterName, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "log" } })
+      window.open(routeUrl.href, "_blank")
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

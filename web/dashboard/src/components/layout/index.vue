@@ -6,18 +6,7 @@
         <layout-header>
           <slot name="header"></slot>
         </layout-header>
-        <div style="width:100%;height:100%;">
-          <fu-split-pane :bottom="buttomHeight" :resizable="false" direction="vertical" resizer-type="line" :resizer-style="{background:'#424649',height:'2px'}">
-            <div slot="top">
-              <layout-view />
-            </div>
-            <div slot="bottom">
-              <layout-footer>
-                <slot name="footer"></slot>
-              </layout-footer>
-            </div>
-          </fu-split-pane>
-        </div>
+        <layout-view />
       </layout-main>
     </slot>
   </el-container>
@@ -27,18 +16,11 @@
 import LayoutSidebar from "./LayoutSidebar"
 import LayoutMain from "./LayoutMain"
 import LayoutHeader from "./LayoutHeader"
-import LayoutFooter from "./LayoutFooter"
 import LayoutView from "./LayoutView"
-import FuSplitPane from "@/components/split-pane/FuSplitPane.vue"
 
 export default {
   name: "Layout",
-  components: { LayoutView, LayoutFooter, LayoutHeader, LayoutMain, LayoutSidebar, FuSplitPane },
-  computed: {
-    buttomHeight() {
-      return this.$store.state.terminal.buttomHeight
-    },
-  },
+  components: { LayoutView, LayoutHeader, LayoutMain, LayoutSidebar },
 }
 </script>
 
