@@ -2,7 +2,7 @@ import Layout from "@/business/app-layout/horizontal-layout"
 
 const Charts = {
   path: "/charts",
-  sort: 3,
+  sort: 7,
   component: Layout,
   name: "ChartManagement",
   // requirePermission: {
@@ -11,7 +11,7 @@ const Charts = {
   // },
   meta: {
     title: "business.chart.chart",
-    icon: "el-icon-house",
+    icon: "el-icon-s-shop",
   },
   children: [
     {
