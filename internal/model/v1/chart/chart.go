@@ -8,6 +8,7 @@ type Chart struct {
 	v1.BaseModel `storm:"inline"`
 	v1.Metadata  `storm:"inline"`
 	Type         string `json:"type"`
+	Cluster      string `json:"cluster"`
 	Spec         Spec   `json:"spec"`
 	Status       Status `json:"status"`
 }

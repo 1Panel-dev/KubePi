@@ -1,27 +1,27 @@
 <template>
-  <layout-content :header="$t('business.chart.create')" :back-to="{ name: 'Charts' }">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Charts' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
-            <el-form-item :label="$t('business.chart.name')" prop="name">
-              <el-input v-model="form.name"></el-input>
+            <el-form-item :label="$t('business.chart.name')" prop="name" >
+              <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
-            <el-form-item :label="$t('business.chart.type')" prop="type">
-              <el-select v-model="form.type" style="width:100%">
-                <el-option :value="'http'" :label="$t('business.chart.http')"></el-option>
-                <el-option :value="'git'" :label="$t('business.chart.git')"></el-option>
-              </el-select>
-            </el-form-item>
-            <div v-if="form.type==='git'">
-              <el-form-item :label="'URL'" prop="spec.gitRepo">
-                <el-input v-model="form.spec.gitRepo"></el-input>
-              </el-form-item>
-              <el-form-item :label="$t('business.chart.branch')" prop="spec.gitBranch">
-                <el-input v-model="form.spec.gitBranch"></el-input>
-              </el-form-item>
-            </div>
+<!--            <el-form-item :label="$t('business.chart.type')" prop="type">-->
+<!--              <el-select v-model="form.type" style="width:100%">-->
+<!--                <el-option :value="'http'" :label="$t('business.chart.http')"></el-option>-->
+<!--                <el-option :value="'git'" :label="$t('business.chart.git')"></el-option>-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--            <div v-if="form.type==='git'">-->
+<!--              <el-form-item :label="'URL'" prop="spec.gitRepo">-->
+<!--                <el-input v-model="form.spec.gitRepo"></el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item :label="$t('business.chart.branch')" prop="spec.gitBranch">-->
+<!--                <el-input v-model="form.spec.gitBranch"></el-input>-->
+<!--              </el-form-item>-->
+<!--            </div>-->
             <div v-if="form.type==='http'">
               <el-form-item :label="'URL'" prop="spec.url">
                 <el-input v-model="form.spec.url"></el-input>
@@ -67,22 +67,23 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rules from "@/utils/rules"
-import {createChart} from "@/api/charts"
+import {getChart, updateChart} from "@/api/charts"
 
 export default {
-  name: "ChartCreate",
+  name: "ChartEdit",
   components: { LayoutContent },
-  props: {},
+  props: {
+    name: String
+  },
   data () {
     return {
       loading: false,
+      isSubmitGoing: false,
       form: {
         spec: {
           authentication: {
-            type: "Basic"
           },
         },
-        type: "http"
       },
       rules: {
         name: [
@@ -120,14 +121,13 @@ export default {
           },
         },
       },
-      isSubmitGoing: false
     }
   },
   methods: {
-    onCancel() {
-      this.$router.push({name: "Charts"})
+    onCancel () {
+      this.$router.push({ name: "Charts" })
     },
-    onConfirm() {
+    onConfirm () {
       if (this.isSubmitGoing) {
         return
       }
@@ -142,21 +142,27 @@ export default {
       }
       this.isSubmitGoing = true
       this.loading = true
-      createChart(this.form).then(() => {
+      updateChart(this.name,this.form).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success")
+          message: this.$t("commons.msg.update_success")
         })
         this.$router.push({name: "Charts"})
-      }).finally(
-        () => {
-          this.isSubmitGoing = false
-          this.loading = false
-        }
-      )
+      }).finally(() => {
+        this.isSubmitGoing = false
+        this.loading = false
+      })
+    },
+    getDetail () {
+      this.loading = true
+      getChart(this.name).then(data => {
+        this.form = data.data
+        this.loading = false
+      })
     }
   },
   created () {
+    this.getDetail()
   }
 }
 </script>

@@ -6,8 +6,8 @@ export function createChart(data) {
   return post(baseUrl, data)
 }
 
-export function searchCharts(page, size, keywords) {
-  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&showExtra=true`
+export function searchCharts(cluster,page, size, keywords) {
+  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&showExtra=true&cluster=${cluster}`
   if (keywords) {
     url = `${url}&keywords=${keywords}`
   }

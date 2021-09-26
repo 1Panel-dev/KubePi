@@ -4,7 +4,7 @@
                    :pagination-config="paginationConfig" @search="search">
       <template #header>
         <el-button-group>
-          <el-button  v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
+          <el-button v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.add") }}
           </el-button>
@@ -30,11 +30,11 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.chart.branch')" prop="branch" min-width="80" fix>
-        <template v-slot:default="{row}">
-          {{ row.spec.gitBranch }}
-        </template>
-      </el-table-column>
+      <!--      <el-table-column :label="$t('business.chart.branch')" prop="branch" min-width="80" fix>-->
+      <!--        <template v-slot:default="{row}">-->
+      <!--          {{ row.spec.gitBranch }}-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | datetimeFormat }}
@@ -61,6 +61,7 @@ export default {
       items: [],
       data: [],
       selects: [],
+      cluster: "",
       paginationConfig: {
         currentPage: 1,
         pageSize: 10,
@@ -78,7 +79,7 @@ export default {
             this.onDetail(row.name)
           },
           disabled: () => {
-            return !checkPermissions({resource: "charts", verb: "update"})
+            return !checkPermissions({ resource: "charts", verb: "update" })
           }
         },
         {
@@ -88,7 +89,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return !checkPermissions({resource: "charts", verb: "delete"})
+            return !checkPermissions({ resource: "charts", verb: "delete" })
           },
         },
       ]
@@ -98,19 +99,19 @@ export default {
     search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
-      searchCharts(currentPage, pageSize, this.searchConfig.keywords).then(data => {
+      searchCharts(this.cluster, currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
       })
     },
     onCreate () {
-      this.$router.push({name: "ChartCreate"})
+      this.$router.push({ name: "ChartCreate" })
     },
-    onDetail(name) {
-      this.$router.push({name: "ChartEdit", params: {name: name}})
+    onDetail (name) {
+      this.$router.push({ name: "ChartEdit", params: { name: name } })
     },
-    onDelete(name) {
+    onDelete (name) {
       if (this.isSubmitGoing) {
         return
       }
@@ -118,21 +119,22 @@ export default {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
-        type: 'warning'
+        type: "warning"
       }).then(() => {
         deleteChart(name).then(() => {
           this.$message({
-            type: 'success',
+            type: "success",
             message: this.$t("commons.msg.delete_success"),
-          });
+          })
           this.search()
         }).finally(() => {
           this.isSubmitGoing = false
         })
-      });
+      })
     }
   },
   created () {
+    this.cluster = this.$route.query.cluster
     this.search()
   }
 }

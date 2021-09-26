@@ -27,7 +27,8 @@ func (h *Handler) SearchCharts() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		pattern := ctx.URLParam("pattern")
-		charts, total, err := h.chartService.Search(pageNum, pageSize, pattern, common.DBOptions{})
+		cluster := ctx.URLParam("cluster")
+		charts, total, err := h.chartService.Search(pageNum, pageSize, cluster, pattern, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)

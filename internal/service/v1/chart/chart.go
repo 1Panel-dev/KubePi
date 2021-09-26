@@ -2,9 +2,10 @@ package chart
 
 import (
 	v1Chart "github.com/KubeOperator/kubepi/internal/model/v1/chart"
-	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
+	"github.com/KubeOperator/kubepi/pkg/util/helm"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
@@ -14,7 +15,7 @@ import (
 type Service interface {
 	common.DBService
 	Create(chart *v1Chart.Chart, options common.DBOptions) error
-	Search(num, size int, pattern string, options common.DBOptions) ([]v1Chart.Chart, int,error)
+	Search(num, size int, cluster, pattern string, options common.DBOptions) ([]v1Chart.Chart, int, error)
 	Delete(name string, options common.DBOptions) error
 	Update(name string, char *v1Chart.Chart, options common.DBOptions) error
 	GetByName(name string, options common.DBOptions) (*v1Chart.Chart, error)
@@ -22,27 +23,29 @@ type Service interface {
 
 func NewService() Service {
 	return &service{
+		clusterService: cluster.NewService(),
 	}
 }
 
 type service struct {
 	common.DefaultDBService
+	clusterService cluster.Service
 }
 
-func (c *service) Search(num, size int, pattern string, options common.DBOptions) ([]v1Chart.Chart, int,error) {
+func (c *service) Search(num, size int, cluster, pattern string, options common.DBOptions) ([]v1Chart.Chart, int, error) {
 	db := c.GetDB(options)
-	query := func() storm.Query{
+	query := func() storm.Query {
 		if pattern != "" {
-			return db.Select(q.Or(
+			return db.Select(q.And(q.Eq("Cluster", cluster), q.Or(
 				costomStorm.Like("Name", pattern),
-				)).OrderBy("CreateAt")
+			))).OrderBy("CreateAt")
 		}
 		return db.Select().OrderBy("CreateAt")
 	}()
 	if num != 0 && size != 0 {
 		query.Limit(size).Skip((num - 1) * size)
 	}
-	count, err := query.Count(&v1User.User{})
+	count, err := query.Count(&v1Chart.Chart{})
 	if err != nil {
 		return nil, 0, err
 	}
@@ -54,6 +57,22 @@ func (c *service) Search(num, size int, pattern string, options common.DBOptions
 }
 
 func (c *service) Create(chart *v1Chart.Chart, options common.DBOptions) error {
+
+	cluster, err := c.clusterService.Get(chart.Cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        cluster.Spec.Connect.Forward.ApiServer,
+		BearerToken: cluster.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return err
+	}
+	_, err = helmClient.List()
+	if err != nil {
+		return err
+	}
 	db := c.GetDB(options)
 	chart.UUID = uuid.New().String()
 	chart.CreateAt = time.Now()
@@ -73,7 +92,6 @@ func (c *service) Update(name string, char *v1Chart.Chart, options common.DBOpti
 	return db.Update(char)
 }
 
-
 func (c *service) GetByName(name string, options common.DBOptions) (*v1Chart.Chart, error) {
 	db := c.GetDB(options)
 	var chart v1Chart.Chart
@@ -84,7 +102,6 @@ func (c *service) GetByName(name string, options common.DBOptions) (*v1Chart.Cha
 	}
 	return &chart, nil
 }
-
 
 func (c *service) Delete(name string, options common.DBOptions) error {
 	db := c.GetDB(options)

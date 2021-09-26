@@ -507,6 +507,8 @@ const message = {
       role: "Role",
     },
     chart: {
+      marketPlace: "MarketPlace",
+      app: "应用",
       chart: "Chart Repo",
       type: "Type",
       branch: "Branch",

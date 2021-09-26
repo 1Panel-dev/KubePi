@@ -10,22 +10,21 @@ const Charts = {
   //   verb: "list"
   // },
   meta: {
-    title: "business.chart.chart",
+    title: "business.chart.marketPlace",
     icon: "el-icon-s-shop",
   },
   children: [
     {
       path: "",
-      component: () => import("@/business/chart-management"),
+      component: () => import("@/business/market-place/chart"),
       name: "Charts",
       meta: {
         title: "business.chart.chart",
-        activeMenu: "/charts",
       }
     },
     {
       path: "create",
-      component: () => import("@/business/chart-management/create"),
+      component: () => import("@/business/market-place/chart/create"),
       name: "ChartCreate",
       hidden: true,
       meta: {
@@ -34,12 +33,20 @@ const Charts = {
     },
     {
       path: "edit/:name",
-      component: () => import("@/business/chart-management/edit"),
+      component: () => import("@/business/market-place/chart/edit"),
       name: "ChartEdit",
       hidden: true,
       props: true,
       meta: {
         activeMenu: "/charts",
+      }
+    },
+    {
+      path: "/apps",
+      component: () => import("@/business/market-place/apps"),
+      name: "Apps",
+      meta: {
+        title: "business.chart.app",
       }
     },
   ]
