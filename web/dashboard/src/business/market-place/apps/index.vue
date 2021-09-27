@@ -1,5 +1,7 @@
 <template>
-  <layout-content></layout-content>
+  <layout-content :header="$t('business.chart.app')">
+
+  </layout-content>
 </template>
 
 <script>

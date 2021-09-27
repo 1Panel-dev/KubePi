@@ -8,6 +8,7 @@ import (
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/helmpath"
 	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/repo"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
@@ -139,4 +140,14 @@ func (c Client) List() ([]*release.Release, error) {
 		return release, fmt.Errorf("list chart failed: %v", err)
 	}
 	return release, nil
+}
+
+func (c Client) ListRepo() ([]*repo.Entry, error) {
+	settings := GetSettings()
+	var repos []*repo.Entry
+	f, err := repo.LoadFile(settings.RepositoryConfig)
+	if err != nil {
+		return repos, err
+	}
+	return f.Repositories, nil
 }
