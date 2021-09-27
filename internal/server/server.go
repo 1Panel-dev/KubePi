@@ -95,9 +95,15 @@ func (e *KubePiSerer) setUpSession() {
 	e.Use(sess.Handler())
 }
 
+const ContentTypeDownload = "application/download"
+
 func (e *KubePiSerer) setResultHandler() {
 	e.Use(func(ctx *context.Context) {
 		ctx.Next()
+		contentType := ctx.ResponseWriter().Header().Get("Content-Type")
+		if contentType == ContentTypeDownload {
+			return
+		}
 		isProxyPath := func() bool {
 			p := ctx.GetCurrentRoute().Path()
 			ss := strings.Split(p, "/")
