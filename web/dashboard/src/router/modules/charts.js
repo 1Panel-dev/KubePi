@@ -1,7 +1,7 @@
 import Layout from "@/business/app-layout/horizontal-layout"
 
 const Charts = {
-  path: "/charts",
+  path: "",
   sort: 7,
   component: Layout,
   name: "ChartManagement",
@@ -15,7 +15,7 @@ const Charts = {
   },
   children: [
     {
-      path: "",
+      path: "/charts",
       component: () => import("@/business/market-place/chart"),
       name: "Charts",
       meta: {
