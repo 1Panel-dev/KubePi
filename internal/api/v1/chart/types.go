@@ -12,3 +12,7 @@ type Repo struct {
 	Url  string `json:"url"`
 	Name string `json:"name"`
 }
+
+type RepoCreate struct {
+	v1Chart.RepoCreate
+}

@@ -1,15 +1,25 @@
 package helm
 
 import (
+	"context"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/gofrs/flock"
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/getter"
 	"helm.sh/helm/v3/pkg/helmpath"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
+	"io/ioutil"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 const (
@@ -150,4 +160,68 @@ func (c Client) ListRepo() ([]*repo.Entry, error) {
 		return repos, err
 	}
 	return f.Repositories, nil
+}
+
+func (c Client) AddRepo(name string, url string, username string, password string) error {
+	settings := GetSettings()
+
+	repoFile := settings.RepositoryConfig
+
+	err := os.MkdirAll(filepath.Dir(repoFile), os.ModePerm)
+	if err != nil && !os.IsExist(err) {
+		return err
+	}
+
+	fileLock := flock.New(strings.Replace(repoFile, filepath.Ext(repoFile), ".lock", 1))
+	lockCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	locked, err := fileLock.TryLockContext(lockCtx, time.Second)
+	if err == nil && locked {
+		defer func() {
+			if err := fileLock.Unlock(); err != nil {
+				server.Logger().Errorf("addRepo fileLock.Unlock failed, error: %s", err.Error())
+			}
+		}()
+	}
+	if err != nil {
+		return err
+	}
+
+	b, err := ioutil.ReadFile(repoFile)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	var f repo.File
+	if err := yaml.Unmarshal(b, &f); err != nil {
+		return err
+	}
+
+	if f.Has(name) {
+		return errors.Errorf("repository name (%s) already exists, please specify a different name", name)
+	}
+
+	e := repo.Entry{
+		Name:                  name,
+		URL:                   url,
+		Username:              username,
+		Password:              password,
+		InsecureSkipTLSverify: true,
+	}
+
+	r, err := repo.NewChartRepository(&e, getter.All(settings))
+	if err != nil {
+		return err
+	}
+	r.CachePath = settings.RepositoryCache
+	if _, err := r.DownloadIndexFile(); err != nil {
+		return errors.Wrapf(err, "looks like %q is not a valid chart repository or cannot be reached", url)
+	}
+
+	f.Update(&e)
+
+	if err := f.WriteFile(repoFile, 0644); err != nil {
+		return err
+	}
+	return nil
 }

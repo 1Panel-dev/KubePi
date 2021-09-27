@@ -21,6 +21,7 @@ type Service interface {
 	Update(name string, char *v1Chart.Chart, options common.DBOptions) error
 	GetByName(name string, options common.DBOptions) (*v1Chart.Chart, error)
 	SearchRepo(cluster string) ([]*repo.Entry, error)
+	AddRepo(cluster string, create *v1Chart.RepoCreate) error
 }
 
 func NewService() Service {
@@ -51,6 +52,25 @@ func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
 		return nil, err
 	}
 	return repos, err
+}
+
+func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return err
+	}
+	err = helmClient.AddRepo(create.Name, create.Url, create.UserName, create.Password)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *service) Search(num, size int, cluster, pattern string, options common.DBOptions) ([]v1Chart.Chart, int, error) {
