@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('business.chart.chart')">
-    <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" @search="search">
+    <complex-table v-loading="loading"  :selects.sync="selects" :data="data"
+                   @search="search">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
@@ -15,19 +15,14 @@
           {{ row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.chart.type')" prop="type" min-width="80" fix>
-        <template v-slot:default="{row}">
-          {{ row.type }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column :label="$t('business.chart.type')" prop="type" min-width="80" fix>-->
+<!--        <template v-slot:default="{row}">-->
+<!--          {{ row.type }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column :label="'URL'" prop="url" min-width="80" fix>
         <template v-slot:default="{row}">
-          <span v-if="row.type === 'http'">
-          {{ row.spec.url }}
-          </span>
-          <span v-else>
-          {{ row.spec.gitRepo }}
-          </span>
+          {{ row.url }}
         </template>
       </el-table-column>
       <!--      <el-table-column :label="$t('business.chart.branch')" prop="branch" min-width="80" fix>-->
@@ -35,11 +30,11 @@
       <!--          {{ row.spec.gitBranch }}-->
       <!--        </template>-->
       <!--      </el-table-column>-->
-      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
-        <template v-slot:default="{row}">
-          {{ row.createAt | datetimeFormat }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>-->
+<!--        <template v-slot:default="{row}">-->
+<!--          {{ row.createAt | datetimeFormat }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
   </layout-content>
@@ -47,7 +42,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {deleteChart, searchCharts} from "@/api/charts"
+import {deleteChart, listRepos} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
 
@@ -62,14 +57,6 @@ export default {
       data: [],
       selects: [],
       cluster: "",
-      paginationConfig: {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-      },
-      searchConfig: {
-        keywords: ""
-      },
       isSubmitGoing: false,
       buttons: [
         {
@@ -98,11 +85,9 @@ export default {
   methods: {
     search () {
       this.loading = true
-      const { currentPage, pageSize } = this.paginationConfig
-      searchCharts(this.cluster, currentPage, pageSize, this.searchConfig.keywords).then(data => {
+      listRepos(this.cluster).then(data => {
         this.loading = false
-        this.data = data.data.items
-        this.paginationConfig.total = data.data.total
+        this.data = data.data
       })
     },
     onCreate () {

@@ -128,6 +128,45 @@ func (h *Handler) UpdateChart() iris.Handler {
 	}
 }
 
+func (h *Handler) ListRepo() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.URLParam("cluster")
+		entrys, err := h.chartService.SearchRepo(cluster)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		repos := make([]Repo, len(entrys))
+		for i, en := range entrys {
+			repos[i] = Repo{
+				Name: en.Name,
+				Url:  en.URL,
+			}
+		}
+		ctx.Values().Set("data", repos)
+	}
+}
+
+func (h *Handler) AddRepo() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.URLParam("cluster")
+		var req RepoCreate
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+
+		err := h.chartService.AddRepo(cluster, &req.RepoCreate)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", &req)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts")
@@ -136,4 +175,6 @@ func Install(parent iris.Party) {
 	sp.Delete("/:name", handler.DeleteChart())
 	sp.Put("/:name", handler.UpdateChart())
 	sp.Get("/:name", handler.GetChart())
+	sp.Get("/repos", handler.ListRepo())
+	sp.Post("/repos", handler.AddRepo())
 }

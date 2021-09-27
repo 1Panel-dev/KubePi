@@ -31,7 +31,7 @@
     </el-row>
     <el-row>
       <div>
-        <iframe :src="terminal.url" :style="{'height': height}" style="width: 100%;border: 0"></iframe>
+        <iframe :key="isRefresh" :src="terminal.url" :style="{'height': height}" style="width: 100%;border: 0"></iframe>
       </div>
     </el-row>
   </div>
@@ -45,6 +45,7 @@ export default {
     return {
       height: "",
       shell: "bash",
+      isRefresh: false,
       follow: true,
       tailLines: 20,
       tailLinesOptions: [
@@ -77,6 +78,7 @@ export default {
     },
     changeConditions() {
       this.terminal.url = this.getTerminalUrl()
+      this.isRefresh = !this.isRefresh
     },
     loadContainters() {
       this.containers = []

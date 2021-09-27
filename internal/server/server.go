@@ -3,6 +3,11 @@ package server
 import (
 	"embed"
 	"fmt"
+	"net/http"
+	"os"
+	"path"
+	"strings"
+
 	"github.com/KubeOperator/kubepi/internal/config"
 	v1Config "github.com/KubeOperator/kubepi/internal/model/v1/config"
 	"github.com/KubeOperator/kubepi/migrate"
@@ -15,10 +20,6 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"os"
-	"path"
-	"strings"
 )
 
 const sessionCookieName = "SESS_COOKIE_KUBEPI"
@@ -70,30 +71,20 @@ func (e *KubePiSerer) setUpDB() {
 	e.db = d
 }
 
-func (e *KubePiSerer) makeKubePiDir() {
-	kubepiDir := "/var/lib/kubepi"
-	if !fileutil.Exist(kubepiDir) {
-		if err := os.MkdirAll(kubepiDir, 0755); err != nil {
-			panic(err)
-		}
-	}
-}
-
 func (e *KubePiSerer) setUpStaticFile() {
-	e.Get("/", func(ctx *context.Context) {
-		ctx.Redirect("/kubepi")
-	})
 	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
+
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
 	e.RegisterView(view.HTML(dashboardFS, ".html"))
 	e.HandleDir("/dashboard/", dashboardFS, spaOption)
+
 	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
 	e.RegisterView(view.HTML(terminalFS, ".html"))
 	e.HandleDir("/terminal/", terminalFS, spaOption)
+
 	kubePiFS := iris.PrefixDir("web/kubepi", http.FS(EmbedWebKubePi))
 	e.RegisterView(view.HTML(kubePiFS, ".html"))
 	e.HandleDir("/kubepi/", kubePiFS, spaOption)
-
 }
 
 func (e *KubePiSerer) setUpSession() {
