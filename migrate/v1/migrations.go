@@ -15,7 +15,7 @@ var Migrations = []migrations.Migration{
 	CreateAdministrator,
 }
 
-// 创建默认系统角色: Admin |Manage Cluster| Manage User|Read only|Common User
+// 创建默认系统角色: Admin |Manage Cluster| Manage User|Read only|Common User | Manage Chart
 // 创建用户
 // 创建用户和角色的关联
 
@@ -107,6 +107,27 @@ var CreateAdministrator = migrations.Migration{
 				},
 			},
 		}
+		roleManageChart := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name:        "Manage Chart",
+				Description: "i18n_user_manage_chart",
+				UUID:        uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"charts"},
+					Verbs:    []string{"*"},
+				},
+			},
+		}
+
 		// 创建管理员用户
 		defaultUserPass := "kubepi"
 		hash, _ := bcrypt.GenerateFromPassword([]byte(defaultUserPass), bcrypt.DefaultCost)
@@ -133,7 +154,7 @@ var CreateAdministrator = migrations.Migration{
 		// 创建绑定关系
 		dbObjects := []interface{}{
 			&roleManageClusters, &roleCommonUser, &roleManageRBAC, &roleReadOnly,
-			&userAdmin,
+			&userAdmin, &roleManageChart,
 		}
 		for i := range dbObjects {
 			if err := db.Save(dbObjects[i]); err != nil {

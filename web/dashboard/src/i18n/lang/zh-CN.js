@@ -506,6 +506,24 @@ const message = {
       role_list: "角色列表",
       user: "用户",
       role: "角色",
+    },
+    chart: {
+      marketPlace: "应用市场",
+      app: "应用",
+      chart: "Chart仓库",
+      type: "类型",
+      branch: "分支",
+      create: "创建",
+      name: "名称",
+      http: "指向 Helm 生成的索引 http(s) URL",
+      git: "包含定义了 Helm Chart 的 Git 仓库",
+      auth: "认证",
+      none: "无",
+      basic: "基本认证",
+      username: "用户名",
+      password: "密码",
+      publicKey: "公钥",
+      privateKey: "私钥"
     }
   },
 }
