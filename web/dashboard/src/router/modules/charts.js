@@ -15,36 +15,36 @@ const Charts = {
   },
   children: [
     {
-      path: "/charts",
-      component: () => import("@/business/market-place/chart"),
-      name: "Charts",
+      path: "/repos",
+      component: () => import("@/business/market-place/repo"),
+      name: "Repos",
       meta: {
         title: "business.chart.chart",
       }
     },
     {
       path: "create",
-      component: () => import("@/business/market-place/chart/create"),
-      name: "ChartCreate",
+      component: () => import("@/business/market-place/repo/create"),
+      name: "RepoCreate",
       hidden: true,
       meta: {
-        activeMenu: "/charts",
+        activeMenu: "/repos",
       }
     },
     {
       path: "edit/:name",
-      component: () => import("@/business/market-place/chart/edit"),
-      name: "ChartEdit",
+      component: () => import("@/business/market-place/repo/edit"),
+      name: "RepoEdit",
       hidden: true,
       props: true,
       meta: {
-        activeMenu: "/charts",
+        activeMenu: "/repos",
       }
     },
     {
       path: "/apps",
-      component: () => import("@/business/market-place/apps"),
-      name: "Apps",
+      component: () => import("@/business/market-place/chart"),
+      name: "Charts",
       meta: {
         title: "business.chart.app",
       }
