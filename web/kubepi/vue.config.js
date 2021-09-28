@@ -5,8 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../../cmd/server/web'),
-    assetsDir: 'kubepi',
+    outputDir: path.resolve(__dirname, '../../cmd/server/web/kubepi'),
     indexPath: 'index.html',
     productionSourceMap: true,
     devServer: {
