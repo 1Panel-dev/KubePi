@@ -3,6 +3,11 @@ package server
 import (
 	"embed"
 	"fmt"
+	"net/http"
+	"os"
+	"path"
+	"strings"
+
 	"github.com/KubeOperator/kubepi/internal/config"
 	v1Config "github.com/KubeOperator/kubepi/internal/model/v1/config"
 	"github.com/KubeOperator/kubepi/migrate"
@@ -15,10 +20,6 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"os"
-	"path"
-	"strings"
 )
 
 const sessionCookieName = "SESS_COOKIE_KUBEPI"
@@ -70,15 +71,6 @@ func (e *KubePiSerer) setUpDB() {
 	e.db = d
 }
 
-func (e *KubePiSerer) makeKubePiDir() {
-	kubepiDir := "/var/lib/kubepi"
-	if !fileutil.Exist(kubepiDir) {
-		if err := os.MkdirAll(kubepiDir, 0755); err != nil {
-			panic(err)
-		}
-	}
-}
-
 func (e *KubePiSerer) setUpStaticFile() {
 	e.Get("/", func(ctx *context.Context) {
 		ctx.Redirect("/kubepi")
@@ -101,9 +93,15 @@ func (e *KubePiSerer) setUpSession() {
 	e.Use(sess.Handler())
 }
 
+const ContentTypeDownload = "application/download"
+
 func (e *KubePiSerer) setResultHandler() {
 	e.Use(func(ctx *context.Context) {
 		ctx.Next()
+		contentType := ctx.ResponseWriter().Header().Get("Content-Type")
+		if contentType == ContentTypeDownload {
+			return
+		}
 		isProxyPath := func() bool {
 			p := ctx.GetCurrentRoute().Path()
 			ss := strings.Split(p, "/")
@@ -144,15 +142,14 @@ func (e *KubePiSerer) setUpErrHandler() {
 			originMessage    string
 		)
 
-		switch message.(type) {
+		switch value := message.(type) {
 		case string:
 			originMessage = message.(string)
-			translateMessage, err = i18n.Translate(lang, message.(string))
+			translateMessage, err = i18n.Translate(lang, value)
 		case []string:
-			ms := message.([]string)
-			originMessage = strings.Join(ms, ",")
-			if len(ms) > 0 {
-				translateMessage, err = i18n.Translate(lang, ms[0], ms[1:])
+			originMessage = strings.Join(value, ",")
+			if len(value) > 0 {
+				translateMessage, err = i18n.Translate(lang, value[0], value[1:])
 			}
 		}
 		msg := translateMessage

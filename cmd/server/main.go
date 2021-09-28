@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/spf13/cobra"

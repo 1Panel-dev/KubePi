@@ -9,6 +9,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	"github.com/KubeOperator/kubepi/internal/api/v1/user"
+	"github.com/KubeOperator/kubepi/internal/api/v1/webkubectl"
 	"github.com/KubeOperator/kubepi/internal/api/v1/ws"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
@@ -257,7 +258,6 @@ func AddV1Route(app iris.Party) {
 	v1Party := app.Party("/v1")
 	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
-
 	session.Install(v1Party)
 	authParty := v1Party.Party("")
 	authParty.Use(resourceExtractHandler())
@@ -272,4 +272,5 @@ func AddV1Route(app iris.Party) {
 	proxy.Install(authParty)
 	ws.Install(authParty)
 	chart.Install(authParty)
+	webkubectl.Install(authParty)
 }
