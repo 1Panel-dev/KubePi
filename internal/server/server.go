@@ -142,15 +142,14 @@ func (e *KubePiSerer) setUpErrHandler() {
 			originMessage    string
 		)
 
-		switch message.(type) {
+		switch value := message.(type) {
 		case string:
 			originMessage = message.(string)
-			translateMessage, err = i18n.Translate(lang, message.(string))
+			translateMessage, err = i18n.Translate(lang, value)
 		case []string:
-			ms := message.([]string)
-			originMessage = strings.Join(ms, ",")
-			if len(ms) > 0 {
-				translateMessage, err = i18n.Translate(lang, ms[0], ms[1:])
+			originMessage = strings.Join(value, ",")
+			if len(value) > 0 {
+				translateMessage, err = i18n.Translate(lang, value[0], value[1:])
 			}
 		}
 		msg := translateMessage
