@@ -1,10 +1,13 @@
 package chart
 
 import (
+	"bytes"
+	"crypto/rand"
 	"github.com/KubeOperator/kubepi/internal/service/v1/chart"
 	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"math/big"
 	"strings"
 )
 

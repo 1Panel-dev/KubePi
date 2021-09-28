@@ -12,7 +12,7 @@
       </template>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" fix>
         <template v-slot:default="{row}">
-          {{ row.name }}
+          <span :style="{color: row.color}">{{ row.name }}</span>
         </template>
       </el-table-column>
 <!--      <el-table-column :label="$t('business.chart.type')" prop="type" min-width="80" fix>-->
