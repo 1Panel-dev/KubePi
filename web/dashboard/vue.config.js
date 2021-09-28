@@ -5,7 +5,9 @@ function resolve(dir) {
 }
 
 module.exports = {
-    outputDir: path.resolve(__dirname, '../../cmd/server/web/dashboard'),
+    outputDir: path.resolve(__dirname, '../../cmd/server/web'),
+    assetsDir: 'dashboard',
+    indexPath: 'index.html',
     productionSourceMap: true,
     devServer: {
         port: 4400,
