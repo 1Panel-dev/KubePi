@@ -31,5 +31,5 @@ module.exports = {
             }
         }
     },
-    publicPath: '/dashboard/',
+    publicPath: '/kubepi/dashboard/',
 };
