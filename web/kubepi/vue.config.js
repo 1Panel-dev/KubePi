@@ -6,7 +6,6 @@ function resolve(dir) {
 
 module.exports = {
     outputDir: path.resolve(__dirname, '../../cmd/server/web/kubepi'),
-    indexPath: 'index.html',
     productionSourceMap: true,
     devServer: {
         port: 4300,
@@ -40,5 +39,5 @@ module.exports = {
             }
         }
     },
-    publicPath: '/kubepi/kubepi/',
+    publicPath: '/kubepi/',
 };
