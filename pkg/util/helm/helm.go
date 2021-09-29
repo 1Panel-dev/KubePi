@@ -137,13 +137,18 @@ func (c Client) Uninstall(name string) (*release.UninstallReleaseResponse, error
 	return res, nil
 }
 
-func (c Client) ListCharts(pattern string) ([]*search.Result, error) {
+func (c Client) ListCharts(repoName, pattern string) ([]*search.Result, error) {
 	repos, err := c.ListRepo()
 	if err != nil {
 		return nil, fmt.Errorf("list chart failed: %v", err)
 	}
 	i := search.NewIndex()
 	for _, re := range repos {
+		if repoName != "KRepoAll" {
+			if repoName != re.Name {
+				continue
+			}
+		}
 		settings := GetSettings()
 		path := filepath.Join(settings.RepositoryCache, helmpath.CacheIndexFile(re.Name))
 		indexFile, err := repo.LoadIndexFile(path)

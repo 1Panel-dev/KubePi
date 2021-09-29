@@ -18,59 +18,6 @@ func NewHandler() *Handler {
 	}
 }
 
-func (h *Handler) SearchCharts() iris.Handler {
-	return func(ctx *context.Context) {
-		//pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
-		//pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
-		//pattern := ctx.URLParam("pattern")
-		//cluster := ctx.URLParam("cluster")
-		//charts, total, err := h.chartService.Search(pageNum, pageSize, cluster, pattern, common.DBOptions{})
-		//if err != nil {
-		//	if !errors.Is(err, storm.ErrNotFound) {
-		//		ctx.StatusCode(iris.StatusInternalServerError)
-		//		ctx.Values().Set("message", err.Error())
-		//		return
-		//	}
-		//}
-		//cs := make([]Chart, 0)
-		//for i := range charts {
-		//	cs = append(cs, Chart{
-		//		Chart: charts[i],
-		//	})
-		//}
-		//ctx.Values().Set("data", pkgV1.Page{Items: cs, Total: total})
-	}
-}
-
-//func (h *Handler) CreateChart() iris.Handler {
-//	return func(ctx *context.Context) {
-//		var req Chart
-//		if err := ctx.ReadJSON(&req); err != nil {
-//			ctx.StatusCode(iris.StatusBadRequest)
-//			ctx.Values().Set("message", err.Error())
-//			return
-//		}
-//		u := ctx.Values().Get("profile")
-//		profile := u.(session.UserProfile)
-//		//tx
-//		tx, err := server.DB().Begin(true)
-//		if err != nil {
-//			ctx.StatusCode(iris.StatusInternalServerError)
-//			ctx.Values().Set("message", err.Error())
-//			return
-//		}
-//		req.CreatedBy = profile.Name
-//		if err := h.chartService.Create(&req.Chart, common.DBOptions{DB: tx}); err != nil {
-//			_ = tx.Rollback()
-//			ctx.StatusCode(iris.StatusInternalServerError)
-//			ctx.Values().Set("message", err.Error())
-//			return
-//		}
-//		_ = tx.Commit()
-//		ctx.Values().Set("data", req)
-//	}
-//}
-
 func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.URLParam("cluster")
@@ -145,7 +92,8 @@ func (h *Handler) ListCharts() iris.Handler {
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		pattern := ctx.URLParam("pattern")
 		cluster := ctx.URLParam("cluster")
-		charts, total, err := h.chartService.ListCharts(cluster, pageNum, pageSize, pattern)
+		repo := ctx.URLParam("repo")
+		charts, total, err := h.chartService.ListCharts(cluster, repo, pageNum, pageSize, pattern)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

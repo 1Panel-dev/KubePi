@@ -31,10 +31,10 @@ export function deleteRepo(cluster,name) {
   return del(`${repoUrl}/${name}?cluster=${cluster}`)
 }
 
-export function searchCharts (cluster, page, size, keywords) {
-  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}`
+export function searchCharts (cluster,repo, page, size, keywords) {
+  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}&repo=${repo}`
   if (keywords) {
-    url = `${url}&keywords=${keywords}`
+    url = `${url}&pattern=${keywords}`
   }
   return post(url)
 }

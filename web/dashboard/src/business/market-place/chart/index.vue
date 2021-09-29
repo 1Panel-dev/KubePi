@@ -1,6 +1,18 @@
 <template>
   <layout-content :header="$t('business.chart.app')" v-loading="loading">
     <div>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-select style="width: 100%" v-model="repo" @change="listAll(true)">
+            <el-option label="All" value="KRepoAll"></el-option>
+            <el-option v-for="(r,index) in repos" :key="index" :label="r.name" :value="r.name"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="12">
+          <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="listAll(true)">
+          </el-input>
+        </el-col>
+      </el-row>
       <el-row :gutter="20" v-infinite-scroll="load" :infinite-scroll-disabled="loading || moreLoading">
         <el-col v-for="(d,index) in shows" v-bind:key="index" :xs="8" :sm="8" :lg="6">
           <div>
@@ -62,14 +74,18 @@ export default {
       shows: [],
       sliceNum: 24,
       currentSlice: 0,
-      moreLoading: false
+      moreLoading: false,
+      repo: "KRepoAll"
     }
   },
   methods: {
-    listAll () {
+    listAll (change) {
+      if (change) {
+        this.init()
+      }
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
-      searchCharts(this.cluster, currentPage, pageSize, this.searchConfig.keywords).then(res => {
+      searchCharts(this.cluster, this.repo, currentPage, pageSize, this.searchConfig.keywords).then(res => {
         this.data = res.data.items
         this.shows = this.data.slice(0, 24)
         this.currentSlice = this.currentSlice + this.sliceNum
@@ -96,13 +112,21 @@ export default {
         this.paginationConfig.currentPage++
         this.moreLoading = true
         const { currentPage, pageSize } = this.paginationConfig
-        searchCharts(this.cluster, currentPage, pageSize, this.searchConfig.keywords).then(res => {
+        searchCharts(this.cluster, this.repo,currentPage, pageSize, this.searchConfig.keywords).then(res => {
           this.data = this.data.concat(res.data.items)
           this.moreLoading = false
           this.load()
         })
       }
     },
+    init() {
+      this.paginationConfig = {
+        currentPage: 1,
+        pageSize: 400,
+        total: 0,
+      }
+      this.currentSlice = 0
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster

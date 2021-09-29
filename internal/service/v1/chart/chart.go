@@ -14,7 +14,7 @@ type Service interface {
 	common.DBService
 	SearchRepo(cluster string) ([]*repo.Entry, error)
 	AddRepo(cluster string, create *v1Chart.RepoCreate) error
-	ListCharts(cluster string, num, size int, pattern string) ([]*search.Result, int, error)
+	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
 	RemoveRepo(cluster string, name string) error
 }
 
@@ -89,7 +89,7 @@ func (c *service) RemoveRepo(cluster string, name string) error {
 	return nil
 }
 
-func (c *service) ListCharts(cluster string, num, size int, pattern string) ([]*search.Result, int, error) {
+func (c *service) ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, 0, err
@@ -101,7 +101,7 @@ func (c *service) ListCharts(cluster string, num, size int, pattern string) ([]*
 	if err != nil {
 		return nil, 0, err
 	}
-	charts, err := helmClient.ListCharts(pattern)
+	charts, err := helmClient.ListCharts(repo, pattern)
 	if err != nil {
 		return nil, 0, err
 	}

@@ -59,16 +59,16 @@ export default {
       cluster: "",
       isSubmitGoing: false,
       buttons: [
-        {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.onDetail(row.name)
-          },
-          disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "update" })
-          }
-        },
+        // {
+        //   label: this.$t("commons.button.edit"),
+        //   icon: "el-icon-edit",
+        //   click: (row) => {
+        //     this.onDetail(row.name)
+        //   },
+        //   disabled: () => {
+        //     return !checkPermissions({ resource: "charts", verb: "update" })
+        //   }
+        // },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
