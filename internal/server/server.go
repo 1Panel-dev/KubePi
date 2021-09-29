@@ -205,7 +205,6 @@ func (e *KubePiSerer) setWebkubectlProxy() {
 
 func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.Application = iris.New()
-	//e.Application.Use(iris.Compression)
 	e.setUpStaticFile()
 	e.setUpConfig()
 	e.setUpLogger()
@@ -215,6 +214,7 @@ func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.setUpErrHandler()
 	e.setWebkubectlProxy()
 	e.runMigrations()
+	e.startTty()
 	return e
 }
 
