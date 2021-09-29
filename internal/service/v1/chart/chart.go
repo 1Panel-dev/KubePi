@@ -4,24 +4,16 @@ import (
 	v1Chart "github.com/KubeOperator/kubepi/internal/model/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	"github.com/KubeOperator/kubepi/pkg/util/helm"
-	"github.com/asdine/storm/v3"
-	"github.com/asdine/storm/v3/q"
-	"github.com/google/uuid"
+	"helm.sh/helm/v3/cmd/helm/search"
 	"helm.sh/helm/v3/pkg/repo"
-	"time"
 )
 
 type Service interface {
 	common.DBService
-	Create(chart *v1Chart.Chart, options common.DBOptions) error
-	Search(num, size int, cluster, pattern string, options common.DBOptions) ([]v1Chart.Chart, int, error)
-	Delete(name string, options common.DBOptions) error
-	Update(name string, char *v1Chart.Chart, options common.DBOptions) error
-	GetByName(name string, options common.DBOptions) (*v1Chart.Chart, error)
 	SearchRepo(cluster string) ([]*repo.Entry, error)
 	AddRepo(cluster string, create *v1Chart.RepoCreate) error
+	ListCharts(cluster string, num, size int, pattern string) ([]*search.Result, int, error)
 }
 
 func NewService() Service {
@@ -73,84 +65,36 @@ func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
 	return nil
 }
 
-func (c *service) Search(num, size int, cluster, pattern string, options common.DBOptions) ([]v1Chart.Chart, int, error) {
-
-	db := c.GetDB(options)
-	query := func() storm.Query {
-		if pattern != "" {
-			return db.Select(q.And(q.Eq("Cluster", cluster), q.Or(
-				costomStorm.Like("Name", pattern),
-			))).OrderBy("CreateAt")
-		}
-		return db.Select().OrderBy("CreateAt")
-	}()
-	if num != 0 && size != 0 {
-		query.Limit(size).Skip((num - 1) * size)
-	}
-	count, err := query.Count(&v1Chart.Chart{})
+func (c *service) ListCharts(cluster string, num, size int, pattern string) ([]*search.Result, int, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, 0, err
-	}
-	charts := make([]v1Chart.Chart, 0)
-	if err := query.Find(&charts); err != nil {
-		return nil, 0, err
-	}
-
-	return charts, count, nil
-}
-
-func (c *service) Create(chart *v1Chart.Chart, options common.DBOptions) error {
-
-	cluster, err := c.clusterService.Get(chart.Cluster, common.DBOptions{})
-	if err != nil {
-		return err
 	}
 	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        cluster.Spec.Connect.Forward.ApiServer,
-		BearerToken: cluster.Spec.Authentication.BearerToken,
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
 	})
 	if err != nil {
-		return err
+		return nil, 0, err
 	}
-	_, err = helmClient.List()
+	charts, err := helmClient.ListCharts(pattern)
 	if err != nil {
-		return err
+		return nil, 0, err
 	}
-	db := c.GetDB(options)
-	chart.UUID = uuid.New().String()
-	chart.CreateAt = time.Now()
-	chart.UpdateAt = time.Now()
-	return db.Save(chart)
-}
-
-func (c *service) Update(name string, char *v1Chart.Chart, options common.DBOptions) error {
-	var chart v1Chart.Chart
-	db := c.GetDB(options)
-	if err := db.One("Name", name, &chart); err != nil {
-		return err
+	var chartArray []*search.Result
+	for _, chart := range charts {
+		exist := false
+		for _, ca := range chartArray {
+			if ca.Name == chart.Name {
+				exist = true
+				break
+			}
+		}
+		if exist {
+			continue
+		}
+		chartArray = append(chartArray, chart)
 	}
-	char.UUID = chart.UUID
-	char.CreateAt = chart.CreateAt
-	char.UpdateAt = time.Now()
-	return db.Update(char)
-}
-
-func (c *service) GetByName(name string, options common.DBOptions) (*v1Chart.Chart, error) {
-	db := c.GetDB(options)
-	var chart v1Chart.Chart
-	query := db.Select(q.Eq("Name", name))
-
-	if err := query.First(&chart); err != nil {
-		return nil, err
-	}
-	return &chart, nil
-}
-
-func (c *service) Delete(name string, options common.DBOptions) error {
-	db := c.GetDB(options)
-	var chart v1Chart.Chart
-	if err := db.One("Name", name, &chart); err != nil {
-		return err
-	}
-	return db.DeleteStruct(&chart)
+	result := chartArray[(num-1)*size : num*size]
+	return result, len(chartArray), nil
 }

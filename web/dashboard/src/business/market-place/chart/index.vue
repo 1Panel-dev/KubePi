@@ -1,130 +1,102 @@
 <template>
-  <layout-content :header="$t('business.chart.chart')">
-    <complex-table v-loading="loading"  :selects.sync="selects" :data="data"
-                   @search="search">
-      <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
-                     @click="onCreate">
-            {{ $t("commons.button.add") }}
-          </el-button>
-        </el-button-group>
-      </template>
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" fix>
-        <template v-slot:default="{row}">
-          {{ row.name }}
-        </template>
-      </el-table-column>
-<!--      <el-table-column :label="$t('business.chart.type')" prop="type" min-width="80" fix>-->
-<!--        <template v-slot:default="{row}">-->
-<!--          {{ row.type }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <el-table-column :label="'URL'" prop="url" min-width="80" fix>
-        <template v-slot:default="{row}">
-          {{ row.url }}
-        </template>
-      </el-table-column>
-      <!--      <el-table-column :label="$t('business.chart.branch')" prop="branch" min-width="80" fix>-->
-      <!--        <template v-slot:default="{row}">-->
-      <!--          {{ row.spec.gitBranch }}-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-<!--      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>-->
-<!--        <template v-slot:default="{row}">-->
-<!--          {{ row.createAt | datetimeFormat }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
-    </complex-table>
+  <layout-content :header="$t('business.chart.app')" v-loading="loading">
+    <div>
+      <el-row :gutter="20">
+        <el-col  v-for="(d,index) in data" v-bind:key="index" :xs="8" :sm="8" :lg="6">
+          <div>
+            <el-card :body-style="{padding: '0px'}" class="d-card el-card">
+              <el-row :gutter="24">
+                <el-col :span="8">
+                  <div style="margin-top: 32px;margin-left: 25px;margin-bottom: 15px" >
+                    <el-image :src="d.icon" fit="contain" style="height: 56px;width: 56px;position:relative">
+                      <div slot="error" class="image-slot">
+                        <img :src="require('@/assets/apps.svg')"/>
+                      </div>
+                    </el-image>
+                  </div>
+                </el-col>
+                <el-col :span="16">
+                  <div style="text-align: right"><el-tag>{{d.repo}}</el-tag></div>
+                  <div class="card-content">
+                    <span style="font-size: large;">{{d.name}}</span>
+                    <p class="chart-description">{{d.description}}</p>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-card>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {deleteChart, listRepos} from "@/api/charts"
-import ComplexTable from "@/components/complex-table"
-import {checkPermissions} from "@/utils/permission"
+import {listRepos, searchCharts} from "@/api/charts"
 
 export default {
-  name: "ChartManagement",
-  components: { ComplexTable, LayoutContent },
+  name: "Charts",
+  components: { LayoutContent },
   props: {},
   data () {
     return {
-      loading: false,
-      items: [],
-      data: [],
-      selects: [],
       cluster: "",
-      isSubmitGoing: false,
-      buttons: [
-        {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.onDetail(row.name)
-          },
-          disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "update" })
-          }
-        },
-        {
-          label: this.$t("commons.button.delete"),
-          icon: "el-icon-delete",
-          click: (row) => {
-            this.onDelete(row.name)
-          },
-          disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "delete" })
-          },
-        },
-      ]
+      data: [],
+      loading: false,
+      paginationConfig: {
+        currentPage: 1,
+        pageSize: 30,
+        total: 0,
+      },
+      searchConfig: {
+        keywords: ""
+      },
+      repos:[],
+      colors: []
     }
   },
   methods: {
-    search () {
+    listAll () {
       this.loading = true
-      listRepos(this.cluster).then(data => {
+      const { currentPage, pageSize } = this.paginationConfig
+      searchCharts(this.cluster,currentPage, pageSize,this.searchConfig.keywords).then(res => {
+        this.data = res.data.items
         this.loading = false
-        this.data = data.data
       })
-    },
-    onCreate () {
-      this.$router.push({ name: "ChartCreate" })
-    },
-    onDetail (name) {
-      this.$router.push({ name: "ChartEdit", params: { name: name } })
-    },
-    onDelete (name) {
-      if (this.isSubmitGoing) {
-        return
-      }
-      this.isSubmitGoing = true
-      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
-        confirmButtonText: this.$t("commons.button.confirm"),
-        cancelButtonText: this.$t("commons.button.cancel"),
-        type: "warning"
-      }).then(() => {
-        deleteChart(name).then(() => {
-          this.$message({
-            type: "success",
-            message: this.$t("commons.msg.delete_success"),
-          })
-          this.search()
-        }).finally(() => {
-          this.isSubmitGoing = false
-        })
+      listRepos(this.cluster).then(res => {
+        this.repos = res.data
       })
     }
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.search()
+    this.listAll()
   }
 }
 </script>
 
 <style scoped>
-
+    .d-card {
+        height: 120px;
+        background-color: #1f2224;
+        margin-top: 10px;
+    }
+    .d-card:hover {
+        cursor: pointer;
+        border: 1px solid #e92322;
+        z-index: 1;
+    }
+    .card-content {
+        text-align: left;
+        float: left;
+    }
+    .chart-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        color: #a1a9ae;
+        font-size: small;
+    }
 </style>
