@@ -272,5 +272,5 @@ func AddV1Route(app iris.Party) {
 	proxy.Install(authParty)
 	ws.Install(authParty)
 	chart.Install(authParty)
-	webkubectl.Install(authParty)
+	webkubectl.Install(authParty, v1Party)
 }

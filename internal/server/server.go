@@ -4,6 +4,8 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -74,17 +76,23 @@ func (e *KubePiSerer) setUpDB() {
 func (e *KubePiSerer) setUpStaticFile() {
 	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
 
+	party := e.Party("/")
+	party.Get("/", func(ctx *context.Context) {
+		ctx.Redirect("/kubepi")
+	})
+	party.Use(iris.Compression)
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
-	e.RegisterView(view.HTML(dashboardFS, ".html"))
-	e.HandleDir("/dashboard/", dashboardFS, spaOption)
+	party.RegisterView(view.HTML(dashboardFS, ".html"))
+	party.HandleDir("/dashboard/", dashboardFS, spaOption)
 
 	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
-	e.RegisterView(view.HTML(terminalFS, ".html"))
-	e.HandleDir("/terminal/", terminalFS, spaOption)
+	party.RegisterView(view.HTML(terminalFS, ".html"))
+	party.HandleDir("/terminal/", terminalFS, spaOption)
 
 	kubePiFS := iris.PrefixDir("web/kubepi", http.FS(EmbedWebKubePi))
-	e.RegisterView(view.HTML(kubePiFS, ".html"))
-	e.HandleDir("/kubepi/", kubePiFS, spaOption)
+	party.RegisterView(view.HTML(kubePiFS, ".html"))
+	party.HandleDir("/kubepi/", kubePiFS, spaOption)
+
 }
 
 func (e *KubePiSerer) setUpSession() {
@@ -104,6 +112,11 @@ func (e *KubePiSerer) setResultHandler() {
 		isProxyPath := func() bool {
 			p := ctx.GetCurrentRoute().Path()
 			ss := strings.Split(p, "/")
+			if len(ss) > 0 {
+				if ss[0] == "webkubectl" {
+					return true
+				}
+			}
 			if len(ss) >= 3 {
 				for i := range ss {
 					if ss[i] == "proxy" || ss[i] == "ws" {
@@ -169,10 +182,33 @@ func (e *KubePiSerer) setUpErrHandler() {
 func (e *KubePiSerer) runMigrations() {
 	migrate.RunMigrate(e.db, e.logger)
 }
+func (e *KubePiSerer) setWebkubectlProxy() {
+	handler := func(ctx *context.Context) {
+		p := ctx.Params().Get("p")
+		if strings.Contains(p, "root") {
+			ctx.Request().URL.Path = strings.ReplaceAll(ctx.Request().URL.Path, "root", "")
+			ctx.Request().RequestURI = strings.ReplaceAll(ctx.Request().RequestURI, "root", "")
+		}
+		u, _ := url.Parse("http://localhost:8080")
+		proxy := httputil.NewSingleHostReverseProxy(u)
+		proxy.ModifyResponse = func(resp *http.Response) error {
+			if resp.StatusCode == iris.StatusMovedPermanently {
+				// 重定向重写
+				if resp.Header.Get("Location") == "/webkubectl/" {
+					resp.Header.Set("Location", "/webkubectl/root")
+				}
+			}
+			return nil
+		}
+		proxy.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
+	}
+	e.Any("/webkubectl/{p:path}", handler)
+	e.Any("webkubectl", handler)
+}
 
 func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.Application = iris.New()
-	e.Application.Use(iris.Compression)
+	//e.Application.Use(iris.Compression)
 	e.setUpStaticFile()
 	e.setUpConfig()
 	e.setUpLogger()
@@ -180,6 +216,7 @@ func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.setUpSession()
 	e.setResultHandler()
 	e.setUpErrHandler()
+	e.setWebkubectlProxy()
 	e.runMigrations()
 	return e
 }

@@ -20,6 +20,11 @@ module.exports = {
                 ws: true,
                 secure: false,
             },
+            '/webkubectl': {
+                target: 'http://0.0.0.0:80',
+                ws: true,
+                secure: false,
+            },
             '/dashboard': {
                 target: 'http://0.0.0.0:4400',
             },
