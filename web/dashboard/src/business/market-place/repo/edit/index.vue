@@ -70,7 +70,7 @@ import Rules from "@/utils/rules"
 import {getChart, updateChart} from "@/api/charts"
 
 export default {
-  name: "ChartEdit",
+  name: "RepoEdit",
   components: { LayoutContent },
   props: {
     name: String

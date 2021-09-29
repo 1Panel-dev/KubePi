@@ -7,6 +7,7 @@ import (
 	"github.com/gofrs/flock"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
+	"helm.sh/helm/v3/cmd/helm/search"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
@@ -82,9 +83,6 @@ func NewClient(config *Config) (*Client, error) {
 	return &client, nil
 }
 func (c Client) Install(name, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
-	//if err := updateRepo(c.Architectures); err != nil {
-	//	return nil, err
-	//}
 	client := action.NewInstall(c.installActionConfig)
 	client.ReleaseName = name
 	client.Namespace = c.Namespace
@@ -109,9 +107,6 @@ func (c Client) Install(name, chartName, chartVersion string, values map[string]
 }
 
 func (c Client) Upgrade(name, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
-	//if err := updateRepo(c.Architectures); err != nil {
-	//	return nil, err
-	//}
 	client := action.NewUpgrade(c.installActionConfig)
 	client.Namespace = c.Namespace
 	client.DryRun = false
@@ -135,21 +130,41 @@ func (c Client) Upgrade(name, chartName, chartVersion string, values map[string]
 
 func (c Client) Uninstall(name string) (*release.UninstallReleaseResponse, error) {
 	client := action.NewUninstall(c.unInstallActionConfig)
-	release, err := client.Run(name)
+	res, err := client.Run(name)
 	if err != nil {
-		return release, errors.Wrap(err, fmt.Sprintf("uninstall tool %s failed: %v", name, err))
+		return nil, errors.Wrap(err, fmt.Sprintf("uninstall tool %s failed: %v", name, err))
 	}
-	return release, nil
+	return res, nil
 }
 
-func (c Client) List() ([]*release.Release, error) {
-	client := action.NewList(c.unInstallActionConfig)
-	client.All = true
-	release, err := client.Run()
+func (c Client) ListCharts(repoName, pattern string) ([]*search.Result, error) {
+	repos, err := c.ListRepo()
 	if err != nil {
-		return release, fmt.Errorf("list chart failed: %v", err)
+		return nil, fmt.Errorf("list chart failed: %v", err)
 	}
-	return release, nil
+	i := search.NewIndex()
+	for _, re := range repos {
+		if repoName != "KRepoAll" {
+			if repoName != re.Name {
+				continue
+			}
+		}
+		settings := GetSettings()
+		path := filepath.Join(settings.RepositoryCache, helmpath.CacheIndexFile(re.Name))
+		indexFile, err := repo.LoadIndexFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("list chart failed: %v", err)
+		}
+		i.AddRepo(re.Name, indexFile, true)
+	}
+	var result []*search.Result
+	if pattern != "" {
+		result = i.SearchLiteral(pattern, 1)
+	} else {
+		result = i.All()
+	}
+	search.SortScore(result)
+	return result, nil
 }
 
 func (c Client) ListRepo() ([]*repo.Entry, error) {
@@ -160,6 +175,22 @@ func (c Client) ListRepo() ([]*repo.Entry, error) {
 		return repos, err
 	}
 	return f.Repositories, nil
+}
+
+func (c Client) RemoveRepo(name string) (bool, error) {
+	settings := GetSettings()
+	f, err := repo.LoadFile(settings.RepositoryConfig)
+	if err != nil {
+		return false, err
+	}
+	success := f.Remove(name)
+	if !success {
+		return false, err
+	}
+	if err := f.WriteFile(settings.RepositoryConfig, 0644); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (c Client) AddRepo(name string, url string, username string, password string) error {
@@ -217,9 +248,7 @@ func (c Client) AddRepo(name string, url string, username string, password strin
 	if _, err := r.DownloadIndexFile(); err != nil {
 		return errors.Wrapf(err, "looks like %q is not a valid chart repository or cannot be reached", url)
 	}
-
 	f.Update(&e)
-
 	if err := f.WriteFile(repoFile, 0644); err != nil {
 		return err
 	}

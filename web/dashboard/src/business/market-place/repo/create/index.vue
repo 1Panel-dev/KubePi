@@ -68,7 +68,7 @@ import Rules from "@/utils/rules"
 import {createRepo} from "@/api/charts"
 
 export default {
-  name: "ChartCreate",
+  name: "RepoCreate",
   components: { LayoutContent },
   props: {},
   data () {

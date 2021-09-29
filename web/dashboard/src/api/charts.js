@@ -7,14 +7,6 @@ export function createChart (data) {
   return post(baseUrl, data)
 }
 
-export function searchCharts (cluster, page, size, keywords) {
-  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&showExtra=true&cluster=${cluster}`
-  if (keywords) {
-    url = `${url}&keywords=${keywords}`
-  }
-  return post(url)
-}
-
 export function deleteChart (name) {
   return del(`${baseUrl}/${name}`)
 }
@@ -33,5 +25,17 @@ export function listRepos (cluster) {
 
 export function createRepo (cluster, data) {
   return post(`${repoUrl}?cluster=${cluster}`, data)
+}
+
+export function deleteRepo(cluster,name) {
+  return del(`${repoUrl}/${name}?cluster=${cluster}`)
+}
+
+export function searchCharts (cluster,repo, page, size, keywords) {
+  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}&repo=${repo}`
+  if (keywords) {
+    url = `${url}&pattern=${keywords}`
+  }
+  return post(url)
 }
 
