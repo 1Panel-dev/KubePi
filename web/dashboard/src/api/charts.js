@@ -27,6 +27,10 @@ export function createRepo (cluster, data) {
   return post(`${repoUrl}?cluster=${cluster}`, data)
 }
 
+export function deleteRepo(cluster,name) {
+  return del(`${repoUrl}/${name}?cluster=${cluster}`)
+}
+
 export function searchCharts (cluster, page, size, keywords) {
   let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}`
   if (keywords) {

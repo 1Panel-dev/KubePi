@@ -42,7 +42,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {deleteChart, listRepos} from "@/api/charts"
+import {deleteRepo, listRepos} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
 
@@ -106,7 +106,7 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: "warning"
       }).then(() => {
-        deleteChart(name).then(() => {
+        deleteRepo(this.cluster,name).then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.delete_success"),

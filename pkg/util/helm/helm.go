@@ -172,6 +172,22 @@ func (c Client) ListRepo() ([]*repo.Entry, error) {
 	return f.Repositories, nil
 }
 
+func (c Client) RemoveRepo(name string) (bool, error) {
+	settings := GetSettings()
+	f, err := repo.LoadFile(settings.RepositoryConfig)
+	if err != nil {
+		return false, err
+	}
+	success := f.Remove(name)
+	if !success {
+		return false, err
+	}
+	if err := f.WriteFile(settings.RepositoryConfig, 0644); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 func (c Client) AddRepo(name string, url string, username string, password string) error {
 	settings := GetSettings()
 

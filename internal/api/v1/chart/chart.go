@@ -71,19 +71,15 @@ func (h *Handler) SearchCharts() iris.Handler {
 //	}
 //}
 
-func (h *Handler) DeleteChart() iris.Handler {
+func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		//tx, _ := server.DB().Begin(true)
-		//txOptions := common.DBOptions{DB: tx}
-		//
-		//name := ctx.Params().GetString("name")
-		//if err := h.chartService.Delete(name, txOptions); err != nil {
-		//	_ = tx.Rollback()
-		//	ctx.StatusCode(iris.StatusInternalServerError)
-		//	ctx.Values().Set("message", err.Error())
-		//	return
-		//}
-		//_ = tx.Commit()
+		cluster := ctx.URLParam("cluster")
+		name := ctx.Params().GetString("name")
+		if err := h.chartService.RemoveRepo(cluster, name); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 	}
 }
 
@@ -172,10 +168,10 @@ func (h *Handler) ListCharts() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts")
-	sp.Delete("/:name", handler.DeleteChart())
 	sp.Put("/:name", handler.UpdateChart())
 	sp.Get("/:name", handler.GetChart())
 	sp.Get("/repos", handler.ListRepo())
 	sp.Post("/repos", handler.AddRepo())
+	sp.Delete("/repos/:name", handler.DeleteRepo())
 	sp.Post("/search", handler.ListCharts())
 }
