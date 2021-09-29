@@ -72,14 +72,11 @@ func (e *KubePiSerer) setUpDB() {
 }
 
 func (e *KubePiSerer) setUpStaticFile() {
-	e.Get("/kubepi", func(ctx *context.Context) {
-		ctx.Redirect("/kubepi/kubepi")
-	})
 	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
 
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
 	e.RegisterView(view.HTML(dashboardFS, ".html"))
-	e.HandleDir("/kubepi/dashboard/", dashboardFS, spaOption)
+	e.HandleDir("/dashboard/", dashboardFS, spaOption)
 
 	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
 	e.RegisterView(view.HTML(terminalFS, ".html"))
@@ -87,7 +84,7 @@ func (e *KubePiSerer) setUpStaticFile() {
 
 	kubePiFS := iris.PrefixDir("web/kubepi", http.FS(EmbedWebKubePi))
 	e.RegisterView(view.HTML(kubePiFS, ".html"))
-	e.HandleDir("/kubepi/kubepi/", kubePiFS, spaOption)
+	e.HandleDir("/", kubePiFS, spaOption)
 }
 
 func (e *KubePiSerer) setUpSession() {

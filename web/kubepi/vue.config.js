@@ -39,5 +39,5 @@ module.exports = {
             }
         }
     },
-    publicPath: '/kubepi/kubepi/',
+    publicPath: '/',
 };
