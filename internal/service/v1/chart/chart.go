@@ -95,6 +95,10 @@ func (c *service) ListCharts(cluster string, num, size int, pattern string) ([]*
 		}
 		chartArray = append(chartArray, chart)
 	}
-	result := chartArray[(num-1)*size : num*size]
+	end := num*size
+	if end > len(chartArray) {
+		end = len(chartArray)
+	}
+	result := chartArray[(num-1)*size : end]
 	return result, len(chartArray), nil
 }
