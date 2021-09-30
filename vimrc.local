@@ -1,0 +1,10 @@
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
+set number
+set paste
+set laststatus=2
+set ruler
+set mouse=a
+set selection=exclusive
+set selectmode=mouse,key

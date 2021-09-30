@@ -15,7 +15,7 @@ cp /root/.bashrc ./
 cp /etc/vim/vimrc.local .vimrc
 echo 'source /opt/kubectl-aliases/.kubectl_aliases' >> .bashrc
 echo -e 'PS1="> "\nalias ll="ls -la"' >> .bashrc
-mkdir -p ~/.kube
+mkdir -p .kube
 
 export HOME=/nonexistent
 
