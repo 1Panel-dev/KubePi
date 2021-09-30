@@ -2,6 +2,11 @@
 
 package server
 
+import (
+	"os"
+	"os/exec"
+)
+
 func (e *KubePiSerer) startTty() {
 	cmd := "gotty"
 	params := []string{"--permit-write", "unshare", "--fork", "--pid", "--mount-proc", "--mount", "bash", "init-kube.sh"}
