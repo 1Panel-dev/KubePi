@@ -50,8 +50,8 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     KUBECTX_VERSION=v0.9.4 && wget https://github.com/ahmetb/kubectx/releases/download/${KUBECTX_VERSION}/kubens_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz && tar -xvf kubens_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz && chmod +x kubens && mv kubens /usr/bin && \
     wget https://github.com/ahmetb/kubectx/releases/download/${KUBECTX_VERSION}/kubectx_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz && tar -xvf kubectx_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz && chmod +x kubectx && mv kubectx /usr/bin && \
     curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
-    chmod +x /usr/bin/gotty && chmod 555 /bin/busybox && \
-    apk del git curl && rm -rf /tmp/* /var/tmp/* /var/cache/apk/* && \
+    chmod +x /usr/local/bin/gotty && chmod 555 /bin/busybox && \
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* && \
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
 EXPOSE 80
