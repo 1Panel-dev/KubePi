@@ -32,14 +32,16 @@ func (h *Handler) DeleteRepo() iris.Handler {
 
 func (h *Handler) GetChart() iris.Handler {
 	return func(ctx *context.Context) {
-		//name := ctx.Params().GetString("name")
-		//c, err := h.chartService.GetByName(name, common.DBOptions{})
-		//if err != nil {
-		//	ctx.StatusCode(iris.StatusInternalServerError)
-		//	ctx.Values().Set("message", err.Error())
-		//	return
-		//}
-		//ctx.Values().Set("data", &Chart{Chart: *c})
+		name := ctx.Params().GetString("name")
+		cluster := ctx.URLParam("cluster")
+		repo := ctx.URLParam("repo")
+		cs, err := h.chartService.GetCharts(cluster, repo, name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", cs)
 	}
 }
 func (h *Handler) UpdateChart() iris.Handler {
