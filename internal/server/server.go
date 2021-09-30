@@ -29,6 +29,7 @@ const sessionCookieName = "SESS_COOKIE_KUBEPI"
 var EmbedWebKubePi embed.FS
 var EmbedWebDashboard embed.FS
 var EmbedWebTerminal embed.FS
+var WebkubectlEntrypoint string
 
 type KubePiSerer struct {
 	*iris.Application
@@ -203,6 +204,18 @@ func (e *KubePiSerer) setWebkubectlProxy() {
 	e.Any("webkubectl", handler)
 }
 
+func (e *KubePiSerer) setUpTtyEntrypoint() {
+	f, err := os.OpenFile("init-kube.sh", os.O_CREATE|os.O_RDWR, 0755)
+	if err != nil {
+		e.logger.Error(err)
+		return
+	}
+	if _, err := f.WriteString(WebkubectlEntrypoint); err != nil {
+		e.logger.Error(err)
+		return
+	}
+}
+
 func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.Application = iris.New()
 	e.setUpStaticFile()
@@ -214,6 +227,7 @@ func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.setUpErrHandler()
 	e.setWebkubectlProxy()
 	e.runMigrations()
+	e.setUpTtyEntrypoint()
 	e.startTty()
 	return e
 }
