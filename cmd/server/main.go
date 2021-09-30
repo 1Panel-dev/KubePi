@@ -5,6 +5,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/spf13/cobra"
+	"runtime"
 )
 
 var (
@@ -22,6 +23,12 @@ var embedWebDashboard embed.FS
 //go:embed web/terminal
 var embedWebTerminal embed.FS
 
+//go:embed script/darwin/init-kube.sh
+var webkubectlEntrypointDarwin string
+
+//go:embed script/linux/init-kube.sh
+var webkubectlEntrypointLinux string
+
 func init() {
 	RootCmd.Flags().StringVar(&serverBindHost, "server-bind-host", "", "kubepi bind address")
 	RootCmd.Flags().IntVar(&serverBindPort, "server-bind-port", 0, "kubepi bind port")
@@ -35,6 +42,11 @@ var RootCmd = &cobra.Command{
 		server.EmbedWebDashboard = embedWebDashboard
 		server.EmbedWebTerminal = embedWebTerminal
 		server.EmbedWebKubePi = embedWebKubePi
+		if runtime.GOOS == "darwin" {
+			server.WebkubectlEntrypoint = webkubectlEntrypointDarwin
+		} else {
+			server.WebkubectlEntrypoint = webkubectlEntrypointLinux
+		}
 		return server.Listen(route.InitRoute)
 	},
 }
