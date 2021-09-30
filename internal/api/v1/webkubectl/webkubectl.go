@@ -10,7 +10,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
@@ -31,15 +30,15 @@ func NewHandler() *Handler {
 
 func (h *Handler) GetConfigFile() iris.Handler {
 	return func(ctx *context.Context) {
-		sessionId := ctx.URLParam("session")
+		sessionId := ctx.URLParam("token")
 		requireLen := len(uuid.New().String())
 		if len(sessionId) != requireLen {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", fmt.Sprintf("sessionId length must be %d", requireLen))
 			return
 		}
-		cfg := h.sessionCache.Get(sessionId)
-		if cfg != nil {
+		sess := h.sessionCache.Get(sessionId)
+		if sess != nil {
 			h.sessionCache.Delete(sessionId)
 		} else {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -51,7 +50,7 @@ func (h *Handler) GetConfigFile() iris.Handler {
 		ctx.Header("Content-Disposition", "attachment;filename=config")
 		ctx.Header("Content-Transfer-Encoding", "binary")
 
-		cc := toCmdConfig(*cfg.config)
+		cc := toCmdConfig(sess)
 		bs, err := clientcmd.Write(*cc)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -62,20 +61,23 @@ func (h *Handler) GetConfigFile() iris.Handler {
 	}
 }
 
-func toCmdConfig(rc rest.Config) *clientcmdapi.Config {
+func toCmdConfig(sess *Session) *clientcmdapi.Config {
 	cc := clientcmdapi.NewConfig()
-	cc.Clusters["default"] = &clientcmdapi.Cluster{
-		Server: rc.Host,
+	cc.Clusters[sess.Cluster] = &clientcmdapi.Cluster{
+		Server:                sess.config.Host,
+		InsecureSkipTLSVerify: true,
 	}
-	cc.AuthInfos["default"] = &clientcmdapi.AuthInfo{
-		ClientCertificateData: rc.CAData,
-		ClientKeyData:         rc.KeyData,
-		Token:                 rc.BearerToken,
+	cc.AuthInfos[sess.User] = &clientcmdapi.AuthInfo{
+		ClientCertificateData: sess.config.CertData,
+		ClientKeyData:         sess.config.KeyData,
+		Token:                 sess.config.BearerToken,
 	}
-	cc.Contexts["default"] = &clientcmdapi.Context{
-		Cluster:  "default",
-		AuthInfo: "default",
+	contextName := fmt.Sprintf("%s@%s", sess.Cluster, sess.User)
+	cc.Contexts[contextName] = &clientcmdapi.Context{
+		Cluster:  sess.Cluster,
+		AuthInfo: sess.User,
 	}
+	cc.CurrentContext = contextName
 	return cc
 }
 
@@ -113,15 +115,15 @@ func (h *Handler) CreateSession() iris.Handler {
 			cfg.CertData = rb.Certificate
 		}
 		sess.config = cfg
+		sess.User = profile.Name
 		sessionId := uuid.New().String()
 		h.sessionCache.Put(sessionId, &sess)
-		ctx.Values().Set("data", &SessionResponse{SessionId: sessionId})
+		ctx.Values().Set("data", &SessionResponse{Token: sessionId})
 	}
 }
 
-func Install(parent iris.Party) {
+func Install(authParent, noAuthParty iris.Party) {
 	handler := NewHandler()
-	sp := parent.Party("/webkubectl")
-	sp.Get("/session", handler.GetConfigFile())
-	sp.Post("/session", handler.CreateSession())
+	authParent.Post("/webkubectl/session", handler.CreateSession())
+	noAuthParty.Get("/webkubectl/session", handler.GetConfigFile())
 }

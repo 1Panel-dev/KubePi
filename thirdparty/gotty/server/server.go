@@ -115,7 +115,7 @@ func (server *Server) Run(ctx context.Context, options ...RunOption) error {
 	}
 
 	counter := newCounter(time.Duration(server.options.Timeout) * time.Second)
-	path := "/terminal/"
+	path := "/webkubectl/"
 	customPath := os.Getenv("TERMINAL_PATH")
 	if len(customPath) > 0 {
 		path = customPath

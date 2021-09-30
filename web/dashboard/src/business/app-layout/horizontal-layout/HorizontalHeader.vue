@@ -3,9 +3,10 @@
     <div class="header-left">
       <sidebar-toggle-button/>
       <home></home>
-      <project-switch style="margin-left: 20px" ></project-switch>
+      <project-switch style="margin-left: 20px"></project-switch>
     </div>
     <div class="header-right">
+      <TerminalEnter></TerminalEnter>
       <language-switch></language-switch>
       <user-setting style="margin-left: 20px"></user-setting>
     </div>
@@ -18,10 +19,11 @@ import UserSetting from "@/business/app-layout/header-components/UserSetting"
 import Home from "@/business/app-layout/header-components/Home"
 import ProjectSwitch from "@/business/app-layout/header-components/ProjectSwitch";
 import LanguageSwitch from "@/business/app-layout/header-components/LanguageSwitch"
+import TerminalEnter from "@/business/app-layout/header-components/TerminalEnter";
 
 export default {
   name: "HorizontalHeader",
-  components: { LanguageSwitch, ProjectSwitch, Home, UserSetting, SidebarToggleButton}
+  components: {TerminalEnter, LanguageSwitch, ProjectSwitch, Home, UserSetting, SidebarToggleButton}
 }
 </script>
 

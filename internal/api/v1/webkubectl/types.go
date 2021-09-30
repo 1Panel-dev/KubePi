@@ -9,5 +9,5 @@ type Session struct {
 }
 
 type SessionResponse struct {
-	SessionId string `json:"sessionId"`
+	Token string `json:"token"`
 }

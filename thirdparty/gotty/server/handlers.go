@@ -127,20 +127,7 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 	windowTitle := ""
 	params := query.Query()
 	params.Del("arg")
-	arg := ""
-	if len(params.Get("token")) > 0 {
-		ttyParameter := server.cache.Get(params.Get("token"))
-		cachedKey := params.Get("token")
-		if ttyParameter != nil {
-			windowTitle = ttyParameter.Title
-			arg = ttyParameter.Arg
-			server.cache.Delete(cachedKey)
-		} else {
-			arg = "ERROR:Invalid Token"
-		}
-	} else {
-		arg = "ERROR:No Token Provided"
-	}
+	arg := params.Get("token")
 	params.Add("arg", arg)
 	log.Println("arg: " + arg)
 	var slave Slave
