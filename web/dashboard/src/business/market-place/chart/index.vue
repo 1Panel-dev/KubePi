@@ -15,12 +15,12 @@
       </el-row>
       <el-row :gutter="20" v-infinite-scroll="load" :infinite-scroll-disabled="loading || moreLoading">
         <el-col v-for="(d,index) in shows" v-bind:key="index" :xs="8" :sm="8" :lg="6">
-          <div>
-            <el-card :body-style="{padding: '0px'}" class="d-card el-card">
+          <div @click="getChartDetail(d)">
+            <el-card :body-style="{padding: '0px'}" class="d-card el-card" >
               <el-row :gutter="24">
                 <el-col :span="8">
-                  <div style="margin-top: 32px;margin-left: 25px;margin-bottom: 15px">
-                    <el-image :src="d.icon" fit="contain" style="height: 56px;width: 56px;position:relative">
+                  <div style="margin-top: 32px;margin-left: 30px;margin-bottom: 15px">
+                    <el-image :src="d.icon" fit="contain" style="height: 56px;width: 56px;position:relative" @click="getChartDetail(d)">
                       <div slot="error" class="image-slot">
                         <img :src="require('@/assets/apps.svg')"/>
                       </div>
@@ -50,7 +50,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listRepos, searchCharts} from "@/api/charts"
+import {getChart, listRepos, searchCharts} from "@/api/charts"
 
 export default {
   name: "Charts",
@@ -126,6 +126,11 @@ export default {
         total: 0,
       }
       this.currentSlice = 0
+    },
+    getChartDetail(row) {
+      getChart(this.cluster,row.repo,row.name).then(res => {
+        console.log(res.data)
+      })
     }
   },
   created () {

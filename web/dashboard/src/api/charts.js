@@ -11,8 +11,8 @@ export function deleteChart (name) {
   return del(`${baseUrl}/${name}`)
 }
 
-export function getChart (name) {
-  return get(`${baseUrl}/${name}`)
+export function getChart (cluster,repo,name) {
+  return get(`${baseUrl}/${name}?cluster=${cluster}&repo=${repo}`)
 }
 
 export function updateChart (name, user) {

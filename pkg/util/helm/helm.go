@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/cmd/helm/search"
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/getter"
@@ -165,6 +166,50 @@ func (c Client) ListCharts(repoName, pattern string) ([]*search.Result, error) {
 	}
 	search.SortScore(result)
 	return result, nil
+}
+
+func (c Client) GetCharts(repoName, name string) ([]*search.Result, error) {
+	charts, err := c.ListCharts(repoName, name)
+	if err != nil {
+		return nil, err
+	}
+	var result []*search.Result
+	for _, chart := range charts {
+		if chart.Chart.Name == name {
+			result = append(result, chart)
+		}
+	}
+	return result, nil
+}
+
+func (c Client) GetChartDetail(repoName, name, version string) (*chart.Chart, error) {
+	repos, err := c.ListRepo()
+	if err != nil {
+		return nil, err
+	}
+	var re *repo.Entry
+	for _, r := range repos {
+		if r.Name == repoName {
+			re = r
+		}
+	}
+	if re == nil {
+		return nil, errors.New("get chart detail failed, repo not found")
+	}
+	client := action.NewShow(action.ShowAll)
+	client.Version = version
+	client.RepoURL = re.URL
+	client.Username = re.Username
+	client.Password = re.Password
+	p, err := client.LocateChart(name, c.settings)
+	if err != nil {
+		return nil, err
+	}
+	ct, err := loader.Load(p)
+	if err != nil {
+		return nil, err
+	}
+	return ct, nil
 }
 
 func (c Client) ListRepo() ([]*repo.Entry, error) {

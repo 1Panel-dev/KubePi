@@ -16,6 +16,7 @@ type Service interface {
 	AddRepo(cluster string, create *v1Chart.RepoCreate) error
 	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
 	RemoveRepo(cluster string, name string) error
+	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
 }
 
 func NewService() Service {
@@ -125,4 +126,33 @@ func (c *service) ListCharts(cluster, repo string, num, size int, pattern string
 	}
 	result := chartArray[(num-1)*size : end]
 	return result, len(chartArray), nil
+}
+
+func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+	allVersionCharts, err := helmClient.GetCharts(repo, name)
+	if err != nil {
+		return nil, err
+	}
+	var result v1Chart.ChArrayResult
+	for _, chart := range allVersionCharts {
+		result.Versions = append(result.Versions, chart.Chart.Version)
+	}
+	lastVersion := allVersionCharts[0].Chart.Metadata.Version
+	chart, err := helmClient.GetChartDetail(repo, allVersionCharts[0].Chart.Name, lastVersion)
+	if err != nil {
+		return nil, err
+	}
+	result.Chart = *chart
+	return &result, nil
 }

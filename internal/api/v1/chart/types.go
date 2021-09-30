@@ -19,3 +19,8 @@ type Chart struct {
 	Icon        string `json:"icon"`
 	Description string `json:"description"`
 }
+
+type Detail struct {
+	Name     string `json:"name"`
+	Versions string `json:"versions"`
+}
