@@ -12,11 +12,6 @@ KubePi 是一款简单易用的开源 Kubernetes 可视化管理面板。
 
 KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户。它允许开发人员管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地处理 Kubernetes 集群中的复杂性。
 
-### 组件项目
-
-- **[KubeOperator](https://github.com/KubeOperator/KubeOperator)**: 轻量级 Kubernetes 发行版，专注于帮助企业规划、部署和运营生产级别的 Kubernetes 集群
-- **[Web Kubectl](https://github.com/KubeOperator/webkubectl)**: 在 Web 浏览器中运行 kubectl 命令
-
 ### UI 展示
 
 ![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/kubepi-demo.gif)
