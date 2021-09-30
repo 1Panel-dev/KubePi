@@ -49,6 +49,16 @@ const Charts = {
         title: "business.chart.app",
       }
     },
+    {
+      path: "/apps/:repo/:name",
+      component: () => import("@/business/market-place/chart/detail"),
+      name: "ChartDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/apps",
+      }
+    },
   ]
 }
 
