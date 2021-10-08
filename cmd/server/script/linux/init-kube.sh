@@ -36,7 +36,7 @@ current_context=`kubectl config current-context`
 cluster=${current_context%@*}
 username=${current_context#*@}
 
-echo -e PS1='['${username}@${cluster}']$ '  >> .bashrc
+echo -e PS1=\"'['${username}@${cluster}']$ '\"  >> .bashrc
 
 echo "Welcome to kubepi web terminal, try kubectl --help."
 
