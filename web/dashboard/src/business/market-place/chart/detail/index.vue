@@ -1,26 +1,32 @@
 <template>
-  <layout-content :header="$t('business.chart.app')" v-loading="loading">
+  <layout-content :header="$t('business.chart.app')" v-loading="loading" :back-to="{ name: 'Charts' }">
     <el-row type="flex" :gutter="20">
       <el-col :span="16">
         <div>
-          <el-image :src="current.metadata.icon" fit="contain" style="height: 56px;width: 56px;position:relative">
+          <el-image :src="current.metadata.icon" fit="contain" style="height: 65px;width: 65px;position:relative">
             <div slot="error" class="image-slot">
               <img :src="require('@/assets/apps.svg')"/>
             </div>
           </el-image>
         </div>
       </el-col>
+      <el-col :span="8">
+        <div style="text-align: right">
+          <el-button style="margin-right: 150px" type="primary">安装</el-button>
+        </div>
+      </el-col>
     </el-row>
     <el-row type="flex" :gutter="20">
-      <el-col :span="20">
+      <el-col :span="18">
         <div>
           <div v-html="compiledMarkdown">
           </div>
         </div>
       </el-col>
-      <el-col :span="4">
-        <div>
-          <h3>Chart Versions</h3>
+      <el-col :span="6">
+        <div class="detail">
+          <span class="title">Chart Versions</span>
+          <br>
           <table>
             <tr>
               <th width="33%"></th>
@@ -36,23 +42,43 @@
             </tr>
           </table>
         </div>
-        <div>
-          <h3>Application Version</h3>
-          <span>{{current.metadata.appVersion}}</span>
-        </div>
-        <div>
-          <h3>Maintainers</h3>
+        <div class="detail">
+          <span class="title">Application Version</span>
+          <br>
           <table>
-            <tr v-for="(maintainer,index) in current.metadata.maintainers" :key="index">
-              <el-link :href="'mailto:'+maintainer.email">{{maintainer.name}}</el-link>
+            <tr>
+              <td><span>{{ current.metadata.appVersion }}</span></td>
             </tr>
           </table>
         </div>
-        <div>
-          <h3>Related</h3>
+        <div class="detail">
+          <span class="title">Maintainers</span>
+          <br>
+          <table>
+            <tr v-for="(maintainer,index) in current.metadata.maintainers" :key="index">
+              <el-link :href="'mailto:'+maintainer.email">{{ maintainer.name }}</el-link>
+            </tr>
+          </table>
+        </div>
+        <div class="detail">
+          <span class="title">Related</span>
+          <br>
           <table>
             <tr v-for="(source,index) in current.metadata.sources" :key="index">
-              <el-link :href="source">{{source}}</el-link>
+              <el-link :href="source">{{ source }}</el-link>
+            </tr>
+          </table>
+        </div>
+        <div class="detail">
+          <span class="title">Keywords</span>
+          <br>
+          <table>
+            <tr>
+              <td>
+                <span v-for="(keyword,index) in current.metadata.keywords" :key="index">
+                  <span>{{ keyword }}&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</span>
+                </span>
+              </td>
             </tr>
           </table>
         </div>
@@ -119,5 +145,11 @@ export default {
 </script>
 
 <style scoped>
+    .title {
+        font-size: 20px;
+    }
 
+    .detail {
+        margin-top: 20px;
+    }
 </style>
