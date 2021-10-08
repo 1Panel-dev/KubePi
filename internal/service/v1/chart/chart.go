@@ -146,13 +146,22 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	}
 	var result v1Chart.ChArrayResult
 	for _, chart := range allVersionCharts {
-		result.Versions = append(result.Versions, chart.Chart.Version)
+		result.Versions = append(result.Versions, v1Chart.Version{
+			Version: chart.Chart.Version,
+			Date:    chart.Chart.Created,
+		})
 	}
 	lastVersion := allVersionCharts[0].Chart.Metadata.Version
 	chart, err := helmClient.GetChartDetail(repo, allVersionCharts[0].Chart.Name, lastVersion)
 	if err != nil {
 		return nil, err
 	}
-	result.Chart = *chart
+	result.Chart.Metadata = *chart.Metadata
+	result.Chart.Values = chart.Values
+	for _, file := range chart.Files {
+		if file.Name == "README.md" {
+			result.Chart.Readme = string(file.Data)
+		}
+	}
 	return &result, nil
 }

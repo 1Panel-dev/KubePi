@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Charts' }">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: 'Repos' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
@@ -147,7 +147,7 @@ export default {
           type: "success",
           message: this.$t("commons.msg.update_success")
         })
-        this.$router.push({name: "Charts"})
+        this.$router.push({name: "Repos"})
       }).finally(() => {
         this.isSubmitGoing = false
         this.loading = false

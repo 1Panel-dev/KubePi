@@ -1,5 +1,20 @@
 import {dateFormat, datetimeFormat} from "fit2cloud-ui/src/filters/time"
 
+// export function DateFormat (value) {
+//   let data = value
+//   if (data == null) {
+//     return null
+//   }
+//   let dt = new Date(data)
+//   let yyyy = dt.getFullYear()
+//   let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
+//   let dd = dt.getDate().toString().padStart(2, '0')
+//   let h = dt.getHours().toString().padStart(2, '0')
+//   let m = dt.getMinutes().toString().padStart(2, '0')
+//   let s = dt.getSeconds().toString().padStart(2, '0')
+//   return yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
+// }
+
 
 export function AgeFormat (value) {
   if (value == null) {

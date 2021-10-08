@@ -9,18 +9,20 @@
           </el-select>
         </el-col>
         <el-col :span="12">
-          <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="listAll(true)">
+          <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable
+                    v-model="searchConfig.keywords" @change="listAll(true)">
           </el-input>
         </el-col>
       </el-row>
       <el-row :gutter="20" v-infinite-scroll="load" :infinite-scroll-disabled="loading || moreLoading">
         <el-col v-for="(d,index) in shows" v-bind:key="index" :xs="8" :sm="8" :lg="6">
           <div @click="getChartDetail(d)">
-            <el-card :body-style="{padding: '0px'}" class="d-card el-card" >
+            <el-card :body-style="{padding: '0px'}" class="d-card el-card">
               <el-row :gutter="24">
                 <el-col :span="8">
                   <div style="margin-top: 32px;margin-left: 30px;margin-bottom: 15px">
-                    <el-image :src="d.icon" fit="contain" style="height: 56px;width: 56px;position:relative" @click="getChartDetail(d)">
+                    <el-image :src="d.icon" fit="contain" style="height: 56px;width: 56px;position:relative"
+                              @click="getChartDetail(d)">
                       <div slot="error" class="image-slot">
                         <img :src="require('@/assets/apps.svg')"/>
                       </div>
@@ -50,7 +52,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getChart, listRepos, searchCharts} from "@/api/charts"
+import {listRepos, searchCharts} from "@/api/charts"
 
 export default {
   name: "Charts",
@@ -112,14 +114,14 @@ export default {
         this.paginationConfig.currentPage++
         this.moreLoading = true
         const { currentPage, pageSize } = this.paginationConfig
-        searchCharts(this.cluster, this.repo,currentPage, pageSize, this.searchConfig.keywords).then(res => {
+        searchCharts(this.cluster, this.repo, currentPage, pageSize, this.searchConfig.keywords).then(res => {
           this.data = this.data.concat(res.data.items)
           this.moreLoading = false
           this.load()
         })
       }
     },
-    init() {
+    init () {
       this.paginationConfig = {
         currentPage: 1,
         pageSize: 400,
@@ -127,10 +129,11 @@ export default {
       }
       this.currentSlice = 0
     },
-    getChartDetail(row) {
-      getChart(this.cluster,row.repo,row.name).then(res => {
-        console.log(res.data)
-      })
+    getChartDetail (row) {
+      this.$router.push({ name: "ChartDetail", params: { name: row.name, repo: row.repo } })
+      // getChart(this.cluster,row.repo,row.name).then(res => {
+      //   console.log(res.data)
+      // })
     }
   },
   created () {
