@@ -1,11 +1,12 @@
 <template>
   <layout-content :header="$t('business.chart.app_installed')">
-    <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects" :pagination-config="paginationConfig"
+    <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects"
+                   :pagination-config="paginationConfig"
                    @search="search">
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{resource:'charts',verb:'delete'}" type="primary" size="small"
-                     @click="onDelete">
+                     @click="onDelete()" :disabled="selects.length === 0">
             {{ $t("commons.button.delete") }}
           </el-button>
         </el-button-group>
@@ -25,18 +26,21 @@
           {{ row.chart.metadata.version }}
         </template>
       </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {searchInstalled} from "@/api/charts"
+import {deleteApp, searchInstalled} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
+import {checkPermissions} from "@/utils/permission"
+import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "Apps",
-  components: { LayoutContent, ComplexTable },
+  components: { LayoutContent, ComplexTable,KoTableOperations },
   props: {},
   data () {
     return {
@@ -52,7 +56,19 @@ export default {
       cluster: "",
       data: [],
       loading: false,
-      selects: []
+      selects: [],
+      buttons: [
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          disabled: () => {
+            return !checkPermissions({resource:'charts',verb:'delete'})
+          },
+          click: (row) => {
+            this.onDelete(row)
+          }
+        },
+      ]
     }
   },
   methods: {
@@ -72,8 +88,41 @@ export default {
         this.loading = false
       })
     },
-    onDelete () {
-
+    onDelete (row) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteApp(this.cluster, row.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteApp(this.cluster, select.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          this.loading = true
+          Promise.all(this.ps)
+            .then(() => {
+              this.search()
+              this.loading = false
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.loading = false
+              this.search()
+            })
+        }
+      })
     }
   },
   created () {

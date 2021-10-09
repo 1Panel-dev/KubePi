@@ -197,6 +197,10 @@ export default {
       installChart(this.form).then(() => {
         this.loading = false
         this.installStep = false
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.operation_success"),
+        })
       }).finally(() => {
         this.loading = false
       })

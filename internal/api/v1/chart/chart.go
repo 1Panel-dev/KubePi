@@ -164,6 +164,20 @@ func (h *Handler) AllInstalled() iris.Handler {
 	}
 }
 
+func (h *Handler) UnInstall() iris.Handler  {
+	return func(ctx *context.Context) {
+		cluster := ctx.URLParam("cluster")
+		name := ctx.Params().GetString("name")
+		err := h.chartService.UnInstallChart(cluster,name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", "")
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts")
@@ -176,4 +190,5 @@ func Install(parent iris.Party) {
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())
 	sp.Post("/installed", handler.AllInstalled())
+	sp.Delete("/uninstall/:name", handler.UnInstall())
 }

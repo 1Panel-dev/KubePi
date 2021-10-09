@@ -56,6 +56,10 @@ export function searchInstalled (cluster, page, size, keywords) {
   return post(url)
 }
 
+export function deleteApp(cluster,name) {
+  return del(`${baseUrl}/uninstall/${name}?cluster=${cluster}`)
+}
+
 
 
 
