@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+echo "export TERM=xterm-256color" >> /root/.bashrc
+echo "source /usr/share/bash-completion/bash_completion" >> /root/.bashrc
+echo 'source <(kubectl completion bash)' >> /root/.bashrc
+echo 'complete -F __start_kubectl k' >> /root/.bashrc
+
 if [ "${WELCOME_BANNER}" ]; then
     echo ${WELCOME_BANNER}
 fi
@@ -12,9 +17,8 @@ mkdir -p /nonexistent
 mount -t tmpfs -o size=${SESSION_STORAGE_SIZE} tmpfs /nonexistent
 cd /nonexistent
 cp /root/.bashrc ./
-#cp /etc/vim/vimrc.local .vimrc
-#echo 'source /opt/kubectl-aliases/.kubectl_aliases' >> .bashrc
-#echo -e 'PS1="> "\nalias ll="ls -la"' >> .bashrc
+cp /etc/vim/vimrc.local .vimrc
+echo 'source /opt/kubectl-aliases/.kubectl_aliases' >> .bashrc
 mkdir -p .kube
 
 export HOME=/nonexistent
@@ -29,12 +33,13 @@ if [[ $code -ne '200' ]];then
 fi
 
 current_context=`kubectl config current-context`
-username=${current_context%@*}
-cluster=${current_context#*@}
+cluster=${current_context%@*}
+username=${current_context#*@}
 
-echo "Welcome to kubepi"
-echo "Current cluster is ${username}"
-echo "Current user is ${cluster}"
+echo -e PS1=\"'['${username}@${cluster}']$ '\"  >> .bashrc
+
+echo "Welcome to kubepi web terminal, try kubectl --help."
+
 
 
 chown -R nobody:nogroup .kube
