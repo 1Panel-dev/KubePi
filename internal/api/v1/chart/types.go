@@ -24,3 +24,12 @@ type Detail struct {
 	Name     string `json:"name"`
 	Versions string `json:"versions"`
 }
+
+type ChInstall struct {
+	Name         string                 `json:"name"`
+	ChartName    string                 `json:"chartName"`
+	Repo         string                 `json:"repo"`
+	ChartVersion string                 `json:"chartVersion"`
+	Cluster      string                 `json:"cluster"`
+	Values       map[string]interface{} `json:"values"`
+}

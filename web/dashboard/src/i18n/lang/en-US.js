@@ -522,7 +522,9 @@ const message = {
       username: "Username",
       password: "Password",
       publicKey: "publicKey",
-      privateKey: "privateKey"
+      privateKey: "privateKey",
+      install: "Install",
+      namespace: "Namespace"
     }
   }
 }

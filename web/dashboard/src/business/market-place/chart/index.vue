@@ -131,9 +131,6 @@ export default {
     },
     getChartDetail (row) {
       this.$router.push({ name: "ChartDetail", params: { name: row.name, repo: row.repo } })
-      // getChart(this.cluster,row.repo,row.name).then(res => {
-      //   console.log(res.data)
-      // })
     }
   },
   created () {

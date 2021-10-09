@@ -20,6 +20,8 @@ import "@/styles/common/kubepi.css"
 import filters from "./filters";
 import JsonViewer from 'vue-json-viewer'
 import directives from "./directive";
+import "fit2cloud-ui/src/styles/components/steps.scss";
+
 
 
 Vue.config.productionTip = false

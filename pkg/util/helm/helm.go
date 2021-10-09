@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -83,28 +84,48 @@ func NewClient(config *Config) (*Client, error) {
 	client.unInstallActionConfig = unInstallActionConfig
 	return &client, nil
 }
-func (c Client) Install(name, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
+
+func (c Client) Install(name, repoName, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
+	//err := c.updateRepo(repoName)
+	//if err != nil {
+	//	return nil, err
+	//}
+	repos, err := c.ListRepo()
+	if err != nil {
+		return nil, err
+	}
+	var rp *repo.Entry
+	for _, r := range repos {
+		if r.Name == repoName {
+			rp = r
+		}
+	}
+	if rp == nil {
+		return nil, errors.New("get chart detail failed, repo not found")
+	}
 	client := action.NewInstall(c.installActionConfig)
 	client.ReleaseName = name
 	client.Namespace = c.Namespace
+	client.RepoURL = rp.URL
+	client.Username = rp.Username
+	client.Password = rp.Password
 	client.ChartPathOptions.InsecureSkipTLSverify = true
 	if len(chartVersion) != 0 {
 		client.ChartPathOptions.Version = chartVersion
 	}
 	p, err := client.ChartPathOptions.LocateChart(chartName, c.settings)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("locate chart %s failed: %v", chartName, err))
+		return nil, fmt.Errorf("locate chart %s failed: %v", chartName, err)
 	}
 	ct, err := loader.Load(p)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("load chart %s failed: %v", chartName, err))
+		return nil, fmt.Errorf("load chart %s failed: %v", chartName, err)
 	}
-
-	release, err := client.Run(ct, values)
+	re, err := client.Run(ct, values)
 	if err != nil {
-		return release, errors.Wrap(err, fmt.Sprintf("install tool %s with chart %s failed: %v", name, chartName, err))
+		return re, errors.Wrap(err, fmt.Sprintf("install %s with chart %s failed: %v", name, chartName, err))
 	}
-	return release, nil
+	return re, nil
 }
 
 func (c Client) Upgrade(name, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
@@ -298,4 +319,60 @@ func (c Client) AddRepo(name string, url string, username string, password strin
 		return err
 	}
 	return nil
+}
+
+func (c Client) updateRepo(repoName string) error {
+	repos, err := c.ListRepo()
+	if err != nil {
+		return err
+	}
+	var re *repo.Entry
+	for _, r := range repos {
+		if r.Name == repoName {
+			re = r
+		}
+	}
+	if re == nil {
+		return errors.New("repo not found")
+	}
+
+	settings := GetSettings()
+	repoFile := settings.RepositoryConfig
+	repoCache := settings.RepositoryCache
+	f, err := repo.LoadFile(repoFile)
+	if err != nil {
+		return fmt.Errorf("load file of repo %s failed: %v", repoFile, err)
+	}
+	f.Update(re)
+	var rps []*repo.ChartRepository
+	for _, cfg := range f.Repositories {
+		r, err := repo.NewChartRepository(cfg, getter.All(settings))
+		if err != nil {
+			return err
+		}
+		if repoCache != "" {
+			r.CachePath = repoCache
+		}
+		rps = append(rps, r)
+	}
+	updateCharts(rps)
+	return nil
+}
+
+func updateCharts(repos []*repo.ChartRepository) {
+	fmt.Printf("Hang tight while we grab the latest from your chart repositories...")
+	var wg sync.WaitGroup
+	for _, re := range repos {
+		wg.Add(1)
+		go func(re *repo.ChartRepository) {
+			defer wg.Done()
+			if _, err := re.DownloadIndexFile(); err != nil {
+				fmt.Printf("...Unable to get an update from the %q chart repository (%s):\n\t%s\n", re.Config.Name, re.Config.URL, err)
+			} else {
+				fmt.Printf("...Successfully got an update from the %q chart repository\n", re.Config.Name)
+			}
+		}(re)
+	}
+	wg.Wait()
+	fmt.Printf("Update Complete. ⎈ Happy Helming!⎈ ")
 }

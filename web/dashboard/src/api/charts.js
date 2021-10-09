@@ -39,3 +39,15 @@ export function searchCharts (cluster,repo, page, size, keywords) {
   return post(url)
 }
 
+export function getChartByVersion (cluster,repo,name,version) {
+  return get(`${baseUrl}/detail/${name}?cluster=${cluster}&repo=${repo}&version=${version}`)
+}
+
+export function installChart (data) {
+  return post(`${baseUrl}/install`, data)
+}
+
+
+
+
+

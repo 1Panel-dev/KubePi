@@ -17,6 +17,8 @@ type Service interface {
 	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
 	RemoveRepo(cluster string, name string) error
 	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
+	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
+	InstallChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 }
 
 func NewService() Service {
@@ -164,4 +166,50 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 		}
 	}
 	return &result, nil
+}
+
+func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+	chart, err := helmClient.GetChartDetail(repo, name, version)
+	if err != nil {
+		return nil, err
+	}
+	var result v1Chart.ChDetail
+	result.Values = chart.Values
+	result.Metadata = *chart.Metadata
+	for _, file := range chart.Files {
+		if file.Name == "README.md" {
+			result.Readme = string(file.Data)
+		}
+	}
+	return &result, nil
+}
+
+func (c *service) InstallChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return err
+	}
+	_, err = helmClient.Install(name, repoName, chartName, chartVersion, values)
+	if err != nil {
+		return err
+	}
+	return nil
 }

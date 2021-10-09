@@ -523,7 +523,9 @@ const message = {
       username: "用户名",
       password: "密码",
       publicKey: "公钥",
-      privateKey: "私钥"
+      privateKey: "私钥",
+      install: "安装",
+      namespace: "命名空间"
     }
   },
 }
