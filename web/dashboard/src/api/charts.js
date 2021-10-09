@@ -48,6 +48,16 @@ export function installChart (data) {
 }
 
 
+export function searchInstalled (cluster, page, size, keywords) {
+  let url = `${baseUrl}/installed?pageNum=${page}&pageSize=${size}&cluster=${cluster}`
+  if (keywords) {
+    url = `${url}&pattern=${keywords}`
+  }
+  return post(url)
+}
+
+
+
 
 
 

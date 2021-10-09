@@ -23,7 +23,7 @@ const Charts = {
       }
     },
     {
-      path: "create",
+      path: "/repos/create",
       component: () => import("@/business/market-place/repo/create"),
       name: "RepoCreate",
       hidden: true,
@@ -32,7 +32,7 @@ const Charts = {
       }
     },
     {
-      path: "edit/:name",
+      path: "/repos/edit/:name",
       component: () => import("@/business/market-place/repo/edit"),
       name: "RepoEdit",
       hidden: true,
@@ -42,7 +42,7 @@ const Charts = {
       }
     },
     {
-      path: "/apps",
+      path: "/charts",
       component: () => import("@/business/market-place/chart"),
       name: "Charts",
       meta: {
@@ -50,13 +50,21 @@ const Charts = {
       }
     },
     {
-      path: "/apps/:repo/:name",
+      path: "/charts/:repo/:name",
       component: () => import("@/business/market-place/chart/detail"),
       name: "ChartDetail",
       hidden: true,
       props: true,
       meta: {
         activeMenu: "/apps",
+      }
+    },
+    {
+      path: "/apps",
+      component: () => import("@/business/market-place/app"),
+      name: "Apps",
+      meta: {
+        title: "business.chart.app_installed",
       }
     },
   ]

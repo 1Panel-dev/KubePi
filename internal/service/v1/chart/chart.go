@@ -7,6 +7,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/util/helm"
 	"helm.sh/helm/v3/cmd/helm/search"
+	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
 )
 
@@ -19,6 +20,7 @@ type Service interface {
 	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
 	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
 	InstallChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
+	ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error)
 }
 
 func NewService() Service {
@@ -212,4 +214,23 @@ func (c *service) InstallChart(cluster, repoName, name, chartName, chartVersion 
 		return err
 	}
 	return nil
+}
+
+func (c *service) ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, 0, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	releases, total, err := helmClient.List(size, num, pattern)
+	if err != nil {
+		return nil, 0, err
+	}
+	return releases, total, nil
 }

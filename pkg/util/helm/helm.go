@@ -41,6 +41,7 @@ type Config struct {
 type Client struct {
 	installActionConfig   *action.Configuration
 	unInstallActionConfig *action.Configuration
+	listActionConfig      *action.Configuration
 	Namespace             string
 	settings              *cli.EnvSettings
 	Architectures         string
@@ -81,15 +82,38 @@ func NewClient(config *Config) (*Client, error) {
 	if err := unInstallActionConfig.Init(cf, config.OldNamespace, helmDriver, nolog); err != nil {
 		return nil, err
 	}
-	client.unInstallActionConfig = unInstallActionConfig
+	client.unInstallActionConfig = installActionConfig
+	listActionConfig := new(action.Configuration)
+	if err := listActionConfig.Init(cf, config.OldNamespace, helmDriver, nolog); err != nil {
+		return nil, err
+	}
+	client.listActionConfig = listActionConfig
 	return &client, nil
 }
 
+func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int, error) {
+	client := action.NewList(c.listActionConfig)
+	client.AllNamespaces = true
+	client.SetStateMask()
+	client.All = true
+	list, err := client.Run()
+	if err != nil {
+		return nil, 0, err
+	}
+	client.Limit = limit
+	client.Offset = offset - 1
+	if pattern != "" {
+		client.Filter = pattern
+	}
+	result, err := client.Run()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return result, len(list), nil
+}
+
 func (c Client) Install(name, repoName, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
-	//err := c.updateRepo(repoName)
-	//if err != nil {
-	//	return nil, err
-	//}
 	repos, err := c.ListRepo()
 	if err != nil {
 		return nil, err
@@ -141,6 +165,7 @@ func (c Client) Upgrade(name, chartName, chartVersion string, values map[string]
 	ct, err := loader.Load(p)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("load chart %s failed: %v", chartName, err))
+
 	}
 
 	release, err := client.Run(name, ct, values)

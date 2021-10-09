@@ -33,3 +33,6 @@ type ChInstall struct {
 	Cluster      string                 `json:"cluster"`
 	Values       map[string]interface{} `json:"values"`
 }
+
+type HelmInstalled struct {
+}

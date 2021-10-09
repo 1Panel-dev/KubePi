@@ -525,7 +525,9 @@ const message = {
       publicKey: "公钥",
       privateKey: "私钥",
       install: "安装",
-      namespace: "命名空间"
+      namespace: "命名空间",
+      app_installed: "已安装应用",
+      version: "版本"
     }
   },
 }

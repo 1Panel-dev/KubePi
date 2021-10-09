@@ -148,6 +148,22 @@ func (h *Handler) InstallChart() iris.Handler {
 	}
 }
 
+func (h *Handler) AllInstalled() iris.Handler {
+	return func(ctx *context.Context) {
+		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
+		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
+		pattern := ctx.URLParam("pattern")
+		cluster := ctx.URLParam("cluster")
+		installed, total, err := h.chartService.ListAllInstalled(cluster, pageNum, pageSize, pattern)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", pkgV1.Page{Items: installed, Total: total})
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts")
@@ -159,4 +175,5 @@ func Install(parent iris.Party) {
 	sp.Post("/search", handler.ListCharts())
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())
+	sp.Post("/installed", handler.AllInstalled())
 }

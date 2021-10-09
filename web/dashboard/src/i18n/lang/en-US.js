@@ -524,7 +524,9 @@ const message = {
       publicKey: "publicKey",
       privateKey: "privateKey",
       install: "Install",
-      namespace: "Namespace"
+      namespace: "Namespace",
+      app_installed: "Installed App",
+      version: "Version"
     }
   }
 }

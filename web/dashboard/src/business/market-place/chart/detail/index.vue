@@ -196,6 +196,7 @@ export default {
       installForm.repo = this.repo
       installChart(this.form).then(() => {
         this.loading = false
+        this.installStep = false
       }).finally(() => {
         this.loading = false
       })
