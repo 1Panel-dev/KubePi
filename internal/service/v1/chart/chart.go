@@ -24,6 +24,7 @@ type Service interface {
 	UnInstallChart(cluster, name string) error
 	GetAppDetail(cluster string, name string) (*release.Release, error)
 	GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdate, error)
+	UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 }
 
 func NewService() Service {
@@ -239,6 +240,22 @@ func (c *service) InstallChart(cluster, repoName, name, chartName, chartVersion 
 		return err
 	}
 	_, err = helmClient.Install(name, repoName, chartName, chartVersion, values)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	_, err = helmClient.Upgrade(name, repoName, chartName, chartVersion, values)
 	if err != nil {
 		return err
 	}

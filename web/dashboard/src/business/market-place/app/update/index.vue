@@ -9,7 +9,7 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item :label="$t('business.chart.version')" prop="version">
-                    <el-select v-model="form.version" @change="getDetailByVersion(form.version)">
+                    <el-select v-model="form.chartVersion" @change="getDetailByVersion(form.chartVersion)">
                       <el-option v-for="(vs,index) in versions"
                                  :label="vs.version" :key="index" :value="vs.version">
                         <span  style="float: left">{{vs.version}}</span>
@@ -37,7 +37,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getApp, getChartByVersion, getChartUpdate} from "@/api/charts"
+import {getApp, getChartByVersion, getChartUpdate, updateChart} from "@/api/charts"
 import YamlEditor from "@/components/yaml-editor"
 
 export default {
@@ -61,7 +61,21 @@ export default {
   },
   methods: {
     onSubmit() {
-
+      const installForm = this.form
+      installForm.cluster = this.cluster
+      installForm.chartName = this.oldChart.metadata.name
+      installForm.name = this.name
+      installForm.repo = this.repo
+      this.loading = true
+      updateChart(this.name,installForm).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.operation_success"),
+        })
+        this.$router.push({name:"Apps"})
+      }).finally(() => {
+        this.loading = false
+      })
     },
     onCancel() {
       this.$router.push({name: "Apps"})
@@ -72,7 +86,7 @@ export default {
         this.oldValues = res.data.chart.values
         this.oldChart = res.data.chart
         this.form.values = res.data.chart.values
-        this.form.version = res.data.chart.metadata.version
+        this.form.chartVersion = res.data.chart.metadata.version
         this.chartMap.set(res.data.chart.metadata.version,res.data.chart)
 
         if ( res.data.chart.values['image']['repository'] === "") {

@@ -44,11 +44,6 @@ func (h *Handler) GetChart() iris.Handler {
 		ctx.Values().Set("data", cs)
 	}
 }
-func (h *Handler) UpdateChart() iris.Handler {
-	return func(ctx *context.Context) {
-	}
-}
-
 func (h *Handler) ListRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.URLParam("cluster")
@@ -136,7 +131,7 @@ func (h *Handler) GetChartForUpdate() iris.Handler {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.URLParam("cluster")
 		repo := ctx.URLParam("repo")
-		cs, err := h.chartService.GetChartsUpdate(cluster,repo,name)
+		cs, err := h.chartService.GetChartsUpdate(cluster, repo, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -154,6 +149,23 @@ func (h *Handler) InstallChart() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 		}
 		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", &req)
+	}
+}
+
+func (h *Handler) UpdateChart() iris.Handler {
+	return func(ctx *context.Context) {
+		var req ChInstall
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+		err := h.chartService.UpgradeChart(req.Cluster, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -197,7 +209,7 @@ func (h *Handler) GetAppDetail() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.URLParam("cluster")
 		name := ctx.Params().GetString("name")
-		data,err := h.chartService.GetAppDetail(cluster, name)
+		data, err := h.chartService.GetAppDetail(cluster, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -223,4 +235,5 @@ func Install(parent iris.Party) {
 	app.Delete("/:name", handler.UnInstall())
 	app.Get("/:name", handler.GetAppDetail())
 	app.Get("/update/:name", handler.GetChartForUpdate())
+	app.Put("/upgrade/:name", handler.UpdateChart())
 }

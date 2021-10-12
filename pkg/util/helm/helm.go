@@ -168,9 +168,26 @@ func (c Client) Install(name, repoName, chartName, chartVersion string, values m
 	return re, nil
 }
 
-func (c Client) Upgrade(name, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
+func (c Client) Upgrade(name, repoName, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {
+	repos, err := c.ListRepo()
+	if err != nil {
+		return nil, err
+	}
+	var rp *repo.Entry
+	for _, r := range repos {
+		if r.Name == repoName {
+			rp = r
+		}
+	}
+	if rp == nil {
+		return nil, errors.New("get chart detail failed, repo not found")
+	}
+
 	client := action.NewUpgrade(c.installActionConfig)
 	client.Namespace = c.Namespace
+	client.RepoURL = rp.URL
+	client.Username = rp.Username
+	client.Password = rp.Password
 	client.DryRun = false
 	client.ChartPathOptions.InsecureSkipTLSverify = true
 	client.ChartPathOptions.Version = chartVersion

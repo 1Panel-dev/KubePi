@@ -69,6 +69,10 @@ export function getChartUpdate (cluster, repo, name) {
   return get(`${appUrl}/update/${name}?cluster=${cluster}&repo=${repo}`)
 }
 
+export function upgradeChart(name,data) {
+  return put(`${appUrl}/${name}`,data)
+}
+
 
 
 
