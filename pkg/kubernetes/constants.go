@@ -612,4 +612,25 @@ var initClusterRoles = []rbacV1.ClusterRole{
 			},
 		},
 	},
+	{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "manage-appmarket",
+			Annotations: map[string]string{
+				"description": "i18n_manage_appmarket",
+				"builtin":     "true",
+				"created-at":  time.Now().Format("2006-01-02 15:04:05"),
+			},
+			Labels: map[string]string{
+				LabelManageKey:   "kubepi",
+				LabelRoleTypeKey: RoleTypeCluster,
+			},
+		},
+		Rules: []rbacV1.PolicyRule{
+			{
+				APIGroups: []string{"kubepi.io"},
+				Resources: []string{"appmarkets"},
+				Verbs:     []string{"*"},
+			},
+		},
+	},
 }

@@ -167,7 +167,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				if len(ss) >= 4 {
 					resourceName := ss[3]
 					//过滤session资源
-					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" {
+					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {
@@ -194,7 +194,8 @@ func roleAccessHandler() iris.Handler {
 		//// 通过api resource 过滤出来资源主体,method 过滤操作
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
-		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") {
+		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") &&
+			!strings.Contains(ctx.Request().URL.Path, "/charts")  && !strings.Contains(ctx.Request().URL.Path, "/apps") {
 			// 放通admin权限
 			if u.IsAdministrator {
 				ctx.Next()

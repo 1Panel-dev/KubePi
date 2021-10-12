@@ -5,7 +5,7 @@
                    @search="search">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="{resource:'charts',verb:'delete'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}" type="primary" size="small"
                      @click="onDelete()" :disabled="selects.length === 0">
             {{ $t("commons.button.delete") }}
           </el-button>
@@ -59,23 +59,23 @@ export default {
       selects: [],
       buttons: [
         {
-          label: this.$t("commons.button.delete"),
-          icon: "el-icon-delete",
-          disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "delete" })
-          },
-          click: (row) => {
-            this.onDelete(row)
-          }
-        },
-        {
           label: this.$t("business.chart.upgrade"),
           icon: "el-icon-edit",
           disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "upgrade" })
+            return !checkPermissions({scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'update'})
           },
           click: (row) => {
             this.onUpgrade(row)
+          }
+        },
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          disabled: () => {
+            return !checkPermissions({scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'delete'})
+          },
+          click: (row) => {
+            this.onDelete(row)
           }
         },
       ]

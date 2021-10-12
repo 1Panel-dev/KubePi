@@ -1,14 +1,16 @@
 import Layout from "@/business/app-layout/horizontal-layout"
 
 const Charts = {
-  path: "",
+  path: "/charts",
   sort: 7,
   component: Layout,
   name: "ChartManagement",
-  // requirePermission: {
-  //   resource: "charts",
-  //   verb: "list"
-  // },
+  requirePermission: {
+    apiGroup: "kubepi.io",
+    resource: "appmarkets",
+    verb: "list",
+    scope:"cluster"
+  },
   meta: {
     title: "business.chart.marketPlace",
     icon: "el-icon-s-shop",
@@ -18,6 +20,12 @@ const Charts = {
       path: "/repos",
       component: () => import("@/business/market-place/repo"),
       name: "Repos",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "list",
+        scope:"cluster"
+      },
       meta: {
         title: "business.chart.chart",
       }
@@ -26,6 +34,12 @@ const Charts = {
       path: "/repos/create",
       component: () => import("@/business/market-place/repo/create"),
       name: "RepoCreate",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "create",
+        scope:"cluster"
+      },
       hidden: true,
       meta: {
         activeMenu: "/repos",
@@ -35,6 +49,12 @@ const Charts = {
       path: "/repos/edit/:name",
       component: () => import("@/business/market-place/repo/edit"),
       name: "RepoEdit",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "update",
+        scope:"cluster"
+      },
       hidden: true,
       props: true,
       meta: {
@@ -45,6 +65,12 @@ const Charts = {
       path: "/charts",
       component: () => import("@/business/market-place/chart"),
       name: "Charts",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "list",
+        scope:"cluster"
+      },
       meta: {
         title: "business.chart.app",
       }
@@ -53,6 +79,12 @@ const Charts = {
       path: "/charts/:repo/:name",
       component: () => import("@/business/market-place/chart/detail"),
       name: "ChartDetail",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "get",
+        scope:"cluster"
+      },
       hidden: true,
       props: true,
       meta: {
@@ -63,6 +95,12 @@ const Charts = {
       path: "/apps",
       component: () => import("@/business/market-place/app"),
       name: "Apps",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "list",
+        scope:"cluster"
+      },
       meta: {
         title: "business.chart.app_installed",
       }
@@ -71,6 +109,12 @@ const Charts = {
       path: "/apps/:name",
       component: () => import("@/business/market-place/app/update"),
       name: "AppUpgrade",
+      requirePermission: {
+        apiGroup: "kubepi.io",
+        resource: "appmarkets",
+        verb: "update",
+        scope:"cluster"
+      },
       hidden: true,
       props: true,
       meta: {

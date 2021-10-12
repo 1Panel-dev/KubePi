@@ -13,7 +13,7 @@
         </el-col>
         <el-col :span="8">
           <div style="text-align: right">
-            <el-button style="margin-right: 150px" type="primary" @click="install">{{ $t("business.chart.install") }}
+            <el-button  v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}" style="margin-right: 150px" type="primary" @click="install">{{ $t("business.chart.install") }}
             </el-button>
           </div>
         </el-col>

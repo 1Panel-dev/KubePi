@@ -4,7 +4,7 @@
                    @search="search">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="{resource:'charts',verb:'create'}" type="primary" size="small"
+          <el-button  v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}" type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.add") }}
           </el-button>
@@ -15,26 +15,11 @@
           <span :style="{color: row.color}">{{ row.name }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column :label="$t('business.chart.type')" prop="type" min-width="80" fix>-->
-<!--        <template v-slot:default="{row}">-->
-<!--          {{ row.type }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column :label="'URL'" prop="url" min-width="80" fix>
         <template v-slot:default="{row}">
           {{ row.url }}
         </template>
       </el-table-column>
-      <!--      <el-table-column :label="$t('business.chart.branch')" prop="branch" min-width="80" fix>-->
-      <!--        <template v-slot:default="{row}">-->
-      <!--          {{ row.spec.gitBranch }}-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-<!--      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>-->
-<!--        <template v-slot:default="{row}">-->
-<!--          {{ row.createAt | datetimeFormat }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
   </layout-content>
@@ -59,16 +44,6 @@ export default {
       cluster: "",
       isSubmitGoing: false,
       buttons: [
-        // {
-        //   label: this.$t("commons.button.edit"),
-        //   icon: "el-icon-edit",
-        //   click: (row) => {
-        //     this.onDetail(row.name)
-        //   },
-        //   disabled: () => {
-        //     return !checkPermissions({ resource: "charts", verb: "update" })
-        //   }
-        // },
         {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
@@ -76,7 +51,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return !checkPermissions({ resource: "charts", verb: "delete" })
+            return  !checkPermissions({scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'delete'})
           },
         },
       ]
