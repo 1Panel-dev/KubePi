@@ -42,6 +42,7 @@ type Client struct {
 	installActionConfig   *action.Configuration
 	unInstallActionConfig *action.Configuration
 	listActionConfig      *action.Configuration
+	getActionConfig       *action.Configuration
 	Namespace             string
 	settings              *cli.EnvSettings
 	Architectures         string
@@ -88,6 +89,12 @@ func NewClient(config *Config) (*Client, error) {
 		return nil, err
 	}
 	client.listActionConfig = listActionConfig
+
+	getActionConfig := new(action.Configuration)
+	if err := getActionConfig.Init(cf, config.Namespace, helmDriver, nolog); err != nil {
+		return nil, err
+	}
+	client.getActionConfig = getActionConfig
 	return &client, nil
 }
 
@@ -111,6 +118,15 @@ func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int
 	}
 
 	return result, len(list), nil
+}
+
+func (c Client) GetDetail(name string) (*release.Release, error) {
+	client := action.NewGet(c.getActionConfig)
+	result, err := client.Run(name)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (c Client) Install(name, repoName, chartName, chartVersion string, values map[string]interface{}) (*release.Release, error) {

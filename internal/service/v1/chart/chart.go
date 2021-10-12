@@ -22,6 +22,8 @@ type Service interface {
 	InstallChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 	ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error)
 	UnInstallChart(cluster, name string) error
+	GetAppDetail(cluster string, name string) (*release.Release, error)
+	GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdate, error)
 }
 
 func NewService() Service {
@@ -171,6 +173,32 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	return &result, nil
 }
 
+func (c *service) GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdate, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+	allVersionCharts, err := helmClient.GetCharts(repo, name)
+	if err != nil {
+		return nil, err
+	}
+	var updates []v1Chart.ChUpdate
+	for _, chart := range allVersionCharts {
+		updates = append(updates, v1Chart.ChUpdate{
+			Version:    chart.Chart.Version,
+			AppVersion: chart.Chart.AppVersion,
+		})
+	}
+	return updates, nil
+}
+
 func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
@@ -253,4 +281,19 @@ func (c *service) ListAllInstalled(cluster string, num, size int, pattern string
 		return nil, 0, err
 	}
 	return releases, total, nil
+}
+
+func (c *service) GetAppDetail(cluster string, name string) (*release.Release, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return helmClient.GetDetail(name)
 }

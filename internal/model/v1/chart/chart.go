@@ -27,3 +27,8 @@ type Version struct {
 	Version string    `json:"version"`
 	Date    time.Time `json:"date"`
 }
+
+type ChUpdate struct {
+	Version    string `json:"version"`
+	AppVersion string `json:"appVersion"`
+}

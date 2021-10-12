@@ -527,7 +527,9 @@ const message = {
       install: "安装",
       namespace: "命名空间",
       app_installed: "已安装应用",
-      version: "版本"
+      version: "版本",
+      upgrade: "升级",
+      repo: "repo不存在"
     }
   },
 }

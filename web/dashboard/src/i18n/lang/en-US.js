@@ -526,7 +526,9 @@ const message = {
       install: "Install",
       namespace: "Namespace",
       app_installed: "Installed App",
-      version: "Version"
+      version: "Version",
+      upgrade: "Upgrade",
+      repo: "Repo not found"
     }
   }
 }

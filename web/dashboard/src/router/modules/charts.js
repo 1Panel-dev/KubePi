@@ -56,7 +56,7 @@ const Charts = {
       hidden: true,
       props: true,
       meta: {
-        activeMenu: "/apps",
+        activeMenu: "/charts",
       }
     },
     {
@@ -65,6 +65,16 @@ const Charts = {
       name: "Apps",
       meta: {
         title: "business.chart.app_installed",
+      }
+    },
+    {
+      path: "/apps/:name",
+      component: () => import("@/business/market-place/app/update"),
+      name: "AppUpgrade",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/apps",
       }
     },
   ]

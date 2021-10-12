@@ -131,6 +131,21 @@ func (h *Handler) GetChartByVersion() iris.Handler {
 	}
 }
 
+func (h *Handler) GetChartForUpdate() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		cluster := ctx.URLParam("cluster")
+		repo := ctx.URLParam("repo")
+		cs, err := h.chartService.GetChartsUpdate(cluster,repo,name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", cs)
+	}
+}
+
 func (h *Handler) InstallChart() iris.Handler {
 	return func(ctx *context.Context) {
 		var req ChInstall
@@ -164,17 +179,31 @@ func (h *Handler) AllInstalled() iris.Handler {
 	}
 }
 
-func (h *Handler) UnInstall() iris.Handler  {
+func (h *Handler) UnInstall() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.URLParam("cluster")
 		name := ctx.Params().GetString("name")
-		err := h.chartService.UnInstallChart(cluster,name)
+		err := h.chartService.UnInstallChart(cluster, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 		ctx.Values().Set("data", "")
+	}
+}
+
+func (h *Handler) GetAppDetail() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.URLParam("cluster")
+		name := ctx.Params().GetString("name")
+		data,err := h.chartService.GetAppDetail(cluster, name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", data)
 	}
 }
 
@@ -189,6 +218,9 @@ func Install(parent iris.Party) {
 	sp.Post("/search", handler.ListCharts())
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())
-	sp.Post("/installed", handler.AllInstalled())
-	sp.Delete("/uninstall/:name", handler.UnInstall())
+	app := parent.Party("/apps")
+	app.Post("/search", handler.AllInstalled())
+	app.Delete("/:name", handler.UnInstall())
+	app.Get("/:name", handler.GetAppDetail())
+	app.Get("/update/:name", handler.GetChartForUpdate())
 }

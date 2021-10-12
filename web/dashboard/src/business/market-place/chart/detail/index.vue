@@ -177,10 +177,9 @@ export default {
       }
       this.loading = true
       getChartByVersion(this.cluster, this.repo, this.name, version).then(res => {
-        this.loading = false
         this.current = res.data
-        this.loading = false
         this.chartMap.set(this.current.metadata.version, res.data)
+        this.loading = false
       })
     },
     install () {

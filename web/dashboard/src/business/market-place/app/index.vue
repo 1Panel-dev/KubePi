@@ -40,7 +40,7 @@ import KoTableOperations from "@/components/ko-table-operations"
 
 export default {
   name: "Apps",
-  components: { LayoutContent, ComplexTable,KoTableOperations },
+  components: { LayoutContent, ComplexTable, KoTableOperations },
   props: {},
   data () {
     return {
@@ -62,10 +62,20 @@ export default {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           disabled: () => {
-            return !checkPermissions({resource:'charts',verb:'delete'})
+            return !checkPermissions({ resource: "charts", verb: "delete" })
           },
           click: (row) => {
             this.onDelete(row)
+          }
+        },
+        {
+          label: this.$t("business.chart.upgrade"),
+          icon: "el-icon-edit",
+          disabled: () => {
+            return !checkPermissions({ resource: "charts", verb: "upgrade" })
+          },
+          click: (row) => {
+            this.onUpgrade(row)
           }
         },
       ]
@@ -123,6 +133,9 @@ export default {
             })
         }
       })
+    },
+    onUpgrade (row) {
+      this.$router.push({ name: "AppUpgrade", params: {name: row.name } })
     }
   },
   created () {
