@@ -3,6 +3,7 @@
 package server
 
 import (
+	"io"
 	"os"
 	"os/exec"
 )
@@ -13,8 +14,8 @@ func (e *KubePiSerer) startTty() {
 	go func() {
 		c := exec.Command(cmd, params...)
 		c.Env = append(c.Env, os.Environ()...)
-		c.Stdout = os.Stdout
-		c.Stderr = os.Stderr
+		c.Stdout = io.Discard
+		c.Stderr = io.Discard
 		if err := c.Run(); err != nil {
 			e.logger.Error(err)
 		}
