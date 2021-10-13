@@ -16,7 +16,7 @@ import (
 	certv1 "k8s.io/api/certificates/v1"
 	certv1beta1 "k8s.io/api/certificates/v1beta1"
 	rbacV1 "k8s.io/api/rbac/v1"
-	apiextensionv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensionv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
@@ -584,25 +584,25 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 	if err != nil {
 		return err
 	}
-	crd := &apiextensionv1beta1.CustomResourceDefinition{
+	crd := &apiextensionv1.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.io"},
-		Spec: apiextensionv1beta1.CustomResourceDefinitionSpec{
+		Spec: apiextensionv1.CustomResourceDefinitionSpec{
 			Group: "kubepi.io",
-			Scope: apiextensionv1beta1.ClusterScoped,
-			Names: apiextensionv1beta1.CustomResourceDefinitionNames{
+			Scope: apiextensionv1.ClusterScoped,
+			Names: apiextensionv1.CustomResourceDefinitionNames{
 				Plural:     "appmarkets",
 				Kind:       "Appmarket",
 				Singular:   "appmarket",
 				ShortNames: []string{"am"},
 			},
-			Versions: []apiextensionv1beta1.CustomResourceDefinitionVersion{{
+			Versions: []apiextensionv1.CustomResourceDefinitionVersion{{
 				Name:    "v1",
 				Served:  true,
 				Storage: true,
 			}},
 		},
 	}
-	_, err = client.ApiextensionsV1beta1().CustomResourceDefinitions().Create(context.TODO(), crd, metav1.CreateOptions{})
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Create(context.TODO(), crd, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
