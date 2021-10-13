@@ -16,6 +16,8 @@ import (
 	certv1 "k8s.io/api/certificates/v1"
 	certv1beta1 "k8s.io/api/certificates/v1beta1"
 	rbacV1 "k8s.io/api/rbac/v1"
+	apiextensionv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
@@ -42,6 +44,7 @@ type Interface interface {
 	CleanAllRBACResource() error
 	CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error
 	CreateOrUpdateRolebinding(namespace string, clusterRoleName string, username string, builtIn bool) error
+	CreateAppMarketCRD() error
 }
 
 type Kubernetes struct {
@@ -566,6 +569,40 @@ func (k *Kubernetes) Ping() error {
 	}
 	_, err = client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 	client.AuthorizationV1().SelfSubjectAccessReviews()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (k *Kubernetes) CreateAppMarketCRD() error {
+	cfg, err := k.Config()
+	if err != nil {
+		return err
+	}
+	client, err := apiextension.NewForConfig(cfg)
+	if err != nil {
+		return err
+	}
+	crd := &apiextensionv1beta1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.io"},
+		Spec: apiextensionv1beta1.CustomResourceDefinitionSpec{
+			Group: "kubepi.io",
+			Scope: apiextensionv1beta1.ClusterScoped,
+			Names: apiextensionv1beta1.CustomResourceDefinitionNames{
+				Plural:     "appmarkets",
+				Kind:       "Appmarket",
+				Singular:   "appmarket",
+				ShortNames: []string{"am"},
+			},
+			Versions: []apiextensionv1beta1.CustomResourceDefinitionVersion{{
+				Name:    "v1",
+				Served:  true,
+				Storage: true,
+			}},
+		},
+	}
+	_, err = client.ApiextensionsV1beta1().CustomResourceDefinitions().Create(context.TODO(), crd, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
