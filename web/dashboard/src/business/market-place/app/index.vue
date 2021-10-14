@@ -21,9 +21,24 @@
           {{ row.chart.metadata.name }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('commons.table.status')" prop="status" fix>
+        <template v-slot:default="{row}">
+          {{ row.info.status }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('business.chart.version')" prop="version" fix>
         <template v-slot:default="{row}">
           {{ row.chart.metadata.version }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="'App '+$t('business.chart.version')" prop="version" fix>
+        <template v-slot:default="{row}">
+          {{ row.chart.metadata.appVersion }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('commons.table.created_time')" prop="info.first_deployed" fix>
+        <template v-slot:default="{row}">
+          {{ row.info.first_deployed | age }}
         </template>
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>

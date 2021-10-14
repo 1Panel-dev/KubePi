@@ -47,6 +47,7 @@
     <div style="height: 20px;text-align: center">
       <i class="el-icon-loading" v-if="moreLoading"></i>
     </div>
+    <el-divider content-position="center" v-if="shows.length>= paginationConfig.total">已经到底了</el-divider>
   </layout-content>
 </template>
 
@@ -100,6 +101,9 @@ export default {
     },
     load () {
       if (this.loading || this.moreLoading) {
+        return
+      }
+      if (this.shows.length>= this.paginationConfig.total ) {
         return
       }
       if (this.shows.length < this.data.length) {
