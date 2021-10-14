@@ -27,6 +27,7 @@ import (
 
 const (
 	helmDriver = "configmap"
+	helmPath   = "/root/.config/helm"
 )
 
 func nolog(format string, v ...interface{}) {}
@@ -37,6 +38,7 @@ type Config struct {
 	OldNamespace  string
 	Namespace     string
 	Architectures string
+	ClusterName   string
 }
 type Client struct {
 	installActionConfig   *action.Configuration
@@ -46,22 +48,45 @@ type Client struct {
 	Namespace             string
 	settings              *cli.EnvSettings
 	Architectures         string
+	ClusterName           string
 }
 
-func GetSettings() *cli.EnvSettings {
+func GetSettings(cluster string) *cli.EnvSettings {
+	checkFiles(cluster)
 	return &cli.EnvSettings{
-		PluginsDirectory: helmpath.DataPath("plugins"),
-		RegistryConfig:   helmpath.ConfigPath("registry.json"),
-		RepositoryConfig: helmpath.ConfigPath("repositories.yaml"),
-		RepositoryCache:  helmpath.CachePath("repository"),
+		PluginsDirectory: helmpath.DataPath(cluster + "/plugins"),
+		RegistryConfig:   helmpath.ConfigPath(cluster + "/registry.json"),
+		RepositoryConfig: helmpath.ConfigPath(cluster + "/repositories.yaml"),
+		RepositoryCache:  helmpath.CachePath(cluster + "/repository"),
 	}
+}
+
+func checkFiles(cluster string) {
+
+	var dataPath = helmpath.ConfigPath(cluster)
+	var repositoryPath = dataPath + "/repositories.yaml"
+	var registryPath = dataPath + "/registry.json"
+
+	if _, err := os.Stat(dataPath); os.IsNotExist(err) {
+		fmt.Sprint(os.Mkdir(dataPath, 0777))
+		os.Chmod(dataPath, 0777)
+	}
+	if _, err := os.Stat(repositoryPath); os.IsNotExist(err) {
+		os.Create(repositoryPath)
+		os.Create(repositoryPath)
+	}
+	if _, err := os.Stat(registryPath); os.IsNotExist(err) {
+		os.Create(registryPath)
+		os.Create(registryPath)
+	}
+	return
 }
 
 func NewClient(config *Config) (*Client, error) {
 	client := Client{
 		Architectures: config.Architectures,
 	}
-	client.settings = GetSettings()
+	client.settings = GetSettings(config.ClusterName)
 	cf := genericclioptions.NewConfigFlags(true)
 	inscure := true
 	apiServer := config.Host
@@ -74,6 +99,7 @@ func NewClient(config *Config) (*Client, error) {
 		client.Namespace = config.Namespace
 	}
 	cf.Namespace = &client.Namespace
+	client.ClusterName = config.ClusterName
 	installActionConfig := new(action.Configuration)
 	if err := installActionConfig.Init(cf, client.Namespace, helmDriver, nolog); err != nil {
 		return nil, err
@@ -229,7 +255,7 @@ func (c Client) ListCharts(repoName, pattern string) ([]*search.Result, error) {
 				continue
 			}
 		}
-		settings := GetSettings()
+		settings := GetSettings(c.ClusterName)
 		path := filepath.Join(settings.RepositoryCache, helmpath.CacheIndexFile(re.Name))
 		indexFile, err := repo.LoadIndexFile(path)
 		if err != nil {
@@ -292,7 +318,7 @@ func (c Client) GetChartDetail(repoName, name, version string) (*chart.Chart, er
 }
 
 func (c Client) ListRepo() ([]*repo.Entry, error) {
-	settings := GetSettings()
+	settings := GetSettings(c.ClusterName)
 	var repos []*repo.Entry
 	f, err := repo.LoadFile(settings.RepositoryConfig)
 	if err != nil {
@@ -302,7 +328,7 @@ func (c Client) ListRepo() ([]*repo.Entry, error) {
 }
 
 func (c Client) RemoveRepo(name string) (bool, error) {
-	settings := GetSettings()
+	settings := GetSettings(c.ClusterName)
 	f, err := repo.LoadFile(settings.RepositoryConfig)
 	if err != nil {
 		return false, err
@@ -318,7 +344,7 @@ func (c Client) RemoveRepo(name string) (bool, error) {
 }
 
 func (c Client) AddRepo(name string, url string, username string, password string) error {
-	settings := GetSettings()
+	settings := GetSettings(c.ClusterName)
 
 	repoFile := settings.RepositoryConfig
 
@@ -394,7 +420,7 @@ func (c Client) updateRepo(repoName string) error {
 		return errors.New("repo not found")
 	}
 
-	settings := GetSettings()
+	settings := GetSettings(c.ClusterName)
 	repoFile := settings.RepositoryConfig
 	repoCache := settings.RepositoryCache
 	f, err := repo.LoadFile(repoFile)
