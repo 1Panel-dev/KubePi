@@ -249,8 +249,9 @@ const description = {
   i18n_view_service_discovery: "服务发现只读用户,拥有当前命名空间内 Service、Endpoint、Ingress和NetworkPolicy 对象的只读权限",
   i18n_manage_service_discovery: "服务发现管理员,拥有当前命名空间内 Service、Endpoint、Ingress和NetworkPolicy 对象的所有权限",
   i18n_manage_rbac: "命名空间访问控制,拥有当前命名空间内 Role、RoleBinding 和 ServiceAccount 对象的所有权限",
-  i18n_view_rbac: "命名空间访问控制 只读用户,拥有当前命名空间内 Role、RoleBinding 和 ServiceAccount 对象的只读权限"
+  i18n_view_rbac: "命名空间访问控制 只读用户,拥有当前命名空间内 Role、RoleBinding 和 ServiceAccount 对象的只读权限",
 
+  i18n_manage_appmarket: "应用市场管理员, 拥有对应用市场的所有权限"
 
 }
 

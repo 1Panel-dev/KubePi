@@ -175,7 +175,8 @@ const description = {
   i18n_view_service_discovery: "The service found a read-only user with read-only permissions on service, endpoint, progress and networkpolicy objects in the current namespace",
   i18n_manage_service_discovery: "The service discovery administrator has all permissions on service, endpoint, ingress and networkpolicy objects in the current namespace",
   i18n_manage_rbac: "The service discovery administrator has all permissions on service, endpoint, ingress and networkpolicy objects in the current namespace",
-  i18n_view_rbac: "Namespace access control read-only user with read-only permissions for role, rolebinding and serviceaccount objects in the current namespace"
+  i18n_view_rbac: "Namespace access control read-only user with read-only permissions for role, rolebinding and serviceaccount objects in the current namespace",
+  i18n_manage_appmarket: "Application market administrator, who has all rights to the application market"
 }
 
 const apiObjects = {
