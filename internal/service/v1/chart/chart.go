@@ -46,6 +46,7 @@ func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, err
@@ -65,6 +66,7 @@ func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return err
@@ -84,6 +86,7 @@ func (c *service) RemoveRepo(cluster string, name string) error {
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return err
@@ -106,6 +109,7 @@ func (c *service) ListCharts(cluster, repo string, num, size int, pattern string
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, 0, err
@@ -132,7 +136,10 @@ func (c *service) ListCharts(cluster, repo string, num, size int, pattern string
 	if end > len(chartArray) {
 		end = len(chartArray)
 	}
-	result := chartArray[(num-1)*size : end]
+	result := []*search.Result{}
+	if len(chartArray) > 0 {
+		result = chartArray[(num-1)*size : end]
+	}
 	return result, len(chartArray), nil
 }
 
@@ -144,6 +151,7 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, err
@@ -182,6 +190,7 @@ func (c *service) GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdat
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, err
@@ -208,6 +217,7 @@ func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Cha
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, err
@@ -235,6 +245,7 @@ func (c *service) InstallChart(cluster, repoName, name, chartName, chartVersion 
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return err
@@ -254,6 +265,7 @@ func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion 
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	_, err = helmClient.Upgrade(name, repoName, chartName, chartVersion, values)
 	if err != nil {
@@ -270,6 +282,7 @@ func (c *service) UnInstallChart(cluster, name string) error {
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return err
@@ -289,6 +302,7 @@ func (c *service) ListAllInstalled(cluster string, num, size int, pattern string
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, 0, err
@@ -308,6 +322,7 @@ func (c *service) GetAppDetail(cluster string, name string) (*release.Release, e
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
 	})
 	if err != nil {
 		return nil, err
