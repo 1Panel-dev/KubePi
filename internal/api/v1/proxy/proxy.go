@@ -202,7 +202,9 @@ func pagerAndSearch(ctx *context.Context, listObj K8sListObj, keywords string) (
 	num, err1 := ctx.Values().GetInt("pageNum")
 	size, err2 := ctx.Values().GetInt("pageSize")
 	var p pkgV1.Page
-	listObj.Sort()
+	if listObj.Kind != "NodeList" {
+		listObj.Sort()
+	}
 	if keywords != "" {
 		listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
 	}
