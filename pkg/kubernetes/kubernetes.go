@@ -286,7 +286,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 	}
 
-	namespaceSet := collectons.NewStringSet()
+	namespaces := []string{}
 	if all {
 		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
@@ -294,7 +294,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 		for i := range ns.Items {
 			if ns.Items[i].Status.Phase == "Active" {
-				namespaceSet.Add(ns.Items[i].Name)
+				namespaces = append(namespaces, ns.Items[i].Name)
 			}
 		}
 	} else {
@@ -305,13 +305,13 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		for i := range rbs.Items {
 			for j := range rbs.Items[i].Subjects {
 				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == username {
-					namespaceSet.Add(rbs.Items[i].Namespace)
+					namespaces = append(namespaces, rbs.Items[i].Namespace)
 				}
 			}
 		}
 	}
 
-	return namespaceSet.ToSlice(), nil
+	return namespaces, nil
 }
 
 func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
