@@ -68,7 +68,7 @@ func checkFiles(cluster string) {
 	var registryPath = dataPath + "/registry.json"
 
 	if _, err := os.Stat(dataPath); os.IsNotExist(err) {
-		fmt.Sprint(os.Mkdir(dataPath, 0777))
+		os.MkdirAll(dataPath, 0777)
 		os.Chmod(dataPath, 0777)
 	}
 	if _, err := os.Stat(repositoryPath); os.IsNotExist(err) {
