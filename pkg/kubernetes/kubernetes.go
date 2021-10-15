@@ -58,7 +58,7 @@ func (k *Kubernetes) VersionMinor() (int, error) {
 	}
 	reg := regexp.MustCompile("[^0-9]")
 	minor, err := strconv.Atoi(reg.ReplaceAllString(v.Minor, ""))
-	return minor, nil
+	return minor, err
 }
 
 func (k *Kubernetes) CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error {
@@ -389,7 +389,8 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	minor, err := strconv.Atoi(v.Minor)
+	reg := regexp.MustCompile("[^0-9]")
+	minor, err := strconv.Atoi(reg.ReplaceAllString(v.Minor, ""))
 	if err != nil {
 		return nil, err
 	}
