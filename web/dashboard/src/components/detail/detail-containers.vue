@@ -52,7 +52,6 @@
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import { getWorkLoadByName } from "@/api/workloads"
-import { randomNum } from "@/utils/randomNum"
 
 export default {
   name: "KoDetailContainers",
@@ -113,36 +112,12 @@ export default {
       })
     },
     openTerminal(row) {
-      let containers = [row.name]
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "terminal",
-        key: randomNum(8),
-        name: this.name,
-        cluster: this.cluster,
-        namespace: this.namespace,
-        pod: this.name,
-        container: row.name,
-        containers: containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.name, type: "terminal" } })
+      window.open(routeUrl.href, "_blank")
     },
     openTerminalLogs(row) {
-      let containers = [row.name]
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "logs",
-        key: randomNum(8),
-        name: this.name,
-        cluster: this.cluster,
-        namespace: this.namespace,
-        pod: this.name,
-        container: row.name,
-        containers: containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.name, type: "log" } })
+      window.open(routeUrl.href, "_blank")
     },
   },
 }

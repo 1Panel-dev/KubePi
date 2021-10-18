@@ -13,7 +13,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)" >{{ row.metadata.name }}</el-link>
+          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" show-overflow-tooltip />
@@ -41,8 +41,7 @@
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import { listPodsWithNsSelector } from "@/api/pods"
-import { randomNum } from "@/utils/randomNum"
-import {checkPermissions} from "@/utils/permission"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "KoDetailPods",
@@ -112,42 +111,14 @@ export default {
       })
     },
     openTerminal(row) {
-      let containers = []
-      for (const c of row.spec.containers) {
-        containers.push(c.name)
-      }
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "terminal",
-        key: randomNum(8),
-        name: row.metadata.name,
-        cluster: this.cluster,
-        namespace: row.metadata.namespace,
-        pod: row.metadata.name,
-        container: containers[0],
-        containers: containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let c = row.spec.containers[0].name
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "terminal" } })
+      window.open(routeUrl.href, "_blank")
     },
     openTerminalLogs(row) {
-      let containers = []
-      for (const c of row.spec.containers) {
-        containers.push(c.name)
-      }
-      let existTerminals = this.$store.getters.terminals
-      const item = {
-        type: "logs",
-        key: randomNum(8),
-        name: row.metadata.name,
-        cluster: this.cluster,
-        namespace: row.metadata.namespace,
-        pod: row.metadata.name,
-        container: containers[0],
-        containers: containers,
-      }
-      existTerminals.push(item)
-      this.$store.commit("terminal/TERMINALS", existTerminals)
+      let c = row.spec.containers[0].name
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "log" } })
+      window.open(routeUrl.href, "_blank")
     },
   },
 }
