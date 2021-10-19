@@ -45,7 +45,6 @@ export default {
       getNamespace(this.cluster, this.name).then(res => {
         this.loading = false
         this.item = res
-        delete this.item.metadata
         this.yaml = JSON.parse(JSON.stringify(this.item))
       })
     },

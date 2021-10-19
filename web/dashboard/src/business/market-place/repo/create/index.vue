@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     onCancel () {
-      this.$router.push({ name: "Charts" })
+      this.$router.push({ name: "Repos" })
     },
     onConfirm () {
       if (this.isSubmitGoing) {

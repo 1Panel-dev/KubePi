@@ -97,6 +97,9 @@ export default {
     getNodeByName () {
       this.loading = true
       getNode(this.cluster, this.name).then(res => {
+        if (res.metadata.resourceVersion) {
+          delete res.metadata.resourceVersion
+        }
         this.item = res
         this.loading = false
         if (this.showYaml) {

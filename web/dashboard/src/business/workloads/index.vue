@@ -294,6 +294,9 @@ export default {
       this.loading = true
       getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name)
         .then((res) => {
+          if (res.metadata.resourceVersion) {
+            delete res.metadata.resourceVersion
+          }
           this.form = res
           this.changeNs(this.form.metadata.namespace)
           if (!this.isCronJob()) {
@@ -685,7 +688,7 @@ export default {
           },
         ],
       }
-      this.podSpec.restartPolicy = (this.isCronJob() || this.isJob()) ? "Never" : "Always"
+      this.podSpec.restartPolicy = this.isCronJob() || this.isJob() ? "Never" : "Always"
       this.currentContainerIndex = 0
       this.currentContainer = this.podSpec.containers[0]
     }
