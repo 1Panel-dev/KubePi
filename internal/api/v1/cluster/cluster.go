@@ -19,6 +19,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 	"sync"
 )
 
@@ -52,6 +53,12 @@ func (h *Handler) CreateCluster() iris.Handler {
 			req.Spec.Authentication.Certificate.CertData = []byte(req.CertDataStr)
 			req.Spec.Authentication.Certificate.KeyData = []byte(req.KeyDataStr)
 		}
+		if req.Spec.Connect.Forward.ApiServer != "" {
+			if !strings.HasPrefix(req.Spec.Connect.Forward.ApiServer, "https://") && !strings.HasPrefix(req.Spec.Connect.Forward.ApiServer, "http://") {
+				req.Spec.Connect.Forward.ApiServer = fmt.Sprintf("%s%s", "https://", req.Spec.Connect.Forward.ApiServer)
+			}
+		}
+
 		// 生成一个rsa格式的私钥
 		privateKey, err := certificate.GeneratePrivateKey()
 		if err != nil {
