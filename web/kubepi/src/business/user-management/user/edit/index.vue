@@ -19,7 +19,7 @@
               <el-input v-model="form.email"></el-input>
             </el-form-item>
 
-            <el-form-item :label="$t('business.user.role')" prop="roles">
+            <el-form-item :label="$t('business.user.role')" prop="roles" required>
               <el-select v-model="form.roles"
                          multiple
                          style="width: 100%"
@@ -139,7 +139,10 @@ export default {
           Rules.RequiredRule,
           Rules.PasswordRule,
           {validator: validatePass2, trigger: 'blur'}
-        ]
+        ],
+        roles:[
+          Rules.RequiredRule,
+        ],
       },
       passwordChangeFrom: {
         newPassword: "",
