@@ -24,9 +24,16 @@ const NumberRule = {
   type: "number",
   message: i18n.t("commons.validate.number_limit")
 }
+const UrlRule = {
+  required: true,
+  pattern: /^(https?:\/\/(([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+\.)+[a-zA-Z]+)(:\d+)?(\/.*)?(\?.*)?(#.*)?$/,
+  message: i18n.t("commons.validate.url_rules"),
+  trigger: "blur"
+}
 export default {
   RequiredRule,
   SelectRule,
   NumberRule,
   CommonNameRule,
+  UrlRule,
 }

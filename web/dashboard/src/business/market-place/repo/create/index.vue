@@ -92,7 +92,7 @@ export default {
           Rules.RequiredRule
         ],
         url: [
-          Rules.RequiredRule
+          Rules.UrlRule
         ],
       },
       isSubmitGoing: false

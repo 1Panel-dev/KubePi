@@ -3,19 +3,19 @@
     <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search()"
                    :search-config="searchConfig">
       <template #header>
-        <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || selects[0].spec.unschedulable"
+        <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
-                   @click="cordon(selects[0],true)" icon="el-icon-video-pause">
+                   @click="cordon(true)" icon="el-icon-video-pause">
           {{$t('business.node.cordon')}}
         </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length !== 1 ||  selects[0] === null || !selects[0].spec.unschedulable"
+        <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
-                   @click="cordon(selects[0],false)" icon="el-icon-video-play">
+                   @click="cordon(false)" icon="el-icon-video-play">
           {{$t('business.node.uncordon')}}
         </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length !== 1"
+        <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
-                   @click="drain(selects[0])" icon="el-icon-refresh-right">
+                   @click="drain()" icon="el-icon-refresh-right">
           {{$t('business.node.drain')}}
         </el-button>
       </template>
@@ -126,24 +126,28 @@ export default {
     onDetail (row) {
       this.$router.push({ path: "/nodes/detail/" + row.metadata.name, query: { yamlShow: "false" } })
     },
-
-
-    cordon(row,isCordon) {
-      this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
-        let data = { spec: { unschedulable: isCordon } }
-        cordonNode(this.clusterName, row.metadata.name, data).then(() => {
-          this.$message({ type: "success", message: this.$t("commons.msg.operation_success") })
-          this.search()
-        })
-      })
+    checkIsValid(isCordon) {
+      if (isCordon) {
+        for (const item of this.selects) {
+          if (item.spec.unschedulable) {
+            this.$message({ type: "warning", message: this.$t("business.node.existing_cordoned") })
+            return false 
+          }
+        }
+      } else {
+        for (const item of this.selects) {
+          if (!item.spec.unschedulable) {
+            this.$message({ type: "warning", message: this.$t("business.node.existing_actived") })
+            return false
+          }
+        }
+      }
+      return true
     },
-    drain(row) {
+    cordon(isCordon) {
+      if (!this.checkIsValid(isCordon)) {
+        return
+      }
       this.$confirm(
         this.$t("commons.confirm_message.delete"),
         this.$t("commons.message_box.prompt"), {
@@ -151,18 +155,52 @@ export default {
           cancelButtonText: this.$t("commons.button.cancel"),
           type: "warning",
         }).then(() => {
-        let data = { spec: { unschedulable: true } }
-        cordonNode(this.clusterName, row.metadata.name, data).then(() => {
-          listPodsWithNsSelector(this.clusterName,"","","spec.nodeName="+row.metadata.name).then(res => {
-            this.batchDeletePod(res.items, row.metadata.name)
+          const ps = []
+          let data = { spec: { unschedulable: isCordon } }
+          for (const item of this.selects) {
+            ps.push(cordonNode(this.clusterName, item.metadata.name, data))
+          }
+          Promise.all(ps)
+          .then(() => {
+            this.search()
+            this.$message({ type: "success", message: this.$t("commons.msg.operation_success") })
           })
+        })
+    },
+    drain() {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        const ps = []
+        this.loading = true
+        let data = { spec: { unschedulable: true } }
+        for (const item of this.selects) {
+          ps.push(
+            cordonNode(this.clusterName, item.metadata.name, data).then(() => {
+              listPodsWithNsSelector(this.clusterName,"","","spec.nodeName="+item.metadata.name).then(res => {
+                this.batchDeletePod(res.items, item.metadata.name)
+              })
+            })
+          )
+        }
+        Promise.all(ps)
+        .then(() => {
+          this.search()
+          this.$message({ type: "success", message: this.$t("commons.msg.operation_success") })
+        })
+        .catch(() => {
+          this.loading = false
         })
       })
     },
     batchDeletePod (items, nodeName) {
       const ps = []
       for (const pod of items) {
-        if (pod.spec.nodeName === nodeName && pod.metadata.ownerReferences.kind !== "daemonset") {
+        if (pod.spec.nodeName === nodeName && pod.metadata.ownerReferences[0].kind !== "DaemonSet") {
           const rmPod = {
             apiVersion: "policy/v1beta1",
             kind: "Eviction",
@@ -173,20 +211,15 @@ export default {
             },
             deleteOptions: {},
           }
-          console.log(pod.spec.nodeName)
           ps.push(evictionPod(this.clusterName, pod.metadata.namespace, pod.metadata.name, rmPod))
         }
       }
       Promise.all(ps)
         .then(() => {
-          this.search()
           this.$message({
             type: "success",
             message: this.$t("business.node.drain_success"),
           })
-        })
-        .catch(() => {
-          this.search()
         })
     }
 
