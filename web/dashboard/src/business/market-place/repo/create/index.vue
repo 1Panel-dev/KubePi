@@ -117,6 +117,7 @@ export default {
       }
       this.isSubmitGoing = true
       this.loading = true
+      this.form.name = this.form.name.replace(" ", "")
       createRepo(this.cluster, this.form).then(() => {
         this.$message({
           type: "success",

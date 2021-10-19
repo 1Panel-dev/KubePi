@@ -149,7 +149,7 @@ export default {
       this.activeName = tab.index
     },
     onCancel() {
-      this.$router.push({name: "PersistentVolumes"})
+      this.$router.push({name: "PersistentVolumeClaim"})
     },
     onEditYaml() {
       this.showYaml = true

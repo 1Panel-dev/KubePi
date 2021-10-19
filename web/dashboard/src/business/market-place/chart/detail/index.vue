@@ -200,6 +200,7 @@ export default {
           type: "success",
           message: this.$t("commons.msg.operation_success"),
         })
+        this.$router.push({name: "Apps"})
       }).finally(() => {
         this.loading = false
       })
