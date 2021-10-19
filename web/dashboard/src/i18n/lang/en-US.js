@@ -143,6 +143,9 @@ const message = {
       restart: "Count"
     },
     node: {
+      cordon: "Cordon",
+      uncordon: "Uncordon",
+      drain: "Drain",
       ready: "Ready",
       role: "Role",
       os: "OS",

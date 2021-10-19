@@ -144,6 +144,9 @@ const message = {
       count: "次数"
     },
     node: {
+      cordon: "暂停",
+      uncordon: "恢复",
+      drain: "驱散",
       ready: "准备就绪",
       role: "角色",
       os: "操作系统",
