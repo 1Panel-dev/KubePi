@@ -11,4 +11,5 @@ var enUSMapping = TextMapping{
 	"must select one role":                  "you must have one role",
 	"must select one rule":                  "you must create one rule",
 	"user %s can not access resource %s %s": "user %s can not access resource %s %s",
+	"can not match original password":       "can not match original password",
 }

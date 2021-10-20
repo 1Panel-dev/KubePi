@@ -85,7 +85,7 @@ export default {
         callback(new Error(this.$t('business.user.please_input_password')));
       } else {
         if (this.passwordChangeFrom.newPassword !== '') {
-          this.$refs.ruleForm.validateField('checkPass');
+          this.$refs.passwordChangeFrom.validateField('checkPass');
         }
         callback();
       }
@@ -183,7 +183,7 @@ export default {
     },
     onChangePasswordConfirm() {
       let isFormReady = false
-      this.$refs["profileForm"].validate((valid) => {
+      this.$refs["passwordChangeFrom"].validate((valid) => {
         if (valid) {
           isFormReady = true
         }

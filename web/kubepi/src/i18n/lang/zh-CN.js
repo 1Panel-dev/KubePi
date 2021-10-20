@@ -64,7 +64,7 @@ const message = {
       select: "请选择{0}",
       required: "必填项",
       email: "请输入有效的电子邮箱",
-      password_help: "有效密码:8-30位,英文字母+数字+特殊字符(可选)",
+      password_help: "有效密码:8-30位,英文字母+数字+特殊字符(~!@#$%^&*,可选)",
       name_not_compliant: "该名称不符合命名规范",
     },
     msg: {
