@@ -13,7 +13,7 @@ const Charts = {
   },
   meta: {
     title: "business.chart.marketPlace",
-    icon: "el-icon-s-shop",
+    icon: "iconfont iconmarket",
   },
   children: [
     {

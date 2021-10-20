@@ -13,7 +13,7 @@ const Dashboard = {
             name: "Dashboard",
             meta: {
                 title: "business.dashboard.dashboard",
-                icon: "el-icon-data-line"
+                icon: "iconfont icongailan"
             },
         },
     ]

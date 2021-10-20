@@ -6,6 +6,20 @@
   "description": "KubeOperator UI",
   "glyphs": [
     {
+      "icon_id": "14151855",
+      "name": "概览",
+      "font_class": "gailan",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "1236816",
+      "name": "应用市场",
+      "font_class": "market",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
       "icon_id": "21400863",
       "name": "line-terminal（终端）",
       "font_class": "line-terminalzhongduan",
