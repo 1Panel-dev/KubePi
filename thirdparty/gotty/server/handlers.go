@@ -124,7 +124,7 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 	if err != nil {
 		return errors.Wrapf(err, "failed to parse arguments")
 	}
-	windowTitle := ""
+	windowTitle := "Webkubectl"
 	params := query.Query()
 	params.Del("arg")
 	arg := params.Get("token")
