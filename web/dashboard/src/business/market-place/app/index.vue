@@ -74,7 +74,7 @@ export default {
       selects: [],
       buttons: [
         {
-          label: this.$t("business.chart.upgrade"),
+          label: this.$t("commons.button.edit")+ "/" + this.$t("business.chart.upgrade"),
           icon: "el-icon-edit",
           disabled: () => {
             return !checkPermissions({scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'update'})

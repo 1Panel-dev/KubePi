@@ -47,7 +47,7 @@
     <div style="height: 20px;text-align: center">
       <i class="el-icon-loading" v-if="moreLoading"></i>
     </div>
-    <el-divider content-position="center" v-if="shows.length>= paginationConfig.total">已经到底了</el-divider>
+    <el-divider content-position="center" v-if="shows.length>= paginationConfig.total">{{$t('business.chart.is_over')}}</el-divider>
   </layout-content>
 </template>
 

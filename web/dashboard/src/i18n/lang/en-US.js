@@ -505,6 +505,7 @@ const message = {
     },
     chart: {
       marketPlace: "Marketplace",
+      is_over: "It's over.",
       app: "Charts",
       chart: "Chart Repositories",
       type: "Type",

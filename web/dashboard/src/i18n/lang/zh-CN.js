@@ -507,6 +507,7 @@ const message = {
     },
     chart: {
       marketPlace: "应用市场",
+      is_over: "已经到底了",
       app: "应用",
       chart: "Chart 仓库",
       type: "类型",
