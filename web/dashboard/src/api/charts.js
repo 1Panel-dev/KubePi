@@ -9,25 +9,25 @@ const repoUrl = (cluster) => {
   return `/api/v1/charts/${cluster}/repos`
 }
 
-const appUrl =(cluster) => {
+const appUrl = (cluster) => {
   return `/api/v1/apps/${cluster}`
 }
 
-export function createChart (cluster,data) {
+export function createChart (cluster, data) {
   return post(chartUrl(cluster), data)
 }
 
-export function deleteChart (cluster,name) {
+export function deleteChart (cluster, name) {
   return del(`${chartUrl(cluster)}/${name}`)
 }
 
 export function getChart (cluster, repo, name) {
   const params = {}
   params["repo"] = repo
-  return get(`${chartUrl(cluster)}/${name}`,params)
+  return get(`${chartUrl(cluster)}/${name}`, params)
 }
 
-export function updateChart (cluster,name, chart) {
+export function updateChart (cluster, name, chart) {
   return put(`${chartUrl(cluster)}/${name}`, chart)
 }
 
@@ -56,17 +56,16 @@ export function searchCharts (cluster, repo, page, size, keywords) {
     params["pageNum"] = page
     params["pageSize"] = size
   }
-  return get(url+"/search",params)
+  return get(url + "/search", params)
 }
 
 export function getChartByVersion (cluster, repo, name, version) {
   const params = {}
   params["repo"] = repo
   params["version"] = version
-  return get(`chartUrl(cluster)/detail/${name}`,params)
+  return get(`${chartUrl(cluster)}/detail/${name}`, params)
 }
-
-export function installChart (cluster,data) {
+export function installChart (cluster, data) {
   return post(`${chartUrl(cluster)}/install`, data)
 }
 
@@ -80,27 +79,25 @@ export function searchInstalled (cluster, page, size, keywords) {
     params["pageNum"] = page
     params["pageSize"] = size
   }
-  return get(`${appUrl(cluster)}/search`,params)
+  return get(`${appUrl(cluster)}/search`, params)
 }
 
-export function deleteApp (cluster, name) {
-  return del(`${appUrl(cluster)}/${name}`)
+export function deleteApp (cluster,namespace, name) {
+  return del(`${appUrl(cluster)}/${namespace}/${name}`)
 }
 
 export function getApp (cluster, name) {
   return get(`${appUrl(cluster)}/${name}`)
 }
 
-export function getChartUpdate (cluster, repo, name) {
+export function getChartUpdate (cluster, chart, name) {
   const params = {}
-  if (repo) {
-    params["repo"] = repo
-  }
+  params["chart"] = chart
   return get(`${appUrl(cluster)}/update/${name}`,params)
 }
 
-export function upgradeChart(cluster,name,data) {
-  return put(`${appUrl(cluster)}/${name}`,data)
+export function upgradeChart (cluster, name, data) {
+  return put(`${appUrl(cluster)}/${name}`, data)
 }
 
 

@@ -3,9 +3,12 @@ package chart
 import (
 	"errors"
 	v1Chart "github.com/KubeOperator/kubepi/internal/model/v1/chart"
+	v1ClusterApp "github.com/KubeOperator/kubepi/internal/model/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/util/helm"
+	"github.com/asdine/storm/v3"
 	"helm.sh/helm/v3/cmd/helm/search"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
@@ -21,21 +24,23 @@ type Service interface {
 	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
 	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error
 	ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error)
-	UnInstallChart(cluster, name string) error
+	UnInstallChart(cluster, namespace, name string) error
 	GetAppDetail(cluster string, name string) (*release.Release, error)
-	GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdate, error)
+	GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpdate, error)
 	UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 }
 
 func NewService() Service {
 	return &service{
-		clusterService: cluster.NewService(),
+		clusterService:    cluster.NewService(),
+		clusterAppService: clusterapp.NewService(),
 	}
 }
 
 type service struct {
 	common.DefaultDBService
-	clusterService cluster.Service
+	clusterService    cluster.Service
+	clusterAppService clusterapp.Service
 }
 
 func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
@@ -184,7 +189,7 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	return &result, nil
 }
 
-func (c *service) GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdate, error) {
+func (c *service) GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpdate, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, err
@@ -197,7 +202,11 @@ func (c *service) GetChartsUpdate(cluster, repo, name string) ([]v1Chart.ChUpdat
 	if err != nil {
 		return nil, err
 	}
-	allVersionCharts, err := helmClient.GetCharts(repo, name)
+	clusterApp, err := c.clusterAppService.Get(name, cluster, common.DBOptions{})
+	if err != nil {
+		return nil, errors.New("There is no version that can be upgraded")
+	}
+	allVersionCharts, err := helmClient.GetCharts(clusterApp.Repo, chart)
 	if err != nil {
 		return nil, err
 	}
@@ -257,6 +266,14 @@ func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, ch
 	if err != nil {
 		return err
 	}
+	err = c.clusterAppService.Create(&v1ClusterApp.ClusterApp{
+		AppName: name,
+		Repo:    repoName,
+		Cluster: cluster,
+	}, common.DBOptions{})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -270,6 +287,9 @@ func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion 
 		BearerToken: clu.Spec.Authentication.BearerToken,
 		ClusterName: cluster,
 	})
+	if err != nil {
+		return err
+	}
 	_, err = helmClient.Upgrade(name, repoName, chartName, chartVersion, values)
 	if err != nil {
 		return err
@@ -277,7 +297,7 @@ func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion 
 	return nil
 }
 
-func (c *service) UnInstallChart(cluster, name string) error {
+func (c *service) UnInstallChart(cluster, namespace, name string) error {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return err
@@ -286,12 +306,17 @@ func (c *service) UnInstallChart(cluster, name string) error {
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
 		ClusterName: cluster,
+		Namespace:   namespace,
 	})
 	if err != nil {
 		return err
 	}
 	_, err = helmClient.Uninstall(name)
 	if err != nil {
+		return err
+	}
+	err = c.clusterAppService.Delete(name, cluster, common.DBOptions{})
+	if err != nil && err != storm.ErrNotFound {
 		return err
 	}
 	return nil

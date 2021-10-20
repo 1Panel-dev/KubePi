@@ -37,7 +37,7 @@
                 <el-input v-model="form.username"></el-input>
               </el-form-item>
               <el-form-item :label="$t('business.chart.password')" prop="password">
-                <el-input v-model="form.password"></el-input>
+                <el-input type="password" v-model="form.password"></el-input>
               </el-form-item>
             </div>
             <div v-if="form.type==='SSH'">

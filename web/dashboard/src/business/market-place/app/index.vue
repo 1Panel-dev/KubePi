@@ -123,11 +123,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteApp(this.cluster, row.name))
+          this.ps.push(deleteApp(this.cluster, row.namespace,row.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteApp(this.cluster, select.name))
+              this.ps.push(deleteApp(this.cluster,  select.namespace,select.name))
             }
           }
         }

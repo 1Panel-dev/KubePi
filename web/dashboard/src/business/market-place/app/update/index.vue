@@ -12,8 +12,8 @@
                     <el-select v-model="form.chartVersion" @change="getDetailByVersion(form.chartVersion)">
                       <el-option v-for="(vs,index) in versions"
                                  :label="vs.version" :key="index" :value="vs.version">
-                        <span  style="float: left">{{vs.version}}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">AppVersion:{{vs.appVersion}}</span>
+                        <span style="float: left">{{ vs.version }}</span>
+                        <span style="float: right; color: #8492a6; font-size: 13px">AppVersion:{{ vs.appVersion }}</span>
                         <span style="float: right;" v-if="vs.version === oldChart.metadata.version">(current)</span>
                       </el-option>
                     </el-select>
@@ -42,7 +42,7 @@ import YamlEditor from "@/components/yaml-editor"
 
 export default {
   name: "AppUpgrade",
-  components: { LayoutContent,YamlEditor },
+  components: { LayoutContent, YamlEditor },
   props: {
     name: String
   },
@@ -60,48 +60,41 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
+    onSubmit () {
       const installForm = this.form
       installForm.cluster = this.cluster
       installForm.chartName = this.oldChart.metadata.name
       installForm.name = this.name
       installForm.repo = this.repo
       this.loading = true
-      updateChart(this.name,installForm).then(() => {
+      updateChart(this.cluster, this.name, installForm).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.operation_success"),
         })
-        this.$router.push({name:"Apps"})
+        this.$router.push({ name: "Apps" })
       }).finally(() => {
         this.loading = false
       })
     },
-    onCancel() {
-      this.$router.push({name: "Apps"})
+    onCancel () {
+      this.$router.push({ name: "Apps" })
     },
-    getDetail() {
+    getDetail () {
       this.loading = true
-      getApp(this.cluster,this.name).then(res => {
+      getApp(this.cluster, this.name).then(res => {
         this.oldValues = res.data.chart.values
         this.oldChart = res.data.chart
         this.form.values = res.data.chart.values
         this.form.chartVersion = res.data.chart.metadata.version
-        this.chartMap.set(res.data.chart.metadata.version,res.data.chart)
-
-        if ( res.data.chart.values['image']['repository'] === "") {
-          this.$message({
-            type: "error",
-            message: this.$t("business.chart.repo"),
-          })
-          return
-        }
-        const repos =  res.data.chart.values['image']['repository'].split('/')
-        this.repo = repos[0]
-        getChartUpdate(this.cluster, this.repo , res.data.chart.metadata.name).then(res => {
+        this.chartMap.set(res.data.chart.metadata.version, res.data.chart)
+        getChartUpdate(this.cluster, res.data.chart.metadata.name, this.name).then(res => {
           this.versions = res.data
+        }).finally(() => {
           this.loading = false
         })
+      }).finally(() => {
+        this.loading = false
       })
 
     },
