@@ -1,30 +1,16 @@
 {
-  "id": "2474164",
-  "name": "KubeOperator-UI",
+  "id": "2880763",
+  "name": "KubePi",
   "font_family": "iconfont",
   "css_prefix_text": "icon",
-  "description": "KubeOperator UI",
+  "description": "",
   "glyphs": [
     {
-      "icon_id": "21400863",
-      "name": "line-terminal（终端）",
-      "font_class": "line-terminalzhongduan",
-      "unicode": "e6f3",
-      "unicode_decimal": 59123
-    },
-    {
-      "icon_id": "14560260",
-      "name": "网络",
-      "font_class": "network",
-      "unicode": "e6d9",
-      "unicode_decimal": 59097
-    },
-    {
-      "icon_id": "16160912",
-      "name": "拼图",
-      "font_class": "custom",
-      "unicode": "e611",
-      "unicode_decimal": 58897
+      "icon_id": "1236816",
+      "name": "应用市场",
+      "font_class": "market",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
     },
     {
       "icon_id": "7688232",
@@ -32,13 +18,6 @@
       "font_class": "accesscontrol",
       "unicode": "e60b",
       "unicode_decimal": 58891
-    },
-    {
-      "icon_id": "15602347",
-      "name": "car dashboard",
-      "font_class": "dashboard",
-      "unicode": "e63a",
-      "unicode_decimal": 58938
     },
     {
       "icon_id": "11507809",
@@ -55,6 +34,13 @@
       "unicode_decimal": 58925
     },
     {
+      "icon_id": "14151855",
+      "name": "概览",
+      "font_class": "gailan",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
       "icon_id": "14406064",
       "name": "configuration",
       "font_class": "configuration",
@@ -62,11 +48,11 @@
       "unicode_decimal": 59275
     },
     {
-      "icon_id": "16307429",
-      "name": "钟表",
-      "font_class": "event",
-      "unicode": "e663",
-      "unicode_decimal": 58979
+      "icon_id": "14560260",
+      "name": "网络",
+      "font_class": "network",
+      "unicode": "e6d9",
+      "unicode_decimal": 59097
     },
     {
       "icon_id": "18816267",
@@ -76,11 +62,11 @@
       "unicode_decimal": 59077
     },
     {
-      "icon_id": "20610267",
-      "name": "服务器",
-      "font_class": "node",
-      "unicode": "e7cd",
-      "unicode_decimal": 59341
+      "icon_id": "21400863",
+      "name": "line-terminal（终端）",
+      "font_class": "line-terminalzhongduan",
+      "unicode": "e6f3",
+      "unicode_decimal": 59123
     },
     {
       "icon_id": "21671363",
@@ -88,391 +74,6 @@
       "font_class": "workload",
       "unicode": "e639",
       "unicode_decimal": 58937
-    },
-    {
-      "icon_id": "15493934",
-      "name": "授权",
-      "font_class": "authorization",
-      "unicode": "e609",
-      "unicode_decimal": 58889
-    },
-    {
-      "icon_id": "923716",
-      "name": "lock h5",
-      "font_class": "lock",
-      "unicode": "e610",
-      "unicode_decimal": 58896
-    },
-    {
-      "icon_id": "4720923",
-      "name": "更改密码",
-      "font_class": "genggaimima",
-      "unicode": "e60f",
-      "unicode_decimal": 58895
-    },
-    {
-      "icon_id": "1645892",
-      "name": "关于",
-      "font_class": "guanyu",
-      "unicode": "e65f",
-      "unicode_decimal": 58975
-    },
-    {
-      "icon_id": "6035351",
-      "name": "项目管理",
-      "font_class": "projectmanage",
-      "unicode": "e624",
-      "unicode_decimal": 58916
-    },
-    {
-      "icon_id": "19719374",
-      "name": "传输_上传",
-      "font_class": "shangchuan5",
-      "unicode": "e608",
-      "unicode_decimal": 58888
-    },
-    {
-      "icon_id": "5192988",
-      "name": "Star Star",
-      "font_class": "StarStar",
-      "unicode": "e635",
-      "unicode_decimal": 58933
-    },
-    {
-      "icon_id": "15760893",
-      "name": "华为",
-      "font_class": "huawei",
-      "unicode": "e607",
-      "unicode_decimal": 58887
-    },
-    {
-      "icon_id": "6480549",
-      "name": "openstack",
-      "font_class": "openstack",
-      "unicode": "e632",
-      "unicode_decimal": 58930
-    },
-    {
-      "icon_id": "16383206",
-      "name": "VMware Vsphere对接数据源",
-      "font_class": "vmware",
-      "unicode": "e61a",
-      "unicode_decimal": 58906
-    },
-    {
-      "icon_id": "13532955",
-      "name": "SFTP",
-      "font_class": "SFTP",
-      "unicode": "e647",
-      "unicode_decimal": 58951
-    },
-    {
-      "icon_id": "17895439",
-      "name": "Amazon S3上传",
-      "font_class": "s3",
-      "unicode": "e8e4",
-      "unicode_decimal": 59620
-    },
-    {
-      "icon_id": "1760690",
-      "name": "讨论",
-      "font_class": "taolun",
-      "unicode": "e602",
-      "unicode_decimal": 58882
-    },
-    {
-      "icon_id": "6642940",
-      "name": "bug",
-      "font_class": "bug",
-      "unicode": "e616",
-      "unicode_decimal": 58902
-    },
-    {
-      "icon_id": "15337722",
-      "name": "Logo GitHub",
-      "font_class": "huaban88",
-      "unicode": "e67c",
-      "unicode_decimal": 59004
-    },
-    {
-      "icon_id": "8287588",
-      "name": "Azure",
-      "font_class": "Azure",
-      "unicode": "e600",
-      "unicode_decimal": 58880
-    },
-    {
-      "icon_id": "16268521",
-      "name": "oss",
-      "font_class": "oss",
-      "unicode": "e605",
-      "unicode_decimal": 58885
-    },
-    {
-      "icon_id": "5209522",
-      "name": "ping",
-      "font_class": "ping",
-      "unicode": "e650",
-      "unicode_decimal": 58960
-    },
-    {
-      "icon_id": "2310534",
-      "name": "使用中",
-      "font_class": "in-use",
-      "unicode": "e629",
-      "unicode_decimal": 58921
-    },
-    {
-      "icon_id": "6191231",
-      "name": "错误",
-      "font_class": "error",
-      "unicode": "e60d",
-      "unicode_decimal": 58893
-    },
-    {
-      "icon_id": "21310037",
-      "name": "错误",
-      "font_class": "error2",
-      "unicode": "ed19",
-      "unicode_decimal": 60697
-    },
-    {
-      "icon_id": "7635228",
-      "name": "集群",
-      "font_class": "cluster",
-      "unicode": "e601",
-      "unicode_decimal": 58881
-    },
-    {
-      "icon_id": "17021866",
-      "name": "禁用",
-      "font_class": "diable",
-      "unicode": "e60c",
-      "unicode_decimal": 58892
-    },
-    {
-      "icon_id": "18879564",
-      "name": "帮 助",
-      "font_class": "bangzhu2",
-      "unicode": "e656",
-      "unicode_decimal": 58966
-    },
-    {
-      "icon_id": "11905181",
-      "name": "帮 助",
-      "font_class": "bangzhu3",
-      "unicode": "e612",
-      "unicode_decimal": 58898
-    },
-    {
-      "icon_id": "5562878",
-      "name": "帮助",
-      "font_class": "bangzhu",
-      "unicode": "e637",
-      "unicode_decimal": 58935
-    },
-    {
-      "icon_id": "10284537",
-      "name": "帮 助",
-      "font_class": "bangzhu1",
-      "unicode": "e61c",
-      "unicode_decimal": 58908
-    },
-    {
-      "icon_id": "86517",
-      "name": "对号",
-      "font_class": "duihao",
-      "unicode": "e606",
-      "unicode_decimal": 58886
-    },
-    {
-      "icon_id": "16555000",
-      "name": "警告",
-      "font_class": "jinggao",
-      "unicode": "e65c",
-      "unicode_decimal": 58972
-    },
-    {
-      "icon_id": "6692332",
-      "name": "fold",
-      "font_class": "fold",
-      "unicode": "e638",
-      "unicode_decimal": 58936
-    },
-    {
-      "icon_id": "21282201",
-      "name": "fold",
-      "font_class": "unfold",
-      "unicode": "ed18",
-      "unicode_decimal": 60696
-    },
-    {
-      "icon_id": "17364729",
-      "name": "x",
-      "font_class": "x-pack",
-      "unicode": "e64f",
-      "unicode_decimal": 58959
-    },
-    {
-      "icon_id": "14763222",
-      "name": "自动",
-      "font_class": "automatic",
-      "unicode": "e633",
-      "unicode_decimal": 58931
-    },
-    {
-      "icon_id": "20862269",
-      "name": "主机",
-      "font_class": "host",
-      "unicode": "e62c",
-      "unicode_decimal": 58924
-    },
-    {
-      "icon_id": "6526097",
-      "name": "自动",
-      "font_class": "automatic-old",
-      "unicode": "e666",
-      "unicode_decimal": 58982
-    },
-    {
-      "icon_id": "6877612",
-      "name": "版本",
-      "font_class": "manifest",
-      "unicode": "e71f",
-      "unicode_decimal": 59167
-    },
-    {
-      "icon_id": "15478266",
-      "name": "备份_复制",
-      "font_class": "backup",
-      "unicode": "e674",
-      "unicode_decimal": 58996
-    },
-    {
-      "icon_id": "7171160",
-      "name": "项目管理",
-      "font_class": "project",
-      "unicode": "e628",
-      "unicode_decimal": 58920
-    },
-    {
-      "icon_id": "18195532",
-      "name": "EulerOS",
-      "font_class": "EulerOS",
-      "unicode": "e6bc",
-      "unicode_decimal": 59068
-    },
-    {
-      "icon_id": "8177020",
-      "name": "未读",
-      "font_class": "weidu1",
-      "unicode": "e634",
-      "unicode_decimal": 58932
-    },
-    {
-      "icon_id": "8925575",
-      "name": "已读",
-      "font_class": "yidu1",
-      "unicode": "e62e",
-      "unicode_decimal": 58926
-    },
-    {
-      "icon_id": "4242680",
-      "name": "企业微信",
-      "font_class": "qiyeweixin",
-      "unicode": "e60e",
-      "unicode_decimal": 58894
-    },
-    {
-      "icon_id": "9634744",
-      "name": "钉钉",
-      "font_class": "dingding",
-      "unicode": "e662",
-      "unicode_decimal": 58978
-    },
-    {
-      "icon_id": "14152715",
-      "name": "钉钉",
-      "font_class": "dingding1",
-      "unicode": "e645",
-      "unicode_decimal": 58949
-    },
-    {
-      "icon_id": "19238587",
-      "name": "企业微信",
-      "font_class": "icon-wechat-qy",
-      "unicode": "e614",
-      "unicode_decimal": 58900
-    },
-    {
-      "icon_id": "4070417",
-      "name": "NVIDIA-Logo",
-      "font_class": "NVIDIA-Logo",
-      "unicode": "e657",
-      "unicode_decimal": 58967
-    },
-    {
-      "icon_id": "5439363",
-      "name": "ubuntu",
-      "font_class": "ubuntu",
-      "unicode": "e6d3",
-      "unicode_decimal": 59091
-    },
-    {
-      "icon_id": "5439375",
-      "name": "red-hat",
-      "font_class": "red-hat",
-      "unicode": "e6d8",
-      "unicode_decimal": 59096
-    },
-    {
-      "icon_id": "7470539",
-      "name": "Centos",
-      "font_class": "ziyuan",
-      "unicode": "e603",
-      "unicode_decimal": 58883
-    },
-    {
-      "icon_id": "9941062",
-      "name": "nvidia",
-      "font_class": "nvidia",
-      "unicode": "e62b",
-      "unicode_decimal": 58923
-    },
-    {
-      "icon_id": "13470077",
-      "name": "nvidia",
-      "font_class": "nvidia1",
-      "unicode": "e604",
-      "unicode_decimal": 58884
-    },
-    {
-      "icon_id": "15282647",
-      "name": "导入",
-      "font_class": "daoru6",
-      "unicode": "e6bf",
-      "unicode_decimal": 59071
-    },
-    {
-      "icon_id": "12331647",
-      "name": "窗口",
-      "font_class": "chuangkou",
-      "unicode": "e664",
-      "unicode_decimal": 58980
-    },
-    {
-      "icon_id": "15634351",
-      "name": "编辑",
-      "font_class": "bianji1",
-      "unicode": "e6ab",
-      "unicode_decimal": 59051
-    },
-    {
-      "icon_id": "15765352",
-      "name": "删 除",
-      "font_class": "shanchu1",
-      "unicode": "e696",
-      "unicode_decimal": 59030
     }
   ]
 }
