@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 2474164 */
-  src: url('iconfont.woff2?t=1634713913102') format('woff2'),
-       url('iconfont.woff?t=1634713913102') format('woff'),
-       url('iconfont.ttf?t=1634713913102') format('truetype');
+  font-family: "iconfont"; /* Project id 2880763 */
+  src: url('iconfont.woff2?t=1634716615880') format('woff2'),
+       url('iconfont.woff?t=1634716615880') format('woff'),
+       url('iconfont.ttf?t=1634716615880') format('truetype');
 }
 
 .iconfont {
@@ -13,32 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icongailan:before {
-  content: "\e631";
-}
-
 .iconmarket:before {
   content: "\e60a";
 }
 
-.iconline-terminalzhongduan:before {
-  content: "\e6f3";
-}
-
-.iconnetwork:before {
-  content: "\e6d9";
-}
-
-.iconcustom:before {
-  content: "\e611";
-}
-
 .iconaccesscontrol:before {
   content: "\e60b";
-}
-
-.icondashboard:before {
-  content: "\e63a";
 }
 
 .iconnamesapce:before {
@@ -49,243 +29,27 @@
   content: "\e62d";
 }
 
+.icongailan:before {
+  content: "\e631";
+}
+
 .iconconfiguration:before {
   content: "\e78b";
 }
 
-.iconevent:before {
-  content: "\e663";
+.iconnetwork:before {
+  content: "\e6d9";
 }
 
 .iconstorage:before {
   content: "\e6c5";
 }
 
-.iconnode:before {
-  content: "\e7cd";
+.iconline-terminalzhongduan:before {
+  content: "\e6f3";
 }
 
 .iconworkload:before {
   content: "\e639";
-}
-
-.iconauthorization:before {
-  content: "\e609";
-}
-
-.iconlock:before {
-  content: "\e610";
-}
-
-.icongenggaimima:before {
-  content: "\e60f";
-}
-
-.iconguanyu:before {
-  content: "\e65f";
-}
-
-.iconprojectmanage:before {
-  content: "\e624";
-}
-
-.iconshangchuan5:before {
-  content: "\e608";
-}
-
-.iconStarStar:before {
-  content: "\e635";
-}
-
-.iconhuawei:before {
-  content: "\e607";
-}
-
-.iconopenstack:before {
-  content: "\e632";
-}
-
-.iconvmware:before {
-  content: "\e61a";
-}
-
-.iconSFTP:before {
-  content: "\e647";
-}
-
-.icons3:before {
-  content: "\e8e4";
-}
-
-.icontaolun:before {
-  content: "\e602";
-}
-
-.iconbug:before {
-  content: "\e616";
-}
-
-.iconhuaban88:before {
-  content: "\e67c";
-}
-
-.iconAzure:before {
-  content: "\e600";
-}
-
-.iconoss:before {
-  content: "\e605";
-}
-
-.iconping:before {
-  content: "\e650";
-}
-
-.iconin-use:before {
-  content: "\e629";
-}
-
-.iconerror:before {
-  content: "\e60d";
-}
-
-.iconerror2:before {
-  content: "\ed19";
-}
-
-.iconcluster:before {
-  content: "\e601";
-}
-
-.icondiable:before {
-  content: "\e60c";
-}
-
-.iconbangzhu2:before {
-  content: "\e656";
-}
-
-.iconbangzhu3:before {
-  content: "\e612";
-}
-
-.iconbangzhu:before {
-  content: "\e637";
-}
-
-.iconbangzhu1:before {
-  content: "\e61c";
-}
-
-.iconduihao:before {
-  content: "\e606";
-}
-
-.iconjinggao:before {
-  content: "\e65c";
-}
-
-.iconfold:before {
-  content: "\e638";
-}
-
-.iconunfold:before {
-  content: "\ed18";
-}
-
-.iconx-pack:before {
-  content: "\e64f";
-}
-
-.iconautomatic:before {
-  content: "\e633";
-}
-
-.iconhost:before {
-  content: "\e62c";
-}
-
-.iconautomatic-old:before {
-  content: "\e666";
-}
-
-.iconmanifest:before {
-  content: "\e71f";
-}
-
-.iconbackup:before {
-  content: "\e674";
-}
-
-.iconproject:before {
-  content: "\e628";
-}
-
-.iconEulerOS:before {
-  content: "\e6bc";
-}
-
-.iconweidu1:before {
-  content: "\e634";
-}
-
-.iconyidu1:before {
-  content: "\e62e";
-}
-
-.iconqiyeweixin:before {
-  content: "\e60e";
-}
-
-.icondingding:before {
-  content: "\e662";
-}
-
-.icondingding1:before {
-  content: "\e645";
-}
-
-.iconicon-wechat-qy:before {
-  content: "\e614";
-}
-
-.iconNVIDIA-Logo:before {
-  content: "\e657";
-}
-
-.iconubuntu:before {
-  content: "\e6d3";
-}
-
-.iconred-hat:before {
-  content: "\e6d8";
-}
-
-.iconziyuan:before {
-  content: "\e603";
-}
-
-.iconnvidia:before {
-  content: "\e62b";
-}
-
-.iconnvidia1:before {
-  content: "\e604";
-}
-
-.icondaoru6:before {
-  content: "\e6bf";
-}
-
-.iconchuangkou:before {
-  content: "\e664";
-}
-
-.iconbianji1:before {
-  content: "\e6ab";
-}
-
-.iconshanchu1:before {
-  content: "\e696";
 }
 
