@@ -117,7 +117,7 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: "warning",
       }).then(() => {
-        this.showYaml = false
+        this.yamlShow = false
       })
     },
     onCancel () {
