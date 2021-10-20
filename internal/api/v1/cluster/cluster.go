@@ -21,6 +21,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 	"sync"
+	"time"
 )
 
 type Handler struct {
@@ -291,9 +292,11 @@ func (h *Handler) SearchClusters() iris.Handler {
 				c := kubernetes.NewKubernetes(&result[i].Cluster)
 				wg.Add(1)
 				i := i
+				goCtx, cancel := goContext.WithTimeout(goContext.Background(), 1*time.Second)
 				go func() {
-					info, _ := getExtraClusterInfo(c)
+					info, _ := getExtraClusterInfo(goCtx, c)
 					result[i].ExtraClusterInfo = info
+					cancel()
 					wg.Done()
 				}()
 			}
@@ -302,7 +305,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 		ctx.Values().Set("data", pkgV1.Page{Items: result, Total: total})
 	}
 }
-func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) {
+func getExtraClusterInfo(context goContext.Context, client kubernetes.Interface) (ExtraClusterInfo, error) {
 	err := client.Ping()
 	if err != nil {
 		return ExtraClusterInfo{Health: false}, nil
@@ -311,8 +314,7 @@ func getExtraClusterInfo(client kubernetes.Interface) (ExtraClusterInfo, error) 
 	if err != nil {
 		return ExtraClusterInfo{}, err
 	}
-
-	nodesList, err := c.CoreV1().Nodes().List(goContext.TODO(), metav1.ListOptions{})
+	nodesList, err := c.CoreV1().Nodes().List(context, metav1.ListOptions{})
 	if err != nil {
 		return ExtraClusterInfo{}, err
 	}
