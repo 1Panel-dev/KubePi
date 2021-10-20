@@ -20,7 +20,7 @@ func NewHandler() *Handler {
 
 func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
 		if err := h.chartService.RemoveRepo(cluster, name); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -33,7 +33,7 @@ func (h *Handler) DeleteRepo() iris.Handler {
 func (h *Handler) GetChart() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		repo := ctx.URLParam("repo")
 		cs, err := h.chartService.GetCharts(cluster, repo, name)
 		if err != nil {
@@ -46,7 +46,7 @@ func (h *Handler) GetChart() iris.Handler {
 }
 func (h *Handler) ListRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		entrys, err := h.chartService.SearchRepo(cluster)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -66,7 +66,7 @@ func (h *Handler) ListRepo() iris.Handler {
 
 func (h *Handler) AddRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		var req RepoCreate
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -88,8 +88,8 @@ func (h *Handler) ListCharts() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		pattern := ctx.URLParam("pattern")
-		cluster := ctx.URLParam("cluster")
 		repo := ctx.URLParam("repo")
+		cluster := ctx.Params().GetString("cluster")
 		charts, total, err := h.chartService.ListCharts(cluster, repo, pageNum, pageSize, pattern)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -113,7 +113,7 @@ func (h *Handler) ListCharts() iris.Handler {
 func (h *Handler) GetChartByVersion() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		repo := ctx.URLParam("repo")
 		version := ctx.URLParam("version")
 		cs, err := h.chartService.GetChartByVersion(cluster, repo, name, version)
@@ -129,7 +129,7 @@ func (h *Handler) GetChartByVersion() iris.Handler {
 func (h *Handler) GetChartForUpdate() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		repo := ctx.URLParam("repo")
 		cs, err := h.chartService.GetChartsUpdate(cluster, repo, name)
 		if err != nil {
@@ -180,7 +180,7 @@ func (h *Handler) AllInstalled() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		pattern := ctx.URLParam("pattern")
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		installed, total, err := h.chartService.ListAllInstalled(cluster, pageNum, pageSize, pattern)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -193,7 +193,7 @@ func (h *Handler) AllInstalled() iris.Handler {
 
 func (h *Handler) UnInstall() iris.Handler {
 	return func(ctx *context.Context) {
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
 		err := h.chartService.UnInstallChart(cluster, name)
 		if err != nil {
@@ -207,7 +207,7 @@ func (h *Handler) UnInstall() iris.Handler {
 
 func (h *Handler) GetAppDetail() iris.Handler {
 	return func(ctx *context.Context) {
-		cluster := ctx.URLParam("cluster")
+		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
 		data, err := h.chartService.GetAppDetail(cluster, name)
 		if err != nil {
@@ -221,17 +221,17 @@ func (h *Handler) GetAppDetail() iris.Handler {
 
 func Install(parent iris.Party) {
 	handler := NewHandler()
-	sp := parent.Party("/charts")
+	sp := parent.Party("/charts/:cluster")
 	sp.Put("/:name", handler.UpdateChart())
 	sp.Get("/:name", handler.GetChart())
 	sp.Get("/repos", handler.ListRepo())
 	sp.Post("/repos", handler.AddRepo())
-	sp.Delete("/repos/:name", handler.DeleteRepo())
-	sp.Post("/search", handler.ListCharts())
+	sp.Delete("/:name", handler.DeleteRepo())
+	sp.Get("/search", handler.ListCharts())
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())
-	app := parent.Party("/apps")
-	app.Post("/search", handler.AllInstalled())
+	app := parent.Party("/apps/:cluster")
+	app.Get("/search", handler.AllInstalled())
 	app.Delete("/:name", handler.UnInstall())
 	app.Get("/:name", handler.GetAppDetail())
 	app.Get("/update/:name", handler.GetChartForUpdate())
