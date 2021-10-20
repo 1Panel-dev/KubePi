@@ -18,8 +18,10 @@ type Service interface {
 	common.DBService
 	SearchRepo(cluster string) ([]*repo.Entry, error)
 	AddRepo(cluster string, create *v1Chart.RepoCreate) error
-	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
+	UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error
+	GetRepo(cluster string, name string) (*v1Chart.Repo, error)
 	RemoveRepo(cluster string, name string) error
+	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
 	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
 	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
 	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error
@@ -77,6 +79,53 @@ func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
 		return err
 	}
 	err = helmClient.AddRepo(create.Name, create.Url, create.UserName, create.Password)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *service) GetRepo(cluster string, name string) (*v1Chart.Repo, error) {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
+	})
+	if err != nil {
+		return nil, err
+	}
+	re, err := helmClient.GetRepo(name)
+	if err != nil {
+		return nil, err
+	}
+	return &v1Chart.Repo{Name: re.Name, Url: re.URL, UserName: re.Username, Password: re.Password}, nil
+}
+
+func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error {
+	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	helmClient, err := helm.NewClient(&helm.Config{
+		Host:        clu.Spec.Connect.Forward.ApiServer,
+		BearerToken: clu.Spec.Authentication.BearerToken,
+		ClusterName: cluster,
+	})
+	if err != nil {
+		return err
+	}
+	result, err := helmClient.RemoveRepo(update.Name)
+	if err != nil {
+		return err
+	}
+	if !result {
+		return errors.New("repo delete failed")
+	}
+	err = helmClient.AddRepo(update.Name, update.Url, update.UserName, update.Password)
 	if err != nil {
 		return err
 	}

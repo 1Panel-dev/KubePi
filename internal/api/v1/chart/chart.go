@@ -64,6 +64,20 @@ func (h *Handler) ListRepo() iris.Handler {
 	}
 }
 
+func (h *Handler) GetRepo() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("cluster")
+		name := ctx.Params().GetString("name")
+		re, err := h.chartService.GetRepo(cluster, name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", re)
+	}
+}
+
 func (h *Handler) AddRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
@@ -74,6 +88,25 @@ func (h *Handler) AddRepo() iris.Handler {
 		}
 
 		err := h.chartService.AddRepo(cluster, &req.RepoCreate)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", &req)
+	}
+}
+
+func (h *Handler) UpdateRepo() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("cluster")
+		var req RepoUpdate
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+
+		err := h.chartService.UpdateRepo(cluster, &req.RepoUpdate)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -223,11 +256,13 @@ func (h *Handler) GetAppDetail() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts/:cluster")
+	sp.Get("/repos", handler.ListRepo())
+	sp.Get("/repos/:name", handler.GetRepo())
+	sp.Post("/repos", handler.AddRepo())
+	sp.Put("/repos/:name", handler.UpdateRepo())
+	sp.Delete("/repos/:name", handler.DeleteRepo())
 	sp.Put("/:name", handler.UpdateChart())
 	sp.Get("/:name", handler.GetChart())
-	sp.Get("/repos", handler.ListRepo())
-	sp.Post("/repos", handler.AddRepo())
-	sp.Delete("/:name", handler.DeleteRepo())
 	sp.Get("/search", handler.ListCharts())
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())

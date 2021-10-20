@@ -40,7 +40,15 @@ export function createRepo (cluster, data) {
 }
 
 export function deleteRepo (cluster, name) {
-  return del(`${repoUrl(cluster)}/${name}}`)
+  return del(`${repoUrl(cluster)}/${name}`)
+}
+
+export function updateRepo(cluster, name,data) {
+  return put(`${repoUrl(cluster)}/${name}`, data)
+}
+
+export function getRepo (cluster, name) {
+  return get(`${repoUrl(cluster)}/${name}`)
 }
 
 export function searchCharts (cluster, repo, page, size, keywords) {
