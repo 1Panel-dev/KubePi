@@ -70,17 +70,18 @@ func (c *cluster) List(options common.DBOptions) ([]v1Cluster.Cluster, error) {
 func (c *cluster) Search(num, size int, keywords string, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
 	db := c.GetDB(options)
 
-	query := func() storm2.Query {
+	query := db.Select()
+	count, err := query.Count(&v1Cluster.Cluster{})
+	if err != nil {
+		return nil, 0, err
+	}
+	query = func() storm2.Query {
 		if keywords != "" {
 			return db.Select(storm.Like("Name", keywords)).Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		} else {
 			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		}
 	}()
-	count, err := query.Count(&v1Cluster.Cluster{})
-	if err != nil {
-		return nil, 0, err
-	}
 	clusters := make([]v1Cluster.Cluster, 0)
 	if err := query.Find(&clusters); err != nil {
 		return clusters, 0, err

@@ -162,6 +162,7 @@ export default {
       searchClusters(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
+        console.log(data)
         this.paginationConfig.total = data.data.total
       })
     },

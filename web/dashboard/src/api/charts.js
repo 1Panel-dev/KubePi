@@ -1,76 +1,106 @@
 import {del, get, post, put} from "@/plugins/request"
 
-const baseUrl = "/api/v1/charts"
-const repoUrl = "/api/v1/charts/repos"
-const appUrl = "/api/v1/apps"
 
-export function createChart (data) {
-  return post(baseUrl, data)
+const chartUrl = (cluster) => {
+  return `/api/v1/charts/${cluster}`
 }
 
-export function deleteChart (name) {
-  return del(`${baseUrl}/${name}`)
+const repoUrl = (cluster) => {
+  return `/api/v1/charts/${cluster}/repos`
+}
+
+const appUrl =(cluster) => {
+  return `/api/v1/apps/${cluster}`
+}
+
+export function createChart (cluster,data) {
+  return post(chartUrl(cluster), data)
+}
+
+export function deleteChart (cluster,name) {
+  return del(`${chartUrl(cluster)}/${name}`)
 }
 
 export function getChart (cluster, repo, name) {
-  return get(`${baseUrl}/${name}?cluster=${cluster}&repo=${repo}`)
+  const params = {}
+  params["repo"] = repo
+  return get(`${chartUrl(cluster)}/${name}`,params)
 }
 
-export function updateChart (name, user) {
-  return put(`${baseUrl}/${name}`, user)
+export function updateChart (cluster,name, chart) {
+  return put(`${chartUrl(cluster)}/${name}`, chart)
 }
 
 export function listRepos (cluster) {
-  return get(`${repoUrl}?cluster=${cluster}`)
+  return get(repoUrl(cluster))
 }
 
 export function createRepo (cluster, data) {
-  return post(`${repoUrl}?cluster=${cluster}`, data)
+  return post(`${repoUrl(cluster)}`, data)
 }
 
 export function deleteRepo (cluster, name) {
-  return del(`${repoUrl}/${name}?cluster=${cluster}`)
+  return del(`${repoUrl(cluster)}/${name}}`)
 }
 
 export function searchCharts (cluster, repo, page, size, keywords) {
-  let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}&repo=${repo}`
+
+  const url = chartUrl(cluster)
+  const params = {}
+  params["repo"] = repo
+
   if (keywords) {
-    url = `${url}&pattern=${keywords}`
+    params["pattern"] = keywords
   }
-  return post(url)
+  if (page && size) {
+    params["pageNum"] = page
+    params["pageSize"] = size
+  }
+  return get(url+"/search",params)
 }
 
 export function getChartByVersion (cluster, repo, name, version) {
-  return get(`${baseUrl}/detail/${name}?cluster=${cluster}&repo=${repo}&version=${version}`)
+  const params = {}
+  params["repo"] = repo
+  params["version"] = version
+  return get(`chartUrl(cluster)/detail/${name}`,params)
 }
 
-export function installChart (data) {
-  return post(`${baseUrl}/install`, data)
+export function installChart (cluster,data) {
+  return post(`${chartUrl(cluster)}/install`, data)
 }
-
 
 export function searchInstalled (cluster, page, size, keywords) {
-  let url = `${appUrl}/search?pageNum=${page}&pageSize=${size}&cluster=${cluster}`
+
+  const params = {}
   if (keywords) {
-    url = `${url}&pattern=${keywords}`
+    params["pattern"] = keywords
   }
-  return post(url)
+  if (page && size) {
+    params["pageNum"] = page
+    params["pageSize"] = size
+  }
+  return get(`${appUrl(cluster)}/search`,params)
 }
 
 export function deleteApp (cluster, name) {
-  return del(`${appUrl}/${name}?cluster=${cluster}`)
+  return del(`${appUrl(cluster)}/${name}`)
 }
 
 export function getApp (cluster, name) {
-  return get(`${appUrl}/${name}?cluster=${cluster}`)
+  return get(`${appUrl(cluster)}/${name}`)
 }
 
 export function getChartUpdate (cluster, repo, name) {
-  return get(`${appUrl}/update/${name}?cluster=${cluster}&repo=${repo}`)
+  const params = {}
+  if (repo) {
+    params["repo"] = repo
+  }
+  return get(`${appUrl(cluster)}/update/${name}`,params)
 }
 
-export function upgradeChart(name,data) {
-  return put(`${appUrl}/${name}`,data)
+export function upgradeChart(cluster,name,data) {
+  return put(`${appUrl(cluster)}/${name}`,data)
 }
 
 
