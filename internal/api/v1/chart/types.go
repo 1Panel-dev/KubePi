@@ -32,6 +32,7 @@ type ChInstall struct {
 	ChartVersion string                 `json:"chartVersion"`
 	Cluster      string                 `json:"cluster"`
 	Values       map[string]interface{} `json:"values"`
+	Namespace    string                 `json:"namespace"`
 }
 
 type HelmInstalled struct {

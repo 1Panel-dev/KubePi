@@ -148,7 +148,7 @@ func (h *Handler) InstallChart() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
+		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Namespace, req.Name, req.ChartName, req.ChartVersion, req.Values)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

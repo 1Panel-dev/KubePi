@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('business.chart.app')" v-loading="loading" :back-to="{ name: 'Charts' }">
+  <layout-content :header="$t('business.chart.app')" v-loading="loading"  :back-to="{ name: 'Charts' }">
     <div v-if="!installStep">
       <el-row type="flex" :gutter="20">
         <el-col :span="16">
@@ -91,7 +91,7 @@
     </div>
     <div v-if="installStep" style="display: block">
       <el-form ref="form" label-position='left' label-width="220px" :model="form" :rules="rules">
-        <fu-steps ref="steps" footerAlign="flex" finish-status="success" @finish="onSubmit" @cancel="onCancel"
+        <fu-steps ref="steps" footerAlign="flex" finish-status="success" @finish="onSubmit" @cancel="onCancel" :beforeLeave="beforeLeave"
                   :isLoading="loading"
                   showCancel>
           <fu-step id="metadata" :title="'Metadata'">
@@ -102,7 +102,7 @@
                     <el-form-item :label="$t('business.chart.name')" prop="name">
                       <el-input v-model="form.name" clearable></el-input>
                     </el-form-item>
-                    <el-form-item :label="$t('business.chart.namespace')" prop="namespace">
+                    <el-form-item :label="$t('business.chart.namespace')" prop="namespace" required>
                       <el-select v-model="form.namespace">
                         <el-option v-for="(ns,index) in namespaces"
                                    :label="ns" :key="index" :value="ns"></el-option>
@@ -157,7 +157,8 @@ export default {
         name: [Rule.RequiredRule],
         namespace: [Rule.RequiredRule],
       },
-      namespaces: []
+      namespaces: [],
+      validate: false
     }
   },
   methods: {
@@ -184,6 +185,10 @@ export default {
     },
     install () {
       this.installStep = true
+      this.form = {
+        name: "",
+        namespace: ""
+      }
       this.form.values = this.current.values
     },
     onSubmit () {
@@ -207,6 +212,22 @@ export default {
     },
     onCancel () {
       this.installStep = false
+    },
+    beforeLeave(step, isNext){
+      if (!isNext) {
+        return
+      }
+      this.checkForm()
+      if (!this.validate) {
+        return  false
+      }
+      return this.validate
+    },
+    checkForm() {
+      this.validate = false
+      this.$refs["form"].validate((valid) => {
+          this.validate = valid
+      })
     }
   },
   created () {
