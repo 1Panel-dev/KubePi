@@ -130,8 +130,8 @@ func (h *Handler) GetChartForUpdate() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.Params().GetString("cluster")
-		repo := ctx.URLParam("repo")
-		cs, err := h.chartService.GetChartsUpdate(cluster, repo, name)
+		chart := ctx.URLParam("chart")
+		cs, err := h.chartService.GetChartsUpdate(cluster, chart, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -195,7 +195,8 @@ func (h *Handler) UnInstall() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
-		err := h.chartService.UnInstallChart(cluster, name)
+		namespace := ctx.Params().GetString("namespace")
+		err := h.chartService.UnInstallChart(cluster, namespace, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -232,7 +233,7 @@ func Install(parent iris.Party) {
 	sp.Post("/install", handler.InstallChart())
 	app := parent.Party("/apps/:cluster")
 	app.Get("/search", handler.AllInstalled())
-	app.Delete("/:name", handler.UnInstall())
+	app.Delete("/:namespace/:name", handler.UnInstall())
 	app.Get("/:name", handler.GetAppDetail())
 	app.Get("/update/:name", handler.GetChartForUpdate())
 	app.Put("/upgrade/:name", handler.UpdateChart())

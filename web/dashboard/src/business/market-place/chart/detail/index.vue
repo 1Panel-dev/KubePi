@@ -198,7 +198,7 @@ export default {
       installForm.chartVersion = this.current.metadata.version
       installForm.chartName = this.name
       installForm.repo = this.repo
-      installChart(this.form).then(() => {
+      installChart(this.cluster,this.form).then(() => {
         this.loading = false
         this.installStep = false
         this.$message({
