@@ -28,9 +28,14 @@ type Version struct {
 	Date    time.Time `json:"date"`
 }
 
-type ChUpdate struct {
+type UpdateVersion struct {
 	Version    string `json:"version"`
 	AppVersion string `json:"appVersion"`
+}
+
+type UpdateResult struct {
+	Repo     string          `json:"repo"`
+	Versions []UpdateVersion `json:"versions"`
 }
 
 type RepoUpdate struct {

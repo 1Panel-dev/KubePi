@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -286,7 +287,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 	}
 
-	namespaces := []string{}
+	namespaceSet := collectons.NewStringSet()
 	if all {
 		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
@@ -294,7 +295,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 		for i := range ns.Items {
 			if ns.Items[i].Status.Phase == "Active" {
-				namespaces = append(namespaces, ns.Items[i].Name)
+				namespaceSet.Add(ns.Items[i].Name)
 			}
 		}
 	} else {
@@ -305,13 +306,15 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		for i := range rbs.Items {
 			for j := range rbs.Items[i].Subjects {
 				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == username {
-					namespaces = append(namespaces, rbs.Items[i].Namespace)
+					namespaceSet.Add(rbs.Items[i].Namespace)
 				}
 			}
 		}
 	}
 
-	return namespaces, nil
+	result := namespaceSet.ToSlice()
+	sort.Strings(result)
+	return result, nil
 }
 
 func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
@@ -585,10 +588,11 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 	if err != nil {
 		return err
 	}
+	client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), "appmarkets.kubepi.org", metav1.DeleteOptions{})
 	crd := &apiextensionv1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.io"},
+		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.org"},
 		Spec: apiextensionv1.CustomResourceDefinitionSpec{
-			Group: "kubepi.io",
+			Group: "kubepi.org",
 			Scope: apiextensionv1.ClusterScoped,
 			Names: apiextensionv1.CustomResourceDefinitionNames{
 				Plural:     "appmarkets",
@@ -600,6 +604,22 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 				Name:    "v1",
 				Served:  true,
 				Storage: true,
+				Schema: &apiextensionv1.CustomResourceValidation{
+					OpenAPIV3Schema: &apiextensionv1.JSONSchemaProps{
+						Type: "object",
+						Properties: map[string]apiextensionv1.JSONSchemaProps{
+							"name": {
+								Type: "string",
+							},
+							"url": {
+								Type: "string",
+							},
+							"auth": {
+								Type: "string",
+							},
+						},
+					},
+				},
 			}},
 		},
 	}

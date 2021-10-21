@@ -89,7 +89,8 @@ export default {
         this.form.chartVersion = res.data.chart.metadata.version
         this.chartMap.set(res.data.chart.metadata.version, res.data.chart)
         getChartUpdate(this.cluster, res.data.chart.metadata.name, this.name).then(res => {
-          this.versions = res.data
+          this.versions = res.data.versions
+          this.repo = res.data.repo
         }).finally(() => {
           this.loading = false
         })

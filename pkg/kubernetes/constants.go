@@ -627,7 +627,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		},
 		Rules: []rbacV1.PolicyRule{
 			{
-				APIGroups: []string{"kubepi.io"},
+				APIGroups: []string{"kubepi.org"},
 				Resources: []string{"appmarkets"},
 				Verbs:     []string{"*"},
 			},

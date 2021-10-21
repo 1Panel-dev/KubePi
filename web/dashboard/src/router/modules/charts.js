@@ -6,7 +6,7 @@ const Charts = {
   component: Layout,
   name: "ChartManagement",
   requirePermission: {
-    apiGroup: "kubepi.io",
+    apiGroup: "kubepi.org",
     resource: "appmarkets",
     verb: "list",
     scope:"cluster"
@@ -21,7 +21,7 @@ const Charts = {
       component: () => import("@/business/market-place/repo"),
       name: "Repos",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "list",
         scope:"cluster"
@@ -35,7 +35,7 @@ const Charts = {
       component: () => import("@/business/market-place/repo/create"),
       name: "RepoCreate",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "create",
         scope:"cluster"
@@ -50,7 +50,7 @@ const Charts = {
       component: () => import("@/business/market-place/repo/edit"),
       name: "RepoEdit",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "update",
         scope:"cluster"
@@ -66,7 +66,7 @@ const Charts = {
       component: () => import("@/business/market-place/chart"),
       name: "Charts",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "list",
         scope:"cluster"
@@ -80,7 +80,7 @@ const Charts = {
       component: () => import("@/business/market-place/chart/detail"),
       name: "ChartDetail",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "get",
         scope:"cluster"
@@ -96,7 +96,7 @@ const Charts = {
       component: () => import("@/business/market-place/app"),
       name: "Apps",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "list",
         scope:"cluster"
@@ -110,7 +110,7 @@ const Charts = {
       component: () => import("@/business/market-place/app/update"),
       name: "AppUpgrade",
       requirePermission: {
-        apiGroup: "kubepi.io",
+        apiGroup: "kubepi.org",
         resource: "appmarkets",
         verb: "update",
         scope:"cluster"
