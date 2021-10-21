@@ -13,6 +13,10 @@ type RepoCreate struct {
 	v1Chart.RepoCreate
 }
 
+type RepoUpdate struct {
+	v1Chart.RepoUpdate
+}
+
 type Chart struct {
 	Name        string `json:"name"`
 	Repo        string `json:"repo"`

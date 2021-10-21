@@ -1,10 +1,11 @@
 <template>
   <layout-content :header="$t('business.chart.chart')">
-    <complex-table v-loading="loading"  :selects.sync="selects" :data="data"
+    <complex-table v-loading="loading" :selects.sync="selects" :data="data"
                    @search="search">
       <template #header>
         <el-button-group>
-          <el-button  v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}" type="primary" size="small"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}"
+                     type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.add") }}
           </el-button>
@@ -45,13 +46,33 @@ export default {
       isSubmitGoing: false,
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "kubepi.io",
+              resource: "appmarkets",
+              verb: "update"
+            })
+          },
+          click: (row) => {
+            this.onEdit(row)
+          }
+        },
+        {
           label: this.$t("commons.button.delete"),
           icon: "el-icon-delete",
           click: (row) => {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return  !checkPermissions({scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'delete'})
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "kubepi.io",
+              resource: "appmarkets",
+              verb: "delete"
+            })
           },
         },
       ]
@@ -68,9 +89,12 @@ export default {
     onCreate () {
       this.$router.push({ name: "RepoCreate" })
     },
-    onDetail (name) {
-      this.$router.push({ name: "RepoEdit", params: { name: name } })
+    onEdit (row) {
+      this.$router.push({ name: "RepoEdit", params: { name: row.name } })
     },
+    // onDetail (name) {
+    //   this.$router.push({ name: "RepoEdit", params: { name: name } })
+    // },
     onDelete (name) {
       if (this.isSubmitGoing) {
         return
@@ -81,7 +105,7 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: "warning"
       }).then(() => {
-        deleteRepo(this.cluster,name).then(() => {
+        deleteRepo(this.cluster, name).then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.delete_success"),

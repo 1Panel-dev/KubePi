@@ -32,3 +32,17 @@ type ChUpdate struct {
 	Version    string `json:"version"`
 	AppVersion string `json:"appVersion"`
 }
+
+type RepoUpdate struct {
+	Url      string `json:"url"`
+	Name     string `json:"name"`
+	UserName string `json:"userName"`
+	Password string `json:"password"`
+}
+
+type Repo struct {
+	Url      string `json:"url"`
+	Name     string `json:"name"`
+	UserName string `json:"userName"`
+	Password string `json:"password"`
+}

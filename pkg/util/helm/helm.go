@@ -443,6 +443,21 @@ func (c Client) updateRepo(repoName string) error {
 	return nil
 }
 
+func (c Client) GetRepo(name string) (*repo.Entry, error) {
+	repos, err := c.ListRepo()
+	if err != nil {
+		return nil, err
+	}
+	var re *repo.Entry
+	for _, r := range repos {
+		if r.Name == name {
+			re = r
+			break
+		}
+	}
+	return re, nil
+}
+
 func updateCharts(repos []*repo.ChartRepository) {
 	fmt.Printf("Hang tight while we grab the latest from your chart repositories...")
 	var wg sync.WaitGroup
