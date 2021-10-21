@@ -154,7 +154,7 @@ export default {
       installStep: false,
       form: {},
       rules: {
-        name: [Rule.RequiredRule],
+        name: [Rule.RequiredRule, Rule.CommonNameRule],
         namespace: [Rule.RequiredRule],
       },
       namespaces: [],
