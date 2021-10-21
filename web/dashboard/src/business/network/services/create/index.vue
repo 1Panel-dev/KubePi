@@ -128,7 +128,7 @@ export default {
       this.activeName = tab.name
     },
     onCancel () {
-      this.$router.push({ name: "Secrets" })
+      this.$router.push({ name: "Services" })
     },
     onEditYaml () {
       this.showYaml = true
