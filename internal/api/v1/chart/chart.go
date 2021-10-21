@@ -213,8 +213,9 @@ func (h *Handler) AllInstalled() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		pattern := ctx.URLParam("pattern")
+		namespace := ctx.URLParam("namespace")
 		cluster := ctx.Params().GetString("cluster")
-		installed, total, err := h.chartService.ListAllInstalled(cluster, pageNum, pageSize, pattern)
+		installed, total, err := h.chartService.ListAllInstalled(cluster,namespace, pageNum, pageSize, pattern)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

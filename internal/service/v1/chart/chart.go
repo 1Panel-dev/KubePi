@@ -25,7 +25,7 @@ type Service interface {
 	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
 	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
 	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error
-	ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error)
+	ListAllInstalled(cluster ,namespace string,  num, size int, pattern string) ([]*release.Release, int, error)
 	UnInstallChart(cluster, namespace, name string) error
 	GetAppDetail(cluster string, name string) (*release.Release, error)
 	GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpdate, error)
@@ -371,7 +371,7 @@ func (c *service) UnInstallChart(cluster, namespace, name string) error {
 	return nil
 }
 
-func (c *service) ListAllInstalled(cluster string, num, size int, pattern string) ([]*release.Release, int, error) {
+func (c *service) ListAllInstalled(cluster ,namespace string, num, size int, pattern string) ([]*release.Release, int, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, 0, err
@@ -380,6 +380,7 @@ func (c *service) ListAllInstalled(cluster string, num, size int, pattern string
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
 		ClusterName: cluster,
+		Namespace: namespace,
 	})
 	if err != nil {
 		return nil, 0, err

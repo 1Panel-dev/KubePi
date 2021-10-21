@@ -111,7 +111,7 @@ func NewClient(config *Config) (*Client, error) {
 	}
 	client.unInstallActionConfig = installActionConfig
 	listActionConfig := new(action.Configuration)
-	if err := listActionConfig.Init(cf, config.OldNamespace, helmDriver, nolog); err != nil {
+	if err := listActionConfig.Init(cf, config.Namespace, helmDriver, nolog); err != nil {
 		return nil, err
 	}
 	client.listActionConfig = listActionConfig
@@ -126,9 +126,11 @@ func NewClient(config *Config) (*Client, error) {
 
 func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int, error) {
 	client := action.NewList(c.listActionConfig)
-	client.AllNamespaces = true
+	if c.Namespace == ""  {
+		client.AllNamespaces = true
+		client.All = true
+	}
 	client.SetStateMask()
-	client.All = true
 	list, err := client.Run()
 	if err != nil {
 		return nil, 0, err
