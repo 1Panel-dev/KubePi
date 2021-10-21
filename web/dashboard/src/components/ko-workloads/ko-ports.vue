@@ -77,8 +77,8 @@ export default {
       this.ports.splice(index, 1)
     },
     transformation(parentFrom) {
+      parentFrom.ports = []
       if (this.ports.length !== 0) {
-        parentFrom.ports = []
         for (const po of this.ports) {
           var itemPo = {}
           itemPo.name = po.name || undefined
