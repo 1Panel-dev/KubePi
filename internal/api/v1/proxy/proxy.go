@@ -5,6 +5,14 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"sort"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
@@ -14,15 +22,8 @@ import (
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"io/ioutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
-	"net/http"
-	"net/url"
-	"sort"
-	"strings"
-	"sync"
-	"time"
 )
 
 type Handler struct {
@@ -208,19 +209,19 @@ func pagerAndSearch(ctx *context.Context, listObj K8sListObj, keywords string) (
 	if keywords != "" {
 		listObj.Items = fieldFilter(listObj.Items, withNamespaceAndNameMatcher(keywords))
 	}
-	total := len(listObj.Items)
 	if err1 == nil && err2 == nil {
 		tt, items, err := pageFilter(num, size, listObj.Items)
 		if err != nil {
 			return nil, err
 		}
-		total = tt
 		listObj.Items = items
-		p.Total = total
+		p.Total = tt
 		p.Items = listObj.Items
 		return &p, nil
 	}
-	return nil, nil
+	p.Total = len(listObj.Items)
+	p.Items = listObj.Items
+	return &p, nil
 }
 
 func getTime(obj interface{}) time.Time {

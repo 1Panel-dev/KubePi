@@ -137,9 +137,9 @@ export default {
         listNodes(this.clusterName).then(res => {
           const nodes = {
             name: "Nodes",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(nodes)
@@ -149,9 +149,9 @@ export default {
         listNamespace(this.clusterName).then(res => {
           const namespaces = {
             name: "Namespaces",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(namespaces)
@@ -161,9 +161,9 @@ export default {
         listIngresses(this.clusterName).then(res => {
           const ingresses = {
             name: "Ingresses",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length,
+              value: res.items? res.items.length : 0,
               name: ""
             }]
           }
@@ -174,9 +174,9 @@ export default {
         listPvs(this.clusterName).then(res => {
           const persistentVolumes = {
             name: "PersistentVolumes",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(persistentVolumes)
@@ -186,9 +186,9 @@ export default {
         listDeployments(this.clusterName).then(res => {
           const deployments = {
             name: "Deployments",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(deployments)
@@ -198,9 +198,9 @@ export default {
         listStatefulSets(this.clusterName).then(res => {
           const statefulSets = {
             name: "StatefulSets",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(statefulSets)
@@ -210,9 +210,9 @@ export default {
         listJobs(this.clusterName).then(res => {
           const jobs = {
             name: "Jobs",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(jobs)
@@ -222,9 +222,9 @@ export default {
         listDaemonSets(this.clusterName).then(res => {
           const daemonSets = {
             name: "DaemonSets",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(daemonSets)
@@ -234,9 +234,9 @@ export default {
         listServices(this.clusterName).then(res => {
           const services = {
             name: "Services",
-            count: res.items.length,
+            count: res.items? res.items.length : 0,
             data: [{
-              value: res.items.length
+              value: res.items? res.items.length : 0
             }]
           }
           this.resources.push(services)

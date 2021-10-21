@@ -9,7 +9,7 @@ const RequiredRule = {
 const EmailRule = {
     type: 'email',
     message: i18n.t("commons.validate.email"),
-    trigger: ['blur', 'change']
+    trigger: ['blur']
 }
 
 const PasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@#$%^&*]{8,30}$/
