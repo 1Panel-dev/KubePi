@@ -343,6 +343,7 @@ const message = {
       skip_if_not_finish: "如果当前 Job 没结束，则跳过",
       replace_if_not_finish: "如果当前 Job 没结束，则替换运行",
       completions: "需完成数",
+      completions_status: "完成状态",
       parallelism: "并发数",
       back_off_limit: "重试次数",
       active_deadline: "活跃终止时间",

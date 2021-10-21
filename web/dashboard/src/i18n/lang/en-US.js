@@ -341,6 +341,7 @@ const message = {
       skip_if_not_finish: "Skip next if current run hasn't finished",
       replace_if_not_finish: "Replace run if current run hasn't finished",
       completions: "Completions",
+      completions_status: "Completion Status",
       parallelism: "Parallelism",
       back_off_limit: "Back Off Limit",
       active_deadline: "Active Deadline",
