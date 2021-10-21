@@ -4,7 +4,7 @@
                    @search="search">
       <template #header>
         <el-button-group>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.io',resource:'appmarkets',verb:'create'}"
+          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.org',resource:'appmarkets',verb:'create'}"
                      type="primary" size="small"
                      @click="onCreate">
             {{ $t("commons.button.add") }}
@@ -51,7 +51,7 @@ export default {
           disabled: () => {
             return !checkPermissions({
               scope: "cluster",
-              apiGroup: "kubepi.io",
+              apiGroup: "kubepi.org",
               resource: "appmarkets",
               verb: "update"
             })
@@ -69,7 +69,7 @@ export default {
           disabled: () => {
             return !checkPermissions({
               scope: "cluster",
-              apiGroup: "kubepi.io",
+              apiGroup: "kubepi.org",
               resource: "appmarkets",
               verb: "delete"
             })

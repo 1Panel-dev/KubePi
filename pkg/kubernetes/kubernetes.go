@@ -589,9 +589,9 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 		return err
 	}
 	crd := &apiextensionv1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.io"},
+		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.org"},
 		Spec: apiextensionv1.CustomResourceDefinitionSpec{
-			Group: "kubepi.io",
+			Group: "kubepi.org",
 			Scope: apiextensionv1.ClusterScoped,
 			Names: apiextensionv1.CustomResourceDefinitionNames{
 				Plural:     "appmarkets",
@@ -603,6 +603,22 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 				Name:    "v1",
 				Served:  true,
 				Storage: true,
+				Schema: &apiextensionv1.CustomResourceValidation{
+					OpenAPIV3Schema: &apiextensionv1.JSONSchemaProps{
+						Type: "object",
+						Properties: map[string]apiextensionv1.JSONSchemaProps{
+							"name": {
+								Type: "string",
+							},
+							"url": {
+								Type: "string",
+							},
+							"auth": {
+								Type: "string",
+							},
+						},
+					},
+				},
 			}},
 		},
 	}
