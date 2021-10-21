@@ -25,10 +25,10 @@ type Service interface {
 	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
 	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
 	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error
-	ListAllInstalled(cluster ,namespace string,  num, size int, pattern string) ([]*release.Release, int, error)
+	ListAllInstalled(cluster, namespace string, num, size int, pattern string) ([]*release.Release, int, error)
 	UnInstallChart(cluster, namespace, name string) error
 	GetAppDetail(cluster string, name string) (*release.Release, error)
-	GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpdate, error)
+	GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error)
 	UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 }
 
@@ -238,7 +238,7 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	return &result, nil
 }
 
-func (c *service) GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpdate, error) {
+func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, err
@@ -259,14 +259,17 @@ func (c *service) GetChartsUpdate(cluster, chart, name string) ([]v1Chart.ChUpda
 	if err != nil {
 		return nil, err
 	}
-	var updates []v1Chart.ChUpdate
+	update := &v1Chart.UpdateResult{
+		Repo: clusterApp.Repo,
+		Versions: []v1Chart.UpdateVersion{},
+	}
 	for _, chart := range allVersionCharts {
-		updates = append(updates, v1Chart.ChUpdate{
+		update.Versions = append(update.Versions, v1Chart.UpdateVersion{
 			Version:    chart.Chart.Version,
 			AppVersion: chart.Chart.AppVersion,
 		})
 	}
-	return updates, nil
+	return update, nil
 }
 
 func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error) {
@@ -371,7 +374,7 @@ func (c *service) UnInstallChart(cluster, namespace, name string) error {
 	return nil
 }
 
-func (c *service) ListAllInstalled(cluster ,namespace string, num, size int, pattern string) ([]*release.Release, int, error) {
+func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pattern string) ([]*release.Release, int, error) {
 	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
 	if err != nil {
 		return nil, 0, err
@@ -380,7 +383,7 @@ func (c *service) ListAllInstalled(cluster ,namespace string, num, size int, pat
 		Host:        clu.Spec.Connect.Forward.ApiServer,
 		BearerToken: clu.Spec.Authentication.BearerToken,
 		ClusterName: cluster,
-		Namespace: namespace,
+		Namespace:   namespace,
 	})
 	if err != nil {
 		return nil, 0, err
