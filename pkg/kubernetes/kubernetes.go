@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -286,7 +287,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 	}
 
-	namespaces := []string{}
+	namespaceSet := collectons.NewStringSet()
 	if all {
 		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
@@ -294,7 +295,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 		for i := range ns.Items {
 			if ns.Items[i].Status.Phase == "Active" {
-				namespaces = append(namespaces, ns.Items[i].Name)
+				namespaceSet.Add(ns.Items[i].Name)
 			}
 		}
 	} else {
@@ -305,13 +306,15 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		for i := range rbs.Items {
 			for j := range rbs.Items[i].Subjects {
 				if rbs.Items[i].Subjects[j].Kind == "User" && rbs.Items[i].Subjects[j].Name == username {
-					namespaces = append(namespaces, rbs.Items[i].Namespace)
+					namespaceSet.Add(rbs.Items[i].Namespace)
 				}
 			}
 		}
 	}
 
-	return namespaces, nil
+	result := namespaceSet.ToSlice()
+	sort.Strings(result)
+	return result, nil
 }
 
 func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
