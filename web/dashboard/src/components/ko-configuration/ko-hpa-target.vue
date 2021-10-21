@@ -36,12 +36,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.configuration.min_replicas')">
-              <el-input type="number" v-model.number="form.minReplicas" required></el-input>
+              <el-input @change="transform" type="number" v-model.number="form.minReplicas" required></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.configuration.max_replicas')">
-              <el-input type="number" v-model.number="form.maxReplicas" required></el-input>
+              <el-input @change="transform" type="number" v-model.number="form.maxReplicas" required></el-input>
             </el-form-item>
           </el-col>
         </el-row>
