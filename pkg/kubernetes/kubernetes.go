@@ -588,6 +588,7 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 	if err != nil {
 		return err
 	}
+	client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), "appmarkets.kubepi.org", metav1.DeleteOptions{})
 	crd := &apiextensionv1.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.org"},
 		Spec: apiextensionv1.CustomResourceDefinitionSpec{

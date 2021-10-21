@@ -27,7 +27,6 @@ import (
 
 const (
 	helmDriver = "configmap"
-	helmPath   = "/root/.config/helm"
 )
 
 func nolog(format string, v ...interface{}) {}
@@ -126,7 +125,7 @@ func NewClient(config *Config) (*Client, error) {
 
 func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int, error) {
 	client := action.NewList(c.listActionConfig)
-	if c.Namespace == ""  {
+	if c.Namespace == "" {
 		client.AllNamespaces = true
 		client.All = true
 	}
