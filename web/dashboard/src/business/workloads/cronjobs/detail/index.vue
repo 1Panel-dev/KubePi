@@ -15,8 +15,11 @@
                   <el-button v-if="row.status.succeeded" type="success" size="mini" plain round>
                     Succeeded
                   </el-button>
-                  <el-button v-else type="warning" size="mini" plain round>
+                  <el-button v-if="row.status.failed" type="warning" size="mini" plain round>
                     Failed
+                  </el-button>
+                  <el-button v-if="row.status.active" type="success" size="mini" plain round>
+                    Active
                   </el-button>
                 </template>
               </el-table-column>
@@ -34,7 +37,7 @@
                   {{ row.spec.completions }}
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('commons.table.status')" min-width="60">
+              <el-table-column :label="$t('business.workload.completions_status')" min-width="60">
                 <template v-slot:default="{row}">
                   <el-tag style="margin-left: 5px" v-if="row.status.active" type="info">active: *{{row.status.active}}</el-tag>
                   <el-tag style="margin-left: 5px" v-if="row.status.succeeded" type="success">succeeded: {{row.status.succeeded}}</el-tag>
