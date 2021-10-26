@@ -10,7 +10,20 @@ const message = {
     },
     personal: {
       profile: "Profile",
-      exit: "Logout"
+      exit: "Logout",
+      project_url: "Project Address",
+      issue: "Feedback",
+      talk: "Participate in the discussion",
+      star: "Star",
+      version: "Version",
+      introduction: "KubePi is an easy to use open source Kubernetes visual management panel.",
+      introduction2: "KubePi allows administrators to import multiple Kubernetes clusters and assign permissions of different clusters and namespaces to specific users through permission control. It allows developers to manage and troubleshoot applications running in the Kubernetes cluster to better deal with the complexity in the Kubernetes cluster."
+    },
+    help: {
+      help: "Help",
+      about: "About",
+      business_support: "Business Support",
+      ko_docs: "Official Document",
     },
     button: {
       detail: "Detail",
