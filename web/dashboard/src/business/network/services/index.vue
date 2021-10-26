@@ -38,7 +38,7 @@
           <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
             <span style="font-size: 12px"> {{ row.spec.clusterIP || "" }}:{{ value.port }} /{{
                 value.protocol
-              }} > {{ value.targetPort }}</span>
+              }} ---> {{ value.targetPort }}</span>
             <br>
           </div>
         </template>

@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" @command="handleCommand">
     <span class="el-dropdown-link">
-      <i class="iconfont iconbangzhu2" style="color: #FA5D50;margin-right: 3px"></i>
+      <i class="iconfont iconbangzhu1" style="margin-right: 3px"></i>
       <span>{{ $t('commons.help.help') }}</span>
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
