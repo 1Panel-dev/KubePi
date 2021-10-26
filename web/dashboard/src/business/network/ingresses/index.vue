@@ -26,7 +26,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
       </el-table-column>
-      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="200px"
+      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="150px"
                        show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
@@ -34,17 +34,7 @@
               <el-link :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
               </el-link>
-              >
-              <el-link @click="toResource('Service',row.metadata.namespace,path.backend.service.name)">
-                {{
-                  path.backend.service ? path.backend.service.name : ""
-                }}
-              </el-link>
             </div>
-          </div>
-          <div v-if="row.spec.defaultBackend">
-            <span>Default</span> >
-            <el-link>{{ row.spec.defaultBackend.service.name }}</el-link>
           </div>
         </template>
       </el-table-column>

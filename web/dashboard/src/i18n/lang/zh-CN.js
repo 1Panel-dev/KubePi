@@ -413,7 +413,7 @@ const message = {
       protocol: "协议",
       port: "端口",
       rule: "规则",
-      host: "主机",
+      host: "域名",
       path: "路径",
       path_type: "路径类型",
       service_name: "Service 名称",
