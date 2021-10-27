@@ -70,6 +70,7 @@ const message = {
       select: "please select {0}",
       required: "required",
       email: "please input a valid email",
+      number_limit: "Please enter the correct number",
       password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (optional)",
       name_not_compliant: "The name does not conform to the naming convention!",
     },

@@ -10,6 +10,7 @@ const message = {
       prompt: "提示",
     },
     personal: {
+      back: "返回",
       exit: "退出",
       project_url: "项目地址",
       issue: "问题反馈",

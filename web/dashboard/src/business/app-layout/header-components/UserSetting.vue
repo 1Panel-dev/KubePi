@@ -6,7 +6,10 @@
         <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
         <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item style="text-align: center" command="exit">
+            <el-dropdown-item style="text-align: center;width:80px" command="back">
+                {{ $t("commons.personal.back") }}
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align: center;width:80px" command="exit">
                 {{ $t("commons.personal.exit") }}
             </el-dropdown-item>
         </el-dropdown-menu>
@@ -32,7 +35,7 @@
                         this.exit()
                         break
                     default:
-                        this.aboutDialogVisible = true
+                        window.open("/kubepi", '_self');
                         break
                 }
             },

@@ -9,6 +9,7 @@ const message = {
       prompt: "Prompt",
     },
     personal: {
+      back: "Back",
       exit: "Exit",
       project_url: "Project Address",
       issue: "Feedback",

@@ -5,7 +5,7 @@
       <span>{{ getNamespaceName }}</span>
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
-    <el-dropdown-menu slot="dropdown" style="height: 600px;overflow:auto">
+    <el-dropdown-menu slot="dropdown" style="max-height: 300px;overflow:auto">
       <el-dropdown-item command="">All Namespaces</el-dropdown-item>
       <el-dropdown-item disabled divided></el-dropdown-item>
       <el-dropdown-item v-for="(value,key) in namespaceOptions" :key="key" :command="value">{{ value }}
