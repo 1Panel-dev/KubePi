@@ -90,6 +90,8 @@ export default {
       }
       if (index !== undefined &&this.servicePorts[index].nodePort !== "" && !Number.isNaN(Number(this.servicePorts[index].nodePort))) {
         this.servicePorts[index].nodePort = parseInt(this.servicePorts[index].nodePort)
+      } else {
+        delete this.servicePorts[index].nodePort
       }
       this.$emit("update:ports", this.servicePorts)
     }

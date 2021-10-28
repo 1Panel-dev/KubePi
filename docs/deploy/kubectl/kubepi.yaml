@@ -62,3 +62,5 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+          securityContext:
+            privileged: true

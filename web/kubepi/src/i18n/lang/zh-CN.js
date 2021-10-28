@@ -11,7 +11,20 @@ const message = {
     },
     personal: {
       profile: "个人信息",
-      exit: "退出"
+      exit: "退出",
+      project_url: "项目地址",
+      issue: "问题反馈",
+      talk: "参与讨论",
+      star: "点亮 Star",
+      version: "版本",
+      introduction: "KubePi 是一款简单易用的开源 Kubernetes 可视化管理面板。",
+      introduction2: "KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户。它允许开发人员管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地处理 Kubernetes 集群中的复杂性。",
+    },
+    help: {
+      help: "帮助",
+      about: "关于",
+      business_support: "商业支持",
+      ko_docs: "官方文档",
     },
     button: {
       detail: "详情",
@@ -64,6 +77,7 @@ const message = {
       select: "请选择{0}",
       required: "必填项",
       email: "请输入有效的电子邮箱",
+      number_limit: "请输入正确的数字",
       password_help: "有效密码:8-30位,英文字母+数字+特殊字符(~!@#$%^&*,可选)",
       name_not_compliant: "该名称不符合命名规范",
     },

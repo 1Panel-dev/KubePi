@@ -34,17 +34,11 @@
               <el-link :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
               </el-link>
-              >
+              --->
               <el-link @click="toResource('Service',row.metadata.namespace,path.backend.service.name)">
-                {{
-                  path.backend.service ? path.backend.service.name : ""
-                }}
+                {{path.backend.service ? path.backend.service.name : ""}}:{{path.backend.service.port ? path.backend.service.port.number : ""}}
               </el-link>
             </div>
-          </div>
-          <div v-if="row.spec.defaultBackend">
-            <span>Default</span> >
-            <el-link>{{ row.spec.defaultBackend.service.name }}</el-link>
           </div>
         </template>
       </el-table-column>

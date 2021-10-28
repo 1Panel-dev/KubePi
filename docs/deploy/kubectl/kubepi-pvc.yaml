@@ -79,6 +79,8 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+          securityContext:
+            privileged: true
           volumeMounts:
             - name: kubepi-persistent-storage
               mountPath: /var/lib/kubepi

@@ -11,14 +11,14 @@
             </el-form-item>
 
             <el-divider content-position="center">{{ $t('business.cluster.connect_setting') }}</el-divider>
-            <el-form-item :label="$t('business.cluster.connect_direction')">
+            <!-- <el-form-item :label="$t('business.cluster.connect_direction')">
               <el-radio v-model="form.direction" label="forward" @change="onDirectionChange">
                 {{ $t('business.cluster.connect_forward') }}
               </el-radio>
               <el-radio v-model="form.direction" disabled label="backward" @change="onDirectionChange">
                 {{ $t('business.cluster.connect_backward') }}({{ $t("business.cluster.expect") }})
               </el-radio>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item :label="$t('business.cluster.authenticate_mode')">
               <el-radio v-model="form.authenticationMode" label="bearer"
                         @change="onAuthenticationModeChange">Bearer Token
@@ -36,13 +36,13 @@
               </el-form-item>
               <div v-if="!form.apiServerInsecure">
                 <el-form-item label="Ca Certificate" prop="caDataStr">
-                  <el-input  type="textarea" v-model="form.caDataStr" clearable></el-input>
+                  <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea" v-model="form.caDataStr" clearable></el-input>
                 </el-form-item>
               </div>
             </div>
             <div v-if="form.authenticationMode==='bearer'">
               <el-form-item label="Bearer Token" prop="token">
-                <el-input type="textarea" v-model="form.token" clearable></el-input>
+                <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea" v-model="form.token" clearable></el-input>
               </el-form-item>
             </div>
             <div v-if="form.authenticationMode==='certificate'">
@@ -55,7 +55,7 @@
             </div>
             <div v-if="form.authenticationMode==='configFile'">
               <el-form-item v-if="form.configContent" :label="$t('business.cluster.config_content')">
-                <el-input type="textarea"  v-model="form.configContent"></el-input>
+                <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea"  v-model="form.configContent"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-upload :before-upload="readFile" action="" style="display: inline-block;margin-left: 5px">

@@ -7,7 +7,8 @@
     </div>
     <div class="header-right">
       <TerminalEnter></TerminalEnter>
-      <language-switch></language-switch>
+      <help />
+      <language-switch style="margin-left: 20px"></language-switch>
       <user-setting style="margin-left: 20px"></user-setting>
     </div>
   </div>
@@ -18,12 +19,13 @@ import SidebarToggleButton from "@/components/layout/sidebar/SidebarToggleButton
 import UserSetting from "@/business/app-layout/header-components/UserSetting"
 import Home from "@/business/app-layout/header-components/Home"
 import ProjectSwitch from "@/business/app-layout/header-components/ProjectSwitch";
+import Help from "@/business/app-layout/header-components/Help";
 import LanguageSwitch from "@/business/app-layout/header-components/LanguageSwitch"
 import TerminalEnter from "@/business/app-layout/header-components/TerminalEnter";
 
 export default {
   name: "HorizontalHeader",
-  components: {TerminalEnter, LanguageSwitch, ProjectSwitch, Home, UserSetting, SidebarToggleButton}
+  components: {TerminalEnter, LanguageSwitch, ProjectSwitch, Help, Home, UserSetting, SidebarToggleButton}
 }
 </script>
 

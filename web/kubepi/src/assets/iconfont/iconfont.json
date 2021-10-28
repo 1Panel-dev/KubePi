@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "10284537",
+      "name": "帮 助",
+      "font_class": "bangzhu1",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
       "icon_id": "1236816",
       "name": "应用市场",
       "font_class": "market",
