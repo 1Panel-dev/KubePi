@@ -53,7 +53,7 @@ export default {
       updateStorageClass(this.cluster, this.name, data).then(() => {
         this.$message({
           type: "success",
-          message: this.$t("commons.msg.create_success"),
+          message: this.$t("commons.msg.update_success"),
         })
         this.$router.push({name: "StorageClasses"})
       }).finally(() => {
