@@ -72,18 +72,3 @@ export function set(obj, path, value) {
 
   return obj;
 }
-
-
-export function model(path){
-  let parts;
-  parts = path.split('.');
-
-  for (let i = 0; i < parts.length; i++) {
-    if (!obj) {
-      return;
-    }
-
-    obj = obj[parts[i]];
-  }
-
-}
