@@ -47,7 +47,10 @@ var RootCmd = &cobra.Command{
 		} else {
 			server.WebkubectlEntrypoint = webkubectlEntrypointLinux
 		}
-		return server.Listen(route.InitRoute)
+		return server.Listen(route.InitRoute,
+			server.WithCustomConfigFilePath(configPath),
+			server.WithServerBindHost(serverBindHost),
+			server.WithServerBindPort(serverBindPort))
 	},
 }
 
