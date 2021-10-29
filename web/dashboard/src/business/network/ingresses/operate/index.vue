@@ -16,10 +16,10 @@
           </el-col>
           <el-col :span="24">
             <el-tabs v-model="activeName" tab-position="top" type="border-card"
-                     @tab-click="handleClick" ref=tabs v-if="form.metadata.namespace!==''">
+                     @tab-click="handleClick" ref=tabs v-if="form.apiVersion!=='' && form.metadata.namespace !== '' ">
               <el-tab-pane :label="$t('business.network.rule')">
                 <ko-ingress-rule :cluster="cluster" :namespace="form.metadata.namespace"
-                                 :rulesArray.sync="form.spec.rules"></ko-ingress-rule>
+                                 :rulesArray.sync="form.spec.rules" :new-version="newVersion"></ko-ingress-rule>
               </el-tab-pane>
               <el-tab-pane :label="$t('business.network.default_backend')">
                 <ko-ingress-default-backend :cluster="cluster" :namespace="form.metadata.namespace"
@@ -63,6 +63,7 @@ import KoIngressTls from "@/components/ko-network/ingress-tls"
 import {createIngress, getIngress, updateIngress} from "@/api/ingress"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 import KoSelect from "@/components/ko-select"
+import {checkApi} from "@/utils/apis"
 
 export default {
   name: "IngressOperate",
@@ -85,7 +86,7 @@ export default {
       namespaces: [],
       loading: false,
       form: {
-        apiVersion: "networking.k8s.io/v1",
+        apiVersion: "",
         kind: "Ingress",
         metadata: {
           namespace: "",
@@ -96,8 +97,9 @@ export default {
       activeName: "",
       yaml: undefined,
       showYaml: false,
-      header: this.mode === 'create' ? this.$t("commons.button.create") : this.$t("commons.button.edit"),
-      mode: ""
+      header: this.mode === "create" ? this.$t("commons.button.create") : this.$t("commons.button.edit"),
+      mode: "",
+      newVersion: true,
     }
   },
   methods: {
@@ -166,15 +168,25 @@ export default {
       }).finally(() => {
         this.loading = false
       })
-    }
+    },
+    init () {
+      this.loading = true
+      checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then(res => {
+        this.newVersion = res
+        this.form.apiVersion = this.res ? "networking.k8s.io/v1" : "networking.k8s.io/v1beta1"
+        if (this.mode === "edit") {
+          this.getDetail()
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
   },
   created () {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"
     this.mode = this.$route.query.mode
-    if (this.mode === "edit") {
-      this.getDetail()
-    }
+    this.init()
   }
 }
 </script>

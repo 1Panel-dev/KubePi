@@ -1,5 +1,7 @@
 import { JSONPath } from 'jsonpath-plus';
 const quotedKey = /['"]/;
+const quotedMatch = /[^."']+|"([^"]*)"|'([^']*)'/g;
+import Vue from 'vue';
 
 
 export function get(obj, path) {
@@ -37,4 +39,51 @@ export function get(obj, path) {
   }
 
   return obj;
+}
+
+export function set(obj, path, value) {
+  let ptr = obj;
+  let parts;
+
+  if (!ptr) {
+    return;
+  }
+
+  if ( path.match(quotedKey) ) {
+    // Path with quoted section
+    parts = path.match(quotedMatch).map(x => x.replace(/['"]/g, ''));
+  } else {
+    // Regular path
+    parts = path.split('.');
+  }
+
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
+
+    if ( i === parts.length - 1 ) {
+      Vue.set(ptr, key, value);
+    } else if ( !ptr[key] ) {
+      // Make sure parent keys exist
+      Vue.set(ptr, key, {});
+    }
+
+    ptr = ptr[key];
+  }
+
+  return obj;
+}
+
+
+export function model(path){
+  let parts;
+  parts = path.split('.');
+
+  for (let i = 0; i < parts.length; i++) {
+    if (!obj) {
+      return;
+    }
+
+    obj = obj[parts[i]];
+  }
+
 }

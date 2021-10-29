@@ -5,9 +5,10 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.network.target')+'Service'">
-              <el-select v-model="defaultBackend.service.name"
-                         @change="changeService(defaultBackend.service.name)"
-                         style="width: 100%">
+              <el-select
+                      v-model="defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name"
+                      @change="changeService(defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name)"
+                      style="width: 100%">
                 <el-option v-for="service in services" :key="service.metadata.name"
                            :label="service.metadata.name" :value="service.metadata.name">
                 </el-option>
@@ -16,7 +17,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.network.port')">
-              <el-select v-model="defaultBackend.service.port.number">
+              <el-select
+                      v-model="defaultBackend.servicePort!==undefined?defaultBackend.servicePort:defaultBackend.service.port.number">
                 <el-option v-for="port in servicePorts" :key="port.name"
                            :label="port.port" :value="port.port">
                 </el-option>
@@ -32,6 +34,7 @@
 <script>
 import KoCard from "@/components/ko-card"
 import {listServicesWithNs} from "@/api/services"
+import {set} from "@/utils/object"
 
 export default {
   name: "KoIngressDefaultBackend",
@@ -40,6 +43,7 @@ export default {
     namespace: String,
     cluster: String,
     defaultBackendObj: Object,
+    newVersion: Boolean
   },
   data () {
     return {
@@ -47,7 +51,9 @@ export default {
         service: {}
       },
       services: [],
-      servicePorts: []
+      servicePorts: [],
+      servicePath: "",
+      portPath: ""
     }
   },
   methods: {
@@ -64,25 +70,36 @@ export default {
         }
       }
     },
+    serviceNamePath () {
+      const nestedPath = "service.name"
+      const flatPath = "serviceName"
+      return this.newVersion ? nestedPath : flatPath
+    },
+    servicePortPath () {
+      const nestedPath = "service.port.number"
+      const flatPath = "servicePort"
+      return this.newVersion ? nestedPath : flatPath
+    },
+    getDefaultBackend () {
+      const backend = {}
+      set(backend, this.servicePath, "")
+      set(backend, this.portPath, 0)
+      return backend
+    }
   },
   watch: {
     namespace: function (old, newValue) {
       if (old !== newValue) {
-        this.defaultBackend.service.name = ""
-        this.defaultBackend.service.port.number = 0
+        set(this.defaultBackend, this.servicePath, "")
+        set(this.defaultBackend, this.portPath, 0)
         this.getServices()
       }
     }
   },
   created () {
-    this.defaultBackend = this.defaultBackendObj ? this.defaultBackendObj : {
-      service: {
-        name: "",
-        port: {
-          number: 0
-        }
-      }
-    }
+    this.servicePath = this.serviceNamePath()
+    this.portPath = this.servicePortPath()
+    this.defaultBackend = this.defaultBackendObj ? this.defaultBackendObj : this.getDefaultBackend()
     this.$emit("update:defaultBackendObj", this.defaultBackend)
     this.getServices()
   }
