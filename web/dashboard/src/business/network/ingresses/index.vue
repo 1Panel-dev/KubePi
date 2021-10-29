@@ -35,8 +35,8 @@
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
               </el-link>
               --->
-              <el-link @click="toResource('Service',row.metadata.namespace,path.backend.service.name)">
-                {{path.backend.service ? path.backend.service.name : ""}}:{{path.backend.service.port ? path.backend.service.port.number : ""}}
+              <el-link @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
+                {{getService(path.backend)}}:{{getPort(path.backend)}}
               </el-link>
             </div>
           </div>
@@ -60,6 +60,8 @@ import KoTableOperations from "@/components/ko-table-operations"
 import {deleteIngress, getIngress, listIngresses} from "@/api/ingress"
 import {mixin} from "@/utils/resourceRoutes"
 import {checkPermissions} from "@/utils/permission"
+import {checkApi} from "@/utils/apis"
+import {get} from "@/utils/object"
 
 export default {
   name: "Ingresses",
@@ -71,6 +73,9 @@ export default {
       selects: [],
       cluster: "",
       loading: false,
+      newVersion: false,
+      servicePath: "",
+      portPath: "",
       buttons: [
         {
           label: this.$t("commons.button.edit"),
@@ -114,7 +119,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getIngress(this.cluster,row.metadata.namespace,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getIngress(this.cluster, row.metadata.namespace, row.metadata.name))
           }
         },
         {
@@ -198,6 +203,30 @@ export default {
         }
       })
     },
+    list () {
+      checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then(res => {
+        this.newVersion = res
+        this.servicePath = this.serviceNamePath()
+        this.portPath = this.servicePortPath()
+        this.search()
+      })
+    },
+    getService(backend) {
+      return get(backend,this.servicePath)
+    },
+    getPort(backend){
+      return get(backend,this.portPath)
+    },
+    serviceNamePath() {
+      const nestedPath = 'service.name';
+      const flatPath = 'serviceName';
+      return this.newVersion ? nestedPath : flatPath;
+    },
+    servicePortPath() {
+      const nestedPath = 'service.port.number';
+      const flatPath = 'servicePort';
+      return this.newVersion ? nestedPath : flatPath;
+    },
     openDetail (row) {
       this.$router.push({
         name: "IngressDetail",
@@ -208,7 +237,7 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.search()
+    this.list()
   }
 }
 </script>
