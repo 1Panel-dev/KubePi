@@ -15,7 +15,7 @@
         <img style="margin-left: 0;" :src="require('@/assets/KubePi-red.png')" class="sidebar-logo" alt="Sidebar Logo">
         <p>{{ $t("commons.personal.introduction") }}</p>
         <p>{{ $t("commons.personal.introduction2") }}</p>
-        <strong>{{ $t("commons.personal.version") }}: v1.1.1</strong>
+        <strong>{{ $t("commons.personal.version") }}: v1.1.2</strong>
       </div>
       <div style="padding:15px 20px;box-shadow:rgb(69 70 70) 0 -14px 24px -12px;">
         <el-row style="font-size: 6px;color: #ffffff;text-align: center">

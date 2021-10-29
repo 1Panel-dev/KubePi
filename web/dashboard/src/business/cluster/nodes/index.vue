@@ -41,14 +41,14 @@
 <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.status')">
         <template v-slot:default="{row}">
-          <el-button v-if="row.nodeStatus.indexOf('Cordoned') !== -1" type="warning" size="mini" plain round>
-            Cordoned
-          </el-button>
           <el-button v-if="row.nodeStatus.indexOf('NotReady') !== -1" type="warning" size="mini" plain round>
             NotReady
           </el-button>
           <el-button v-else type="success" size="mini" plain round>
             Ready
+          </el-button>
+          <el-button v-if="row.nodeStatus.indexOf('SchedulingDisabled') !== -1" type="warning" size="mini" plain round>
+            SchedulingDisabled
           </el-button>
         </template>
       </el-table-column>
@@ -134,7 +134,7 @@ export default {
             }
           }
           if (node.spec.unschedulable) {
-            node.nodeStatus += ", Cordoned"
+            node.nodeStatus += ", SchedulingDisabled"
           }
         }
         this.paginationConfig.total = res.total
