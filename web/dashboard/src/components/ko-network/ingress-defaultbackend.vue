@@ -5,24 +5,24 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.network.target')+'Service'">
-              <el-select
-                      v-model="defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name"
-                      @change="changeService(defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name)"
-                      style="width: 100%">
-                <el-option v-for="service in services" :key="service.metadata.name"
-                           :label="service.metadata.name" :value="service.metadata.name">
-                </el-option>
-              </el-select>
+<!--              <el-select-->
+<!--                      v-model="defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name"-->
+<!--                      @change="changeService(defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name)"-->
+<!--                      style="width: 100%">-->
+<!--                <el-option v-for="service in services" :key="service.metadata.name"-->
+<!--                           :label="service.metadata.name" :value="service.metadata.name">-->
+<!--                </el-option>-->
+<!--              </el-select>-->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.network.port')">
-              <el-select
-                      v-model="defaultBackend.servicePort!==undefined?defaultBackend.servicePort:defaultBackend.service.port.number">
-                <el-option v-for="port in servicePorts" :key="port.name"
-                           :label="port.port" :value="port.port">
-                </el-option>
-              </el-select>
+<!--              <el-select-->
+<!--                      v-model="defaultBackend.servicePort!==undefined?defaultBackend.servicePort:defaultBackend.service.port.number">-->
+<!--                <el-option v-for="port in servicePorts" :key="port.name"-->
+<!--                           :label="port.port" :value="port.port">-->
+<!--                </el-option>-->
+<!--              </el-select>-->
             </el-form-item>
           </el-col>
         </el-row>

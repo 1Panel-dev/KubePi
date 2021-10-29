@@ -109,7 +109,7 @@
 
 import KoCard from "@/components/ko-card"
 import {listServicesWithNs} from "@/api/services"
-import {get, set} from "@/utils/object"
+import {set} from "@/utils/object"
 
 export default {
   name: "KoIngressRule",
