@@ -36,7 +36,7 @@
               </el-link>
               --->
               <el-link @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
-                {{getService(path.backend)}}:{{getPort(path.backend)}}
+                {{ getService(path.backend) }}:{{ getPort(path.backend) }}
               </el-link>
             </div>
           </div>
@@ -82,9 +82,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "IngressEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
+              path: `/ingresses/${row.metadata.namespace}/${row.metadata.name}/edit`,
+              query: { yamlShow: false, mode: "edit" }
             })
           },
           disabled: () => {
@@ -101,9 +100,8 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              name: "IngressEdit",
-              params: { name: row.metadata.name, namespace: row.metadata.namespace },
-              query: { yamlShow: true }
+              path: `/ingresses/${row.metadata.namespace}/${row.metadata.name}/edit`,
+              query: { yamlShow: true, mode: "edit" }
             })
           },
           disabled: () => {
@@ -162,12 +160,14 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "IngressCreate", query: { yamlShow: false }
+        path: `/ingresses/create`,
+        query: { yamlShow: false, mode: "create" }
       })
     },
     yamlCreate () {
       this.$router.push({
-        name: "IngressCreate", query: { yamlShow: true }
+        path: `/ingresses/create`,
+        query: { yamlShow: true, mode: "create" }
       })
     },
     onDelete (row) {
@@ -204,6 +204,7 @@ export default {
       })
     },
     list () {
+      this.loading = true
       checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then(res => {
         this.newVersion = res
         this.servicePath = this.serviceNamePath()
@@ -211,21 +212,21 @@ export default {
         this.search()
       })
     },
-    getService(backend) {
-      return get(backend,this.servicePath)
+    getService (backend) {
+      return get(backend, this.servicePath)
     },
-    getPort(backend){
-      return get(backend,this.portPath)
+    getPort (backend) {
+      return get(backend, this.portPath)
     },
-    serviceNamePath() {
-      const nestedPath = 'service.name';
-      const flatPath = 'serviceName';
-      return this.newVersion ? nestedPath : flatPath;
+    serviceNamePath () {
+      const nestedPath = "service.name"
+      const flatPath = "serviceName"
+      return this.newVersion ? nestedPath : flatPath
     },
-    servicePortPath() {
-      const nestedPath = 'service.port.number';
-      const flatPath = 'servicePort';
-      return this.newVersion ? nestedPath : flatPath;
+    servicePortPath () {
+      const nestedPath = "service.port.number"
+      const flatPath = "servicePort"
+      return this.newVersion ? nestedPath : flatPath
     },
     openDetail (row) {
       this.$router.push({
