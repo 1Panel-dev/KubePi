@@ -169,6 +169,7 @@ export default {
         total: 0,
       },
       dialogScaleVisible: false,
+      scaleRow: {},
       form: {
         name: "",
         namespace: "",
@@ -176,6 +177,7 @@ export default {
         imagesData: [],
       },
       dialogModifyVersionVisible: false,
+      modifyRow: {},
       searchConfig: {
         keywords: "",
       },
@@ -229,11 +231,12 @@ export default {
       this.form.namespace = row.metadata.namespace
       this.form.replicas = row.spec.replicas
       this.dialogScaleVisible = true
+      this.scaleRow = row
     },
     onScaleSubmit() {
       this.loading = true
-      let data = { spec: { replicas: this.form.replicas } }
-      scaleStatefulset(this.clusterName, this.form.namespace, this.form.name, data)
+      this.scaleRow.spec.replicas = this.form.replicas
+      scaleStatefulset(this.clusterName, this.form.namespace, this.form.name, this.scaleRow)
         .then(() => {
           this.dialogScaleVisible = false
           this.loading = true
@@ -258,7 +261,7 @@ export default {
             name: c.name,
             image: index !== -1 ? c.image.substring(0, index) : "",
             version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
-            newVersion: "",
+            newVersion: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
           })
         }
       }
@@ -269,29 +272,36 @@ export default {
           name: c.name,
           image: index !== -1 ? c.image.substring(0, index) : "",
           version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
-          newVersion: "",
+          newVersion: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
         })
       }
+      this.modifyRow = row
       this.dialogModifyVersionVisible = true
     },
     onModifyVersionSubmit() {
       this.loading = true
-      let containers = []
-      let initContainers = []
-      for (const c of this.form.imagesData) {
-        if (c.type === this.$t("business.workload.initContainer")) {
-          initContainers.push({
-            name: c.name,
-            image: c.image + ":" + (c.newVersion !== "" ? c.newVersion : c.version),
-          })
-        } else {
-          containers.push({
-            name: c.name,
-            image: c.image + ":" + (c.newVersion !== "" ? c.newVersion : c.version),
-          })
+      this.loading = true
+      for (const c of this.modifyRow.spec.template.spec.containers) {
+        let index = c.image.lastIndexOf(":")
+        for (const i of this.form.imagesData) {
+          if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.standardContainer")) {
+            c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+            break
+          }
         }
       }
-      let data = { spec: { template: { spec: { containers: containers, initContainers: initContainers } } } }
+      if (this.modifyRow.spec.template.spec.initContainers) {
+        for (const c of this.modifyRow.spec.template.spec.initContainers) {
+          let index = c.image.lastIndexOf(":")
+          for (const i of this.form.imagesData) {
+            if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.initContainer")) {
+              c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+              break
+            }
+          }
+        }
+      }
+      let data = this.modifyRow
       patchStatefulset(this.clusterName, this.form.namespace, this.form.name, data)
         .then(() => {
           this.dialogModifyVersionVisible = false

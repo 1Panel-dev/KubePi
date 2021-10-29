@@ -49,25 +49,25 @@
       </el-col>
     </el-row>
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
-      <h3>Events</h3>
+      <h3>{{$t('business.event.event')}}</h3>
       <complex-table :data="events" @search="search()" v-loading="loading" :pagination-config="paginationConfig"
                      :search-config="searchConfig">
-        <el-table-column label="Reason" prop="reason" fix max-width="50px">
+        <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
           <template v-slot:default="{row}">
             {{ row.reason }}
           </template>
         </el-table-column>
-        <el-table-column label="Namespace" prop="namespace" fix max-width="50px">
+        <el-table-column :label="$t('business.namespace.namespace')" prop="namespace" fix max-width="50px">
           <template v-slot:default="{row}">
             {{ row.metadata.namespace }}
           </template>
         </el-table-column>
-        <el-table-column label="Message" prop="resource" fix min-width="200px" show-overflow-tooltip>
+        <el-table-column :label="$t('business.event.message')" prop="resource" fix min-width="200px" show-overflow-tooltip>
           <template v-slot:default="{row}">
             {{ row.message }}
           </template>
         </el-table-column>
-        <el-table-column label="Resource" prop="resource" fix min-width="200px" show-overflow-tooltip>
+        <el-table-column :label="$t('business.event.resource')" prop="resource" fix min-width="200px" show-overflow-tooltip>
           <template v-slot:default="{row}">
             <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">
               {{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
