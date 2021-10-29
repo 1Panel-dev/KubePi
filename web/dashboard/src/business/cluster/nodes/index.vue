@@ -41,11 +41,14 @@
 <!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.status')">
         <template v-slot:default="{row}">
-          <el-button v-if="row.spec.unschedulable === true" type="warning" size="mini" plain round>
+          <el-button v-if="row.nodeStatus.indexOf('Cordoned') !== -1" type="warning" size="mini" plain round>
             Cordoned
           </el-button>
+          <el-button v-if="row.nodeStatus.indexOf('NotReady') !== -1" type="warning" size="mini" plain round>
+            NotReady
+          </el-button>
           <el-button v-else type="success" size="mini" plain round>
-            Active
+            Ready
           </el-button>
         </template>
       </el-table-column>
@@ -120,6 +123,20 @@ export default {
       listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.loading = false
         this.data = res.items
+        for (const node of this.data) {
+          node.nodeStatus = "NotReady"
+          for(const condition of node.status.conditions) {
+            if (condition.type === "Ready") {
+              if (condition.status === "True") {
+                node.nodeStatus = "Ready"
+              }
+              break
+            }
+          }
+          if (node.spec.unschedulable) {
+            node.nodeStatus += ", Cordoned"
+          }
+        }
         this.paginationConfig.total = res.total
       })
     },
