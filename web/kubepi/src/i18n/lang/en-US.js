@@ -39,7 +39,8 @@ const message = {
       all_select: "All",
       upload: "Upload",
       search: "Search",
-      rbac_manage: "RBAC Manage"
+      rbac_manage: "RBAC Manage",
+      sync: "Sync"
     },
     table: {
       name: "name",
@@ -161,8 +162,15 @@ const message = {
       resource_name: "resource name",
       please_input_password: "please input password",
       please_input_password_agin: "please input password again",
-      password_not_equal: "two passwords are inconsistent"
-
+      password_not_equal: "two passwords are inconsistent",
+      ldap: "LDAP",
+      ldap_address: "Address",
+      ldap_port: "Port",
+      ldap_username: "Username",
+      ldap_password: "Password",
+      ldap_filter_dn: "User Filtering DN",
+      ldap_filter_rule: "User Filtering Rules",
+      ldap_helper: "Note: Users without mailboxes will not be synchronized, and those with the same login name as local users will not be synchronized!"
     }
   },
 }

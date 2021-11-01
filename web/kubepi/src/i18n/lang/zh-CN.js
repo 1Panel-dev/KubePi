@@ -42,8 +42,8 @@ const message = {
       all_select: "全选",
       upload: "上传文件",
       search: "搜索",
-      rbac_manage: "授权"
-
+      rbac_manage: "授权",
+      sync: "同步"
     },
     table: {
       name: "名称",
@@ -206,8 +206,15 @@ const message = {
       resource_name: "资源名称",
       please_input_password: "请输入密码",
       please_input_password_agin: "请再次输入密码",
-      password_not_equal: "两次输入密码不一致"
-
+      password_not_equal: "两次输入密码不一致",
+      ldap: "LDAP",
+      ldap_address: "地址",
+      ldap_port: "端口",
+      ldap_username: "用户名",
+      ldap_password: "密码",
+      ldap_filter_dn: "用户过滤 DN",
+      ldap_filter_rule: "用户过滤规则",
+      ldap_helper: "注意：没有邮箱的用户不会被同步，与本地用户登录名重复的也不会被同步!"
     }
   },
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
@@ -87,6 +88,7 @@ func (h *Handler) CreateUser() iris.Handler {
 		if req.Language == "" {
 			req.Language = profile.Language
 		}
+		req.Type = v1User.LOCAL
 		if err := h.userService.Create(&req.User, common.DBOptions{DB: tx}); err != nil {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)

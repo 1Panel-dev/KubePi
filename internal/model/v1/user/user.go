@@ -10,6 +10,7 @@ type User struct {
 	Language     string       `json:"language"`
 	IsAdmin      bool         `json:"isAdmin"`
 	Authenticate Authenticate `json:"authenticate"`
+	Type         string       `json:"type"`
 }
 
 type Authenticate struct {
@@ -17,3 +18,7 @@ type Authenticate struct {
 	Token    string `json:"token"`
 }
 
+const (
+	LDAP  = "LDAP"
+	LOCAL = "LOCAL"
+)

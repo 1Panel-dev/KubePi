@@ -8,6 +8,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/creack/pty v1.1.15 // indirect
+	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
 	github.com/gofrs/flock v0.8.1
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.2.0
@@ -19,6 +20,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/sys v0.0.0-20210927052749-1cf2251ac284 // indirect
+	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/igm/sockjs-go.v2 v2.1.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	helm.sh/helm/v3 v3.7.0

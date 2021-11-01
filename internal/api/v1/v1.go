@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/api/v1/ldap"
 	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
@@ -274,4 +275,5 @@ func AddV1Route(app iris.Party) {
 	ws.Install(authParty)
 	chart.Install(authParty)
 	webkubectl.Install(authParty, v1Party)
+	ldap.Install(authParty)
 }
