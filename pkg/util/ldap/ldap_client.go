@@ -53,11 +53,11 @@ func (l *Ldap) Search(dn, filter string) ([]*ldap.Entry, error) {
 	return sr.Entries, err
 }
 
-func (l *Ldap) Login(dn string) error {
+func (l *Ldap) Login(dn ,username,password string) error {
 
 	searchRequest := ldap.NewSearchRequest(dn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf("(&(objectClass=organizationalPerson)(cn=%s))", l.Username),
+		fmt.Sprintf("(&(objectClass=organizationalPerson)(cn=%s))", username),
 		[]string{"dn", "cn", "uid"},
 		nil)
 	sr, err := l.Conn.Search(searchRequest)
@@ -68,7 +68,7 @@ func (l *Ldap) Login(dn string) error {
 		return errors.New("user is not found")
 	}
 	userdn := sr.Entries[0].DN
-	err = l.Conn.Bind(userdn, l.Password)
+	err = l.Conn.Bind(userdn, password)
 	if err != nil {
 		return err
 	}

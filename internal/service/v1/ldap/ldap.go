@@ -27,6 +27,7 @@ type Service interface {
 	GetById(id string, options common.DBOptions) (*v1Ldap.Ldap, error)
 	Delete(id string, options common.DBOptions) error
 	Sync(id string, options common.DBOptions) error
+	Login(username, password string, options common.DBOptions) error
 }
 
 func NewService() Service {
@@ -98,6 +99,19 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 		return err
 	}
 	return db.DeleteStruct(ldap)
+}
+
+func (l *service) Login(username, password string, options common.DBOptions) error {
+	ldaps, err := l.List(options)
+	if err != nil {
+		return err
+	}
+	ldap := ldaps[0]
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
+	if err := lc.Connect(); err != nil {
+		return err
+	}
+	return lc.Login(ldap.Dn, username, password)
 }
 
 func (l *service) Sync(id string, options common.DBOptions) error {
