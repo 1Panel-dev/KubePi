@@ -93,7 +93,7 @@ const UserManagement = {
       component: () => import("@/business/user-management/ldap"),
       name: "LDAP",
       requirePermission: {
-        resource: "users",
+        resource: "ldap",
         verb: "list"
       },
       meta: {

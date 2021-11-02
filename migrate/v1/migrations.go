@@ -25,8 +25,6 @@ var CreateAdministrator = migrations.Migration{
 	Handler: func(db storm.Node) error {
 		//
 
-
-
 		roleManageClusters := v1Role.Role{
 			BaseModel: v1.BaseModel{
 				ApiVersion: "v1",
@@ -62,7 +60,7 @@ var CreateAdministrator = migrations.Migration{
 			},
 			Rules: []v1Role.PolicyRule{
 				{
-					Resource: []string{"users", "roles"},
+					Resource: []string{"users", "roles", "ldap"},
 					Verbs:    []string{"*"},
 				},
 			},

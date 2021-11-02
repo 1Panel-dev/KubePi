@@ -168,7 +168,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				if len(ss) >= 4 {
 					resourceName := ss[3]
 					//过滤session资源
-					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" || resourceName == "webkubectl" {
+					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" || resourceName == "webkubectl" || resourceName == "apps" {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {

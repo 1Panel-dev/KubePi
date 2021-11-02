@@ -4,22 +4,22 @@
     <el-col :span="15">
       <div class="grid-content bg-purple-light">
         <el-form ref="form" v-loading="loading" label-position="left" :rules="rules" :model="form" label-width="150px">
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')" prop="address" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')" prop="address" >
             <el-input v-model="form.address"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port" >
             <el-input v-model="form.port" type="number"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username">
             <el-input v-model="form.username"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password">
             <el-input type="password" v-model="form.password"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_dn')" prop="dn" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_dn')" prop="dn">
             <el-input v-model="form.dn"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter" required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter">
             <el-input v-model="form.filter"></el-input>
           </el-form-item>
           <el-form-item>
@@ -33,11 +33,11 @@
 
           <div style="float: right">
             <el-form-item>
-              <el-button @click="sync" :disabled="isSubmitGoing">{{
+              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
                   $t("commons.button.sync")
                 }}
               </el-button>
-              <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing">{{ $t("commons.button.confirm") }}
+              <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
               </el-button>
             </el-form-item>
           </div>
