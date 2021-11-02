@@ -10,16 +10,16 @@
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port" required>
             <el-input v-model="form.port" type="number"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username"  required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username" required>
             <el-input v-model="form.username"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password"  required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password" required>
             <el-input type="password" v-model="form.password"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_dn')" prop="dn" required>
             <el-input v-model="form.dn"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter"  required>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter" required>
             <el-input v-model="form.filter"></el-input>
           </el-form-item>
           <el-form-item>
@@ -33,7 +33,10 @@
 
           <div style="float: right">
             <el-form-item>
-              <el-button @click="sync">{{ $t("commons.button.sync") }}</el-button>
+              <el-button @click="sync" :disabled="isSubmitGoing">{{
+                  $t("commons.button.sync")
+                }}
+              </el-button>
               <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing">{{ $t("commons.button.confirm") }}
               </el-button>
             </el-form-item>
@@ -49,7 +52,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
-import {createLdap, getLdap, updateLdap} from "@/api/ldap"
+import {createLdap, getLdap, syncLdap, updateLdap} from "@/api/ldap"
 
 export default {
   name: "LDAP",
@@ -72,7 +75,22 @@ export default {
   },
   methods: {
     sync () {
-
+      if (this.form.uuid === undefined || this.form.uuid === "") {
+        this.$message({
+          type: "warning",
+          message: this.$t("business.user.ldap_sync_error")
+        })
+        return
+      }
+      this.isSubmitGoing = true
+      syncLdap(this.form.uuid, {}).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("business.user.ldap_sync")
+        })
+      }).finally(() => {
+        this.isSubmitGoing = false
+      })
     },
     onSubmit () {
       if (this.isSubmitGoing) {
@@ -101,7 +119,7 @@ export default {
           this.isSubmitGoing = false
           this.loading = false
         })
-      }else {
+      } else {
         updateLdap(this.form).then(() => {
           this.$message({
             type: "success",

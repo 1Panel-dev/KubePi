@@ -214,7 +214,9 @@ const message = {
       ldap_password: "密码",
       ldap_filter_dn: "用户过滤 DN",
       ldap_filter_rule: "用户过滤规则",
-      ldap_helper: "注意：没有邮箱的用户不会被同步，与本地用户登录名重复的也不会被同步!"
+      ldap_helper: "注意：没有邮箱的用户不会被同步，与本地用户登录名重复的也不会被同步!",
+      ldap_sync: "开始同步，稍后请查看用户列表",
+      ldap_sync_error: "请先保存",
     }
   },
 }

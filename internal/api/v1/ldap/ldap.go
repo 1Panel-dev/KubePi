@@ -63,10 +63,24 @@ func (h *Handler) UpdateLdap() iris.Handler {
 	}
 }
 
+func (h *Handler) SyncLdapUser() iris.Handler {
+	return func(ctx *context.Context) {
+		uuid := ctx.Params().Get("id")
+		err := h.ldapService.Sync(uuid, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", "")
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/ldap")
 	sp.Get("/", handler.ListLdap())
 	sp.Post("/", handler.AddLdap())
 	sp.Put("/", handler.UpdateLdap())
+	sp.Post("/sync/:id", handler.SyncLdapUser())
 }

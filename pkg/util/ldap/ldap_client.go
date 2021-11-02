@@ -28,7 +28,7 @@ func (l *Ldap) Connect() error {
 	if err != nil {
 		return err
 	}
-	if err := conn.Bind(l.Username, l.Password);err != nil {
+	if err := conn.Bind(l.Username, l.Password); err != nil {
 		return err
 	}
 	l.Conn = conn
@@ -40,7 +40,7 @@ func (l *Ldap) Search(dn, filter string) ([]*ldap.Entry, error) {
 	searchRequest := ldap.NewSearchRequest(dn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		filter,
-		[]string{"cn", "mail"},
+		[]string{"cn", "mail", "sAMAccountName"},
 		nil)
 	sr, err := l.Conn.Search(searchRequest)
 	if err != nil {

@@ -13,3 +13,8 @@ export function createLdap (data) {
 export function updateLdap(data){
   return put(`${baseUrl}`, data)
 }
+
+export function syncLdap(id,data) {
+  return post(`${baseUrl}/sync/${id}`, data)
+
+}
