@@ -173,6 +173,7 @@ const message = {
       ldap_helper: "Note: Users without mailboxes will not be synchronized, and those with the same login name as local users will not be synchronized!",
       ldap_sync: "Start syncing, please check the user list later",
       ldap_sync_error: "Please save first",
+      type: "Type"
     }
   },
 }

@@ -41,6 +41,11 @@
           {{ $t("commons.bool." + row.builtIn) }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('business.user.type')" min-width="100" fix>
+        <template v-slot:default="{row}">
+          {{ row.type ? row.type : "LOCAL" }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | datetimeFormat }}
@@ -57,13 +62,13 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {searchUsers, deleteUser} from "@/api/users"
-import {checkPermissions} from "@/utils/permission";
+import {checkPermissions} from "@/utils/permission"
 
 
 export default {
   name: "ClusterList",
-  components: {ComplexTable, LayoutContent},
-  data() {
+  components: { ComplexTable, LayoutContent },
+  data () {
     return {
       buttons: [
         {
@@ -73,7 +78,7 @@ export default {
             this.onEdit(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions({resource: "users", verb: "update"})
+            return row.builtIn || !checkPermissions({ resource: "users", verb: "update" }) || row.type === "LDAP"
           }
         },
         {
@@ -83,7 +88,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions({resource: "users", verb: "delete"})
+            return row.builtIn || !checkPermissions({ resource: "users", verb: "delete" })
           }
         },
       ],
@@ -101,22 +106,22 @@ export default {
     }
   },
   methods: {
-    search() {
+    search () {
       this.loading = true
-      const {currentPage, pageSize} = this.paginationConfig
+      const { currentPage, pageSize } = this.paginationConfig
       searchUsers(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
       })
     },
-    onCreate() {
-      this.$router.push({name: "UserCreate"})
+    onCreate () {
+      this.$router.push({ name: "UserCreate" })
     },
-    onEdit(name) {
-      this.$router.push({name: "UserEdit", params: {name: name}})
+    onEdit (name) {
+      this.$router.push({ name: "UserEdit", params: { name: name } })
     },
-    onDelete(name) {
+    onDelete (name) {
       if (this.isSubmitGoing) {
         return
       }
@@ -124,22 +129,22 @@ export default {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
-        type: 'warning'
+        type: "warning"
       }).then(() => {
         deleteUser(name).then(() => {
           this.$message({
-            type: 'success',
+            type: "success",
             message: this.$t("commons.msg.delete_success"),
-          });
+          })
           this.search()
         }).finally(() => {
           this.isSubmitGoing = false
         })
-      });
+      })
     }
 
   },
-  created() {
+  created () {
     this.search()
   }
 }
