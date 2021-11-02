@@ -9,13 +9,13 @@
         </el-col>
         <el-col :span="24">
           <br>
-          <el-card class="el-card">
+          <el-card class="el-card" style="width:800px">
             <div class="card_title">
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>
-            <div v-for="(value,key) in item.data" v-bind:key="key">
-              <ko-data :title="key">
-                <json-viewer v-if="jsonV(value)" :value="getContent(value)" :copyable=true
+            <div v-for="(value,key) in item.data" v-bind:key="key" >
+              <ko-data :title="key" >
+                <json-viewer v-if="jsonV(value)" :value="getContent(value)" copyable
                              theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
                 <el-card v-else style="background: #202124;border: 0;">
                   <div style="white-space: pre-line;background: #202124;">
