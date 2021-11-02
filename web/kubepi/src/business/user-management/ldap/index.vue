@@ -4,23 +4,23 @@
     <el-col :span="15">
       <div class="grid-content bg-purple-light">
         <el-form ref="form" v-loading="loading" label-position="left" :rules="rules" :model="form" label-width="150px">
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')" prop="address" >
-            <el-input v-model="form.address"></el-input>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')"  prop="address" >
+            <el-input v-model="form.address" :placeholder="'172.16.10.1'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port" >
-            <el-input v-model="form.port" type="number"></el-input>
+            <el-input v-model="form.port" :placeholder="'389'" type="number"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username">
-            <el-input v-model="form.username"></el-input>
+            <el-input v-model="form.username" :placeholder="'cn=Manager,dc=ko,dc=com'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password">
             <el-input type="password" v-model="form.password"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_dn')" prop="dn">
-            <el-input v-model="form.dn"></el-input>
+            <el-input v-model="form.dn" :placeholder="'dc=ko,dc=com'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter">
-            <el-input v-model="form.filter"></el-input>
+            <el-input v-model="form.filter" :placeholder="'(&(objectClass=organizationalPerson))'"></el-input>
           </el-form-item>
           <el-form-item>
             <div style="font-size: 12px;color: #4E5051;">
