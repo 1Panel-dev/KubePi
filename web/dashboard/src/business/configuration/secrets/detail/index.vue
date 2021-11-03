@@ -1,6 +1,6 @@
 <template>
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Secrets'}" v-loading="loading">
-    <el-row :gutter="20"  class="row-box">
+    <el-row :gutter="20" class="row-box">
       <div v-if="!yamlShow">
         <el-col :span="24">
           <el-card class="el-card">
@@ -13,13 +13,13 @@
             <div class="card_title">
               <h3>{{ $t("business.configuration.data") }}</h3>
             </div>
-            <div v-for="(value,key) in item.data" v-bind:key="key" >
-              <ko-data :title="key" >
-                <json-viewer v-if="jsonV(value)" :value="getContent(value)" copyable
-                             theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
-                <el-card v-else style="background: #202124;border: 0;">
-                  <div style="white-space: pre-line;background: #202124;">
-                    <span>{{ getValue(value) }} </span>
+            <div v-for="(value,key) in item.data" v-bind:key="key">
+              <ko-data :title="key">
+                <!--                <json-viewer v-if="jsonV(value)&&key!=='token'" :value="getContent(value)" :copyable="copyable"-->
+                <!--                             theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>-->
+                <el-card style="background: #202124;border: 0;">
+                  <div style="white-space: pre-line;background: #202124;width: 100%">
+                    <span style="word-break:break-all;">{{ getValue(value) }} </span>
                   </div>
                 </el-card>
               </ko-data>
@@ -61,7 +61,8 @@ export default {
       cluster: "",
       yamlShow: false,
       loading: false,
-      yaml: {}
+      yaml: {},
+      copyable: { copyText: "复制" }
     }
   },
   methods: {
