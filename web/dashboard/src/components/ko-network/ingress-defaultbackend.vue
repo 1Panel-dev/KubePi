@@ -5,24 +5,22 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.network.target')+'Service'">
-<!--              <el-select-->
-<!--                      v-model="defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name"-->
-<!--                      @change="changeService(defaultBackend.serviceName!==undefined?defaultBackend.serviceName:defaultBackend.service.name)"-->
-<!--                      style="width: 100%">-->
-<!--                <el-option v-for="service in services" :key="service.metadata.name"-->
-<!--                           :label="service.metadata.name" :value="service.metadata.name">-->
-<!--                </el-option>-->
-<!--              </el-select>-->
+              <el-select v-model="serviceName"
+                         @change="changeService(serviceName)"
+                         style="width: 100%">
+                <el-option v-for="service in services" :key="service.metadata.name"
+                           :label="service.metadata.name" :value="service.metadata.name">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.network.port')">
-<!--              <el-select-->
-<!--                      v-model="defaultBackend.servicePort!==undefined?defaultBackend.servicePort:defaultBackend.service.port.number">-->
-<!--                <el-option v-for="port in servicePorts" :key="port.name"-->
-<!--                           :label="port.port" :value="port.port">-->
-<!--                </el-option>-->
-<!--              </el-select>-->
+              <el-select v-model="servicePort">
+                <el-option v-for="port in servicePorts" :key="port.name"
+                           :label="port.port" :value="port.port">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -43,7 +41,10 @@ export default {
     namespace: String,
     cluster: String,
     defaultBackendObj: Object,
-    newVersion: Boolean
+    newVersion: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
@@ -53,7 +54,9 @@ export default {
       services: [],
       servicePorts: [],
       servicePath: "",
-      portPath: ""
+      portPath: "",
+      serviceName: "",
+      servicePort: 0,
     }
   },
   methods: {
@@ -94,6 +97,12 @@ export default {
         set(this.defaultBackend, this.portPath, 0)
         this.getServices()
       }
+    },
+    serviceName:function (value) {
+      set(this.defaultBackend, this.servicePath, value)
+    },
+    servicePort: function (value) {
+      set(this.defaultBackend, this.portPath, value)
     }
   },
   created () {
@@ -102,6 +111,9 @@ export default {
     this.defaultBackend = this.defaultBackendObj ? this.defaultBackendObj : this.getDefaultBackend()
     this.$emit("update:defaultBackendObj", this.defaultBackend)
     this.getServices()
+    console.log(this.servicePath)
+    console.log(this.newVersion)
+    console.log(this.portPath)
   }
 }
 </script>

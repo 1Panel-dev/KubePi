@@ -22,7 +22,7 @@
                                  :rulesArray.sync="form.spec.rules" :new-version="newVersion"></ko-ingress-rule>
               </el-tab-pane>
               <el-tab-pane :label="$t('business.network.default_backend')">
-                <ko-ingress-default-backend :cluster="cluster" :namespace="form.metadata.namespace"
+                <ko-ingress-default-backend :cluster="cluster" :namespace="form.metadata.namespace" :new-version="newVersion"
                                             :defaultBackendObj.sync="form.spec.defaultBackend"></ko-ingress-default-backend>
               </el-tab-pane>
               <el-tab-pane :label="$t('business.configuration.certificate')">
