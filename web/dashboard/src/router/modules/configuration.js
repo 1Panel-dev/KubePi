@@ -273,7 +273,7 @@ const Configuration = {
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
-        title: "Horizontal Pod Autoscalers",
+        title: "HPA",
       }
     },
     {

@@ -33,7 +33,7 @@
                 <el-tab-pane :label="$t('business.workload.labels_annotations')">
                   <ko-key-value :title="$t('business.workload.label')"
                                 :value.sync="item.metadata.labels"></ko-key-value>
-                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                  <ko-key-value :title="$t('business.workload.annotations')"
                                 :value.sync="item.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>

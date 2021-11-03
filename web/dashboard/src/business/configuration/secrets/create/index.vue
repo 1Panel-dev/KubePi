@@ -52,7 +52,7 @@
                 <el-tab-pane name="1" :label="$t('business.workload.labels_annotations')">
                   <ko-key-value :title="$t('business.workload.label')"
                                 :value.sync="form.metadata.labels"></ko-key-value>
-                  <ko-key-value :title="$t('business.workload.labels_annotations')"
+                  <ko-key-value :title="$t('business.workload.annotations')"
                                 :value.sync="form.metadata.annotations"></ko-key-value>
                 </el-tab-pane>
               </el-tabs>
