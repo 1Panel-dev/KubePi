@@ -1,11 +1,14 @@
 <template>
   <layout-content header="Pods">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
+                   :search-config="searchConfig" @search="search">
       <template #header>
-        <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
+        <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
           YAML
         </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
+        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
           {{ $t("commons.button.delete") }}
         </el-button>
       </template>
@@ -15,19 +18,29 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace" />
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
       <el-table-column :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
-          {{getPodStatus(row)}}
+          {{ getPodStatus(row) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.workload.restarts')" min-width="35">
         <template v-slot:default="{row}">
-          {{getRestartTimes(row)}}
+          {{ getRestartTimes(row) }}
         </template>
       </el-table-column>
-      <el-table-column label="IP" min-width="40" prop="status.podIP" />
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName" />
+      <el-table-column label="IP" min-width="40" prop="status.podIP"/>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName"/>
+      <el-table-column :label="'Cpu(Cores)'"  min-width="45">
+        <template v-slot:default="{row}">
+          {{ getPodUsage(row.metadata.name, "cpu") }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="'Memory(bytes)'" min-width="45">
+        <template v-slot:default="{row}">
+          {{ getPodUsage(row.metadata.name, "memory") }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="35" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -35,40 +48,47 @@
       </el-table-column>
       <el-table-column min-width="45" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'update'}" />
+          <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit"
+                     v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'update'}"/>
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
-            <el-button circle icon="el-icon-more" size="mini" />
+            <el-button circle icon="el-icon-more" size="mini"/>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-download" command="download">{{$t("commons.button.download_yaml")}}</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}
+              </el-dropdown-item>
               <div v-if="row.containers.length > 1">
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
                     <p style="margin: 0">
-                      <el-button @click="openTerminal(row, c)" type="text">{{c}}</el-button>
+                      <el-button @click="openTerminal(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
                   <el-dropdown-item slot="reference" icon="el-icon-date" command="terminal">
-                    {{$t("commons.button.terminal")}}
-                    <i class="el-icon-arrow-right" />
+                    {{ $t("commons.button.terminal") }}
+                    <i class="el-icon-arrow-right"/>
                   </el-dropdown-item>
                 </el-popover>
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
                     <p style="margin: 0">
-                      <el-button @click="openTerminalLogs(row, c)" type="text">{{c}}</el-button>
+                      <el-button @click="openTerminalLogs(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
                   <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
-                    {{$t("commons.button.logs")}}
-                    <i class="el-icon-arrow-right" />
+                    {{ $t("commons.button.logs") }}
+                    <i class="el-icon-arrow-right"/>
                   </el-dropdown-item>
                 </el-popover>
               </div>
               <div v-if="row.containers.length == 1">
-                <el-dropdown-item icon="iconfont iconline-terminalzhongduan" command="terminal">{{$t("commons.button.terminal")}}</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-tickets" command="logs">{{$t("commons.button.logs")}}</el-dropdown-item>
+                <el-dropdown-item icon="iconfont iconline-terminalzhongduan" command="terminal">
+                  {{ $t("commons.button.terminal") }}
+                </el-dropdown-item>
+                <el-dropdown-item icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
+                </el-dropdown-item>
               </div>
-              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">{{$t("commons.button.delete")}}</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">
+                {{ $t("commons.button.delete") }}
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -79,15 +99,16 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import { listWorkLoads, deleteWorkLoad, getWorkLoadByName } from "@/api/workloads"
-import { downloadYaml } from "@/utils/actions"
+import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
+import {downloadYaml} from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
-import { checkPermissions } from "@/utils/permission"
+import {checkPermissions} from "@/utils/permission"
+import {listPodMetrics} from "@/api/apis"
 
 export default {
   name: "Pods",
   components: { LayoutContent, ComplexTable },
-  data() {
+  data () {
     return {
       loading: false,
       data: [],
@@ -101,16 +122,21 @@ export default {
       },
       selects: [],
       clusterName: "",
+      podUsage: []
     }
   },
   methods: {
-    openDetail(row) {
-      this.$router.push({ name: "PodDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
+    openDetail (row) {
+      this.$router.push({
+        name: "PodDetail",
+        params: { namespace: row.metadata.namespace, name: row.metadata.name },
+        query: { yamlShow: false }
+      })
     },
-    onCheckPermissions() {
+    onCheckPermissions () {
       return checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "delete" })
     },
-    handleClick(btn, row) {
+    handleClick (btn, row) {
       switch (btn) {
         case "download":
           downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
@@ -126,30 +152,48 @@ export default {
           break
       }
     },
-    onEdit(row) {
+    onEdit (row) {
       this.$router.push({ name: "PodEdit", params: { namespace: row.metadata.namespace, name: row.metadata.name } })
     },
-    openTerminal(row, container) {
+    openTerminal (row, container) {
       let c
       if (container) {
         c = container
       } else {
         c = row.containers[0]
       }
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.clusterName, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "terminal" } })
+      let routeUrl = this.$router.resolve({
+        path: "/terminal",
+        query: {
+          cluster: this.clusterName,
+          namespace: row.metadata.namespace,
+          pod: row.metadata.name,
+          container: c,
+          type: "terminal"
+        }
+      })
       window.open(routeUrl.href, "_blank")
     },
-    openTerminalLogs(row, container) {
+    openTerminalLogs (row, container) {
       let c
       if (container) {
         c = container
       } else {
         c = row.containers[0]
       }
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.clusterName, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "log" } })
+      let routeUrl = this.$router.resolve({
+        path: "/terminal",
+        query: {
+          cluster: this.clusterName,
+          namespace: row.metadata.namespace,
+          pod: row.metadata.name,
+          container: c,
+          type: "log"
+        }
+      })
       window.open(routeUrl.href, "_blank")
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -180,10 +224,10 @@ export default {
         }
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({ name: "PodCreate" })
     },
-    getPodStatus(row) {
+    getPodStatus (row) {
       if (row.status.containerStatuses) {
         let readyCount = 0
         for (const c of row.status.containerStatuses) {
@@ -195,7 +239,7 @@ export default {
       }
       return
     },
-    getRestartTimes(row) {
+    getRestartTimes (row) {
       if (row.status.containerStatuses) {
         let restartCount = 0
         for (const c of row.status.containerStatuses) {
@@ -205,7 +249,7 @@ export default {
       }
       return 0
     },
-    search(resetPage) {
+    search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -221,6 +265,7 @@ export default {
             item.containers = container
           }
           this.paginationConfig.total = res.total
+          this.listPodMetric()
         })
         .catch((error) => {
           console.log(error)
@@ -229,8 +274,50 @@ export default {
           this.loading = false
         })
     },
+    listPodMetric () {
+      const namespace = sessionStorage.getItem("namespace")
+      listPodMetrics(this.clusterName, namespace).then(res => {
+        this.podUsage = res.items
+      })
+    },
+    getPodUsage (name, type) {
+      let result = "0 m"
+      if (this.podUsage.length > 0) {
+        for (let item of this.podUsage) {
+          if (item.metadata.name === name) {
+            let usage = 0
+            for (let container of item.containers) {
+              if (type === "cpu") {
+                if (container.usage.cpu.indexOf("n") > -1) {
+                  usage = usage + parseInt(container.usage.cpu)
+                }
+                if (container.usage.cpu.indexOf("m") > -1) {
+                  usage = usage + parseInt(container.usage.cpu) * 1000 * 1000
+                }
+              }
+              if (type === "memory") {
+                if (container.usage.memory.indexOf("Ki") > -1) {
+                  usage = usage + parseInt(container.usage.memory)
+                }
+                if (container.usage.memory.indexOf("Mi") > -1) {
+                  usage = usage + parseInt(container.usage.memory) * 1000
+                }
+              }
+            }
+            const unit = type === "cpu" ? "m" : "Mi"
+            if (type === "cpu") {
+              result = (usage / 1000000).toFixed(2)
+            } else {
+              result = (usage / 1000).toFixed(2)
+            }
+            result = result + unit
+          }
+        }
+      }
+      return result
+    }
   },
-  mounted() {
+  mounted () {
     this.clusterName = this.$route.query.cluster
     this.search()
   },

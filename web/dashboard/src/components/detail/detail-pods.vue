@@ -3,11 +3,13 @@
     <complex-table :data="pods" v-loading="loading" @search="search()">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success" size="mini" plain round>
-            {{row.status.phase}}
+          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
+                     size="mini" plain round>
+            {{ row.status.phase }}
           </el-button>
-          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning" size="mini" plain round>
-            {{row.status.phase}}
+          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning"
+                     size="mini" plain round>
+            {{ row.status.phase }}
           </el-button>
         </template>
       </el-table-column>
@@ -16,8 +18,9 @@
           <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace" show-overflow-tooltip />
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip />
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace"
+                       show-overflow-tooltip/>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip/>
       <el-table-column :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
@@ -25,6 +28,16 @@
               {{ item.image }}
             </el-tag>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'Cpu(Cores)'" min-width="45">
+        <template v-slot:default="{row}">
+          {{ getPodUsage(row.metadata.name, "cpu") }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="'Memory(bytes)'" min-width="45">
+        <template v-slot:default="{row}">
+          {{ getPodUsage(row.metadata.name, "memory") }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" fix>
@@ -40,8 +53,9 @@
 <script>
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import { listPodsWithNsSelector } from "@/api/pods"
-import { checkPermissions } from "@/utils/permission"
+import {listPodsWithNsSelector} from "@/api/pods"
+import {checkPermissions} from "@/utils/permission"
+import {listPodMetrics} from "@/api/apis"
 
 export default {
   name: "KoDetailPods",
@@ -54,7 +68,7 @@ export default {
   },
   watch: {
     selector: {
-      handler(newSelector) {
+      handler (newSelector) {
         if (newSelector) {
           this.search()
         }
@@ -62,7 +76,7 @@ export default {
       immediate: true,
     },
     fieldSelector: {
-      handler(newSelector) {
+      handler (newSelector) {
         if (newSelector) {
           this.search()
         }
@@ -70,7 +84,7 @@ export default {
       immediate: true,
     },
   },
-  data() {
+  data () {
     return {
       buttons: [
         {
@@ -90,10 +104,11 @@ export default {
       ],
       loading: false,
       pods: [],
+      podUsage: [],
     }
   },
   methods: {
-    search() {
+    search () {
       this.loading = true
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
         return
@@ -101,32 +116,89 @@ export default {
       listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
         this.loading = false
+        listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
+          this.podUsage = res.items
+        })
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "PodDetail",
         params: { namespace: row.metadata.namespace, name: row.metadata.name },
         query: { yamlShow: false },
       })
     },
-    openTerminal(row) {
+    openTerminal (row) {
       let c = row.spec.containers[0].name
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "terminal" } })
+      let routeUrl = this.$router.resolve({
+        path: "/terminal",
+        query: {
+          cluster: this.cluster,
+          namespace: row.metadata.namespace,
+          pod: row.metadata.name,
+          container: c,
+          type: "terminal"
+        }
+      })
       window.open(routeUrl.href, "_blank")
     },
-    openTerminalLogs(row) {
+    openTerminalLogs (row) {
       let c = row.spec.containers[0].name
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: row.metadata.namespace, pod: row.metadata.name, container: c, type: "log" } })
+      let routeUrl = this.$router.resolve({
+        path: "/terminal",
+        query: {
+          cluster: this.cluster,
+          namespace: row.metadata.namespace,
+          pod: row.metadata.name,
+          container: c,
+          type: "log"
+        }
+      })
       window.open(routeUrl.href, "_blank")
     },
+    getPodUsage (name, type) {
+      let result = "0 m"
+      if (this.podUsage.length > 0) {
+        for (let item of this.podUsage) {
+          if (item.metadata.name === name) {
+            let usage = 0
+            for (let container of item.containers) {
+              if (type === "cpu") {
+                if (container.usage.cpu.indexOf("n") > -1) {
+                  usage = usage + parseInt(container.usage.cpu)
+                }
+                if (container.usage.cpu.indexOf("m") > -1) {
+                  usage = usage + parseInt(container.usage.cpu) * 1000 * 1000
+                }
+              }
+              if (type === "memory") {
+                if (container.usage.memory.indexOf("Ki") > -1) {
+                  usage = usage + parseInt(container.usage.memory)
+                }
+                if (container.usage.memory.indexOf("Mi") > -1) {
+                  usage = usage + parseInt(container.usage.memory) * 1000
+                }
+              }
+            }
+            const unit = type === "cpu" ? "m" : "Mi"
+            if (type === "cpu") {
+              result = (usage / 1000000).toFixed(2)
+            } else {
+              result = (usage / 1000).toFixed(2)
+            }
+            result = result + unit
+          }
+        }
+      }
+      return result
+    }
   },
 }
 </script>
 
 <style scoped>
-.btnSize {
-  width: 28px;
-  height: 28px;
-}
+    .btnSize {
+        width: 28px;
+        height: 28px;
+    }
 </style>
