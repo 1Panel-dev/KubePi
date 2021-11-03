@@ -39,7 +39,8 @@ const message = {
       all_select: "All",
       upload: "Upload",
       search: "Search",
-      rbac_manage: "RBAC Manage"
+      rbac_manage: "RBAC Manage",
+      sync: "Sync"
     },
     table: {
       name: "name",
@@ -161,8 +162,18 @@ const message = {
       resource_name: "resource name",
       please_input_password: "please input password",
       please_input_password_agin: "please input password again",
-      password_not_equal: "two passwords are inconsistent"
-
+      password_not_equal: "two passwords are inconsistent",
+      ldap: "LDAP",
+      ldap_address: "Address",
+      ldap_port: "Port",
+      ldap_username: "Username",
+      ldap_password: "Password",
+      ldap_filter_dn: "User Filtering DN",
+      ldap_filter_rule: "User Filtering Rules",
+      ldap_helper: "Note: Users without mailboxes will not be synchronized, and those with the same login name as local users will not be synchronized!",
+      ldap_sync: "Start syncing, please check the user list later",
+      ldap_sync_error: "Please save first",
+      type: "Type"
     }
   },
 }
@@ -176,7 +187,7 @@ const description = {
   i18n_manage_nodes: "The node administrator has read-only permissions on node objects",
   i18n_manage_crd: "The custom resource administrator has all the permissions of the CustomResourceDefinition objec",
   i18n_view_crd: "User defined resource administrator with read-only permission on CustomResourceDefinition object",
-  i18n_user_manage_chart:"Chart warehouse administrator, has all rights to the Chart warehouse",
+  i18n_user_manage_chart: "Chart warehouse administrator, has all rights to the Chart warehouse",
 
   i18n_manage_config: "The configuration administrator has all permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
   i18n_view_config: "Configure a read-only user with read-only permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",

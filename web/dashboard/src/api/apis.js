@@ -7,3 +7,8 @@ const apiUrl = (cluster_name) => {
 export function listApis(cluster_name) {
   return get(`${apiUrl(cluster_name)}`)
 }
+
+
+export function listResourceApi(cluster_name,apiGroup,version) {
+  return get(`${apiUrl(cluster_name)}/${apiGroup}/${version}`)
+}

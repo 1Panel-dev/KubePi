@@ -3,6 +3,7 @@ package server
 import (
 	"embed"
 	"fmt"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -31,24 +32,58 @@ var EmbedWebDashboard embed.FS
 var EmbedWebTerminal embed.FS
 var WebkubectlEntrypoint string
 
-type KubePiSerer struct {
-	*iris.Application
-	db     *storm.DB
-	logger *logrus.Logger
-	config v1Config.Config
+type Option func(server *KubePiSerer)
+
+func WithServerBindHost(host string) Option {
+	return func(server *KubePiSerer) {
+		if host != "" {
+			server.config.Spec.Server.Bind.Host = host
+		}
+	}
 }
 
-func NewKubePiSerer() *KubePiSerer {
+func WithServerBindPort(port int) Option {
+	return func(server *KubePiSerer) {
+		if port != 0 {
+			server.config.Spec.Server.Bind.Port = port
+		}
+	}
+}
+
+func WithCustomConfigFilePath(path string) Option {
+	return func(server *KubePiSerer) {
+		if path != "" {
+			server.configCustomFilePath = path
+		}
+	}
+}
+
+type KubePiSerer struct {
+	*iris.Application
+	db                   *storm.DB
+	logger               *logrus.Logger
+	configCustomFilePath string
+	config               *v1Config.Config
+}
+
+func NewKubePiSerer(opts ...Option) *KubePiSerer {
 	c := &KubePiSerer{}
+	c.config = getDefaultConfig()
+	for _, op := range opts {
+		op(c)
+	}
+	c.setUpConfig()
+	for _, op := range opts {
+		op(c)
+	}
 	return c.bootstrap()
 }
 
 func (e *KubePiSerer) setUpConfig() {
-	c, err := config.ReadConfig()
+	err := config.ReadConfig(e.config, e.configCustomFilePath)
 	if err != nil {
 		panic(err)
 	}
-	e.config = c
 }
 
 func (e *KubePiSerer) setUpLogger() {
@@ -219,7 +254,6 @@ func (e *KubePiSerer) setUpTtyEntrypoint() {
 func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	e.Application = iris.New()
 	e.setUpStaticFile()
-	e.setUpConfig()
 	e.setUpLogger()
 	e.setUpDB()
 	e.setUpSession()
@@ -238,7 +272,7 @@ func DB() *storm.DB {
 	return es.db
 }
 
-func Config() v1Config.Config {
+func Config() *v1Config.Config {
 	return es.config
 }
 
@@ -246,8 +280,33 @@ func Logger() *logrus.Logger {
 	return es.logger
 }
 
-func Listen(route func(party iris.Party)) error {
-	es = NewKubePiSerer()
+func Listen(route func(party iris.Party), options ...Option) error {
+	es = NewKubePiSerer(options...)
 	route(es.Application)
 	return es.Run(iris.Addr(fmt.Sprintf("%s:%d", es.config.Spec.Server.Bind.Host, es.config.Spec.Server.Bind.Port)))
+}
+
+func getDefaultConfig() *v1Config.Config {
+	return &v1Config.Config{
+		BaseModel: v1.BaseModel{
+			ApiVersion: "v1",
+			Kind:       "AppConfig",
+		},
+		Metadata: v1.Metadata{},
+		Spec: v1Config.Spec{
+			Server: v1Config.ServerConfig{
+				Bind: v1Config.BindConfig{
+					Host: "0.0.0.0",
+					Port: 80,
+				},
+				SSL: v1Config.SSLConfig{
+					Enable: false,
+				},
+			},
+			DB: v1Config.DBConfig{
+				Path: "/var/lib/kubepi/db",
+			},
+			Logger: v1Config.LoggerConfig{Level: "debug"},
+		},
+	}
 }

@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/internal/service/v1/ldap"
 	"github.com/KubeOperator/kubepi/internal/service/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
@@ -27,6 +29,7 @@ type Handler struct {
 	roleService        role.Service
 	clusterService     cluster.Service
 	rolebindingService rolebinding.Service
+	ldapService        ldap.Service
 }
 
 func NewHandler() *Handler {
@@ -35,6 +38,7 @@ func NewHandler() *Handler {
 		userService:        user.NewService(),
 		roleService:        role.NewService(),
 		rolebindingService: rolebinding.NewService(),
+		ldapService:        ldap.NewService(),
 	}
 }
 
@@ -67,10 +71,18 @@ func (h *Handler) Login() iris.Handler {
 			return
 		}
 
-		if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", "username or password error")
-			return
+		if u.Type == v1User.LDAP {
+			if err := h.ldapService.Login(u.Name,loginCredential.Password,common.DBOptions{});err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", "username or password error")
+				return
+			}
+		}else {
+			if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", "username or password error")
+				return
+			}
 		}
 
 		permissions, err := h.aggregateResourcePermissions(loginCredential.Username)

@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	"github.com/KubeOperator/kubepi/internal/model/v1/config"
 	"github.com/KubeOperator/kubepi/pkg/file"
 	"github.com/coreos/etcd/pkg/fileutil"
@@ -18,7 +17,7 @@ var configFilePaths = []string{
 	"/etc/kubepi",
 }
 
-func ReadConfig(path ...string) (config.Config, error) {
+func ReadConfig(c *config.Config, path ...string)  error {
 	v := viper.New()
 	v.SetConfigName("app")
 	v.SetConfigType("yaml")
@@ -46,40 +45,15 @@ func ReadConfig(path ...string) (config.Config, error) {
 
 	var configMap map[string]interface{}
 	if err := v.Unmarshal(&configMap); err != nil {
-		return config.Config{}, err
+		return  err
 	}
 	str, err := json.Marshal(&configMap)
 	if err != nil {
-		return config.Config{}, err
+		return  err
 	}
-	c := defaultConfig()
 	if err := json.Unmarshal(str, &c); err != nil {
-		return config.Config{}, nil
+		return  nil
 	}
-	return c, nil
+	return  nil
 }
 
-func defaultConfig() config.Config {
-	return config.Config{
-		BaseModel: v1.BaseModel{
-			ApiVersion: "v1",
-			Kind:       "AppConfig",
-		},
-		Metadata: v1.Metadata{},
-		Spec: config.Spec{
-			Server: config.ServerConfig{
-				Bind: config.BindConfig{
-					Host: "0.0.0.0",
-					Port: 80,
-				},
-				SSL: config.SSLConfig{
-					Enable: false,
-				},
-			},
-			DB: config.DBConfig{
-				Path: "/var/lib/kubepi/db",
-			},
-			Logger: config.LoggerConfig{Level: "debug"},
-		},
-	}
-}

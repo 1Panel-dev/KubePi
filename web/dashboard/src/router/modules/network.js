@@ -173,7 +173,7 @@ const Network = {
         verb: "update",
         scope:"namespace"
       },
-      component: () => import("@/business/network/ingresses/edit"),
+      component: () => import("@/business/network/ingresses/operate"),
       name: "IngressEdit",
       hidden: true,
       props: true,
@@ -189,7 +189,7 @@ const Network = {
         verb: "create",
         scope:"namespace"
       },
-      component: () => import("@/business/network/ingresses/create"),
+      component: () => import("@/business/network/ingresses/operate"),
       name: "IngressCreate",
       hidden: true,
       props: true,

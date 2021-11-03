@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
+	"github.com/KubeOperator/kubepi/internal/api/v1/ldap"
 	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
@@ -167,7 +168,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				if len(ss) >= 4 {
 					resourceName := ss[3]
 					//过滤session资源
-					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" || resourceName == "webkubectl" {
+					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" || resourceName == "webkubectl" || resourceName == "apps" {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {
@@ -274,4 +275,5 @@ func AddV1Route(app iris.Party) {
 	ws.Install(authParty)
 	chart.Install(authParty)
 	webkubectl.Install(authParty, v1Party)
+	ldap.Install(authParty)
 }

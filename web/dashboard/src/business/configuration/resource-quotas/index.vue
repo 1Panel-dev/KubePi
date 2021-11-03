@@ -28,11 +28,23 @@
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> pods: {{ row.status.used.pods }} /
             {{ row.status.hard.pods }}
           </el-tag>
+          <br>
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu:
-            {{ row.status.used["requests.cpu"] }} / {{ row.status.hard["requests.cpu"] }}
+            <span v-if="row.status.used['requests.cpu']">
+              {{ row.status.used["requests.cpu"] }} / {{ row.status.hard["requests.cpu"] }}
+            </span>
+            <span v-else>
+              {{ row.status.used["cpu"] }} / {{ row.status.hard["cpu"] }}
+            </span>
           </el-tag>
+          <br>
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory:
-            {{ row.status.used["requests.memory"] }} / {{ row.status.hard["requests.memory"] }}
+            <span v-if="row.status.used['requests.memory']">
+               {{ row.status.used["requests.memory"] }} / {{ row.status.hard["requests.memory"] }}
+            </span>
+            <span v-else>
+              {{ row.status.used["memory"] }} / {{ row.status.hard["memory"] }}
+            </span>
           </el-tag>
         </template>
       </el-table-column>
@@ -41,6 +53,7 @@
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu:
             {{ row.status.used["limits.cpu"] }} / {{ row.status.hard["limits.cpu"] }}
           </el-tag>
+          <br>
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> memory:
             {{ row.status.used["limits.memory"] }} / {{ row.status.hard["limits.memory"] }}
           </el-tag>
@@ -91,7 +104,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getResourceQuota(this.cluster,row.metadata.namespace,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getResourceQuota(this.cluster, row.metadata.namespace, row.metadata.name))
           }
         },
         {

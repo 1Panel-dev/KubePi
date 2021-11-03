@@ -44,7 +44,16 @@
                     <td>
                       <el-input v-model="row.path" @change="transformation"></el-input>
                     </td>
-                    <td>
+                    <td v-if="row.backend.serviceName!==undefined">
+                      <el-select v-model="row.backend.serviceName"
+                                 @change="changeService(row.backend.serviceName,index)"
+                                 style="width: 100%">
+                        <el-option v-for="service in services" :key="service.metadata.name"
+                                   :label="service.metadata.name" :value="service.metadata.name">
+                        </el-option>
+                      </el-select>
+                    </td>
+                    <td v-else>
                       <el-select v-model="row.backend.service.name"
                                  @change="changeService(row.backend.service.name,index)"
                                  style="width: 100%">
@@ -53,7 +62,15 @@
                         </el-option>
                       </el-select>
                     </td>
-                    <td>
+
+                    <td v-if="row.backend.servicePort !== undefined">
+                      <el-select v-model="row.backend.servicePort">
+                        <el-option v-for="port in servicePorts[index]" :key="port.name"
+                                   :label="port.port" :value="port.port">
+                        </el-option>
+                      </el-select>
+                    </td>
+                    <td v-else>
                       <el-select v-model="row.backend.service.port.number">
                         <el-option v-for="port in servicePorts[index]" :key="port.name"
                                    :label="port.port" :value="port.port">
@@ -92,6 +109,7 @@
 
 import KoCard from "@/components/ko-card"
 import {listServicesWithNs} from "@/api/services"
+import {set} from "@/utils/object"
 
 export default {
   name: "KoIngressRule",
@@ -99,7 +117,9 @@ export default {
   props: {
     rulesArray: Array,
     namespace: String,
-    cluster: String
+    cluster: String,
+    mode: String,
+    newVersion: Boolean
   },
   data () {
     return {
@@ -107,7 +127,9 @@ export default {
         rules: [],
       },
       services: [],
-      servicePorts: {}
+      servicePorts: {},
+      servicePath: "",
+      portPath: ""
     }
   },
   methods: {
@@ -126,37 +148,17 @@ export default {
       }
     },
     addRule () {
-      this.form.rules.push({
-        host: "",
-        http: {
-          paths: [{
-            backend: {
-              service: {
-                port: {
-                  number: 0
-                },
-                name: ""
-              }
-            },
-            path: "",
-            pathType: ""
-          }]
-        }
-      })
+      this.form.rules.push(this.getDefaultRule())
     },
     addPath (row) {
-      row.http.paths.push({
-        backend: {
-          service: {
-            port: {
-              number: 0
-            },
-            name: ""
-          }
-        },
+      const path = {
+        backend: {},
         path: "",
         pathType: ""
-      })
+      }
+      set(path.backend, this.servicePath, "")
+      set(path.backend, this.portPath, 0)
+      row.http.paths.push(path)
     },
     deletePath (ind, index) {
       this.form.rules[ind].http.paths.splice(index, 1)
@@ -165,6 +167,31 @@ export default {
       listServicesWithNs(this.cluster, this.namespace).then(res => {
         this.services = res.items
       })
+    },
+    serviceNamePath () {
+      const nestedPath = "service.name"
+      const flatPath = "serviceName"
+      return this.newVersion ? nestedPath : flatPath
+    },
+    servicePortPath () {
+      const nestedPath = "service.port.number"
+      const flatPath = "servicePort"
+      return this.newVersion ? nestedPath : flatPath
+    },
+    getDefaultRule () {
+      const rule = {
+        host: "",
+        http: {
+          paths: [{
+            backend: {},
+            path: "",
+            pathType: ""
+          }]
+        }
+      }
+      set(rule.http.paths[0].backend, this.servicePath, "")
+      set(rule.http.paths[0].backend, this.portPath, 0)
+      return rule
     }
   },
   watch: {
@@ -172,8 +199,8 @@ export default {
       if (old !== newValue) {
         for (let i = 0; i < this.form.rules.length; i++) {
           for (let j = 0; j < this.form.rules[i].http.paths.length; j++) {
-            this.form.rules[i].http.paths[j].backend.service.name = ""
-            this.form.rules[i].http.paths[j].backend.service.port.number = 0
+            set(this.form.rules[i].http.paths[j].backend, this.servicePath, "")
+            set(this.form.rules[i].http.paths[j].backend, this.portPath, 0)
           }
         }
         this.getServices()
@@ -181,23 +208,14 @@ export default {
     }
   },
   created () {
-    this.form.rules = this.rulesArray ? this.rulesArray : [{
-      host: "",
-      http: {
-        paths: [{
-          backend: {
-            service: {
-              port: {
-                number: 0
-              },
-              name: ""
-            }
-          },
-          path: "",
-          pathType: ""
-        }]
-      }
-    }]
+    this.servicePath = this.serviceNamePath()
+    this.portPath = this.servicePortPath()
+
+    if (this.rulesArray) {
+      this.form.rules = this.rulesArray
+    } else {
+      this.form.rules = [this.getDefaultRule()]
+    }
     this.transformation()
     this.getServices()
   }
