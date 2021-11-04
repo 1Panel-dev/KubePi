@@ -155,6 +155,18 @@
                   </span>
                   </td>
                 </tr>
+                <tr>
+                  <td>Allocatable</td>
+                  <td><span>
+                    CPU:{{item.status.allocatable.cpu}}  Memory:{{item.status.allocatable.memory}}  Pods:{{item.status.allocatable.pods}}
+                  </span></td>
+                </tr>
+                <tr>
+                  <td>Capacity</td>
+                  <td><span>
+                    CPU:{{item.status.capacity.cpu}} Memory:{{item.status.capacity.memory}}  Pods:{{item.status.capacity.pods}}
+                  </span></td>
+                </tr>
               </table>
             </el-tab-pane>
           </el-tabs>
