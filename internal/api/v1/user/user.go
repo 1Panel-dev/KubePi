@@ -91,6 +91,20 @@ func (h *Handler) CreateUser() iris.Handler {
 		req.Type = v1User.LOCAL
 		if err := h.userService.Create(&req.User, common.DBOptions{DB: tx}); err != nil {
 			_ = tx.Rollback()
+			if errors.Is(err, storm.ErrAlreadyExists) {
+				u, _ := h.userService.GetByNameOrEmail(req.User.Name, common.DBOptions{})
+				if u != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", "username already exists")
+					return
+				}
+				u, _ = h.userService.GetByNameOrEmail(req.User.Email, common.DBOptions{})
+				if u != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", "email already exists")
+					return
+				}
+			}
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return

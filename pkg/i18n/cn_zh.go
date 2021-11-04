@@ -11,5 +11,7 @@ var zhCNMapping = TextMapping{
 	"must select one role":                  "请至少选择一个角色",
 	"must select one rule":                  "请至少创建一个规则",
 	"user %s can not access resource %s %s": "用户 %s 缺少资源 [%s - %s] 的权限, 无法完成此操作",
-	"can not match original password":      "无法匹配原密码",
+	"can not match original password":       "无法匹配原密码",
+	"username already exists":               "用户名已存在",
+	"email already exists":                  "邮箱已存在",
 }
