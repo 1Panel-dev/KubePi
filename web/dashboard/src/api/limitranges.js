@@ -40,3 +40,7 @@ export function createLimitRange (cluster_name, namespace, data) {
 export function updateLimitRange (cluster_name, namespace, name,data) {
   return put(`${namespaceLimitRangeUrl(cluster_name, namespace)}/${name}`, data)
 }
+
+export function listLimitRangeByNamespace(cluster_name,namespace) {
+  return get(`${namespaceLimitRangeUrl(cluster_name, namespace)}`)
+}

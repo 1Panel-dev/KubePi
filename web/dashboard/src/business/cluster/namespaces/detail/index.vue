@@ -3,7 +3,7 @@
     <el-row class="row-box">
       <el-card v-if="!yamlShow" class="el-card">
         <el-col :span="24">
-          <ko-detail-basic :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
+          <ko-detail-basic v-if="item.metadata.name" :item="item" :yaml-show.sync="yamlShow"></ko-detail-basic>
         </el-col>
       </el-card>
     </el-row>
