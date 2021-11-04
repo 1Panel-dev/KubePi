@@ -196,6 +196,7 @@ func roleAccessHandler() iris.Handler {
 		p := sessions.Get(ctx).Get("profile")
 		u := p.(session.UserProfile)
 		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") &&
+			!strings.Contains(ctx.Request().URL.Path, "/webkubectl") && !strings.Contains(ctx.Request().URL.Path, "/webkubectl") &&
 			!strings.Contains(ctx.Request().URL.Path, "/charts") && !strings.Contains(ctx.Request().URL.Path, "/apps") {
 			// 放通admin权限
 			if u.IsAdministrator {
