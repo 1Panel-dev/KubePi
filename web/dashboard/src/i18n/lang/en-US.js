@@ -452,7 +452,9 @@ const message = {
       CharDeviceLabel: "CharDevice: Character devices that must exist on the path",
       BlockDeviceLabel: "BlockDevice: The path must contain a block device, for example, /dev/sda1",
       default: "Default",
-      change_default: "Change Default"
+      change_default: "Change Default",
+      volumeMode: "Volume Mode",
+      persistentVolumeReclaimPolicy:"PersistentVolumeReclaimPolicy"
     },
     configuration: {
       configuration: "Configuration",

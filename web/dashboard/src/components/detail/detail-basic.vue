@@ -35,6 +35,24 @@
           </div>
         </td>
       </tr>
+      <tr v-if="item.kind === 'Namespace'">
+        <td>Resource Quotas</td>
+        <td colspan="4">
+          <div v-for="(item,index) in resourceQuotas" v-bind:key="index" class="my-tag">
+            <el-link @click="toResourceQuota(item)">{{item.metadata.name}}</el-link>
+          </div>
+        </td>
+      </tr>
+      <tr v-if="item.kind === 'Namespace'">
+        <td>Limit Ranges</td>
+        <td colspan="4">
+          <div v-for="(item,index) in limitRanges" v-bind:key="index" class="my-tag">
+            <el-link @click="toLimitRange(item)">
+              {{item.metadata.name}}
+            </el-link>
+          </div>
+        </td>
+      </tr>
       <tr>
         <td>{{ $t("commons.table.created_time") }}</td>
         <td colspan="4">{{ item.metadata.creationTimestamp | age }}</td>
@@ -60,6 +78,8 @@
 
 <script>
 import KoDetailKeyValue from "@/components/detail/detail-key-value"
+import {listResourceQuotaByNamespace} from "@/api/resourcequota"
+import {listLimitRangeByNamespace} from "@/api/limitranges"
 
 export default {
   name: "KoDetailBasic",
@@ -72,6 +92,9 @@ export default {
     return {
       show: false,
       containers: [],
+      limitRanges: [],
+      resourceQuotas: [],
+      cluster: ""
     }
   },
   methods: {
@@ -90,9 +113,33 @@ export default {
         return false
       }
     },
+    listResources() {
+      listResourceQuotaByNamespace(this.cluster,this.item.metadata.name).then(res => {
+        this.resourceQuotas = res.items
+      })
+      listLimitRangeByNamespace(this.cluster,this.item.metadata.name).then(res => {
+        this.limitRanges = res.items
+      })
+    },
+    toResourceQuota(row){
+      this.$router.push({
+        name: "ResourceQuotaDetail",
+        params: { namespace: row.metadata.namespace, name: row.metadata.name }
+      })
+    },
+    toLimitRange(row) {
+      this.$router.push({
+        name: "LimitRangeDetail",
+        params: {namespace: row.metadata.namespace, name: row.metadata.name}
+      })
+    }
   },
   created() {
     this.show = this.yamlShow
+    this.cluster = this.$route.query.cluster
+    if (this.item.kind === 'Namespace') {
+      this.listResources()
+    }
   },
 }
 </script>
