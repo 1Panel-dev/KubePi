@@ -23,6 +23,10 @@ type Cluster struct {
 	ExtraClusterInfo     ExtraClusterInfo `json:"extraClusterInfo"`
 }
 
+type UpdateCluster struct {
+	Labels map[string]string `json:"labels"`
+}
+
 type ExtraClusterInfo struct {
 	TotalNodeNum      int     `json:"totalNodeNum"`
 	ReadyNodeNum      int     `json:"readyNodeNum"`

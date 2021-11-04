@@ -31,6 +31,10 @@ export function createClusterMember(name, member) {
     return post(`${baseUrl}/${name}/members`, member)
 }
 
+export function updateCluster(name, req) {
+    return put(`${baseUrl}/${name}`, req)
+}
+
 
 export function updateClusterMember(name, memberName, member) {
     return put(`${baseUrl}/${name}/members/${memberName}`, member)

@@ -12,6 +12,7 @@
         </el-button-group>
       </template>
 
+
       <el-table-column :label="$t('commons.table.status')" min-width="60px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
@@ -19,11 +20,51 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="60" fix>
         <template v-slot:default="{row}">
           {{ row.name }}
         </template>
       </el-table-column>
+
+
+      <el-table-column :label="$t('commons.table.label')" align="left" min-width="200" fix>
+        <template v-slot:default="{row}">
+          <div style="font-size: 20px">
+            <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="k">
+              <div v-for="(value,key,index) in row.labels" :key="index">
+                <el-tag closable type="info" size="mini" @close="onDeleteLabel(row,key)">
+                  {{ key }}={{ value }}
+                </el-tag>
+                <br/>
+              </div>
+            </div>
+            <div style="padding-top: 10px;">
+              <el-popover
+                  placement="top"
+                  width="160"
+                  title="添加标签"
+                  trigger="manual"
+                  v-model="showAddLabelVisible">
+                <div style="text-align: right; margin: 0">
+                  <el-form :model="labelForm" label-position="left">
+                    <el-form-item size="mini">
+                      <el-input type="text" v-model="labelForm.key" placeholder="key"></el-input>
+                    </el-form-item>
+                    <el-form-item size="mini">
+                      <el-input type="text" v-model="labelForm.value" placeholder="value"></el-input>
+                    </el-form-item>
+                  </el-form>
+                  <el-button size="mini" type="text" @click="showAddLabelVisible = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">确定</el-button>
+                </div>
+                <i class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer" @click="onAddLabel"></i>
+
+              </el-popover>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+
 
       <el-table-column :label="$t('business.cluster.nodes')" min-width="80" fix>
         <template v-slot:default="{row}">
@@ -96,14 +137,12 @@
         <el-button type="primary" @click="onGuildSubmit">{{ $t('commons.button.confirm') }}</el-button>
       </div>
     </el-dialog>
-
-
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listClusters, deleteCluster, searchClusters} from "@/api/clusters"
+import {listClusters, updateCluster, deleteCluster, searchClusters} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission";
 import ComplexTable from "@/components/complex-table";
 
@@ -113,12 +152,18 @@ export default {
   components: {LayoutContent, ComplexTable},
   data() {
     return {
+      k: 0,
       loading: false,
       guideDialogVisible: false,
+      showAddLabelVisible: false,
       items: [],
       timer: null,
       data: [],
       selects: [],
+      labelForm: {
+        key: "",
+        value: ""
+      },
       paginationConfig: {
         currentPage: 1,
         pageSize: 10,
@@ -162,13 +207,33 @@ export default {
       searchClusters(currentPage, pageSize, this.searchConfig.keywords).then(data => {
         this.loading = false
         this.data = data.data.items
-        console.log(data)
         this.paginationConfig.total = data.data.total
       })
     },
     onCreate() {
       this.$router.push({name: "ClusterCreate"})
       this.search()
+    },
+    onAddLabel() {
+      this.showAddLabelVisible = true
+      this.labelForm.key = ""
+      this.labelForm.value = ""
+    },
+
+    onDeleteLabel(item, key) {
+      delete item.labels[key]
+      updateCluster(item.name, {"labels": item.labels}).then(() => {
+        this.k++
+      })
+    },
+    onAddLabelSubmit(item) {
+      if (!item["labels"]) {
+        item["labels"] = {}
+      }
+      item.labels[this.labelForm.key] = this.labelForm.value
+      updateCluster(item.name, {"labels": item.labels}).then(() => {
+        this.showAddLabelVisible = false
+      })
     },
     onDetail(name) {
       this.$router.push({name: "ClusterMembers", params: {name: name}})

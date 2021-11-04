@@ -376,6 +376,35 @@ func (h *Handler) GetCluster() iris.Handler {
 	}
 }
 
+func (h *Handler) UpdateCluster() iris.Handler {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		var req UpdateCluster
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
+		c, err := h.clusterService.Get(name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		c.Labels = req.Labels
+		if req.Labels == nil {
+			req.Labels = map[string]string{}
+		}
+		err = h.clusterService.Update(name, c, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
@@ -461,6 +490,7 @@ func Install(parent iris.Party) {
 	sp.Post("", handler.CreateCluster())
 	sp.Get("", handler.ListClusters())
 	sp.Get("/:name", handler.GetCluster())
+	sp.Put("/:name", handler.UpdateCluster())
 	sp.Delete("/:name", handler.DeleteCluster())
 	sp.Post("/search", handler.SearchClusters())
 	sp.Get("/:name/members", handler.ListClusterMembers())
