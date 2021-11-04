@@ -454,7 +454,9 @@ const message = {
       CharDeviceLabel: "CharDevice: 路径上必须存在的字符设备 ",
       BlockDeviceLabel: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 ",
       default: "默认",
-      change_default: "更改默认状态"
+      change_default: "更改默认状态",
+      volumeMode: "卷类型",
+      persistentVolumeReclaimPolicy:"回收策略"
     },
     configuration: {
       configuration: "配置",
