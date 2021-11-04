@@ -1,6 +1,7 @@
 package webkubectl
 
 import (
+	"encoding/pem"
 	"fmt"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
@@ -113,6 +114,7 @@ func (h *Handler) CreateSession() iris.Handler {
 				return
 			}
 			cfg.CertData = rb.Certificate
+			cfg.KeyData =pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey})
 		}
 		sess.config = cfg
 		sess.User = profile.Name
