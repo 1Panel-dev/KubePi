@@ -453,6 +453,8 @@ const message = {
       SocketLabel: "Socket: 路径上必须存在的 UNIX 套接字 ",
       CharDeviceLabel: "CharDevice: 路径上必须存在的字符设备 ",
       BlockDeviceLabel: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 ",
+      default: "默认",
+      change_default: "更改默认状态"
     },
     configuration: {
       configuration: "配置",
