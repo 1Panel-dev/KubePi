@@ -185,7 +185,10 @@ func (h *Handler) CreateCluster() iris.Handler {
 					return
 				}
 			}
-			_ = client.CreateAppMarketCRD()
+			err = client.CreateAppMarketCRD()
+			if err != nil {
+				server.Logger().Errorf("create app-market crd failed %s", err)
+			}
 		}()
 	}
 }

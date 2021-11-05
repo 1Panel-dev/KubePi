@@ -130,7 +130,7 @@ func (c *cluster) Delete(name string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	if err := c.clusterAppService.DeleteByCluster(name, options); err != nil {
+	if err := c.clusterAppService.DeleteByCluster(name, options); err != nil && err != storm2.ErrNotFound {
 		return err
 	}
 	return db.DeleteStruct(cluster)

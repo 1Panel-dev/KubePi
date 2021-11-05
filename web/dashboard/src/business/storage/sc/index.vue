@@ -86,7 +86,7 @@ export default {
         },
         {
           label: this.$t("business.storage.change_default"),
-          icon: "el-icon-edit",
+          icon: "el-icon-check",
           click: (row) => {
             this.changeDefault(row)
           },

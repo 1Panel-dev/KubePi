@@ -103,6 +103,9 @@ import {listEvents} from "@/api/events"
 import {getCluster} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission"
 import {mixin} from "@/utils/resourceRoutes"
+import {listConfigMaps} from "@/api/configmaps"
+import {listCronJobs} from "@/api/cronjobs"
+import {listSecrets} from "@/api/secrets"
 
 export default {
   name: "Dashboard",
@@ -234,6 +237,42 @@ export default {
         listServices(this.clusterName).then(res => {
           const services = {
             name: "Services",
+            count: res.items? res.items.length : 0,
+            data: [{
+              value: res.items? res.items.length : 0
+            }]
+          }
+          this.resources.push(services)
+        })
+      }
+      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "configmaps", verb: "list"})) {
+        listConfigMaps(this.clusterName).then(res => {
+          const services = {
+            name: "ConfigMaps",
+            count: res.items? res.items.length : 0,
+            data: [{
+              value: res.items? res.items.length : 0
+            }]
+          }
+          this.resources.push(services)
+        })
+      }
+      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "cronjobs", verb: "list"})) {
+        listCronJobs(this.clusterName).then(res => {
+          const services = {
+            name: "CronJobs",
+            count: res.items? res.items.length : 0,
+            data: [{
+              value: res.items? res.items.length : 0
+            }]
+          }
+          this.resources.push(services)
+        })
+      }
+      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "secrets", verb: "list"})) {
+        listSecrets(this.clusterName).then(res => {
+          const services = {
+            name: "Secrets",
             count: res.items? res.items.length : 0,
             data: [{
               value: res.items? res.items.length : 0

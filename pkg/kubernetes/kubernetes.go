@@ -19,6 +19,7 @@ import (
 	rbacV1 "k8s.io/api/rbac/v1"
 	apiextensionv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	k8sError "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
@@ -326,7 +327,7 @@ func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
 		return false, err
 	}
 	apiList, err := client.ServerPreferredNamespacedResources()
-	if err != nil {
+	if err != nil && len(apiList) == 0 {
 		return false, err
 	}
 	for i := range apiList {
@@ -588,7 +589,12 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 	if err != nil {
 		return err
 	}
-	client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), "appmarkets.kubepi.org", metav1.DeleteOptions{})
+
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), "appmarkets.kubepi.org", metav1.GetOptions{})
+	if err != nil && !k8sError.IsNotFound(err) {
+		return err
+	}
+
 	crd := &apiextensionv1.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.org"},
 		Spec: apiextensionv1.CustomResourceDefinitionSpec{

@@ -3,7 +3,6 @@ package clusterapp
 import (
 	v1ClusterApp "github.com/KubeOperator/kubepi/internal/model/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
@@ -56,13 +55,13 @@ func (c *ClusterApp) Delete(name, cluster string, options common.DBOptions) erro
 
 func (c *ClusterApp) DeleteByCluster(cluster string, options common.DBOptions) error {
 	db := c.GetDB(options)
-	var clusterApps []v1ClusterApp.ClusterApp
+	//var clusterApps []v1ClusterApp.ClusterApp
 	query := db.Select(q.Eq("Cluster", cluster))
-	if err := query.Find(&clusterApps); err != nil && err != storm.ErrNotFound {
-		return err
-	}
-	if len(clusterApps) == 0 {
-		return nil
-	}
-	return query.Delete(clusterApps)
+	//if err := query.Find(&clusterApps); err != nil && err != storm.ErrNotFound {
+	//	return err
+	//}
+	//if len(clusterApps) == 0 {
+	//	return nil
+	//}
+	return query.Delete(new(v1ClusterApp.ClusterApp))
 }

@@ -194,6 +194,7 @@ const message = {
       last_100_lines: "最后100行",
       last_200_lines: "最后200行",
       last_500_lines: "最后500行",
+      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动),所以 Cpu(Cores)、Memory(bytes) 暂无数据"
     },
     namespace: {
       namespace: "命名空间",
