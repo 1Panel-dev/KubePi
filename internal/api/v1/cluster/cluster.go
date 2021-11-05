@@ -4,6 +4,10 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
@@ -19,9 +23,6 @@ import (
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
-	"sync"
-	"time"
 )
 
 type Handler struct {
@@ -127,17 +128,17 @@ func (h *Handler) CreateCluster() iris.Handler {
 		go func() {
 			req.Status.Phase = clusterStatusInitializing
 			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-				server.Logger().Errorf("cna not update cluster status %s", err)
+				server.Logger().Errorf("can not update cluster status %s", err)
 				return
 			}
 			if err := client.CreateDefaultClusterRoles(); err != nil {
 				req.Status.Phase = clusterStatusFailed
 				req.Status.Message = err.Error()
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
-				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+				server.Logger().Errorf("can not init  built in clusterroles %s", err)
 				return
 			}
 			if !profile.IsAdministrator {
@@ -166,21 +167,21 @@ func (h *Handler) CreateCluster() iris.Handler {
 					req.Status.Phase = clusterStatusFailed
 					req.Status.Message = err.Error()
 					if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-						server.Logger().Errorf("cna not update cluster status %s", err)
+						server.Logger().Errorf("can not update cluster status %s", err)
 						return
 					}
-					server.Logger().Errorf("cna not create cluster user  %s", err)
+					server.Logger().Errorf("can not create cluster user  %s", err)
 					return
 				}
 				req.Status.Phase = clusterStatusCompleted
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
 			} else {
 				req.Status.Phase = clusterStatusCompleted
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
 			}

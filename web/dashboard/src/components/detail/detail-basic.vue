@@ -1,12 +1,7 @@
 <template>
   <div>
+    <h3>{{ $t("business.common.basic") }}</h3>
     <table style="width: 100%" class="myTable">
-      <tr>
-        <th scope="col" width="30%" align="left">
-          <h3>{{ $t("business.common.basic") }}</h3>
-        </th>
-        <th scope="col"></th>
-      </tr>
       <tr>
         <td>{{ $t("commons.table.name") }}</td>
         <td colspan="4">{{ item.metadata.name }}</td>
