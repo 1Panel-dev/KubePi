@@ -1,5 +1,12 @@
 <template>
+  <div>
   <layout-content header="Pods">
+    <el-alert
+            v-if="showText"
+            :title="$t('business.pod.metric_server_tip')"
+            type="warning">
+    </el-alert>
+    <br>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig" @search="search">
       <template #header>
@@ -95,6 +102,7 @@
       </el-table-column>
     </complex-table>
   </layout-content>
+  </div>
 </template>
 
 <script>
@@ -122,7 +130,8 @@ export default {
       },
       selects: [],
       clusterName: "",
-      podUsage: []
+      podUsage: [],
+      showText: false
     }
   },
   methods: {
@@ -256,6 +265,7 @@ export default {
       }
       listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
+          console.log(res)
           this.data = res.items
           for (const item of this.data) {
             let container = []
@@ -267,8 +277,8 @@ export default {
           this.paginationConfig.total = res.total
           this.listPodMetric()
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(error => {
+          console.log(error.message)
         })
         .finally(() => {
           this.loading = false
@@ -278,6 +288,9 @@ export default {
       const namespace = sessionStorage.getItem("namespace")
       listPodMetrics(this.clusterName, namespace).then(res => {
         this.podUsage = res.items
+      }).catch(error => {
+        this.showText = true
+        console.log(error.message)
       })
     },
     getPodUsage (name, type) {

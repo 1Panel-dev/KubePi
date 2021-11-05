@@ -454,7 +454,8 @@ const message = {
       default: "Default",
       change_default: "Change Default",
       volumeMode: "Volume Mode",
-      persistentVolumeReclaimPolicy:"PersistentVolumeReclaimPolicy"
+      persistentVolumeReclaimPolicy:"PersistentVolumeReclaimPolicy",
+      metric_server_tip: "Since the  Metrics-Server service is not started, there is no data in the Cpu (Cores) and Memory (bytes) "
     },
     configuration: {
       configuration: "Configuration",
