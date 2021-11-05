@@ -326,7 +326,7 @@ func (k *Kubernetes) IsNamespacedResource(resourceName string) (bool, error) {
 		return false, err
 	}
 	apiList, err := client.ServerPreferredNamespacedResources()
-	if err != nil {
+	if err != nil && len(apiList) == 0 {
 		return false, err
 	}
 	for i := range apiList {
