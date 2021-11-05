@@ -37,18 +37,18 @@
         </template>
       </el-table-column>
       <el-table-column label="IP" min-width="40" prop="status.podIP"/>
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" prop="spec.nodeName"/>
-      <el-table-column :label="'Cpu(Cores)'"  min-width="45">
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" show-overflow-tooltip prop="spec.nodeName"/>
+      <el-table-column :label="'Cpu'"  min-width="45">
         <template v-slot:default="{row}">
           {{ getPodUsage(row.metadata.name, "cpu") }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Memory(bytes)'" min-width="45">
+      <el-table-column :label="'Memory'" min-width="45">
         <template v-slot:default="{row}">
           {{ getPodUsage(row.metadata.name, "memory") }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="35" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" show-overflow-tooltip min-width="35" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>

@@ -4,7 +4,7 @@
     <el-alert v-if="ingress.length === 0" type="info">
       <div slot="title">
         <i class="el-icon-info"></i>
-        <span> {{ $t('business.network.ingress_detail_help', [name]) }}</span>
+        <span> {{ $t('business.network.ingress_detail_help', [resourceType, name]) }}</span>
       </div>
     </el-alert>
     <div v-for="(item, index) in ingress" :key="index">
@@ -32,6 +32,7 @@ export default {
     cluster: String,
     namespace: String,
     name: String,
+    resourceType: String,
   },
   data() {
     return {

@@ -93,6 +93,7 @@ const message = {
       number_limit: "Please enter the correct number",
       number_persent_rules: "Please enter a correct positive integer or percentage",
       name_rules: "Only lowercase English, numbers and-are supported",
+      url_rules: "Please enter the correct url",
       params_not_complete: " params is not complete",
     },
     msg: {
@@ -427,7 +428,7 @@ const message = {
       path_type: "Path Type",
       service_name: "Service Name",
       service_detail_help: "Service: {1} with the same name as {0} is shown here, but you did not define this Service.",
-      ingress_router: "Ingress router",
+      ingress_router: "Ingress",
       ingress_detail_help: "Ingress: {1} with the same name as {0} is shown here, but you did not define the Ingress.",
       service_port: "Service Port",
       target: "Target",
