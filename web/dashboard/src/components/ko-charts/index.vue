@@ -48,7 +48,7 @@ export default {
             itemStyle: {
               normal: {
                 color: function () {
-                  const colors = ['#fee82c','#abcd2c','#db2d45','#cd4d89','#1491d1','#f17f43','#108774','#7c4899','#282a88']
+                  const colors = ['#fee82c','#abcd2c','#db2d45','#cd4d89','#1491d1','#f17f43','#108774','#7c4899','#282a88','#008B8B','#90EE90','#8B0000']
                   return [colors[index]]
                 }
               }
