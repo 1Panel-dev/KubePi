@@ -55,61 +55,17 @@
                     </el-col>
                   </el-row>
                 </ko-card>
-                <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingType="'matching_rules'" :nodeList="[]"
+                <ko-node-scheduling :isReadOnly="readOnly" ref="ko_node_scheduling"
+                                    :nodeSchedulingType="'matching_rules'" :nodeList="[]"
                                     :nodeSchedulingParentObj="form.spec"/>
               </div>
             </el-tab-pane>
             <el-tab-pane label="Plugin Configuration">
               <div style="margin-top: 20px">
                 <ko-card title="Plugin Configuration">
-                  <el-form v-if="currentStorageType === 'NFS'">
-                    <el-row :gutter="24">
-                      <el-col :span="8">
-                        <el-form-item label="PATH" required>
-                          <el-input clearable placeholder="eg: /nfs-share" v-model="form.spec.nfs.path"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="8">
-                        <el-form-item label="Server" required>
-                          <el-input clearable placeholder="eg: 172.16.10.100" v-model="form.spec.nfs.server"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="6">
-                        <el-form-item label="ReadOnly">
-                          <el-radio v-model="form.spec.nfs.readOnly" :label="true">Yes</el-radio>
-                          <el-radio v-model="form.spec.nfs.readOnly" :label="false">No</el-radio>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-
-                  </el-form>
-                  <el-form v-if="currentStorageType === 'Local'">
-                    <el-col :span="8">
-                      <el-form-item label="Path on the Node" required>
-                        <el-input clearable placeholder="eg: /data" v-model="form.spec.local.path"></el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                  <el-form v-if="currentStorageType === 'Host'">
-                    <el-row :gutter="24">
-                      <el-col :span="8">
-                        <el-form-item label="PATH" required>
-                          <el-input clearable placeholder="eg: /data" v-model="form.spec.hostPath.path"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="12">
-                        <el-form-item label="Path on the Node" required>
-                          <el-select v-model="form.spec.hostPath.type">
-                            <el-option v-for="(h, index) in hostPathTypes"
-                                       :key="index"
-                                       :label="h.label"
-                                       :value="h.value">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
+                  <pv-nfs v-if="currentStorageType === 'NFS'" :spec.sync="form.spec"></pv-nfs>
+                  <local v-if="currentStorageType === 'Local'" :spec.sync="form.spec"></local>
+                  <host-path v-if="currentStorageType === 'Host'" :spec.sync="form.spec"></host-path>
                 </ko-card>
               </div>
             </el-tab-pane>
@@ -138,15 +94,18 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {createPv} from "@/api/pv"
-import KoCard from "@/components/ko-card/index";
-import {listStorageClasses} from "@/api/storageclass";
+import KoCard from "@/components/ko-card/index"
+import {listStorageClasses} from "@/api/storageclass"
 import KoNodeScheduling from "@/components/ko-workloads/ko-node-scheduling.vue"
 import {checkPermissions} from "@/utils/permission"
+import PvNfs from "@/components/ko-storage/pv-nfs"
+import Local from "@/components/ko-storage/local"
+import HostPath from "@/components/ko-storage/host-path"
 
 export default {
   name: "PersistentVolumeCreate",
-  components: {KoCard, YamlEditor, LayoutContent, KoNodeScheduling},
-  data() {
+  components: { HostPath, Local, PvNfs, KoCard, YamlEditor, LayoutContent, KoNodeScheduling },
+  data () {
     return {
       loading: false,
       showYaml: false,
@@ -202,25 +161,25 @@ export default {
       }],
       hostPathTypes: [{
         value: "DirectoryOrCreate",
-        label: this.$t('business.storage.DirectoryOrCreateLabel')
+        label: this.$t("business.storage.DirectoryOrCreateLabel")
       }, {
         value: "Directory",
-        label: this.$t('business.storage.DirectoryLabel')
+        label: this.$t("business.storage.DirectoryLabel")
       }, {
         value: "FileOrCreate",
-        label: this.$t('business.storage.FileOrCreateLabel')
+        label: this.$t("business.storage.FileOrCreateLabel")
       }, {
         value: "File",
-        label: this.$t('business.storage.FileLabel')
+        label: this.$t("business.storage.FileLabel")
       }, {
         value: "Socket",
-        label: this.$t('business.storage.SocketLabel')
+        label: this.$t("business.storage.SocketLabel")
       }, {
         value: "CharDevice",
-        label: this.$t('business.storage.CharDeviceLabel')
+        label: this.$t("business.storage.CharDeviceLabel")
       }, {
         value: "BlockDevice",
-        label: this.$t('business.storage.BlockDeviceLabel')
+        label: this.$t("business.storage.BlockDeviceLabel")
       }],
       currentStorageType: "Local",
       currentStorageCapacity: 1,
@@ -228,17 +187,17 @@ export default {
     }
   },
   methods: {
-    handleClick(tab) {
+    handleClick (tab) {
       this.activeName = tab.index
     },
-    onCancel() {
-      this.$router.push({name: "PersistentVolumes"})
+    onCancel () {
+      this.$router.push({ name: "PersistentVolumes" })
     },
-    onEditYaml() {
+    onEditYaml () {
       this.showYaml = true
       this.yaml = this.transformYaml()
     },
-    backToForm() {
+    backToForm () {
       this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.continue_edit"),
@@ -247,7 +206,7 @@ export default {
         this.showYaml = false
       })
     },
-    onSubmit() {
+    onSubmit () {
       let data = {}
       if (this.showYaml) {
         data = this.$refs.yaml_editor.getValue()
@@ -263,12 +222,12 @@ export default {
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({name: "PersistentVolumes"})
+        this.$router.push({ name: "PersistentVolumes" })
       }).finally(() => {
         this.loading = false
       })
     },
-    loadStorageClasses() {
+    loadStorageClasses () {
       this.storageClasses = []
       listStorageClasses(this.cluster).then((res) => {
         for (const sc of res.items) {
@@ -276,7 +235,7 @@ export default {
         }
       })
     },
-    transformYaml() {
+    transformYaml () {
       let formData = {}
       switch (this.currentStorageType) {
         case "Local":
@@ -291,9 +250,9 @@ export default {
         case "NFS":
           delete this.form.spec["hostPath"]
           delete this.form.spec["local"]
-          if (this.form.spec.nfs.readOnly) {
-            delete this.form.spec.nfs["readOnly"]
-          }
+          // if (this.form.spec.nfs.readOnly) {
+          //   delete this.form.spec.nfs["readOnly"]
+          // }
           break
       }
 
@@ -304,11 +263,11 @@ export default {
       formData = JSON.parse(JSON.stringify(this.form))
       return formData
     },
-    setStorageCapacity() {
-      this.form.spec.capacity.storage = this.currentStorageCapacity.toString() + 'Gi'
+    setStorageCapacity () {
+      this.form.spec.capacity.storage = this.currentStorageCapacity.toString() + "Gi"
     }
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"
     if (checkPermissions({ scope: "cluster", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
