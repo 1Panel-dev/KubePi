@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('business.cluster.cluster')">
+  <layout-content :header="$t('business.cluster.list')">
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
                    :pagination-config="paginationConfig" @search="search"
                    element-loading-background="rgba(0, 0, 0, 0.8)">
@@ -22,7 +22,7 @@
 
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="60" fix>
         <template v-slot:default="{row}">
-          {{ row.name }}
+          <el-link @click="onGotoDashboard(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
 
@@ -109,12 +109,6 @@
       <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | datetimeFormat }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label=" " width="100">
-        <template v-slot:default="{row}">
-          <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
         </template>
       </el-table-column>
 

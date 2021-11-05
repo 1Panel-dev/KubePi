@@ -185,7 +185,7 @@ const message = {
             cluster_viewer: "只读用户",
         },
         user: {
-            user_management: "用户与权限",
+            user_management: "用户管理",
             user_group: "用户组",
             username: "用户名",
             nickname: "昵称",
