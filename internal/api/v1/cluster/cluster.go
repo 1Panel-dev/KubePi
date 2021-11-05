@@ -4,6 +4,7 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
@@ -250,12 +251,15 @@ func (h *Handler) SearchClusters() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		showExtra := ctx.URLParamExists("showExtra")
-		keywords := ctx.URLParam("keywords")
-
+		var conditions commons.SearchConditions
+		if err := ctx.ReadJSON(&conditions); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
-
-		clusters, total, err := h.clusterService.Search(pageNum, pageSize, keywords, common.DBOptions{})
+		clusters, total, err := h.clusterService.Search(pageNum, pageSize, conditions.Conditions, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -394,7 +398,7 @@ func (h *Handler) UpdateCluster() iris.Handler {
 		}
 		c.Labels = req.Labels
 		if req.Labels == nil {
-			req.Labels = map[string]string{}
+			req.Labels = []string{}
 		}
 		err = h.clusterService.Update(name, c, common.DBOptions{})
 		if err != nil {

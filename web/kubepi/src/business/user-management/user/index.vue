@@ -2,6 +2,7 @@
   <layout-content :header="$t('business.user.user_list')">
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
                    :pagination-config="paginationConfig" @search="search">
+
       <template #header>
         <el-button-group>
           <el-button v-has-permissions="{resource:'users',verb:'create'}" type="primary" size="small"
@@ -25,8 +26,6 @@
           <el-tag style="margin-left: 5px" size="small" v-for="(item,key) in row.roles" :key="key">{{ item }}</el-tag>
 
           <el-tag style="margin-left: 5px" size="small" v-if="row.roles.length===0 && row.isAdmin">Supper User</el-tag>
-
-
         </template>
       </el-table-column>
 
@@ -67,8 +66,8 @@ import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "ClusterList",
-  components: { ComplexTable, LayoutContent },
-  data () {
+  components: {ComplexTable, LayoutContent},
+  data() {
     return {
       buttons: [
         {
@@ -78,7 +77,7 @@ export default {
             this.onEdit(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions({ resource: "users", verb: "update" }) || row.type === "LDAP"
+            return row.builtIn || !checkPermissions({resource: "users", verb: "update"}) || row.type === "LDAP"
           }
         },
         {
@@ -88,7 +87,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions({ resource: "users", verb: "delete" })
+            return row.builtIn || !checkPermissions({resource: "users", verb: "delete"})
           }
         },
       ],
@@ -98,7 +97,17 @@ export default {
         total: 0,
       },
       searchConfig: {
-        keywords: ""
+        quickPlaceholder: this.$t('commons.search.quickSearch'),
+        components: [
+          {field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq"},
+          {
+            field: "nickName",
+            label: this.$t("business.user.nickname"),
+            component: "FuComplexInput",
+            defaultOperator: "eq"
+          },
+          {field: "email", label: this.$t("business.user.email"), component: "FuComplexInput", defaultOperator: "eq"},
+        ]
       },
       data: [],
       selects: [],
@@ -106,22 +115,22 @@ export default {
     }
   },
   methods: {
-    search () {
+    search(conditions) {
       this.loading = true
-      const { currentPage, pageSize } = this.paginationConfig
-      searchUsers(currentPage, pageSize, this.searchConfig.keywords).then(data => {
+      const {currentPage, pageSize} = this.paginationConfig
+      searchUsers(currentPage, pageSize, conditions).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
       })
     },
-    onCreate () {
-      this.$router.push({ name: "UserCreate" })
+    onCreate() {
+      this.$router.push({name: "UserCreate"})
     },
-    onEdit (name) {
-      this.$router.push({ name: "UserEdit", params: { name: name } })
+    onEdit(name) {
+      this.$router.push({name: "UserEdit", params: {name: name}})
     },
-    onDelete (name) {
+    onDelete(name) {
       if (this.isSubmitGoing) {
         return
       }
@@ -144,7 +153,7 @@ export default {
     }
 
   },
-  created () {
+  created() {
     this.search()
   }
 }

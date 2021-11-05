@@ -5,6 +5,7 @@ import (
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
+	"github.com/KubeOperator/kubepi/pkg/util/lang"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ type Service interface {
 	List(options common.DBOptions) ([]v1Role.Role, error)
 	Delete(name string, options common.DBOptions) error
 	Update(name string, role *v1Role.Role, options common.DBOptions) error
-	Search(num, size int, pattern string, options common.DBOptions) ([]v1Role.Role, int, error)
+	Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Role.Role, int, error)
 }
 
 func NewService() Service {
@@ -106,13 +107,32 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 	return db.DeleteStruct(item)
 }
 
-func (s *service) Search(num, size int, pattern string, options common.DBOptions) ([]v1Role.Role, int, error) {
+func (s *service) Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Role.Role, int, error) {
 	db := s.GetDB(options)
 	query := func() storm.Query {
-		if pattern != "" {
-			return db.Select(q.Or(
-				costomStorm.Like("Name", pattern),
-			)).OrderBy("CreateAt")
+		var ms []q.Matcher
+
+		for k := range conditions {
+			if conditions[k].Field == "quick" {
+				ms = append(ms, costomStorm.Like("Name", conditions[k].Value))
+			} else {
+				filed := lang.FirstToUpper(conditions[k].Field)
+				value := lang.ParseValueType(conditions[k].Value)
+
+				switch conditions[k].Operator {
+				case "eq":
+					ms = append(ms, q.Eq(filed, value))
+				case "ne":
+					ms = append(ms, q.Not(q.Eq(filed, value)))
+				case "like":
+					ms = append(ms, costomStorm.Like(filed, value.(string)))
+				case "not like":
+					ms = append(ms, q.Not(costomStorm.Like(filed, value.(string))))
+				}
+			}
+		}
+		if len(conditions) > 0 {
+			return db.Select(ms...).OrderBy("CreateAt")
 		}
 		return db.Select().OrderBy("CreateAt")
 	}()

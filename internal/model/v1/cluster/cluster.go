@@ -7,11 +7,11 @@ import (
 type Cluster struct {
 	v1.BaseModel  `storm:"inline"`
 	v1.Metadata   `storm:"inline"`
-	CaCertificate Certificate       `json:"caCertificate" storm:"inline"`
-	Spec          Spec              `json:"spec" storm:"inline"`
-	PrivateKey    []byte            `json:"privateKey"`
-	Status        Status            `json:"status" storm:"inline"`
-	Labels        map[string]string `json:"labels"`
+	CaCertificate Certificate `json:"caCertificate" storm:"inline"`
+	Spec          Spec        `json:"spec" storm:"inline"`
+	PrivateKey    []byte      `json:"privateKey"`
+	Status        Status      `json:"status" storm:"inline"`
+	Labels        []string    `json:"labels"`
 }
 
 type Spec struct {

@@ -27,14 +27,22 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('commons.table.label')" align="left" min-width="200" fix>
+      <el-table-column :label="$t('business.cluster.label')" align="left" min-width="200" fix>
         <template v-slot:default="{row}">
           <div style="font-size: 20px">
-            <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="k">
-              <div v-for="(value,key,index) in row.labels" :key="index">
-                <el-tag closable type="info" size="mini" @close="onDeleteLabel(row,key)">
-                  {{ key }}={{ value }}
+            <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="row.k">
+              <div v-for="(key,index) in row.labels" :key="index">
+
+                <el-tag v-if="!checkPrem({resource: 'clusters', verb: 'update'})" type="info" size="mini"
+                        @close="onDeleteLabel(row,key)">
+                  {{ key }}
                 </el-tag>
+
+                <el-tag v-if="checkPrem({resource: 'clusters', verb: 'update'})" closable type="info" size="mini"
+                        @close="onDeleteLabel(row,key)">
+                  {{ key }}
+                </el-tag>
+
                 <br/>
               </div>
             </div>
@@ -42,23 +50,24 @@
               <el-popover
                   placement="top"
                   width="160"
-                  title="添加标签"
+                  :title="$t('commons.button.add')+$t('business.cluster.label')"
                   trigger="manual"
-                  v-model="showAddLabelVisible">
+                  v-model="row.showAddLabelVisible">
                 <div style="text-align: right; margin: 0">
-                  <el-form :model="labelForm" label-position="left">
-                    <el-form-item size="mini">
-                      <el-input type="text" v-model="labelForm.key" placeholder="key"></el-input>
-                    </el-form-item>
-                    <el-form-item size="mini">
-                      <el-input type="text" v-model="labelForm.value" placeholder="value"></el-input>
+                  <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
+                    <el-form-item size="mini" prop="key">
+                      <el-input type="text" v-model="row.form.key" placeholder="key"></el-input>
                     </el-form-item>
                   </el-form>
-                  <el-button size="mini" type="text" @click="showAddLabelVisible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">确定</el-button>
+                  <el-button size="mini" type="text" @click="row.showAddLabelVisible = false">
+                    {{ $t('commons.button.cancel') }}
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">
+                    {{ $t('commons.button.confirm') }}
+                  </el-button>
                 </div>
-                <i class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer" @click="onAddLabel"></i>
-
+                <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
+                   @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
               </el-popover>
             </div>
           </div>
@@ -142,9 +151,10 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listClusters, updateCluster, deleteCluster, searchClusters} from "@/api/clusters"
+import {deleteCluster, listClusters, searchClusters, updateCluster} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission";
 import ComplexTable from "@/components/complex-table";
+import Rule from "@/utils/rules"
 
 
 export default {
@@ -152,7 +162,6 @@ export default {
   components: {LayoutContent, ComplexTable},
   data() {
     return {
-      k: 0,
       loading: false,
       guideDialogVisible: false,
       showAddLabelVisible: false,
@@ -160,9 +169,17 @@ export default {
       timer: null,
       data: [],
       selects: [],
-      labelForm: {
-        key: "",
-        value: ""
+      labelRules: {
+        key: [
+          Rule.RequiredRule,
+          Rule.CommonNameRule,
+          {
+            min: 0,
+            max: 10,
+            message: this.$t("commons.validate.limit", [1, 10]),
+            trigger: "blur"
+          }
+        ]
       },
       paginationConfig: {
         currentPage: 1,
@@ -173,7 +190,16 @@ export default {
         {color: '#1989fa', percentage: 0},
       ],
       searchConfig: {
-        keywords: ""
+        quickPlaceholder: this.$t('commons.search.quickSearch'),
+        components: [
+          {field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq"},
+          {
+            field: "labels",
+            label: this.$t("business.cluster.label"),
+            component: "FuComplexInput",
+            defaultOperator: "like"
+          },
+        ]
       },
       buttons: [
         {
@@ -201,38 +227,57 @@ export default {
   },
   computed: {},
   methods: {
-    search() {
+    search(conditions) {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchClusters(currentPage, pageSize, this.searchConfig.keywords).then(data => {
+      searchClusters(currentPage, pageSize, conditions).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
+        this.data.forEach(d => {
+          this.$set(d, "showAddLabelVisible", false)
+          this.$set(d, "k", 0)
+          this.$set(d, "form", {
+            key: "",
+          },)
+        })
       })
     },
     onCreate() {
       this.$router.push({name: "ClusterCreate"})
       this.search()
     },
-    onAddLabel() {
-      this.showAddLabelVisible = true
-      this.labelForm.key = ""
-      this.labelForm.value = ""
+    onAddLabel(row) {
+      this.data.forEach(d => {
+        if (d.showAddLabelVisible) {
+          d.showAddLabelVisible = false
+        }
+      })
+      row.form.key = ""
+      row.showAddLabelVisible = true
     },
 
-    onDeleteLabel(item, key) {
-      delete item.labels[key]
-      updateCluster(item.name, {"labels": item.labels}).then(() => {
-        this.k++
+    onDeleteLabel(row, key) {
+      row.labels.splice(row.labels.indexOf(key), 1)
+      updateCluster(row.name, {"labels": row.labels}).then(() => {
+        row.k++
       })
     },
-    onAddLabelSubmit(item) {
-      if (!item["labels"]) {
-        item["labels"] = {}
-      }
-      item.labels[this.labelForm.key] = this.labelForm.value
-      updateCluster(item.name, {"labels": item.labels}).then(() => {
-        this.showAddLabelVisible = false
+    onAddLabelSubmit(row) {
+      this.$refs[row.name].validate((valid) => {
+        if (valid) {
+          let key = row.form.key
+          if (!row.labels) {
+            row.labels = []
+          }
+          if (row.labels.indexOf(key) === -1) {
+            row.labels.push(key)
+            updateCluster(row.name, {"labels": row.labels}).then(() => {
+              row.showAddLabelVisible = false
+            })
+          }
+          row.showAddLabelVisible = false
+        }
       })
     },
     onDetail(name) {
@@ -261,7 +306,9 @@ export default {
         this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
       }
     },
-
+    checkPrem(obj) {
+      return checkPermissions(obj)
+    },
     getCpuUsed(item) {
       const r = Math.round((item.extraClusterInfo.cpuRequested / item.extraClusterInfo.cpuAllocatable) * 100)
       return r > 100 ? 100 : r
@@ -282,25 +329,6 @@ export default {
         })
       }, 3000)
     },
-    onVueCreated() {
-      listClusters().then(data => {
-        this.items = data.data.filter((item) => {
-          if (this.$store.getters.isAdmin) {
-            return true
-          }
-          if (!checkPermissions({resource: "clusters", verb: "create"}) && !checkPermissions({
-            resource: "clusters",
-            verb: "delete"
-          })) {
-            return item.accessable
-          }
-        });
-        if (this.items.length === 0 && checkPermissions({resource: 'clusters', verb: 'create'})) {
-          this.guideDialogVisible = true
-        }
-        this.pullingClusterStatus()
-      })
-    }
   },
   created() {
     this.search()

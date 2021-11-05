@@ -24,7 +24,7 @@ type Cluster struct {
 }
 
 type UpdateCluster struct {
-	Labels map[string]string `json:"labels"`
+	Labels []string `json:"labels"`
 }
 
 type ExtraClusterInfo struct {
