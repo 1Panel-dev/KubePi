@@ -145,7 +145,7 @@ const message = {
             cluster_viewer: "Viewer",
         },
         user: {
-            user_management: "RBAC",
+            user_management: "user management",
             username: "username",
             nickname: "nickname",
             email: "email",

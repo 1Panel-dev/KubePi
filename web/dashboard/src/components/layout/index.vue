@@ -61,6 +61,6 @@ export default {
   flex: auto;
   overflow: auto;
   box-sizing: border-box;
-  padding: $view-padding;
+  padding:0 15px 15px;
 }
 </style>
