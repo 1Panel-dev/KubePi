@@ -8,7 +8,8 @@ const Configuration = {
   name: "Configuration",
   meta: {
     title: "business.configuration.configuration",
-    icon: "iconfont iconconfiguration"
+    icon: "iconfont iconconfiguration",
+    scope:"namespace"
   },
   children: [
     {

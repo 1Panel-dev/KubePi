@@ -9,6 +9,7 @@ const Workloads = {
   meta: {
     title: "business.workload.workload",
     icon: "iconfont iconworkload",
+    scope:"namespace"
   },
   children: [
     {
@@ -18,7 +19,6 @@ const Workloads = {
         resource: "pods",
         verb: "list",
         scope:"namespace"
-
       },
       component: () => import("@/business/workloads/pods"),
       name: "Pods",

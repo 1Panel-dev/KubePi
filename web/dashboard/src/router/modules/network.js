@@ -8,7 +8,8 @@ const Network = {
   name: "Network",
   meta: {
     title: "business.network.service_discovery",
-    icon: "iconfont iconnetwork"
+    icon: "iconfont iconnetwork",
+    scope:"namespace"
   },
   children: [
     {
