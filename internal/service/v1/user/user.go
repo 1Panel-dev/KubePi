@@ -27,8 +27,7 @@ type Service interface {
 }
 
 func NewService() Service {
-	return &service{
-	}
+	return &service{}
 }
 
 type service struct {
@@ -97,13 +96,12 @@ func (u *service) Search(num, size int, pattern string, options common.DBOptions
 		}
 		return db.Select().OrderBy("CreateAt")
 	}()
-
-	if num != 0 && size != 0 {
-		query.Limit(size).Skip((num - 1) * size)
-	}
 	count, err := query.Count(&v1User.User{})
 	if err != nil {
 		return nil, 0, err
+	}
+	if num != 0 && size != 0 {
+		query.Limit(size).Skip((num - 1) * size)
 	}
 	users := make([]v1User.User, 0)
 	if err := query.Find(&users); err != nil {
