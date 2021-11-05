@@ -84,11 +84,6 @@ export default {
         { label: "OrderedReady", value: "OrderedReady" },
         { label: "Parallel", value: "Parallel" },
       ],
-      restart_policy_list: [
-        { label: "Always", value: "Always" },
-        { label: "OnFailure", value: "OnFailure" },
-        { label: "Never", value: "Never" },
-      ],
       devider_list: [
         { label: "Pods", value: "" },
         { label: "%", value: "%" },

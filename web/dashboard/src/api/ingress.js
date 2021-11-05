@@ -29,6 +29,10 @@ export function deleteIngress (cluster_name, namespace, name) {
   return del(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`)
 }
 
+export function listIngressWithNs (cluster_name, namespace) {
+  return get(`${namespaceIngressUrl(cluster_name, namespace)}`)
+}
+
 export function getIngress (cluster_name, namespace, name) {
   return get(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`)
 }
