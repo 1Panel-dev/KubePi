@@ -227,22 +227,19 @@ export default {
     },
     onModifyVersionSubmit() {
       this.loading = true
-      this.loading = true
       for (const c of this.modifyRow.spec.template.spec.containers) {
-        let index = c.image.lastIndexOf(":")
         for (const i of this.form.imagesData) {
-          if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.standardContainer")) {
-            c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+          if (c.name == i.name && i.type === this.$t("business.workload.standardContainer")) {
+            c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
             break
           }
         }
       }
       if (this.modifyRow.spec.template.spec.initContainers) {
         for (const c of this.modifyRow.spec.template.spec.initContainers) {
-          let index = c.image.lastIndexOf(":")
           for (const i of this.form.imagesData) {
-            if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.initContainer")) {
-              c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+            if (c.name == i.name && i.type === this.$t("business.workload.initContainer")) {
+              c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
               break
             }
           }

@@ -74,12 +74,16 @@
           <el-row :gutter="20">
             <el-col v-if="item.name" :span="6">
               <el-form-item style="margin-left: 20px;" :label="$t('commons.table.name')">
-                <span>{{item.name}}</span>
+                <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
+                  <span>{{item.name.length > 30 ? item.name.substring(0, 30) + '...' : item.name}}</span>
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col v-if="item.mountPath" :span="6">
               <el-form-item style="margin-left: 20px;" :label="$t('business.workload.path')">
-                <span>{{item.mountPath}}</span>
+                <el-tooltip class="item" effect="dark" :content="item.mountPath" placement="top-start">
+                  <span>{{item.mountPath.length > 30 ? item.mountPath.substring(0, 30) + '...' : item.mountPath}}</span>
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col v-if="item.readOnly" :span="6">
@@ -89,7 +93,9 @@
             </el-col>
             <el-col v-if="item.subPath" :span="6">
               <el-form-item style="margin-left: 20px;" :label="$t('business.workload.sub_path_in_volume')">
-                <span>{{item.subPath}}</span>
+                <el-tooltip class="item" effect="dark" :content="item.subPath" placement="top-start">
+                  <span>{{item.subPath.length > 30 ? item.subPath.substring(0, 30) + '...' : item.subPath}}</span>
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>

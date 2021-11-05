@@ -44,16 +44,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.action')" min-width="40">
+      <el-table-column :label="$t('commons.table.action')" min-width="60">
         <template v-slot:default="{row}">
           <el-tooltip class="item" effect="dark" :content="$t('commons.form.detail')" placement="bottom">
-            <el-button circle @click="openDetail(row)" icon="el-icon-view"></el-button>
+            <el-button size="mini" circle @click="openDetail(row)" icon="el-icon-view"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" :content="$t('commons.button.logs')" placement="bottom">
-            <el-button circle @click="openTerminalLogs(row)" icon="el-icon-tickets"></el-button>
+            <el-button size="mini" circle @click="openTerminalLogs(row)" icon="el-icon-tickets"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" :content="$t('commons.button.terminal')" placement="bottom">
-            <el-button circle @click="openTerminal(row)" icon="iconfont iconline-terminalzhongduan"></el-button>
+            <el-button size="mini" circle @click="openTerminal(row)" icon="iconfont iconline-terminalzhongduan"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
