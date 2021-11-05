@@ -15,9 +15,9 @@
             </div>
             <div v-for="(value,key) in item.data" v-bind:key="key">
               <ko-data :title="key">
-                <!--                <json-viewer v-if="jsonV(value)&&key!=='token'" :value="getContent(value)" :copyable="copyable"-->
-                <!--                             theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>-->
-                <el-card style="background: #202124;border: 0;">
+                <json-viewer v-if="jsonV(value)&&key!=='token'" :value="getContent(value)" :copyable="copyable"
+                             theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
+                <el-card v-else style="background: #202124;border: 0;">
                   <div style="white-space: pre-line;background: #202124;width: 100%">
                     <span style="word-break:break-all;">{{ getValue(value) }} </span>
                   </div>
