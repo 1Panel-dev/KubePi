@@ -198,6 +198,7 @@ const message = {
       last_100_lines: "最后100行",
       last_200_lines: "最后200行",
       last_500_lines: "最后500行",
+      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动),所以 Cpu(Cores)、Memory(bytes) 暂无数据"
     },
     namespace: {
       namespace: "命名空间",
@@ -466,6 +467,10 @@ const message = {
       SocketLabel: "Socket: 路径上必须存在的 UNIX 套接字 ",
       CharDeviceLabel: "CharDevice: 路径上必须存在的字符设备 ",
       BlockDeviceLabel: "BlockDevice: 路径上必须存在的块设备，例: /dev/sda1 ",
+      default: "默认",
+      change_default: "更改默认状态",
+      volumeMode: "卷类型",
+      persistentVolumeReclaimPolicy:"回收策略"
     },
     configuration: {
       configuration: "配置",

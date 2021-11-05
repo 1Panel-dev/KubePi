@@ -12,7 +12,7 @@
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body
                 popper-class="sidebar-popper">
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="$t(item.meta.title)"/>
+        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="$t(item.meta.title)" :namespaced="item.meta.scope && item.meta.scope==='namespace'"/>
       </template>
       <sidebar-item
               v-for="child in item.children"

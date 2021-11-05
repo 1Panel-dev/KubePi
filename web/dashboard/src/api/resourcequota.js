@@ -39,3 +39,8 @@ export function createResourceQuota (cluster_name, namespace, data) {
 export function updateResourceQuota (cluster_name, namespace,name, data) {
   return put(`${namespaceResourceQuotaUrl(cluster_name, namespace)}/${name}`, data)
 }
+
+export function listResourceQuotaByNamespace(cluster_name,namespace) {
+  return get(`${namespaceResourceQuotaUrl(cluster_name, namespace)}`)
+
+}

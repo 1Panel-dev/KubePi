@@ -42,6 +42,12 @@
           <el-tag v-for="(name,index) in row.spec.accessModes " :key="index" type="info" size="mini">{{ name }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('business.storage.volumeMode')" prop="spec.volumeMode">
+
+      </el-table-column>
+      <el-table-column :label="$t('business.storage.persistentVolumeReclaimPolicy')" prop="spec.persistentVolumeReclaimPolicy">
+
+      </el-table-column>
       <el-table-column :label="$t('business.storage.capacity')" prop="metadata.labels">
         <template v-slot:default="{row}">
           {{ row.spec.capacity["storage"] }}

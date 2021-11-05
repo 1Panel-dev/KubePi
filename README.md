@@ -22,6 +22,18 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 打开浏览器访问http://localhost
 
+### 在线体验
+
+- 环境地址：<https://demo.kubeoperator.io:8080/>
+- 用户名：demo
+- 密码：Password@123
+
+| :warning: 注意                 |
+| :--------------------------- |
+| 该环境仅作体验目的使用，我们会定时清理、重置数据！    |
+| 请勿修改体验环境用户的密码！               |
+| 请勿在环境中添加业务生产环境地址、用户名密码等敏感信息！ |
+
 ### 微信交流群
 
 ![wechat-group](https://kubeoperator.io/docs/img/wechat-group.png)

@@ -464,6 +464,11 @@ const message = {
       SocketLabel: "Socket: UNIX socket that must exist on the path",
       CharDeviceLabel: "CharDevice: Character devices that must exist on the path",
       BlockDeviceLabel: "BlockDevice: The path must contain a block device, for example, /dev/sda1",
+      default: "Default",
+      change_default: "Change Default",
+      volumeMode: "Volume Mode",
+      persistentVolumeReclaimPolicy:"PersistentVolumeReclaimPolicy",
+      metric_server_tip: "Since the  Metrics-Server service is not started, there is no data in the Cpu (Cores) and Memory (bytes) "
     },
     configuration: {
       configuration: "Configuration",

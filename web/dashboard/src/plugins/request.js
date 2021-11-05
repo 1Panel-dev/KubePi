@@ -78,7 +78,9 @@ instance.interceptors.response.use(response => {
         console.log("error: " + error)
         msg = error.message
     }
-    $error(msg)
+    if (error.config.url.indexOf("metrics.k8s.io") < 0) {
+      $error(msg)
+    }
     return Promise.reject(error)
 })
 

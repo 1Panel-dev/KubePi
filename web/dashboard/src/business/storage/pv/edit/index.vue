@@ -326,7 +326,7 @@ export default {
           }
           break
       }
-      if (this.form.spec.nodeAffinity) {
+      if (this.form.spec.nodeAffinity && this.$refs.ko_node_scheduling) {
         this.$refs.ko_node_scheduling.transformation(this.form.spec)
       }
       return JSON.parse(JSON.stringify(this.form))

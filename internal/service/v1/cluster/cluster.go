@@ -5,7 +5,9 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/storm"
+	"github.com/KubeOperator/kubepi/pkg/util/lang"
 	storm2 "github.com/asdine/storm/v3"
+	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
 )
@@ -17,7 +19,7 @@ type Service interface {
 	Get(name string, options common.DBOptions) (*v1Cluster.Cluster, error)
 	List(options common.DBOptions) ([]v1Cluster.Cluster, error)
 	Delete(name string, options common.DBOptions) error
-	Search(num, size int, keywords string, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
+	Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error)
 }
 
 func NewService() Service {
@@ -70,7 +72,7 @@ func (c *cluster) List(options common.DBOptions) ([]v1Cluster.Cluster, error) {
 	return clusters, nil
 }
 
-func (c *cluster) Search(num, size int, keywords string, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
+func (c *cluster) Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
 	db := c.GetDB(options)
 
 	query := db.Select()
@@ -79,8 +81,38 @@ func (c *cluster) Search(num, size int, keywords string, options common.DBOption
 		return nil, 0, err
 	}
 	query = func() storm2.Query {
-		if keywords != "" {
-			return db.Select(storm.Like("Name", keywords)).Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
+		var ms []q.Matcher
+
+		for k := range conditions {
+			if k == "quick" {
+				ms = append(ms, storm.Like("Name", conditions[k].Value))
+			} else if k == "labels" {
+				switch conditions[k].Operator {
+				case "like":
+					ms = append(ms, storm.Contains("Labels", conditions[k].Value))
+				case "not like":
+					ms = append(ms, q.Not(storm.Contains("Labels", conditions[k].Value)))
+				case "eq":
+					ms = append(ms, storm.ArrayValueEq("Labels", conditions[k].Value))
+				case "ne":
+					ms = append(ms, q.Not(storm.ArrayValueEq("Labels", conditions[k].Value)))
+				}
+			} else {
+				field := lang.FirstToUpper(conditions[k].Field)
+				switch conditions[k].Operator {
+				case "eq":
+					ms = append(ms, q.Eq(field, conditions[k].Value))
+				case "ne":
+					ms = append(ms, q.Not(q.Eq(field, conditions[k].Value)))
+				case "like":
+					ms = append(ms, storm.Like(field, conditions[k].Value))
+				case "not like":
+					ms = append(ms, q.Not(storm.Like(field, conditions[k].Value)))
+				}
+			}
+		}
+		if len(conditions) > 0 {
+			return db.Select(q.And(ms...)).Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		} else {
 			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		}
@@ -98,7 +130,7 @@ func (c *cluster) Delete(name string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	if err := c.clusterAppService.DeleteByCluster(name, options); err != nil {
+	if err := c.clusterAppService.DeleteByCluster(name, options); err != nil && err != storm2.ErrNotFound {
 		return err
 	}
 	return db.DeleteStruct(cluster)

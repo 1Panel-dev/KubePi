@@ -6,12 +6,24 @@
 
     <div class="complex-table__toolbar" v-if="$slots.toolbar || searchConfig">
       <div>
+
+
         <div v-if="searchConfig">
-          <el-input :placeholder="$t('commons.button.search')"
-                    suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords"
-                    @change="search(true)">
-          </el-input>
+
+          <!--          <el-input :placeholder="$t('commons.button.search')"-->
+          <!--                    suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords"-->
+          <!--                    @change="search(true)">-->
+          <!--          </el-input>-->
+          <fu-search-bar v-bind="searchConfig" @exec="search">
+            <template #complex>
+              <slot name="complex"></slot>
+            </template>
+            <slot name="buttons"></slot>
+<!--            <fu-table-column-select :columns="columns"/>-->
+          </fu-search-bar>
         </div>
+
+
         <slot name="toolbar">
 
         </slot>

@@ -1,13 +1,18 @@
 <template>
   <layout-content header="Storage Class">
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
+                   :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}" @click="onCreate">
-            YAML
-          </el-button>
-          <el-button type="primary" size="small" v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}" :disabled="selects.length===0" @click="onDelete()">
-            {{ $t("commons.button.delete") }}
-          </el-button>
+        <el-button type="primary" size="small"
+                   v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'create'}"
+                   @click="onCreate">
+          YAML
+        </el-button>
+        <el-button type="primary" size="small"
+                   v-has-permissions="{scope:'cluster',apiGroup:'storage.k8s.io',resource:'storageclasses',verb:'delete'}"
+                   :disabled="selects.length===0" @click="onDelete()">
+          {{ $t("commons.button.delete") }}
+        </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
@@ -25,6 +30,13 @@
           {{ row.reclaimPolicy }}
         </template>
       </el-table-column>
+      <el-table-column :label="$t('business.storage.default')">
+        <template v-slot:default="{row}">
+          <i v-if="checkDefault(row)"
+             class="el-icon-check"></i>
+          <i v-else class="el-icon-minus"></i>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -38,15 +50,15 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table/index"
-import { downloadYaml } from "@/utils/actions"
+import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteStorageClasses, getStorageClass, listStorageClasses} from "@/api/storageclass"
-import { checkPermissions } from "@/utils/permission"
+import {changeStorageClass, deleteStorageClasses, getStorageClass, listStorageClasses} from "@/api/storageclass"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "StorageClasses",
   components: { ComplexTable, LayoutContent, KoTableOperations },
-  data() {
+  data () {
     return {
       data: [],
       selects: [],
@@ -64,14 +76,34 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({scope:'cluster', apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "update" })
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "storage.k8s.io",
+              resource: "storageclasses",
+              verb: "update"
+            })
+          },
+        },
+        {
+          label: this.$t("business.storage.change_default"),
+          icon: "el-icon-check",
+          click: (row) => {
+            this.changeDefault(row)
+          },
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "storage.k8s.io",
+              resource: "storageclasses",
+              verb: "update"
+            })
           },
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getStorageClass(this.cluster,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getStorageClass(this.cluster, row.metadata.name))
           },
         },
         {
@@ -81,7 +113,12 @@ export default {
             this.onDelete(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope:'cluster',apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "delete" })
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "storage.k8s.io",
+              resource: "storageclasses",
+              verb: "delete"
+            })
           },
         },
       ],
@@ -96,7 +133,7 @@ export default {
     }
   },
   methods: {
-    search() {
+    search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
       listStorageClasses(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then((res) => {
@@ -105,13 +142,13 @@ export default {
         this.paginationConfig.total = res.total
       })
     },
-    onCreate() {
+    onCreate () {
       this.$router.push({
         name: "StorageClassCreate",
         query: { yamlShow: false },
       })
     },
-    onDelete(row) {
+    onDelete (row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -142,15 +179,52 @@ export default {
         }
       })
     },
-    openDetail(row) {
+    openDetail (row) {
       this.$router.push({
         name: "StorageClassDetail",
         params: { name: row.metadata.name },
         query: { yamlShow: false },
       })
     },
+    changeDefault (row) {
+      if (this.checkDefault(row)) {
+        changeStorageClass(this.cluster, row.metadata.name, { metadata: { annotations: { "storageclass.kubernetes.io/is-default-class": "false" } } }).then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.update_success"),
+          })
+          this.search(true)
+        })
+      } else {
+        listStorageClasses(this.cluster).then(res => {
+          this.ps = []
+          for (const item of res.items) {
+            if (this.checkDefault(item)) {
+              this.ps.push(changeStorageClass(this.cluster, item.metadata.name, { metadata: { annotations: { "storageclass.kubernetes.io/is-default-class": "false" } } }))
+            }
+          }
+          this.ps.push(changeStorageClass(this.cluster, row.metadata.name, { metadata: { annotations: { "storageclass.kubernetes.io/is-default-class": "true" } } }))
+          if (this.ps.length !== 0) {
+            Promise.all(this.ps)
+              .then(() => {
+                this.$message({
+                  type: "success",
+                  message: this.$t("commons.msg.update_success"),
+                })
+                this.search(true)
+              })
+              .catch(() => {
+                this.search(true)
+              })
+          }
+        })
+      }
+    },
+    checkDefault (row) {
+      return row.metadata.annotations && row.metadata.annotations["storageclass.kubernetes.io/is-default-class"] && row.metadata.annotations["storageclass.kubernetes.io/is-default-class"] === "true"
+    }
   },
-  created() {
+  created () {
     this.cluster = this.$route.query.cluster
     this.search()
   },

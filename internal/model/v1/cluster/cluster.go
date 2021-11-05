@@ -11,6 +11,7 @@ type Cluster struct {
 	Spec          Spec        `json:"spec" storm:"inline"`
 	PrivateKey    []byte      `json:"privateKey"`
 	Status        Status      `json:"status" storm:"inline"`
+	Labels        []string    `json:"labels"`
 }
 
 type Spec struct {

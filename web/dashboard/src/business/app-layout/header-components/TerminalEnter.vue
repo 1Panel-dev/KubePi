@@ -18,7 +18,6 @@ export default {
       getTerminalSession(clusterName).then(data => {
         const token = data.data.token
         const url = `/webkubectl/root?token=${token}`
-        console.log(url)
         open(url, "_black")
       })
     }

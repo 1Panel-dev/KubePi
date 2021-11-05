@@ -14,12 +14,9 @@ export function deleteCluster(name) {
     return del(`${baseUrl}/${name}`)
 }
 
-export function searchClusters(page, size, keywords) {
+export function searchClusters(page, size, conditions) {
     let url = `${baseUrl}/search?pageNum=${page}&pageSize=${size}&showExtra=true`
-    if (keywords) {
-        url = `${url}&keywords=${keywords}`
-    }
-    return post(url)
+    return post(url, {conditions: conditions})
 }
 
 
@@ -29,6 +26,10 @@ export function listClusterMembers(name) {
 
 export function createClusterMember(name, member) {
     return post(`${baseUrl}/${name}/members`, member)
+}
+
+export function updateCluster(name, req) {
+    return put(`${baseUrl}/${name}`, req)
 }
 
 

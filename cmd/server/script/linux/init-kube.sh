@@ -14,7 +14,7 @@ arg1=$1
 
 
 mkdir -p /nonexistent
-mount -t tmpfs -o size=${SESSION_STORAGE_SIZE} tmpfs /nonexistent
+mount -t tmpfs -o size=10m tmpfs /nonexistent
 cd /nonexistent
 cp /root/.bashrc ./
 cp /etc/vim/vimrc.local .vimrc

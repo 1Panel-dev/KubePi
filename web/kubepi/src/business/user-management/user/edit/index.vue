@@ -6,20 +6,21 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
 
-            <el-form-item :label="$t('business.user.username')" prop="name" required>
+            <el-form-item :label="$t('business.user.username')" prop="name" >
               <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
 
-            <el-form-item :label="$t('business.user.nickname')" prop="nickname" required>
+            <el-form-item :label="$t('business.user.nickname')" prop="nickname" >
               <el-input v-model="form.nickname"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.email')" prop="email" required>
+            <el-form-item :label="$t('business.user.email')" prop="email" >
               <el-input v-model="form.email"></el-input>
             </el-form-item>
 
-            <el-form-item :label="$t('business.user.role')" prop="roles" required>
+
+            <el-form-item :label="$t('business.user.role')" prop="roles" >
               <el-select v-model="form.roles"
                          multiple
                          style="width: 100%"
@@ -127,6 +128,9 @@ export default {
         nickname: [
           Rules.RequiredRule,
         ],
+        roles: [
+          Rules.RequiredRule,
+        ],
       },
       changePasswordOpened: false,
       passwordChangeRules: {
@@ -139,9 +143,6 @@ export default {
           Rules.RequiredRule,
           Rules.PasswordRule,
           {validator: validatePass2, trigger: 'blur'}
-        ],
-        roles:[
-          Rules.RequiredRule,
         ],
       },
       passwordChangeFrom: {

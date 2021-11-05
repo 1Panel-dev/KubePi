@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
@@ -37,8 +38,15 @@ func (h *Handler) SearchUsers() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
-		pattern := ctx.URLParam("pattern")
-		users, total, err := h.userService.Search(pageNum, pageSize, pattern, common.DBOptions{})
+
+		//pattern := ctx.URLParam("pattern")
+		var conditions commons.SearchConditions
+		if err := ctx.ReadJSON(&conditions); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		users, total, err := h.userService.Search(pageNum, pageSize, conditions.Conditions, common.DBOptions{})
 		if err != nil {
 			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -91,6 +99,20 @@ func (h *Handler) CreateUser() iris.Handler {
 		req.Type = v1User.LOCAL
 		if err := h.userService.Create(&req.User, common.DBOptions{DB: tx}); err != nil {
 			_ = tx.Rollback()
+			if errors.Is(err, storm.ErrAlreadyExists) {
+				u, _ := h.userService.GetByNameOrEmail(req.User.Name, common.DBOptions{})
+				if u != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", "username already exists")
+					return
+				}
+				u, _ = h.userService.GetByNameOrEmail(req.User.Email, common.DBOptions{})
+				if u != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", "email already exists")
+					return
+				}
+			}
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -313,7 +335,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/users")
-	sp.Get("/search", handler.SearchUsers())
+	sp.Post("/search", handler.SearchUsers())
 	sp.Post("/", handler.CreateUser())
 	sp.Delete("/:name", handler.DeleteUser())
 	sp.Get("/:name", handler.GetUser())
