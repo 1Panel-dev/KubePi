@@ -4,6 +4,7 @@ import (
 	"github.com/asdine/storm/v3/q"
 	"go/token"
 	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -43,13 +44,19 @@ func (c *arrayValueEq) MatchField(v interface{}) (bool, error) {
 		return false, nil
 	}
 
-	var fieldArray []interface{}
+	var fieldArray []string
 	for i := 0; i < refV.Len(); i++ {
-		fieldArray = append(fieldArray, refV.Index(i).Interface())
+		if refV.Index(i).Kind() == reflect.String {
+			fieldArray = append(fieldArray, refV.Index(i).Interface().(string))
+		} else {
+			return false, nil
+		}
 	}
+	sort.Strings(fieldArray)
+	sort.Strings(valArray)
+
 	for i := range fieldArray {
-		v, ok := fieldArray[i].(string)
-		if !ok || v != valArray[i] {
+		if fieldArray[i] == valArray[i] {
 			return false, nil
 		}
 	}
