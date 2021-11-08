@@ -149,10 +149,6 @@ import {deleteCluster, listClusters, searchClusters, updateCluster} from "@/api/
 import {checkPermissions} from "@/utils/permission";
 import ComplexTable from "@/components/complex-table";
 import Rule from "@/utils/rules"
-import i18n from "@/i18n";
-
-
-
 
 export default {
   name: "ClusterList",

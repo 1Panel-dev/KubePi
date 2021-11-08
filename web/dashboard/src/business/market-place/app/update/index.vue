@@ -57,6 +57,7 @@ export default {
       chartMap: null,
       repo: "",
       oldChart: "",
+      namespace: ""
     }
   },
   methods: {
@@ -66,6 +67,7 @@ export default {
       installForm.chartName = this.oldChart.metadata.name
       installForm.name = this.name
       installForm.repo = this.repo
+      installForm.namespace = this.namespace
       this.loading = true
       updateChart(this.cluster, this.name, installForm).then(() => {
         this.$message({
@@ -88,6 +90,7 @@ export default {
         this.form.values = res.data.chart.values
         this.form.chartVersion = res.data.chart.metadata.version
         this.chartMap.set(res.data.chart.metadata.version, res.data.chart)
+        this.namespace = res.data.namespace
         getChartUpdate(this.cluster, res.data.chart.metadata.name, this.name).then(res => {
           this.versions = res.data.versions
           this.repo = res.data.repo
