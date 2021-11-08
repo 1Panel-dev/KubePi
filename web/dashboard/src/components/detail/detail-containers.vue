@@ -131,5 +131,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.complex-table {
+  /deep/tbody tr:hover > td {
+    cursor: pointer;
+  }
+}
 </style>

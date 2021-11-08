@@ -88,20 +88,18 @@ export default {
     updateForm() {
       this.loading = true
       for (const c of this.form.spec.template.spec.containers) {
-        let index = c.image.lastIndexOf(":")
         for (const i of this.imagesData) {
-          if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.standardContainer")) {
-            c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+          if (c.name == i.name && i.type === this.$t("business.workload.standardContainer")) {
+            c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
             break
           }
         }
       }
       if (this.form.spec.template.spec.initContainers) {
         for (const c of this.form.spec.template.spec.initContainers) {
-          let index = c.image.lastIndexOf(":")
           for (const i of this.imagesData) {
-            if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.initContainer")) {
-              c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+            if (c.name == i.name && i.type === this.$t("business.workload.initContainer")) {
+              c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
               break
             }
           }
