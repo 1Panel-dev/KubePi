@@ -27,12 +27,12 @@
 
         <el-col v-if="form.spec.serviceAccount" :span="12">
           <el-form-item style="margin-left: 20px;" :label="$t('business.workload.service_account')">
-            <span>{{form.spec.serviceAccount}}</span>
+            <div class="spanInFormStyle"><span :title="form.spec.serviceAccount">{{form.spec.serviceAccount}}</span></div>
           </el-form-item>
         </el-col>
         <el-col v-if="form.spec.serviceAccountName" :span="12">
           <el-form-item style="margin-left: 20px;" :label="$t('business.workload.service_account_name')">
-            <span>{{form.spec.serviceAccountName}}</span>
+            <div class="spanInFormStyle"><span :title="form.spec.serviceAccountName">{{form.spec.serviceAccountName}}</span></div>
           </el-form-item>
         </el-col>
       </el-row>

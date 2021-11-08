@@ -1,7 +1,7 @@
 <template>
   <div>
     <complex-table :data="conditions">
-      <el-table-column :label="$t('business.pod.type')" prop="type" min-width="50" />
+      <el-table-column :label="$t('business.pod.type')" prop="type" min-width="50" show-overflow-tooltip />
       <el-table-column :label="$t('commons.table.status')" prop="status" min-width="30" />
       <el-table-column :label="$t('commons.table.message')" min-width="100" show-overflow-tooltip>
         <template v-slot:default="{row}">

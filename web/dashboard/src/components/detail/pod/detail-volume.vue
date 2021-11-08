@@ -7,9 +7,7 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item style="margin-left: 20px;" :label="$t('business.workload.name')">
-                <el-tooltip class="item" effect="dark" :content="item._name" placement="top-start">
-                  <span>{{item._name.length > 20 ? item._name.substring(0, 20) + '...' : item._name}}</span>
-                </el-tooltip>
+                <div class="spanInFormStyle"><span :title="item._name">{{item._name}}</span></div>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -38,9 +36,7 @@
             <el-row :gutter="20">
               <el-col v-if="item._detail" :span="12">
                 <el-form-item style="margin-left: 20px;" label="claimName">
-                  <el-tooltip class="item" effect="dark" :content="item._detail" placement="top-start">
-                    <span>{{item._detail.length > 20 ? item._detail.substring(0, 20) + '...' : item._detail}}</span>
-                  </el-tooltip>
+                  <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -50,16 +46,12 @@
             <el-row :gutter="20">
               <el-col v-if="item._path" :span="12">
                 <el-form-item style="margin-left: 20px;" label="Path">
-                  <el-tooltip class="item" effect="dark" :content="item._path" placement="top-start">
-                    <span>{{item._path.length > 20 ? item._path.substring(0, 20) + '...' : item._path}}</span>
-                  </el-tooltip>
+                  <div class="spanInFormStyle"><span :title="item._path">{{item._path}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col v-if="item._hostType" :span="12">
                 <el-form-item style="margin-left: 20px;" label="HostType">
-                  <el-tooltip class="item" effect="dark" :content="item._hostType" placement="top-start">
-                    <span>{{item._hostType.length > 20 ? item._hostType.substring(0, 20) + '...' : item._hostType}}</span>
-                  </el-tooltip>
+                  <div class="spanInFormStyle"><span :title="item._hostType">{{item._hostType}}</span></div>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -69,9 +61,7 @@
             <el-row :gutter="20">
               <el-col v-if="item._detail" :span="12">
                 <el-form-item style="margin-left: 20px;" label="ConfigMapName">
-                  <el-tooltip class="item" effect="dark" :content="item._detail" placement="top-start">
-                    <span>{{item._detail.length > 20 ? item._detail.substring(0, 20) + '...' : item._detail}}</span>
-                  </el-tooltip>
+                  <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col v-if="item._defaultMode" :span="12">
@@ -86,9 +76,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item style="margin-left: 20px;" label="SecretName">
-                  <el-tooltip class="item" effect="dark" :content="item._detail" placement="top-start">
-                    <span>{{item._detail.length > 20 ? item._detail.substring(0, 20) + '...' : item._detail}}</span>
-                  </el-tooltip>
+                  <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col :span="12">

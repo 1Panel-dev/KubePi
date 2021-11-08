@@ -4,13 +4,11 @@
     <el-form label-position="top">
       <el-collapse v-model="activeNames">
         <el-collapse-item style="margin-top: 10px" :name="index" v-for="(item, index) in form.spec.tolerations" :key="index">
-          <span v-if="item.key" slot="title">{{item.key.length > 20 ? item.key.substring(0, 20) + '...' : item.key}}</span>
+          <div v-if="item.key" slot="title" class="spanInFormStyle"><span :title="item.key">{{item.key}}</span></div>
           <el-row :gutter="20">
             <el-col v-if="item.key" :span="12">
               <el-form-item style="margin-left: 20px;" label="key">
-                <el-tooltip class="item" effect="dark" :content="item.key" placement="top-start">
-                  <span>{{item.key.length > 20 ? item.key.substring(0, 20) + '...' : item.key}}</span>
-                </el-tooltip>
+                <div class="spanInFormStyle"><span :title="item.key">{{item.key}}</span></div>
               </el-form-item>
             </el-col>
             <el-col v-if="item.operator" :span="12">

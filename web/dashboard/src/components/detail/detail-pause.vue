@@ -4,7 +4,7 @@
     <div v-loading="loading">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item :label="$t('commons.table.status')" prop="spec.paused">
               <el-radio-group v-model="form.spec.paused" @change="changeStatus">
                 <el-radio :label="true">{{$t("business.workload.pause")}}</el-radio>
@@ -18,7 +18,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.min_ready_time')" prop="spec.minReadySeconds">
-              <span>{{form.spec.minReadySeconds || 0}} S</span>
+              <span>{{form.spec.minReadySeconds || 0}}</span>
             </el-form-item>
           </el-col>
           <el-col :span="12">
