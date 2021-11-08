@@ -104,6 +104,7 @@ export default {
             type: "success",
             message: this.$t("commons.msg.update_success"),
           })
+          this.enableEdit = false
           this.$emit("refresh")
         })
         .finally(() => {
