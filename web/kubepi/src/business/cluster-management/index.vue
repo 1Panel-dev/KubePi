@@ -149,6 +149,10 @@ import {deleteCluster, listClusters, searchClusters, updateCluster} from "@/api/
 import {checkPermissions} from "@/utils/permission";
 import ComplexTable from "@/components/complex-table";
 import Rule from "@/utils/rules"
+import i18n from "@/i18n";
+
+
+const NamePattern = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
 
 
 export default {
@@ -166,7 +170,12 @@ export default {
       labelRules: {
         key: [
           Rule.RequiredRule,
-          Rule.CommonNameRule,
+          {
+            required: true,
+            pattern: NamePattern,
+            message: i18n.t("commons.validate.name_not_compliant"),
+            trigger: "blur"
+          },
           {
             min: 0,
             max: 10,
