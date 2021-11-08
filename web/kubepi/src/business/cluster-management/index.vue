@@ -86,10 +86,9 @@
 
       <el-table-column min-width="200" fix>
         <template v-slot:default="{row}">
-          cpu
-          <el-progress type="dashboard" :width="60" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
-          <el-progress type="dashboard" :width="60" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
-          memory
+          <div><el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
+          <el-progress type="dashboard" style="white-space: pre-wrap;" :width="80" :format="formatMemory" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
+          </div>
         </template>
       </el-table-column>
 
@@ -226,6 +225,12 @@ export default {
   },
   computed: {},
   methods: {
+    formatCpu(percentage) {
+      return `${percentage}% \nCPU`
+    },
+    formatMemory(percentage) {
+      return `${percentage}% \nMemory`
+    },
     search(conditions) {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
