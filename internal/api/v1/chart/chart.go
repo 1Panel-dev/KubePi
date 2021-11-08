@@ -198,7 +198,7 @@ func (h *Handler) UpdateChart() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.chartService.UpgradeChart(req.Cluster, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
+		err := h.chartService.UpgradeChart(req.Cluster, req.Namespace, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -215,7 +215,7 @@ func (h *Handler) AllInstalled() iris.Handler {
 		pattern := ctx.URLParam("pattern")
 		namespace := ctx.URLParam("namespace")
 		cluster := ctx.Params().GetString("cluster")
-		installed, total, err := h.chartService.ListAllInstalled(cluster,namespace, pageNum, pageSize, pattern)
+		installed, total, err := h.chartService.ListAllInstalled(cluster, namespace, pageNum, pageSize, pattern)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

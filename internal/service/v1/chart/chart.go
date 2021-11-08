@@ -7,6 +7,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util/helm"
 	"github.com/asdine/storm/v3"
 	"helm.sh/helm/v3/cmd/helm/search"
@@ -29,7 +30,7 @@ type Service interface {
 	UnInstallChart(cluster, namespace, name string) error
 	GetAppDetail(cluster string, name string) (*release.Release, error)
 	GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error)
-	UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
+	UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
 }
 
 func NewService() Service {
@@ -46,15 +47,7 @@ type service struct {
 }
 
 func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, err
 	}
@@ -66,15 +59,7 @@ func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
 }
 
 func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return err
 	}
@@ -86,15 +71,7 @@ func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
 }
 
 func (c *service) GetRepo(cluster string, name string) (*v1Chart.Repo, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, err
 	}
@@ -106,15 +83,7 @@ func (c *service) GetRepo(cluster string, name string) (*v1Chart.Repo, error) {
 }
 
 func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return err
 	}
@@ -133,15 +102,7 @@ func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error {
 }
 
 func (c *service) RemoveRepo(cluster string, name string) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return err
 	}
@@ -156,15 +117,7 @@ func (c *service) RemoveRepo(cluster string, name string) error {
 }
 
 func (c *service) ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, 0, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, 0, err
 	}
@@ -198,15 +151,7 @@ func (c *service) ListCharts(cluster, repo string, num, size int, pattern string
 }
 
 func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, err
 	}
@@ -239,15 +184,7 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 }
 
 func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +197,7 @@ func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateR
 		return nil, err
 	}
 	update := &v1Chart.UpdateResult{
-		Repo: clusterApp.Repo,
+		Repo:     clusterApp.Repo,
 		Versions: []v1Chart.UpdateVersion{},
 	}
 	for _, chart := range allVersionCharts {
@@ -273,15 +210,7 @@ func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateR
 }
 
 func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+	helmClient, err := NewHelmClient(cluster, "")
 	if err != nil {
 		return nil, err
 	}
@@ -301,16 +230,7 @@ func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Cha
 }
 
 func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-		Namespace:   namespace,
-	})
+	helmClient, err := NewHelmClient(cluster, namespace)
 	if err != nil {
 		return err
 	}
@@ -329,16 +249,8 @@ func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, ch
 	return nil
 }
 
-func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion string, values map[string]interface{}) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-	})
+func (c *service) UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}) error {
+	helmClient, err := NewHelmClient(cluster, namespace)
 	if err != nil {
 		return err
 	}
@@ -350,16 +262,7 @@ func (c *service) UpgradeChart(cluster, repoName, name, chartName, chartVersion 
 }
 
 func (c *service) UnInstallChart(cluster, namespace, name string) error {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-		Namespace:   namespace,
-	})
+	helmClient, err := NewHelmClient(cluster, namespace)
 	if err != nil {
 		return err
 	}
@@ -375,16 +278,7 @@ func (c *service) UnInstallChart(cluster, namespace, name string) error {
 }
 
 func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pattern string) ([]*release.Release, int, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
-	if err != nil {
-		return nil, 0, err
-	}
-	helmClient, err := helm.NewClient(&helm.Config{
-		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
-		Namespace:   namespace,
-	})
+	helmClient, err := NewHelmClient(cluster, namespace)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -396,17 +290,30 @@ func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pat
 }
 
 func (c *service) GetAppDetail(cluster string, name string) (*release.Release, error) {
-	clu, err := c.clusterService.Get(cluster, common.DBOptions{})
+	helmClient, err := NewHelmClient(cluster, "")
+	if err != nil {
+		return nil, err
+	}
+	return helmClient.GetDetail(name)
+}
+
+func NewHelmClient(clusterName, namespace string) (*helm.Client, error) {
+	clu, err := cluster.NewService().Get(clusterName, common.DBOptions{})
+	if err != nil {
+		return nil, err
+	}
+	kubeConfig, err := kubernetes.NewKubernetes(clu).Config()
 	if err != nil {
 		return nil, err
 	}
 	helmClient, err := helm.NewClient(&helm.Config{
 		Host:        clu.Spec.Connect.Forward.ApiServer,
-		BearerToken: clu.Spec.Authentication.BearerToken,
-		ClusterName: cluster,
+		ClusterName: clusterName,
+		KubeConfig:  kubeConfig,
+		Namespace:   namespace,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return helmClient.GetDetail(name)
+	return helmClient, nil
 }

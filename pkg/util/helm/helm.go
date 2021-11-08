@@ -18,6 +18,7 @@ import (
 	"helm.sh/helm/v3/pkg/repo"
 	"io/ioutil"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/rest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,6 +39,7 @@ type Config struct {
 	Namespace     string
 	Architectures string
 	ClusterName   string
+	KubeConfig    *rest.Config
 }
 type Client struct {
 	installActionConfig   *action.Configuration
