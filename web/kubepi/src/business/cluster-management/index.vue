@@ -112,6 +112,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column label=" " width="100">
+        <template v-slot:default="{row}">
+          <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
+        </template>
+      </el-table-column>
+
 
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')"/>
     </complex-table>
