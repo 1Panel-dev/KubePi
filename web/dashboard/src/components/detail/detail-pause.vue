@@ -10,7 +10,7 @@
                 <el-radio :label="true">{{$t("business.workload.pause")}}</el-radio>
                 <el-radio :label="false">{{$t("business.workload.resume")}}</el-radio>
               </el-radio-group>
-              <span style="font-size: 12px;" v-if="form.spec.paused">{{$t('business.workload.pause_help')}}</span>
+              <div><span style="font-size: 12px;" v-if="form.spec.paused">{{$t('business.workload.pause_help')}}</span></div>
             </el-form-item>
           </el-col>
         </el-row>
