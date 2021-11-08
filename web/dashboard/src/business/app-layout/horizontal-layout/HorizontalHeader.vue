@@ -7,7 +7,7 @@
     </div>
     <div class="header-right">
       <TerminalEnter></TerminalEnter>
-      <help />
+      <help/>
       <language-switch style="margin-left: 20px"></language-switch>
       <user-setting style="margin-left: 20px"></user-setting>
     </div>
@@ -35,7 +35,7 @@ export default {
 .horizontal-header {
   @include flex-row(flex-start, center);
   position: relative;
-  height: 100%;
+  height: 60px;
 
   .header-left {
     @include flex-row(flex-start, center);

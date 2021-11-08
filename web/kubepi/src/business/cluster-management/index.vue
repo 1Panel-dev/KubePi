@@ -13,7 +13,7 @@
       </template>
 
 
-      <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="100px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -109,6 +109,12 @@
       <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label=" " width="100">
+        <template v-slot:default="{row}">
+          <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
         </template>
       </el-table-column>
 

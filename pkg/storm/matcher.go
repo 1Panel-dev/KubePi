@@ -4,6 +4,7 @@ import (
 	"github.com/asdine/storm/v3/q"
 	"go/token"
 	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -29,6 +30,37 @@ func Contains(fieldName string, val interface{}) q.Matcher {
 	return q.NewFieldMatcher(fieldName, &contains{val: val})
 }
 
+type arrayValueLike struct {
+	val string
+}
+
+func (a *arrayValueLike) MatchField(v interface{}) (bool, error) {
+	refV := reflect.ValueOf(v)
+	if refV.Kind() != reflect.Slice {
+		return false, nil
+	}
+	vs := strings.Split(a.val, ",")
+	for i := range vs {
+		var flag = false
+		for j := 0; j < refV.Len(); j++ {
+			v, ok := refV.Index(j).Interface().(string)
+			if ok {
+				if v == vs[i] {
+					flag = true
+				}
+			}
+		}
+		if !flag {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func ArrayValueLike(fieldName, val string) q.Matcher {
+	return q.NewFieldMatcher(fieldName, &arrayValueLike{val: val})
+}
+
 type arrayValueEq struct {
 	val string
 }
@@ -43,13 +75,19 @@ func (c *arrayValueEq) MatchField(v interface{}) (bool, error) {
 		return false, nil
 	}
 
-	var fieldArray []interface{}
+	var fieldArray []string
 	for i := 0; i < refV.Len(); i++ {
-		fieldArray = append(fieldArray, refV.Index(i).Interface())
+		if refV.Index(i).Kind() == reflect.String {
+			fieldArray = append(fieldArray, refV.Index(i).Interface().(string))
+		} else {
+			return false, nil
+		}
 	}
+	sort.Strings(fieldArray)
+	sort.Strings(valArray)
+
 	for i := range fieldArray {
-		v, ok := fieldArray[i].(string)
-		if !ok || v != valArray[i] {
+		if fieldArray[i] != valArray[i] {
 			return false, nil
 		}
 	}

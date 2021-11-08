@@ -76,10 +76,7 @@ func (c *cluster) Search(num, size int, conditions common.Conditions, options co
 	db := c.GetDB(options)
 
 	query := db.Select()
-	count, err := query.Count(&v1Cluster.Cluster{})
-	if err != nil {
-		return nil, 0, err
-	}
+
 	query = func() storm2.Query {
 		var ms []q.Matcher
 
@@ -89,9 +86,9 @@ func (c *cluster) Search(num, size int, conditions common.Conditions, options co
 			} else if k == "labels" {
 				switch conditions[k].Operator {
 				case "like":
-					ms = append(ms, storm.Contains("Labels", conditions[k].Value))
+					ms = append(ms, storm.ArrayValueLike("Labels", conditions[k].Value))
 				case "not like":
-					ms = append(ms, q.Not(storm.Contains("Labels", conditions[k].Value)))
+					ms = append(ms, q.Not(storm.ArrayValueLike("Labels", conditions[k].Value)))
 				case "eq":
 					ms = append(ms, storm.ArrayValueEq("Labels", conditions[k].Value))
 				case "ne":
@@ -117,6 +114,10 @@ func (c *cluster) Search(num, size int, conditions common.Conditions, options co
 			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		}
 	}()
+	count, err := query.Count(&v1Cluster.Cluster{})
+	if err != nil {
+		return nil, 0, err
+	}
 	clusters := make([]v1Cluster.Cluster, 0)
 	if err := query.Find(&clusters); err != nil {
 		return clusters, 0, err
