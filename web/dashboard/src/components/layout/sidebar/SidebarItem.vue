@@ -24,6 +24,8 @@
               class="nest-menu"
       />
     </el-submenu>
+
+    <namespaced-tip v-if="false"></namespaced-tip>
   </div>
 </template>
 
