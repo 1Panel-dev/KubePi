@@ -4,11 +4,12 @@
             v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-no-dropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="transformTitle(onlyOneChild.meta.title)"/>
+          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
+                :title="transformTitle(onlyOneChild.meta.title)"
+                :namespaced="item.meta && item.meta.scope && item.meta.scope==='namespace'"/>
         </el-menu-item>
       </app-link>
     </template>
-
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body
                 popper-class="sidebar-popper">
       <template slot="title">
@@ -23,19 +24,22 @@
               class="nest-menu"
       />
     </el-submenu>
+
+    <namespaced-tip v-if="false"></namespaced-tip>
   </div>
 </template>
 
 <script>
-import path from 'path'
-import {isExternal} from '@/utils/validate'
-import Item from './Item'
-import AppLink from './Link'
-import FixOSBug from './FixiOSBug'
+import path from "path"
+import {isExternal} from "@/utils/validate"
+import Item from "./Item"
+import AppLink from "./Link"
+import FixOSBug from "./FixiOSBug"
+import NamespacedTip from "@/components/layout/sidebar/namespaced"
 
 export default {
-  name: 'SidebarItem',
-  components: {Item, AppLink},
+  name: "SidebarItem",
+  components: { NamespacedTip, Item, AppLink },
   mixins: [FixOSBug],
   props: {
     // route object
@@ -49,18 +53,18 @@ export default {
     },
     basePath: {
       type: String,
-      default: ''
+      default: ""
     }
   },
-  data() {
+  data () {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
     // TODO: refactor with render function
     this.onlyOneChild = null
     return {}
   },
   methods: {
-    hasOneShowingChild(children = [], parent) {
-      if (parent.parent){
+    hasOneShowingChild (children = [], parent) {
+      if (parent.parent) {
         return false
       }
       const showingChildren = children.filter(item => {
@@ -79,16 +83,16 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = {...parent, path: '', noShowingChildren: true}
+        this.onlyOneChild = { ...parent, path: "", noShowingChildren: true }
         return true
       }
 
       return false
     },
-    transformTitle(title) {
-      return title.indexOf(".") !== -1 ? this.$t(title) : title 
+    transformTitle (title) {
+      return title.indexOf(".") !== -1 ? this.$t(title) : title
     },
-    resolvePath(routePath) {
+    resolvePath (routePath) {
       if (isExternal(routePath)) {
         return routePath
       }
