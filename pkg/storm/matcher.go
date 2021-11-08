@@ -56,7 +56,7 @@ func (c *arrayValueEq) MatchField(v interface{}) (bool, error) {
 	sort.Strings(valArray)
 
 	for i := range fieldArray {
-		if fieldArray[i] == valArray[i] {
+		if fieldArray[i] != valArray[i] {
 			return false, nil
 		}
 	}
