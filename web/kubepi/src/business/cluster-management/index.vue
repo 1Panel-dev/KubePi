@@ -13,14 +13,14 @@
       </template>
 
 
-      <el-table-column :label="$t('commons.table.status')" min-width="60px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="60" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140px" fix>
         <template v-slot:default="{row}">
           <el-link @click="onGotoDashboard(row)">{{ row.name }}</el-link>
         </template>
@@ -108,7 +108,7 @@
 
       <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
         <template v-slot:default="{row}">
-          {{ row.createAt | datetimeFormat }}
+          {{ row.createAt | ageFormat }}
         </template>
       </el-table-column>
 
@@ -149,9 +149,6 @@ import {deleteCluster, listClusters, searchClusters, updateCluster} from "@/api/
 import {checkPermissions} from "@/utils/permission";
 import ComplexTable from "@/components/complex-table";
 import Rule from "@/utils/rules"
-import i18n from "@/i18n";
-
-
 
 
 export default {
