@@ -47,7 +47,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
         <template v-slot:default="{row}">
-          {{ row.createAt | datetimeFormat }}
+          {{ row.createAt | ageFormat }}
         </template>
       </el-table-column>
 
