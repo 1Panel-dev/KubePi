@@ -50,7 +50,7 @@
     </el-dialog>
 
     <el-dialog :title="$t('commons.button.scale')" width="70%" :close-on-click-modal="false" :visible.sync="dialogModifyVersionVisible">
-      <complex-table :data="form.imagesData" v-loading="loading">
+      <complex-table :data="imagesData" v-loading="loading">
         <el-table-column :label="$t('business.workload.container_type')" prop="type" min-width="10" />
         <el-table-column :label="$t('business.workload.name')" prop="name" min-width="20" show-overflow-tooltip />
         <el-table-column :label="$t('business.workload.container_image')" prop="image" min-width="40" show-overflow-tooltip />
@@ -174,8 +174,8 @@ export default {
         name: "",
         namespace: "",
         replicas: 1,
-        imagesData: [],
       },
+      imagesData: [],
       dialogModifyVersionVisible: false,
       modifyRow: {},
       searchConfig: {
@@ -254,14 +254,14 @@ export default {
         })
     },
     onModifyVersion(row) {
-      this.form.imagesData = []
+      this.imagesData = []
       this.form.name = row.metadata.name
       this.form.namespace = row.metadata.namespace
       if (row.spec.template.spec.initContainers) {
         for (const c of row.spec.template.spec.containers) {
           let index = c.image.lastIndexOf(":")
-          this.form.imagesData.push({
-            type: this.$t("business.workload.initContainer"),
+          this.imagesData.push({
+            type: "initContainer",
             name: c.name,
             image: index !== -1 ? c.image.substring(0, index) : "",
             version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
@@ -271,8 +271,8 @@ export default {
       }
       for (const c of row.spec.template.spec.containers) {
         let index = c.image.lastIndexOf(":")
-        this.form.imagesData.push({
-          type: this.$t("business.workload.standardContainer"),
+        this.imagesData.push({
+          type: "standardContainer",
           name: c.name,
           image: index !== -1 ? c.image.substring(0, index) : "",
           version: index !== -1 ? c.image.substring(index + 1, c.image.length) : "",
@@ -285,20 +285,18 @@ export default {
     onModifyVersionSubmit() {
       this.loading = true
       for (const c of this.modifyRow.spec.template.spec.containers) {
-        let index = c.image.lastIndexOf(":")
-        for (const i of this.form.imagesData) {
-          if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.standardContainer")) {
-            c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+        for (const i of this.imagesData) {
+          if (c.name == i.name && i.type === "standardContainer") {
+            c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
             break
           }
         }
       }
       if (this.modifyRow.spec.template.spec.initContainers) {
         for (const c of this.modifyRow.spec.template.spec.initContainers) {
-          let index = c.image.lastIndexOf(":")
-          for (const i of this.form.imagesData) {
-            if (c.image.substring(0, index) == i.name && i.type === this.$t("business.workload.initContainer")) {
-              c.image = i.name + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
+          for (const i of this.imagesData) {
+            if (c.name == i.name && i.type === "initContainer") {
+              c.image = i.image + ":" + (i.newVersion !== "" ? i.newVersion : i.version)
               break
             }
           }

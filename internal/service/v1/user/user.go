@@ -7,6 +7,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
+	"github.com/KubeOperator/kubepi/pkg/util/lang"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ type Service interface {
 	GetByNameOrEmail(el string, options common.DBOptions) (*v1User.User, error)
 	List(options common.DBOptions) ([]v1User.User, error)
 	Delete(name string, options common.DBOptions) error
-	Search(num, size int, pattern string, options common.DBOptions) ([]v1User.User, int, error)
+	Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1User.User, int, error)
 	Update(name string, u *v1User.User, options common.DBOptions) error
 	UpdatePassword(name string, oldPassword string, newPassword string, options common.DBOptions) error
 	ResetPassword(name string, newPassword string, options common.DBOptions) error
@@ -84,15 +85,35 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	return db.Update(us)
 }
 
-func (u *service) Search(num, size int, pattern string, options common.DBOptions) ([]v1User.User, int, error) {
+func (u *service) Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1User.User, int, error) {
 	db := u.GetDB(options)
 	query := func() storm.Query {
-		if pattern != "" {
-			return db.Select(q.Or(
-				costomStorm.Like("Name", pattern),
-				costomStorm.Like("NickName", pattern),
-				costomStorm.Like("Email", pattern),
-			)).OrderBy("CreateAt")
+		var ms []q.Matcher
+		for k := range conditions {
+			if conditions[k].Field == "quick" {
+				ms = append(ms, q.Or(
+					costomStorm.Like("Name", conditions[k].Value),
+					costomStorm.Like("NickName", conditions[k].Value),
+					costomStorm.Like("Email", conditions[k].Value),
+				))
+			} else {
+				field := lang.FirstToUpper(conditions[k].Field)
+				value := lang.ParseValueType(conditions[k].Value)
+
+				switch conditions[k].Operator {
+				case "eq":
+					ms = append(ms, q.Eq(field, value))
+				case "ne":
+					ms = append(ms, q.Not(q.Eq(field, value)))
+				case "like":
+					ms = append(ms, costomStorm.Like(field, value.(string)))
+				case "not like":
+					ms = append(ms, q.Not(costomStorm.Like(field, value.(string))))
+				}
+			}
+		}
+		if len(conditions) > 0 {
+			return db.Select(ms...).OrderBy("CreateAt")
 		}
 		return db.Select().OrderBy("CreateAt")
 	}()

@@ -2,12 +2,9 @@ import {post, del, get, put} from "@/plugins/request"
 
 const baseUrl = "/api/v1/users"
 
-export function searchUsers(pageNum, pageSize, pattern) {
+export function searchUsers(pageNum, pageSize, conditions) {
     let url = `${baseUrl}/search?pageNum=${pageNum}&&pageSize=${pageSize}`
-    if (pattern) {
-        url = `${url}&pattern=${pattern}`
-    }
-    return get(url)
+    return post(url, {conditions: conditions})
 }
 
 export function createUser(user) {

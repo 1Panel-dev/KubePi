@@ -4,6 +4,11 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
@@ -19,9 +24,6 @@ import (
 	"github.com/kataras/iris/v12/context"
 	authV1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
-	"sync"
-	"time"
 )
 
 type Handler struct {
@@ -127,17 +129,17 @@ func (h *Handler) CreateCluster() iris.Handler {
 		go func() {
 			req.Status.Phase = clusterStatusInitializing
 			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-				server.Logger().Errorf("cna not update cluster status %s", err)
+				server.Logger().Errorf("can not update cluster status %s", err)
 				return
 			}
 			if err := client.CreateDefaultClusterRoles(); err != nil {
 				req.Status.Phase = clusterStatusFailed
 				req.Status.Message = err.Error()
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
-				server.Logger().Errorf("cna not init  built in clusterroles %s", err)
+				server.Logger().Errorf("can not init  built in clusterroles %s", err)
 				return
 			}
 			if !profile.IsAdministrator {
@@ -166,21 +168,21 @@ func (h *Handler) CreateCluster() iris.Handler {
 					req.Status.Phase = clusterStatusFailed
 					req.Status.Message = err.Error()
 					if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-						server.Logger().Errorf("cna not update cluster status %s", err)
+						server.Logger().Errorf("can not update cluster status %s", err)
 						return
 					}
-					server.Logger().Errorf("cna not create cluster user  %s", err)
+					server.Logger().Errorf("can not create cluster user  %s", err)
 					return
 				}
 				req.Status.Phase = clusterStatusCompleted
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
 			} else {
 				req.Status.Phase = clusterStatusCompleted
 				if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
-					server.Logger().Errorf("cna not update cluster status %s", err)
+					server.Logger().Errorf("can not update cluster status %s", err)
 					return
 				}
 			}
@@ -253,12 +255,15 @@ func (h *Handler) SearchClusters() iris.Handler {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 		showExtra := ctx.URLParamExists("showExtra")
-		keywords := ctx.URLParam("keywords")
-
+		var conditions commons.SearchConditions
+		if err := ctx.ReadJSON(&conditions); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
-
-		clusters, total, err := h.clusterService.Search(pageNum, pageSize, keywords, common.DBOptions{})
+		clusters, total, err := h.clusterService.Search(pageNum, pageSize, conditions.Conditions, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -397,7 +402,7 @@ func (h *Handler) UpdateCluster() iris.Handler {
 		}
 		c.Labels = req.Labels
 		if req.Labels == nil {
-			req.Labels = map[string]string{}
+			req.Labels = []string{}
 		}
 		err = h.clusterService.Update(name, c, common.DBOptions{})
 		if err != nil {

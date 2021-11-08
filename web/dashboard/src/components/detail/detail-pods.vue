@@ -30,17 +30,17 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="'Cpu(Cores)'" min-width="45">
+      <el-table-column :label="'Cpu'" min-width="45">
         <template v-slot:default="{row}">
           {{ getPodUsage(row.metadata.name, "cpu") }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Memory(bytes)'" min-width="45">
+      <el-table-column :label="'Memory'" min-width="45">
         <template v-slot:default="{row}">
           {{ getPodUsage(row.metadata.name, "memory") }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" fix>
+      <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
         </template>

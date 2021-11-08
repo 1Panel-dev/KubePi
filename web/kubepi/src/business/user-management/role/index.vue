@@ -79,7 +79,17 @@ export default {
         total: 0,
       },
       searchConfig: {
-        keywords: ""
+        quickPlaceholder: this.$t('commons.search.quickSearch'),
+        components: [
+          {field: "name", label: this.$t("commons.table.name"), component: "FuComplexInput", defaultOperator: "eq"},
+          {
+            field: "builtIn", label: this.$t("commons.table.built_in"), component: "FuComplexSelect",
+            options: [{label: this.$t("commons.bool.true"), value: "true"}, {
+              label: this.$t("commons.bool.false"),
+              value: "false"
+            }],
+          },
+        ]
       },
       data: [],
       selects: [],
@@ -87,10 +97,11 @@ export default {
     }
   },
   methods: {
-    search() {
+    search(conditions) {
+      console.log(conditions)
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
-      searchRoles(currentPage, pageSize, this.searchConfig.keywords).then(data => {
+      searchRoles(currentPage, pageSize, conditions).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
