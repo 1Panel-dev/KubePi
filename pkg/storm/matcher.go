@@ -30,6 +30,37 @@ func Contains(fieldName string, val interface{}) q.Matcher {
 	return q.NewFieldMatcher(fieldName, &contains{val: val})
 }
 
+type arrayValueLike struct {
+	val string
+}
+
+func (a *arrayValueLike) MatchField(v interface{}) (bool, error) {
+	refV := reflect.ValueOf(v)
+	if refV.Kind() != reflect.Slice {
+		return false, nil
+	}
+	vs := strings.Split(a.val, ",")
+	for i := range vs {
+		var flag = false
+		for j := 0; j < refV.Len(); j++ {
+			v, ok := refV.Index(j).Interface().(string)
+			if ok {
+				if v == vs[i] {
+					flag = true
+				}
+			}
+		}
+		if !flag {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func ArrayValueLike(fieldName, val string) q.Matcher {
+	return q.NewFieldMatcher(fieldName, &arrayValueLike{val: val})
+}
+
 type arrayValueEq struct {
 	val string
 }
