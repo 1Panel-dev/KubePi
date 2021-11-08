@@ -1,28 +1,38 @@
 <script>
+import Namespaced from "@/components/layout/sidebar/namespaced"
+import NamespacedTip from "@/components/layout/sidebar/namespaced"
 export default {
-  name: 'MenuItem',
+  name: "MenuItem",
+  components: { NamespacedTip, Namespaced },
   functional: true,
   props: {
     icon: {
       type: String,
-      default: ''
+      default: ""
     },
     title: {
       type: String,
-      default: ''
+      default: ""
+    },
+    namespaced: {
+      type: Boolean,
+      default: false
     }
   },
-  render(h, context) {
-    const {icon, title} = context.props
+  render (h, context) {
+    const { icon, title, namespaced } = context.props
     const vnodes = []
 
     if (icon) {
-      vnodes.push(<i class={[icon, 'sub-el-icon']}/>)
+      vnodes.push(<i class={[icon, "sub-el-icon"]}/>)
     }
 
-    if (title) {
-      vnodes.push(<span slot='title'>{(title)}</span>)
+    if (title &&namespaced) {
+      vnodes.push(<span slot="title">{(title)}<namespaced-tip></namespaced-tip></span> )
+    }else {
+      vnodes.push(<span slot="title">{(title)}</span>)
     }
+
     return vnodes
   }
 }
