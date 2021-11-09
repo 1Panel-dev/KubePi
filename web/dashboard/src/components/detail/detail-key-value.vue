@@ -5,12 +5,12 @@
     </el-link>
     <div v-if="showItem">
       <div v-for="(value,key,index) in valueObj" v-bind:key="index" class="myTag">
-        <el-tag type="info" size="small" v-if="value.length < 100">
+        <el-tag type="info" size="small" v-if="value.length < 50">
           {{ key }} = {{ value }}
         </el-tag>
-        <el-tooltip v-if="value.length > 100" :content="value" placement="top">
-          <el-tag type="info" size="small" v-if="value.length >= 100">
-            {{ key }} = {{ value.substring(0, 100) + "..." }}
+        <el-tooltip v-if="value.length > 50" :content="value" placement="top">
+          <el-tag type="info" size="small" v-if="value.length >= 50">
+            {{ key }} = {{ value.substring(0, 50) + "..." }}
           </el-tag>
         </el-tooltip>
       </div>
