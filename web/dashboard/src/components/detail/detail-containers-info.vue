@@ -131,62 +131,73 @@
         <div v-for="(item, index) in container.healthCheck" :key="index">
           <h5 style="display: inline-block;margin-left: 10px;">{{item._type}}</h5>
           <div v-if="item._model.exec">
-            <el-col :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
-                <span>exec</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.exec.command" :span="20">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.command')">
-                <el-tag type="success" style="margin-right: 10px;" v-for="(item, index) in item._model.exec.command" :key="index">{{item}}</el-tag>
-              </el-form-item>
-            </el-col>
+            <el-row :gutter="20">
+              <el-col :span="4">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+                  <span>exec</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.exec.command" :span="20">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.command')">
+                  <div v-for="(item, index) in item._model.exec.command" :key="index">
+                    <el-tag v-if="item.length < 200" type="success">{{item}}</el-tag>
+                    <div v-else style="background-color: #1F261E;line-height: 20px;"><span class="spanStyle">{{item}}</span></div>
+                  </div>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
           <div v-if="item._model.tcpSocket">
-            <el-col :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
-                <span>tcpSocket</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.exec.port" :span="8">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.network.port')">
-                <span>{{item._model.exec.port}}</span>
-              </el-form-item>
-            </el-col>
+            <el-row :gutter="20">
+              <el-col :span="4">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+                  <span>tcpSocket</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.exec.port" :span="8">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.network.port')">
+                  <span>{{item._model.exec.port}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
           <div v-if="item._model.httpGet">
-            <el-col :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
-                <span>httpGet</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.httpGet.path" :span="8">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
-                <span>{{item._model.httpGet.path}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.httpGet.port" :span="8">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
-                <span>{{item._model.httpGet.port}}</span>
-              </el-form-item>
-            </el-col>
+            <el-row :gutter="20">
+              <el-col :span="4">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+                  <span>httpGet</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.httpGet.path" :span="8">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
+                  <span>{{item._model.httpGet.path}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.httpGet.port" :span="8">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
+                  <span>{{item._model.httpGet.port}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
           <div v-if="item._model.httpsGet">
-            <el-col :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
-                <span>httpsGet</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.httpsGet.path" :span="8">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
-                <span>{{item._model.httpsGet.path}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.httpsGet.port" :span="8">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
-                <span>{{item._model.httpsGet.port}}</span>
-              </el-form-item>
-            </el-col>
+            <el-row :gutter="20">
+              <el-col :span="4">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+                  <span>httpsGet</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.httpsGet.path" :span="8">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
+                  <span>{{item._model.httpsGet.path}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="item._model.httpsGet.port" :span="8">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
+                  <span>{{item._model.httpsGet.port}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
           <el-row :gutter="20">
             <el-col v-if="item._model.failureThreshold" :span="4">
@@ -323,4 +334,12 @@ export default {
 </script>
 
 <style scoped>
+.spanStyle {
+  display: block;
+  padding-left: 10px;
+  margin-top: 5px;
+  font-size: 12px;
+  color:#67c23a;
+  white-space: pre;
+}
 </style>

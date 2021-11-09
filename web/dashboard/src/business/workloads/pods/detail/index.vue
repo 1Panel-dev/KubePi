@@ -87,7 +87,7 @@
       <h2 style="margin-top: 40px">{{$t('business.workload.container')}}</h2>
       <el-row style="margin-top: 20px" class="row-box">
         <el-card class="el-card">
-          <ko-detail-containers :yamlInfo="form" />
+          <ko-detail-containers :yamlInfo="form" :cluster="clusterName" />
         </el-card>
       </el-row>
     </div>
