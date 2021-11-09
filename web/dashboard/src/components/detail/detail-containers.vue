@@ -73,6 +73,7 @@ export default {
   name: "KoDetailContainers",
   components: { ComplexTable, KoDetailContainersInfo },
   props: {
+    cluster: String,
     yamlInfo: Object,
   },
   watch: {
@@ -80,6 +81,8 @@ export default {
       handler(yamlInfo) {
         if (yamlInfo.spec.containers) {
           this.form = yamlInfo
+          this.namespace = this.form.metadata.namespace
+          this.name = this.form.metadata.name
           this.data = []
           if (yamlInfo.status.containerStatuses) {
             for (const c of yamlInfo.status.containerStatuses) {
@@ -107,6 +110,8 @@ export default {
   data() {
     return {
       form: {},
+      namespace: "",
+      name: "",
       data: [],
       containerInfo: {
         type: "",
