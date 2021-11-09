@@ -20,7 +20,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
     sudo docker run --privileged -d --restart=unless-stopped -p 80:80 kubeoperator/kubepi-server
 
-打开浏览器访问http://localhost
+打开浏览器访问：http://localhost:80/
 
 ### 在线体验
 
@@ -41,7 +41,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 ### 致谢
 
 - [Vue](https://cn.vuejs.org) 前端框架
-- [FIT2CLOUD UI](https://github.com/fit2cloud-ui/fit2cloud-ui/) FIT2CLOUD UI组件库
+- [FIT2CLOUD UI](https://github.com/fit2cloud-ui/fit2cloud-ui/) FIT2CLOUD UI 组件库
 - [Vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) 项目脚手架
 
 ### License & Copyright
