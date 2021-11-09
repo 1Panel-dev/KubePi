@@ -42,14 +42,15 @@ type Config struct {
 	KubeConfig    *rest.Config
 }
 type Client struct {
-	installActionConfig   *action.Configuration
-	unInstallActionConfig *action.Configuration
-	listActionConfig      *action.Configuration
-	getActionConfig       *action.Configuration
-	Namespace             string
-	settings              *cli.EnvSettings
-	Architectures         string
-	ClusterName           string
+	//installActionConfig   *action.Configuration
+	//unInstallActionConfig *action.Configuration
+	//listActionConfig      *action.Configuration
+	//getActionConfig       *action.Configuration
+	actionConfig  *action.Configuration
+	Namespace     string
+	settings      *cli.EnvSettings
+	Architectures string
+	ClusterName   string
 }
 
 func GetSettings(cluster string) *cli.EnvSettings {
@@ -74,10 +75,8 @@ func checkFiles(cluster string) {
 	}
 	if _, err := os.Stat(repositoryPath); os.IsNotExist(err) {
 		os.Create(repositoryPath)
-		os.Create(repositoryPath)
 	}
 	if _, err := os.Stat(registryPath); os.IsNotExist(err) {
-		os.Create(registryPath)
 		os.Create(registryPath)
 	}
 	return
@@ -89,44 +88,29 @@ func NewClient(config *Config) (*Client, error) {
 	}
 	client.settings = GetSettings(config.ClusterName)
 	cf := genericclioptions.NewConfigFlags(true)
-	inscure := true
 	apiServer := config.Host
 	cf.APIServer = &apiServer
-	cf.BearerToken = &config.BearerToken
-	cf.Insecure = &inscure
-	if config.Namespace == "" {
-		client.Namespace = "default"
-	} else {
+	kubeConfig := config.KubeConfig
+	cf.WrapConfigFn = func(config *rest.Config) *rest.Config {
+		return kubeConfig
+	}
+	cf.CacheDir = nil
+	if config.Namespace != "" {
 		client.Namespace = config.Namespace
+		cf.Namespace = &client.Namespace
 	}
-	cf.Namespace = &client.Namespace
 	client.ClusterName = config.ClusterName
-	installActionConfig := new(action.Configuration)
-	if err := installActionConfig.Init(cf, client.Namespace, helmDriver, nolog); err != nil {
+	actionConfig := new(action.Configuration)
+	if err := actionConfig.Init(cf, config.Namespace, helmDriver, nolog); err != nil {
 		return nil, err
 	}
-	client.installActionConfig = installActionConfig
-	unInstallActionConfig := new(action.Configuration)
-	if err := unInstallActionConfig.Init(cf, config.OldNamespace, helmDriver, nolog); err != nil {
-		return nil, err
-	}
-	client.unInstallActionConfig = installActionConfig
-	listActionConfig := new(action.Configuration)
-	if err := listActionConfig.Init(cf, config.Namespace, helmDriver, nolog); err != nil {
-		return nil, err
-	}
-	client.listActionConfig = listActionConfig
+	client.actionConfig = actionConfig
 
-	getActionConfig := new(action.Configuration)
-	if err := getActionConfig.Init(cf, config.Namespace, helmDriver, nolog); err != nil {
-		return nil, err
-	}
-	client.getActionConfig = getActionConfig
 	return &client, nil
 }
 
 func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int, error) {
-	client := action.NewList(c.listActionConfig)
+	client := action.NewList(c.actionConfig)
 	if c.Namespace == "" {
 		client.AllNamespaces = true
 		client.All = true
@@ -150,7 +134,7 @@ func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int
 }
 
 func (c Client) GetDetail(name string) (*release.Release, error) {
-	client := action.NewGet(c.getActionConfig)
+	client := action.NewGet(c.actionConfig)
 	result, err := client.Run(name)
 	if err != nil {
 		return nil, err
@@ -172,7 +156,7 @@ func (c Client) Install(name, repoName, chartName, chartVersion string, values m
 	if rp == nil {
 		return nil, errors.New("get chart detail failed, repo not found")
 	}
-	client := action.NewInstall(c.installActionConfig)
+	client := action.NewInstall(c.actionConfig)
 	client.ReleaseName = name
 	client.Namespace = c.Namespace
 	client.RepoURL = rp.URL
@@ -212,7 +196,7 @@ func (c Client) Upgrade(name, repoName, chartName, chartVersion string, values m
 		return nil, errors.New("get chart detail failed, repo not found")
 	}
 
-	client := action.NewUpgrade(c.installActionConfig)
+	client := action.NewUpgrade(c.actionConfig)
 	client.Namespace = c.Namespace
 	client.RepoURL = rp.URL
 	client.Username = rp.Username
@@ -238,7 +222,7 @@ func (c Client) Upgrade(name, repoName, chartName, chartVersion string, values m
 }
 
 func (c Client) Uninstall(name string) (*release.UninstallReleaseResponse, error) {
-	client := action.NewUninstall(c.unInstallActionConfig)
+	client := action.NewUninstall(c.actionConfig)
 	res, err := client.Run(name)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("uninstall tool %s failed: %v", name, err))

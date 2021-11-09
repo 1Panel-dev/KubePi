@@ -1,8 +1,8 @@
-FROM node:14-alpine as stage-web-build
+FROM node:14.18.1 as stage-web-build
 
 LABEL stage=stage-web-build
 
-RUN apk add make python  gcc g++
+RUN apt-get install -y make python gcc g++
 
 WORKDIR /build/kubepi/web
 
@@ -11,7 +11,6 @@ COPY . .
 RUN make build_web
 
 RUN rm -fr web
-
 
 FROM golang:1.16 as stage-bin-build
 
@@ -26,7 +25,6 @@ LABEL stage=stage-bin-build
 WORKDIR /build/kubepi/bin
 
 COPY --from=stage-web-build /build/kubepi/web .
-
 
 RUN go mod download
 
@@ -55,7 +53,6 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
 COPY vimrc.local /etc/vim
-
 
 EXPOSE 80
 
