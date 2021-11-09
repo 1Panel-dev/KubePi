@@ -125,11 +125,11 @@ export default {
       this.containerInfo = { name: row.container.name, type: row.type }
     },
     openTerminal(row) {
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.name, type: "terminal" } })
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.container.name, type: "terminal" } })
       window.open(routeUrl.href, "_blank")
     },
     openTerminalLogs(row) {
-      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.name, type: "log" } })
+      let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.container.name, type: "log" } })
       window.open(routeUrl.href, "_blank")
     },
   },
