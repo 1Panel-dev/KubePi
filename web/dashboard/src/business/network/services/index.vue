@@ -42,7 +42,13 @@
         <template v-slot:default="{row}">
           <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
             <span style="font-size: 12px" v-if="row.spec.type ==='NodePort'"> 
-              {{ value.port }} : {{ value.nodePort }} /{{ value.protocol }} ---> {{ value.targetPort }}
+              {{ value.port }}:{{ value.nodePort }}/{{ value.protocol }}
+            </span>
+            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port === value.targetPort"> 
+              {{ value.port }}/{{ value.protocol }}
+            </span>
+            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port !== value.targetPort"> 
+              {{ value.port }}:{{ value.targetPort }}/{{ value.protocol }}
             </span>
             <br>
           </div>
