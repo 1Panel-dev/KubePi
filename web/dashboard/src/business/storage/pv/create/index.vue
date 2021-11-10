@@ -213,7 +213,7 @@ export default {
       } else {
         data = this.transformYaml()
       }
-      if (data.spec.nodeAffinity?.required?.nodeSelectorTerms?.length === 0) {
+      if (!data.spec.nodeAffinity?.required?.nodeSelectorTerms?.length > 0) {
         delete data.spec.nodeAffinity
       }
       this.loading = true
