@@ -6,7 +6,6 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	"github.com/KubeOperator/kubepi/pkg/util/lang"
-	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
@@ -109,41 +108,33 @@ func (s *service) Delete(name string, options common.DBOptions) error {
 
 func (s *service) Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Role.Role, int, error) {
 	db := s.GetDB(options)
-	query := func() storm.Query {
-		var ms []q.Matcher
+	var ms []q.Matcher
+	for k := range conditions {
+		if conditions[k].Field == "quick" {
+			ms = append(ms, costomStorm.Like("Name", conditions[k].Value))
+		} else {
+			filed := lang.FirstToUpper(conditions[k].Field)
+			value := lang.ParseValueType(conditions[k].Value)
 
-		for k := range conditions {
-			if conditions[k].Field == "quick" {
-				ms = append(ms, costomStorm.Like("Name", conditions[k].Value))
-			} else {
-				filed := lang.FirstToUpper(conditions[k].Field)
-				value := lang.ParseValueType(conditions[k].Value)
-
-				switch conditions[k].Operator {
-				case "eq":
-					ms = append(ms, q.Eq(filed, value))
-				case "ne":
-					ms = append(ms, q.Not(q.Eq(filed, value)))
-				case "like":
-					ms = append(ms, costomStorm.Like(filed, value.(string)))
-				case "not like":
-					ms = append(ms, q.Not(costomStorm.Like(filed, value.(string))))
-				}
+			switch conditions[k].Operator {
+			case "eq":
+				ms = append(ms, q.Eq(filed, value))
+			case "ne":
+				ms = append(ms, q.Not(q.Eq(filed, value)))
+			case "like":
+				ms = append(ms, costomStorm.Like(filed, value.(string)))
+			case "not like":
+				ms = append(ms, q.Not(costomStorm.Like(filed, value.(string))))
 			}
 		}
-		if len(conditions) > 0 {
-			return db.Select(ms...).OrderBy("CreateAt")
-		}
-		return db.Select().OrderBy("CreateAt")
-	}()
-
-	if num != 0 && size != 0 {
-		query.Limit(size).Skip((num - 1) * size)
 	}
-
+	query := db.Select(ms...).OrderBy("CreateAt")
 	count, err := query.Count(&v1Role.Role{})
 	if err != nil {
 		return nil, 0, err
+	}
+	if size != 0 {
+		query.Limit(size).Skip((num - 1) * size)
 	}
 	roles := make([]v1Role.Role, 0)
 	if err := query.Find(&roles); err != nil {

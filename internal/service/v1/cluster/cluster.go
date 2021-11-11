@@ -75,48 +75,42 @@ func (c *cluster) List(options common.DBOptions) ([]v1Cluster.Cluster, error) {
 func (c *cluster) Search(num, size int, conditions common.Conditions, options common.DBOptions) ([]v1Cluster.Cluster, int, error) {
 	db := c.GetDB(options)
 
-	query := db.Select()
-
-	query = func() storm2.Query {
-		var ms []q.Matcher
-
-		for k := range conditions {
-			if k == "quick" {
-				ms = append(ms, storm.Like("Name", conditions[k].Value))
-			} else if k == "labels" {
-				switch conditions[k].Operator {
-				case "like":
-					ms = append(ms, storm.ArrayValueLike("Labels", conditions[k].Value))
-				case "not like":
-					ms = append(ms, q.Not(storm.ArrayValueLike("Labels", conditions[k].Value)))
-				case "eq":
-					ms = append(ms, storm.ArrayValueEq("Labels", conditions[k].Value))
-				case "ne":
-					ms = append(ms, q.Not(storm.ArrayValueEq("Labels", conditions[k].Value)))
-				}
-			} else {
-				field := lang.FirstToUpper(conditions[k].Field)
-				switch conditions[k].Operator {
-				case "eq":
-					ms = append(ms, q.Eq(field, conditions[k].Value))
-				case "ne":
-					ms = append(ms, q.Not(q.Eq(field, conditions[k].Value)))
-				case "like":
-					ms = append(ms, storm.Like(field, conditions[k].Value))
-				case "not like":
-					ms = append(ms, q.Not(storm.Like(field, conditions[k].Value)))
-				}
+	var ms []q.Matcher
+	for k := range conditions {
+		if k == "quick" {
+			ms = append(ms, storm.Like("Name", conditions[k].Value))
+		} else if k == "labels" {
+			switch conditions[k].Operator {
+			case "like":
+				ms = append(ms, storm.ArrayValueLike("Labels", conditions[k].Value))
+			case "not like":
+				ms = append(ms, q.Not(storm.ArrayValueLike("Labels", conditions[k].Value)))
+			case "eq":
+				ms = append(ms, storm.ArrayValueEq("Labels", conditions[k].Value))
+			case "ne":
+				ms = append(ms, q.Not(storm.ArrayValueEq("Labels", conditions[k].Value)))
+			}
+		} else {
+			field := lang.FirstToUpper(conditions[k].Field)
+			switch conditions[k].Operator {
+			case "eq":
+				ms = append(ms, q.Eq(field, conditions[k].Value))
+			case "ne":
+				ms = append(ms, q.Not(q.Eq(field, conditions[k].Value)))
+			case "like":
+				ms = append(ms, storm.Like(field, conditions[k].Value))
+			case "not like":
+				ms = append(ms, q.Not(storm.Like(field, conditions[k].Value)))
 			}
 		}
-		if len(conditions) > 0 {
-			return db.Select(q.And(ms...)).Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
-		} else {
-			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
-		}
-	}()
+	}
+	query := db.Select(ms...).OrderBy("CreateAt").Reverse()
 	count, err := query.Count(&v1Cluster.Cluster{})
 	if err != nil {
 		return nil, 0, err
+	}
+	if size != 0 {
+		query.Limit(size).Skip((num - 1) * size)
 	}
 	clusters := make([]v1Cluster.Cluster, 0)
 	if err := query.Find(&clusters); err != nil {
