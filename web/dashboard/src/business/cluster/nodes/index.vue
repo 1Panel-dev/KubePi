@@ -47,9 +47,11 @@
           <el-button v-else type="success" size="mini" plain round>
             Ready
           </el-button>
-          <el-button v-if="row.nodeStatus.indexOf('SchedulingDisabled') !== -1" type="warning" size="mini" plain round>
-            SchedulingDisabled
-          </el-button>
+          <div v-if="row.nodeStatus.indexOf('SchedulingDisabled') !== -1" style="margin-top:3px">
+            <el-button type="warning" size="mini" plain round>
+              SchedulingDisabled
+            </el-button>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.node.role')" prop="metadata.labels" min-width="180px" show-overflow-tooltip>

@@ -327,7 +327,7 @@ export default {
     },
     loadStorageClass() {
       this.sc_list = []
-      if (!checkPermissions({ scope: "namespace", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
+      if (!checkPermissions({ scope: "cluster", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
         return
       }
       listStorageClasses(this.clusterName).then((res) => {
