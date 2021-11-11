@@ -126,6 +126,7 @@ const message = {
             administrator: "administrator",
             viewer: "viewer",
             custom: "custom",
+            contains_namespace: "(contains namespace roles)",
             rule: "rule",
             config_file: "kubeconfig file",
             config_content: "Config content",

@@ -144,6 +144,7 @@ const message = {
             administrator: "管理员",
             viewer: "只读者",
             custom: "自定义",
+            contains_namespace: "(包含命名空间角色)",
             rule: "规则",
             config_file: "kubeconfig 文件",
             config_content: "config 内容",

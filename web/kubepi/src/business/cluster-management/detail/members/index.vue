@@ -44,7 +44,7 @@
           <el-radio-group v-model="memberForm.roleType" @change="onRoleTypeChange">
             <el-radio label="admin">{{ $t('business.cluster.administrator') }}</el-radio>
             <el-radio label="viewer">{{ $t('business.cluster.viewer') }}</el-radio>
-            <el-radio label="custom">{{ $t('business.cluster.custom') }}</el-radio>
+            <el-radio label="custom">{{ $t('business.cluster.custom') }} {{ $t('business.cluster.contains_namespace') }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <div v-if="memberForm.roleType==='custom'">
