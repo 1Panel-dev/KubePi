@@ -117,7 +117,7 @@ func (u *service) Search(num, size int, conditions common.Conditions, options co
 		}
 		return db.Select().OrderBy("CreateAt")
 	}()
-	count, err := query.Count(&v1User.User{})
+	count, err := db.Select().Count(&v1User.User{})
 	if err != nil {
 		return nil, 0, err
 	}

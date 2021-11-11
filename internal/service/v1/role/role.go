@@ -141,7 +141,7 @@ func (s *service) Search(num, size int, conditions common.Conditions, options co
 		query.Limit(size).Skip((num - 1) * size)
 	}
 
-	count, err := query.Count(&v1Role.Role{})
+	count, err := db.Select().Count(&v1Role.Role{})
 	if err != nil {
 		return nil, 0, err
 	}

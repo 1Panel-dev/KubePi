@@ -114,7 +114,7 @@ func (c *cluster) Search(num, size int, conditions common.Conditions, options co
 			return db.Select().Limit(size).Skip((num - 1) * size).OrderBy("CreateAt").Reverse()
 		}
 	}()
-	count, err := query.Count(&v1Cluster.Cluster{})
+	count, err := db.Select().Count(&v1Cluster.Cluster{})
 	if err != nil {
 		return nil, 0, err
 	}
