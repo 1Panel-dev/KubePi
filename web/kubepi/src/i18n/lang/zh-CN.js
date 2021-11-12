@@ -55,6 +55,7 @@ const message = {
             creat_by: "创建者",
             built_in: "内置",
             description: "描述",
+            empty_text: "没有内容显示",
         },
         header: {
             help_doc: "帮助文档",

@@ -51,6 +51,7 @@ const message = {
             creat_by: "created by",
             built_in: "built in",
             description: "description",
+            empty_text: "There are no rows to show.",
         },
         header: {
             help_doc: "document",

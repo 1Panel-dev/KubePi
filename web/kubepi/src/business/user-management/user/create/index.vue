@@ -31,7 +31,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('business.user.role')" prop="roles">
-              <el-select v-model="form.roles" multiple
+              <el-select v-model="form.roles" multiple filterable
                          style="width: 100%"
                          :placeholder="$t('commons.form.select_placeholder')">
                 <el-option
