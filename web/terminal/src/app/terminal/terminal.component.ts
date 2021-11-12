@@ -54,7 +54,6 @@ export class TerminalComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     if (this.namespace_ && this.podName && this.container) {
       this.setupConnection()
-      this.initTerm()
     } else {
       alert("please set param: namespace,pod  and container name ")
     }
@@ -172,7 +171,7 @@ export class TerminalComponent implements AfterViewInit {
       this.conn_.onopen = this.onConnectionOpen.bind(this, id);
       this.conn_.onmessage = this.onConnectionMessage.bind(this);
       this.conn_.onclose = this.onConnectionClose.bind(this);
-
+      this.initTerm()
       this.cdr_.markForCheck();
     } catch (e) {
       this.term.write(e.error.message)
