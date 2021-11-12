@@ -150,22 +150,26 @@
                 <tr>
                   <td>{{ $t("business.pod.address") }}</td>
                   <td>
-                  <span v-for="(address,index) in item.status.addresses" v-bind:key="index">
-                      {{ address.type }} : {{ address.address }}
-                  </span>
+                    <div v-for="(address,index) in item.status.addresses" v-bind:key="index">
+                      <el-tag type="success">{{ address.type }} : {{ address.address }}</el-tag>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <td>Allocatable</td>
-                  <td><span>
-                    CPU:{{item.status.allocatable.cpu}}  Memory:{{item.status.allocatable.memory}}  Pods:{{item.status.allocatable.pods}}
-                  </span></td>
+                  <td>
+                    <div><el-tag type="success">CPU : {{item.status.allocatable.cpu}}</el-tag></div>
+                    <div><el-tag type="success">Memory : {{item.status.allocatable.memory}}</el-tag></div>
+                    <div><el-tag type="success">Pods : {{item.status.allocatable.pods}}</el-tag></div>
+                  </td>
                 </tr>
                 <tr>
                   <td>Capacity</td>
-                  <td><span>
-                    CPU:{{item.status.capacity.cpu}} Memory:{{item.status.capacity.memory}}  Pods:{{item.status.capacity.pods}}
-                  </span></td>
+                  <td>
+                    <div><el-tag type="success">CPU : {{item.status.capacity.cpu}}</el-tag></div>
+                    <div><el-tag type="success">Memory : {{item.status.capacity.memory}}</el-tag></div>
+                    <div><el-tag type="success">Pods : {{item.status.capacity.pods}}</el-tag></div>
+                  </td>
                 </tr>
               </table>
             </el-tab-pane>
