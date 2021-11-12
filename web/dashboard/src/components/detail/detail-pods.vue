@@ -1,6 +1,6 @@
 <template>
   <div>
-    <complex-table :data="pods" v-loading="loading" @search="search()">
+    <complex-table :data="pods" v-loading="loading" @search="search">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
@@ -108,8 +108,11 @@ export default {
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
         return
       }

@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Nodes">
-    <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search()"
+    <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search"
                    :search-config="searchConfig">
       <template #header>
         <el-button type="primary" size="small"
@@ -119,8 +119,11 @@ export default {
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
       const { currentPage, pageSize } = this.paginationConfig
       listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         this.loading = false

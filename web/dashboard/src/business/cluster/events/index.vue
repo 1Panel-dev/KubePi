@@ -1,6 +1,6 @@
 <template>
   <layout-content header="Events">
-    <complex-table :data="data" @search="search()" v-loading="loading" :pagination-config="paginationConfig"
+    <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
       <template #toolbar>
       </template>
@@ -76,8 +76,11 @@ export default {
     }
   },
   methods: {
-    search () {
+    search (resetPage) {
       this.loading = true
+      if (resetPage) {
+        this.paginationConfig.currentPage = 1
+      }
       listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.loading = false
         this.data = res.items
