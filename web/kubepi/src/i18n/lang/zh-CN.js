@@ -50,6 +50,7 @@ const message = {
             name: "名称",
             kind: "类型",
             created_time: "创建时间",
+            imported_time: "导入时间",
             status: "状态",
             action: "操作",
             creat_by: "创建者",

@@ -46,6 +46,7 @@ const message = {
             name: "name",
             kind: "kind",
             created_time: "created at",
+            imported_time: "imported at",
             status: "status",
             action: "action",
             creat_by: "created by",

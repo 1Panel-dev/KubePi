@@ -86,8 +86,9 @@
 
       <el-table-column min-width="200" fix>
         <template v-slot:default="{row}">
-          <div><el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
-          <el-progress type="dashboard" style="white-space: pre-wrap;" :width="80" :format="formatMemory" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
+          <div>
+            <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
+            <el-progress type="dashboard" :width="80" :format="formatMemory" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
           </div>
         </template>
       </el-table-column>
@@ -105,7 +106,7 @@
                        fix/>
 
 
-      <el-table-column :label="$t('commons.table.created_time')" min-width="120" fix>
+      <el-table-column :label="$t('commons.table.imported_time')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>
