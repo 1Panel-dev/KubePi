@@ -95,7 +95,8 @@ export default {
       roleOptions: [],
       rules: {
         name: [
-          Rules.RequiredRule
+          Rules.RequiredRule,
+          Rules.CommonNameRule
         ],
         nickname: [
           Rules.RequiredRule
