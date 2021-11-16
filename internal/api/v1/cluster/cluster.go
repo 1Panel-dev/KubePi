@@ -242,7 +242,7 @@ func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions m
 			return "", err
 		case b := <-resultCh:
 			if !b.Allowed {
-				return fmt.Sprintf("%s-%s"), nil
+				return fmt.Sprintf("%s", b.Resource.Resource), nil
 			}
 		}
 	}
