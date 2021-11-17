@@ -147,7 +147,7 @@ func (sm *SessionMap) Close(sessionId string, status uint32, reason string) {
 	sm.Lock.Lock()
 	defer sm.Lock.Unlock()
 	err := sm.Sessions[sessionId].sockJSSession.Close(status, reason)
-	if err != nil {
+	if err != nil && status != 1 {
 		log.Println(err)
 	}
 
