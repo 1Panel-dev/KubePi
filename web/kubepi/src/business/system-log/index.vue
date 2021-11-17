@@ -68,6 +68,7 @@ export default {
               { label: this.translate("clusters_members"), value: "clusters_members" },
               { label: this.translate("clusters_clusterroles"), value: "clusters_clusterroles" },
               { label: this.translate("ldap"), value: "ldap" },
+              { label: this.translate("imagerepos"), value: "imagerepos" },
             ],
           },
           {

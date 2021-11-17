@@ -11,7 +11,7 @@ const ImageRepos = {
   },
   meta: {
     title: "business.image_repos.list",
-    icon: "el-icon-box",
+    icon: "iconfont iconjingxiangcangku",
   },
   children: [
     {

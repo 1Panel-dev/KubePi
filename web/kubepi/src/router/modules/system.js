@@ -12,7 +12,7 @@ const SystemLog = {
       name: "SystemLog",
       meta: {
         title: "business.system.system_log",
-        icon: "el-icon-notebook-2",
+        icon: "iconfont iconxitongrizhi",
       },
     },
   ],

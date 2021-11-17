@@ -11,7 +11,7 @@ const UserManagement = {
   },
   meta: {
     title: "business.user.user_management",
-    icon: "el-icon-user",
+    icon: "iconfont iconyonghuguanli",
     global: true
   },
   children: [

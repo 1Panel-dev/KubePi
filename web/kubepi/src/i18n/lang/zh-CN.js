@@ -268,6 +268,7 @@ const system_logs = {
     users: "用户",
     clusters_members: "集群成员",
     clusters_clusterroles: "集群角色",
+    imagerepos: "镜像仓库",
     ldap: "LDAP",
 }
 
