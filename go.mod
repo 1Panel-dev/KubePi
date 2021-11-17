@@ -8,7 +8,8 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/creack/pty v1.1.15 // indirect
-	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
+	github.com/go-ldap/ldap v3.0.3+incompatible
+	github.com/go-logr/logr v0.4.0
 	github.com/gofrs/flock v0.8.1
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.2.0
@@ -29,6 +30,7 @@ require (
 	k8s.io/apimachinery v0.22.1
 	k8s.io/cli-runtime v0.22.1
 	k8s.io/client-go v0.22.1
+	k8s.io/klog/v2 v2.9.0
 )
 
 replace github.com/KubeOperator/webkubectl/gotty v0.0.0-20210927072155-e9ce79172471 => ./thirdparty/gotty
