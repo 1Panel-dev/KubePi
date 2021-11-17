@@ -53,15 +53,13 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <el-table-column min-width="45" :label="$t('commons.table.action')">
+      <el-table-column width="90px" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
           <el-button circle @click="onEdit(row)" size="mini" icon="el-icon-edit"
                      v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'update'}"/>
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini"/>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}
-              </el-dropdown-item>
               <div v-if="row.containers.length > 1">
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
@@ -93,6 +91,7 @@
                 <el-dropdown-item icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
                 </el-dropdown-item>
               </div>
+              <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}</el-dropdown-item>
               <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">
                 {{ $t("commons.button.delete") }}
               </el-dropdown-item>
@@ -265,7 +264,6 @@ export default {
       }
       listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
-          console.log(res)
           this.data = res.items
           for (const item of this.data) {
             let container = []

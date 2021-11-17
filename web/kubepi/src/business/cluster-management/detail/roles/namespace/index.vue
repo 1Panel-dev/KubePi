@@ -178,7 +178,7 @@ export default {
         "networking.k8s.io": ["ingresses", "networkpolicies"],
         "rbac.authorization.k8s.io": ["role", "rolebinding"]
       },
-      operation: "",
+      operation: "create",
       verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
       clusterRoleForm: {
         name: "",

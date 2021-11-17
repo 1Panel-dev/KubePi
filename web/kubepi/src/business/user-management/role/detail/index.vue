@@ -77,7 +77,9 @@ export default {
   },
   methods: {
     translate(a) {
-      return a.startsWith("i18n_") ? this.$t(a) : a
+      if (a) {
+        return a.startsWith("i18n_") ? this.$t(a) : a
+      }
     },
     checkPermissions(r) {
       return checkPermissions(r)

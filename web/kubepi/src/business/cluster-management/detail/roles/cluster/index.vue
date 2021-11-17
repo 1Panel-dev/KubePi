@@ -189,7 +189,7 @@ export default {
         "storage.k8s.io": ["storageclasses"],
         "rbac.authorization.k8s.io": ["clusterroles", "clusterrolebindings"]
       },
-      operation: "",
+      operation: "create",
       verbOptions: ["*", "create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"],
       clusterRoleForm: {
         name: "",
