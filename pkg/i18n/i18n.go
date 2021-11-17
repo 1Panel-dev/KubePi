@@ -19,7 +19,7 @@ var langMapping = map[string]TextMapping{
 func Translate(lang string, key string, v ...interface{}) (string, error) {
 	mapping := langMapping[lang]
 	if mapping == nil {
-		return "", fmt.Errorf("can no translate to language %s, key %s", lang, key)
+		return "", fmt.Errorf("can not translate to language %s, key: %s", lang, key)
 	}
 	msg := mapping[key]
 	if msg == "" {

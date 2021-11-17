@@ -200,7 +200,7 @@ func (e *KubePiSerer) setUpErrHandler() {
 		}
 		msg := translateMessage
 		if err != nil {
-			e.Logger().Warn(err)
+			e.Logger().Debug(err)
 			msg = originMessage
 		}
 		er := iris.Map{
