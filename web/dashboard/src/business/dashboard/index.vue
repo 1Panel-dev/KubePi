@@ -49,7 +49,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
-      <h3>{{$t('business.event.event')}}</h3>
+      <h4 style="margin-left: 10px">{{$t('business.event.event')}}</h4>
       <complex-table :data="events" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                      :search-config="searchConfig">
         <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">

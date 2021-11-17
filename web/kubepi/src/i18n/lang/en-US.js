@@ -180,6 +180,13 @@ const message = {
             ldap_sync: "Start syncing, please check the user list later",
             ldap_sync_error: "Please save first",
             type: "Type"
+        },
+        system: {
+            system_log: "System logs",
+            operator: "Operator",
+            operation: "Operation",
+            operation_domain: "Resource",
+            specific_information: "Informations"
         }
     },
 }
@@ -187,7 +194,7 @@ const message = {
 const description = {
     i18n_user_administrator: "Super administrator, with permissions for all objects.",
     i18n_user_manage_cluster: "The Cluster Administrator has all the permissions of the cluster object.",
-    i18n_user_manage_rbac: "Role and user administrators have all the permissions of role and user objects.",
+    i18n_user_manage_rbac: "Role and user administrators have all the permissions of the user objects.",
     i18n_user_manage_readonly: "Read only user with access to all objects only,",
     i18n_user_common_user: "Ordinary users only have access to cluster objects",
     i18n_manage_nodes: "The node administrator has read-only permissions on node objects",
@@ -214,6 +221,7 @@ const apiObjects = {
     users: "users",
     roles: "roles",
     clusters: "clusters",
+    systems: "systems",
 }
 
 const apiVerbs = {
@@ -224,6 +232,17 @@ const apiVerbs = {
     "create": "create"
 }
 
+const system_logs = {
+    post: "create",
+    put: "update",
+    delete: "delete",
+    clusters: "cluster",
+    users: "user",
+    clusters_members: "cluster members",
+    clusters_clusterroles: "cluster roles",
+    ldap: "LDAP",
+}
+
 
 export default {
     ...el,
@@ -231,5 +250,6 @@ export default {
     ...message,
     ...apiObjects,
     ...apiVerbs,
-    ...description
+    ...description,
+    ...system_logs
 }

@@ -1,8 +1,13 @@
 package v1
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"strings"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/api/v1/imagerepo"
@@ -10,13 +15,17 @@ import (
 	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
+	"github.com/KubeOperator/kubepi/internal/api/v1/system"
 	"github.com/KubeOperator/kubepi/internal/api/v1/user"
 	"github.com/KubeOperator/kubepi/internal/api/v1/webkubectl"
 	"github.com/KubeOperator/kubepi/internal/api/v1/ws"
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1System "github.com/KubeOperator/kubepi/internal/model/v1/system"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	v1RoleService "github.com/KubeOperator/kubepi/internal/service/v1/role"
 	v1RoleBindingService "github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
+	v1SystemService "github.com/KubeOperator/kubepi/internal/service/v1/system"
 	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
 	"github.com/KubeOperator/kubepi/pkg/collectons"
 	"github.com/KubeOperator/kubepi/pkg/i18n"
@@ -25,7 +34,6 @@ import (
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/core/router"
 	"github.com/kataras/iris/v12/sessions"
-	"strings"
 )
 
 func authHandler() iris.Handler {
@@ -73,6 +81,87 @@ func pageHandler() iris.Handler {
 			ctx.Values().Set(pkgV1.PageNum, pageNum)
 			ctx.Values().Set(pkgV1.PageSize, pageSize)
 		}
+		ctx.Next()
+	}
+}
+
+type logHelper struct {
+	Name     string `json:"name"`
+	Metadata v1.Metadata
+}
+
+func logHandler() iris.Handler {
+	return func(ctx *context.Context) {
+		method := strings.ToLower(ctx.Method())
+		if method != "post" && method != "delete" && method != "put" {
+			ctx.Next()
+			return
+		}
+		currentPath := ctx.GetCurrentRoute().Path()
+		if strings.HasPrefix(currentPath, "/api/v1/proxy") || strings.HasPrefix(currentPath, "/api/v1/chart") || strings.HasPrefix(currentPath, "/api/v1/webkubectl") || strings.HasPrefix(currentPath, "/api/v1/apps") {
+			ctx.Next()
+			return
+		}
+		path := strings.Replace(ctx.Request().URL.Path, "/api/v1/", "", 1)
+		currentPath = strings.Replace(currentPath, "/api/v1/", "", 1)
+		if strings.HasSuffix(path, "search") {
+			ctx.Next()
+			return
+		}
+
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		var log v1System.SystemLog
+		log.Operator = profile.Name
+		log.Operation = method
+
+		pathResource := strings.Split(path, "/")
+		if strings.HasPrefix(currentPath, "clusters/:name") {
+			if len(pathResource) < 3 {
+				log.OperationDomain = pathResource[0]
+				if method != "post" {
+					log.SpecificInformation = pathResource[1]
+				}
+			} else {
+				log.OperationDomain = fmt.Sprintf("%s_%s", pathResource[0], pathResource[2])
+				if method != "post" {
+					if len(pathResource) > 3 {
+						log.SpecificInformation = fmt.Sprintf("[%s] %s", pathResource[1], pathResource[3])
+					} else {
+						log.SpecificInformation = fmt.Sprintf("[%s] %s", pathResource[1], "-")
+					}
+				}
+			}
+		} else {
+			log.OperationDomain = strings.Split(currentPath, "/")[0]
+			if method != "post" {
+				log.SpecificInformation = pathResource[1]
+				if len(pathResource) > 1 {
+					log.SpecificInformation = pathResource[1]
+				} else {
+					log.SpecificInformation = "-"
+				}
+			}
+		}
+		// post 从body里面取
+		if method == "post" {
+			var req logHelper
+			data, _ := ctx.GetBody()
+			if err := json.Unmarshal(data, &req); err != nil {
+				ctx.Next()
+			}
+			if len(req.Name) == 0 {
+				req.Name = req.Metadata.Name
+			}
+			if strings.HasPrefix(currentPath, "clusters/:name") {
+				log.SpecificInformation = fmt.Sprintf("[%s] %s", pathResource[1], req.Name)
+			} else {
+				log.SpecificInformation = req.Name
+			}
+			ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		}
+		systemService := v1SystemService.NewService()
+		go systemService.Create(&log, common.DBOptions{})
 		ctx.Next()
 	}
 }
@@ -269,10 +358,12 @@ func AddV1Route(app iris.Party) {
 	authParty.Use(roleHandler())
 	authParty.Use(roleAccessHandler())
 	authParty.Use(resourceNameInvalidHandler())
+	authParty.Use(logHandler())
 	authParty.Get("/", apiResourceHandler(authParty))
 	user.Install(authParty)
 	cluster.Install(authParty)
 	role.Install(authParty)
+	system.Install(v1Party)
 	proxy.Install(authParty)
 	ws.Install(authParty)
 	chart.Install(authParty)
