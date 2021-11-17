@@ -33,7 +33,7 @@
             <el-form-item :label="$t('business.user.role')" prop="roles">
               <el-select v-model="form.roles" multiple filterable
                          style="width: 100%"
-                         :placeholder="$t('commons.form.select_placeholder')">
+                         :placeholder="$t('commpasswordons.form.select_placeholder')">
                 <el-option
                     v-for="item in roleOptions "
                     :key="item.value"
@@ -95,7 +95,8 @@ export default {
       roleOptions: [],
       rules: {
         name: [
-          Rules.RequiredRule
+          Rules.RequiredRule,
+          Rules.CommonNameRule
         ],
         nickname: [
           Rules.RequiredRule

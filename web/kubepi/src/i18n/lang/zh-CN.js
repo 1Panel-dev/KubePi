@@ -229,6 +229,17 @@ const message = {
             operation: "操作",
             operation_domain: "资源类型",
             specific_information: "操作对象"
+        },
+        image_repos: {
+          list: "镜像仓库",
+          name: "名称",
+          endpoint: "地址",
+          downloadUrl: "镜像下载地址",
+          username: "用户名",
+          password: "密码",
+          type: "类型",
+          repo: "镜像库",
+          load_repo: "加载镜像库",
         }
     },
 }
