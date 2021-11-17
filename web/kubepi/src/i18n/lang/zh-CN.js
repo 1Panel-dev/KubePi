@@ -223,6 +223,13 @@ const message = {
             ldap_sync_error: "请先保存",
             type: "类型"
         },
+        system: {
+            system_log: "系统日志",
+            operator: "操作人",
+            operation: "操作",
+            operation_domain: "资源类型",
+            specific_information: "操作对象"
+        },
         image_repos: {
           list: "镜像仓库",
           name: "名称",
@@ -232,7 +239,7 @@ const message = {
           password: "密码",
           type: "类型",
           repo: "镜像库",
-          load_repo: "加载镜像库"
+          load_repo: "加载镜像库",
         }
     },
 }
@@ -241,6 +248,7 @@ const apiObjects = {
     users: "用户",
     roles: "角色",
     clusters: "集群",
+    systems: "系统日志",
 }
 
 const apiVerbs = {
@@ -252,11 +260,22 @@ const apiVerbs = {
     privilege: "特权"
 }
 
+const system_logs = {
+    post: "创建",
+    put: "修改",
+    delete: "删除",
+    clusters: "集群",
+    users: "用户",
+    clusters_members: "集群成员",
+    clusters_clusterroles: "集群角色",
+    ldap: "LDAP",
+}
+
 
 const description = {
     i18n_user_administrator: "超级管理员，拥有所有对象的权限",
     i18n_user_manage_cluster: "集群管理员，拥有集群对象的所有权限",
-    i18n_user_manage_rbac: "角色与用户管理员，拥有角色和用户对象的所有权限",
+    i18n_user_manage_rbac: "角色与用户管理员，拥有用户管理对象的所有权限",
     i18n_user_manage_readonly: "只读用户，只拥有所有对象的访问权限",
     i18n_user_common_user: "普通用户，只拥有集群对象访问权限",
     i18n_user_manage_chart: "Chart仓库管理员， 拥有对Chart仓库的所有权限",
@@ -300,6 +319,7 @@ export default {
     ...message,
     ...apiObjects,
     ...apiVerbs,
-    ...description
+    ...description,
+    ...system_logs
 
 }
