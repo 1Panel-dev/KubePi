@@ -34,7 +34,7 @@
                element-loading-background="rgba(0, 0, 0, 0.8)" :model="memberForm" label-position="left"
                label-width="144px">
         <el-form-item :label="$t('business.user.user')+$t('commons.table.name')">
-          <el-select v-model="memberForm.userName" style="width: 85%" :disabled="operation==='edit'">
+          <el-select v-model="memberForm.userName" style="width: 85%" filterable :disabled="operation==='edit'">
             <el-option v-for="(item, index) in getUserOptions" :key="index" :value="item.name">
               {{ item.name }}
             </el-option>
@@ -49,7 +49,7 @@
         </el-form-item>
         <div v-if="memberForm.roleType==='custom'">
           <el-form-item>
-            <el-select v-model="memberForm.customClusterRoles" multiple style="width: 85%">
+            <el-select v-model="memberForm.customClusterRoles" filterable multiple style="width: 85%">
               <el-option
                   v-for="(item,index) in getClusterRolesOptions"
                   :key="index"
@@ -78,7 +78,7 @@
               <tr v-for="(item, index) in memberForm.namespaceRoles" :key="index">
                 <td style="text-align: center">
                   <div v-if="item.roleType ==='custom'" style="height: 28px"></div>
-                  <el-select v-model="item.namespace" style="width:100%">
+                  <el-select v-model="item.namespace" filterable style="width:100%">
                     <el-option v-for="(item,index) in getNamespaceOptions"
                                :key="index"
                                :value="item.metadata.name">
@@ -93,7 +93,7 @@
                     <el-radio label="custom">{{ $t('business.cluster.custom') }}</el-radio>
                   </el-radio-group>
                   <div v-if="item.roleType==='custom'">
-                    <el-select multiple v-model="item.roles" style="width:100%">
+                    <el-select multiple v-model="item.roles" filterable style="width:100%">
                       <el-option v-for="(item,index) in getNamespaceRolesOptions"
                                  :key="index"
                                  :value="item.metadata.name">

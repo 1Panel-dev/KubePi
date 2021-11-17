@@ -18,7 +18,7 @@
         <strong>{{ $t("commons.personal.version") }}: v1.1.2</strong>
       </div>
       <div style="padding:15px 20px;box-shadow:rgb(69 70 70) 0 -14px 24px -12px;">
-        <el-row style="font-size: 6px;color: #ffffff;text-align: center">
+        <el-row style="color: #ffffff;text-align: center">
           <el-col :span="6">
             <el-link @click="toGithub" class="iconfont iconhuaban88"><span>{{
                 $t("commons.personal.project_url")

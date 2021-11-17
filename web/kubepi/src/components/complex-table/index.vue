@@ -31,7 +31,7 @@
     </div>
 
     <div class="complex-table__body">
-      <fu-table v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey"
+      <fu-table :empty-text="$t('commons.table.empty_text')" v-on="$listeners" v-bind="$attrs" :columns="columns" :local-key="localKey"
                 @selection-change="handleSelectionChange">
         <slot></slot>
       </fu-table>

@@ -66,7 +66,7 @@
             </tr>
             <tr v-for="(item,index) in clusterRoleForm.rules" :key="index">
               <td style="text-align: center">
-                <el-select v-model="item.apiGroups" style="width: 100%" multiple>
+                <el-select v-model="item.apiGroups" filterable style="width: 100%" multiple>
                   <el-option v-for="(groupName,index) in getApiGroupOptions()"
                              :key="index"
                              :value="groupName">
@@ -75,7 +75,7 @@
                 </el-select>
               </td>
               <td>
-                <el-select multiple v-model="item.resources" style="width:100%">
+                <el-select multiple v-model="item.resources" filterable style="width:100%">
                   <el-option v-for="(item,index) in getResourcesByApiGroupNames(item.apiGroups)"
                              :key="index"
                              :value="item">
@@ -84,7 +84,7 @@
                 </el-select>
               </td>
               <td>
-                <el-select multiple v-model="item.verbs" style="width:100%">
+                <el-select multiple v-model="item.verbs" filterable style="width:100%">
                   <el-option v-for="(item,index) in verbOptions"
                              :key="index"
                              :value="item">

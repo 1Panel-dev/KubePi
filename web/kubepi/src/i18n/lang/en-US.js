@@ -46,11 +46,13 @@ const message = {
             name: "name",
             kind: "kind",
             created_time: "created at",
+            imported_time: "imported at",
             status: "status",
             action: "action",
             creat_by: "created by",
             built_in: "built in",
             description: "description",
+            empty_text: "There are no rows to show.",
         },
         header: {
             help_doc: "document",
