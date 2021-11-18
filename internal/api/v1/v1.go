@@ -111,7 +111,7 @@ func logHandler() iris.Handler {
 
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
-		var log v1System.SystemLog
+		var log v1System.OperationLog
 		log.Operator = profile.Name
 		log.Operation = method
 
@@ -161,7 +161,7 @@ func logHandler() iris.Handler {
 			ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		}
 		systemService := v1SystemService.NewService()
-		go systemService.Create(&log, common.DBOptions{})
+		go systemService.CreateOperationLog(&log, common.DBOptions{})
 		ctx.Next()
 	}
 }
