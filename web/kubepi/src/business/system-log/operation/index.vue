@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('business.system.system_log')">
+  <layout-content :header="$t('business.system.operation_log')">
     <complex-table :search-config="searchConfig" :data="data" :pagination-config="paginationConfig" @search="search">
       <el-table-column :label="$t('business.system.operator')" prop="operator" fix />
       <el-table-column :label="$t('business.system.operation')" prop="operation" fix>
@@ -25,10 +25,10 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import { searchSystemLog } from "@/api/systems"
+import { searchOperationLogs } from "@/api/systems"
 
 export default {
-  name: "SystemLog",
+  name: "OperationLog",
   components: { ComplexTable, LayoutContent },
   data() {
     return {
@@ -89,7 +89,7 @@ export default {
     search(conditions) {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
-      searchSystemLog(currentPage, pageSize, conditions).then((data) => {
+      searchOperationLogs(currentPage, pageSize, conditions).then((data) => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
