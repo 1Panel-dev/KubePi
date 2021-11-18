@@ -418,8 +418,8 @@ func (h *Handler) ListClusters() iris.Handler {
 		var clusters []v1Cluster.Cluster
 		clusters, err := h.clusterService.List(common.DBOptions{})
 		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
 			return
 		}
 		var resultClusters []Cluster
@@ -427,9 +427,9 @@ func (h *Handler) ListClusters() iris.Handler {
 		profile := u.(session.UserProfile)
 		for i := range clusters {
 			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-			if err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", err)
+			if err != nil && !errors.Is(err, storm.ErrNotFound) {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
 				return
 			}
 			rc := Cluster{
