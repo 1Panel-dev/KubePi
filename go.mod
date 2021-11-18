@@ -22,6 +22,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/sys v0.0.0-20210927052749-1cf2251ac284 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/igm/sockjs-go.v2 v2.1.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b

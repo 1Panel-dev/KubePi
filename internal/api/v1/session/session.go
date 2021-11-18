@@ -4,25 +4,35 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1System "github.com/KubeOperator/kubepi/internal/model/v1/system"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/ldap"
 	"github.com/KubeOperator/kubepi/internal/service/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
+	v1SystemService "github.com/KubeOperator/kubepi/internal/service/v1/system"
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
 	"github.com/KubeOperator/kubepi/pkg/collectons"
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/pkg/network/ip"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/middleware/jwt"
 	"github.com/kataras/iris/v12/sessions"
 	"golang.org/x/crypto/bcrypt"
 	v1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
 )
+
+var JwtSigKey = []byte("signature_hmac_secret_shared_key")
+var jwtMaxAge = 10 * time.Minute
 
 type Handler struct {
 	userService        user.Service
@@ -30,6 +40,7 @@ type Handler struct {
 	clusterService     cluster.Service
 	rolebindingService rolebinding.Service
 	ldapService        ldap.Service
+	jwtSigner          *jwt.Signer
 }
 
 func NewHandler() *Handler {
@@ -39,6 +50,7 @@ func NewHandler() *Handler {
 		roleService:        role.NewService(),
 		rolebindingService: rolebinding.NewService(),
 		ldapService:        ldap.NewService(),
+		jwtSigner:          jwt.NewSigner(jwt.HS256, JwtSigKey, jwtMaxAge),
 	}
 }
 
@@ -72,12 +84,12 @@ func (h *Handler) Login() iris.Handler {
 		}
 
 		if u.Type == v1User.LDAP {
-			if err := h.ldapService.Login(u.Name,loginCredential.Password,common.DBOptions{});err != nil {
+			if err := h.ldapService.Login(u.Name, loginCredential.Password, common.DBOptions{}); err != nil {
 				ctx.StatusCode(iris.StatusBadRequest)
 				ctx.Values().Set("message", "username or password error")
 				return
 			}
-		}else {
+		} else {
 			if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 				ctx.StatusCode(iris.StatusBadRequest)
 				ctx.Values().Set("message", "username or password error")
@@ -91,7 +103,6 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		session := sessions.Get(ctx)
 		profile := UserProfile{
 			Name:                u.Name,
 			NickName:            u.NickName,
@@ -100,10 +111,42 @@ func (h *Handler) Login() iris.Handler {
 			ResourcePermissions: permissions,
 			IsAdministrator:     u.IsAdmin,
 		}
-		session.Set("profile", profile)
+
+		authMethod := ctx.GetHeader("authMethod")
+
+		switch authMethod {
+		case "jwt":
+			token, err := h.jwtSigner.Sign(profile)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+			}
+			ctx.StatusCode(iris.StatusOK)
+			ctx.Values().Set("data", token)
+			return
+		default:
+			session := sessions.Get(ctx)
+			session.Set("profile", profile)
+		}
+
 		ctx.StatusCode(iris.StatusOK)
+		go saveLoginLog(ctx, profile.Name)
 		ctx.Values().Set("data", profile)
 	}
+}
+
+func saveLoginLog(ctx *context.Context, userName string) {
+	var logItem v1System.LoginLog
+	logItem.UserName = userName
+	logItem.Ip = ctx.RemoteAddr()
+	qqWry, err := ip.NewQQwry()
+	if err != nil {
+		server.Logger().Errorf("load qqwry datas failed: %s", err)
+	}
+	res := qqWry.Find(logItem.Ip)
+	logItem.City = res.Area
+	systemService := v1SystemService.NewService()
+	systemService.CreateLoginLog(&logItem, common.DBOptions{})
 }
 
 func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string, error) {
