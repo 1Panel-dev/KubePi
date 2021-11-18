@@ -14,19 +14,20 @@ func NewClient(config Config) RepoClient {
 		return repos.NewNexusClient(config.EndPoint, config.Credential.Username, config.Credential.Password)
 	case "Harbor":
 		return repos.NewHarborClient(config.EndPoint, config.Credential.Username, config.Credential.Password)
+	case "DockerRegistry":
+		return repos.NewDockerRegistryClient(config.EndPoint, config.Credential.Username, config.Credential.Password)
 	}
 	return nil
 }
 
 type Config struct {
-	Type        string
-	EndPoint    string
+	Type     string
+	EndPoint string
 	//DownloadUrl string
-	Credential  Credential
+	Credential Credential
 }
 
 type Credential struct {
 	Username string
 	Password string
 }
-

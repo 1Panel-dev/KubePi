@@ -8,6 +8,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/creack/pty v1.1.15 // indirect
+	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/go-ldap/ldap v3.0.3+incompatible
 	github.com/go-logr/logr v0.4.0
 	github.com/gofrs/flock v0.8.1
