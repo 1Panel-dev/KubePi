@@ -14,6 +14,11 @@ type HttpClient struct {
 	Host string
 }
 
+type NameResult struct {
+	Name    string
+	Version string
+}
+
 func (h *HttpClient) NewRequest(method,endpoint string) (request *http.Request, err error) {
 	url := fmt.Sprintf("%s/%s", h.Host, endpoint)
 	request, err = http.NewRequest(method, url, nil)

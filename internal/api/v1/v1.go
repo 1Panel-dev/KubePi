@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/kataras/iris/v12/middleware/jwt"
 	"io/ioutil"
 	"strings"
 
@@ -38,8 +39,15 @@ import (
 
 func authHandler() iris.Handler {
 	return func(ctx *context.Context) {
-		p := sessions.Get(ctx).Get("profile")
-		if p == nil {
+		var p session.UserProfile
+		if ctx.GetHeader("Authorization") != "" {
+			pr := jwt.Get(ctx).(*session.UserProfile)
+			p = *pr
+
+		} else {
+			p = sessions.Get(ctx).Get("profile").(session.UserProfile)
+		}
+		if p.Name == "" {
 			ctx.Values().Set("message", "please login")
 			ctx.StopWithStatus(iris.StatusUnauthorized)
 			return
@@ -51,8 +59,7 @@ func authHandler() iris.Handler {
 
 func langHandler() iris.Handler {
 	return func(ctx *context.Context) {
-		s := sessions.Get(ctx)
-		p := s.Get("profile")
+		p := ctx.Values().Get("profile")
 		u, ok := p.(session.UserProfile)
 		lang := i18n.LanguageZhCN
 		if ok {
@@ -182,7 +189,7 @@ func roleHandler() iris.Handler {
 	return func(ctx *context.Context) {
 		// 查询当前用户的角色
 		// 查询角色的 rolebinding 获取 roles
-		p := sessions.Get(ctx).Get("profile")
+		p := ctx.Values().Get("profile")
 		u := p.(session.UserProfile)
 
 		if u.IsAdministrator {
@@ -283,7 +290,7 @@ func roleAccessHandler() iris.Handler {
 	return func(ctx *context.Context) {
 		//// 查询角色的 resources
 		//// 通过api resource 过滤出来资源主体,method 过滤操作
-		p := sessions.Get(ctx).Get("profile")
+		p := ctx.Values().Get("profile")
 		u := p.(session.UserProfile)
 		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") &&
 			!strings.Contains(ctx.Request().URL.Path, "/webkubectl") && !strings.Contains(ctx.Request().URL.Path, "/webkubectl") &&
@@ -347,14 +354,33 @@ func resourceNameInvalidHandler() iris.Handler {
 	}
 }
 
+func WarpedJwtHandler() iris.Handler {
+	verifier := jwt.NewVerifier(jwt.HS256, session.JwtSigKey)
+	verifier.WithDefaultBlocklist()
+	verifyMiddleware := verifier.Verify(func() interface{} {
+		return new(session.UserProfile)
+	})
+	return func(ctx *context.Context) {
+		sess := sessions.Get(ctx)
+		if sess.Get("profile") != nil {
+			ctx.Next()
+			return
+		}
+		verifyMiddleware(ctx)
+	}
+}
+
 func AddV1Route(app iris.Party) {
+
 	v1Party := app.Party("/v1")
 	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
 	session.Install(v1Party)
 	authParty := v1Party.Party("")
-	authParty.Use(resourceExtractHandler())
+
+	authParty.Use(WarpedJwtHandler())
 	authParty.Use(authHandler())
+	authParty.Use(resourceExtractHandler())
 	authParty.Use(roleHandler())
 	authParty.Use(roleAccessHandler())
 	authParty.Use(resourceNameInvalidHandler())

@@ -192,6 +192,17 @@ const message = {
             username: "Username",
             ip: "Login ip",
             city: "Login city",
+        },
+        image_repos: {
+          list: "Mirror Warehouse",
+          name: "Name",
+          endpoint: "Address",
+          downloadUrl: "Mirror download URL",
+          username: "Username",
+          password: "Password",
+          type: "Type",
+          repo: "Mirror Library",
+          load_repo: "Load image library",
         }
     },
 }
