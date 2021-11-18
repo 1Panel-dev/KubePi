@@ -360,13 +360,13 @@ const AccessControl = {
         apiGroup: "policy",
         resource: "podsecuritypolicies",
         verb: "list",
-        scope: "namespace"
+        scope: "cluster"
       },
       component: () => import("@/business/access-control/pod-security-policies"),
       name: "PSPs",
       meta: {
         title: "Pod Security Policies",
-        scope: "namespace"
+        scope: "cluster"
       }
     },
     {
@@ -375,7 +375,7 @@ const AccessControl = {
         apiGroup: "policy",
         resource: "podsecuritypolicies",
         verb: "get",
-        scope: "namespace"
+        scope: "cluster"
       },
       hidden: true,
       props: true,
@@ -391,7 +391,7 @@ const AccessControl = {
         apiGroup: "policy",
         resource: "podsecuritypolicies",
         verb: "create",
-        scope: "namespace"
+        scope: "cluster"
       },
       hidden: true,
       props: true,
@@ -407,7 +407,7 @@ const AccessControl = {
         apiGroup: "policy",
         resource: "podsecuritypolicies",
         verb: "get",
-        scope: "namespace"
+        scope: "cluster"
       },
       hidden: true,
       props: true,
