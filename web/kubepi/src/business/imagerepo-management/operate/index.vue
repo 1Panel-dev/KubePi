@@ -122,8 +122,11 @@ export default {
       )
     },
     list () {
+      this.loading = true
       listInternalRepos(this.form).then(res => {
         this.repos = res.data
+      }).finally(() => {
+        this.loading = false
       })
     },
     onCancel () {

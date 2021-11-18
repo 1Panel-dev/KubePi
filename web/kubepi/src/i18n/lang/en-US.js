@@ -187,6 +187,17 @@ const message = {
             operation: "Operation",
             operation_domain: "Resource",
             specific_information: "Informations"
+        },
+        image_repos: {
+          list: "Mirror Warehouse",
+          name: "Name",
+          endpoint: "Address",
+          downloadUrl: "Mirror download URL",
+          username: "Username",
+          password: "Password",
+          type: "Type",
+          repo: "Mirror Library",
+          load_repo: "Load image library",
         }
     },
 }
