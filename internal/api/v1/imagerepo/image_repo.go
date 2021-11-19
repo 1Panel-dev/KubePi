@@ -67,7 +67,7 @@ func (h *Handler) ListInternalRepos() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		names, err := h.imageRepoService.ListInternalRepos(req.ImageRepo);
+		names, err := h.imageRepoService.ListInternalRepos(req.ImageRepo)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -77,10 +77,28 @@ func (h *Handler) ListInternalRepos() iris.Handler {
 	}
 }
 
+func (h *Handler) UpdateRepo() iris.Handler {
+	return func(ctx *context.Context) {
+
+	}
+}
+
+func (h *Handler) DeleteRepo() iris.Handler {
+	return func(ctx *context.Context) {
+		imageRepoName := ctx.Params().GetString("name")
+		if err := h.imageRepoService.Delete(imageRepoName, common.DBOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/imagerepos")
 	sp.Post("/search", handler.SearchRepos())
 	sp.Post("/", handler.CreateRepo())
+	sp.Delete("/:name", handler.DeleteRepo())
 	sp.Post("/repositories", handler.ListInternalRepos())
 }

@@ -246,6 +246,7 @@ const message = {
           type: "类型",
           repo: "镜像库",
           load_repo: "加载镜像库",
+          auth: "认证"
         }
     },
 }

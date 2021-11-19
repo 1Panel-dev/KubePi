@@ -18,13 +18,20 @@
             <el-form-item :label="$t('business.image_repos.endpoint')" prop="endpoint">
               <el-input v-model="form.endpoint"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('business.image_repos.username')" prop="credential.username">
+            <el-form-item :label="$t('business.image_repos.auth')" prop="auth">
+              <el-radio-group v-model="form.auth">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="form.auth" :label="$t('business.image_repos.username')" prop="credential.username">
               <el-input v-model="form.credential.username"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('business.image_repos.password')" prop="credential.password">
+            <el-form-item v-if="form.auth" :label="$t('business.image_repos.password')" prop="credential.password">
               <el-input type="password" v-model="form.credential.password"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('business.image_repos.repo')" prop="repoName">
+            <el-form-item v-if="form.type !== 'DockerRegistry'" :label="$t('business.image_repos.repo')"
+                          prop="repoName">
               <el-select v-model="form.repoName">
                 <el-option v-for="(repo,index) in repos" :key="index" :value="repo" :label="repo">
                 </el-option>
@@ -37,7 +44,9 @@
               <div style="float: right">
                 <el-button @click="list()">{{ $t("business.image_repos.load_repo") }}</el-button>
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-                <el-button type="primary" :disabled="isSubmitGoing"  @click="onConfirm()">{{ $t("commons.button.confirm") }}
+                <el-button type="primary" :disabled="isSubmitGoing" @click="onConfirm()">{{
+                    $t("commons.button.confirm")
+                  }}
                 </el-button>
               </div>
             </el-form-item>
@@ -62,7 +71,8 @@ export default {
       loading: false,
       mode: "",
       form: {
-        credential:{}
+        auth: true,
+        credential: {}
       },
       rules: {
         name: [
@@ -72,6 +82,9 @@ export default {
           Rules.RequiredRule
         ],
         endpoint: [
+          Rules.RequiredRule
+        ],
+        auth: [
           Rules.RequiredRule
         ],
         credential: {

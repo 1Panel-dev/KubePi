@@ -10,6 +10,7 @@ type ImageRepo struct {
 	DownloadUrl  string     `json:"downloadUrl"`
 	RepoName     string     `json:"repoName"`
 	Credential   Credential `json:"credential"`
+	Auth         bool       `json:"auth"`
 }
 
 type Credential struct {
