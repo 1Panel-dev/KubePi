@@ -48,10 +48,13 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.onEdit(row.name)
+            this.$router.push({
+              path: `/imagerepos/${row.name}/edit`,
+              query: {mode: "edit" }
+            })
           },
           disabled: () => {
-            return !checkPermissions({resource: "imagerepos", verb: "create"})
+            return !checkPermissions({ resource: "imagerepos", verb: "create" })
           }
         },
         {
@@ -61,7 +64,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return !checkPermissions({resource: "imagerepos", verb: "delete"})
+            return !checkPermissions({ resource: "imagerepos", verb: "delete" })
           }
         },
       ],
@@ -93,11 +96,11 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        path: '/imagerepos/create',
+        path: "/imagerepos/create",
         query: { mode: "create" }
       })
     },
-    onDelete(name) {
+    onDelete (name) {
       if (this.isSubmitGoing) {
         return
       }
@@ -117,7 +120,7 @@ export default {
           this.isSubmitGoing = false
         })
       })
-    }
+    },
   },
   created () {
     this.search()
