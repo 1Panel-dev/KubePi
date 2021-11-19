@@ -105,7 +105,7 @@ const message = {
             namespace: "Namespace",
             scope: "scope",
             version: "version",
-            list: "Cluster",
+            list: "Clusters",
             import: "import cluster",
             edit: "edit",
             nodes: "nodes",
@@ -148,7 +148,7 @@ const message = {
             cluster_viewer: "Viewer",
         },
         user: {
-            user_management: "user management",
+            user_management: "Users",
             username: "username",
             nickname: "nickname",
             email: "email",
@@ -182,11 +182,16 @@ const message = {
             type: "Type"
         },
         system: {
-            system_log: "System logs",
+            system_log: "Audits",
+            operation_log: "Operation Logs",
             operator: "Operator",
             operation: "Operation",
             operation_domain: "Resource",
-            specific_information: "Informations"
+            specific_information: "Informations",
+            login_log: "Login Logs",
+            username: "Username",
+            ip: "Login ip",
+            city: "Login city",
         },
         image_repos: {
           list: "Mirror Warehouse",
@@ -198,6 +203,7 @@ const message = {
           type: "Type",
           repo: "Mirror Library",
           load_repo: "Load image library",
+          auth: "Auth"
         }
     },
 }

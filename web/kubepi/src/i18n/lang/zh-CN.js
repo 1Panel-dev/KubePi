@@ -224,11 +224,17 @@ const message = {
             type: "类型"
         },
         system: {
-            system_log: "系统日志",
+            system_log: "日志审计",
+            operation_log: "操作日志",
             operator: "操作人",
             operation: "操作",
             operation_domain: "资源类型",
-            specific_information: "操作对象"
+            specific_information: "操作对象",
+            login_log: "登录日志",
+            username: "用户名",
+            ip: "登录IP",
+            city: "登录城市",
+            commercial: "运营商",
         },
         image_repos: {
           list: "镜像仓库",
@@ -240,6 +246,7 @@ const message = {
           type: "类型",
           repo: "镜像库",
           load_repo: "加载镜像库",
+          auth: "认证"
         }
     },
 }

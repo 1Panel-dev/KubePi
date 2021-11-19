@@ -4,16 +4,23 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
+	v1System "github.com/KubeOperator/kubepi/internal/model/v1/system"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/ldap"
 	"github.com/KubeOperator/kubepi/internal/service/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
+	v1SystemService "github.com/KubeOperator/kubepi/internal/service/v1/system"
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
 	"github.com/KubeOperator/kubepi/pkg/collectons"
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/pkg/network/ip"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -22,8 +29,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	v1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
-	"time"
 )
 
 var JwtSigKey = []byte("signature_hmac_secret_shared_key")
@@ -57,7 +62,6 @@ func (h *Handler) IsLogin() iris.Handler {
 		ctx.Values().Set("data", loginUser != nil)
 	}
 }
-
 
 func (h *Handler) Login() iris.Handler {
 	return func(ctx *context.Context) {
@@ -126,8 +130,23 @@ func (h *Handler) Login() iris.Handler {
 		}
 
 		ctx.StatusCode(iris.StatusOK)
+		go saveLoginLog(ctx, profile.Name)
 		ctx.Values().Set("data", profile)
 	}
+}
+
+func saveLoginLog(ctx *context.Context, userName string) {
+	var logItem v1System.LoginLog
+	logItem.UserName = userName
+	logItem.Ip = ctx.RemoteAddr()
+	qqWry, err := ip.NewQQwry()
+	if err != nil {
+		server.Logger().Errorf("load qqwry datas failed: %s", err)
+	}
+	res := qqWry.Find(logItem.Ip)
+	logItem.City = res.Area
+	systemService := v1SystemService.NewService()
+	systemService.CreateLoginLog(&logItem, common.DBOptions{})
 }
 
 func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string, error) {

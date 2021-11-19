@@ -18,6 +18,9 @@ type Service interface {
 	ListInternalRepos(repo imagerepo.ImageRepo) (names []string, err error)
 	Search(num, size int, conditions common.Conditions, options common.DBOptions) (result []V1ImageRepo.ImageRepo, count int, err error)
 	Create(repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
+	Delete(name string, options common.DBOptions) (err error)
+	GetByName(name string, options common.DBOptions) (repo V1ImageRepo.ImageRepo, err error)
+	UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
 }
 
 func NewService() Service {
@@ -87,4 +90,36 @@ func (s *service) Create(repo *V1ImageRepo.ImageRepo, options common.DBOptions) 
 	repo.CreateAt = time.Now()
 	repo.UpdateAt = time.Now()
 	return db.Save(repo)
+}
+
+func (s *service) Delete(name string, options common.DBOptions) (err error) {
+	db := s.GetDB(options)
+	item, err1 := s.GetByName(name, options)
+	if err1 != nil {
+		err = err1
+		return
+	}
+	return db.DeleteStruct(&item)
+}
+
+func (s *service) GetByName(name string, options common.DBOptions) (repo V1ImageRepo.ImageRepo, err error) {
+	db := s.GetDB(options)
+	query := db.Select(q.Eq("Name", name))
+	if err = query.First(&repo); err != nil {
+		return
+	}
+	return
+}
+
+func (s *service) UpdateRepo(name string,repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error) {
+	db := s.GetDB(options)
+	old, err1 := s.GetByName(name, options)
+	if err1 != nil {
+		err = err1
+		return
+	}
+	repo.UUID = old.UUID
+	repo.CreateAt = old.CreateAt
+	repo.UpdateAt = time.Now()
+	return db.Update(repo)
 }

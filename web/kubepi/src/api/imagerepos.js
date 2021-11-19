@@ -1,4 +1,4 @@
-import {post} from "@/plugins/request"
+import {del, get, post, put} from "@/plugins/request"
 
 const baseUrl = "/api/v1/imagerepos"
 
@@ -11,6 +11,18 @@ export function createRepo (data) {
   return post(baseUrl, data)
 }
 
-export function listInternalRepos(data) {
-  return post(baseUrl+"/repositories", data)
+export function listInternalRepos (data) {
+  return post(baseUrl + "/repositories", data)
+}
+
+export function deleteRepo (name) {
+  return del(`${baseUrl}/${name}`)
+}
+
+export function getRepo (name) {
+  return get(`${baseUrl}/${name}`)
+}
+
+export function updateRepo (name, data) {
+  return put(`${baseUrl}/${name}`, data)
 }
