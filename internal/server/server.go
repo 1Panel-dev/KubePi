@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
-	"github.com/go-logr/logr"
 	"k8s.io/klog/v2"
 	"net/http"
 	"net/http/httputil"
@@ -88,31 +87,6 @@ func (e *KubePiSerer) setUpConfig() {
 	}
 }
 
-type TodoLogger struct {
-}
-
-func (t TodoLogger) Enabled() bool {
-	return true
-}
-
-func (t TodoLogger) Info(msg string, keysAndValues ...interface{}) {
-
-}
-
-func (t TodoLogger) Error(err error, msg string, keysAndValues ...interface{}) {
-}
-
-func (t TodoLogger) V(level int) logr.Logger {
-	return nil
-}
-
-func (t TodoLogger) WithValues(keysAndValues ...interface{}) logr.Logger {
-	return nil
-}
-
-func (t TodoLogger) WithName(name string) logr.Logger {
-	return nil
-}
 
 func (e *KubePiSerer) setUpLogger() {
 	klog.SetLogger(TodoLogger{})
