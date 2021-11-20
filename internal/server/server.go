@@ -60,15 +60,17 @@ func WithCustomConfigFilePath(path string) Option {
 }
 
 type KubePiSerer struct {
-	*iris.Application
+	app                  *iris.Application
 	db                   *storm.DB
 	logger               *logrus.Logger
 	configCustomFilePath string
 	config               *v1Config.Config
+	rootRoute            iris.Party
 }
 
 func NewKubePiSerer(opts ...Option) *KubePiSerer {
 	c := &KubePiSerer{}
+	c.app = iris.New()
 	c.config = getDefaultConfig()
 	for _, op := range opts {
 		op(c)
@@ -86,7 +88,6 @@ func (e *KubePiSerer) setUpConfig() {
 		panic(err)
 	}
 }
-
 
 func (e *KubePiSerer) setUpLogger() {
 	klog.SetLogger(TodoLogger{})
@@ -112,12 +113,16 @@ func (e *KubePiSerer) setUpDB() {
 	e.db = d
 }
 
-func (e *KubePiSerer) setUpStaticFile() {
-	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
-	party := e.Party("/")
-	party.Get("/", func(ctx *context.Context) {
+func (e *KubePiSerer) setUpRootRoute() {
+	e.app.Any("/", func(ctx *context.Context) {
 		ctx.Redirect("/kubepi")
 	})
+	e.rootRoute = e.app.Party("/kubepi")
+}
+
+func (e *KubePiSerer) setUpStaticFile() {
+	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
+	party := e.rootRoute.Party("/")
 	party.Use(iris.Compression)
 	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
 	party.RegisterView(view.HTML(dashboardFS, ".html"))
@@ -129,18 +134,18 @@ func (e *KubePiSerer) setUpStaticFile() {
 
 	kubePiFS := iris.PrefixDir("web/kubepi", http.FS(EmbedWebKubePi))
 	party.RegisterView(view.HTML(kubePiFS, ".html"))
-	party.HandleDir("/kubepi/", kubePiFS, spaOption)
+	party.HandleDir("/", kubePiFS, spaOption)
 }
 
 func (e *KubePiSerer) setUpSession() {
 	sess := sessions.New(sessions.Config{Cookie: sessionCookieName, AllowReclaim: true})
-	e.Use(sess.Handler())
+	e.rootRoute.Use(sess.Handler())
 }
 
 const ContentTypeDownload = "application/download"
 
 func (e *KubePiSerer) setResultHandler() {
-	e.Use(func(ctx *context.Context) {
+	e.rootRoute.Use(func(ctx *context.Context) {
 		ctx.Next()
 		contentType := ctx.ResponseWriter().Header().Get("Content-Type")
 		if contentType == ContentTypeDownload {
@@ -176,7 +181,7 @@ func (e *KubePiSerer) setResultHandler() {
 }
 
 func (e *KubePiSerer) setUpErrHandler() {
-	e.OnAnyErrorCode(func(ctx iris.Context) {
+	e.rootRoute.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.Values().GetString("message") == "" {
 			switch ctx.GetStatusCode() {
 			case iris.StatusNotFound:
@@ -203,7 +208,7 @@ func (e *KubePiSerer) setUpErrHandler() {
 		}
 		msg := translateMessage
 		if err != nil {
-			e.Logger().Debug(err)
+			e.app.Logger().Debug(err)
 			msg = originMessage
 		}
 		er := iris.Map{
@@ -238,8 +243,8 @@ func (e *KubePiSerer) setWebkubectlProxy() {
 		}
 		proxy.ServeHTTP(ctx.ResponseWriter(), ctx.Request())
 	}
-	e.Any("/webkubectl/{p:path}", handler)
-	e.Any("webkubectl", handler)
+	e.rootRoute.Any("/webkubectl/{p:path}", handler)
+	e.rootRoute.Any("webkubectl", handler)
 }
 
 func (e *KubePiSerer) setUpTtyEntrypoint() {
@@ -255,7 +260,7 @@ func (e *KubePiSerer) setUpTtyEntrypoint() {
 }
 
 func (e *KubePiSerer) bootstrap() *KubePiSerer {
-	e.Application = iris.New()
+	e.setUpRootRoute()
 	e.setUpStaticFile()
 	e.setUpLogger()
 	e.setUpDB()
@@ -285,8 +290,8 @@ func Logger() *logrus.Logger {
 
 func Listen(route func(party iris.Party), options ...Option) error {
 	es = NewKubePiSerer(options...)
-	route(es.Application)
-	return es.Run(iris.Addr(fmt.Sprintf("%s:%d", es.config.Spec.Server.Bind.Host, es.config.Spec.Server.Bind.Port)))
+	route(es.rootRoute)
+	return es.app.Run(iris.Addr(fmt.Sprintf("%s:%d", es.config.Spec.Server.Bind.Host, es.config.Spec.Server.Bind.Port)))
 }
 
 func getDefaultConfig() *v1Config.Config {

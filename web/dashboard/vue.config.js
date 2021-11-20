@@ -4,6 +4,7 @@ function resolve(dir) {
     return path.join(__dirname, dir)
 }
 
+let publicPath = process.env.VUE_APP_PUBLIC_PATH
 module.exports = {
     outputDir: path.resolve(__dirname, '../../cmd/server/web/dashboard'),
     productionSourceMap: true,
@@ -15,8 +16,8 @@ module.exports = {
             errors: true
         },
         proxy: {
-            '/api': {
-                target: 'http://0.0.0.0:2019',
+            '/kubepi/api': {
+                target: 'http://0.0.0.0:80',
                 ws: true,
                 secure: false,
             }
@@ -30,5 +31,5 @@ module.exports = {
             }
         }
     },
-    publicPath: '/dashboard/',
+    publicPath: `${publicPath}`
 };

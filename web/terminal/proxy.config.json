@@ -1,5 +1,5 @@
 {
-  "/api": {
-    "target": "http://localhost:2019"
+  "/kubepi/api/": {
+    "target": "http://localhost:80"
   }
 }

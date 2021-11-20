@@ -37,6 +37,25 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 )
 
+var urlWhiteList = WhiteList{
+	"/api/v1/proxy",
+	"/api/v1/chart",
+	"/api/v1/webkubectl",
+}
+
+var resourceWhiteList = WhiteList{"sessions", "proxy", "ws", "charts", "webkubectl", "apps"}
+
+type WhiteList []string
+
+func (w WhiteList) In(name string) bool {
+	for i := range w {
+		if w[i] == name {
+			return true
+		}
+	}
+	return false
+}
+
 func authHandler() iris.Handler {
 	return func(ctx *context.Context) {
 		var p session.UserProfile
@@ -104,11 +123,19 @@ func logHandler() iris.Handler {
 			ctx.Next()
 			return
 		}
+
+		resourceName := ctx.Values().GetString("resource")
+		if resourceName == "" || urlWhiteList.In(resourceName) {
+			ctx.Next()
+			return
+		}
+
 		currentPath := ctx.GetCurrentRoute().Path()
 		if strings.HasPrefix(currentPath, "/api/v1/proxy") || strings.HasPrefix(currentPath, "/api/v1/chart") || strings.HasPrefix(currentPath, "/api/v1/webkubectl") || strings.HasPrefix(currentPath, "/api/v1/apps") {
 			ctx.Next()
 			return
 		}
+
 		path := strings.Replace(ctx.Request().URL.Path, "/api/v1/", "", 1)
 		currentPath = strings.Replace(currentPath, "/api/v1/", "", 1)
 		if strings.HasSuffix(path, "search") {
@@ -178,8 +205,8 @@ func resourceExtractHandler() iris.Handler {
 		path := ctx.Request().URL.Path
 		ss := strings.Split(path, "/")
 		// "" "api" "v1" "resource"
-		if len(ss) >= 4 {
-			ctx.Values().Set("resource", ss[3])
+		if len(ss) >= 5 {
+			ctx.Values().Set("resource", ss[4])
 		}
 		ctx.Next()
 	}
@@ -260,12 +287,12 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 		routes := apiBuilder.GetRoutes()
 		resourceMap := map[string]*collectons.StringSet{}
 		for i := range routes {
-			if strings.HasPrefix(routes[i].Path, "/api/v1/") {
+			if strings.HasPrefix(routes[i].Path, "/kubepi/api/v1/") {
 				ss := strings.Split(routes[i].Path, "/")
-				if len(ss) >= 4 {
-					resourceName := ss[3]
+				if len(ss) >= 5 {
+					resourceName := ss[4]
 					//过滤session资源
-					if resourceName == "sessions" || resourceName == "proxy" || resourceName == "ws" || resourceName == "charts" || resourceName == "webkubectl" || resourceName == "apps" {
+					if resourceWhiteList.In(resourceName) {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {

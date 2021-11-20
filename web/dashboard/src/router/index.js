@@ -49,7 +49,7 @@ const createRouter = () => new Router({
     mode: 'history',
     scrollBehavior: () => ({y: 0}),
     routes: constantRoutes,
-    base: "dashboard"
+    base: process.env.VUE_APP_PUBLIC_PATH
 })
 
 const router = createRouter()

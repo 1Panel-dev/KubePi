@@ -13,7 +13,7 @@ export class TerminalService {
 
   createTerminalSession(clusterName: string, namespace: string, podName: string, containerName: string, shell: string): Observable<any> {
     const url = function () {
-      let baseUrl = `/api/v1/clusters/${clusterName}/terminal/session?podName=${podName}&&containerName=${containerName}&&shell=${shell}`
+      let baseUrl = `/kubepi/api/v1/clusters/${clusterName}/terminal/session?podName=${podName}&&containerName=${containerName}&&shell=${shell}`
       if (namespace) {
         baseUrl = `${baseUrl}&&namespace=${namespace}`
       }

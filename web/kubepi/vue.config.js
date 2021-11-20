@@ -15,7 +15,10 @@ module.exports = {
             errors: true
         },
         proxy: {
-            '/api': {
+            '/dashboard': {
+                target: 'http://0.0.0.0:4400',
+            },
+            '/kubepi/api': {
                 target: 'http://0.0.0.0:80',
                 ws: true,
                 secure: false,
@@ -24,9 +27,6 @@ module.exports = {
                 target: 'http://0.0.0.0:80',
                 ws: true,
                 secure: false,
-            },
-            '/dashboard': {
-                target: 'http://0.0.0.0:4400',
             },
             '/terminal': {
                 target: 'http://0.0.0.0:4200',

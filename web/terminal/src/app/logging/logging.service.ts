@@ -17,7 +17,7 @@ export class LoggingService {
                        tailLines: number,
                        follow: boolean): Observable<any> {
     const url = function () {
-      let baseUrl = `/api/v1/clusters/${clusterName}/logging/session?podName=${podName}`
+      let baseUrl = `/kubepi/api/v1/clusters/${clusterName}/logging/session?podName=${podName}`
       if (namespace) {
         baseUrl = `${baseUrl}&&namespace=${namespace}`
       }

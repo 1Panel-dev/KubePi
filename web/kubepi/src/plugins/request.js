@@ -4,7 +4,7 @@ import store from "@/store"
 import i18n, {getLanguage} from "@/i18n"
 
 const instance = axios.create({
-    baseURL: "", // url = base url + request url
+    baseURL: "/kubepi", // url = base url + request url
     withCredentials: true,
     timeout: 60000 // request timeout, default 1 min
 })

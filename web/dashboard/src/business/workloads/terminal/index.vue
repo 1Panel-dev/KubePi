@@ -71,9 +71,9 @@ export default {
     },
     getTerminalUrl() {
       if (this.terminal.type == "terminal") {
-        return `/terminal/app?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&shell=${this.shell}`
+        return `${process.env.VUE_APP_TERMINAL_PATH}/app?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&shell=${this.shell}`
       } else {
-        return `/terminal/logging?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&tailLines=${this.tailLines}&follow=${this.follow}`
+        return `${process.env.VUE_APP_TERMINAL_PATH}/logging?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&tailLines=${this.tailLines}&follow=${this.follow}`
       }
     },
     changeConditions() {

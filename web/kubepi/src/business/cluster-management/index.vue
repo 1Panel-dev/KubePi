@@ -87,8 +87,10 @@
       <el-table-column min-width="200" fix>
         <template v-slot:default="{row}">
           <div>
-            <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors" :percentage="getCpuUsed(row)"></el-progress>
-            <el-progress type="dashboard" :width="80" :format="formatMemory" :color="colors" :percentage="getMemoryUsed(row)"></el-progress>
+            <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors"
+                         :percentage="getCpuUsed(row)"></el-progress>
+            <el-progress type="dashboard" :width="80" :format="formatMemory" :color="colors"
+                         :percentage="getMemoryUsed(row)"></el-progress>
           </div>
         </template>
       </el-table-column>
@@ -306,7 +308,8 @@ export default {
     onGotoDashboard(row) {
       if (row.accessable) {
         sessionStorage.removeItem("namespace")
-        window.open(`/dashboard?cluster=${row.name}`, "_self")
+        const url = `${process.env.VUE_APP_DASHBOARD_URL_PREFIX}/dashboard?cluster=${row.name}`
+        window.open(url, "_self")
       } else {
         this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
       }
