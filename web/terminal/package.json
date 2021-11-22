@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.config.json --base-href=/terminal/",
-    "build": "ng build --prod --aot --base-href=/terminal/",
+    "build": "ng build --prod --aot --base-href=/kubepi/terminal/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

@@ -32,6 +32,16 @@ const ImageRepos = {
       meta: {
         activeMenu: "/imagerepos",
       }
+    },
+    {
+      path: "/imagerepos/:name/edit",
+      component: () => import("@/business/imagerepo-management/operate"),
+      name: "ImageRepoEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/imagerepos",
+      }
     }
   ]
 }

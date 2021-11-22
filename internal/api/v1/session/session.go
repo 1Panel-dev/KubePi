@@ -158,10 +158,9 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 		return nil, err
 	}
 
-	allRoleBindings := append(userRoleBindings)
 	var roleNames []string
-	for i := range allRoleBindings {
-		roleNames = append(roleNames, allRoleBindings[i].RoleRef)
+	for i := range userRoleBindings {
+		roleNames = append(roleNames, userRoleBindings[i].RoleRef)
 	}
 
 	rs, err := h.roleService.GetByNames(roleNames, common.DBOptions{})

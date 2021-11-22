@@ -34,7 +34,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {searchRepos} from "@/api/imagerepos"
+import {deleteRepo, searchRepos} from "@/api/imagerepos"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
@@ -48,10 +48,23 @@ export default {
           label: this.$t("commons.button.edit"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.onEdit(row.name)
+            this.$router.push({
+              path: `/imagerepos/${row.name}/edit`,
+              query: {mode: "edit" }
+            })
           },
           disabled: () => {
-            return !checkPermissions({resource: "imagerepos", verb: "create"})
+            return !checkPermissions({ resource: "imagerepos", verb: "create" })
+          }
+        },
+        {
+          label: this.$t("commons.button.delete"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.onDelete(row.name)
+          },
+          disabled: () => {
+            return !checkPermissions({ resource: "imagerepos", verb: "delete" })
           }
         },
       ],
@@ -83,10 +96,31 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        path: '/imagerepos/create',
+        path: "/imagerepos/create",
         query: { mode: "create" }
       })
-    }
+    },
+    onDelete (name) {
+      if (this.isSubmitGoing) {
+        return
+      }
+      this.isSubmitGoing = true
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning"
+      }).then(() => {
+        deleteRepo(name).then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.delete_success"),
+          })
+          this.search()
+        }).finally(() => {
+          this.isSubmitGoing = false
+        })
+      })
+    },
   },
   created () {
     this.search()
