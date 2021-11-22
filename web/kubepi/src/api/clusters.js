@@ -78,3 +78,11 @@ export function deleteClusterRole(name, clusterRoleName) {
 export function listNamespaces(name) {
     return get(`${baseUrl}/${name}/namespaces`)
 }
+
+export function listClusterRepos(name) {
+  return get(`${baseUrl}/${name}/repos`)
+}
+
+export function addClusterRepo(name,data) {
+  return post(`${baseUrl}/${name}/repos`, data)
+}

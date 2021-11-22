@@ -140,7 +140,8 @@ const message = {
             cluster_role_form_check_msg: "api groups,resources or verbs  list cannot be empty",
             user_not_in_cluster: "You are not a member of this cluster and cannot access the console of this cluster. Please contact the administrator to add you as a cluster member.",
             ready: "Ready",
-            not_ready: "NotReady"
+            not_ready: "NotReady",
+            repo: "Repo"
         },
         cluster_role: {
             none: "None",

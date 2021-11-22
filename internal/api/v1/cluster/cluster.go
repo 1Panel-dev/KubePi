@@ -4,6 +4,7 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
 	"strings"
 	"sync"
 	"time"
@@ -29,12 +30,14 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
+	clusterRepoService clusterrepo.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
+		clusterRepoService: clusterrepo.NewService(),
 	}
 }
 
@@ -515,4 +518,6 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
+	sp.Get("/:name/repos", handler.ListClusterRepos())
+	sp.Post("/:name/repos", handler.AddCLusterRepo())
 }
