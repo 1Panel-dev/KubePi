@@ -113,9 +113,8 @@ export function createWorkLoad(cluster_name, type, namespace, data) {
         data
       );
     case "pods":
-      return post(
-        `${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`
-      );
+    case "services":
+      return post(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}`, data);
     case "jobs":
       return post(`${batchV1WithNsUrl(cluster_name, type, namespace)}`, data);
   }

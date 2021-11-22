@@ -12,7 +12,7 @@
       <el-table-column :label="$t('business.workload.protocol')" prop="protocol" />
       <el-table-column :label="$t('business.workload.port')" prop="port" />
       <el-table-column :label="$t('business.workload.node_port')" prop="nodePort" />
-      <el-table-column :label="$t('business.workload.private_port')" prop="targetPort" />
+      <el-table-column :label="$t('business.workload.container_port')" prop="targetPort" />
     </complex-table>
   </div>
 </template>
