@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/kataras/iris/v12/middleware/jwt"
 	"io/ioutil"
 	"strings"
+
+	"github.com/kataras/iris/v12/middleware/jwt"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
@@ -131,13 +132,8 @@ func logHandler() iris.Handler {
 		}
 
 		currentPath := ctx.GetCurrentRoute().Path()
-		if strings.HasPrefix(currentPath, "/api/v1/proxy") || strings.HasPrefix(currentPath, "/api/v1/chart") || strings.HasPrefix(currentPath, "/api/v1/webkubectl") || strings.HasPrefix(currentPath, "/api/v1/apps") {
-			ctx.Next()
-			return
-		}
-
-		path := strings.Replace(ctx.Request().URL.Path, "/api/v1/", "", 1)
-		currentPath = strings.Replace(currentPath, "/api/v1/", "", 1)
+		path := strings.Replace(ctx.Request().URL.Path, "/kubepi/api/v1/", "", 1)
+		currentPath = strings.Replace(currentPath, "/kubepi/api/v1/", "", 1)
 		if strings.HasSuffix(path, "search") {
 			ctx.Next()
 			return
@@ -177,7 +173,6 @@ func logHandler() iris.Handler {
 				}
 			}
 		}
-		// post 从body里面取
 		if method == "post" {
 			var req logHelper
 			data, _ := ctx.GetBody()
@@ -303,7 +298,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 			}
 		}
 		displayMap := map[string][]string{}
-		for k, _ := range resourceMap {
+		for k := range resourceMap {
 			verbs := resourceMap[k]
 			if len(verbs.ToSlice()) > 0 {
 				displayMap[k] = verbs.ToSlice()
