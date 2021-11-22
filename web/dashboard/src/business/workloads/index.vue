@@ -133,6 +133,10 @@
               </el-tab-pane>
             </el-tabs>
           </el-tab-pane>
+
+          <el-tab-pane label="Service" name="Service" v-if="!isCronJob() && !isJob() && isCreateOperation()">
+            <ko-service-add ref="service_add" />
+          </el-tab-pane>
         </el-tabs>
       </el-card>
     </div>
@@ -179,6 +183,8 @@ import KoHealthCheck from "@/components/ko-workloads/ko-health-check.vue"
 import KoSecurityContext from "@/components/ko-workloads/ko-security-context.vue"
 import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
+import KoServiceAdd from "@/components/ko-workloads/ko-service/ko-service-add.vue"
+
 import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
 import { listSecretsWithNs } from "@/api/secrets"
 import { listConfigMapsWithNs } from "@/api/configmaps"
@@ -218,6 +224,8 @@ export default {
     KoPodScheduling,
     KoTolerations,
     KoVolumeMount,
+
+    KoServiceAdd,
   },
   data() {
     return {
@@ -268,6 +276,8 @@ export default {
           },
         },
       },
+      serviceForm: null,
+      batchCreateForm: {},
       podSpec: {
         containers: [],
       },
@@ -493,7 +503,6 @@ export default {
       this.$refs.ko_toleration.transformation(this.podSpec)
       this.$refs.ko_spec_security.transformation(this.podSpec)
       this.$refs.ko_spec_base.transformation(this.podSpec)
-
       this.$refs.ko_container.transformation(this.currentContainer)
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
@@ -544,6 +553,7 @@ export default {
         this.form.spec.template.spec = this.podSpec
         this.form.spec.template.metadata = this.podMetadata
       }
+      this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
       return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow() {
@@ -591,16 +601,33 @@ export default {
       }
     },
     onCreate(data) {
-      createWorkLoad(this.clusterName, this.type, data.metadata.namespace, data)
+      var backUrl = this.toggleCase() + "s"
+      if (data.kind === "List") {
+        this.batchCreateForm = data
+      } else {
+        this.batchCreateForm = { apiVersion: "v1", kind: "List", items: [] }
+        this.batchCreateForm.items.push(data)
+        if (this.serviceForm) {
+          this.batchCreateForm.items.push(this.serviceForm)
+        }
+      }
+      let ps = []
+      for (const item of this.batchCreateForm.items) {
+        ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
+      }
+      Promise.all(ps)
         .then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
-          this.$router.push({ name: this.toggleCase() + "s" })
+          this.$router.push({ name: backUrl })
         })
-        .finally(() => {
-          this.loading = false
+        .catch(() => {
+          this.$message({
+            type: "error",
+            message: this.$t("commons.msg.create_failed"),
+          })
         })
     },
     onEdit(data) {
@@ -634,11 +661,27 @@ export default {
           cancelButtonText: this.$t("commons.button.cancel"),
           type: "warning",
         }).then(() => {
-          this.yaml = this.gatherFormData()
+          let data = this.gatherFormData()
+          if (this.isCreateOperation() && this.serviceForm !== null) {
+            this.batchCreateForm = { apiVersion: "v1", kind: "List", items: [] }
+            this.batchCreateForm.items.push(data)
+            this.batchCreateForm.items.push(this.serviceForm)
+            this.yaml = this.batchCreateForm
+          } else {
+            this.yaml = data
+          }
           this.showYaml = true
         })
       } else {
-        this.yaml = this.gatherFormData()
+        let data = this.gatherFormData()
+        if (this.isCreateOperation() && this.serviceForm !== null) {
+          this.batchCreateForm = { apiVersion: "v1", kind: "List", items: [] }
+          this.batchCreateForm.items.push(data)
+          this.batchCreateForm.items.push(this.serviceForm)
+          this.yaml = this.batchCreateForm
+        } else {
+          this.yaml = data
+        }
         this.showYaml = true
       }
     },

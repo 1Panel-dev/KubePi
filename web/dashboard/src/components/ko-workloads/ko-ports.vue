@@ -4,9 +4,9 @@
       <table style="width: 98%" class="tab-table">
         <tr>
           <th scope="col" width="45%" align="left"><label>{{$t('business.workload.name')}}</label></th>
-          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.private_port')}}</label></th>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.container_port')}}</label></th>
           <th scope="col" width="15%" align="left"><label>{{$t('business.workload.protocol')}}</label></th>
-          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.public_port')}}</label></th>
+          <th scope="col" width="15%" align="left"><label>{{$t('business.workload.host_port')}}</label></th>
           <th align="left"></th>
         </tr>
         <tr v-for="(row, index) in ports" v-bind:key="index">
@@ -54,12 +54,6 @@ export default {
       protocol_list: [
         { label: "TCP", value: "TCP" },
         { label: "UDP", value: "UDP" },
-      ],
-      service_type_list: [
-        { label: this.$t("business.workload.not_create"), value: "" },
-        { label: this.$t("business.workload.cluster_ip"), value: "ClusterIP" },
-        { label: this.$t("business.workload.node_port"), value: "NodePort" },
-        { label: this.$t("business.workload.load_balancer"), value: "LoadBalancer" },
       ],
     }
   },
