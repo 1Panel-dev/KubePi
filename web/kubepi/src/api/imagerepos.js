@@ -26,3 +26,7 @@ export function getRepo (name) {
 export function updateRepo (name, data) {
   return put(`${baseUrl}/${name}`, data)
 }
+
+export function listRepoByCluster(cluster) {
+  return get(`${baseUrl}/cluster/${cluster}`)
+}

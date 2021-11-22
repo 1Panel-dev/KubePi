@@ -2,6 +2,7 @@ package cluster
 
 import (
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
 	"time"
 )
 
@@ -52,4 +53,8 @@ type Member struct {
 
 type Privilege struct {
 	Url string `json:"url"`
+}
+
+type ClusterRepo struct {
+	V1ClusterRepo.ClusterRepo
 }

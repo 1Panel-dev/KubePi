@@ -24,7 +24,7 @@
               </el-form-item>
             </el-col>
             <el-col v-if="item.containerPort" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.private_port')">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.container_port')">
                 <span>{{item.containerPort}}</span>
               </el-form-item>
             </el-col>

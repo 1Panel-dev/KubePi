@@ -87,6 +87,16 @@ const Clusters = {
                         }
                     ],
                 },
+                {
+                    path: "repos",
+                    props: true,
+                    component: () => import("@/business/cluster-management/detail/repos"),
+                    hidden: true,
+                    name: "ClusterRepos",
+                    meta: {
+                      activeMenu: "/clusters",
+                    },
+                }
             ]
         }
     ]

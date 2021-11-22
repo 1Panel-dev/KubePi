@@ -6,6 +6,7 @@
     <el-menu class="menuClass" router :default-active="activeRoute()" mode="horizontal"  background-color="#222629">
       <el-menu-item :index="membersPath">{{ $t('business.cluster.member') }}</el-menu-item>
       <el-menu-item :index="rolesPath">{{ $t('business.cluster.role') }}</el-menu-item>
+      <el-menu-item :index="reposPath">{{ $t('business.cluster.repo') }}</el-menu-item>
     </el-menu>
     <br/>
     <div class="detailClass">
@@ -26,6 +27,7 @@ export default {
     return {
       membersPath: `/clusters/detail/${this.name}/members`,
       rolesPath: `/clusters/detail/${this.name}/roles`,
+      reposPath: `/clusters/detail/${this.name}/repos`,
     }
   },
   methods: {
