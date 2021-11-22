@@ -30,14 +30,14 @@ import (
 type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
-	clusterRepoService clusterrepo.Service
+	clusterRepoService    clusterrepo.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
-		clusterRepoService: clusterrepo.NewService(),
+		clusterRepoService:    clusterrepo.NewService(),
 	}
 }
 
@@ -520,4 +520,5 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
 	sp.Get("/:name/repos", handler.ListClusterRepos())
 	sp.Post("/:name/repos", handler.AddCLusterRepo())
+	sp.Delete("/:name/repos/:repo", handler.DeleteClusterRepo())
 }

@@ -159,7 +159,8 @@ const message = {
             user_not_in_cluster: "您不是此集群的成员，无法访问此集群的控制台，请联系管理员添加您为集群成员",
             ready: "正常",
             not_ready: "异常",
-            repo: "仓库"
+            repo: "仓库",
+            repo_auth: "仓库授权"
         },
         namespace: {
             description: "描述"

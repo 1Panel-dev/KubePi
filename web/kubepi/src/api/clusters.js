@@ -86,3 +86,7 @@ export function listClusterRepos(name) {
 export function addClusterRepo(name,data) {
   return post(`${baseUrl}/${name}/repos`, data)
 }
+
+export function deleteClusterRepo(cluster,repo) {
+  return del(`${baseUrl}/${cluster}/repos/${repo}`)
+}

@@ -22,7 +22,9 @@
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
     </complex-table>
     <el-dialog :visible.sync="formDialogOpened" :close-on-click-modal="false"
-               :title="'test'"  v-loading="isSubmitGoing">
+               :title="$t('business.cluster.repo_auth')"  v-loading="isSubmitGoing"   z-index="10"
+               width="70%"
+               center>
       <el-form element-loading-spinner="el-icon-loading"
                element-loading-background="rgba(0, 0, 0, 0.8)" :model="repoForm" label-position="left"
                label-width="144px">
@@ -44,7 +46,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {addClusterRepo, listClusterRepos} from "@/api/clusters"
+import {addClusterRepo, deleteClusterRepo, listClusterRepos} from "@/api/clusters"
 import ComplexTable from "@/components/complex-table"
 import {listRepoByCluster} from "@/api/imagerepos"
 
@@ -86,8 +88,17 @@ export default {
       this.formDialogOpened = true
       this.listRepos()
     },
-    onDelete () {
-      this.formDialogOpened = false
+    onDelete(raw) {
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: 'warning'
+      }).then(() => {
+        deleteClusterRepo(this.name, raw.repo).then(() => {
+          this.$message.success(this.$t('commons.msg.delete_success'))
+          this.list()
+        })
+      });
     },
     listRepos () {
       listRepoByCluster(this.name).then(res => {
