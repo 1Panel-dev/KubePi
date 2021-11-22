@@ -422,7 +422,7 @@ func (h *Handler) ListClusters() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		var resultClusters []Cluster
+		resultClusters := make([]Cluster, 0)
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
 		for i := range clusters {
