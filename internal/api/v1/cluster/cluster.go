@@ -193,6 +193,10 @@ func (h *Handler) CreateCluster() iris.Handler {
 			if err != nil {
 				server.Logger().Errorf("create app-market crd failed %s", err)
 			}
+			err = client.CreateImageRepoCRD()
+			if err != nil {
+				server.Logger().Errorf("create image-repo crd failed %s", err)
+			}
 		}()
 	}
 }
