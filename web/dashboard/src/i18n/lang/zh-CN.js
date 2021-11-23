@@ -507,7 +507,8 @@ const message = {
       metrics_selector: "指标选择器",
       api_version: "API 版本",
       kind: "类型",
-      name: "名称"
+      name: "名称",
+      split_help: "多个值时以逗号分隔",
     },
     access_control: {
       access_control: "访问控制",

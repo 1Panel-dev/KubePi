@@ -3,9 +3,12 @@
     <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button type="primary" size="small" @click="onCreate"
+        <el-button type="primary" size="small" @click="yamlCreate"
                    v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">
+          {{ $t("commons.button.create") }}
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                    v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'delete'}">
@@ -93,7 +96,8 @@ export default {
           click: (row) => {
             this.$router.push({
               name: "ResourceQuotaEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name }
+              params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
             })
           },
           disabled: () => {
@@ -141,8 +145,12 @@ export default {
       })
     },
     onCreate () {
+      this.$router.push({ name: "ResourceQuotaCreate", query: { yamlShow: false } })
+    },
+    yamlCreate () {
       this.$router.push({
         name: "ResourceQuotaCreate",
+        query: { yamlShow: true },
       })
     },
     onDelete (row) {

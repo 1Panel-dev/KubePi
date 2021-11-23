@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"regexp"
 	"sort"
 	"strconv"
@@ -26,6 +28,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	kClient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type Interface interface {
@@ -47,6 +50,9 @@ type Interface interface {
 	CreateOrUpdateClusterRoleBinding(clusterRoleName string, username string, builtIn bool) error
 	CreateOrUpdateRolebinding(namespace string, clusterRoleName string, username string, builtIn bool) error
 	CreateAppMarketCRD() error
+	CreateImageRepoCRD() error
+	CreateImageRepo(repo CustomImageRepo) error
+	DeleteImageRepo(name string) error
 }
 
 type Kubernetes struct {
@@ -634,4 +640,132 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 		return err
 	}
 	return nil
+}
+
+func (k *Kubernetes) CreateImageRepoCRD() error {
+	cfg, err := k.Config()
+	if err != nil {
+		return err
+	}
+	client, err := apiextension.NewForConfig(cfg)
+	if err != nil {
+		return err
+	}
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), "imagerepos.kubepi.org", metav1.GetOptions{})
+	if err != nil && !k8sError.IsNotFound(err) {
+		return err
+	}
+	if err == nil {
+		return nil
+	}
+
+	crd := &apiextensionv1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{Name: "imagerepos.kubepi.org"},
+		Spec: apiextensionv1.CustomResourceDefinitionSpec{
+			Group: "kubepi.org",
+			Scope: apiextensionv1.ClusterScoped,
+			Names: apiextensionv1.CustomResourceDefinitionNames{
+				Plural:     "imagerepos",
+				Kind:       "ImageRepo",
+				Singular:   "imagerepo",
+				ShortNames: []string{"ir"},
+			},
+			Versions: []apiextensionv1.CustomResourceDefinitionVersion{{
+				Name:    "v1",
+				Served:  true,
+				Storage: true,
+				Schema: &apiextensionv1.CustomResourceValidation{
+					OpenAPIV3Schema: &apiextensionv1.JSONSchemaProps{
+						Type: "object",
+						Properties: map[string]apiextensionv1.JSONSchemaProps{
+							"spec": {
+								Type: "object",
+								Properties: map[string]apiextensionv1.JSONSchemaProps{
+									"type": {
+										Type: "string",
+									},
+									"url": {
+										Type: "string",
+									},
+									"username": {
+										Type: "string",
+									},
+									"password": {
+										Type: "string",
+									},
+								},
+							},
+						},
+					},
+				},
+			}},
+		},
+	}
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Create(context.TODO(), crd, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type CustomImageRepo struct {
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Url      string `json:"url"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (k *Kubernetes) CreateImageRepo(repo CustomImageRepo) error {
+
+	err := k.CreateImageRepoCRD()
+	if err != nil {
+		return err
+	}
+
+	cfg, err := k.Config()
+	if err != nil {
+		return err
+	}
+	client, err := kClient.New(cfg, kClient.Options{})
+	if err != nil {
+		return err
+	}
+	u := &unstructured.Unstructured{}
+	u.Object = map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"name": repo.Name,
+		},
+		"spec": map[string]interface{}{
+			"type":     repo.Type,
+			"url":      repo.Url,
+			"username": repo.Username,
+			"password": repo.Password,
+		},
+	}
+	u.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   "kubepi.org",
+		Kind:    "ImageRepo",
+		Version: "v1",
+	})
+	return client.Create(context.Background(), u)
+}
+
+func (k *Kubernetes) DeleteImageRepo(name string) error {
+	cfg, err := k.Config()
+	if err != nil {
+		return err
+	}
+	client, err := kClient.New(cfg, kClient.Options{})
+	if err != nil {
+		return err
+	}
+	u := &unstructured.Unstructured{}
+	u.SetName(name)
+	u.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   "kubepi.org",
+		Kind:    "ImageRepo",
+		Version: "v1",
+	})
+	return client.Delete(context.Background(), u)
 }
