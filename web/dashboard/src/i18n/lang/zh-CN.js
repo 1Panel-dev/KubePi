@@ -238,6 +238,10 @@ const message = {
       container_image: "容器镜像",
       pull_policy: "拉取策略",
       pull_secrets: "拉取密钥",
+      list_image: "镜像仓库",
+      repo_image: "镜像",
+      repo_disabled: "不使用镜像仓库",
+
 
       port: "服务端口",
       service_type: "服务类型",

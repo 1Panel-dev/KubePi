@@ -236,6 +236,9 @@ const message = {
       container_image: "Container Image",
       pull_policy: "Pull Policy",
       pull_secrets: "Pull Secrets",
+      list_image: "Image Repo",
+      repo_image: "Image",
+      repo_disabled: "Do not use Image Repo",
 
       port: "Port",
       service_type: "Service Type",
