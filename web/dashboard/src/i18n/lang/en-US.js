@@ -506,7 +506,8 @@ const message = {
       metrics_selector: "Metrics Selector",
       api_version: "API Version",
       kind: "Kind",
-      name: "Name"
+      name: "Name",
+      split_help: "Multiple values are separated by commas",
     },
     access_control: {
       access_control: "Access Control",
