@@ -2,12 +2,14 @@ package imagerepo
 
 import (
 	"errors"
+	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
 	"github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	V1ImageRepo "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	repoClient "github.com/KubeOperator/kubepi/pkg/util/imagerepo"
 	"github.com/KubeOperator/kubepi/pkg/util/lang"
+	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
@@ -21,10 +23,12 @@ type Service interface {
 	Delete(name string, options common.DBOptions) (err error)
 	GetByName(name string, options common.DBOptions) (repo V1ImageRepo.ImageRepo, err error)
 	UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
+	ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error)
 }
 
 func NewService() Service {
-	return &service{}
+	return &service{
+	}
 }
 
 type service struct {
@@ -44,6 +48,30 @@ func (s *service) ListInternalRepos(repo imagerepo.ImageRepo) (names []string, e
 		return nil, errors.New("repo client is not found")
 	}
 	return client.ListRepos()
+}
+
+func (s *service) ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error) {
+	db := s.GetDB(options)
+	query := db.Select(q.Eq("Cluster", cluster))
+	var clusterrepos []V1ClusterRepo.ClusterRepo
+	if err = query.Find(&clusterrepos); err != nil  && err != storm.ErrNotFound{
+		return
+	}
+	if len(clusterrepos) > 0 {
+		group := make([]string,0)
+		for _,repo := range clusterrepos {
+			group = append(group, repo.Repo)
+		}
+		query2 := db.Select(q.Not(q.In("Name",group)))
+		if err = query2.Find(&result); err != nil {
+			return
+		}
+	}else {
+		if err = db.All(&result); err != nil {
+			return
+		}
+	}
+	return
 }
 
 func (s *service) Search(num, size int, conditions common.Conditions, options common.DBOptions) (result []V1ImageRepo.ImageRepo, count int, err error) {
@@ -111,7 +139,7 @@ func (s *service) GetByName(name string, options common.DBOptions) (repo V1Image
 	return
 }
 
-func (s *service) UpdateRepo(name string,repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error) {
+func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error) {
 	db := s.GetDB(options)
 	old, err1 := s.GetByName(name, options)
 	if err1 != nil {

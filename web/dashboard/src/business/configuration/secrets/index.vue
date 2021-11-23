@@ -45,6 +45,9 @@ import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
 
+
+const types = ['Opaque','kubernetes.io/dockerconfigjson','kubernetes.io/basic-auth','kubernetes.io/ssh-auth','kubernetes.io/tls']
+
 export default {
   name: "Secrets",
   components: { ComplexTable, LayoutContent, KoTableOperations },
@@ -72,7 +75,7 @@ export default {
               apiGroup: "",
               resource: "secrets",
               verb: "update"
-            }) || row.type === "kubernetes.io/service-account-token"
+            }) || types.indexOf(row.type) === -1
           }
         },
         {
@@ -85,13 +88,13 @@ export default {
               query: { yamlShow: true }
             })
           },
-          disabled: (row) => {
+          disabled: () => {
             return !checkPermissions({
               scope: "namespace",
               apiGroup: "",
               resource: "secrets",
               verb: "update"
-            }) || row.type === "kubernetes.io/service-account-token"
+            })
           }
         },
         {
