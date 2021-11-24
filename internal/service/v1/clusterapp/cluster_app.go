@@ -55,13 +55,6 @@ func (c *ClusterApp) Delete(name, cluster string, options common.DBOptions) erro
 
 func (c *ClusterApp) DeleteByCluster(cluster string, options common.DBOptions) error {
 	db := c.GetDB(options)
-	//var clusterApps []v1ClusterApp.ClusterApp
 	query := db.Select(q.Eq("Cluster", cluster))
-	//if err := query.Find(&clusterApps); err != nil && err != storm.ErrNotFound {
-	//	return err
-	//}
-	//if len(clusterApps) == 0 {
-	//	return nil
-	//}
 	return query.Delete(new(v1ClusterApp.ClusterApp))
 }

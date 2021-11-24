@@ -594,6 +594,9 @@ func (k *Kubernetes) CreateAppMarketCRD() error {
 	if err != nil && !k8sError.IsNotFound(err) {
 		return err
 	}
+	if err == nil {
+		return nil
+	}
 
 	crd := &apiextensionv1.CustomResourceDefinition{
 		ObjectMeta: metav1.ObjectMeta{Name: "appmarkets.kubepi.org"},

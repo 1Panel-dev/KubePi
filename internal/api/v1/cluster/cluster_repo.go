@@ -22,7 +22,7 @@ func (h *Handler) ListClusterRepos() iris.Handler {
 
 func (h *Handler) AddCLusterRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		var req ClusterRepo
+		var req Repo
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())

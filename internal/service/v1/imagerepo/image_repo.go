@@ -24,11 +24,11 @@ type Service interface {
 	GetByName(name string, options common.DBOptions) (repo V1ImageRepo.ImageRepo, err error)
 	UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
 	ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error)
+	ListImages(repo, cluster string, options common.DBOptions) (names []string, err error)
 }
 
 func NewService() Service {
-	return &service{
-	}
+	return &service{}
 }
 
 type service struct {
@@ -50,23 +50,54 @@ func (s *service) ListInternalRepos(repo imagerepo.ImageRepo) (names []string, e
 	return client.ListRepos()
 }
 
+func (s *service) ListImages(repo, cluster string, options common.DBOptions) (names []string, err error) {
+	db := s.GetDB(options)
+	query := db.Select(q.And(q.Eq("Cluster", cluster), q.Eq("Repo", repo)))
+	var cRepo V1ClusterRepo.ClusterRepo
+	if err = query.First(&cRepo); err != nil {
+		return
+	}
+	rp, err1 := s.GetByName(repo, options)
+	if err1 != nil {
+		err = err1
+		return
+	}
+	client := repoClient.NewClient(repoClient.Config{
+		Type:     rp.Type,
+		EndPoint: rp.EndPoint,
+		Credential: repoClient.Credential{
+			Username: rp.Credential.Username,
+			Password: rp.Credential.Password,
+		},
+	})
+	images, err2 := client.ListImages(rp.RepoName)
+	if err2 != nil {
+		err = err2
+		return
+	}
+	for _, image := range images {
+		names = append(names, rp.DownloadUrl+"/"+image)
+	}
+	return
+}
+
 func (s *service) ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error) {
 	db := s.GetDB(options)
 	query := db.Select(q.Eq("Cluster", cluster))
 	var clusterrepos []V1ClusterRepo.ClusterRepo
-	if err = query.Find(&clusterrepos); err != nil  && err != storm.ErrNotFound{
+	if err = query.Find(&clusterrepos); err != nil && err != storm.ErrNotFound {
 		return
 	}
 	if len(clusterrepos) > 0 {
-		group := make([]string,0)
-		for _,repo := range clusterrepos {
+		group := make([]string, 0)
+		for _, repo := range clusterrepos {
 			group = append(group, repo.Repo)
 		}
-		query2 := db.Select(q.Not(q.In("Name",group)))
+		query2 := db.Select(q.Not(q.In("Name", group)))
 		if err = query2.Find(&result); err != nil {
 			return
 		}
-	}else {
+	} else {
 		if err = db.All(&result); err != nil {
 			return
 		}

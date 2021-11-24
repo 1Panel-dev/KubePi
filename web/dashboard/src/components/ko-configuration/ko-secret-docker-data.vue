@@ -68,7 +68,8 @@ export default {
     if (this.dataObj && this.dataObj[".dockerconfigjson"]) {
       const { Base64 } = require("js-base64")
       const value = Base64.decode(this.dataObj[".dockerconfigjson"])
-      const auths = JSON.parse(value)
+      const obj = JSON.parse(value)
+      const auths = obj.auths
       for (const key in auths) {
         if (Object.prototype.hasOwnProperty.call(auths, key)) {
           this.form = {
