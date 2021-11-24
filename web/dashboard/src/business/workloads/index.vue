@@ -5,37 +5,44 @@
       <el-row :gutter="10" class="row-box">
         <el-col :span="spanWidth">
           <el-card class="el-card">
-            <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.general')}}</span>
+            <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.general") }}</span>
             <el-form label-position="top" ref="form" :model="form">
               <el-row>
                 <el-form-item :label="$t('commons.table.name')" prop="metadata.name" :rules="nameRules">
-                  <ko-form-item :disabled="readOnly || !isCreateOperation()" itemType="input" v-model="form.metadata.name" />
+                  <ko-form-item :disabled="readOnly || !isCreateOperation()" itemType="input"
+                                v-model="form.metadata.name"/>
                 </el-form-item>
               </el-row>
               <el-row>
-                <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace" :rules="selectRules">
-                  <ko-select v-if="isCreateOperation()" style="width: 100%" @change="changeNs" :namespace.sync="form.metadata.namespace"></ko-select>
-                  <ko-form-item v-else disabled itemType="select2" :selections="[]" v-model="form.metadata.namespace" />
+                <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace"
+                              :rules="selectRules">
+                  <ko-select v-if="isCreateOperation()" style="width: 100%" @change="changeNs"
+                             :namespace.sync="form.metadata.namespace"></ko-select>
+                  <ko-form-item v-else disabled itemType="select2" :selections="[]" v-model="form.metadata.namespace"/>
                 </el-form-item>
               </el-row>
 
               <el-row>
-                <ko-kv-table @changeCreateMode="changeCreateMode" :key="isRefresh" ref="ko_annotation_label" :isReadOnly="readOnly" :resourceName="form.metadata.name" :metadataObj="form.metadata" :selectorObj="form.spec.selector" :isCreate="isCreateOperation()" />
+                <ko-kv-table @changeCreateMode="changeCreateMode" :key="isRefresh" ref="ko_annotation_label"
+                             :isReadOnly="readOnly" :resourceName="form.metadata.name" :metadataObj="form.metadata"
+                             :selectorObj="form.spec.selector" :isCreate="isCreateOperation()"/>
               </el-row>
 
               <el-row v-if="isReplicasShow()">
                 <el-form-item :label="$t('business.workload.replicas')" prop="spec.replicas" :rules="numberRules">
-                  <ko-form-item :disabled="readOnly" itemType="number" v-model.number="form.spec.replicas" />
+                  <ko-form-item :disabled="readOnly" itemType="number" v-model.number="form.spec.replicas"/>
                 </el-form-item>
               </el-row>
               <el-row v-if="isStatefulSet()">
                 <el-form-item :label="$t('business.network.service_name')" prop="spec.serviceName">
-                  <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName" :selections="headless_service_of_ns" />
+                  <ko-form-item :disabled="readOnly" itemType="select2" v-model="form.spec.serviceName"
+                                :selections="headless_service_of_ns"/>
                 </el-form-item>
               </el-row>
               <el-row v-if="isCronJob()">
                 <el-form-item :label="$t('business.workload.schedule')" prop="spec.schedule" :rules="requiredRules">
-                  <ko-form-item :disabled="readOnly" placeholder="0 * * * *" itemType="input" v-model="form.spec.schedule" />
+                  <ko-form-item :disabled="readOnly" placeholder="0 * * * *" itemType="input"
+                                v-model="form.spec.schedule"/>
                 </el-form-item>
               </el-row>
             </el-form>
@@ -43,50 +50,59 @@
         </el-col>
         <el-col :span="spanWidth" v-if="isStatefulSet()">
           <el-card class="el-card">
-            <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume_claim_template')}}</span>
-            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim" :volumeClaimParentObj="form.spec" :pvcList="pvc_list_of_ns" :scList="sc_list" />
+            <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.volume_claim_template") }}</span>
+            <ko-volume-claim @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume_claim"
+                             :volumeClaimParentObj="form.spec" :pvcList="pvc_list_of_ns" :scList="sc_list"/>
           </el-card>
         </el-col>
         <el-col :span="spanWidth">
           <el-card class="el-card">
-            <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.volume')}}</span>
-            <ko-volume @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume" :volumeParentObj="podSpec" :configMapList="config_map_list_of_ns" :pvcList="pvc_list_of_ns" :secretList="secret_list_of_ns" />
+            <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.volume") }}</span>
+            <ko-volume @loadVolumes="loadVolumes" :key="isRefresh" :isReadOnly="readOnly" ref="ko_volume"
+                       :volumeParentObj="podSpec" :configMapList="config_map_list_of_ns" :pvcList="pvc_list_of_ns"
+                       :secretList="secret_list_of_ns"/>
           </el-card>
         </el-col>
       </el-row>
 
       <el-card style="margin-top: 20px;border: 0" class="el-card">
-        <span style="font-size: 14px;font-weight: bold;">{{$t('business.workload.containers')}}</span>
+        <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.containers") }}</span>
         <el-tabs tabPosition="left" v-model="activeName">
           <el-tab-pane label="Spec" name="Spec">
             <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameSpec">
               <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
-                <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job" :upgradePolicyParentObj="form.spec" :resourceType="type" />
-                <ko-upgrade-common v-else :isReadOnly="readOnly" ref="ko_upgrade_common" :upgradePolicyParentObj="form.spec" :resourceType="type" />
+                <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job"
+                                :upgradePolicyParentObj="form.spec" :resourceType="type"/>
+                <ko-upgrade-common v-else :isReadOnly="readOnly" ref="ko_upgrade_common"
+                                   :upgradePolicyParentObj="form.spec" :resourceType="type"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.node_schedule')" name="NodeSchedule">
-                <ko-node-selector :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec" :nodeList="node_list" />
+                <ko-node-selector :isReadOnly="readOnly" ref="ko_node_scheduling" :nodeSchedulingParentObj="podSpec"
+                                  :nodeList="node_list"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.affinity_or_anti')" name="PodSchedule">
-                <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec" :namespaceList="namespace_list" />
+                <ko-pod-scheduling :isReadOnly="readOnly" ref="ko_pod_scheduling" :podSchedulingParentObj="podSpec"
+                                   :namespaceList="namespace_list"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.toleration')" name="Toleration">
-                <ko-tolerations :isReadOnly="readOnly" ref="ko_toleration" :tolerationsParentObj="podSpec" />
+                <ko-tolerations :isReadOnly="readOnly" ref="ko_toleration" :tolerationsParentObj="podSpec"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.network')" name="Networking">
-                <ko-networking :isReadOnly="readOnly" ref="ko_networking" :networkingParentObj="podSpec" />
+                <ko-networking :isReadOnly="readOnly" ref="ko_networking" :networkingParentObj="podSpec"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
-                <ko-spec-security :isReadOnly="readOnly" ref="ko_spec_security" :securityContextParentObj="podSpec" />
+                <ko-spec-security :isReadOnly="readOnly" ref="ko_spec_security" :securityContextParentObj="podSpec"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.others')" name="others">
-                <ko-spec-base :isReadOnly="readOnly" ref="ko_spec_base" :resourceType="type" :specBaseParentObj="podSpec" :serviceList="service_of_ns" :secretList="secret_list_of_ns" />
+                <ko-spec-base :isReadOnly="readOnly" ref="ko_spec_base" :resourceType="type"
+                              :specBaseParentObj="podSpec" :serviceList="service_of_ns"
+                              :secretList="secret_list_of_ns"/>
               </el-tab-pane>
             </el-tabs>
           </el-tab-pane>
@@ -94,48 +110,63 @@
           <el-tab-pane label="Containers" name="Container">
             <el-row :gutter="20">
               <el-col :span="18">
-                <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
+                <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer"
+                         @gatherFormData="gatherFormData" @addContainer="addContainer"
+                         @deleteContainer="deleteContainer"/>
               </el-col>
             </el-row>
-            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameContainers">
+            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card"
+                     v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
-                <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" />
+                <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList"
+                              :containerParentObj="currentContainer"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.command')" name="Command">
-                <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer" />
+                <ko-command :isReadOnly="readOnly" ref="ko_command" :commandParentObj="currentContainer"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.port')" name="Port">
-                <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer" />
+                <ko-ports :isReadOnly="readOnly" ref="ko_ports" :portParentObj="currentContainer"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.environment_variable')" name="Environment">
-                <ko-environment :isReadOnly="readOnly" ref="ko_environment" :envParentObj="currentContainer" :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns" :secretList="secret_list_of_ns" />
+                <ko-environment :isReadOnly="readOnly" ref="ko_environment" :envParentObj="currentContainer"
+                                :currentNamespace="form.metadata.namespace" :configMapList="config_map_list_of_ns"
+                                :secretList="secret_list_of_ns"/>
               </el-tab-pane>
 
-              <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')" name="Health Check">
-                <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.readiness_check')" />
-                <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.liveness_check')" />
-                <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check" :healthCheckParentObj="currentContainer" :health_check_type="$t('business.workload.startup_check')" />
+              <el-tab-pane v-if="isStandardContainer()" :label="$t('business.workload.health_check')"
+                           name="Health Check">
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_readiness_check"
+                                 :healthCheckParentObj="currentContainer"
+                                 :health_check_type="$t('business.workload.readiness_check')"/>
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_liveness_check"
+                                 :healthCheckParentObj="currentContainer"
+                                 :health_check_type="$t('business.workload.liveness_check')"/>
+                <ko-health-check :isReadOnly="readOnly" ref="ko_health_startup_check"
+                                 :healthCheckParentObj="currentContainer"
+                                 :health_check_type="$t('business.workload.startup_check')"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.resource')" name="Resources">
-                <ko-resources :isReadOnly="readOnly" ref="ko_resource" :resourceParentObj="currentContainer" />
+                <ko-resources :isReadOnly="readOnly" ref="ko_resource" :resourceParentObj="currentContainer"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.security_context')" name="Security Context">
-                <ko-security-context :isReadOnly="readOnly" ref="ko_security_context" :securityContextParentObj="currentContainer" />
+                <ko-security-context :isReadOnly="readOnly" ref="ko_security_context"
+                                     :securityContextParentObj="currentContainer"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.mount')" name="Mount">
-                <ko-volume-mount :isReadOnly="readOnly" ref="ko_volume_mount" :mountParentObj="currentContainer" :volumeList="volume_list" />
+                <ko-volume-mount :isReadOnly="readOnly" ref="ko_volume_mount" :mountParentObj="currentContainer"
+                                 :volumeList="volume_list"/>
               </el-tab-pane>
             </el-tabs>
           </el-tab-pane>
 
           <el-tab-pane label="Service" name="Service" v-if="!isCronJob() && !isJob() && isCreateOperation()">
-            <ko-service-add ref="service_add" />
+            <ko-service-add ref="service_add"/>
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -148,7 +179,9 @@
         <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
         <el-button v-if="!showYaml" @click="onEditYaml()">{{ $t("commons.button.edit_yaml") }}</el-button>
         <el-button v-if="showYaml" @click="backToForm()">{{ $t("commons.button.back_form") }}</el-button>
-        <el-button v-loading="operationLoading" v-if="!readOnly" @click="onSubmit()" type="primary">{{ $t("commons.button.confirm") }}</el-button>
+        <el-button v-loading="operationLoading" v-if="!readOnly" @click="onSubmit()" type="primary">
+          {{ $t("commons.button.confirm") }}
+        </el-button>
       </div>
     </div>
   </layout-content>
@@ -185,17 +218,17 @@ import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import KoServiceAdd from "@/components/ko-workloads/ko-service/ko-service-add.vue"
 
-import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
-import { listSecretsWithNs } from "@/api/secrets"
-import { listConfigMapsWithNs } from "@/api/configmaps"
-import { listStorageClasses } from "@/api/storageclass"
-import { listServicesWithNs } from "@/api/services"
-import { listPvcsWithNs } from "@/api/pvc"
-import { listNodes } from "@/api/nodes"
-import { getNamespaces } from "@/api/auth"
+import {getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad, createSecret} from "@/api/workloads"
+import {listSecretsWithNs} from "@/api/secrets"
+import {listConfigMapsWithNs} from "@/api/configmaps"
+import {listStorageClasses} from "@/api/storageclass"
+import {listServicesWithNs} from "@/api/services"
+import {listPvcsWithNs} from "@/api/pvc"
+import {listNodes} from "@/api/nodes"
+import {getNamespaces} from "@/api/auth"
 import KoSelect from "@/components/ko-select"
 
-import { checkPermissions } from "@/utils/permission"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   components: {
@@ -227,7 +260,7 @@ export default {
 
     KoServiceAdd,
   },
-  data() {
+  data () {
     return {
       name: "",
       type: "",
@@ -293,14 +326,14 @@ export default {
     }
   },
   methods: {
-    updateContainerList(val) {
+    updateContainerList (val) {
       if (this.isStandardContainer()) {
         this.podSpec.containers[this.currentContainerIndex].name = val
       } else {
         this.podSpec.initContainers[this.currentContainerIndex].name = val
       }
     },
-    search() {
+    search () {
       this.loading = true
       getWorkLoadByName(this.clusterName, this.type, this.$route.params.namespace, this.$route.params.name)
         .then((res) => {
@@ -326,7 +359,7 @@ export default {
           this.loading = false
         })
     },
-    loadSecretsWithNs(ns) {
+    loadSecretsWithNs (ns) {
       this.secret_list_of_ns = []
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "secrets", verb: "list" })) {
         return
@@ -335,16 +368,21 @@ export default {
         this.secret_list_of_ns = res.items
       })
     },
-    loadStorageClass() {
+    loadStorageClass () {
       this.sc_list = []
-      if (!checkPermissions({ scope: "cluster", apiGroup: "storage.k8s.io", resource: "storageclasses", verb: "list" })) {
+      if (!checkPermissions({
+        scope: "cluster",
+        apiGroup: "storage.k8s.io",
+        resource: "storageclasses",
+        verb: "list"
+      })) {
         return
       }
       listStorageClasses(this.clusterName).then((res) => {
         this.sc_list = res.items
       })
     },
-    loadPvcsWithNs(ns) {
+    loadPvcsWithNs (ns) {
       this.pvc_list_of_ns = []
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "persistentvolumeclaims", verb: "list" })) {
         return
@@ -353,7 +391,7 @@ export default {
         this.pvc_list_of_ns = res.items
       })
     },
-    loadServicesWithNs(ns) {
+    loadServicesWithNs (ns) {
       this.headless_service_of_ns = []
       this.service_of_ns = []
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "list" })) {
@@ -368,7 +406,7 @@ export default {
         })
       })
     },
-    loadConfigMapsWithNs(ns) {
+    loadConfigMapsWithNs (ns) {
       this.config_map_list_of_ns = []
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "configmaps", verb: "list" })) {
         return
@@ -377,7 +415,7 @@ export default {
         this.config_map_list_of_ns = res.items
       })
     },
-    loadNodes() {
+    loadNodes () {
       this.node_list = []
       if (!checkPermissions({ scope: "cluster", apiGroup: "", resource: "nodes", verb: "list" })) {
         return
@@ -386,12 +424,12 @@ export default {
         this.node_list = res.items
       })
     },
-    loadNamespace() {
+    loadNamespace () {
       getNamespaces(this.clusterName).then((res) => {
         this.namespace_list = res.data
       })
     },
-    loadVolumes(type, volumes, volumeClaimTemplates) {
+    loadVolumes (type, volumes, volumeClaimTemplates) {
       if (type !== "All") {
         this.volume_list = this.volume_list.filter((item) => {
           return item.belongTo !== type
@@ -408,11 +446,15 @@ export default {
           this.volume_list.push({ name: vo.name, type: this.loadVolumeType(vo), belongTo: "volume" })
         }
         for (const vo of volumeClaimTemplates) {
-          this.volume_list.push({ name: vo.metadata.name, type: "VolumeClaimTemplates", belongTo: "VolumeClaimTemplates" })
+          this.volume_list.push({
+            name: vo.metadata.name,
+            type: "VolumeClaimTemplates",
+            belongTo: "VolumeClaimTemplates"
+          })
         }
       }
     },
-    loadVolumeType(volume) {
+    loadVolumeType (volume) {
       if (volume.configMap) {
         return "ConfigMap"
       }
@@ -432,7 +474,7 @@ export default {
         return "HostPath"
       }
     },
-    changeNs(val) {
+    changeNs (val) {
       if (val) {
         this.loadSecretsWithNs(val)
         this.loadConfigMapsWithNs(val)
@@ -444,13 +486,13 @@ export default {
       }
     },
 
-    refreshContainer(type, index, item) {
+    refreshContainer (type, index, item) {
       this.currentContainerIndex = index
       this.currentContainerType = type
       this.currentContainer = item
       this.isRefresh = !this.isRefresh
     },
-    addContainer(type, item) {
+    addContainer (type, item) {
       if (type === "initContainers") {
         if (!this.podSpec.initContainers) {
           this.podSpec.initContainers = []
@@ -460,17 +502,17 @@ export default {
         this.podSpec.containers.push(item)
       }
     },
-    deleteContainer(type, index) {
+    deleteContainer (type, index) {
       if (type === "initContainers") {
         this.podSpec.initContainers.splice(index, 1)
       } else {
         this.podSpec.containers.splice(index, 1)
       }
     },
-    changeCreateMode(val) {
+    changeCreateMode (val) {
       this.recreate = val
     },
-    gatherFormValid() {
+    gatherFormValid () {
       this.$refs["form"].validate((valid) => {
         if (!valid) {
           this.isValid = false
@@ -493,7 +535,7 @@ export default {
         return
       }
     },
-    gatherFormData() {
+    gatherFormData () {
       this.$refs.ko_annotation_label.transformation(this.form, this.podMetadata)
 
       this.$refs.ko_volume.transformation(this.podSpec)
@@ -556,28 +598,28 @@ export default {
       this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
       return JSON.parse(JSON.stringify(this.form))
     },
-    isReplicasShow() {
+    isReplicasShow () {
       return this.type === "deployments" || this.type === "statefulsets"
     },
-    isCronJob() {
+    isCronJob () {
       return this.type === "cronjobs"
     },
-    isStatefulSet() {
+    isStatefulSet () {
       return this.type === "statefulsets"
     },
-    isJob() {
+    isJob () {
       return this.type === "jobs"
     },
-    isStandardContainer() {
+    isStandardContainer () {
       return this.currentContainerType === "standardContainers"
     },
-    isCreateOperation() {
+    isCreateOperation () {
       return this.operation === "create"
     },
-    onCancel() {
+    onCancel () {
       this.$router.push({ name: this.toggleCase() + "s" })
     },
-    onSubmit() {
+    onSubmit () {
       let data = {}
       if (this.showYaml) {
         data = this.$refs.yaml_editor.getValue()
@@ -600,7 +642,7 @@ export default {
         }
       }
     },
-    onCreate(data) {
+    onCreate (data) {
       var backUrl = this.toggleCase() + "s"
       if (data.kind === "List") {
         this.batchCreateForm = data
@@ -612,9 +654,17 @@ export default {
         }
       }
       let ps = []
+      const secret = this.$refs.ko_container.getRepoForSecret(this.form.metadata.name,this.form.metadata.namespace)
+      if (secret !== {}) {
+        ps.push(createSecret(this.clusterName,this.form.metadata.namespace,secret))
+      }
       for (const item of this.batchCreateForm.items) {
+        if (item.kind !== 'Service') {
+          item.metadata.imagePullSecrets = [{name:secret.metadata.name}]
+        }
         ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
       }
+
       Promise.all(ps)
         .then(() => {
           this.$message({
@@ -630,7 +680,7 @@ export default {
           })
         })
     },
-    onEdit(data) {
+    onEdit (data) {
       updateWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name, data)
         .then(() => {
           this.$message({
@@ -643,7 +693,7 @@ export default {
           this.loading = false
         })
     },
-    onRecreate(data) {
+    onRecreate (data) {
       deleteWorkLoad(this.clusterName, this.type, data.metadata.namespace, data.metadata.name)
         .then(() => {
           delete data.metadata.resourceVersion
@@ -653,7 +703,7 @@ export default {
           this.loading = false
         })
     },
-    onEditYaml() {
+    onEditYaml () {
       this.gatherFormValid()
       if (!this.isValid) {
         this.$confirm(this.unValidInfo + this.$t("commons.confirm_message.open_yaml"), this.$t("commons.message_box.prompt"), {
@@ -685,7 +735,7 @@ export default {
         this.showYaml = true
       }
     },
-    backToForm() {
+    backToForm () {
       this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
@@ -694,7 +744,7 @@ export default {
         this.showYaml = false
       })
     },
-    toggleCase() {
+    toggleCase () {
       switch (this.type) {
         case "deployments":
           return "Deployment"
@@ -709,7 +759,7 @@ export default {
       }
     },
   },
-  created() {
+  created () {
     this.readOnly = this.$route.query.readOnly && this.$route.query.readOnly === "true"
     this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
@@ -742,15 +792,16 @@ export default {
 </script>
 
 <style scoped>
-.row-box {
-  display: flex;
-  flex-flow: wrap;
-}
-.row-box .el-card {
-  min-width: 100%;
-  height: 100%;
-  margin-right: 20px;
-  border: 0px;
-  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-}
+    .row-box {
+        display: flex;
+        flex-flow: wrap;
+    }
+
+    .row-box .el-card {
+        min-width: 100%;
+        height: 100%;
+        margin-right: 20px;
+        border: 0px;
+        box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
 </style>
