@@ -24,9 +24,6 @@ const batchV1Url = (cluster_name, type) => {
 const batchV1WithNsUrl = (cluster_name, type, namespaces) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/namespaces/${namespaces}/${type}`
 }
-const secretV1Url = (cluster_name, namespace) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/secrets`
-}
 
 export function listWorkLoads (
   cluster_name,
