@@ -22,7 +22,7 @@
 
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140px" fix>
         <template v-slot:default="{row}">
-          <el-link @click="onGotoDashboard(row)">{{ row.name }}</el-link>
+          <el-link @click="onGotoDashboard(row)" :disabled="!row.extraClusterInfo.health">{{ row.name }}</el-link>
         </template>
       </el-table-column>
 
@@ -116,7 +116,9 @@
 
       <el-table-column label=" " width="100">
         <template v-slot:default="{row}">
-          <el-button @click="onGotoDashboard(row)">{{ $t("business.cluster.open_dashboard") }}</el-button>
+          <el-button @click="onGotoDashboard(row)" :disabled="!row.extraClusterInfo.health">
+            {{ $t("business.cluster.open_dashboard") }}
+          </el-button>
         </template>
       </el-table-column>
 
