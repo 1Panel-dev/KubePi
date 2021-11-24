@@ -199,6 +199,18 @@ const message = {
       last_100_lines: "最后100行",
       last_200_lines: "最后200行",
       last_500_lines: "最后500行",
+      controller: "控制台  ",
+      download_logs: "日志下载",
+      start_time: "开始时间",
+      limit_byte: "最大限制",
+      download_log_help: "您将开始下载自 {0} 开始的最大 {1}Mb 日志文件！",
+      last_half_hour: "最近半小时",
+      last_three_hour: "最近三小时",
+      last_day: "最近一天",
+      last_three_days: "最近三天",
+      last_week: "最近一周",
+      last_month: "最近一月",
+      last_three_month: "最近三月",
       metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动),所以 Cpu(Cores)、Memory(bytes) 暂无数据"
     },
     namespace: {

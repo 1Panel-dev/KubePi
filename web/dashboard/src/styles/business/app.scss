@@ -143,3 +143,27 @@ a:hover {
   overflow: hidden; /*超出的文本隐藏*/
   text-overflow: ellipsis; /* 溢出用省略号*/
 }
+.el-date-editor .el-range-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  display: inline-block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 39%;
+  text-align: center;
+  font-size: 14px;
+  color: #ebeef5;
+  background-color: #19191c;
+}
+.el-picker-panel {
+  color: #338ccd;
+  border: 1px solid #909399;
+  background: #1a1a1e;
+  border-radius: 4px;
+  line-height: 30px;
+  margin: 5px 0;
+}

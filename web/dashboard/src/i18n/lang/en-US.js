@@ -198,6 +198,19 @@ const message = {
       last_100_lines: "Last 100 lines",
       last_200_lines: "Last 200 lines",
       last_500_lines: "Last 500 lines",
+      controller: "Controller  ",
+      download_logs: "Download logs",
+      start_time: "Start time",
+      limit_byte: "Limit byte",
+      download_log_help: "You will start downloading the Max {1}Mb log files from {0} !",
+      last_half_hour: "half hour ago",
+      last_three_hour: "3 hours ago",
+      last_day: "A day ago",
+      last_three_days: "3 days ago",
+      last_week: "A week ago",
+      last_month: "A month ago",
+      last_three_month: "3 months ago",
+      metric_server_tip: "Since the  Metrics-Server service is not started, there is no data in the Cpu (Cores) and Memory (bytes) "
     },
     namespace: {
       namespace: "Namespace",
@@ -476,7 +489,6 @@ const message = {
       change_default: "Change Default",
       volumeMode: "Volume Mode",
       persistentVolumeReclaimPolicy:"PersistentVolumeReclaimPolicy",
-      metric_server_tip: "Since the  Metrics-Server service is not started, there is no data in the Cpu (Cores) and Memory (bytes) "
     },
     configuration: {
       configuration: "Configuration",

@@ -43,8 +43,8 @@ export function deletePod (cluster_name, pod) {
   return del(`${podUrl(cluster_name)}/${pod}`)
 }
 
-export function getPodLogsByName (cluster_name, namespace, pod, paramInfo) {
-  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log` + paramInfo)
+export function getPodLogsByName (cluster_name, namespace, pod, params) {
+  return get(`${podUrlWithNs(cluster_name, namespace)}/${pod}/log`, params)
 }
 
 export function createPod (cluster_name, namespace, pod) {
