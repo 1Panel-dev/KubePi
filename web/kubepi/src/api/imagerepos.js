@@ -30,3 +30,7 @@ export function updateRepo (name, data) {
 export function listRepoByCluster(cluster) {
   return get(`${baseUrl}/cluster/${cluster}`)
 }
+
+export function listImages(cluster,repo) {
+  return get(`${baseUrl}/images/${cluster}/${repo}`)
+}

@@ -55,6 +55,6 @@ type Privilege struct {
 	Url string `json:"url"`
 }
 
-type ClusterRepo struct {
+type Repo struct {
 	V1ClusterRepo.ClusterRepo
 }
