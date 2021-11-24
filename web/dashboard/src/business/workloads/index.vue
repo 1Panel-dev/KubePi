@@ -660,7 +660,7 @@ export default {
       }
       for (const item of this.batchCreateForm.items) {
         if (item.kind !== 'Service') {
-          item.metadata.imagePullSecrets = [{name:secret.metadata.name}]
+          item.spec.template.spec.imagePullSecrets = [{name:secret.metadata.name}]
         }
         ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
       }
