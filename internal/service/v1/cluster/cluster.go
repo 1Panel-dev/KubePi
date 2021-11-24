@@ -2,11 +2,9 @@ package cluster
 
 import (
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
-	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/storm"
 	"github.com/KubeOperator/kubepi/pkg/util/lang"
-	storm2 "github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"
@@ -24,14 +22,12 @@ type Service interface {
 
 func NewService() Service {
 	return &cluster{
-		DefaultDBService:  common.DefaultDBService{},
-		clusterAppService: clusterapp.NewService(),
+		DefaultDBService: common.DefaultDBService{},
 	}
 }
 
 type cluster struct {
 	common.DefaultDBService
-	clusterAppService clusterapp.Service
 }
 
 func (c *cluster) Update(name string, cluster *v1Cluster.Cluster, options common.DBOptions) error {
@@ -123,9 +119,6 @@ func (c *cluster) Delete(name string, options common.DBOptions) error {
 	db := c.GetDB(options)
 	cluster, err := c.Get(name, options)
 	if err != nil {
-		return err
-	}
-	if err := c.clusterAppService.DeleteByCluster(name, options); err != nil && err != storm2.ErrNotFound {
 		return err
 	}
 	return db.DeleteStruct(cluster)

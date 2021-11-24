@@ -4,7 +4,9 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
+	"github.com/KubeOperator/kubepi/internal/service/v1/imagerepo"
 	"strings"
 	"sync"
 	"time"
@@ -31,6 +33,8 @@ type Handler struct {
 	clusterService        cluster.Service
 	clusterBindingService clusterbinding.Service
 	clusterRepoService    clusterrepo.Service
+	imageRepoService      imagerepo.Service
+	clusterAppService     clusterapp.Service
 }
 
 func NewHandler() *Handler {
@@ -38,6 +42,8 @@ func NewHandler() *Handler {
 		clusterService:        cluster.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
 		clusterRepoService:    clusterrepo.NewService(),
+		imageRepoService:      imagerepo.NewService(),
+		clusterAppService:     clusterapp.NewService(),
 	}
 }
 
@@ -192,10 +198,6 @@ func (h *Handler) CreateCluster() iris.Handler {
 			err = client.CreateAppMarketCRD()
 			if err != nil {
 				server.Logger().Errorf("create app-market crd failed %s", err)
-			}
-			err = client.CreateImageRepoCRD()
-			if err != nil {
-				server.Logger().Errorf("create image-repo crd failed %s", err)
 			}
 		}()
 	}
@@ -477,6 +479,21 @@ func (h *Handler) DeleteCluster() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
 			return
 		}
+
+		if err := h.clusterRepoService.DeleteByCluster(name, txOptions); err != nil && err != storm.ErrNotFound {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+
+		if err := h.clusterAppService.DeleteByCluster(name, txOptions); err != nil && err != storm.ErrNotFound {
+			_ = tx.Rollback()
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", fmt.Sprintf("delete cluster failed: %s", err.Error()))
+			return
+		}
+
 		clusterBindings, err := h.clusterBindingService.GetClusterBindingByClusterName(name, txOptions)
 		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			_ = tx.Rollback()
