@@ -3,7 +3,7 @@
     <br>
     <div class="grid-content bg-purple-light" v-if="!showYaml">
       <el-form label-position="top" :model="form" :rules="rules" ref="form">
-        <el-row :gutter="20" style="margin-left: 5px">
+        <el-row :gutter="20" style="margin-left: 25px">
           <el-col :span="4">
             <el-form-item :label="$t('commons.table.name')" prop="metadata.name">
               <el-input clearable v-model="form.metadata.name"></el-input>
@@ -15,67 +15,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-row>
-          <table style="width: 98%" class="tab-table">
-            <tr>
-              <th scope="col" width="30%" align="left"><label>{{$t('business.workload.resource')}}</label></th>
-              <th scope="col" width="30%" align="left"><label>{{$t('business.workload.limit')}}</label></th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="(row, index) in hards" v-bind:key="index">
-              <td>
-                <ko-form-item itemType="select2" @change="changeType" v-model="row.key" :selections="resource_list" />
-              </td>
-              <td>
-                <ko-form-item itemType="input" v-model="row.value" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
-              </td>
-            </tr>
-          </table>
-        </el-row>
-
-        <el-row style="margin-top:20px">
-          <table style="width: 98%" class="tab-table">
-            <tr>
-              <th scope="col" width="30%" align="left"><label>ScopeName</label></th>
-              <th scope="col" width="30%" align="left"><label>Operator</label></th>
-              <th scope="col" width="30%" align="left"><label>Values</label></th>
-              <th align="left"></th>
-            </tr>
-            <tr v-for="(row, index) in selectors" v-bind:key="index">
-              <td>
-                <ko-form-item itemType="select" @change="changeScopeName(row)" v-model="row.scopeName" :selections="scope_list" />
-              </td>
-              <td>
-                <ko-form-item itemType="select2" :disabled="isOperatorOnlyExist(row.scopeName)" v-model="row.operator" :selections="operator_list" />
-              </td>
-              <td>
-                <ko-form-item :disabled="row.operator === 'Exists' || row.operator === 'DoesNotExist'" :placeholder="$t('business.configuration.split_help')" itemType="input" v-model="row.values" />
-              </td>
-              <td>
-                <el-button type="text" style="font-size: 10px" @click="handleScopeDelete(index)">
-                  {{ $t("commons.button.delete") }}
-                </el-button>
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <el-button @click="handleScopeAdd">{{ $t("commons.button.add") }}</el-button>
-              </td>
-            </tr>
-          </table>
-        </el-row>
-
+        <ko-resource-quota style="margin-left: 20px" :hasSelector="true" :resourceQuotaObj="form.spec" ref="ko_resource_quota" />
       </el-form>
     </div>
 
@@ -100,13 +40,12 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import Rule from "@/utils/rules"
 import { createResourceQuota } from "@/api/resourcequota"
-import KoFormItem from "@/components/ko-form-item/index"
-import { parseArryToObj } from "@/utils/objArryParse"
 import KoSelect from "@/components/ko-select"
+import KoResourceQuota from "@/components/ko-configuration/ko-resource-quota.vue"
 
 export default {
   name: "ResourceQuotaCreate",
-  components: { YamlEditor, LayoutContent, KoFormItem, KoSelect },
+  components: { YamlEditor, LayoutContent, KoSelect, KoResourceQuota },
   data() {
     return {
       loading: false,
@@ -130,19 +69,6 @@ export default {
           namespace: [Rule.RequiredRule],
         },
       },
-      hards: [],
-      all_resource_list: ["limits.cpu", "limits.memory", "requests.cpu", "requests.memory", "configmaps", "pods", "replicationcontrollers", "resourcequotas", "services", "services.loadbalancers", "services.nodeports", "secrets", "requests.storage", "persistentvolumeclaims"],
-      resource_list: [],
-
-      selectors: [],
-      scope_list: [
-        { label: "Terminating (.spec.activeDeadlineSeconds >= 0)", value: "Terminating" },
-        { label: "NotTerminating (.spec.activeDeadlineSeconds is nil)", value: "NotTerminating" },
-        { label: "BestEffort (have best effort quality of service)", value: "BestEffort" },
-        { label: "NotBestEffort (not have best effort quality of service)", value: "NotBestEffort" },
-        { label: "PriorityClass (references the specified priority class)", value: "PriorityClass" },
-      ],
-      operator_list: ["In", "NotIn", "Exists", "DoesNotExist"],
 
       showYaml: false,
       yaml: undefined,
@@ -150,75 +76,23 @@ export default {
     }
   },
   methods: {
-    handleAdd() {
-      var item = {
-        key: "",
-        value: "",
-      }
-      this.hards.push(item)
+    gatherFormData() {
+      this.$refs.ko_resource_quota.transformation(this.form.spec)
     },
-    handleDelete(index) {
-      this.hards.splice(index, 1)
-    },
-    handleScopeAdd() {
-      var item = {
-        scopeName: "",
-        operator: "",
-        value: "",
-      }
-      this.selectors.push(item)
-    },
-    handleScopeDelete(index) {
-      this.selectors.splice(index, 1)
-    },
-    changeType() {
-      let newTypeList = []
-      for (const t of this.all_resource_list) {
-        let isExist = false
-        for (const item of this.hards) {
-          if (item.key === t) {
-            isExist = true
-            break
+    onSubmit() {
+      if (this.showYaml) {
+        this.onCreate(this.$refs.yaml_editor.getValue())
+      } else {
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.gatherFormData()
+            this.onCreate(this.form)
           }
-        }
-        if (!isExist) {
-          newTypeList.push(t)
-        }
-      }
-      this.resource_list = newTypeList
-    },
-    changeScopeName(row) {
-      if (this.isOperatorOnlyExist(row.scopeName)) {
-        row.operator = "Exists"
-      }
-    },
-    isOperatorOnlyExist(scopeName) {
-      return scopeName === "Terminating" || scopeName === "NotTerminating" || scopeName === "BestEffort" || scopeName === "NotBestEffort"
-    },
-    beforeSubmit() {
-      this.form.spec.hard = parseArryToObj(this.hards)
-      if (this.selectors.length === 0) {
-        delete this.form.spec.scopeSelector
-        return
-      }
-      this.form.spec.scopeSelector.matchExpressions = []
-      for (const scope of this.selectors) {
-        this.form.spec.scopeSelector.matchExpressions.push({
-          scopeName: scope.scopeName,
-          operator: scope.operator,
-          values: scope.values ? scope.values.split(",") : undefined,
         })
       }
     },
-    onSubmit() {
+    onCreate(data) {
       this.loading = true
-      let data
-      if (this.yamlShow) {
-        data = this.$refs.yaml_editor.getValue()
-      } else {
-        this.beforeSubmit()
-        data = this.form
-      }
       createResourceQuota(this.cluster, data.metadata.namespace, data)
         .then(() => {
           this.$message({
@@ -234,11 +108,8 @@ export default {
     onCancel() {
       this.$router.push({ name: "ResourceQuotas" })
     },
-    transformYaml() {
-      return JSON.parse(JSON.stringify(this.form))
-    },
     onEditYaml() {
-      this.beforeSubmit()
+      this.gatherFormData()
       this.yaml = this.form
       this.showYaml = true
     },
@@ -251,14 +122,10 @@ export default {
         this.showYaml = false
       })
     },
-    handleClick(tab) {
-      this.activeName = tab.index
-    },
   },
   created() {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"
-    this.changeType()
   },
 }
 </script>
