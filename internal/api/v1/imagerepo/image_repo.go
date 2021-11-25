@@ -3,6 +3,8 @@ package imagerepo
 import (
 	"errors"
 	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
+	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/imagerepo"
 	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
@@ -12,12 +14,14 @@ import (
 )
 
 type Handler struct {
-	imageRepoService imagerepo.Service
+	imageRepoService   imagerepo.Service
+	clusterRepoService clusterrepo.Service
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		imageRepoService: imagerepo.NewService(),
+		imageRepoService:   imagerepo.NewService(),
+		clusterRepoService: clusterrepo.NewService(),
 	}
 }
 
@@ -97,11 +101,24 @@ func (h *Handler) UpdateRepo() iris.Handler {
 func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		imageRepoName := ctx.Params().GetString("name")
-		if err := h.imageRepoService.Delete(imageRepoName, common.DBOptions{}); err != nil {
+		tx, err := server.DB().Begin(true)
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		txOptions := common.DBOptions{DB: tx}
+		if err := h.imageRepoService.Delete(imageRepoName, txOptions); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if err := h.clusterRepoService.DeleteByRepo(imageRepoName, txOptions); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		_ = tx.Commit()
 	}
 }
 

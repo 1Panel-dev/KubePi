@@ -15,6 +15,7 @@ type Service interface {
 	Create(clusterRepo *V1ClusterRepo.ClusterRepo, options common.DBOptions) error
 	Delete(cluster, repo string, options common.DBOptions) error
 	DeleteByCluster(cluster string, options common.DBOptions) error
+	DeleteByRepo(repo string, options common.DBOptions) error
 }
 
 func NewService() Service {
@@ -65,5 +66,10 @@ func (s *service) Delete(cluster, repo string, options common.DBOptions) error {
 func (s *service) DeleteByCluster(cluster string, options common.DBOptions) error {
 	db := s.GetDB(options)
 	query := db.Select(q.Eq("Cluster", cluster))
+	return query.Delete(new(V1ClusterRepo.ClusterRepo))
+}
+func (s *service) DeleteByRepo(repo string, options common.DBOptions) error {
+	db := s.GetDB(options)
+	query := db.Select(q.Eq("Repo", repo))
 	return query.Delete(new(V1ClusterRepo.ClusterRepo))
 }
