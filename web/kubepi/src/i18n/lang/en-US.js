@@ -259,6 +259,7 @@ const system_logs = {
     users: "user",
     clusters_members: "cluster members",
     clusters_clusterroles: "cluster roles",
+    clusters_repos: "cluster repos",
     imagerepos: "image repos",
     ldap: "LDAP",
 }
