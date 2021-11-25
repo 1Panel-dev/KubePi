@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="$t('business.configuration.password')" prop="password">
-              <ko-form-item itemType="input" type="password" v-model="form.password" @change.native="transform"></ko-form-item>
+              <ko-form-item itemType="input" type="password" v-model="form.password" @change.native="transform" show-password></ko-form-item>
             </el-form-item>
           </el-col>
         </el-row>
