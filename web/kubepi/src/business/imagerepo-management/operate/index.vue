@@ -4,7 +4,7 @@
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
         <div class="grid-content bg-purple-light">
-          <el-form ref="form" :model="form" :rules="rules" label-width="150px" label-position="left">
+          <el-form ref="form" :model="form" :rules="rules" label-width="250px" label-position="left">
             <el-form-item :label="$t('business.image_repos.name')" prop="name">
               <el-input v-model="form.name" :disabled="mode==='edit'"></el-input>
             </el-form-item>
@@ -20,8 +20,8 @@
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.auth')" prop="auth">
               <el-radio-group v-model="form.auth">
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
+                <el-radio :label="true">{{ $t("commons.bool.true") }}</el-radio>
+                <el-radio :label="false">{{ $t("commons.bool.false") }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item v-if="form.auth" :label="$t('business.image_repos.username')" prop="credential.username">
@@ -39,6 +39,12 @@
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.downloadUrl')" prop="downloadUrl">
               <el-input v-model="form.downloadUrl"></el-input>
+            </el-form-item>
+            <el-form-item :label="$t('business.image_repos.allow_anonymous')" prop="allowAnonymous">
+              <el-radio-group v-model="form.allowAnonymous">
+                <el-radio :label="true">{{ $t("commons.bool.true") }}</el-radio>
+                <el-radio :label="false">{{ $t("commons.bool.false") }}</el-radio>
+              </el-radio-group>
             </el-form-item>
             <el-form-item>
               <div style="float: right">
@@ -74,7 +80,8 @@ export default {
       mode: "",
       form: {
         auth: true,
-        credential: {}
+        credential: {},
+        allowAnonymous: false,
       },
       rules: {
         name: [
@@ -102,6 +109,9 @@ export default {
         ],
         downloadUrl: [
           Rules.RequiredRule
+        ],
+        allowAnonymous: [
+          Rules.RequiredRule
         ]
       },
       repos: [],
@@ -125,8 +135,8 @@ export default {
       this.isSubmitGoing = true
       this.loading = true
 
-      if (this.mode === 'edit') {
-        updateRepo(this.name,this.form).then(() => {
+      if (this.mode === "edit") {
+        updateRepo(this.name, this.form).then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.update_success")
@@ -137,7 +147,7 @@ export default {
             this.loading = false
           }
         )
-      }else {
+      } else {
         createRepo(this.form).then(() => {
           this.$message({
             type: "success",

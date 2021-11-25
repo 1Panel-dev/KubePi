@@ -96,6 +96,7 @@ const message = {
       name_rules: "仅支持小写英文、数字和-",
       url_rules: "请输入正确的url",
       params_not_complete: "参数不完整",
+      required: "输入项不能为空",
     },
     msg: {
       operation_success: "操作成功",
@@ -503,7 +504,7 @@ const message = {
       token_auth: "令牌",
       cluster_ip: "集群 IP",
       selector: "选择",
-      registry_domain_name: "注册域名",
+      registry_domain_name: "仓库地址",
       username: "用户名",
       password: "密码",
       authentication: "基本身份认证",

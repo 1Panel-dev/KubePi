@@ -95,6 +95,7 @@ const message = {
       name_rules: "Only lowercase English, numbers and-are supported",
       url_rules: "Please enter the correct url",
       params_not_complete: " params is not complete",
+      required: "The input item cannot be empty",
     },
     msg: {
       operation_success: "Operation successfully",
@@ -501,7 +502,7 @@ const message = {
       token_auth: "Token Auth",
       cluster_ip: "Cluster IP",
       selector: "Selector",
-      registry_domain_name: "Registry Domain Name",
+      registry_domain_name: "Registry Url",
       username: "Username",
       password: "Password",
       authentication: "Authentication",

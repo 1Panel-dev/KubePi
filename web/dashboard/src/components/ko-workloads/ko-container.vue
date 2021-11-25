@@ -117,7 +117,7 @@ export default {
       })
     },
     getSecret (workload, namespace) {
-      if (this.repo.name === "") {
+      if (this.repo.name === "" || this.repo.repo?.allowAnonymous) {
         return null
       }
       const auths = {
