@@ -323,6 +323,7 @@ export default {
       selectRules: [Rule.SelectRule],
       requiredRules: [Rule.RequiredRule],
       nameRules: [Rule.CommonNameRule],
+      secret: {}
     }
   },
   methods: {
@@ -596,6 +597,7 @@ export default {
         this.form.spec.template.metadata = this.podMetadata
       }
       this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
+      this.secret = this.$refs.ko_container.getSecret(this.form.metadata.name,this.form.metadata.namespace)
       return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow () {
@@ -654,13 +656,12 @@ export default {
         }
       }
       let ps = []
-      const secret = this.$refs.ko_container.getRepoForSecret(this.form.metadata.name,this.form.metadata.namespace)
-      if (secret !== {}) {
-        ps.push(createSecret(this.clusterName,this.form.metadata.namespace,secret))
+      if (this.secret !== {}) {
+        ps.push(createSecret(this.clusterName,this.form.metadata.namespace,this.secret))
       }
       for (const item of this.batchCreateForm.items) {
-        if (item.kind !== 'Service') {
-          item.spec.template.spec.imagePullSecrets = [{name:secret.metadata.name}]
+        if (item.kind !== 'Service' && this.secret !== {}) {
+          item.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
         }
         ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
       }

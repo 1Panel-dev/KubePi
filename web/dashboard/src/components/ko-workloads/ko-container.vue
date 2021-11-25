@@ -9,11 +9,6 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item :label="$t('business.workload.container_image')" prop="image">
-            <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image"/>
-          </el-form-item>
-        </el-col>
         <el-col :span="4">
           <el-form-item :label="$t('business.workload.list_image')">
             <el-select v-model="repo.name" @change="changeRepo(repo.name)">
@@ -23,9 +18,12 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item :label="$t('business.workload.repo_image')">
-            <el-select v-model="repo.image" @change="changeImage(repo.image)" style="width: 100%">
+        <el-col :span="12">
+          <el-form-item :label="$t('business.workload.container_image')" prop="image" v-if="repo.name===''">
+            <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image"/>
+          </el-form-item>
+          <el-form-item :label="$t('business.workload.container_image')" prop="image" v-else>
+            <el-select v-model="form.image" @change="changeImage(form.image)" style="width: 100%">
               <el-option v-for="(item,index) in repo.images" :key="index" :value="item" :label="item">
               </el-option>
             </el-select>
@@ -118,7 +116,7 @@ export default {
         this.repo.repo = res.data
       })
     },
-    getRepoForSecret (workload, namespace) {
+    getSecret (workload, namespace) {
       if (this.repo.name !== "") {
         const auths = {
           auths: {
