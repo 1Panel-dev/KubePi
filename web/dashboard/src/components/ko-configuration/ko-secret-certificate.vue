@@ -1,15 +1,15 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card :title="$t('business.configuration.certificate')" ref="form" :model="form">
-      <el-form label-position="top" ref="form" :model="form">
+    <ko-card :title="$t('business.configuration.certificate')">
+      <el-form label-position="top" ref="form" :model="form" :rules="rules">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item  :label="$t('business.configuration.privateKey')" prop="crt" required>
+            <el-form-item  :label="$t('business.configuration.privateKey')" prop="crt">
               <ko-form-item itemType="textarea" v-model="form.crt" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item  :label="$t('business.configuration.certificate')" prop="key" required>
+            <el-form-item  :label="$t('business.configuration.certificate')" prop="key">
               <ko-form-item itemType="textarea" v-model="form.key" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
@@ -22,6 +22,7 @@
 <script>
 import KoCard from "@/components/ko-card"
 import KoFormItem from "@/components/ko-form-item"
+import Rules from "@/utils/rules"
 
 export default {
   name: "KoSecretCertificate",
@@ -34,6 +35,11 @@ export default {
       form: {
         crt: "",
         key: ""
+      },
+      rules: {
+        key:[
+          Rules.RequiredRule
+        ]
       }
     }
   },
