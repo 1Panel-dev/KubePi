@@ -24,13 +24,14 @@
           <span class="spanClass">{{$t('business.pod.watch')}}</span>
           <el-switch class="interval" @change="changeConditions()" v-model="follow" />
         </div>
+        <div class="terminalOption">
+          <el-button style="margin-left: 20px;" size="mini" @click="dialogDownloadVisible = true">{{$t('business.pod.download_logs')}}</el-button>
+        </div>
       </div>
       <div style="float: right;margin-top: 15px;margin-bottom: 5px;margin-right: 30px">
         <span style="font-size: 20px; color: white">{{terminal.namespace}}/{{terminal.pod}}/{{terminal.container}}</span>
       </div>
-      <div class="terminalOption">
-        <el-button style="margin-left: 20px;" size="mini" @click="dialogDownloadVisible = true">{{$t('business.pod.download_logs')}}</el-button>
-      </div>
+
     </el-row>
     <el-row>
       <div>
@@ -85,7 +86,7 @@ import { getWorkLoadByName } from "@/api/workloads"
 import { getPodLogsByName } from "@/api/pods"
 import KoFormItem from "@/components/ko-form-item/index"
 import FileSaver from "file-saver"
-import {datetimeFormat} from "fit2cloud-ui/src/filters/time"
+import { datetimeFormat } from "fit2cloud-ui/src/filters/time"
 export default {
   name: "Terminal",
   components: { KoFormItem },
