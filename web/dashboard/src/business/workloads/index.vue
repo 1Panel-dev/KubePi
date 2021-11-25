@@ -165,7 +165,7 @@
             </el-tabs>
           </el-tab-pane>
 
-          <el-tab-pane label="Service" name="Service" v-if="!isCronJob() && !isJob() && isCreateOperation()">
+          <el-tab-pane label="Service" name="Service" v-if="hasService()">
             <ko-service-add ref="service_add"/>
           </el-tab-pane>
         </el-tabs>
@@ -323,7 +323,7 @@ export default {
       selectRules: [Rule.SelectRule],
       requiredRules: [Rule.RequiredRule],
       nameRules: [Rule.CommonNameRule],
-      secret: {}
+      secret: null
     }
   },
   methods: {
@@ -596,7 +596,9 @@ export default {
         this.form.spec.template.spec = this.podSpec
         this.form.spec.template.metadata = this.podMetadata
       }
-      this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
+      if (this.hasService()) {
+        this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
+      }
       this.secret = this.$refs.ko_container.getSecret(this.form.metadata.name,this.form.metadata.namespace)
       return JSON.parse(JSON.stringify(this.form))
     },
@@ -617,6 +619,9 @@ export default {
     },
     isCreateOperation () {
       return this.operation === "create"
+    },
+    hasService() {
+      return !this.isCronJob() && !this.isJob() && this.isCreateOperation()
     },
     onCancel () {
       this.$router.push({ name: this.toggleCase() + "s" })
@@ -656,12 +661,16 @@ export default {
         }
       }
       let ps = []
-      if (this.secret !== {}) {
+      if (this.secret) {
         ps.push(createSecret(this.clusterName,this.form.metadata.namespace,this.secret))
       }
       for (const item of this.batchCreateForm.items) {
-        if (item.kind !== 'Service' && this.secret !== {}) {
-          item.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
+        if (item.kind !== 'Service' && this.secret?.metadata?.name) {
+          if (item.kind !== "CronJob") {
+            item.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
+          } else {
+            item.spec.jobTemplate.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
+          }
         }
         ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
       }

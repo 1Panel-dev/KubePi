@@ -11,14 +11,14 @@
       <el-row :gutter="20">
         <el-col :span="4">
           <el-form-item :label="$t('business.workload.list_image')">
-            <el-select v-model="repo.name" @change="changeRepo(repo.name)">
+            <el-select style="width: 100%" v-model="repo.name" @change="changeRepo(repo.name)">
               <el-option :value="''" :label="$t('business.workload.repo_disabled')"></el-option>
               <el-option v-for="(item,index) in repos" :key="index" :value="item.repo" :label="item.repo">
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item :label="$t('business.workload.container_image')" prop="image" v-if="repo.name===''">
             <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image"/>
           </el-form-item>
@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     changeName (val) {
-      this.$emit("update:ContanerList", val)
+      this.$emit("updateContanerList", val)
     },
     checkIsValid () {
       let isValid = true
@@ -117,31 +117,30 @@ export default {
       })
     },
     getSecret (workload, namespace) {
-      if (this.repo.name !== "") {
-        const auths = {
-          auths: {
-            [this.repo.repo.endPoint]: {
-              username: this.repo.repo.credential.username,
-              password: this.repo.repo.credential.password
-            }
+      if (this.repo.name === "") {
+        return null
+      }
+      const auths = {
+        auths: {
+          [this.repo.repo.endPoint]: {
+            username: this.repo.repo.credential.username,
+            password: this.repo.repo.credential.password
           }
         }
-        const { Base64 } = require("js-base64")
-        const data = {
-          [".dockerconfigjson"]: Base64.encode(JSON.stringify(auths))
-        }
-        return {
-          apiVersion: "v1",
-          kind: "Secret",
-          metadata: {
-            name: workload + "-" + this.repo.name,
-            namespace: namespace,
-          },
-          data: data,
-          type: "kubernetes.io/dockerconfigjson"
-        }
-      } else {
-        return {}
+      }
+      const { Base64 } = require("js-base64")
+      const data = {
+        [".dockerconfigjson"]: Base64.encode(JSON.stringify(auths))
+      }
+      return {
+        apiVersion: "v1",
+        kind: "Secret",
+        metadata: {
+          name: workload + "-" + this.repo.name,
+          namespace: namespace,
+        },
+        data: data,
+        type: "kubernetes.io/dockerconfigjson"
       }
     },
     changeImage (image) {
