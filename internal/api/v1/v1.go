@@ -38,12 +38,6 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 )
 
-var urlWhiteList = WhiteList{
-	"/api/v1/proxy",
-	"/api/v1/chart",
-	"/api/v1/webkubectl",
-}
-
 var resourceWhiteList = WhiteList{"sessions", "proxy", "ws", "charts", "webkubectl", "apps"}
 
 type WhiteList []string
@@ -126,7 +120,7 @@ func logHandler() iris.Handler {
 		}
 
 		resourceName := ctx.Values().GetString("resource")
-		if resourceName == "" || urlWhiteList.In(resourceName) {
+		if resourceName == "" || resourceWhiteList.In(resourceName) {
 			ctx.Next()
 			return
 		}
