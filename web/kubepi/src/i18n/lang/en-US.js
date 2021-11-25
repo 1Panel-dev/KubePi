@@ -205,7 +205,8 @@ const message = {
           type: "Type",
           repo: "Mirror Library",
           load_repo: "Load image library",
-          auth: "Auth"
+          auth: "Auth",
+          allow_anonymous: "Allow anonymous docker pull "
         }
     },
 }

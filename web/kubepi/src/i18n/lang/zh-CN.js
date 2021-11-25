@@ -248,7 +248,8 @@ const message = {
           type: "类型",
           repo: "镜像库",
           load_repo: "加载镜像库",
-          auth: "认证"
+          auth: "认证",
+          allow_anonymous: "允许匿名docker pull"
         }
     },
 }

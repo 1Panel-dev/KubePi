@@ -13,9 +13,9 @@ const (
 
 func NewNexusClient(endpoint, username, password string) *nexusClient {
 	return &nexusClient{
-		Username:    username,
-		EndPoint:    endpoint,
-		Password:    password,
+		Username: username,
+		EndPoint: endpoint,
+		Password: password,
 		HttpClient: &HttpClient{
 			Username: username,
 			Password: password,
@@ -25,10 +25,10 @@ func NewNexusClient(endpoint, username, password string) *nexusClient {
 }
 
 type nexusClient struct {
-	Username    string
-	Password    string
-	EndPoint    string
-	HttpClient  *HttpClient
+	Username   string
+	Password   string
+	EndPoint   string
+	HttpClient *HttpClient
 }
 
 type ItemResult struct {
@@ -50,7 +50,9 @@ func (c *nexusClient) ListRepos() (names []string, err error) {
 		return
 	}
 	for _, r := range result {
-		names = append(names, r.Name)
+		if r.Format == "docker" {
+			names = append(names, r.Name)
+		}
 	}
 	return
 }

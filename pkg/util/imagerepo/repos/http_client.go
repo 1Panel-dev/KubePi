@@ -11,22 +11,23 @@ import (
 type HttpClient struct {
 	Username string
 	Password string
-	Host string
+	Host     string
 }
 
 type NameResult struct {
 	Name    string
 	Version string
+	Format  string
 }
 
-func (h *HttpClient) NewRequest(method,endpoint string) (request *http.Request, err error) {
+func (h *HttpClient) NewRequest(method, endpoint string) (request *http.Request, err error) {
 	url := fmt.Sprintf("%s/%s", h.Host, endpoint)
 	request, err = http.NewRequest(method, url, nil)
 	if err != nil {
 		return
 	}
-	if h.Username != "" && h.Password !=""{
-		request.SetBasicAuth(h.Username,h.Password)
+	if h.Username != "" && h.Password != "" {
+		request.SetBasicAuth(h.Username, h.Password)
 	}
 	return
 }
@@ -61,5 +62,3 @@ func (h *HttpClient) http(method, endpoint string) ([]byte, *http.Response, erro
 func (h *HttpClient) Get(endpoint string) ([]byte, *http.Response, error) {
 	return h.http(http.MethodGet, endpoint)
 }
-
-
