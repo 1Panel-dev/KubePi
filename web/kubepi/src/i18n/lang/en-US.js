@@ -199,7 +199,7 @@ const message = {
           list: "Mirror Warehouse",
           name: "Name",
           endpoint: "Address",
-          downloadUrl: "Mirror download URL",
+          downloadUrl: "Download URL",
           username: "Username",
           password: "Password",
           type: "Type",

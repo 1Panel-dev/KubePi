@@ -4,7 +4,7 @@
       <template #header>
         <el-button-group>
           <el-button type="primary" size="small" @click="onCreate">
-            {{ $t("commons.button.create") }}
+            {{ $t("commons.button.add") }}
           </el-button>
         </el-button-group>
         <br/>
