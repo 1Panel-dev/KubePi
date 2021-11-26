@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"runtime"
 	"strings"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -30,8 +29,7 @@ type QQwry struct {
 
 func NewQQwry() (QQwry, error) {
 	var qqwry QQwry
-	_, dir, _, _ := runtime.Caller(0)
-	qqwry.FilePath = strings.Replace(dir, "ip.go", "qqwry.dat", 1)
+	qqwry.FilePath = "/var/lib/kubepi/network/qqwry.dat"
 	_, err := os.Stat(qqwry.FilePath)
 	if err != nil {
 		return qqwry, err

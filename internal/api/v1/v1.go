@@ -159,7 +159,6 @@ func logHandler() iris.Handler {
 		} else {
 			log.OperationDomain = strings.Split(currentPath, "/")[0]
 			if method != "post" {
-				log.SpecificInformation = pathResource[1]
 				if len(pathResource) > 1 {
 					log.SpecificInformation = pathResource[1]
 				} else {
