@@ -20,9 +20,9 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.cluster.label')" prop="metadata.labels" min-width="200px">

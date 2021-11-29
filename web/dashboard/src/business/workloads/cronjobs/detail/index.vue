@@ -23,12 +23,12 @@
                   </el-button>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('commons.table.name')" prop="metadata.name" min-width="90">
+              <el-table-column :label="$t('commons.table.name')" prop="metadata.name" min-width="90" show-overflow-tooltip>
                 <template v-slot:default="{row}">
-                  <el-link @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{
+                  <span class="span-link" @click="toResource('Job', row.metadata.namespace, row.metadata.name)">{{
                       row.metadata.name
                     }}
-                  </el-link>
+                  </span>
                 </template>
               </el-table-column>
 

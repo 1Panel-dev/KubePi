@@ -20,9 +20,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140px" fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="140px" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <el-link @click="onGotoDashboard(row)" :disabled="!row.extraClusterInfo.health">{{ row.name }}</el-link>
+          <span v-if="row.extraClusterInfo.health" class="span-link" @click="onGotoDashboard(row)">{{ row.name }}</span>
+          <span v-else>{{ row.name }}</span>
         </template>
       </el-table-column>
 

@@ -21,7 +21,7 @@
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
@@ -31,13 +31,13 @@
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
             <div v-for="(path,index) in rule.http.paths" :key="index">
-              <el-link :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+              <span class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
-              </el-link>
+              </span>
               --->
-              <el-link @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
+              <span class="span-link" @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
                 {{ getService(path.backend) }}:{{ getPort(path.backend) }}
-              </el-link>
+              </span>
             </div>
           </div>
         </template>

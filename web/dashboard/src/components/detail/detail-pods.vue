@@ -15,7 +15,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace"
