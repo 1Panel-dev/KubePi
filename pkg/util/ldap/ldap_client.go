@@ -35,12 +35,11 @@ func (l *Ldap) Connect() error {
 	return nil
 }
 
-func (l *Ldap) Search(dn, filter string) ([]*ldap.Entry, error) {
-
+func (l *Ldap) Search(dn, filter string, attributes []string) ([]*ldap.Entry, error) {
 	searchRequest := ldap.NewSearchRequest(dn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		filter,
-		[]string{"cn", "mail", "sAMAccountName"},
+		attributes,
 		nil)
 	sr, err := l.Conn.Search(searchRequest)
 	if err != nil {
@@ -53,11 +52,10 @@ func (l *Ldap) Search(dn, filter string) ([]*ldap.Entry, error) {
 	return sr.Entries, err
 }
 
-func (l *Ldap) Login(dn ,username,password string) error {
-
+func (l *Ldap) Login(dn, filter, password string) error {
 	searchRequest := ldap.NewSearchRequest(dn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf("(&(objectClass=organizationalPerson)(cn=%s))", username),
+		filter,
 		[]string{"dn", "cn", "uid"},
 		nil)
 	sr, err := l.Conn.Search(searchRequest)

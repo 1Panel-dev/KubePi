@@ -1,6 +1,7 @@
 package ldap
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
@@ -15,6 +16,7 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -27,7 +29,7 @@ type Service interface {
 	GetById(id string, options common.DBOptions) (*v1Ldap.Ldap, error)
 	Delete(id string, options common.DBOptions) error
 	Sync(id string, options common.DBOptions) error
-	Login(username, password string, options common.DBOptions) error
+	Login(user v1User.User, password string, options common.DBOptions) error
 }
 
 func NewService() Service {
@@ -44,9 +46,13 @@ type service struct {
 }
 
 func (l *service) Create(ldap *v1Ldap.Ldap, options common.DBOptions) error {
-
+	m := make(map[string]string)
+	err := json.Unmarshal([]byte(ldap.Mapping), &m)
+	if err != nil {
+		return err
+	}
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
-	err := lc.Connect()
+	err = lc.Connect()
 	if err != nil {
 		return err
 	}
@@ -67,6 +73,11 @@ func (l *service) List(options common.DBOptions) ([]v1Ldap.Ldap, error) {
 }
 
 func (l *service) Update(id string, ldap *v1Ldap.Ldap, options common.DBOptions) error {
+	m := make(map[string]string)
+	err := json.Unmarshal([]byte(ldap.Mapping), &m)
+	if err != nil {
+		return err
+	}
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
 	if err := lc.Connect(); err != nil {
 		return err
@@ -101,17 +112,28 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 	return db.DeleteStruct(ldap)
 }
 
-func (l *service) Login(username, password string, options common.DBOptions) error {
+func (l *service) Login(user v1User.User, password string, options common.DBOptions) error {
 	ldaps, err := l.List(options)
 	if err != nil {
 		return err
 	}
 	ldap := ldaps[0]
+
+	mappings, err := ldap.GetMappings()
+	if err != nil {
+		return err
+	}
+	var userFilter string
+	for k, v := range mappings {
+		if k == "Name" {
+			userFilter = "(" + v + "=" + user.Name + ")"
+		}
+	}
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
 	if err := lc.Connect(); err != nil {
 		return err
 	}
-	return lc.Login(ldap.Dn, username, password)
+	return lc.Login(ldap.Dn, userFilter, password)
 }
 
 func (l *service) Sync(id string, options common.DBOptions) error {
@@ -124,18 +146,29 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 		return err
 	}
 	go func() {
-		entries, _ := lc.Search(ldap.Dn, ldap.Filter)
+		attributes, err := ldap.GetAttributes()
+		if err != nil {
+			server.Logger().Errorf("can not get ldap map attributes")
+			return
+		}
+		mappings, err := ldap.GetMappings()
+		if err != nil {
+			server.Logger().Errorf("can not get ldap mappings")
+			return
+		}
+		entries, _ := lc.Search(ldap.Dn, ldap.Filter, attributes)
 		for _, entry := range entries {
 			us := new(v1User.User)
+			rv := reflect.ValueOf(&us).Elem().Elem()
+
 			for _, at := range entry.Attributes {
-				if at.Name == "cn" {
-					us.Name = strings.Trim(at.Values[0], " ")
-				}
-				if at.Name == "mail" {
-					us.Email = strings.Trim(at.Values[0], " ")
-				}
-				if at.Name == "sAMAccountName" {
-					us.NickName = strings.Trim(at.Values[0], " ")
+				for k, v := range mappings {
+					if v == at.Name && len(at.Values) > 0 {
+						fv := rv.FieldByName(k)
+						if fv.IsValid() {
+							fv.Set(reflect.ValueOf(strings.Trim(at.Values[0], " ")))
+						}
+					}
 				}
 			}
 			if us.Email == "" {

@@ -22,11 +22,13 @@
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter">
             <el-input v-model="form.filter" :placeholder="'(&(objectClass=organizationalPerson))'"></el-input>
           </el-form-item>
+          <el-form-item  style="width: 100%" :label="$t('business.user.ldap_mapping')" prop="mapping">
+            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>
+          </el-form-item>
           <el-form-item>
             <div style="font-size: 12px;color: #4E5051;">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icontishi11"></use>
-              </svg>
+              {{$t('business.user.ldap_mapping_helper')}}
+              <br>
               {{ $t("business.user.ldap_helper") }}
             </div>
           </el-form-item>
@@ -69,6 +71,7 @@ export default {
         password: [Rule.RequiredRule],
         dn: [Rule.RequiredRule],
         filter: [Rule.RequiredRule],
+        mapping: [Rule.RequiredRule],
       },
       isSubmitGoing: false
     }
@@ -137,7 +140,9 @@ export default {
       getLdap().then((res) => {
         if (res.data.length > 0) {
           this.form = res.data[0]
-          console.log(this.form)
+        }
+        if (this.form.mapping === "") {
+          this.form.mapping = "{\"name\":\"sAMAccountName\",\"nickName\":\"cn\",\"email\":\"mail\"}"
         }
       }).finally(() => {
         this.loading = false
