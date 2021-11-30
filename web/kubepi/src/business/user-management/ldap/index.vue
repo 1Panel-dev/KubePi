@@ -142,7 +142,7 @@ export default {
           this.form = res.data[0]
         }
         if (this.form.mapping === "") {
-          this.form.mapping = "{\"name\":\"sAMAccountName\",\"nickName\":\"cn\",\"email\":\"mail\"}"
+          this.form.mapping = "{\"Name\":\"sAMAccountName\",\"NickName\":\"cn\",\"Email\":\"mail\"}"
         }
       }).finally(() => {
         this.loading = false

@@ -6,37 +6,37 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
 
-            <el-form-item :label="$t('business.user.username')" prop="name" >
+            <el-form-item :label="$t('business.user.username')" prop="name">
               <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
 
-            <el-form-item :label="$t('business.user.nickname')" prop="nickname" >
-              <el-input v-model="form.nickname"></el-input>
+            <el-form-item :label="$t('business.user.nickname')" prop="nickname">
+              <el-input v-model="form.nickname" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.email')" prop="email" >
-              <el-input v-model="form.email"></el-input>
+            <el-form-item :label="$t('business.user.email')" prop="email">
+              <el-input v-model="form.email" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.role')" prop="roles" >
+            <el-form-item :label="$t('business.user.role')" prop="roles">
               <el-select v-model="form.roles" filterable
                          multiple
                          style="width: 100%"
                          :placeholder="$t('commons.form.select_placeholder')">
                 <el-option
-                    v-for="item in roleOptions "
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                        v-for="item in roleOptions "
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
 
 
-            <el-form-item :label="$t('business.user.password')">
-              <el-link @click="openedChangePassword">{{ $t('business.user.change_password') }}</el-link>
+            <el-form-item :label="$t('business.user.password')" v-if="form.type !=='LDAP'">
+              <el-link @click="openedChangePassword">{{ $t("business.user.change_password") }}</el-link>
             </el-form-item>
 
 
@@ -56,10 +56,10 @@
 
 
     <el-dialog
-        :title="$t('business.user.change_password')"
-        :visible.sync="changePasswordOpened"
-        :close-on-click-modal="false"
-        width="30%">
+            :title="$t('business.user.change_password')"
+            :visible.sync="changePasswordOpened"
+            :close-on-click-modal="false"
+            width="30%">
       <div>
         <el-form :rules="passwordChangeRules" ref="passwordChangeFrom" :model="passwordChangeFrom" label-width="150px"
                  label-position="left">
@@ -91,25 +91,25 @@ import Rules from "@/utils/rules"
 export default {
   name: "UserEdit",
   props: ["name"],
-  components: {LayoutContent},
-  data() {
+  components: { LayoutContent },
+  data () {
     var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error(this.$t('business.user.please_input_password')));
+      if (value === "") {
+        callback(new Error(this.$t("business.user.please_input_password")))
       } else {
-        if (this.passwordChangeFrom.newPassword !== '') {
-          this.$refs.form.validateField('checkPass');
+        if (this.passwordChangeFrom.newPassword !== "") {
+          this.$refs.form.validateField("checkPass")
         }
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error(this.$t('business.user.please_input_password')));
+      if (value === "") {
+        callback(new Error(this.$t("business.user.please_input_password")))
       } else if (value !== this.passwordChangeFrom.newPassword) {
-        callback(new Error(this.$t('business.user.password_not_equal')));
+        callback(new Error(this.$t("business.user.password_not_equal")))
       } else {
-        callback();
+        callback()
       }
     }
     return {
@@ -137,12 +137,12 @@ export default {
         newPassword: [
           Rules.RequiredRule,
           Rules.PasswordRule,
-          {validator: validatePass, trigger: 'blur'},
+          { validator: validatePass, trigger: "blur" },
         ],
         confirmPassword: [
           Rules.RequiredRule,
           Rules.PasswordRule,
-          {validator: validatePass2, trigger: 'blur'}
+          { validator: validatePass2, trigger: "blur" }
         ],
       },
       passwordChangeFrom: {
@@ -153,12 +153,13 @@ export default {
         name: "",
         nickname: "",
         email: "",
-        roles: []
+        roles: [],
+        type: "LOCAL"
       },
     }
   },
   methods: {
-    onChangePasswordConfirm() {
+    onChangePasswordConfirm () {
       let isFormReady = false
       this.$refs["passwordChangeFrom"].validate((valid) => {
         if (valid) {
@@ -171,14 +172,14 @@ export default {
       updateUser(this.name, {
         "password": this.passwordChangeFrom.newPassword
       }).then(() => {
-        this.$message.success(this.$t('commons.msg.update_success'))
+        this.$message.success(this.$t("commons.msg.update_success"))
         this.changePasswordOpened = false
       })
     },
-    openedChangePassword() {
+    openedChangePassword () {
       this.changePasswordOpened = true
     },
-    onConfirm() {
+    onConfirm () {
       if (this.isSubmitGoing) {
         return
       }
@@ -205,23 +206,24 @@ export default {
           type: "success",
           message: this.$t("commons.msg.update_success")
         })
-        this.$router.push({name: "Users"})
+        this.$router.push({ name: "Users" })
       }).finally(() => {
         this.isSubmitGoing = false
         this.loading = false
       })
     },
-    onCancel() {
-      this.$router.push({name: "Users"})
+    onCancel () {
+      this.$router.push({ name: "Users" })
     },
-    onCreated() {
+    onCreated () {
       this.loading = true
       getUser(this.name).then(data => {
-        this.form.name = data.data.name;
-        this.form.nickname = data.data.nickName;
-        this.form.email = data.data.email;
-        this.form.roles = data.data.roles;
-        this.user = data.data;
+        this.form.name = data.data.name
+        this.form.nickname = data.data.nickName
+        this.form.email = data.data.email
+        this.form.roles = data.data.roles
+        this.form.type = data.data.type
+        this.user = data.data
         listRoles().then(d => {
           d.data.forEach(r => {
             this.roleOptions.push({
@@ -234,7 +236,7 @@ export default {
       })
     }
   },
-  created() {
+  created () {
     this.onCreated()
   }
 }
