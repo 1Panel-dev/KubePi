@@ -9,9 +9,9 @@
         </el-button-group>
         <br/>
       </template>
-      <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.name')" min-width="100" fix show-overflow-tooltip> 
         <template v-slot:default="{row}">
-          <el-link @click="onOpenDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="onOpenDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
 

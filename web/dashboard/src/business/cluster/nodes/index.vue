@@ -20,9 +20,9 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix max-width="30px">
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix show-overflow-tooltip max-width="30px">
         <template v-slot:default="{row}">
-          <el-link @click="onDetail(row)"> {{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="onDetail(row)"> {{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Internal IP" prop="metadata.name" max-width="30px">
@@ -32,13 +32,6 @@
           </div>
         </template>
       </el-table-column>
-<!--      <el-table-column :label="$t('business.node.ready')" prop="status.conditions" max-width="30px">-->
-<!--        <template v-slot:default="{row}">-->
-<!--          <div v-for="(condition,index) in row.status.conditions" v-bind:key="index">-->
-<!--            <span v-if="condition.type === 'Ready'">{{ condition.status }}</span>-->
-<!--          </div>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column :label="$t('commons.table.status')">
         <template v-slot:default="{row}">
           <el-button v-if="row.nodeStatus.indexOf('NotReady') !== -1" type="warning" size="mini" plain round>

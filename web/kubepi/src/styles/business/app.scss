@@ -137,3 +137,16 @@ a:hover {
   margin: 0;
   transform: translate(0, -50%);
 }
+
+.span-link {
+  color: #338ccd;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 2px;
+  cursor: pointer;
+}
+.span-link:hover {
+  padding-bottom:3px;
+  color: rgb(255, 255, 255);
+  border-bottom:1px solid;
+}

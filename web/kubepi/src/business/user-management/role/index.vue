@@ -11,11 +11,11 @@
           </el-button>
         </el-button-group>
       </template>
-      <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.name')" min-width="100" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <el-link @click="onDetail(row.name)">
+          <span class="span-link" @click="onDetail(row.name)">
             {{ row.name }}
-          </el-link>
+          </span>
         </template>
       </el-table-column>
 

@@ -69,9 +69,9 @@
         </el-table-column>
         <el-table-column :label="$t('business.event.resource')" prop="resource" fix min-width="200px" show-overflow-tooltip>
           <template v-slot:default="{row}">
-            <el-link @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">
+            <span class="span-link" @click="toResource(row.involvedObject.kind,row.metadata.namespace,row.involvedObject.name)">
               {{ row.involvedObject.kind }} / {{ row.involvedObject.name }}
-            </el-link>
+            </span>
           </template>
         </el-table-column>
         <el-table-column :label="$t('commons.table.time')" prop="metadata.creationTimestamp" fix>

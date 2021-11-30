@@ -19,7 +19,7 @@
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="60" prop="metadata.namespace"/>

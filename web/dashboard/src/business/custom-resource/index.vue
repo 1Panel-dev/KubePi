@@ -7,9 +7,9 @@
           </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')">
+      <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.spec.names.kind }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.spec.names.kind }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Group" prop="spec.group">

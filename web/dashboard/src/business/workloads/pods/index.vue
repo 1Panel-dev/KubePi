@@ -22,7 +22,7 @@
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <el-link @click="openDetail(row)">{{ row.metadata.name }}</el-link>
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
