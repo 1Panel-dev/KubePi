@@ -2,9 +2,7 @@ package ip
 
 import (
 	"encoding/binary"
-	"io/ioutil"
 	"net"
-	"os"
 	"strings"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -19,39 +17,15 @@ const (
 	redirectMode2 = 0x02
 )
 
+var IpCommonDictionary []byte
+
 type QQwry struct {
-	Data     []byte
-	FilePath string
-	Path     *os.File
-	IPNum    int64
-	Offset   int64
+	Data   []byte
+	Offset int64
 }
 
 func NewQQwry() (QQwry, error) {
-	var qqwry QQwry
-	qqwry.FilePath = "/var/lib/kubepi/network/qqwry.dat"
-	_, err := os.Stat(qqwry.FilePath)
-	if err != nil {
-		return qqwry, err
-	}
-	qqwry.Path, err = os.OpenFile(qqwry.FilePath, os.O_RDONLY, 0400)
-	if err != nil {
-		return qqwry, err
-	}
-	defer qqwry.Path.Close()
-
-	qqwry.Data, err = ioutil.ReadAll(qqwry.Path)
-	if err != nil {
-		return qqwry, err
-	}
-
-	buf := qqwry.Data[0:8]
-	start := binary.LittleEndian.Uint32(buf[:4])
-	end := binary.LittleEndian.Uint32(buf[4:])
-
-	qqwry.IPNum = int64((end-start)/indexLen + 1)
-
-	return qqwry, nil
+	return QQwry{Data: IpCommonDictionary}, nil
 }
 
 // readData 从文件中读取数据
