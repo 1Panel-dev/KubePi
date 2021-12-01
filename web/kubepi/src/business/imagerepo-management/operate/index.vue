@@ -16,7 +16,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.endpoint')" prop="endPoint">
-              <el-input v-model="form.endPoint"></el-input>
+              <el-input v-model="form.endPoint" :placeholder="'http://172.16.10.10:8080'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.auth')" prop="auth">
               <el-radio-group v-model="form.auth">
@@ -32,13 +32,13 @@
             </el-form-item>
             <el-form-item v-if="form.type !== 'DockerRegistry'" :label="$t('business.image_repos.repo')"
                           prop="repoName">
-              <el-select v-model="form.repoName">
+              <el-select v-model="form.repoName" filterable>
                 <el-option v-for="(repo,index) in repos" :key="index" :value="repo" :label="repo">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.downloadUrl')" prop="downloadUrl">
-              <el-input v-model="form.downloadUrl"></el-input>
+              <el-input v-model="form.downloadUrl" :placeholder="'172.16.10.10:8081'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.allow_anonymous')" prop="allowAnonymous">
               <el-radio-group v-model="form.allowAnonymous">
