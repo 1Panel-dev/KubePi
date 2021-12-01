@@ -73,8 +73,8 @@ export default {
           } else {
             this.form.cpuMin = newVal.min?.cpu ? cpuUnitConvert(newVal.min.cpu) : ""
             this.form.cpuMax = newVal.max?.cpu ? cpuUnitConvert(newVal.max.cpu) : ""
-            this.form.memoryMin = newVal.min?.memory ? cpuUnitConvert(newVal.min.memory) : ""
-            this.form.memoryMax = newVal.max?.memory ? cpuUnitConvert(newVal.max.memory) : ""
+            this.form.memoryMin = newVal.min?.memory ? memeryUnitConvert(newVal.min.memory) : ""
+            this.form.memoryMax = newVal.max?.memory ? memeryUnitConvert(newVal.max.memory) : ""
           }
         }
       },
@@ -109,7 +109,7 @@ export default {
             type: this.form.type,
             max: {
               cpu: this.form.cpuMax ? this.form.cpuMax + "m" : undefined,
-              memoryMax: this.form.memoryMax ? this.form.memoryMax + "Mi" : undefined,
+              memory: this.form.memoryMax ? this.form.memoryMax + "Mi" : undefined,
             },
             min: {
               cpu: this.form.cpuMin ? this.form.cpuMin + "m" : undefined,
