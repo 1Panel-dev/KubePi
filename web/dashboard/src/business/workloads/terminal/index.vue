@@ -176,6 +176,9 @@ export default {
             },
           },
         ],
+        disabledDate: (time) => {
+          return time.getTime() > Date.now()
+        },
       },
     }
   },
@@ -212,7 +215,7 @@ export default {
       params.timestamps = true
       console.log(this.form.limitDate)
       if (this.form.limitDate) {
-        params.sinceSeconds = (new Date().getTime() - this.form.limitDate.getTime())
+        params.sinceSeconds = new Date().getTime() - this.form.limitDate.getTime()
       }
       if (this.form.limitBytes) {
         params.limitBytes = this.form.limitBytes * 1024 * 1024
