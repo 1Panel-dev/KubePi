@@ -2,10 +2,12 @@ package main
 
 import (
 	"embed"
+	"runtime"
+
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/KubeOperator/kubepi/pkg/network/ip"
 	"github.com/spf13/cobra"
-	"runtime"
 )
 
 var (
@@ -29,6 +31,9 @@ var webkubectlEntrypointDarwin string
 //go:embed script/linux/init-kube.sh
 var webkubectlEntrypointLinux string
 
+//go:embed helper/ip/qqwry.dat
+var IpCommonDictionary []byte
+
 func init() {
 	RootCmd.Flags().StringVar(&serverBindHost, "server-bind-host", "", "kubepi bind address")
 	RootCmd.Flags().IntVar(&serverBindPort, "server-bind-port", 0, "kubepi bind port")
@@ -47,6 +52,7 @@ var RootCmd = &cobra.Command{
 		} else {
 			server.WebkubectlEntrypoint = webkubectlEntrypointLinux
 		}
+		ip.IpCommonDictionary = IpCommonDictionary
 		return server.Listen(route.InitRoute,
 			server.WithCustomConfigFilePath(configPath),
 			server.WithServerBindHost(serverBindHost),
