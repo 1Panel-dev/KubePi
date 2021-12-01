@@ -51,8 +51,6 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* && \
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
-RUN mkdir -p /var/lib/kubepi/network && cd /var/lib/kubepi/network && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/network/qqwry.dat
-
 COPY vimrc.local /etc/vim
 
 EXPOSE 80
