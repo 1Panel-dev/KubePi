@@ -181,7 +181,9 @@ const message = {
             ldap_helper: "Note: Users without mailboxes will not be synchronized, and those with the same login name as local users will not be synchronized!",
             ldap_sync: "Start syncing, please check the user list later",
             ldap_sync_error: "Please save first",
-            type: "Type"
+            type: "Type",
+            ldap_mapping: "User Attribute Mapping",
+            ldap_mapping_helper: "User attribute mapping represents how to map user attributes in LDAP to kubepi users, name, nickName, email are the attributes required by kubepi users",
         },
         system: {
             system_log: "Audits",

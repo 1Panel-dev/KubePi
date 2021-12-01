@@ -77,7 +77,7 @@ export default {
             this.onEdit(row.name)
           },
           disabled: (row) => {
-            return row.builtIn || !checkPermissions({resource: "users", verb: "update"}) || row.type === "LDAP"
+            return row.builtIn || !checkPermissions({resource: "users", verb: "update"})
           }
         },
         {

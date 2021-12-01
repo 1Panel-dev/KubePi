@@ -84,7 +84,7 @@ func (h *Handler) Login() iris.Handler {
 		}
 
 		if u.Type == v1User.LDAP {
-			if err := h.ldapService.Login(u.Name, loginCredential.Password, common.DBOptions{}); err != nil {
+			if err := h.ldapService.Login(*u, loginCredential.Password, common.DBOptions{}); err != nil {
 				ctx.StatusCode(iris.StatusBadRequest)
 				ctx.Values().Set("message", "username or password error")
 				return
