@@ -116,6 +116,21 @@ func (h *Handler) UpdateRepo() iris.Handler {
 	}
 }
 
+func (h *Handler) SyncRepo() iris.Handler  {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("name")
+		cluster := ctx.Params().GetString("cluster")
+
+		err := h.chartService.SyncRepo(cluster,name)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", "")
+	}
+}
+
 func (h *Handler) ListCharts() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
@@ -262,6 +277,7 @@ func Install(parent iris.Party) {
 	sp.Post("/repos", handler.AddRepo())
 	sp.Put("/repos/:name", handler.UpdateRepo())
 	sp.Delete("/repos/:name", handler.DeleteRepo())
+	sp.Post("/repos/sync/:name", handler.SyncRepo())
 	sp.Put("/:name", handler.UpdateChart())
 	sp.Get("/:name", handler.GetChart())
 	sp.Get("/search", handler.ListCharts())

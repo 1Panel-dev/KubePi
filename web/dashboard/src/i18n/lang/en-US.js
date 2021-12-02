@@ -53,6 +53,7 @@ const message = {
       scale: "Scale",
       restart: "Restart",
       modifying_version: "Modifying version",
+      sync: "Sync"
     },
     table: {
       name: "Name",
@@ -103,6 +104,7 @@ const message = {
       create_success: "Created successfully",
       update_success: "Modified successfully",
       create_failed: "Created failed",
+      sync_success: "Sync successfully"
     },
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",
