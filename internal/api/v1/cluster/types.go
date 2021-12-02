@@ -58,3 +58,8 @@ type Privilege struct {
 type Repo struct {
 	V1ClusterRepo.ClusterRepo
 }
+
+type CreateRepo struct {
+	Repos   []string
+	Cluster string
+}
