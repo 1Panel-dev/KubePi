@@ -1,6 +1,8 @@
 package cluster
 
 import (
+	"github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
+	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -22,17 +24,32 @@ func (h *Handler) ListClusterRepos() iris.Handler {
 
 func (h *Handler) AddCLusterRepo() iris.Handler {
 	return func(ctx *context.Context) {
-		var req Repo
+		var req CreateRepo
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.clusterRepoService.Create(&req.ClusterRepo, common.DBOptions{})
+		tx, err := server.DB().Begin(true)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		txOptions := common.DBOptions{DB: tx}
+		for _,v := range req.Repos {
+			clusterRepo := &clusterrepo.ClusterRepo{
+				Cluster: req.Cluster,
+				Repo: v,
+			}
+			err := h.clusterRepoService.Create(clusterRepo, txOptions)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				tx.Rollback()
+				return
+			}
+		}
+		tx.Commit()
 		ctx.Values().Set("data", &req)
 	}
 }

@@ -29,7 +29,7 @@
                element-loading-background="rgba(0, 0, 0, 0.8)" :model="repoForm" label-position="left"
                label-width="144px">
         <el-form-item :label="$t('business.cluster.repo')">
-          <el-select v-model="repoForm.repo" style="width: 85%" filterable>
+          <el-select v-model="repoForm.repos" style="width: 85%" filterable multiple>
             <el-option v-for="(item, index) in repos" :key="index" :value="item.name">
               {{ item.name }}
             </el-option>
