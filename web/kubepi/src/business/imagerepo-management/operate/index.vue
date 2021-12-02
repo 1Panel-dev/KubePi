@@ -48,7 +48,7 @@
             </el-form-item>
             <el-form-item>
               <div style="float: right">
-                <el-button @click="list()">{{ $t("business.image_repos.load_repo") }}</el-button>
+                <el-button @click="list()" v-if="form.type !== 'DockerRegistry'">{{ $t("business.image_repos.load_repo") }}</el-button>
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
                 <el-button type="primary" :disabled="isSubmitGoing" @click="onConfirm()">{{
                     $t("commons.button.confirm")
