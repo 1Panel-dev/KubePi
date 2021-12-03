@@ -208,7 +208,8 @@ const message = {
           repo: "Mirror Library",
           load_repo: "Load image library",
           auth: "Auth",
-          allow_anonymous: "Allow anonymous docker pull "
+          allow_anonymous: "Allow anonymous docker pull ",
+          repo_null: "Repo is null"
         }
     },
 }
