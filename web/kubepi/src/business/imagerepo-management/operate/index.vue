@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'ImageRepos' }">
+  <layout-content :header="header" :back-to="{ name: 'ImageRepos' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
@@ -81,6 +81,7 @@ export default {
     return {
       loading: false,
       mode: "",
+      header: this.$t('commons.button.create'),
       form: {
         auth: true,
         credential: {},
@@ -88,7 +89,8 @@ export default {
       },
       rules: {
         name: [
-          Rules.RequiredRule
+          Rules.RequiredRule,
+          Rules.CommonNameRule
         ],
         type: [
           Rules.RequiredRule
@@ -202,6 +204,7 @@ export default {
     this.mode = this.$route.query.mode
     if (this.mode === "edit") {
       this.getDetail()
+      this.header = this.$t('commons.button.edit')
     }
   }
 }
