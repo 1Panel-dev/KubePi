@@ -31,6 +31,7 @@ type Service interface {
 	GetAppDetail(cluster string, name string) (*release.Release, error)
 	GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error)
 	UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
+	SyncRepo(cluster,name string) error
 }
 
 func NewService() Service {
@@ -295,6 +296,14 @@ func (c *service) GetAppDetail(cluster string, name string) (*release.Release, e
 		return nil, err
 	}
 	return helmClient.GetDetail(name)
+}
+
+func (c *service) SyncRepo(cluster,name string) error {
+	helmClient, err := NewHelmClient(cluster, "")
+	if err != nil {
+		return err
+	}
+	return helmClient.UpdateRepo(name)
 }
 
 func NewHelmClient(clusterName, namespace string) (*helm.Client, error) {

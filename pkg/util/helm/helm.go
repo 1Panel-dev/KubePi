@@ -392,7 +392,7 @@ func (c Client) AddRepo(name string, url string, username string, password strin
 	return nil
 }
 
-func (c Client) updateRepo(repoName string) error {
+func (c Client) UpdateRepo(repoName string) error {
 	repos, err := c.ListRepo()
 	if err != nil {
 		return err

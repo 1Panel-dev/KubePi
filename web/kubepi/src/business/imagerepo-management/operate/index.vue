@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'ImageRepos' }">
+  <layout-content :header="header" :back-to="{ name: 'ImageRepos' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
@@ -48,7 +48,10 @@
             </el-form-item>
             <el-form-item>
               <div style="float: right">
-                <el-button @click="list()" v-if="form.type !== 'DockerRegistry'">{{ $t("business.image_repos.load_repo") }}</el-button>
+                <el-button @click="list()" v-if="form.type !== 'DockerRegistry'">{{
+                    $t("business.image_repos.load_repo")
+                  }}
+                </el-button>
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
                 <el-button type="primary" :disabled="isSubmitGoing" @click="onConfirm()">{{
                     $t("commons.button.confirm")
@@ -78,6 +81,7 @@ export default {
     return {
       loading: false,
       mode: "",
+      header: this.$t('commons.button.create'),
       form: {
         auth: true,
         credential: {},
@@ -85,7 +89,8 @@ export default {
       },
       rules: {
         name: [
-          Rules.RequiredRule
+          Rules.RequiredRule,
+          Rules.CommonNameRule
         ],
         type: [
           Rules.RequiredRule
@@ -134,7 +139,7 @@ export default {
       }
       this.isSubmitGoing = true
       this.loading = true
-
+      this.checkAuth()
       if (this.mode === "edit") {
         updateRepo(this.name, this.form).then(() => {
           this.$message({
@@ -162,9 +167,16 @@ export default {
       }
     },
     list () {
+      this.checkAuth()
       this.loading = true
       listInternalRepos(this.form).then(res => {
         this.repos = res.data
+        if (res.data === null || res.data.length === 0) {
+          this.$message({
+            type: "warning",
+            message: this.$t("business.image_repos.repo_null")
+          })
+        }
       }).finally(() => {
         this.loading = false
       })
@@ -176,7 +188,14 @@ export default {
         this.loading = false
       })
     },
-
+    checkAuth () {
+      if (this.form.auth === false) {
+        this.form.credential = {
+          username: "",
+          password: ""
+        }
+      }
+    },
     onCancel () {
       this.$router.push({ name: "ImageRepos" })
     },
@@ -185,6 +204,7 @@ export default {
     this.mode = this.$route.query.mode
     if (this.mode === "edit") {
       this.getDetail()
+      this.header = this.$t('commons.button.edit')
     }
   }
 }
