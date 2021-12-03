@@ -47,6 +47,10 @@ export function updateRepo(cluster, name,data) {
   return put(`${repoUrl(cluster)}/${name}`, data)
 }
 
+export function syncRepo(cluster, name) {
+  return post(`${repoUrl(cluster)}/sync/${name}`)
+}
+
 export function getRepo (cluster, name) {
   return get(`${repoUrl(cluster)}/${name}`)
 }

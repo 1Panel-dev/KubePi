@@ -431,8 +431,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		for i := 0; i < 10; i++ {
+		for i := 0; i < 30; i++ {
 			time.Sleep(1 * time.Second)
 			getResp, err := client.CertificatesV1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
 			if err != nil {
@@ -444,7 +443,7 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 			}
 		}
 		if data == nil {
-			return nil, errors.New("csr approve time out")
+			return nil, errors.New("csr approve time out ,30 sec")
 		}
 	} else {
 		name := "kubernetes.io/kube-apiserver-client"

@@ -235,8 +235,8 @@ func (e *KubePiSerer) setWebkubectlProxy() {
 		proxy.ModifyResponse = func(resp *http.Response) error {
 			if resp.StatusCode == iris.StatusMovedPermanently {
 				// 重定向重写
-				if resp.Header.Get("Location") == "/webkubectl/" {
-					resp.Header.Set("Location", "/webkubectl/root")
+				if resp.Header.Get("Location") == "/kubepi/webkubectl/" {
+					resp.Header.Set("Location", "/kubepi/webkubectl/root")
 				}
 			}
 			return nil

@@ -180,5 +180,30 @@ func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options c
 	repo.UUID = old.UUID
 	repo.CreateAt = old.CreateAt
 	repo.UpdateAt = time.Now()
+
+	if old.Auth == false {
+		repo.Credential.Password = ""
+		repo.Credential.Username = ""
+		repo.Credential = V1ImageRepo.Credential{}
+		err = db.UpdateField(repo, "Credential",repo.Credential)
+		if err != nil {
+			return
+		}
+	}
+
+	if old.AllowAnonymous != repo.AllowAnonymous {
+		err = db.UpdateField(repo, "AllowAnonymous", repo.AllowAnonymous)
+		if err != nil {
+			return
+		}
+	}
+
+	if old.Auth != repo.Auth {
+		err = db.UpdateField(repo, "Auth", repo.Auth)
+		if err != nil {
+			return
+		}
+	}
+
 	return db.Update(repo)
 }

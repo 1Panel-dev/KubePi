@@ -28,7 +28,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {deleteRepo, listRepos} from "@/api/charts"
+import {deleteRepo, listRepos, syncRepo} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
 
@@ -58,6 +58,21 @@ export default {
           },
           click: (row) => {
             this.onEdit(row)
+          }
+        },
+        {
+          label: this.$t("commons.button.sync"),
+          icon: "el-icon-refresh",
+          disabled: () => {
+            return !checkPermissions({
+              scope: "cluster",
+              apiGroup: "kubepi.org",
+              resource: "appmarkets",
+              verb: "update"
+            })
+          },
+          click: (row) => {
+            this.sync(row.name)
           }
         },
         {
@@ -114,6 +129,17 @@ export default {
         }).finally(() => {
           this.isSubmitGoing = false
         })
+      })
+    },
+    sync (name) {
+      this.loading = true
+      syncRepo(this.cluster, name).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.sync_success"),
+        })
+      }).finally(() => {
+        this.loading = false
       })
     }
   },

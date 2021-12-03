@@ -54,6 +54,7 @@ const message = {
       scale: "伸缩",
       restart: "重启",
       modifying_version: "修改镜像版本",
+      sync: "同步"
     },
     table: {
       name: "名称",
@@ -104,6 +105,7 @@ const message = {
       create_success: "创建成功",
       update_success: "修改成功",
       create_failed: "创建失败",
+      sync_success: "同步成功"
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",

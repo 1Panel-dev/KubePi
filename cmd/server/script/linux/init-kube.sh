@@ -24,7 +24,7 @@ mkdir -p .kube
 export HOME=/nonexistent
 
 
-code=`curl -w %{http_code} -s -o ~/.kube/config http://localhost/api/v1/webkubectl/session?token=${arg1}`
+code=`curl -w %{http_code} -s -o ~/.kube/config http://localhost/kubepi/api/v1/webkubectl/session?token=${arg1}`
 
 if [[ $code -ne '200' ]];then
     echo "download kubeconfig failed"

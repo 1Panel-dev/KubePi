@@ -23,7 +23,7 @@
             <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image"/>
           </el-form-item>
           <el-form-item :label="$t('business.workload.container_image')" prop="image" v-else>
-            <el-select v-model="form.image" @change="changeImage(form.image)" style="width: 100%">
+            <el-select v-model="form.image" @change="changeImage(form.image)" style="width: 100%" filterable>
               <el-option v-for="(item,index) in repo.images" :key="index" :value="item" :label="item">
               </el-option>
             </el-select>
