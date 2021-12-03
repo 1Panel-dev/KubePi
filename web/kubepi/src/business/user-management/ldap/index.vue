@@ -62,7 +62,9 @@ export default {
   props: {},
   data () {
     return {
-      form: {},
+      form: {
+        mapping: "{\"Name\":\"sAMAccountName\",\"NickName\":\"cn\",\"Email\":\"mail\"}"
+      },
       loading: false,
       rules: {
         address: [Rule.RequiredRule],
@@ -140,9 +142,6 @@ export default {
       getLdap().then((res) => {
         if (res.data.length > 0) {
           this.form = res.data[0]
-        }
-        if (this.form.mapping === "") {
-          this.form.mapping = "{\"Name\":\"sAMAccountName\",\"NickName\":\"cn\",\"Email\":\"mail\"}"
         }
       }).finally(() => {
         this.loading = false
