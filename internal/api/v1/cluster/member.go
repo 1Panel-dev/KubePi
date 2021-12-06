@@ -202,30 +202,36 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			UserRef:    req.Name,
 			ClusterRef: name,
 		}
-		c, err := h.clusterService.Get(name, common.DBOptions{})
+
+		tx, err := server.DB().Begin(true)
+		c, err := h.clusterService.Get(name, common.DBOptions{DB: tx})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
+
 		k := kubernetes.NewKubernetes(c)
 		cert, err := k.CreateCommonUser(req.Name)
 		if err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
 			return
 		}
 		binding.Certificate = cert
-		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{}); err != nil {
+		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{DB: tx}); err != nil {
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
+			ctx.Values().Set("message", "unable to complete authorization")
 			return
 		}
 		// 创建clusterrolebinding
 		for i := range req.ClusterRoles {
 			if err := k.CreateOrUpdateClusterRoleBinding(req.ClusterRoles[i], req.Name, false); err != nil {
+				_ = tx.Rollback()
 				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err)
+				ctx.Values().Set("message", "unable to complete authorization")
 				return
 			}
 		}
@@ -233,12 +239,14 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 		for i := range req.NamespaceRoles {
 			for j := range req.NamespaceRoles[i].Roles {
 				if err := k.CreateOrUpdateRolebinding(req.NamespaceRoles[i].Namespace, req.NamespaceRoles[i].Roles[j], req.Name, false); err != nil {
+					_ = tx.Rollback()
 					ctx.StatusCode(iris.StatusInternalServerError)
-					ctx.Values().Set("message", err)
+					ctx.Values().Set("message", err.Error())
 					return
 				}
 			}
 		}
+		_ = tx.Commit()
 		ctx.Values().Set("data", req)
 	}
 }
@@ -282,16 +290,10 @@ func (h *Handler) DeleteClusterMember() iris.Handler {
 		}
 		k := kubernetes.NewKubernetes(c)
 		if err := k.CleanManagedClusterRoleBinding(memberName); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
+			server.Logger().Errorf("can not delete cluster member %s : %s", memberName, err)
 		}
 		if err := k.CleanManagedRoleBinding(memberName); err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
+			server.Logger().Errorf("can not delete cluster member %s : %s", memberName, err)
 		}
 		_ = tx.Commit()
 	}
