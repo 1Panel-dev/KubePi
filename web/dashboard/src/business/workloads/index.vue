@@ -166,7 +166,7 @@
           </el-tab-pane>
 
           <el-tab-pane label="Service" name="Service" v-if="hasService()">
-            <ko-service-add ref="service_add"/>
+            <ko-service-add ref="service_add" :serviceObj="serviceForm" />
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -681,6 +681,7 @@ export default {
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
+          this.loading = false
           this.$router.push({ name: backUrl })
         })
         .catch(() => {
@@ -688,6 +689,7 @@ export default {
             type: "error",
             message: this.$t("commons.msg.create_failed"),
           })
+          this.loading = false
         })
     },
     onEdit (data) {

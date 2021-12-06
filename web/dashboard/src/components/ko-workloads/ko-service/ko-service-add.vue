@@ -117,12 +117,55 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import { parseArryToObj } from "@/utils/objArryParse"
+import { parseArryToObj, parseObjToArry } from "@/utils/objArryParse"
 
 export default {
   name: "KoServiceAdd",
   components: { KoFormItem },
-  props: {},
+  props: {
+    serviceObj: Object,
+  },
+  watch: {
+    serviceObj: {
+      handler(newObj) {
+        if (newObj) {
+          this.form = newObj
+          if (this.form.spec?.type) {
+            this.serviceType = this.form.spec.type
+          }
+          if (this.form.metadata?.annotations) {
+            this.annotations = parseObjToArry(this.form.metadata.annotations)
+          }
+          this.externalIPs = []
+          if (this.form.spec?.externalIPs) {
+            for (const ip of this.form.spec.externalIPs) {
+              this.externalIPs.push({ value: ip })
+            }
+          }
+          this.ports = []
+          if (this.form.spec?.ports) {
+            for (const item of this.form.spec.ports) {
+              var itemPo = {}
+              itemPo.name = item.name || undefined
+              itemPo.port = item.port || undefined
+              itemPo.protocol = item.protocol || undefined
+              itemPo.targetPort = item.targetPort || undefined
+              itemPo.nodePort = item.nodePort || undefined
+              this.ports.push({
+                name: item.name,
+                port: item.port,
+                protocol: item.protocol,
+                targetPort: item.targetPort,
+                nodePort: item.nodePort,
+              })
+            }
+          }
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   data() {
     return {
       cluster: "",
@@ -213,6 +256,7 @@ export default {
       for (const item of this.externalIPs) {
         this.form.spec.externalIPs.push(item.value)
       }
+      this.form.spec.ports = []
       for (const item of this.ports) {
         var itemPo = {}
         itemPo.name = item.name || undefined
