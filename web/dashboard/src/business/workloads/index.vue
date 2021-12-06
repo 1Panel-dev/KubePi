@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading.fullscreen.lock="loading">
     <br>
     <div v-if="!showYaml">
       <el-row :gutter="10" class="row-box">
@@ -166,7 +166,7 @@
           </el-tab-pane>
 
           <el-tab-pane label="Service" name="Service" v-if="hasService()">
-            <ko-service-add ref="service_add"/>
+            <ko-service-add ref="service_add" :serviceObj="serviceForm" />
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -692,6 +692,7 @@ export default {
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
+          this.loading = false
           this.$router.push({ name: backUrl })
         })
         .catch(() => {
@@ -699,6 +700,7 @@ export default {
             type: "error",
             message: this.$t("commons.msg.create_failed"),
           })
+          this.loading = false
         })
     },
     onEdit (data) {

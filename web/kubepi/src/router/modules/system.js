@@ -6,7 +6,7 @@ const SystemLog = {
   component: Layout,
   name: "Systems",
   requirePermission: {
-    resource: "system",
+    resource: "systems",
     verb: "list"
   },
   meta: {

@@ -213,9 +213,10 @@ export default {
       params.container = this.terminal.container
       params.pretty = true
       params.timestamps = true
-      console.log(this.form.limitDate)
       if (this.form.limitDate) {
-        params.sinceSeconds = new Date().getTime() - this.form.limitDate.getTime()
+        if (Math.floor((new Date().getTime() - this.form.limitDate.getTime()) / 1000) > 0) {
+          params.sinceSeconds = Math.floor((new Date().getTime() - this.form.limitDate.getTime()) / 1000)
+        }
       }
       if (this.form.limitBytes) {
         params.limitBytes = this.form.limitBytes * 1024 * 1024

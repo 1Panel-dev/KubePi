@@ -1,49 +1,33 @@
 <template>
-  <div class="sidebar-logo-container"
-       :class="{'collapse':collapse}">
-    <transition name="sidebar-logo-fade"
-                mode="out-in">
-      <div v-if="collapse"
-           key="collapse"
-           class="sidebar-logo-link"
-           to="/">
-        <img v-if="collapseLogo"
-             :src="collapseLogo"
-             class="sidebar-logo"
-             alt="Sidebar Logo">
-      </div>
-      <div v-else
-           key="expand"
-           class="sidebar-logo-link"
-           to="/">
-        <img v-if="logo"
-             :src="logo"
-             class="sidebar-logo"
-             alt="Sidebar Logo">
-      </div>
+  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+    <transition name="sidebar-logo-fade" mode="out-in">
+      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+        <img v-if="collapseLogo" :src="collapseLogo" class="sidebar-logo" alt="Sidebar Logo">
+      </router-link>
+      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+        <img v-if="logo" :src="logo" class="sidebar-logo" alt="Sidebar Logo">
+      </router-link>
     </transition>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'SidebarLogo',
+  name: "SidebarLogo",
   props: {
     collapse: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
-  created() {
-  },
+  created() {},
   data() {
     return {
-      title: 'FIT2CLOUD',
-      logo: require('@/assets/KubePi-red.png'),
-      collapseLogo: require('@/assets/KubePi-assist-red.png')
+      title: "FIT2CLOUD",
+      logo: require("@/assets/KubePi-red.png"),
+      collapseLogo: require("@/assets/KubePi-assist-red.png"),
     }
-  }
+  },
 }
 </script>
 
@@ -63,7 +47,7 @@ export default {
     right: #{$sidebar-close-width / 4};
     height: 1px;
     width: calc(100% - #{$sidebar-close-width / 2});
-    background-color: hsla(0, 0%, 100%, .5);
+    background-color: hsla(0, 0%, 100%, 0.5);
   }
 
   & .sidebar-logo-link {
