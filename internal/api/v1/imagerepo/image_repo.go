@@ -111,11 +111,13 @@ func (h *Handler) DeleteRepo() iris.Handler {
 		if err := h.imageRepoService.Delete(imageRepoName, txOptions); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
+			_ = tx.Rollback()
 			return
 		}
-		if err := h.clusterRepoService.DeleteByRepo(imageRepoName, txOptions); err != nil {
+		if err := h.clusterRepoService.DeleteByRepo(imageRepoName, txOptions); err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
+			_ = tx.Rollback()
 			return
 		}
 		_ = tx.Commit()
