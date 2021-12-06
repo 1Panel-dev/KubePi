@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading.fullscreen.lock="loading">
     <br>
     <div v-if="!showYaml">
       <el-row :gutter="10" class="row-box">
