@@ -656,11 +656,6 @@ export default {
         }
       }
     },
-    checkSecret: async function(){
-        const res = await getSecret(this.clusterName,this.form.metadata.namespace,this.secret.metadata.name)
-        return res
-    },
-
     onCreate (data) {
       var backUrl = this.toggleCase() + "s"
       if (data.kind === "List") {
