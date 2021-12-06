@@ -85,6 +85,9 @@ export default {
         .then((res) => {
           this.loading = true
           this.form = res
+          if (this.showYaml) {
+            this.yaml = JSON.parse(JSON.stringify(this.form))
+          }
         })
         .finally(() => {
           this.loading = false

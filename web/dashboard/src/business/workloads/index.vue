@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading="loading">
+  <layout-content :header="$t('commons.button.edit')" :back-to="{ name: (toggleCase()+'s') }" v-loading.fullscreen.lock="loading">
     <br>
     <div v-if="!showYaml">
       <el-row :gutter="10" class="row-box">
@@ -166,7 +166,7 @@
           </el-tab-pane>
 
           <el-tab-pane label="Service" name="Service" v-if="hasService()">
-            <ko-service-add ref="service_add"/>
+            <ko-service-add ref="service_add" :serviceObj="serviceForm" />
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -218,8 +218,8 @@ import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import KoServiceAdd from "@/components/ko-workloads/ko-service/ko-service-add.vue"
 
-import {getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad, createSecret} from "@/api/workloads"
-import {listSecretsWithNs} from "@/api/secrets"
+import {getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad} from "@/api/workloads"
+import {getSecret, listSecretsWithNs, createSecret} from "@/api/secrets"
 import {listConfigMapsWithNs} from "@/api/configmaps"
 import {listStorageClasses} from "@/api/storageclass"
 import {listServicesWithNs} from "@/api/services"
@@ -649,6 +649,11 @@ export default {
         }
       }
     },
+    checkSecret: async function(){
+        const res = await getSecret(this.clusterName,this.form.metadata.namespace,this.secret.metadata.name)
+        return res
+    },
+
     onCreate (data) {
       var backUrl = this.toggleCase() + "s"
       if (data.kind === "List") {
@@ -662,7 +667,13 @@ export default {
       }
       let ps = []
       if (this.secret) {
-        ps.push(createSecret(this.clusterName,this.form.metadata.namespace,this.secret))
+        this.checkSecret().then(() => {
+          this.secret = {}
+        },error => {
+          if (error.response.data.code === 404) {
+            ps.push(createSecret(this.clusterName,this.form.metadata.namespace,this.secret))
+          }
+        })
       }
       for (const item of this.batchCreateForm.items) {
         if (item.kind !== 'Service' && this.secret?.metadata?.name) {
@@ -681,6 +692,7 @@ export default {
             type: "success",
             message: this.$t("commons.msg.create_success"),
           })
+          this.loading = false
           this.$router.push({ name: backUrl })
         })
         .catch(() => {
@@ -688,6 +700,7 @@ export default {
             type: "error",
             message: this.$t("commons.msg.create_failed"),
           })
+          this.loading = false
         })
     },
     onEdit (data) {

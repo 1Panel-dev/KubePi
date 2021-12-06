@@ -136,7 +136,7 @@ export default {
         apiVersion: "v1",
         kind: "Secret",
         metadata: {
-          name: workload + "-" + this.repo.name,
+          name: "ko-" + this.repo.name + "-secret",
           namespace: namespace,
         },
         data: data,

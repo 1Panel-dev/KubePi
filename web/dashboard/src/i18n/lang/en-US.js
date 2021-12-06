@@ -526,6 +526,7 @@ const message = {
       kind: "Kind",
       name: "Name",
       split_help: "Multiple values are separated by commas",
+      best_effort: "The {0} scope restricts a quota to tracking the following resource:",
     },
     access_control: {
       access_control: "Access Control",

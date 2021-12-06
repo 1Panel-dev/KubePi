@@ -528,6 +528,7 @@ const message = {
       kind: "类型",
       name: "名称",
       split_help: "多个值时以逗号分隔",
+      best_effort: "{0} 范围限制了跟踪以下资源的配额:",
     },
     access_control: {
       access_control: "访问控制",
