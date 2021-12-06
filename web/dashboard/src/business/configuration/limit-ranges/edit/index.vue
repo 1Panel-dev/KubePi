@@ -81,6 +81,9 @@ export default {
       getLimitRange(this.cluster, this.namespace, this.name).then((res) => {
         this.form = res
         this.loading = false
+        if (this.showYaml) {
+          this.yaml = JSON.parse(JSON.stringify(this.form))
+        }
       })
     },
     gatherFormData() {
