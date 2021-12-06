@@ -74,12 +74,12 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 
 		if req.Name == "" {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("username can not be none"))
+			ctx.Values().Set("message","username can not be none")
 			return
 		}
 		if len(req.Rules) == 0 {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("must select one rule"))
+			ctx.Values().Set("message", "must select one rule")
 			return
 		}
 

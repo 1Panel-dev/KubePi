@@ -102,7 +102,7 @@
               <el-tab-pane :label="$t('business.workload.others')" name="others">
                 <ko-spec-base :isReadOnly="readOnly" ref="ko_spec_base" :resourceType="type"
                               :specBaseParentObj="podSpec" :serviceList="service_of_ns"
-                              :secretList="secret_list_of_ns"/>
+                              :secretList="secret_list_of_ns" :repoList="repo_list"/>
               </el-tab-pane>
             </el-tabs>
           </el-tab-pane>
@@ -119,7 +119,7 @@
                      v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
                 <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList"
-                              :containerParentObj="currentContainer"/>
+                              :containerParentObj="currentContainer" :metadata="podMetadata" :repoList="repo_list"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.command')" name="Command">
@@ -218,8 +218,9 @@ import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 
 import KoServiceAdd from "@/components/ko-workloads/ko-service/ko-service-add.vue"
 
-import {getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad, createSecret} from "@/api/workloads"
-import {listSecretsWithNs} from "@/api/secrets"
+import {listClusterReposDetail} from "../../../../kubepi/src/api/clusters"
+import {getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad} from "@/api/workloads"
+import {listSecretsWithNs, createSecret} from "@/api/secrets"
 import {listConfigMapsWithNs} from "@/api/configmaps"
 import {listStorageClasses} from "@/api/storageclass"
 import {listServicesWithNs} from "@/api/services"
@@ -279,6 +280,7 @@ export default {
       namespace_list: [],
       node_list: [],
       secret_list_of_ns: [],
+      repo_list: [],
       config_map_list_of_ns: [],
       sc_list: [],
       pvc_list_of_ns: [],
@@ -323,7 +325,7 @@ export default {
       selectRules: [Rule.SelectRule],
       requiredRules: [Rule.RequiredRule],
       nameRules: [Rule.CommonNameRule],
-      secret: null
+      secretCreateList: []
     }
   },
   methods: {
@@ -414,6 +416,12 @@ export default {
       }
       listConfigMapsWithNs(this.clusterName, ns).then((res) => {
         this.config_map_list_of_ns = res.items
+      })
+    },
+    loadRepos () {
+      this.repo_list = []
+      listClusterReposDetail(this.clusterName).then(res => {
+        this.repo_list = res.data
       })
     },
     loadNodes () {
@@ -545,8 +553,8 @@ export default {
       this.$refs.ko_node_scheduling.transformation(this.podSpec)
       this.$refs.ko_toleration.transformation(this.podSpec)
       this.$refs.ko_spec_security.transformation(this.podSpec)
-      this.$refs.ko_spec_base.transformation(this.podSpec)
-      this.$refs.ko_container.transformation(this.currentContainer)
+      this.$refs.ko_container.transformation(this.currentContainer, this.podMetadata)
+      this.secretCreateList = this.$refs.ko_spec_base.transformation(this.podSpec, this.podMetadata)
       this.$refs.ko_ports.transformation(this.currentContainer)
       this.$refs.ko_command.transformation(this.currentContainer)
       this.$refs.ko_environment.transformation(this.currentContainer)
@@ -599,7 +607,6 @@ export default {
       if (this.hasService()) {
         this.serviceForm = this.$refs.service_add.transformation(this.form.metadata)
       }
-      this.secret = this.$refs.ko_container.getSecret(this.form.metadata.name,this.form.metadata.namespace)
       return JSON.parse(JSON.stringify(this.form))
     },
     isReplicasShow () {
@@ -649,6 +656,11 @@ export default {
         }
       }
     },
+    checkSecret: async function(){
+        const res = await getSecret(this.clusterName,this.form.metadata.namespace,this.secret.metadata.name)
+        return res
+    },
+
     onCreate (data) {
       var backUrl = this.toggleCase() + "s"
       if (data.kind === "List") {
@@ -661,17 +673,12 @@ export default {
         }
       }
       let ps = []
-      if (this.secret) {
-        ps.push(createSecret(this.clusterName,this.form.metadata.namespace,this.secret))
+      if (this.secretCreateList.length !== 0) {
+        for(const sec of this.secretCreateList) {
+          ps.push(createSecret(this.clusterName,this.form.metadata.namespace,sec))
+        }
       }
       for (const item of this.batchCreateForm.items) {
-        if (item.kind !== 'Service' && this.secret?.metadata?.name) {
-          if (item.kind !== "CronJob") {
-            item.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
-          } else {
-            item.spec.jobTemplate.spec.template.spec.imagePullSecrets = [{name:this.secret.metadata.name}]
-          }
-        }
         ps.push(createWorkLoad(this.clusterName, item.kind.toLowerCase() + "s", item.metadata.namespace, item))
       }
 
@@ -778,6 +785,7 @@ export default {
     this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
     this.loadNodes()
+    this.loadRepos()
     this.loadNamespace()
     if (!this.isCreateOperation()) {
       this.name = this.$route.params.name

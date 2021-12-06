@@ -1,17 +1,21 @@
 package clusterrepo
 
 import (
+	"time"
+
 	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
+	V1ImageRepo "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/imagerepo"
+	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Service interface {
 	List(cluster string, options common.DBOptions) (result []V1ClusterRepo.ClusterRepo, err error)
+	ListInfo(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error)
 	Create(clusterRepo *V1ClusterRepo.ClusterRepo, options common.DBOptions) error
 	Delete(cluster, repo string, options common.DBOptions) error
 	DeleteByCluster(cluster string, options common.DBOptions) error
@@ -38,6 +42,28 @@ func (s *service) List(cluster string, options common.DBOptions) (result []V1Clu
 		return
 	}
 	return
+}
+
+func (s *service) ListInfo(cluster string, options common.DBOptions) ([]V1ImageRepo.ImageRepo, error) {
+	var result []V1ImageRepo.ImageRepo
+	db := s.GetDB(options)
+	query := db.Select(q.Eq("Cluster", cluster))
+	var clusterrepos []V1ClusterRepo.ClusterRepo
+	if err := query.Find(&clusterrepos); err != nil && err != storm.ErrNotFound {
+		return result, err
+	}
+	if len(clusterrepos) == 0 {
+		return result, nil
+	}
+	group := make([]string, 0)
+	for _, repo := range clusterrepos {
+		group = append(group, repo.Repo)
+	}
+	query2 := db.Select(q.In("Name", group))
+	if err := query2.Find(&result); err != nil {
+		return result, err
+	}
+	return result, nil
 }
 
 func (s *service) Create(clusterRepo *V1ClusterRepo.ClusterRepo, options common.DBOptions) error {

@@ -13,7 +13,7 @@
           <el-form-item :label="$t('business.workload.list_image')">
             <el-select style="width: 100%" v-model="repo.name" @change="changeRepo(repo.name)">
               <el-option :value="''" :label="$t('business.workload.repo_disabled')"></el-option>
-              <el-option v-for="(item,index) in repos" :key="index" :value="item.repo" :label="item.repo">
+              <el-option v-for="(item,index) in repos" :key="index" :value="item.name" :label="item.name">
               </el-option>
             </el-select>
           </el-form-item>
@@ -43,7 +43,6 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import Rule from "@/utils/rules"
-import {listClusterRepos} from "../../../../kubepi/src/api/clusters"
 import {getRepo, listImages} from "../../../../kubepi/src/api/imagerepos"
 
 export default {
@@ -53,8 +52,47 @@ export default {
     containerParentObj: Object,
     secretList: Array,
     isReadOnly: Boolean,
+    repoList: Array,
+    metadata: Object,
   },
-  watch: {},
+  watch: {
+    repoList: {
+      handler(newObj) {
+        this.repos = []
+        if (newObj) {
+          this.repos = newObj
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+    metadata: {
+      handler(newObj) {
+        if (newObj?.annotations){
+          this.cluster = this.$route.query.cluster
+          let itemName = "korepo-" + this.containerParentObj.name + "/"
+          for (const key in newObj.annotations) {
+            if (key.indexOf(itemName) !== -1) {
+              this.repo.name = key.replace(itemName, "")
+              this.changeRepo(this.repo.name)
+              break
+            }
+          }
+          if (this.containerParentObj.name) {
+            this.form.name = this.containerParentObj.name
+          }
+          if (this.containerParentObj.image) {
+            this.form.image = this.containerParentObj.image
+          }
+          if (this.containerParentObj.imagePullPolicy) {
+            this.form.imagePullPolicy = this.containerParentObj.imagePullPolicy
+          }
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   data () {
     return {
       form: {
@@ -92,15 +130,18 @@ export default {
       })
       return isValid
     },
-    transformation (parentFrom) {
+    transformation (parentFrom, metadata) {
       parentFrom.name = this.form.name || undefined
       parentFrom.image = this.form.image || undefined
       parentFrom.imagePullPolicy = this.form.imagePullPolicy || undefined
-    },
-    listRepos () {
-      listClusterRepos(this.cluster).then(res => {
-        this.repos = res.data
-      })
+      if (this.repo.name === "") {
+        return 
+      }
+      if (!metadata.annotations) {
+        metadata.annotations = {}
+      }
+      let secrets = "korepo-" + parentFrom.name + "/" + this.repo.name
+      metadata.annotations[secrets] = this.form.image
     },
     changeRepo (repo) {
       if (repo === "") {
@@ -116,53 +157,12 @@ export default {
         this.repo.repo = res.data
       })
     },
-    getSecret (workload, namespace) {
-      if (this.repo.name === "" || this.repo.repo?.allowAnonymous) {
-        return null
-      }
-      const auths = {
-        auths: {
-          [this.repo.repo.endPoint]: {
-            username: this.repo.repo.credential.username,
-            password: this.repo.repo.credential.password
-          }
-        }
-      }
-      const { Base64 } = require("js-base64")
-      const data = {
-        [".dockerconfigjson"]: Base64.encode(JSON.stringify(auths))
-      }
-      return {
-        apiVersion: "v1",
-        kind: "Secret",
-        metadata: {
-          name: workload + "-" + this.repo.name,
-          namespace: namespace,
-        },
-        data: data,
-        type: "kubernetes.io/dockerconfigjson"
-      }
-    },
     changeImage (image) {
       this.form.image = image
     }
   },
-  mounted () {
-    if (this.containerParentObj) {
-      if (this.containerParentObj.name) {
-        this.form.name = this.containerParentObj.name
-      }
-      if (this.containerParentObj.image) {
-        this.form.image = this.containerParentObj.image
-      }
-      if (this.containerParentObj.imagePullPolicy) {
-        this.form.imagePullPolicy = this.containerParentObj.imagePullPolicy
-      }
-    }
-  },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listRepos()
   }
 }
 </script>

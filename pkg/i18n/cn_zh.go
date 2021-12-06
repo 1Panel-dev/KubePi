@@ -14,4 +14,5 @@ var zhCNMapping = TextMapping{
 	"can not match original password":       "无法匹配原密码",
 	"username already exists":               "用户名已存在",
 	"email already exists":                  "邮箱已存在",
+	"unable to complete authorization":      "无法完成授权，请检查用户名是否符合规范: /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/",
 }
