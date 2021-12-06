@@ -144,7 +144,3 @@ export function updateWorkLoad (cluster_name, type, namespace, name, data) {
       )
   }
 }
-
-export function createSecret (cluster_name, namespace, data) {
-  return post(`/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/secrets`, data)
-}

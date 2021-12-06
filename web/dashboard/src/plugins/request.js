@@ -78,8 +78,10 @@ instance.interceptors.response.use(response => {
         console.log("error: " + error)
         msg = error.message
     }
-    if (error.config.url.indexOf("metrics.k8s.io") < 0) {
-      $error(msg)
+    if (error.config.url.indexOf("metrics.k8s.io") < 0 ) {
+      if (!(error.response.data?.details?.kind === 'secrets' && error.response.data?.code === 404))  {
+        $error(msg)
+      }
     }
     return Promise.reject(error)
 })
