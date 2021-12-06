@@ -12,7 +12,10 @@
             <td>
               <ko-form-item itemType="select2" @change="changeType" v-model="row.key" :selections="resource_list" />
             </td>
-            <td>
+            <td v-if="loadSuffix(row) !== 'none'">
+              <ko-form-item :deviderName="loadSuffix(row)" itemType="number" v-model="row.value" />
+            </td>
+            <td v-else>
               <ko-form-item itemType="input" v-model="row.value" />
             </td>
             <td>
@@ -85,7 +88,6 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
-import { parseArryToObj, parseObjToArry } from "@/utils/objArryParse"
 
 export default {
   name: "KoLimitRange",
@@ -98,7 +100,19 @@ export default {
     resourceQuotaObj: {
       handler(newVal) {
         if (newVal) {
-          this.hards = parseObjToArry(newVal.hard)
+          let data = []
+          if (newVal.hard) {
+            for (const key in newVal.hard) {
+              if (Object.prototype.hasOwnProperty.call(newVal.hard, key)) {
+                data.push({
+                  key: key,
+                  value: newVal.hard[key].replace("Gi", "").replace("Mi", "").replace("m", ""),
+                })
+              }
+            }
+          }
+
+          this.hards = data
           if (newVal.scopeSelector?.matchExpressions) {
             for (const item of newVal.scopeSelector.matchExpressions) {
               this.selectors.push({
@@ -176,8 +190,43 @@ export default {
     isOperatorOnlyExist(scopeName) {
       return scopeName === "Terminating" || scopeName === "NotTerminating" || scopeName === "BestEffort" || scopeName === "NotBestEffort"
     },
+    loadSuffix(row) {
+      if (row.key.indexOf(".memory") !== -1) {
+        return "Mi"
+      } else if (row.key.indexOf(".cpu") !== -1) {
+        return "mCPU"
+      } else if (row.key.indexOf(".storage") !== -1) {
+        return "Gi"
+      } else {
+        return "none"
+      }
+    },
     transformation(spec) {
-      spec.hard = parseArryToObj(this.hards)
+      let obj = {}
+      for (let i = 0; i < this.hards.length; i++) {
+        if (this.hards[i].key !== "") {
+          switch (this.loadSuffix(this.hards[i])) {
+            case "Mi": {
+              obj[this.hards[i].key] = this.hards[i].value + "Mi"
+              break
+            }
+            case "mCPU": {
+              obj[this.hards[i].key] = this.hards[i].value + "m"
+              break
+            }
+            case "Gi": {
+              obj[this.hards[i].key] = this.hards[i].value + "Gi"
+              break
+            }
+            default: {
+              obj[this.hards[i].key] = this.hards[i].value
+              break
+            }
+          }
+        }
+      }
+
+      spec.hard = obj
       if (this.selectors.length === 0) {
         delete spec.scopeSelector
         return
