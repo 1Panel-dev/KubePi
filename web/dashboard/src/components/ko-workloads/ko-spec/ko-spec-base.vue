@@ -134,7 +134,7 @@ export default {
       parentFrom.terminationGracePeriodSeconds = this.form.terminationGracePeriodSeconds || undefined
 
       if (!metadata.annotations) {
-        return
+        return this.secretCreate
       }
       let imagePullSecrets = []
       for (const item of this.form.imagePullSecrets) {
