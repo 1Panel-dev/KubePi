@@ -50,6 +50,7 @@ export default {
   components: { KoFormItem },
   props: {
     containerParentObj: Object,
+    containerType: String,
     secretList: Array,
     isReadOnly: Boolean,
     repoList: Array,
@@ -70,22 +71,18 @@ export default {
       handler(newObj) {
         if (newObj?.annotations){
           this.cluster = this.$route.query.cluster
-          let itemName = "korepo-" + this.containerParentObj.name + "/"
+          let itemName = ""
+          if(this.containerType === "initContainers") {
+            itemName = "korepo-init-" + this.containerParentObj.name + "/"
+          } else {
+            itemName = "korepo-" + this.containerParentObj.name + "/"
+          }
           for (const key in newObj.annotations) {
             if (key.indexOf(itemName) !== -1) {
               this.repo.name = key.replace(itemName, "")
               this.changeRepo(this.repo.name)
               break
             }
-          }
-          if (this.containerParentObj.name) {
-            this.form.name = this.containerParentObj.name
-          }
-          if (this.containerParentObj.image) {
-            this.form.image = this.containerParentObj.image
-          }
-          if (this.containerParentObj.imagePullPolicy) {
-            this.form.imagePullPolicy = this.containerParentObj.imagePullPolicy
           }
         }
       },
@@ -140,7 +137,12 @@ export default {
       if (!metadata.annotations) {
         metadata.annotations = {}
       }
-      let secrets = "korepo-" + parentFrom.name + "/" + this.repo.name
+      let secrets = ""
+      if (this.containerType === "standardContainers") {
+        secrets = "korepo-" + parentFrom.name + "/" + this.repo.name
+      } else {
+        secrets = "korepo-init-" + parentFrom.name + "/" + this.repo.name
+      }
       metadata.annotations[secrets] = this.form.image
     },
     changeRepo (repo) {
@@ -159,6 +161,19 @@ export default {
     },
     changeImage (image) {
       this.form.image = image
+    }
+  },
+  mounted () {
+    if (this.containerParentObj) {
+      if (this.containerParentObj.name) {
+        this.form.name = this.containerParentObj.name
+      }
+      if (this.containerParentObj.image) {
+        this.form.image = this.containerParentObj.image
+      }
+      if (this.containerParentObj.imagePullPolicy) {
+        this.form.imagePullPolicy = this.containerParentObj.imagePullPolicy
+      }
     }
   },
   created () {

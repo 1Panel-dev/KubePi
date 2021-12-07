@@ -19,9 +19,9 @@
             <span>{{form.spec.dnsPolicy}}</span>
           </el-form-item>
         </el-col>
-        <el-col v-if="form.spec.hostNetwork" :span="12">
+        <el-col v-if="hostNetwork" :span="12">
           <el-form-item style="margin-left: 20px;" :label="$t('business.workload.host_network')">
-            <span>{{form.spec.hostNetwork}}</span>
+            <span>{{hostNetwork}}</span>
           </el-form-item>
         </el-col>
 
@@ -53,10 +53,10 @@ export default {
         if (newYamlInfo) {
           if (newYamlInfo.spec) {
             this.form = newYamlInfo
-            if (this.form.spec.hostNetwork == undefined) {
-              this.form.spec.hostNetwork = this.$t("business.workload.no")
+            if (newYamlInfo.spec.hostNetwork == undefined) {
+              this.hostNetwork = this.$t("business.workload.no")
             } else {
-              this.form.spec.hostNetwork = this.form.spec.hostNetwork ? this.$t("business.workload.yes") : this.$t("business.workload.no")
+              this.hostNetwork = this.hostNetwork ? this.$t("business.workload.yes") : this.$t("business.workload.no")
             }
             this.loading = false
           }
@@ -72,6 +72,7 @@ export default {
       form: {
         spec: {},
       },
+      hostNetwork: "",
     }
   },
 }

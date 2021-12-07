@@ -119,7 +119,7 @@
                      v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
                 <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList"
-                              :containerParentObj="currentContainer" :metadata="podMetadata" :repoList="repo_list"/>
+                              :containerParentObj="currentContainer" :containerType="currentContainerType" :metadata="podMetadata" :repoList="repo_list"/>
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.command')" name="Command">

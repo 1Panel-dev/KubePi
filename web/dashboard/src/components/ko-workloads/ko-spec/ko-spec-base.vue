@@ -78,7 +78,6 @@ export default {
       handler(newObj) {
         this.form.imagePullSecrets = []
         if (newObj.imagePullSecrets) {
-          console.log(newObj.imagePullSecrets)
           for (const sec of newObj.imagePullSecrets) {
             this.form.imagePullSecrets.push(sec.name)
           }
@@ -121,7 +120,12 @@ export default {
   },
   methods: {
     isJobs() {
-      return this.resourceType === "jobs" || this.resourceType === "cronjobs"
+      if (this.resourceType === "jobs" || this.resourceType === "cronjobs") {
+        this.form.restartPolicy = "OnFailure"
+        return true
+      }
+      this.form.restartPolicy = "Always"
+      return false
     },
     transformation(parentFrom, metadata) {
       this.secretCreate = []
@@ -134,7 +138,7 @@ export default {
       }
       let imagePullSecrets = []
       for (const item of this.form.imagePullSecrets) {
-        imagePullSecrets.push({name: item})
+        imagePullSecrets.push({ name: item })
       }
       for (const key in metadata.annotations) {
         if (key.indexOf("korepo-") !== -1 && key.indexOf("/") !== -1) {
@@ -152,12 +156,15 @@ export default {
       return this.secretCreate
     },
     existSecret(secretName, imagePullSecrets) {
+      if (imagePullSecrets.length === 0) {
+        return false
+      }
       for (const sec of imagePullSecrets) {
         if (sec.name === secretName) {
           return true
         }
-        return false
       }
+      return false
     },
     addSecret(repoName, namespace, secretName) {
       let repoInfo = null
