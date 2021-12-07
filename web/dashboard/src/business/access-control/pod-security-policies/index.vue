@@ -124,11 +124,11 @@ export default {
           }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deletePSP(this.cluster, row.metadata.namespace, row.metadata.name))
+          this.ps.push(deletePSP(this.cluster, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deletePSP(this.cluster, select.metadata.namespace, select.metadata.name))
+              this.ps.push(deletePSP(this.cluster, select.metadata.name))
             }
           }
         }
