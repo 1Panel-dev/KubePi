@@ -73,9 +73,9 @@ export default {
           this.cluster = this.$route.query.cluster
           let itemName = ""
           if(this.containerType === "initContainers") {
-            itemName = "korepo-init-" + this.containerParentObj.name + "/"
+            itemName = "kubepi-repo-init-" + this.containerParentObj.name + "/"
           } else {
-            itemName = "korepo-" + this.containerParentObj.name + "/"
+            itemName = "kubepi-repo-" + this.containerParentObj.name + "/"
           }
           for (const key in newObj.annotations) {
             if (key.indexOf(itemName) !== -1) {
@@ -139,9 +139,9 @@ export default {
       }
       let secrets = ""
       if (this.containerType === "standardContainers") {
-        secrets = "korepo-" + parentFrom.name + "/" + this.repo.name
+        secrets = "kubepi-repo-" + parentFrom.name + "/" + this.repo.name
       } else {
-        secrets = "korepo-init-" + parentFrom.name + "/" + this.repo.name
+        secrets = "kubepi-repo-init-" + parentFrom.name + "/" + this.repo.name
       }
       metadata.annotations[secrets] = this.form.image
     },

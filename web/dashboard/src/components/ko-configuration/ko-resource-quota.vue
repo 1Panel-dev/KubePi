@@ -231,7 +231,7 @@ export default {
         delete spec.scopeSelector
         return
       }
-      spec.scopeSelector.matchExpressions = []
+      spec.scopeSelector = {matchExpressions: []}
       for (const scope of this.selectors) {
         spec.scopeSelector.matchExpressions.push({
           scopeName: scope.scopeName,

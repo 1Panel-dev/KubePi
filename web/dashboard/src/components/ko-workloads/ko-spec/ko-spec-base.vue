@@ -141,9 +141,9 @@ export default {
         imagePullSecrets.push({ name: item })
       }
       for (const key in metadata.annotations) {
-        if (key.indexOf("korepo-") !== -1 && key.indexOf("/") !== -1) {
+        if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
           let repoName = key.split("/")[1]
-          let secretName = "ko-" + key.split("/")[1] + "-secret"
+          let secretName = "kubepi-" + key.split("/")[1] + "-secret"
           if (!this.existSecret(secretName, imagePullSecrets)) {
             imagePullSecrets.push({ name: secretName })
           }
