@@ -54,7 +54,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ resource: "imagerepos", verb: "edit" })
+            return !checkPermissions({ resource: "imagerepos", verb: "update" })
           }
         },
         {
