@@ -88,6 +88,7 @@ const message = {
             create_success: "创建成功",
             delete_success: "删除成功",
             update_success: "修改成功",
+            duplicate_failed: "数据重复，操作失败！",
             no_data: "暂无数据",
         },
         confirm_message: {

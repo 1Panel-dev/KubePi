@@ -281,6 +281,11 @@ export default {
             updateCluster(row.name, {"labels": row.labels}).then(() => {
               row.showAddLabelVisible = false
             })
+          } else {
+            this.$message({
+              type: 'warning',
+              message: this.$t("commons.msg.duplicate_failed"),
+            });
           }
           row.showAddLabelVisible = false
         }

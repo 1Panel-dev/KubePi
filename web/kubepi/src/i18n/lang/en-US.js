@@ -84,6 +84,7 @@ const message = {
             create_success: "create success",
             delete_success: "delete success",
             update_success: "update success",
+            duplicate_failed: "The operation failed because the data is duplicate！",
             no_data: "no data",
         },
         confirm_message: {
