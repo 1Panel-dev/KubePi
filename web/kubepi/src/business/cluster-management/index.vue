@@ -31,7 +31,7 @@
       <el-table-column :label="$t('business.cluster.label')" align="left" min-width="160" fix>
         <template v-slot:default="{row}">
           <div style="font-size: 20px">
-            <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="row.k">
+            <div v-if="row.labels" :key="row.k">
               <div v-for="(key,index) in row.labels" :key="index">
 
                 <el-tag v-if="!checkPrem({resource: 'clusters', verb: 'update'})" type="info" size="mini"
@@ -46,30 +46,30 @@
 
                 <br/>
               </div>
-              <div style="padding-top: 5px;">
-                <el-popover
-                  placement="top"
-                  width="160"
-                  :title="$t('commons.button.add')+$t('business.cluster.label')"
-                  trigger="manual"
-                  v-model="row.showAddLabelVisible">
-                  <div style="text-align: right; margin: 0">
-                    <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
-                      <el-form-item size="mini" prop="key">
-                        <el-input type="text" v-model="row.form.key" placeholder="key"></el-input>
-                      </el-form-item>
-                    </el-form>
-                    <el-button size="mini" type="text" @click="row.showAddLabelVisible = false">
-                      {{ $t('commons.button.cancel') }}
-                    </el-button>
-                    <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">
-                      {{ $t('commons.button.confirm') }}
-                    </el-button>
-                  </div>
-                  <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
-                   @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
-                </el-popover>
-              </div>
+            </div>
+            <div style="padding-top: 5px;">
+              <el-popover
+                placement="top"
+                width="160"
+                :title="$t('commons.button.add')+$t('business.cluster.label')"
+                trigger="manual"
+                v-model="row.showAddLabelVisible">
+                <div style="text-align: right; margin: 0">
+                  <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
+                    <el-form-item size="mini" prop="key">
+                      <el-input type="text" v-model="row.form.key" placeholder="key"></el-input>
+                    </el-form-item>
+                  </el-form>
+                  <el-button size="mini" type="text" @click="row.showAddLabelVisible = false">
+                    {{ $t('commons.button.cancel') }}
+                  </el-button>
+                  <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">
+                    {{ $t('commons.button.confirm') }}
+                  </el-button>
+                </div>
+                <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
+                  @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
+              </el-popover>
             </div>
           </div>
         </template>
