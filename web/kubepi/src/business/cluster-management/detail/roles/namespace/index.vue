@@ -26,9 +26,9 @@
           {{ $t('commons.bool.' + row.metadata.annotations["builtin"]) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.age')" min-width="100" fix>
         <template v-slot:default="{row}">
-          {{ row.metadata.annotations["created-at"] }}
+          {{ row.metadata.annotations["created-at"] | ageFormat }}
         </template>
       </el-table-column>
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>

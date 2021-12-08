@@ -13,7 +13,7 @@
       </template>
 
 
-      <el-table-column :label="$t('commons.table.status')" min-width="100px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -28,7 +28,7 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('business.cluster.label')" align="left" min-width="200" fix>
+      <el-table-column :label="$t('business.cluster.label')" align="left" min-width="160" fix>
         <template v-slot:default="{row}">
           <div style="font-size: 20px">
             <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="row.k">
@@ -46,30 +46,30 @@
 
                 <br/>
               </div>
-            </div>
-            <div style="padding-top: 10px;">
-              <el-popover
+              <div style="padding-top: 5px;">
+                <el-popover
                   placement="top"
                   width="160"
                   :title="$t('commons.button.add')+$t('business.cluster.label')"
                   trigger="manual"
                   v-model="row.showAddLabelVisible">
-                <div style="text-align: right; margin: 0">
-                  <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
-                    <el-form-item size="mini" prop="key">
-                      <el-input type="text" v-model="row.form.key" placeholder="key"></el-input>
-                    </el-form-item>
-                  </el-form>
-                  <el-button size="mini" type="text" @click="row.showAddLabelVisible = false">
-                    {{ $t('commons.button.cancel') }}
-                  </el-button>
-                  <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">
-                    {{ $t('commons.button.confirm') }}
-                  </el-button>
-                </div>
-                <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
+                  <div style="text-align: right; margin: 0">
+                    <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
+                      <el-form-item size="mini" prop="key">
+                        <el-input type="text" v-model="row.form.key" placeholder="key"></el-input>
+                      </el-form-item>
+                    </el-form>
+                    <el-button size="mini" type="text" @click="row.showAddLabelVisible = false">
+                      {{ $t('commons.button.cancel') }}
+                    </el-button>
+                    <el-button type="primary" size="mini" @click="onAddLabelSubmit(row)">
+                      {{ $t('commons.button.confirm') }}
+                    </el-button>
+                  </div>
+                  <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
                    @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
-              </el-popover>
+                </el-popover>
+              </div>
             </div>
           </div>
         </template>
@@ -85,7 +85,7 @@
       </el-table-column>
 
 
-      <el-table-column min-width="200" fix>
+      <el-table-column min-width="180" fix>
         <template v-slot:default="{row}">
           <div>
             <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors"
@@ -105,11 +105,7 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('commons.table.creat_by')" prop="createdBy" min-width="80"
-                       fix/>
-
-
-      <el-table-column :label="$t('commons.table.imported_time')" min-width="120" fix>
+      <el-table-column :label="$t('commons.table.age')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>

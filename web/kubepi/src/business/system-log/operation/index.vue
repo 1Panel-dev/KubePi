@@ -15,7 +15,7 @@
       <el-table-column :label="$t('business.system.specific_information')" prop="specificInformation" fix />
       <el-table-column :label="$t('commons.table.created_time')" fix>
         <template v-slot:default="{row}">
-          {{ row.createAt | ageFormat }}
+          {{ row.createAt | datetimeFormat }}
         </template>
       </el-table-column>
     </complex-table>

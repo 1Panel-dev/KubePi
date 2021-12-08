@@ -21,7 +21,7 @@
       </el-table-column>
       <el-table-column :label="$t('business.image_repos.repo')" prop="repoName" min-width="100" fix>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.age')" min-width="80" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>

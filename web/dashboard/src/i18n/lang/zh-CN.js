@@ -58,7 +58,7 @@ const message = {
     },
     table: {
       name: "名称",
-      created_time: "创建时间",
+      created_time: "存活时间",
       status: "状态",
       action: "操作",
       creat_by: "创建者",

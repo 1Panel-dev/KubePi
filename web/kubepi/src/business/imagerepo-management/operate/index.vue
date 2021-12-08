@@ -2,7 +2,7 @@
   <layout-content :header="header" :back-to="{ name: 'ImageRepos' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
-      <el-col :span="10">
+      <el-col :span="12">
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :model="form" :rules="rules" label-width="250px" label-position="left">
             <el-form-item :label="$t('business.image_repos.name')" prop="name">
