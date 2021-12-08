@@ -113,6 +113,7 @@ export default {
           }
 
           this.hards = data
+          this.changeType()
           if (newVal.scopeSelector?.matchExpressions) {
             for (const item of newVal.scopeSelector.matchExpressions) {
               this.selectors.push({
@@ -240,9 +241,6 @@ export default {
         })
       }
     },
-  },
-  created() {
-    this.changeType()
   },
 }
 </script>
