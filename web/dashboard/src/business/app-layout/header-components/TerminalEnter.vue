@@ -18,7 +18,7 @@ export default {
       getTerminalSession(clusterName).then(data => {
         const token = data.data.token
         const url = `/kubepi/webkubectl/root?token=${token}`
-        open(url, "_black")
+        open(url, "_black" + Math.random())
       })
     }
   }
