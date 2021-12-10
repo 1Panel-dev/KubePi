@@ -13,16 +13,16 @@
           <el-form-item :label="$t('business.workload.list_image')">
             <el-select style="width: 100%" v-model="repo.name" @change="changeRepo(repo.name)">
               <el-option :value="''" :label="$t('business.workload.repo_disabled')"></el-option>
-              <el-option v-for="(item,index) in repos" :key="index" :value="item.repo" :label="item.repo">
+              <el-option v-for="(item,index) in repos" :key="index" :value="item.name" :label="item.name">
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item :label="$t('business.workload.container_image')" prop="image" v-if="repo.name===''">
+          <el-form-item :label="$t('business.workload.container_image')" prop="image" :rules="inputRule" v-if="repo.name===''">
             <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image"/>
           </el-form-item>
-          <el-form-item :label="$t('business.workload.container_image')" prop="image" v-else>
+          <el-form-item :label="$t('business.workload.container_image')" prop="image" :rules="selectRule" v-else>
             <el-select v-model="form.image" @change="changeImage(form.image)" style="width: 100%" filterable>
               <el-option v-for="(item,index) in repo.images" :key="index" :value="item" :label="item">
               </el-option>
@@ -43,7 +43,6 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 import Rule from "@/utils/rules"
-import {listClusterRepos} from "../../../../kubepi/src/api/clusters"
 import {getRepo, listImages} from "../../../../kubepi/src/api/imagerepos"
 
 export default {
@@ -51,10 +50,46 @@ export default {
   components: { KoFormItem },
   props: {
     containerParentObj: Object,
+    containerType: String,
     secretList: Array,
     isReadOnly: Boolean,
+    repoList: Array,
+    metadata: Object,
   },
-  watch: {},
+  watch: {
+    repoList: {
+      handler(newObj) {
+        this.repos = []
+        if (newObj) {
+          this.repos = newObj
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+    metadata: {
+      handler(newObj) {
+        if (newObj?.annotations){
+          this.cluster = this.$route.query.cluster
+          let itemName = ""
+          if(this.containerType === "initContainers") {
+            itemName = "kubepi-repo-init-" + this.containerParentObj.name + "/"
+          } else {
+            itemName = "kubepi-repo-" + this.containerParentObj.name + "/"
+          }
+          for (const key in newObj.annotations) {
+            if (key.indexOf(itemName) !== -1) {
+              this.repo.name = key.replace(itemName, "")
+              this.changeRepo(this.repo.name)
+              break
+            }
+          }
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   data () {
     return {
       form: {
@@ -70,8 +105,9 @@ export default {
       },
       rules: {
         name: [Rule.CommonNameRule],
-        image: [Rule.RequiredRule],
       },
+      selectRule: Rule.SelectRule,
+      inputRule: Rule.RequiredRule,
       image_pull_policy_list: [
         { label: "Always", value: "Always" },
         { label: "IfNotPresent", value: "IfNotPresent" },
@@ -92,15 +128,23 @@ export default {
       })
       return isValid
     },
-    transformation (parentFrom) {
+    transformation (parentFrom, metadata) {
       parentFrom.name = this.form.name || undefined
       parentFrom.image = this.form.image || undefined
       parentFrom.imagePullPolicy = this.form.imagePullPolicy || undefined
-    },
-    listRepos () {
-      listClusterRepos(this.cluster).then(res => {
-        this.repos = res.data
-      })
+      if (this.repo.name === "") {
+        return 
+      }
+      if (!metadata.annotations) {
+        metadata.annotations = {}
+      }
+      let secrets = ""
+      if (this.containerType === "standardContainers") {
+        secrets = "kubepi-repo-" + parentFrom.name + "/" + this.repo.name
+      } else {
+        secrets = "kubepi-repo-init-" + parentFrom.name + "/" + this.repo.name
+      }
+      metadata.annotations[secrets] = this.form.image
     },
     changeRepo (repo) {
       if (repo === "") {
@@ -115,33 +159,6 @@ export default {
       getRepo(repo).then(res => {
         this.repo.repo = res.data
       })
-    },
-    getSecret (workload, namespace) {
-      if (this.repo.name === "" || this.repo.repo?.allowAnonymous) {
-        return null
-      }
-      const auths = {
-        auths: {
-          [this.repo.repo.endPoint]: {
-            username: this.repo.repo.credential.username,
-            password: this.repo.repo.credential.password
-          }
-        }
-      }
-      const { Base64 } = require("js-base64")
-      const data = {
-        [".dockerconfigjson"]: Base64.encode(JSON.stringify(auths))
-      }
-      return {
-        apiVersion: "v1",
-        kind: "Secret",
-        metadata: {
-          name: "ko-" + this.repo.name + "-secret",
-          namespace: namespace,
-        },
-        data: data,
-        type: "kubernetes.io/dockerconfigjson"
-      }
     },
     changeImage (image) {
       this.form.image = image
@@ -162,7 +179,6 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
-    this.listRepos()
   }
 }
 </script>

@@ -59,7 +59,6 @@ func (c *nexusClient) ListRepos() (names []string, err error) {
 
 func (c *nexusClient) ListImages(repository string) (images []string, err error) {
 	body, _, err1 := c.HttpClient.Get(fmt.Sprintf("%s%s", ComponentUrl, repository))
-	fmt.Println(fmt.Sprintf("%s%s", ComponentUrl, repository))
 	if err1 != nil {
 		err = err1
 		return

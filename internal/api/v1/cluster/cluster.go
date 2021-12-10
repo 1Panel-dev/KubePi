@@ -4,12 +4,13 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
-	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
-	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
-	"github.com/KubeOperator/kubepi/internal/service/v1/imagerepo"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterapp"
+	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
+	"github.com/KubeOperator/kubepi/internal/service/v1/imagerepo"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
@@ -540,6 +541,7 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
 	sp.Get("/:name/repos", handler.ListClusterRepos())
+	sp.Get("/:name/repos/detail", handler.ListClusterReposDetail())
 	sp.Post("/:name/repos", handler.AddCLusterRepo())
 	sp.Delete("/:name/repos/:repo", handler.DeleteClusterRepo())
 }

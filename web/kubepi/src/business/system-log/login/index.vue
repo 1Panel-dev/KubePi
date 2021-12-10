@@ -6,7 +6,7 @@
       <el-table-column :label="$t('business.system.city')" prop="city" fix />
       <el-table-column :label="$t('commons.table.created_time')" fix>
         <template v-slot:default="{row}">
-          {{ row.createAt | ageFormat }}
+          {{ row.createAt | datetimeFormat }}
         </template>
       </el-table-column>
     </complex-table>

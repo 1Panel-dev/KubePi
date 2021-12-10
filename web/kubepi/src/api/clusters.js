@@ -83,6 +83,10 @@ export function listClusterRepos(name) {
   return get(`${baseUrl}/${name}/repos`)
 }
 
+export function listClusterReposDetail(name) {
+return get(`${baseUrl}/${name}/repos/detail`)
+}
+
 export function addClusterRepo(name,data) {
   return post(`${baseUrl}/${name}/repos`, data)
 }

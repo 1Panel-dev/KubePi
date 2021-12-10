@@ -50,7 +50,7 @@ const message = {
             name: "名称",
             kind: "类型",
             created_time: "创建时间",
-            imported_time: "导入时间",
+            age: "存活时间",
             status: "状态",
             action: "操作",
             creat_by: "创建者",
@@ -88,6 +88,7 @@ const message = {
             create_success: "创建成功",
             delete_success: "删除成功",
             update_success: "修改成功",
+            duplicate_failed: "数据重复，操作失败！",
             no_data: "暂无数据",
         },
         confirm_message: {

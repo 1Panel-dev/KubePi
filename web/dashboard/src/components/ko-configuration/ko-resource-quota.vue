@@ -88,6 +88,7 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
+import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoLimitRange",
@@ -104,15 +105,28 @@ export default {
           if (newVal.hard) {
             for (const key in newVal.hard) {
               if (Object.prototype.hasOwnProperty.call(newVal.hard, key)) {
-                data.push({
-                  key: key,
-                  value: newVal.hard[key].replace("Gi", "").replace("Mi", "").replace("m", ""),
-                })
+                if (key.indexOf(".cpu") !== -1) {
+                  data.push({
+                    key: key,
+                    value: cpuUnitConvert(newVal.hard[key]),
+                  })
+                } else if (key.indexOf(".memory") !== -1 || key.indexOf(".storage") !== -1) {
+                  data.push({
+                    key: key,
+                    value: memeryUnitConvert(newVal.hard[key]),
+                  })
+                } else {
+                  data.push({
+                    key: key,
+                    value: newVal.hard[key],
+                  })
+                }
               }
             }
           }
 
           this.hards = data
+          this.changeType()
           if (newVal.scopeSelector?.matchExpressions) {
             for (const item of newVal.scopeSelector.matchExpressions) {
               this.selectors.push({
@@ -231,7 +245,7 @@ export default {
         delete spec.scopeSelector
         return
       }
-      spec.scopeSelector.matchExpressions = []
+      spec.scopeSelector = {matchExpressions: []}
       for (const scope of this.selectors) {
         spec.scopeSelector.matchExpressions.push({
           scopeName: scope.scopeName,
@@ -240,9 +254,6 @@ export default {
         })
       }
     },
-  },
-  created() {
-    this.changeType()
   },
 }
 </script>

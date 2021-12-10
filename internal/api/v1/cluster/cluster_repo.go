@@ -22,6 +22,19 @@ func (h *Handler) ListClusterRepos() iris.Handler {
 	}
 }
 
+func (h *Handler) ListClusterReposDetail() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("name")
+		clusterRepos, err := h.clusterRepoService.ListInfo(cluster, common.DBOptions{})
+		if err != nil && err != storm.ErrNotFound {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", clusterRepos)
+	}
+}
+
 func (h *Handler) AddCLusterRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		var req CreateRepo
@@ -36,10 +49,10 @@ func (h *Handler) AddCLusterRepo() iris.Handler {
 			return
 		}
 		txOptions := common.DBOptions{DB: tx}
-		for _,v := range req.Repos {
+		for _, v := range req.Repos {
 			clusterRepo := &clusterrepo.ClusterRepo{
 				Cluster: req.Cluster,
-				Repo: v,
+				Repo:    v,
 			}
 			err := h.clusterRepoService.Create(clusterRepo, txOptions)
 			if err != nil {

@@ -40,6 +40,7 @@ export default {
     specBaseParentObj: Object,
     serviceList: Array,
     secretList: Array,
+    repoList: Array,
     resourceType: String,
     isReadOnly: Boolean,
   },
@@ -64,12 +65,41 @@ export default {
       },
       immediate: true,
     },
+    repoList: {
+      handler(newObj) {
+        this.repo_list = []
+        if (newObj) {
+          this.repo_list = newObj
+        }
+      },
+      immediate: true,
+    },
+    specBaseParentObj: {
+      handler(newObj) {
+        this.form.imagePullSecrets = []
+        if (newObj.imagePullSecrets) {
+          for (const sec of newObj.imagePullSecrets) {
+            this.form.imagePullSecrets.push(sec.name)
+          }
+          if (this.specBaseParentObj.restartPolicy) {
+            this.form.restartPolicy = this.specBaseParentObj.restartPolicy
+          }
+          if (this.specBaseParentObj.serviceAccountName) {
+            this.form.serviceAccountName = this.specBaseParentObj.serviceAccountName
+          }
+          if (this.specBaseParentObj.terminationGracePeriodSeconds) {
+            this.form.terminationGracePeriodSeconds = this.specBaseParentObj.terminationGracePeriodSeconds
+          }
+        }
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
       form: {
         restartPolicy: "",
-        imagePullSecrets: "",
+        imagePullSecrets: [],
         serviceAccountName: "",
         terminationGracePeriodSeconds: "",
       },
@@ -84,34 +114,92 @@ export default {
       ],
       service_list: [],
       secret_list: [],
+      repo_list: [],
+      secretCreate: [],
     }
   },
   methods: {
     isJobs() {
-      return this.resourceType === "jobs" || this.resourceType === "cronjobs"
+      if (this.resourceType === "jobs" || this.resourceType === "cronjobs") {
+        this.form.restartPolicy = "OnFailure"
+        return true
+      }
+      this.form.restartPolicy = "Always"
+      return false
     },
-    transformation(parentFrom) {
+    transformation(parentFrom, metadata) {
+      this.secretCreate = []
       parentFrom.restartPolicy = this.form.restartPolicy || undefined
       parentFrom.serviceAccountName = this.form.serviceAccountName || undefined
       parentFrom.terminationGracePeriodSeconds = this.form.terminationGracePeriodSeconds || undefined
-      parentFrom.imagePullSecrets = this.form.imagePullSecrets || undefined
+
+      if (!metadata.annotations) {
+        return this.secretCreate
+      }
+      let imagePullSecrets = []
+      for (const item of this.form.imagePullSecrets) {
+        imagePullSecrets.push({ name: item })
+      }
+      for (const key in metadata.annotations) {
+        if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
+          let repoName = key.split("/")[1]
+          let secretName = "kubepi-" + key.split("/")[1] + "-secret"
+          if (!this.existSecret(secretName, imagePullSecrets)) {
+            imagePullSecrets.push({ name: secretName })
+          }
+          if (this.secret_list.indexOf(secretName) === -1) {
+            this.addSecret(repoName, metadata.namespace, secretName)
+          }
+        }
+      }
+      parentFrom.imagePullSecrets = imagePullSecrets.length !== 0 ? imagePullSecrets : undefined
+      return this.secretCreate
     },
-  },
-  mounted() {
-    if (this.specBaseParentObj) {
-      if (this.specBaseParentObj.restartPolicy) {
-        this.form.restartPolicy = this.specBaseParentObj.restartPolicy
+    existSecret(secretName, imagePullSecrets) {
+      if (imagePullSecrets.length === 0) {
+        return false
       }
-      if (this.specBaseParentObj.serviceAccountName) {
-        this.form.serviceAccountName = this.specBaseParentObj.serviceAccountName
+      for (const sec of imagePullSecrets) {
+        if (sec.name === secretName) {
+          return true
+        }
       }
-      if (this.specBaseParentObj.terminationGracePeriodSeconds) {
-        this.form.terminationGracePeriodSeconds = this.specBaseParentObj.terminationGracePeriodSeconds
+      return false
+    },
+    addSecret(repoName, namespace, secretName) {
+      let repoInfo = null
+      for (const item of this.repo_list) {
+        if (item.name === repoName) {
+          repoInfo = item
+          break
+        }
       }
-      if (this.specBaseParentObj.imagePullSecrets) {
-        this.form.imagePullSecrets = this.specBaseParentObj.imagePullSecrets
+      if (repoInfo === null) {
+        return
       }
-    }
+      const auths = {
+        auths: {
+          [repoInfo.endPoint]: {
+            username: repoInfo.credential.username,
+            password: repoInfo.credential.password,
+          },
+        },
+      }
+      const { Base64 } = require("js-base64")
+      const data = {
+        [".dockerconfigjson"]: Base64.encode(JSON.stringify(auths)),
+      }
+      this.secretCreate.push({
+        apiVersion: "v1",
+        kind: "Secret",
+        metadata: {
+          name: secretName,
+          namespace: namespace,
+        },
+        data: data,
+        type: "kubernetes.io/dockerconfigjson",
+      })
+    },
   },
 }
 </script>
