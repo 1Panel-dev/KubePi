@@ -6,6 +6,16 @@ export function getK8sObject (kind,namespace) {
       return serviceObj(namespace)
     case "pods":
       return podObj(namespace)
+    case "deployments":
+      return workloadObj(namespace,'Deployment')
+    case "daemonsets":
+      return workloadObj(namespace,'DaemonSet')
+    case "statefulsets":
+      return workloadObj(namespace,'StatefulSet')
+    case "jobs":
+      return workloadObj(namespace,'Job')
+    case "cronjobs":
+      return workloadObj(namespace,'CronJob')
     default:
       return {}
   }
@@ -36,6 +46,46 @@ const namespaceObj = {
   metadata: objMetadata
 }
 
+const selectorObj = {
+  matchLabels:{
+    "kubepi.org/name": ""
+  }
+}
+
+const templateObj = {
+  metadata: {
+    labels: {
+      "kubepi.org/name": ""
+    }
+  },
+  spec: {
+    containers:[{
+      name:"container-0",
+      imagePullPolicy: "IfNotPresent",
+      ports: [],
+      tty: false,
+      resources: {
+        requests: {},
+        limits: {}
+      },
+      securityContext: {
+        capabilities: {},
+        seLinuxOptions: {}
+      },
+      volumeMounts: [],
+    }],
+    restartPolicy: "Always",
+    volumes: [],
+    dnsConfig: {},
+    affinity: {},
+    nodeAffinity: {},
+    securityContext:{
+      seLinuxOptions: {}
+    }
+  }
+}
+
+
 const serviceObj = (namespace) =>  {
   return {
     apiVersion: "v1",
@@ -53,4 +103,15 @@ const podObj = (namespace) =>  {
   }
 }
 
-
+const workloadObj = (namespace,kind) => {
+  return {
+    apiVersion: "apps/v1",
+    kind: kind,
+    metadata: objNsMetadata(namespace),
+    spec: {
+      replicas:1,
+      selector: selectorObj,
+      template: templateObj
+    }
+  }
+}

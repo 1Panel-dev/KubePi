@@ -163,7 +163,7 @@ export default {
       this.$router.push({ name: "DaemonSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     yamlCreate() {
-      this.$router.push({ name: "DaemonSetCreate", params: { operation: "create" }, query: { yamlShow: true } })
+      this.$router.push({ name: "DaemonSetCreateYaml", params: { operation: "create" }, query: { type: "daemonsets" } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

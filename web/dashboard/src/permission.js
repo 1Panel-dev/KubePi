@@ -27,11 +27,12 @@ const generateRoutes = async (to, from, next) => {
               if (father.children?.length >0) {
                   for (const j in father.children) {
                     const route = father.children[j]
-                    if (route.path.indexOf("create") > -1) {
+                    if (route.path.indexOf("create") > -1 || route.path.indexOf("operation") >-1) {
                       father.children.push(           {
                         path: route.path+"/yaml",
                         hidden: true,
                         name: route.name+"Yaml",
+                        props: true,
                         component: () => import("@/business/yaml"),
                         meta: {
                           activeMenu: route.meta?.activeMenu
