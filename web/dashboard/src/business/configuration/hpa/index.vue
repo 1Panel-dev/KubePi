@@ -184,7 +184,7 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "HPACreate", query: { yamlShow: true }
+        name: "HPACreateYaml", query: { type: "horizontalpodautoscalers" }
       })
     },
     onDelete (row) {

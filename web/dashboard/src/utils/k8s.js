@@ -22,6 +22,18 @@ export function getK8sObject (kind,namespace) {
       return ingressObj(namespace)
     case "networkpolicies":
       return npObj(namespace)
+    case "configmaps":
+      return configMapObj(namespace)
+    case "secrets":
+      return secretObj(namespace)
+    case "resourcequotas":
+      return resourceQuotaObj(namespace)
+    case "limitranges":
+      return limitRangesObj(namespace)
+    case "horizontalpodautoscalers":
+      return hpaObj(namespace)
+    case "poddisruptionbudgets":
+      return pdbObj(namespace)
     default:
       return {}
   }
@@ -194,6 +206,76 @@ const npObj = (namespace) => {
   return {
     apiVersion: "networking.k8s.io/v1",
     kind: 'NetworkPolicy',
+    metadata: objNsMetadata(namespace),
+    spec: {}
+  }
+}
+
+const configMapObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'ConfigMap',
+    metadata: objNsMetadata(namespace),
+    spec: {}
+  }
+}
+
+const secretObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'Secret',
+    metadata: objNsMetadata(namespace),
+    data: {},
+    type: "Opaque"
+  }
+}
+
+const resourceQuotaObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'ResourceQuota',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      hard: {}
+    }
+  }
+}
+
+const limitRangesObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'LimitRange',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      limits: []
+    }
+  }
+}
+
+const hpaObj = (namespace) => {
+  return {
+    apiVersion: "autoscaling/v2beta2",
+    kind: 'HorizontalPodAutoscaler',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      metrics: [{
+        type:"Resource",
+        resource: {
+          name: "cpu",
+          target: {
+            type: "Utilization",
+            averageUtilization: 80
+          }
+        }
+      }]
+    }
+  }
+}
+
+const pdbObj = (namespace) => {
+  return {
+    apiVersion: "policy/v1beta1",
+    kind: 'PodDisruptionBudget',
     metadata: objNsMetadata(namespace),
     spec: {}
   }

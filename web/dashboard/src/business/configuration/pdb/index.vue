@@ -116,7 +116,10 @@ export default {
     },
     onCreate() {
       this.$router.push({
-        name: "PDBCreate",
+        name: "PDBCreateYaml",
+        query: {
+          type:"poddisruptionbudgets"
+        }
       })
     },
     onDelete(row) {

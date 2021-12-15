@@ -127,8 +127,8 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "LimitRangeCreate",
-        query: { yamlShow: true },
+        name: "LimitRangeCreateYaml",
+        query: { type: "limitranges" },
       })
     },
     onDelete(row) {
