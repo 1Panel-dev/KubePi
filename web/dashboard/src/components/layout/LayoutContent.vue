@@ -2,7 +2,7 @@
   <div class="content-container">
     <div class="content-container__header" v-if="$slots.header || header">
       <slot name="header">
-        <back-button :path="backPath" :name="backName" :to="backTo" v-if="showBack"></back-button>
+        <back-button :path="backPath" :name="backName" :to="backTo" :back="back" v-if="showBack"></back-button>
         {{ header }}
       </slot>
     </div>
@@ -23,11 +23,15 @@ export default {
     description: String,
     backPath: String,
     backName: String,
-    backTo: Object
+    backTo: Object,
+    back: {
+      type: Boolean,
+      default:false,
+    }
   },
   computed: {
-    showBack({backPath, backName, backTo}) {
-      return backPath || backName || backTo
+    showBack({backPath, backName, backTo,back}) {
+      return backPath || backName || backTo || back
     }
   }
 }
