@@ -17,6 +17,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getK8sObject} from "@/utils/k8s"
 import {postYaml} from "@/api/k8s"
+import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "YamlCreate",
@@ -25,8 +26,8 @@ export default {
   data () {
     return {
       type: "",
-      namespace: "",
       yamlValue: {},
+      namespace: "",
       loading: false,
       clusterName: "",
       requires: ["apiVersion", "kind", "metadata"]
@@ -41,7 +42,7 @@ export default {
       if (!this.checkValid(data)) {
         return
       }
-      postYaml(this.clusterName, this.getGroup(), this.yamlValue.apiVersion, this.type, data).then(() => {
+      postYaml(this.clusterName,this.type, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
@@ -49,26 +50,37 @@ export default {
         this.$router.go(-1)
       })
     },
-    getGroup () {
-      return ""
-    },
     checkValid (data) {
+      let result = true
+      let message = ""
       for (const key of this.requires) {
-        if (data[key] === undefined || data[key] === "") {
-          this.$message({
-            type: "warning",
-            message: key + " is required",
-          })
-          return false
+        if (data[key] === undefined || data[key] === null || data[key] === "") {
+          message = key + " is required \n"
+          result = false
+          break
         }
       }
-      return true
+      if (data.metadata.name === undefined || data.metadata.name === "" || data.metadata.name === null) {
+        message = message + "name is required \n"
+        result = false
+      }
+      if (data.metadata.namespace !== undefined && (data.metadata.namespace === "" || data.metadata.namespace === null)) {
+        message = message + "namespace is required \n"
+        result = false
+      }
+      if (!result) {
+        this.$message({
+          type: "warning",
+          message: message,
+        })
+      }
+      return result
     }
   },
   created () {
     this.type = this.$route.query.type
-    this.namespace = this.$route.query.namespace
     this.clusterName = this.$route.query.cluster
+    this.namespace = sessionStorage.getItem("namespace")?sessionStorage.getItem("namespace"):"default"
     this.yamlValue = getK8sObject(this.type, this.namespace)
   }
 }
