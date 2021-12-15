@@ -166,7 +166,7 @@ export default {
       })
     },
     yamlCreate () {
-      this.$router.push({ name: "ClusterRoleBindingCreate", query: { yamlShow: true } })
+      this.$router.push({ name: "ClusterRoleBindingCreateYaml", query: { type: "clusterrolebindings" } })
     },
     onDelete (row) {
       this.$confirm(

@@ -140,7 +140,7 @@ export default {
       })
     },
     yamlCreate () {
-      this.$router.push({ name: "ClusterRoleCreate", query: { yamlShow: true } })
+      this.$router.push({ name: "ClusterRoleCreateYaml", query: { type: "clusterroles" } })
     },
     onDelete (row) {
       this.$confirm(

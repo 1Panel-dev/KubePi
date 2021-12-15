@@ -40,10 +40,24 @@ export function getK8sObject (kind,namespace) {
       return pvObj
     case "storageclasses":
       return scObj
+    case "serviceaccounts":
+      return saObj(namespace)
+    case "roles":
+      return roleObj(namespace)
+    case "rolebindings":
+      return roleBindingObj(namespace)
+    case "clusterroles":
+      return clusterRoleObj
+    case "clusterrolebindings":
+      return clusterRoleBindingObj
+    case "podsecuritypolicies":
+      return pspObj
     default:
       return {}
   }
 }
+
+
 
 const objMetadata = {
   name: "",
@@ -321,4 +335,70 @@ const scObj = {
   metadata: objMetadata,
   provisioner: "",
   parameters: {}
+}
+
+const saObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'ServiceAccount',
+    metadata: objNsMetadata(namespace),
+    spec: {}
+  }
+}
+
+const roleObj = (namespace) => {
+  return {
+    apiVersion: "rbac.authorization.k8s.io/v1",
+    kind: 'Role',
+    metadata: objNsMetadata(namespace),
+    rules: [{
+      verbs: [],
+      resources: [],
+      nonResourceURLs: [],
+      apiGroups: []
+    }]
+  }
+}
+
+const roleBindingObj = (namespace) => {
+  return {
+    apiVersion: "rbac.authorization.k8s.io/v1",
+    kind: 'RoleBinding',
+    metadata: objNsMetadata(namespace),
+    roleRef: {
+      kind: "ClusterRole",
+      apiGroup: "rbac.authorization.k8s.io",
+      name: ""
+    }
+  }
+}
+
+const clusterRoleObj ={
+  apiVersion: "rbac.authorization.k8s.io/v1",
+  kind: 'ClusterRole',
+  metadata: objMetadata,
+  rules: [{
+    verbs: [],
+    resources: [],
+    nonResourceURLs: [],
+    apiGroups: []
+  }]
+}
+
+const clusterRoleBindingObj = {
+  apiVersion: "rbac.authorization.k8s.io/v1",
+  kind: 'ClusterRoleBinding',
+  metadata: objMetadata,
+  roleRef: {
+    kind: "ClusterRole",
+    apiGroup: "rbac.authorization.k8s.io",
+    name: ""
+  }
+}
+
+const pspObj = {
+  apiVersion: "policy/v1beta1",
+  kind: 'PodSecurityPolicy',
+  metadata: objMetadata,
+  spec: {}
 }

@@ -146,7 +146,7 @@ export default {
       })
     },
     yamlCreate () {
-      this.$router.push({ name: "RoleCreate", query: { yamlShow: true } })
+      this.$router.push({ name: "RoleCreateYaml", query: { type: "roles" } })
     },
     onDelete (row) {
       this.$confirm(
