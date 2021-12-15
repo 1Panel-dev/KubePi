@@ -10,7 +10,7 @@ const apiNsUrl = (cluster_name, version, namespace, kind) => {
 }
 
 
-const apisUrl = (cluster_name, group, version, kind) => {
+const apisUrl = (cluster_name, version, group, kind) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/${group}/${version}/${kind}`
 }
 
@@ -25,7 +25,7 @@ export function postYaml (cluster_name, kind, data) {
 export function getUrl (cluster_name, kind, data) {
   let url = ""
   if (data.apiVersion === "v1") {
-    if (data.metadata.namespace !== "") {
+    if (data.metadata.namespace !== undefined && data.metadata.namespace !== "") {
       url = apiNsUrl(cluster_name, data.apiVersion, data.metadata.namespace, kind)
     } else {
       url = apiUrl(cluster_name, data.apiVersion, kind)
@@ -34,7 +34,7 @@ export function getUrl (cluster_name, kind, data) {
     const apiVersions = data.apiVersion.split("/")
     const group = apiVersions[0]
     const version = apiVersions[1]
-    if (data.metadata.namespace !== "") {
+    if (data.metadata.namespace !== undefined && data.metadata.namespace !== "") {
       url = apisNsUrl(cluster_name, version, group, data.metadata.namespace, kind)
     } else {
       url = apisUrl(cluster_name, version, group, kind)

@@ -34,14 +34,16 @@ export function getK8sObject (kind,namespace) {
       return hpaObj(namespace)
     case "poddisruptionbudgets":
       return pdbObj(namespace)
+    case "persistentvolumeclaims":
+      return pvcObj(namespace)
+    case "persistentvolumes":
+      return pvObj
+    case "storageclasses":
+      return scObj
     default:
       return {}
   }
 }
-
-
-
-
 
 const objMetadata = {
   name: "",
@@ -279,4 +281,44 @@ const pdbObj = (namespace) => {
     metadata: objNsMetadata(namespace),
     spec: {}
   }
+}
+
+const pvcObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'PersistentVolumeClaim',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      accessModes: [],
+      resources: {
+        requests: {
+          storage: "1Gi"
+        }
+      }
+    }
+  }
+}
+
+const pvObj = {
+  apiVersion: "v1",
+  kind: 'PersistentVolume',
+  metadata: objMetadata,
+  spec: {
+    local: {
+      path: ""
+    },
+    capacity: {
+      storage: "1Gi"
+    },
+    nodeAffinity: {},
+    accessModes: []
+  }
+}
+
+const scObj = {
+  apiVersion: "storage.k8s.io/v1",
+  kind: 'StorageClass',
+  metadata: objMetadata,
+  provisioner: "",
+  parameters: {}
 }

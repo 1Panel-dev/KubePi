@@ -156,8 +156,8 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "PersistentVolumeCreate",
-        query: { yamlShow: true },
+        name: "PersistentVolumeCreateYaml",
+        query: { type: "persistentvolumes" },
       })
     },
     onDelete (row) {
