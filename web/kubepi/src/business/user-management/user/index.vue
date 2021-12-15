@@ -45,7 +45,7 @@
           {{ row.type ? row.type : "LOCAL" }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.age')" min-width="60" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>

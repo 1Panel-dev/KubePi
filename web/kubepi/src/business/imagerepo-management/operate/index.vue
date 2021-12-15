@@ -2,14 +2,14 @@
   <layout-content :header="header" :back-to="{ name: 'ImageRepos' }">
     <el-row v-loading="loading">
       <el-col :span="4"><br/></el-col>
-      <el-col :span="10">
+      <el-col :span="12">
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :model="form" :rules="rules" label-width="250px" label-position="left">
             <el-form-item :label="$t('business.image_repos.name')" prop="name">
               <el-input v-model="form.name" :disabled="mode==='edit'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.image_repos.type')" prop="type">
-              <el-select v-model="form.type" :disabled="mode==='edit'">
+              <el-select v-model="form.type" style="width:100%" :disabled="mode==='edit'">
                 <el-option :value="'Nexus'" :label="'Nexus'"></el-option>
                 <el-option :value="'Harbor'" :label="'Harbor'"></el-option>
                 <el-option :value="'DockerRegistry'" :label="'Docker Registry'"></el-option>
@@ -32,7 +32,7 @@
             </el-form-item>
             <el-form-item v-if="form.type !== 'DockerRegistry'" :label="$t('business.image_repos.repo')"
                           prop="repoName">
-              <el-select v-model="form.repoName" filterable>
+              <el-select v-model="form.repoName" style="width:100%" filterable>
                 <el-option v-for="(repo,index) in repos" :key="index" :value="repo" :label="repo">
                 </el-option>
               </el-select>

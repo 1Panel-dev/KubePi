@@ -13,7 +13,7 @@
       </template>
 
 
-      <el-table-column :label="$t('commons.table.status')" min-width="100px" fix>
+      <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
           <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
@@ -28,10 +28,10 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('business.cluster.label')" align="left" min-width="200" fix>
+      <el-table-column :label="$t('business.cluster.label')" align="left" min-width="160" fix>
         <template v-slot:default="{row}">
           <div style="font-size: 20px">
-            <div v-if="row.labels" style="float:left; margin-right: 10px;" :key="row.k">
+            <div v-if="row.labels" :key="row.k">
               <div v-for="(key,index) in row.labels" :key="index">
 
                 <el-tag v-if="!checkPrem({resource: 'clusters', verb: 'update'})" type="info" size="mini"
@@ -47,13 +47,13 @@
                 <br/>
               </div>
             </div>
-            <div style="padding-top: 10px;">
+            <div style="padding-top: 5px;">
               <el-popover
-                  placement="top"
-                  width="160"
-                  :title="$t('commons.button.add')+$t('business.cluster.label')"
-                  trigger="manual"
-                  v-model="row.showAddLabelVisible">
+                placement="top"
+                width="160"
+                :title="$t('commons.button.add')+$t('business.cluster.label')"
+                trigger="manual"
+                v-model="row.showAddLabelVisible">
                 <div style="text-align: right; margin: 0">
                   <el-form :ref="row.name" :model="row.form" :rules="labelRules" label-position="top">
                     <el-form-item size="mini" prop="key">
@@ -68,7 +68,7 @@
                   </el-button>
                 </div>
                 <i :id="row.id" class="el-icon-circle-plus-outline" slot="reference" style="cursor: pointer"
-                   @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
+                  @click="onAddLabel(row)" v-has-permissions="{resource:'clusters',verb:'update'}"></i>
               </el-popover>
             </div>
           </div>
@@ -85,7 +85,7 @@
       </el-table-column>
 
 
-      <el-table-column min-width="200" fix>
+      <el-table-column min-width="180" fix>
         <template v-slot:default="{row}">
           <div>
             <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors"
@@ -105,11 +105,7 @@
       </el-table-column>
 
 
-      <el-table-column :label="$t('commons.table.creat_by')" prop="createdBy" min-width="80"
-                       fix/>
-
-
-      <el-table-column :label="$t('commons.table.imported_time')" min-width="120" fix>
+      <el-table-column :label="$t('commons.table.age')" min-width="120" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>
@@ -285,6 +281,11 @@ export default {
             updateCluster(row.name, {"labels": row.labels}).then(() => {
               row.showAddLabelVisible = false
             })
+          } else {
+            this.$message({
+              type: 'warning',
+              message: this.$t("commons.msg.duplicate_failed"),
+            });
           }
           row.showAddLabelVisible = false
         }

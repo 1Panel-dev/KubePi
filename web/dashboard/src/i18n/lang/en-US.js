@@ -57,9 +57,9 @@ const message = {
     },
     table: {
       name: "Name",
-      created_time: "Created Time",
+      created_time: "Age",
       status: "Status",
-      action: "Operation",
+      action: "Action",
       creat_by: "Creator",
       time: "Time",
       message: "Message",
