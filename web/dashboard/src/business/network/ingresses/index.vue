@@ -166,8 +166,8 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        path: `/ingresses/create`,
-        query: { yamlShow: true, mode: "create" }
+        path: `/ingresses/create/yaml`,
+        query: { type: "ingresses"}
       })
     },
     onDelete (row) {

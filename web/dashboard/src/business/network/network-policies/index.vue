@@ -124,7 +124,10 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "NetworkPolicyCreate",
+        name: "NetworkPolicyCreateYaml",
+        query: {
+          type: "networkpolicies"
+        }
       })
     },
     onDelete (row) {

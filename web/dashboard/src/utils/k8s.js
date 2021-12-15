@@ -16,6 +16,12 @@ export function getK8sObject (kind,namespace) {
       return workloadObj(namespace,'Job')
     case "cronjobs":
       return workloadObj(namespace,'CronJob')
+    case "endpoints":
+      return endPointObj(namespace)
+    case "ingresses":
+      return ingressObj(namespace)
+    case "networkpolicies":
+      return npObj(namespace)
     default:
       return {}
   }
@@ -85,15 +91,6 @@ const templateObj = {
   }
 }
 
-
-const serviceObj = (namespace) =>  {
-  return {
-    apiVersion: "v1",
-    kind: 'Service',
-    metadata: objNsMetadata(namespace)
-  }
-}
-
 const podObj = (namespace) =>  {
   return {
     apiVersion: "v1",
@@ -104,8 +101,15 @@ const podObj = (namespace) =>  {
 }
 
 const workloadObj = (namespace,kind) => {
+  let apiVersion = "apps/v1"
+  if (kind === 'Job') {
+    apiVersion = "batch/v1"
+  }
+  if (kind === 'CronJob') {
+    apiVersion = "batch/v1beta1"
+  }
   return {
-    apiVersion: "apps/v1",
+    apiVersion: apiVersion,
     kind: kind,
     metadata: objNsMetadata(namespace),
     spec: {
@@ -113,5 +117,84 @@ const workloadObj = (namespace,kind) => {
       selector: selectorObj,
       template: templateObj
     }
+  }
+}
+
+const serviceObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'Service',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      type: "ClusterIP",
+      ports: [{
+        name: "",
+        port: "",
+        protocol: "TCP",
+        targetPort: ""
+      }],
+      sessionAffinity: "None",
+      sessionAffinityConfig: {
+        clientIP: {}
+      },
+      externalIPs: [],
+      clusterIP: ""
+    }
+  }
+}
+
+const endPointObj = (namespace) => {
+  return {
+    apiVersion: "v1",
+    kind: 'Endpoints',
+    metadata: objNsMetadata(namespace),
+  }
+}
+
+const ingressObj = (namespace) => {
+  return {
+    apiVersion: "networking.k8s.io/v1beta1",
+    kind: 'Ingress',
+    metadata: objNsMetadata(namespace),
+    spec: {
+      rules:[{
+        host: "",
+        http: {
+          paths:[{
+            backend:{
+              service: {
+                name: "",
+                port: {
+                  number:0
+                }
+              }
+            },
+            path: "",
+            pathType: ""
+          }]
+        }
+      }],
+      defaultBackend: {
+        service: {
+          name: "",
+          port: {
+            number: 0
+          }
+        }
+      },
+      tls: [{
+        secretName: "",
+        hosts: []
+      }]
+    }
+  }
+}
+
+const npObj = (namespace) => {
+  return {
+    apiVersion: "networking.k8s.io/v1",
+    kind: 'NetworkPolicy',
+    metadata: objNsMetadata(namespace),
+    spec: {}
   }
 }

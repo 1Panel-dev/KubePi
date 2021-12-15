@@ -118,8 +118,11 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "EndpointCreate",
-      })
+        name: "EndpointCreateYaml",
+        query: {
+          type: "endpoints"
+        }
+      },)
     },
     onDelete (row) {
       this.$confirm(
