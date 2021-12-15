@@ -9,7 +9,10 @@ export default {
     path: String,
     name: String,
     to: Object,
-    back: false
+    back: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     jump() {
