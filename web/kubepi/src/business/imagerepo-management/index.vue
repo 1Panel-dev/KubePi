@@ -12,12 +12,14 @@
       </template>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
         <template v-slot:default="{row}">
-          {{ row.name }}
+          <el-link @click="onDetail(row.name)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.image_repos.type')" prop="type" min-width="100" fix>
       </el-table-column>
       <el-table-column :label="$t('business.image_repos.endpoint')" prop="endPoint" min-width="100" fix>
+      </el-table-column>
+      <el-table-column :label="$t('business.image_repos.downloadUrl')" prop="downloadUrl" min-width="100" fix>
       </el-table-column>
       <el-table-column :label="$t('business.image_repos.repo')" prop="repoName" min-width="100" fix>
       </el-table-column>
@@ -121,6 +123,12 @@ export default {
         })
       })
     },
+    onDetail(repo) {
+      this.$router.push({
+        name: "ImageRepoDetail",
+        params: { repo: repo }
+      })
+    }
   },
   created () {
     this.search()

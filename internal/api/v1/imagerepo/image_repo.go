@@ -164,6 +164,19 @@ func (h *Handler) ListImages() iris.Handler {
 	}
 }
 
+func (h *Handler) ListImagesByRepo() iris.Handler  {
+	return func(ctx *context.Context) {
+		name := ctx.Params().GetString("repo")
+		imageRepos, err := h.imageRepoService.ListImagesByRepo(name, common.DBOptions{})
+		if err != nil && err != storm.ErrNotFound {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", imageRepos)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/imagerepos")
@@ -175,4 +188,5 @@ func Install(parent iris.Party) {
 	sp.Put("/:name", handler.UpdateRepo())
 	sp.Get("/cluster/:cluster", handler.ListRepoForCluster())
 	sp.Get("/images/:cluster/:repo", handler.ListImages())
+	sp.Get("/images/:repo", handler.ListImagesByRepo())
 }

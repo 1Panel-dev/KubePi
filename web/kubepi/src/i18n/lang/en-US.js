@@ -210,7 +210,8 @@ const message = {
           load_repo: "Load image library",
           auth: "Auth",
           allow_anonymous: "Allow anonymous docker pull ",
-          repo_null: "Repo is null"
+          repo_null: "Repo is null",
+          images: "Image List"
         }
     },
 }
