@@ -25,6 +25,7 @@ type Service interface {
 	UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
 	ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error)
 	ListImages(repo, cluster string, options common.DBOptions) (names []string, err error)
+	ListImagesByRepo(repo string, options common.DBOptions) (names []string, err error)
 }
 
 func NewService() Service {
@@ -80,6 +81,32 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 	}
 	return
 }
+
+func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names []string, err error) {
+	rp, err1 := s.GetByName(repo, options)
+	if err1 != nil {
+		err = err1
+		return
+	}
+	client := repoClient.NewClient(repoClient.Config{
+		Type:     rp.Type,
+		EndPoint: rp.EndPoint,
+		Credential: repoClient.Credential{
+			Username: rp.Credential.Username,
+			Password: rp.Credential.Password,
+		},
+	})
+	images, err2 := client.ListImages(rp.RepoName)
+	if err2 != nil {
+		err = err2
+		return
+	}
+	for _, image := range images {
+		names = append(names, rp.DownloadUrl+"/"+image)
+	}
+	return
+}
+
 
 func (s *service) ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error) {
 	db := s.GetDB(options)

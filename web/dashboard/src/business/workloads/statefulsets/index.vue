@@ -193,7 +193,7 @@ export default {
       this.$router.push({ name: "StatefulSetDetail", params: { namespace: row.metadata.namespace, name: row.metadata.name }, query: { yamlShow: false } })
     },
     yamlCreate() {
-      this.$router.push({ name: "StatefulSetCreate", params: { operation: "create" }, query: { yamlShow: true } })
+      this.$router.push({ name: "StatefulSetCreateYaml", params: { operation: "create" }, query: { type: "statefulsets" } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

@@ -135,7 +135,7 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "ConfigMapCreate", query: { yamlShow: true }
+        name: "ConfigMapCreateYaml", query: { type: "configmaps" }
       })
     },
     onDelete (row) {

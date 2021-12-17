@@ -111,7 +111,10 @@ export default {
     },
     onCreate() {
       this.$router.push({
-        name: "PSPCreate",
+        name: "PSPCreateYaml",
+        query: {
+          type: "podsecuritypolicies"
+        }
       })
     },
     onDelete(row) {

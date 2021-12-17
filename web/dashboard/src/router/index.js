@@ -29,6 +29,15 @@ export const constantRoutes = [
         path: "/",
         component: Layout,
         redirect: "/dashboard",
+    },
+    {
+      path: "/yaml/create",
+      hidden: true,
+      name: "YamlCreate",
+      component: () => import("@/business/yaml"),
+      meta: {
+        // activeMenu: from.path
+      }
     }
 ]
 

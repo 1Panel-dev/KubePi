@@ -144,8 +144,8 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "StorageClassCreate",
-        query: { yamlShow: false },
+        name: "StorageClassCreateYaml",
+        query: { type: "storageclasses" },
       })
     },
     onDelete (row) {

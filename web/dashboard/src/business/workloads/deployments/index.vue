@@ -197,7 +197,7 @@ export default {
       })
     },
     yamlCreate() {
-      this.$router.push({ name: "DeploymentCreate", params: { operation: "create" }, query: { yamlShow: true } })
+      this.$router.push({ name: "DeploymentCreateYaml", params: { operation: "create" }, query: { type: "deployments" } })
     },
     onDelete(row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

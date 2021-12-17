@@ -163,8 +163,8 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "ResourceQuotaCreate",
-        query: { yamlShow: true },
+        name: "ResourceQuotaCreateYaml",
+        query: { type: "resourcequotas" },
       })
     },
     onDelete (row) {

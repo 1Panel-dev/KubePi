@@ -8,11 +8,15 @@ export default {
   props: {
     path: String,
     name: String,
-    to: Object
+    to: Object,
+    back: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     jump() {
-      const {path, name, to} = this
+      const {path, name, to,back} = this
       if (path) {
         this.$router.push(path)
       }
@@ -21,6 +25,9 @@ export default {
       }
       if (to) {
         this.$router.push(to)
+      }
+      if (back) {
+        this.$router.go(-1)
       }
     }
   }

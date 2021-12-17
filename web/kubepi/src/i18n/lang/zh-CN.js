@@ -211,7 +211,8 @@ const message = {
           load_repo: "加载镜像库",
           auth: "认证",
           allow_anonymous: "允许匿名docker pull",
-          repo_null: "镜像库为空"
+          repo_null: "镜像库为空",
+          images: "镜像列表"
         }
     },
 }

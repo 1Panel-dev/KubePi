@@ -107,7 +107,10 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "ServiceAccountCreate",
+        name: "ServiceAccountCreateYaml",
+        query: {
+          type: "serviceaccounts"
+        }
       })
     },
     onDelete (row) {

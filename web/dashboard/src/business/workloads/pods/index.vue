@@ -233,7 +233,8 @@ export default {
       })
     },
     onCreate () {
-      this.$router.push({ name: "PodCreate" })
+      this.$router.push({ name: "PodCreateYaml", query: { type: "pods" } })
+      // this.$router.push({ name: "PodCreate" })
     },
     getPodStatus (row) {
       if (row.status.containerStatuses) {

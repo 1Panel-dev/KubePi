@@ -172,7 +172,7 @@ export default {
       })
     },
     yamlCreate() {
-      this.$router.push({name: "RoleBindingCreate", query: {yamlShow: true}})
+      this.$router.push({name: "RoleBindingCreateYaml", query: {type: "rolebindings"}})
     },
     onDelete(row) {
       this.$confirm(

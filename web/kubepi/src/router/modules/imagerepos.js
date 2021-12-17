@@ -42,6 +42,16 @@ const ImageRepos = {
       meta: {
         activeMenu: "/imagerepos",
       }
+    },
+    {
+      path: "/imagerepos/:repo/detail",
+      component: () => import("@/business/imagerepo-management/detail"),
+      name: "ImageRepoDetail",
+      hidden: true,
+      props: true,
+      meta: {
+        activeMenu: "/imagerepos",
+      }
     }
   ]
 }

@@ -8,7 +8,7 @@
             <el-scrollbar style="height:100%">
               <el-row>
                 <el-col :span="12">
-                  <el-form-item :label="$t('business.chart.version')" prop="version">
+                  <el-form-item :label="$t('business.chart.version')" prop="chartVersion">
                     <el-select v-model="form.chartVersion" @change="getDetailByVersion(form.chartVersion)">
                       <el-option v-for="(vs,index) in versions"
                                  :label="vs.version" :key="index" :value="vs.version">
@@ -26,7 +26,7 @@
         <fu-step id="values" :title="'Values'">
           <div class="example">
             <el-scrollbar style="height:100%">
-              <yaml-editor :value="form.values"></yaml-editor>
+              <yaml-editor :value="form.values" ref="yaml_editor"></yaml-editor>
             </el-scrollbar>
           </div>
         </fu-step>
@@ -68,6 +68,7 @@ export default {
       installForm.name = this.name
       installForm.repo = this.repo
       installForm.namespace = this.namespace
+      installForm.values = this.$refs.yaml_editor.getValue()
       this.loading = true
       updateChart(this.cluster, this.name, installForm).then(() => {
         this.$message({
@@ -85,11 +86,11 @@ export default {
     getDetail () {
       this.loading = true
       getApp(this.cluster, this.name).then(res => {
-        this.oldValues = res.data.chart.values
+        this.oldValues = res.data.config
         this.oldChart = res.data.chart
-        this.form.values = res.data.chart.values
+        this.form.values = res.data.config
         this.form.chartVersion = res.data.chart.metadata.version
-        this.chartMap.set(res.data.chart.metadata.version, res.data.chart)
+        this.chartMap.set(res.data.chart.metadata.version, {values:res.data.config} )
         this.namespace = res.data.namespace
         getChartUpdate(this.cluster, res.data.chart.metadata.name, this.name).then(res => {
           this.versions = res.data.versions
@@ -103,6 +104,7 @@ export default {
 
     },
     getDetailByVersion (version) {
+      this.$forceUpdate()
       if (this.chartMap.has(version)) {
         this.form.values = this.chartMap.get(version).values
         return

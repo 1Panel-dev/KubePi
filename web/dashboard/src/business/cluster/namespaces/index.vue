@@ -138,7 +138,7 @@ export default {
       this.$router.push({ name: "NamespaceCreate", query: { yamlShow: false } })
     },
     yamlCreate () {
-      this.$router.push({ name: "NamespaceCreate", query: { yamlShow: true } })
+      this.$router.push({ name: "NamespaceCreateYaml", query: { type: "namespaces" } })
     },
     search (resetPage) {
       if (resetPage) {

@@ -41,13 +41,13 @@
       <el-table-column :label="$t('business.network.target_port')" min-width="120px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
-            <span style="font-size: 12px" v-if="row.spec.type ==='NodePort'"> 
+            <span style="font-size: 12px" v-if="row.spec.type ==='NodePort'">
               {{ value.port }}:{{ value.nodePort }}/{{ value.protocol }}
             </span>
-            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port === value.targetPort"> 
+            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port === value.targetPort">
               {{ value.port }}/{{ value.protocol }}
             </span>
-            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port !== value.targetPort"> 
+            <span style="font-size: 12px" v-if="row.spec.type !=='NodePort' && value.port !== value.targetPort">
               {{ value.port }}:{{ value.targetPort }}/{{ value.protocol }}
             </span>
             <br>
@@ -164,7 +164,7 @@ export default {
     },
     yamlCreate () {
       this.$router.push({
-        name: "ServiceCreate", query: { yamlShow: true }
+        name: "ServiceCreateYaml", query: { type: "services" }
       })
     },
     onDelete (row) {

@@ -141,7 +141,7 @@ export default {
       this.$router.push({ name: "SecretCreate", query: { yamlShow: false } })
     },
     yamlCreate () {
-      this.$router.push({ name: "SecretCreate", query: { yamlShow: true } })
+      this.$router.push({ name: "SecretCreateYaml", query: { type: "secrets" } })
     },
     onDelete (row) {
       this.$confirm(

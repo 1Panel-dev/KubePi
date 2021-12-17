@@ -132,7 +132,7 @@ export default {
       })
     },
     yamlCreate () {
-      this.$router.push({ name: "CronJobCreate", params: { operation: "create" }, query: { yamlShow: true } })
+      this.$router.push({ name: "CronJobCreateYaml", params: { operation: "create" }, query: { type: "cronjobs" } })
     },
     onDelete (row) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {

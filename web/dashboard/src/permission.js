@@ -22,6 +22,26 @@ const generateRoutes = async (to, from, next) => {
                 }
                 router.addRoute(root)
             }
+            for (const i in accessRoutes) {
+              let father = accessRoutes[i]
+              if (father.children?.length >0) {
+                  for (const j in father.children) {
+                    const route = father.children[j]
+                    if (route.path.indexOf("create") > -1 || route.path.indexOf("operation") >-1) {
+                      father.children.push(           {
+                        path: route.path+"/yaml",
+                        hidden: true,
+                        name: route.name+"Yaml",
+                        props: true,
+                        component: () => import("@/business/yaml"),
+                        meta: {
+                          activeMenu: route.meta?.activeMenu
+                        }
+                      })
+                    }
+                  }
+              }
+            }
             router.addRoutes(accessRoutes)
             next({...to, replace: true})
         } catch (error) {
@@ -39,6 +59,11 @@ router.beforeEach(async (to, from, next) => {
                 await store.dispatch("user/setCurrentCluster", from.query["cluster"])
                 const q = to.query
                 q["cluster"] = from.query["cluster"]
+                // if (to.path.indexOf("yaml") > -1) {
+                //   router.addRoute(
+
+              //   )
+                // }
                 next({path: to.path, query: q})
                 NProgress.done()
             } else {

@@ -116,7 +116,7 @@
           <fu-step id="values" :title="'Values'">
             <div class="example">
               <el-scrollbar style="height:100%">
-                <yaml-editor :value="form.values"></yaml-editor>
+                <yaml-editor :value="form.values" ref="yaml_editor"></yaml-editor>
               </el-scrollbar>
             </div>
           </fu-step>
@@ -198,7 +198,8 @@ export default {
       installForm.chartVersion = this.current.metadata.version
       installForm.chartName = this.name
       installForm.repo = this.repo
-      installChart(this.cluster,this.form).then(() => {
+      installForm.values = this.$refs.yaml_editor.getValue()
+      installChart(this.cluster,installForm).then(() => {
         this.loading = false
         this.installStep = false
         this.$message({
