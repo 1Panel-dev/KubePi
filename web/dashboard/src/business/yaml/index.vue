@@ -17,7 +17,6 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getK8sObject} from "@/utils/k8s"
 import {postYaml} from "@/api/k8s"
-import {getNamespaces} from "@/api/auth"
 
 export default {
   name: "YamlCreate",

@@ -133,12 +133,13 @@ export default {
       parentFrom.serviceAccountName = this.form.serviceAccountName || undefined
       parentFrom.terminationGracePeriodSeconds = this.form.terminationGracePeriodSeconds || undefined
 
-      if (!metadata.annotations) {
-        return this.secretCreate
-      }
       let imagePullSecrets = []
       for (const item of this.form.imagePullSecrets) {
         imagePullSecrets.push({ name: item })
+      }
+      if (!metadata.annotations) {
+        parentFrom.imagePullSecrets = imagePullSecrets.length !== 0 ? imagePullSecrets : undefined
+        return this.secretCreate
       }
       for (const key in metadata.annotations) {
         if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
