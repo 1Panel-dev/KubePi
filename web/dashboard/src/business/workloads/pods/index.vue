@@ -1,18 +1,16 @@
 <template>
   <div>
   <layout-content header="Pods">
-    <el-alert
-            v-if="showText"
-            :title="$t('business.pod.metric_server_tip')"
-            type="warning">
-    </el-alert>
-    <br>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig" @search="search">
       <template #header>
         <el-button type="primary" size="small" @click="onCreate"
                    v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
           YAML
+        </el-button>
+        <el-button type="primary" size="small" @click="onTop"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+          Top
         </el-button>
         <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                    v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
@@ -38,16 +36,6 @@
       </el-table-column>
       <el-table-column label="IP" min-width="40" prop="status.podIP"/>
       <el-table-column :label="$t('business.cluster.nodes')" min-width="45" show-overflow-tooltip prop="spec.nodeName"/>
-      <el-table-column :label="'Cpu'"  min-width="45">
-        <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "cpu") }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="'Memory'" min-width="45">
-        <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "memory") }}
-        </template>
-      </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" show-overflow-tooltip min-width="35" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
@@ -110,7 +98,6 @@ import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
 import {downloadYaml} from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
-import {listPodMetrics} from "@/api/apis"
 
 export default {
   name: "Pods",
@@ -130,7 +117,6 @@ export default {
       selects: [],
       clusterName: "",
       podUsage: [],
-      showText: false
     }
   },
   methods: {
@@ -234,7 +220,9 @@ export default {
     },
     onCreate () {
       this.$router.push({ name: "PodCreateYaml", query: { type: "pods" } })
-      // this.$router.push({ name: "PodCreate" })
+    },
+    onTop () {
+      this.$router.push({ name: "PodTop" })
     },
     getPodStatus (row) {
       if (row.status.containerStatuses) {
@@ -274,7 +262,6 @@ export default {
             item.containers = container
           }
           this.paginationConfig.total = res.total
-          this.listPodMetric()
         })
         .catch(error => {
           console.log(error.message)
@@ -283,51 +270,6 @@ export default {
           this.loading = false
         })
     },
-    listPodMetric () {
-      const namespace = sessionStorage.getItem("namespace")
-      listPodMetrics(this.clusterName, namespace).then(res => {
-        this.podUsage = res.items
-      }).catch(error => {
-        this.showText = true
-        console.log(error.message)
-      })
-    },
-    getPodUsage (name, type) {
-      let result = "0 m"
-      if (this.podUsage.length > 0) {
-        for (let item of this.podUsage) {
-          if (item.metadata.name === name) {
-            let usage = 0
-            for (let container of item.containers) {
-              if (type === "cpu") {
-                if (container.usage.cpu.indexOf("n") > -1) {
-                  usage = usage + parseInt(container.usage.cpu)
-                }
-                if (container.usage.cpu.indexOf("m") > -1) {
-                  usage = usage + parseInt(container.usage.cpu) * 1000 * 1000
-                }
-              }
-              if (type === "memory") {
-                if (container.usage.memory.indexOf("Ki") > -1) {
-                  usage = usage + parseInt(container.usage.memory)
-                }
-                if (container.usage.memory.indexOf("Mi") > -1) {
-                  usage = usage + parseInt(container.usage.memory) * 1000
-                }
-              }
-            }
-            const unit = type === "cpu" ? "m" : "Mi"
-            if (type === "cpu") {
-              result = (usage / 1000000).toFixed(2)
-            } else {
-              result = (usage / 1000).toFixed(2)
-            }
-            result = result + unit
-          }
-        }
-      }
-      return result
-    }
   },
   mounted () {
     this.clusterName = this.$route.query.cluster

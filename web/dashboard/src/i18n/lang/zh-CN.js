@@ -185,6 +185,7 @@ const message = {
     },
     pod: {
       image: "镜像",
+      windows: "时间窗口",
       ready: "准备就绪",
       restart_count: "重启次数",
       type: "类别",
@@ -206,7 +207,7 @@ const message = {
       download_logs: "日志下载",
       start_time: "开始时间",
       limit_byte: "最大限制",
-      download_log_help: "您将开始下载自 {0} 开始的最大 {1}Mb 日志文件！",
+      download_log_help: "您将开始下载自 {0} 开始的最大 {1}Mb 日志文件 !",
       last_half_hour: "最近半小时",
       last_three_hour: "最近三小时",
       last_day: "最近一天",

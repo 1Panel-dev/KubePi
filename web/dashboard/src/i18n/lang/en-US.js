@@ -184,6 +184,7 @@ const message = {
     },
     pod: {
       image: "Image",
+      windows: "Windows",
       ready: "Ready",
       restart_count: "Restart count",
       type: "Type",

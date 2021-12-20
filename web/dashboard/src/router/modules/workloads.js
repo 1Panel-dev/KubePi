@@ -43,6 +43,22 @@ const Workloads = {
       },
     },
     {
+      path: "/pods/top",
+      requirePermission: {
+        apiGroup: "",
+        resource: "pods",
+        verb: "list",
+        scope:"namespace"
+      },
+      name: "PodTop",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/top"),
+      props: true,
+      meta: {
+        activeMenu: "/pods",
+      },
+    },
+    {
       path: "pods/:namespace/:name",
       requirePermission: {
         apiGroup: "",

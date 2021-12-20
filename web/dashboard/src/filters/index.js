@@ -1,21 +1,5 @@
 import {dateFormat, datetimeFormat} from "fit2cloud-ui/src/filters/time"
 
-// export function DateFormat (value) {
-//   let data = value
-//   if (data == null) {
-//     return null
-//   }
-//   let dt = new Date(data)
-//   let yyyy = dt.getFullYear()
-//   let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
-//   let dd = dt.getDate().toString().padStart(2, '0')
-//   let h = dt.getHours().toString().padStart(2, '0')
-//   let m = dt.getMinutes().toString().padStart(2, '0')
-//   let s = dt.getSeconds().toString().padStart(2, '0')
-//   return yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
-// }
-
-
 export function AgeFormat (value) {
   if (value == null) {
     return ""
@@ -51,10 +35,40 @@ export function AgeFormat (value) {
   return result
 }
 
+export function CpuFormat (value) {
+  if (value == null) {
+    return ""
+  }
+  if (value.indexOf("u") !== -1) {
+    return (Number(value.replace("u", "")) / 1000000000).toFixed(2) + "m"
+  } else if (value.indexOf("n") !== -1) {
+    return (Number(value.replace("n", "")) / 1000000).toFixed(2) + "m"
+  } else if (value.indexOf("m") !== -1) {
+    return value
+  } else {
+    return (Number(value) * 1000) + "m"
+  }
+}
+
+export function MemoryFormat (value) {
+  if (value == null) {
+    return ""
+  }
+  if (value.indexOf("Ki") !== -1) {
+    return (Number(value.replace("Ki", "")) / 1024).toFixed(2) + "Mi"
+  } else if (value.indexOf("Mi") !== -1) {
+    return value
+  } else if (value.indexOf("Gi") !== -1) {
+    return (Number(value) * 1000) + "Mi"
+  }
+}
+
 const filters = {
   "dateFormat": dateFormat,
   "datetimeFormat": datetimeFormat,
-  "age": AgeFormat
+  "age": AgeFormat,
+  "cpu": CpuFormat,
+  "memory": MemoryFormat
 }
 
 export default {
