@@ -20,24 +20,24 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace"
                        show-overflow-tooltip/>
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip/>
-      <el-table-column :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="'CPU ' + $t('business.workload.reservation')" min-width="45">
         <template v-slot:default="{row}">
-          <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
-            <el-tag type="info" size="small">
-              {{ item.image }}
-            </el-tag>
-          </div>
+          {{ row.cpuRequest }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Cpu'" min-width="45">
+      <el-table-column :label="'CPU ' + $t('business.workload.limit')" min-width="45">
         <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "cpu") }}
+          {{ row.cpuLimit }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Memory'" min-width="45">
+      <el-table-column :label="$t('business.workload.memory') + $t('business.workload.reservation')" min-width="50">
         <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "memory") }}
+          {{ row.memoryRequest }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.workload.memory') + $t('business.workload.limit')" min-width="45">
+        <template v-slot:default="{row}">
+          {{ row.memoryLimit }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" show-overflow-tooltip fix>
@@ -55,7 +55,7 @@ import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import {listPodsWithNsSelector} from "@/api/pods"
 import {checkPermissions} from "@/utils/permission"
-import {listPodMetrics} from "@/api/apis"
+import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoDetailPods",
@@ -65,6 +65,7 @@ export default {
     namespace: String,
     selector: String,
     fieldSelector: String,
+    allocatable: Object,
   },
   watch: {
     selector: {
@@ -118,10 +119,31 @@ export default {
       }
       listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
+        for (const item of this.pods) {
+          let cpuLimit = 0
+          let memoryLimit = 0
+          let cpuRequest = 0
+          let memoryRequest = 0
+          for (const c of item.spec.containers) {
+            if(c.resources?.limits?.cpu) {
+              cpuLimit += cpuUnitConvert(c.resources.limits.cpu)
+            }
+            if(c.resources?.limits?.memory) {
+              memoryLimit += memeryUnitConvert(c.resources.limits.memory)
+            }
+            if(c.resources?.requests?.cpu) {
+              cpuRequest += cpuUnitConvert(c.resources.requests.cpu)
+            }
+            if(c.resources?.requests?.memory) {
+              memoryRequest += memeryUnitConvert(c.resources.requests.memory)
+            }
+          }
+          item.cpuLimit = cpuLimit !== 0 ? (cpuLimit + "m (" + (Math.floor(cpuLimit / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
+          item.memoryLimit = memoryLimit !== 0 ? (memoryLimit + "Mi (" + (Math.floor(memoryLimit / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+          item.cpuRequest = cpuRequest !== 0 ? (cpuRequest  + "m (" + (Math.floor(cpuRequest / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
+          item.memoryRequest = memoryRequest !== 0 ? (memoryRequest  + "Mi (" + (Math.floor(memoryRequest / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+        }
         this.loading = false
-        listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
-          this.podUsage = res.items
-        })
       })
     },
     openDetail (row) {
