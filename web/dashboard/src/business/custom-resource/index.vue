@@ -1,39 +1,24 @@
 <template>
   <layout-content header="Custom Resource Definitions">
-    <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
-      <template #header>
-          <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-      </template>
-      <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip>
-        <template v-slot:default="{row}">
-          <span class="span-link" @click="openDetail(row)">{{ row.spec.names.kind }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Group" prop="spec.group">
-        <template v-slot:default="{row}">
-          {{ row.spec.group }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('business.custom_resource.full_name')" prop="metadata.name">
-        <template v-slot:default="{row}">
-          {{ row.metadata.name }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('business.custom_resource.namespaced')" prop="metadata.name">
-        <template v-slot:default="{row}">
-          {{ row.spec.scope === "Namespaced" ? "True" : "False" }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
-        <template v-slot:default="{row}">
-          {{ row.metadata.creationTimestamp | age }}
-        </template>
-      </el-table-column>
-      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
-    </complex-table>
+    <el-row>
+      <el-col :span="6">
+        <el-tree
+                class="filter-tree"
+                :default-expand-all="true"
+                :data="data"
+                :props="props"
+                node-key="id"
+                ref="tree"
+                :highlight-current="true"
+                @node-click="handleNodeClick"
+                style="margin: 5px">
+        </el-tree>
+      </el-col>
+      <el-col :span="18">
+          <c-r-d-list v-if="resourceType==='Definitions'"></c-r-d-list>
+          <c-r-list :key="key" v-if="resourceType==='CustomResources'" :version="crItem.version" :names="crItem.names" :group="crItem.group" :scope="crItem.scope"></c-r-list>
+      </el-col>
+    </el-row>
   </layout-content>
 </template>
 
@@ -42,18 +27,31 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteCustomResource, getCustomResource, listCustomResources} from "@/api/customresourcedefinitions"
+import {
+  deleteCustomResourceDefinition,
+  listCustomResourceDefinitions,
+} from "@/api/customresourcedefinitions"
 import {checkPermissions} from "@/utils/permission"
+import CRDList from "@/business/custom-resource/crd"
+import CRList from "@/business/custom-resource/cr/cr"
 
 export default {
   name: "CustomResourceDefinitions",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
+  components: { CRList, CRDList, ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
       selects: [],
       loading: false,
       cluster: "",
+      props: {
+        children: "children",
+        label: "label"
+      },
+      resources:[],
+      resourceType: "Definitions",
+      crItem:{},
+      key:0,
       buttons: [
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -64,15 +62,20 @@ export default {
               params: { name: row.metadata.name }
             })
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"update"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "apiextensions.k8s.io",
+              resource: "customresourcedefinitions",
+              verb: "update"
+            })
           }
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml",getCustomResource(this.cluster,row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getCustomResource(this.cluster, row.metadata.name))
           }
         },
         {
@@ -81,8 +84,13 @@ export default {
           click: (row) => {
             this.onDelete(row)
           },
-          disabled:()=>{
-            return !checkPermissions({scope:'namespace',apiGroup:"apiextensions.k8s.io",resource:"customresourcedefinitions",verb:"delete"})
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "apiextensions.k8s.io",
+              resource: "customresourcedefinitions",
+              verb: "delete"
+            })
           }
         },
       ],
@@ -97,21 +105,50 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search () {
       this.loading = true
-      if (resetPage) {
-        this.paginationConfig.currentPage = 1
-      }
-      listCustomResources(this.cluster,true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
-        this.data = res.items
+      listCustomResourceDefinitions(this.cluster).then(res => {
+        this.resources = res.items
+        let groups = new Map()
+        for (const item of res.items) {
+          const group = item.spec.group
+          let children = groups.get(group)
+          if (children === undefined) {
+            groups.set(group, [item])
+          } else {
+            children.push(item)
+            groups.set(group, children)
+          }
+        }
+        this.data.push({label:"Definitions"})
+        for (let [key, value] of groups.entries()) {
+          let array = []
+          for (let children of value) {
+            array.push({ label: children.spec.names.kind, group: key,name:children.spec.names.plural,version: children.spec.versions[0].name,scope:children.spec.scope})
+          }
+          this.data.push({
+            label: key,
+            children: array
+          })
+        }
+
+      }).finally(() => {
         this.loading = false
-        this.paginationConfig.total = res.total
       })
     },
-    onCreate () {
-      this.$router.push({
-        name: "CustomResourceDefinitionCreate",
-      })
+    handleNodeClick (data) {
+      if (data.label === "Definitions") {
+        this.resourceType = "Definitions"
+      }else if (data.children === undefined) {
+        this.key ++
+        this.resourceType = "CustomResources"
+        this.crItem = {
+          version: data.version,
+          group: data.group,
+          names:data.name,
+          scope: data.scope,
+        }
+      }
     },
     onDelete (row) {
       this.$confirm(
@@ -123,11 +160,11 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          this.ps.push(deleteCustomResource(this.cluster, row.metadata.name))
+          this.ps.push(deleteCustomResourceDefinition(this.cluster, row.metadata.name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteCustomResource(this.cluster, select.metadata.name))
+              this.ps.push(deleteCustomResourceDefinition(this.cluster, select.metadata.name))
             }
           }
         }

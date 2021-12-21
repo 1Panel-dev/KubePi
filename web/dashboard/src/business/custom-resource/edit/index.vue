@@ -13,7 +13,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getCustomResource, updateCustomResource} from "@/api/customresourcedefinitions"
+import {getCustomResourceDefinition, updateCustomResourceDefinitione} from "@/api/customresourcedefinitions"
 
 export default {
   name: "CustomResourceDefinitionEdit",
@@ -32,7 +32,7 @@ export default {
   methods: {
     getDetail () {
       this.loading = true
-      getCustomResource(this.cluster,  this.name).then(res => {
+      getCustomResourceDefinition(this.cluster,  this.name).then(res => {
         this.item = res
         this.yaml = JSON.parse(JSON.stringify(this.item))
         this.loading = false
@@ -44,7 +44,7 @@ export default {
     onSubmit () {
       this.loading = true
       const data = this.$refs.yaml_editor.getValue()
-      updateCustomResource(this.cluster,this.name, data).then(() => {
+      updateCustomResourceDefinitione(this.cluster,this.name, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.update_success"),

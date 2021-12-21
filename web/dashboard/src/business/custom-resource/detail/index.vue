@@ -110,7 +110,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getCustomResource} from "@/api/customresourcedefinitions"
+import {getCustomResourceDefinition} from "@/api/customresourcedefinitions"
 import ComplexTable from "@/components/complex-table"
 import KoDetailConditions from "@/components/detail/detail-conditions"
 
@@ -137,7 +137,7 @@ export default {
   methods: {
     getDetail () {
       this.loading = true
-      getCustomResource(this.cluster, this.name).then(res => {
+      getCustomResourceDefinition(this.cluster, this.name).then(res => {
         this.item = res
         this.yaml = JSON.parse(JSON.stringify(this.item))
         this.loading = false
