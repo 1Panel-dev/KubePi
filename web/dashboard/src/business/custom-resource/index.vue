@@ -24,11 +24,9 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
-import KoTableOperations from "@/components/ko-table-operations"
 import {
-  deleteCustomResourceDefinition,
+  deleteCustomResourceDefinition, getCustomResourceDefinition,
   listCustomResourceDefinitions,
 } from "@/api/customresourcedefinitions"
 import {checkPermissions} from "@/utils/permission"
@@ -37,7 +35,7 @@ import CRList from "@/business/custom-resource/cr/cr"
 
 export default {
   name: "CustomResourceDefinitions",
-  components: { CRList, CRDList, ComplexTable, LayoutContent, KoTableOperations },
+  components: { CRList, CRDList, LayoutContent },
   data () {
     return {
       data: [],
@@ -75,7 +73,7 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            downloadYaml(row.metadata.name + ".yml", getCustomResource(this.cluster, row.metadata.name))
+            downloadYaml(row.metadata.name + ".yml", getCustomResourceDefinition(this.cluster, row.metadata.name))
           }
         },
         {
