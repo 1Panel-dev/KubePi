@@ -14,7 +14,7 @@
           {{ row.metadata.name }}
         </template>
       </el-table-column>
-      <el-table-column  v-if="show" label="namespace" prop="metadata.namespace">
+      <el-table-column  v-if="show" :label="$t('business.namespace.namespace')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
