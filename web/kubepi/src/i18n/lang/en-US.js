@@ -1,6 +1,7 @@
 import el from "element-ui/lib/locale/lang/en"
 import fu from "fit2cloud-ui/src/locale/lang/en_US" // 加载fit2cloud的内容
 
+
 const message = {
     commons: {
         message_box: {
@@ -222,10 +223,22 @@ const description = {
     i18n_user_manage_rbac: "Role and user administrators have all the permissions of the user objects.",
     i18n_user_manage_readonly: "Read only user with access to all objects only,",
     i18n_user_common_user: "Ordinary users only have access to cluster objects",
+    i18n_user_manage_chart: "Chart warehouse administrator, has all rights to the Chart warehouse",
+
+    i18n_cluster_owner: "The cluster owner has permissions on all objects",
+    i18n_cluster_viewer: "A cluster read-only user who has the read-only permission on all objects",
+    i18n_manage_cluster_rbac: "Cluster Access control Administrator who has all permissions on ClusterRole and ClusterRoleBinding objects",
+    i18n_view_cluster_rbac: "Cluster access control read-only user who has the ClusterRole and ClusterRoleBinding read-only permission",
+    i18n_manage_cluster_storage: "Cluster storage administrator who has all permissions on the StorageClass and PersistentVolume objects",
+    i18n_view_cluster_storage: "The cluster stores read-only users and has the read-only permission on the StorageClass and PersistentVolume objects",
+    i18n_manage_namespaces: "Namespace administrator who has all permissions on Namespace objects",
+    i18n_view_namespaces: "A read-only Namespace user who has all permissions on Namespace objects",
+    i18n_view_events: "A cluster event read-only user who has read-only permission on Events objects",
+    i18n_view_nodes: "A read-only user who has the read-only permission on Node objects",
+
     i18n_manage_nodes: "The node administrator has read-only permissions on node objects",
     i18n_manage_crd: "The custom resource administrator has all the permissions of the CustomResourceDefinition objec",
     i18n_view_crd: "User defined resource administrator with read-only permission on CustomResourceDefinition object",
-    i18n_user_manage_chart: "Chart warehouse administrator, has all rights to the Chart warehouse",
 
     i18n_manage_config: "The configuration administrator has all permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",
     i18n_view_config: "Configure a read-only user with read-only permissions on the current namespace configmap, secret, resourcequotes, limitranges, horizontalpodautoscalers and poddisruptionbudget objects",

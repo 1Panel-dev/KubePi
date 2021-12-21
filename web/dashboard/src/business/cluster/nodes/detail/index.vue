@@ -124,7 +124,7 @@
           <br>
           <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
             <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-              <ko-detail-pods :cluster="cluster" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
+              <ko-detail-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
             </el-tab-pane>
             <el-tab-pane :label="$t('business.common.conditions')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
@@ -305,10 +305,10 @@ export default {
         this.cpuResource.requests = (cpuRequests / 1000).toFixed(3)
         this.memResource.limits = memLimits
         this.memResource.requests = memRequests
-        this.cpuResource.limitsUsage = Math.round(cpuLimits / this.cpuResource.total * 100)
-        this.cpuResource.requestsUsage = Math.round(cpuRequests / this.cpuResource.total * 100)
-        this.memResource.limitsUsage = Math.round(memLimits / this.memResource.total * 100)
-        this.memResource.requestsUsage = Math.round(memRequests / this.memResource.total * 100)
+        this.cpuResource.limitsUsage = Math.floor(cpuLimits / this.cpuResource.total * 100)
+        this.cpuResource.requestsUsage = Math.floor(cpuRequests / this.cpuResource.total * 100)
+        this.memResource.limitsUsage = Math.floor(memLimits / this.memResource.total * 100)
+        this.memResource.requestsUsage = Math.floor(memRequests / this.memResource.total * 100)
       })
     },
     cpuFormat () {

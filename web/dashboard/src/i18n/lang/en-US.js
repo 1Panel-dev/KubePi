@@ -184,6 +184,13 @@ const message = {
     },
     pod: {
       image: "Image",
+      eviction: "Eviction",
+      eviction_confirm: "Pod eviction will proceed as follows, whether it is determined to continue?",
+      eviction_help1: "1. Set the node to the unschedulable state",
+      eviction_help2: "2. Eviction the pod",
+      eviction_help3: "3. Set the node to the schedulable state",
+      drain_success: "Pod eviction succeeded, please refresh the page later",
+      windows: "Windows",
       ready: "Ready",
       restart_count: "Restart count",
       type: "Type",

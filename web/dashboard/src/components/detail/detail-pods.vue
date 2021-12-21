@@ -20,24 +20,24 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" min-width="40" prop="metadata.namespace"
                        show-overflow-tooltip/>
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="40" prop="spec.nodeName" show-overflow-tooltip/>
-      <el-table-column :label="$t('business.pod.image')" min-width="120" show-overflow-tooltip>
+      <el-table-column :label="'CPU ' + $t('business.workload.reservation')" min-width="45">
         <template v-slot:default="{row}">
-          <div v-for="(item,index) in row.spec.containers" v-bind:key="index" class="myTag">
-            <el-tag type="info" size="small">
-              {{ item.image }}
-            </el-tag>
-          </div>
+          {{ row.cpuRequest }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Cpu'" min-width="45">
+      <el-table-column :label="'CPU ' + $t('business.workload.limit')" min-width="45">
         <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "cpu") }}
+          {{ row.cpuLimit }}
         </template>
       </el-table-column>
-      <el-table-column :label="'Memory'" min-width="45">
+      <el-table-column :label="$t('business.workload.memory') + $t('business.workload.reservation')" min-width="50">
         <template v-slot:default="{row}">
-          {{ getPodUsage(row.metadata.name, "memory") }}
+          {{ row.memoryRequest }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.workload.memory') + $t('business.workload.limit')" min-width="45">
+        <template v-slot:default="{row}">
+          {{ row.memoryLimit }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" min-width="40" prop="metadata.creationTimestamp" show-overflow-tooltip fix>
@@ -47,15 +47,30 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
+
+    <el-dialog :title="'Pod ' + $t('business.pod.eviction')" width="30%" :visible.sync="evictionDialogVisible">
+      <div style="margin-left: 50px">
+        <p>{{ $t("business.pod.eviction_confirm") }}</p>
+        <ul>{{ $t("business.pod.eviction_help1") }}</ul>
+        <ul>{{ $t("business.pod.eviction_help2") }}</ul>
+        <ul>{{ $t("business.pod.eviction_help3") }}</ul>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="evictionDialogVisible = false">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button size="small" @click="submitEviction">{{ $t("commons.button.confirm") }}</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {listPodsWithNsSelector} from "@/api/pods"
+import {listPodsWithNsSelector, evictionPod} from "@/api/pods"
+import {cordonNode} from "@/api/nodes"
 import {checkPermissions} from "@/utils/permission"
-import {listPodMetrics} from "@/api/apis"
+import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoDetailPods",
@@ -65,6 +80,7 @@ export default {
     namespace: String,
     selector: String,
     fieldSelector: String,
+    allocatable: Object,
   },
   watch: {
     selector: {
@@ -101,10 +117,18 @@ export default {
             this.openTerminalLogs(row)
           },
         },
+        {
+          label: this.$t("business.node.drain"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.openEviction(row)
+          },
+        },
       ],
       loading: false,
+      evictionDialogVisible: false,
       pods: [],
-      podUsage: [],
+      podItem: {},
     }
   },
   methods: {
@@ -118,9 +142,59 @@ export default {
       }
       listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
+        for (const item of this.pods) {
+          let cpuLimit = 0
+          let memoryLimit = 0
+          let cpuRequest = 0
+          let memoryRequest = 0
+          for (const c of item.spec.containers) {
+            if(c.resources?.limits?.cpu) {
+              cpuLimit += cpuUnitConvert(c.resources.limits.cpu)
+            }
+            if(c.resources?.limits?.memory) {
+              memoryLimit += memeryUnitConvert(c.resources.limits.memory)
+            }
+            if(c.resources?.requests?.cpu) {
+              cpuRequest += cpuUnitConvert(c.resources.requests.cpu)
+            }
+            if(c.resources?.requests?.memory) {
+              memoryRequest += memeryUnitConvert(c.resources.requests.memory)
+            }
+          }
+          item.cpuLimit = cpuLimit !== 0 ? (cpuLimit + "m (" + (Math.floor(cpuLimit / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
+          item.memoryLimit = memoryLimit !== 0 ? (memoryLimit + "Mi (" + (Math.floor(memoryLimit / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+          item.cpuRequest = cpuRequest !== 0 ? (cpuRequest  + "m (" + (Math.floor(cpuRequest / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
+          item.memoryRequest = memoryRequest !== 0 ? (memoryRequest  + "Mi (" + (Math.floor(memoryRequest / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+        }
         this.loading = false
-        listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
-          this.podUsage = res.items
+      })
+    },
+    openEviction(row) {
+      this.evictionDialogVisible = true
+      this.podItem = row
+    },
+    submitEviction() {
+      let data = { spec: { unschedulable: true } }
+      cordonNode(this.cluster, this.podItem.spec.nodeName, data).then(() => {
+        const rmPod = {
+          apiVersion: "policy/v1beta1",
+          kind: "Eviction",
+          metadata: {
+            name: this.podItem.metadata.name,
+            namespace: this.podItem.metadata.namespace,
+            creationTimestamp: null,
+          },
+          deleteOptions: {},
+        }
+        evictionPod(this.cluster, this.podItem.metadata.namespace, this.podItem.metadata.name, rmPod).then(() => {
+          let data = { spec: { unschedulable: false } }
+          cordonNode(this.cluster, this.podItem.spec.nodeName, data).then(() => {
+            this.$message({
+              type: "success",
+              message: this.$t("business.pod.drain_success"),
+            })
+            this.evictionDialogVisible = false
+          })
         })
       })
     },
@@ -159,42 +233,6 @@ export default {
       })
       window.open(routeUrl.href, "_blank")
     },
-    getPodUsage (name, type) {
-      let result = "0 m"
-      if (this.podUsage.length > 0) {
-        for (let item of this.podUsage) {
-          if (item.metadata.name === name) {
-            let usage = 0
-            for (let container of item.containers) {
-              if (type === "cpu") {
-                if (container.usage.cpu.indexOf("n") > -1) {
-                  usage = usage + parseInt(container.usage.cpu)
-                }
-                if (container.usage.cpu.indexOf("m") > -1) {
-                  usage = usage + parseInt(container.usage.cpu) * 1000 * 1000
-                }
-              }
-              if (type === "memory") {
-                if (container.usage.memory.indexOf("Ki") > -1) {
-                  usage = usage + parseInt(container.usage.memory)
-                }
-                if (container.usage.memory.indexOf("Mi") > -1) {
-                  usage = usage + parseInt(container.usage.memory) * 1000
-                }
-              }
-            }
-            const unit = type === "cpu" ? "m" : "Mi"
-            if (type === "cpu") {
-              result = (usage / 1000000).toFixed(2)
-            } else {
-              result = (usage / 1000).toFixed(2)
-            }
-            result = result + unit
-          }
-        }
-      }
-      return result
-    }
   },
 }
 </script>

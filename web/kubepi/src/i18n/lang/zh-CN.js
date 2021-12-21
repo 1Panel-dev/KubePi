@@ -35,8 +35,6 @@ const message = {
             cancel: "取消",
             login: "登录",
             confirm: "确定",
-            edit_yaml: "YAML",
-            back_form: "返回表单",
             add: "添加",
             edit: "编辑",
             all_select: "全选",
@@ -46,7 +44,6 @@ const message = {
             sync: "同步"
         },
         table: {
-            label: "标签",
             name: "名称",
             kind: "类型",
             created_time: "创建时间",
@@ -102,24 +99,10 @@ const message = {
             title: "登录 KubePi",
             welcome: "欢迎回来，请输入用户名和密码登录",
             expires: "认证信息已过期，请重新登录",
-            table: {
-                name: "名称",
-                created_time: "创建时间"
-            },
-            search: {
-                quickSearch: "搜索"
-            },
-            form: {
-                name: "名称"
-            }
         },
     },
     business: {
-        dashboard: {
-            dashboard: "概览"
-        },
         cluster: {
-            node: "节点",
             cluster: "集群",
             namespace: "命名空间",
             scope: "作用域",
@@ -163,28 +146,6 @@ const message = {
             repo: "仓库",
             repo_auth: "仓库授权"
         },
-        namespace: {
-            description: "描述"
-        },
-        workload: {
-            workload: "工作量"
-        },
-        network: {
-            network: "网络"
-        },
-        storage: {
-            storage: "存储"
-        },
-        group: {
-            binding_management: "绑定管理",
-            add_user: "添加用户"
-        },
-        configuration: {
-            configuration: "配置"
-        },
-        access_control: {
-            access_control: "访问控制"
-        },
         cluster_role: {
             none: "无",
             cluster_administrator: "集群管理员",
@@ -192,12 +153,10 @@ const message = {
         },
         user: {
             user_management: "用户管理",
-            user_group: "用户组",
             username: "用户名",
             nickname: "昵称",
             email: "邮箱",
             user_list: "用户列表",
-            user_group_list: "用户组列表",
             role_list: "角色列表",
             user: "用户",
             role: "角色",
@@ -239,7 +198,6 @@ const message = {
             username: "用户名",
             ip: "登录IP",
             city: "登录城市",
-            commercial: "运营商",
         },
         image_repos: {
           list: "镜像仓库",
