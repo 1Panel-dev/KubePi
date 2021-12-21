@@ -47,13 +47,28 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
+
+    <el-dialog :title="'Pod ' + $t('business.pod.eviction')" width="30%" :visible.sync="evictionDialogVisible">
+      <div style="margin-left: 50px">
+        <p>{{ $t("business.pod.eviction_confirm") }}</p>
+        <ul>{{ $t("business.pod.eviction_help1") }}</ul>
+        <ul>{{ $t("business.pod.eviction_help2") }}</ul>
+        <ul>{{ $t("business.pod.eviction_help3") }}</ul>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="evictionDialogVisible = false">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button size="small" @click="submitEviction">{{ $t("commons.button.confirm") }}</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {listPodsWithNsSelector} from "@/api/pods"
+import {listPodsWithNsSelector, evictionPod} from "@/api/pods"
+import {cordonNode} from "@/api/nodes"
 import {checkPermissions} from "@/utils/permission"
 import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
 
@@ -102,10 +117,18 @@ export default {
             this.openTerminalLogs(row)
           },
         },
+        {
+          label: this.$t("business.node.drain"),
+          icon: "el-icon-delete",
+          click: (row) => {
+            this.openEviction(row)
+          },
+        },
       ],
       loading: false,
+      evictionDialogVisible: false,
       pods: [],
-      podUsage: [],
+      podItem: {},
     }
   },
   methods: {
@@ -146,6 +169,35 @@ export default {
         this.loading = false
       })
     },
+    openEviction(row) {
+      this.evictionDialogVisible = true
+      this.podItem = row
+    },
+    submitEviction() {
+      let data = { spec: { unschedulable: true } }
+      cordonNode(this.cluster, this.podItem.spec.nodeName, data).then(() => {
+        const rmPod = {
+          apiVersion: "policy/v1beta1",
+          kind: "Eviction",
+          metadata: {
+            name: this.podItem.metadata.name,
+            namespace: this.podItem.metadata.namespace,
+            creationTimestamp: null,
+          },
+          deleteOptions: {},
+        }
+        evictionPod(this.cluster, this.podItem.metadata.namespace, this.podItem.metadata.name, rmPod).then(() => {
+          let data = { spec: { unschedulable: false } }
+          cordonNode(this.cluster, this.podItem.spec.nodeName, data).then(() => {
+            this.$message({
+              type: "success",
+              message: this.$t("business.pod.drain_success"),
+            })
+            this.evictionDialogVisible = false
+          })
+        })
+      })
+    },
     openDetail (row) {
       this.$router.push({
         name: "PodDetail",
@@ -181,42 +233,6 @@ export default {
       })
       window.open(routeUrl.href, "_blank")
     },
-    getPodUsage (name, type) {
-      let result = "0 m"
-      if (this.podUsage.length > 0) {
-        for (let item of this.podUsage) {
-          if (item.metadata.name === name) {
-            let usage = 0
-            for (let container of item.containers) {
-              if (type === "cpu") {
-                if (container.usage.cpu.indexOf("n") > -1) {
-                  usage = usage + parseInt(container.usage.cpu)
-                }
-                if (container.usage.cpu.indexOf("m") > -1) {
-                  usage = usage + parseInt(container.usage.cpu) * 1000 * 1000
-                }
-              }
-              if (type === "memory") {
-                if (container.usage.memory.indexOf("Ki") > -1) {
-                  usage = usage + parseInt(container.usage.memory)
-                }
-                if (container.usage.memory.indexOf("Mi") > -1) {
-                  usage = usage + parseInt(container.usage.memory) * 1000
-                }
-              }
-            }
-            const unit = type === "cpu" ? "m" : "Mi"
-            if (type === "cpu") {
-              result = (usage / 1000000).toFixed(2)
-            } else {
-              result = (usage / 1000).toFixed(2)
-            }
-            result = result + unit
-          }
-        }
-      }
-      return result
-    }
   },
 }
 </script>

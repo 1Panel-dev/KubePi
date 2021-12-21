@@ -185,6 +185,12 @@ const message = {
     },
     pod: {
       image: "镜像",
+      eviction: "驱散",
+      eviction_confirm: "Pod 驱散将进行以下操作，是否确定继续 ?",
+      eviction_help1: "1. 将节点置为不可调度状态",
+      eviction_help2: "2. 驱散该 pod",
+      eviction_help3: "3. 将节点置为可调度状态",
+      drain_success: "pod 驱散成功，请稍后刷新页面",
       windows: "时间窗口",
       ready: "准备就绪",
       restart_count: "重启次数",
