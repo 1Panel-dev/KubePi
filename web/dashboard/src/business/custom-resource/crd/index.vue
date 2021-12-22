@@ -7,25 +7,23 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip>
+      <el-table-column label="Kind" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span class="span-link" @click="openDetail(row)">{{ row.spec.names.kind }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Group" prop="spec.group">
+      </el-table-column>
+      <el-table-column label="Versions" prop="spec.versions">
         <template v-slot:default="{row}">
-          {{ row.spec.group }}
+          <span v-for="value in row.spec.versions">
+            {{value.name}}
+          </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.custom_resource.full_name')" prop="metadata.name">
-        <template v-slot:default="{row}">
-          {{ row.metadata.name }}
-        </template>
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
       </el-table-column>
-      <el-table-column :label="$t('business.custom_resource.namespaced')" prop="metadata.name">
-        <template v-slot:default="{row}">
-          {{ row.spec.scope === "Namespaced" ? "True" : "False" }}
-        </template>
+      <el-table-column label="Scope" prop="spec.scope">
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
