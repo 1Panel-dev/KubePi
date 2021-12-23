@@ -9,10 +9,12 @@
         </el-button>
       </template>
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip>
-        <template v-slot:default="{row}">
-          {{ row.metadata.name }}
-        </template>
+
+      <el-table-column label="ApiVersion" show-overflow-tooltip prop="apiVersion">
+      </el-table-column>
+      <el-table-column label="Kind" show-overflow-tooltip prop="kind">
+      </el-table-column>
+      <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip prop="metadata.name">
       </el-table-column>
       <el-table-column  v-if="show" :label="$t('business.namespace.namespace')" prop="metadata.namespace">
         <template v-slot:default="{row}">
