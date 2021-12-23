@@ -226,7 +226,7 @@ const message = {
       last_week: "最近一周",
       last_month: "最近一月",
       last_three_month: "最近三月",
-      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动),所以 Cpu(Cores)、Memory(bytes) 暂无数据"
+      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动)，所以暂无数据"
     },
     namespace: {
       namespace: "命名空间",

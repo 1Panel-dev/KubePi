@@ -30,7 +30,7 @@
     </el-row>
     <br>
 
-    <el-row :gutter="20" v-if="hasMetric">
+    <el-row :gutter="20" v-if="hasMetric === 'true'">
       <el-col :span="12">
         <el-card style="background-color: #212e38" class="n-card el-card">
           <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatCpu}}</span>
@@ -44,7 +44,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="!hasMetric">
+    <el-row v-if="!hasMetric === 'true'">
       <el-alert type="info" :closable="false">
         <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
       </el-alert> 
@@ -149,7 +149,7 @@ export default {
       searchConfig: {
         keywords: ""
       },
-      hasMetric: null,
+      hasMetric: "false",
       clusterInfo: {
         allocatCpu: 0,
         allocatMemory: 0,
@@ -200,7 +200,7 @@ export default {
           }
           this.resources.push(nodes)
           listNodeMetrics(this.clusterName).then(metricNodes => {
-            this.hasMetric = true
+            this.hasMetric = "true"
             this.clusterInfo.metricCpu = 0
             this.clusterInfo.metricMemory = 0
             for(const n of metricNodes.items) {
@@ -218,7 +218,7 @@ export default {
             this.clusterInfo.cpuPercent = Number((this.clusterInfo.metricCpu / this.clusterInfo.allocatCpu).toFixed(2) * 100)
             this.clusterInfo.memoryPercent = Number((this.clusterInfo.metricMemory / this.clusterInfo.allocatMemory).toFixed(2) * 100)
           }).catch(() => {
-            this.hasMetric = false
+            this.hasMetric = "false"
           })
         })
       }
