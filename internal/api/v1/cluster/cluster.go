@@ -323,15 +323,15 @@ func (h *Handler) SearchClusters() iris.Handler {
 func getExtraClusterInfo(context goContext.Context, client kubernetes.Interface) (ExtraClusterInfo, error) {
 	err := client.Ping()
 	if err != nil {
-		return ExtraClusterInfo{Health: false}, nil
+		return ExtraClusterInfo{Health: false, Message: err.Error()}, err
 	}
 	c, err := client.Client()
 	if err != nil {
-		return ExtraClusterInfo{}, err
+		return ExtraClusterInfo{Health: false, Message: err.Error()}, err
 	}
 	nodesList, err := c.CoreV1().Nodes().List(context, metav1.ListOptions{})
 	if err != nil {
-		return ExtraClusterInfo{}, err
+		return ExtraClusterInfo{Health: true, Message: err.Error()}, err
 	}
 	nodes := nodesList.Items
 
@@ -356,7 +356,7 @@ func getExtraClusterInfo(context goContext.Context, client kubernetes.Interface)
 	}
 	podsList, err := c.CoreV1().Pods("").List(goContext.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return ExtraClusterInfo{}, err
+		return ExtraClusterInfo{Health: true, Message: err.Error()}, err
 	}
 	pods := podsList.Items
 	for i := range pods {

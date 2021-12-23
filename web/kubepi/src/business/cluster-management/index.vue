@@ -16,7 +16,9 @@
       <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
-          <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
+          <el-tooltip class="item" effect="dark" :content="row.extraClusterInfo.message" placement="right">
+            <el-tag type="danger" v-if="!row.extraClusterInfo.health">{{ $t('business.cluster.not_ready') }}</el-tag>
+          </el-tooltip>
         </template>
       </el-table-column>
 
@@ -81,18 +83,6 @@
           <el-tag>
             {{ row.extraClusterInfo.readyNodeNum }} / {{ row.extraClusterInfo.totalNodeNum }}
           </el-tag>
-        </template>
-      </el-table-column>
-
-
-      <el-table-column min-width="180" fix>
-        <template v-slot:default="{row}">
-          <div>
-            <el-progress type="dashboard" :width="80" :format="formatCpu" :color="colors"
-                         :percentage="getCpuUsed(row)"></el-progress>
-            <el-progress type="dashboard" :width="80" :format="formatMemory" :color="colors"
-                         :percentage="getMemoryUsed(row)"></el-progress>
-          </div>
         </template>
       </el-table-column>
 
@@ -186,9 +176,6 @@ export default {
         pageSize: 10,
         total: 0,
       },
-      colors: [
-        {color: '#1989fa', percentage: 0},
-      ],
       searchConfig: {
         quickPlaceholder: this.$t('commons.search.quickSearch'),
         components: [
@@ -208,8 +195,8 @@ export default {
           click: (row) => {
             this.onDetail(row.name)
           },
-          disabled: () => {
-            return !checkPermissions({resource: "clusters", verb: "update"})
+          disabled: (row) => {
+            return !(checkPermissions({resource: "clusters", verb: "update"}) && row.extraClusterInfo.health)
           }
         },
         {
@@ -225,14 +212,7 @@ export default {
       ],
     }
   },
-  computed: {},
   methods: {
-    formatCpu(percentage) {
-      return `${percentage}% \nCPU`
-    },
-    formatMemory(percentage) {
-      return `${percentage}% \nMemory`
-    },
     search(conditions) {
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
@@ -320,15 +300,6 @@ export default {
     },
     checkPrem(obj) {
       return checkPermissions(obj)
-    },
-    getCpuUsed(item) {
-      const r = Math.round((item.extraClusterInfo.cpuRequested / item.extraClusterInfo.cpuAllocatable) * 100)
-      return r > 100 ? 100 : r
-    },
-
-    getMemoryUsed(item) {
-      const r = Math.round((item.extraClusterInfo.memoryRequested / item.extraClusterInfo.memoryAllocatable) * 100)
-      return r > 100 ? 100 : r
     },
 
     onGuildSubmit() {
