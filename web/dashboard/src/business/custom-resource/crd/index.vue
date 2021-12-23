@@ -16,7 +16,7 @@
       </el-table-column>
       <el-table-column label="Versions" prop="spec.versions">
         <template v-slot:default="{row}">
-          <span v-for="value in row.spec.versions">
+          <span v-for="(value, index) in row.spec.versions" v-bind:key="index">
             {{value.name}}
           </span>
         </template>
