@@ -143,7 +143,12 @@ const message = {
       service: "Service",
     },
     dashboard: {
-      dashboard: "Dashboard"
+      dashboard: "Dashboard",
+      metric_server_help: "Failed to detect Metric Server service, click Install or Reset",
+      metric_server_install_help: "Meterics server will create the following under the cluster kube-system namespace: ",
+      has_permission: "Existing permissions",
+      has_not_permission: "lack permissions",
+      image: "image",
     },
     cluster: {
       cluster: "Cluster",

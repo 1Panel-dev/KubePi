@@ -88,7 +88,7 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
-import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
+import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoLimitRange",
@@ -113,7 +113,7 @@ export default {
                 } else if (key.indexOf(".memory") !== -1 || key.indexOf(".storage") !== -1) {
                   data.push({
                     key: key,
-                    value: memeryUnitConvert(newVal.hard[key]),
+                    value: memoryUnitConvert(newVal.hard[key]),
                   })
                 } else {
                   data.push({
