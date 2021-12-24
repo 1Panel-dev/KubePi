@@ -212,7 +212,8 @@ const message = {
           auth: "Auth",
           allow_anonymous: "Allow anonymous docker pull ",
           repo_null: "Repo is null",
-          images: "Image List"
+          images: "Image List",
+          push_image: "Push the mirror to the current project",
         }
     },
 }

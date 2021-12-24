@@ -212,7 +212,8 @@ const message = {
           auth: "认证",
           allow_anonymous: "允许匿名docker pull",
           repo_null: "镜像库为空",
-          images: "镜像列表"
+          images: "镜像列表",
+          push_image: "推送镜像到当前项目",
         }
     },
 }
