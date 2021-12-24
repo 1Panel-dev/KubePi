@@ -12,7 +12,8 @@
             <table style="width: 100%" class="myTable">
               <tr>
                 <th scope="col" width="30%" align="left">
-                  <h3>{{ $t("business.common.system") }}</h3></th>
+                  <h3>{{ $t("business.common.system") }}</h3>
+                </th>
                 <th scope="col"></th>
               </tr>
               <tr>
@@ -42,139 +43,202 @@
             </table>
           </el-card>
         </el-col>
-        <el-col :span="24" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-          <br>
+      </el-row>
+      <br>
+      <el-row class="row-box" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+        <el-card class="el-card">
           <el-row :gutter="20">
-            <el-col :span="9">
-              <el-card>
-                <div slot="header" class="clearfix" style="text-align: center;">
-                  <span>CPU</span>
-                </div>
-                <div style="text-align: center;">
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <div>Requests</div>
-                      <br>
-                      <el-progress type="circle" :percentage="cpuResource.requestsUsage"></el-progress>
-                      <br>
-                      <span>Cores:{{ cpuResource.requests }}</span>
-                    </el-col>
-                    <el-col :span="12">
-                      <div>Limits</div>
-                      <br>
-                      <el-progress type="circle"
-                                   :percentage="cpuResource.limitsUsage  >= 100 ? 100: cpuResource.limitsUsage"
-                                   :format="cpuFormat"></el-progress>
-                      <br>
-                      <span>Cores:{{ cpuResource.limits }}</span>
-                    </el-col>
-                  </el-row>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="9">
-              <el-card>
-                <div slot="header" class="clearfix" style="text-align: center;">
-                  <span>Memory</span>
-                </div>
-                <div style="text-align: center">
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <div>Requests</div>
-                      <br>
-                      <el-progress type="circle" :percentage="memResource.requestsUsage"></el-progress>
-                      <br>
-                      <span>Mib:{{ memResource.requests }}</span>
-                    </el-col>
-                    <el-col :span="12">
-                      <div>Limits</div>
-                      <br>
-                      <el-progress type="circle"
-
-                                   :percentage="memResource.limitsUsage  >= 100 ? 100: memResource.limitsUsage"
-                                   :format="memFormat"></el-progress>
-                      <br>
-                      <span>Mib:{{ memResource.limits }}</span>
-                    </el-col>
-                  </el-row>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="6">
-              <el-card>
-                <div slot="header" class="clearfix" style="text-align: center;">
-                  <span>Pods</span>
-                </div>
-                <div style="text-align: center">
-                  <el-row :gutter="20">
-                    <el-col>
-                      <div>Allocation</div>
-                      <br>
-                      <el-progress type="circle" :percentage="podsData.usage"></el-progress>
-                      <br>
-                      <span>Pods:{{ podsData.podsCount }}</span>
-                    </el-col>
-                  </el-row>
-                </div>
-              </el-card>
-            </el-col>
+            <h4>{{ $t('business.node.allocata') }}</h4>
+            <el-form label-position="top">
+              <el-col :span="4">
+                <el-form-item :label="'CPU ' + $t('business.workload.reservation')">
+                  <span>{{ cpuResource.requests }} core ({{ cpuResource.requestsUsage }}%)</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item :label="'CPU ' + $t('business.workload.limit')">
+                  <span>{{ cpuResource.limits }} core ({{ cpuResource.limitsUsage }}%)</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')">
+                  <span>{{ memResource.requests }} Mib ({{ memResource.requestsUsage }}%)</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')">
+                  <span>{{ memResource.limits }} Mib ({{ memResource.limitsUsage }}%)</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item label="Pods">
+                  <span>{{ podsData.podsCount }} ({{ podsData.usage }}%)</span>
+                </el-form-item>
+              </el-col>
+            </el-form>
           </el-row>
-        </el-col>
-        <el-col :span="24">
-          <br>
-          <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
-            <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-              <ko-detail-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('business.common.conditions')">
-              <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('business.pod.image')">
-              <table style="width: 90%" class="myTable">
-                <tr>
-                  <th scope="col" width="70%" align="left">{{ $t("commons.table.name") }}</th>
-                  <th scope="col" align="left">{{ $t("business.pod.size") }}</th>
-                </tr>
-                <tr v-for="(image,index) in item.status.images" v-bind:key="index">
-                  <td>{{ image.names[1] ? image.names[1] : image.names[0] }}</td>
-                  <td>{{ Math.round(image.sizeBytes / (1024 * 1024)) }} MB</td>
-                </tr>
-              </table>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('business.pod.resource')">
-              <table style="width: 100%" class="myTable">
-                <tr>
-                  <td>Pod CIDR</td>
-                  <td>{{ item.spec.podCIDR }}</td>
-                </tr>
-                <tr>
-                  <td>{{ $t("business.pod.address") }}</td>
-                  <td>
-                    <div v-for="(address,index) in item.status.addresses" v-bind:key="index">
-                      <el-tag type="success">{{ address.type }} : {{ address.address }}</el-tag>
+        </el-card>
+      </el-row>
+      <br>
+      <el-row class="row-box" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+        <el-card class="el-card">
+          <el-row :gutter="20">
+            <h4>{{$t('business.node.health_statu')}}</h4>
+            <el-form label-position="top">
+              <div v-for="(cond, index) in item.status.conditions" v-bind:key="index">
+                <el-col :span="8" v-if="cond.type === 'NetworkUnavailable'">
+                  <div>
+                    <div style="font-size: 30px;"><i class="iconfont iconnetwork" style="float: left"></i></div>
+                    <div v-if="cond.status === 'False'" style="font-size: 10px; color: green; "><i class="el-icon-success" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                    <div v-if="cond.status === 'True'" style="font-size: 10px; color: red; "><i class="el-icon-warning" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                  </div>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">
+                      <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
+                      <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Allocatable</td>
-                  <td>
-                    <div><el-tag type="success">CPU : {{item.status.allocatable.cpu}}</el-tag></div>
-                    <div><el-tag type="success">Memory : {{item.status.allocatable.memory}}</el-tag></div>
-                    <div><el-tag type="success">Pods : {{item.status.allocatable.pods}}</el-tag></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Capacity</td>
-                  <td>
-                    <div><el-tag type="success">CPU : {{item.status.capacity.cpu}}</el-tag></div>
-                    <div><el-tag type="success">Memory : {{item.status.capacity.memory}}</el-tag></div>
-                    <div><el-tag type="success">Pods : {{item.status.capacity.pods}}</el-tag></div>
-                  </td>
-                </tr>
-              </table>
-            </el-tab-pane>
-          </el-tabs>
-        </el-col>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.network_statu')">
+                      <span>{{ $t('business.node.network_statu_help') }}</span>
+                    </el-form-item>
+                  </el-tooltip>
+                </el-col>
+                <el-col :span="8" v-if="cond.type === 'MemoryPressure'">
+                  <div>
+                    <div style="font-size: 30px;"><i class="iconfont iconxingzhuang" style="float: left"></i></div>
+                    <div v-if="cond.status === 'False'" style="font-size: 10px; color: green; "><i class="el-icon-success" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                    <div v-if="cond.status === 'True'" style="font-size: 10px; color: red; "><i class="el-icon-warning" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                  </div>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">
+                      <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
+                      <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                    </div>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.memory_statu')">
+                      <span>{{ $t('business.node.memory_statu_help') }}</span>
+                    </el-form-item>
+                  </el-tooltip>
+                </el-col>
+                <el-col :span="8" v-if="cond.type === 'DiskPressure'">
+                  <div>
+                    <div style="font-size: 30px;"><i class="iconfont iconcipan" style="float: left"></i></div>
+                    <div v-if="cond.status === 'False'" style="font-size: 10px; color: green; "><i class="el-icon-success" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                    <div v-if="cond.status === 'True'" style="font-size: 10px; color: red; "><i class="el-icon-warning" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                  </div>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">
+                      <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
+                      <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                    </div>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.disk_statu')">
+                      <span>{{ $t('business.node.disk_statu_help') }}</span>
+                    </el-form-item>
+                  </el-tooltip>
+                </el-col>
+                <el-col :span="8" v-if="cond.type === 'PIDPressure'">
+                  <div>
+                    <div style="font-size: 30px;"><i class="iconfont iconchakanjincheng" style="float: left"></i></div>
+                    <div v-if="cond.status === 'False'" style="font-size: 10px; color: green; "><i class="el-icon-success" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                    <div v-if="cond.status === 'True'" style="font-size: 10px; color: red; "><i class="el-icon-warning" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                  </div>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">
+                      <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
+                      <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                    </div>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.pid_statu')">
+                      <span>{{ $t('business.node.pid_statu_help') }}</span>
+                    </el-form-item>
+                  </el-tooltip>
+                </el-col>
+                <el-col :span="8" v-if="cond.type === 'Ready'">
+                  <div>
+                    <div style="font-size: 30px;"><i class="iconfont iconjiedian" style="float: left"></i></div>
+                    <div v-if="cond.status === 'True'" style="font-size: 10px; color: green; "><i class="el-icon-success" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                    <div v-if="cond.status === 'False'" style="font-size: 10px; color: red; "><i class="el-icon-warning" style="float: left;margin-top: 25px; margin-left: -5px"></i></div>
+                  </div>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">
+                      <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
+                      <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                    </div>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.node_statu')">
+                      <span>{{ $t('business.node.node_statu_help') }}</span>
+                    </el-form-item>
+                  </el-tooltip>
+                </el-col>
+              </div>
+            </el-form>
+          </el-row>
+        </el-card>
+      </el-row>
+      <el-row>
+        <br>
+        <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
+          <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+            <ko-detail-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('business.pod.image')">
+            <table style="width: 90%" class="myTable">
+              <tr>
+                <th scope="col" width="70%" align="left">{{ $t("commons.table.name") }}</th>
+                <th scope="col" align="left">{{ $t("business.pod.size") }}</th>
+              </tr>
+              <tr v-for="(image,index) in item.status.images" v-bind:key="index">
+                <td>{{ image.names[1] ? image.names[1] : image.names[0] }}</td>
+                <td>{{ Math.round(image.sizeBytes / (1024 * 1024)) }} MB</td>
+              </tr>
+            </table>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('business.pod.resource')">
+            <table style="width: 100%" class="myTable">
+              <tr>
+                <td>Pod CIDR</td>
+                <td>{{ item.spec.podCIDR }}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.pod.address") }}</td>
+                <td>
+                  <div v-for="(address,index) in item.status.addresses" v-bind:key="index">
+                    <el-tag type="success">{{ address.type }} : {{ address.address }}</el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Allocatable</td>
+                <td>
+                  <div>
+                    <el-tag type="success">CPU : {{item.status.allocatable.cpu}}</el-tag>
+                  </div>
+                  <div>
+                    <el-tag type="success">Memory : {{item.status.allocatable.memory}}</el-tag>
+                  </div>
+                  <div>
+                    <el-tag type="success">Pods : {{item.status.allocatable.pods}}</el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Capacity</td>
+                <td>
+                  <div>
+                    <el-tag type="success">CPU : {{item.status.capacity.cpu}}</el-tag>
+                  </div>
+                  <div>
+                    <el-tag type="success">Memory : {{item.status.capacity.memory}}</el-tag>
+                  </div>
+                  <div>
+                    <el-tag type="success">Pods : {{item.status.capacity.pods}}</el-tag>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </el-tab-pane>
+        </el-tabs>
       </el-row>
     </div>
     <div v-if="yamlShow">
@@ -188,35 +252,28 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {getNode} from "@/api/nodes"
-import {listPodsWithNsSelector} from "@/api/pods"
+import { getNode } from "@/api/nodes"
+import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
-import KoDetailConditions from "@/components/detail/detail-conditions"
 import KoDetailPods from "@/components/detail/detail-pods"
 import KoDetailBasic from "@/components/detail/detail-basic"
-import {checkPermissions} from "@/utils/permission"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "NodeDetail",
-  components: {
-    KoDetailBasic,
-    KoDetailPods,
-    KoDetailConditions,
-    YamlEditor,
-    LayoutContent
-  },
+  components: { KoDetailBasic, KoDetailPods, YamlEditor, LayoutContent },
   props: {
     name: String,
   },
-  data () {
+  data() {
     return {
       loading: false,
       item: {
         metadata: {},
         status: {
-          nodeInfo: {}
+          nodeInfo: {},
         },
-        spec: {}
+        spec: {},
       },
       showItem: false,
       pods: [],
@@ -232,12 +289,19 @@ export default {
         limitsUsage: 0,
         limits: 0,
         requestsUsage: 0,
-        requests: 0
+        requests: 0,
       },
       podsData: {
         usage: 0,
         limit: 110,
-        podsCount: 0
+        podsCount: 0,
+      },
+      hasMetric: null,
+      metricResource: {
+        cpu: "",
+        cpuUsage: "",
+        memory: "",
+        memoryUsage: "",
       },
       page: {
         pageSize: 20,
@@ -245,13 +309,13 @@ export default {
       },
       yaml: {},
       yamlShow: false,
-      cluster: ""
+      cluster: "",
     }
   },
   methods: {
-    getNodeByName () {
+    getNodeByName() {
       this.loading = true
-      getNode(this.cluster, this.name).then(res => {
+      getNode(this.cluster, this.name).then((res) => {
         this.item = res
         this.loading = false
         if (this.yamlShow) {
@@ -263,12 +327,13 @@ export default {
         this.podsData.limit = parseInt(this.item.status.allocatable.pods)
       })
     },
-    listPodsByNodeName () {
+
+    listPodsByNodeName() {
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
         return
       }
-      listPodsWithNsSelector(this.cluster, "", "", "spec.nodeName=" + this.item.metadata.name).then(res => {
-        this.podsData.usage = Math.round(parseInt(res.items.length) / this.podsData.limit * 100)
+      listPodsWithNsSelector(this.cluster, "", "", "spec.nodeName=" + this.item.metadata.name).then((res) => {
+        this.podsData.usage = Math.round((parseInt(res.items.length) / this.podsData.limit) * 100)
         this.podsData.podsCount = res.items.length
 
         let cpuLimits = 0
@@ -305,17 +370,11 @@ export default {
         this.cpuResource.requests = (cpuRequests / 1000).toFixed(3)
         this.memResource.limits = memLimits
         this.memResource.requests = memRequests
-        this.cpuResource.limitsUsage = Math.floor(cpuLimits / this.cpuResource.total * 100)
-        this.cpuResource.requestsUsage = Math.floor(cpuRequests / this.cpuResource.total * 100)
-        this.memResource.limitsUsage = Math.floor(memLimits / this.memResource.total * 100)
-        this.memResource.requestsUsage = Math.floor(memRequests / this.memResource.total * 100)
+        this.cpuResource.limitsUsage = Math.floor((cpuLimits / this.cpuResource.total) * 100)
+        this.cpuResource.requestsUsage = Math.floor((cpuRequests / this.cpuResource.total) * 100)
+        this.memResource.limitsUsage = Math.floor((memLimits / this.memResource.total) * 100)
+        this.memResource.requestsUsage = Math.floor((memRequests / this.memResource.total) * 100)
       })
-    },
-    cpuFormat () {
-      return this.cpuResource.limitsUsage + "\n %"
-    },
-    memFormat () {
-      return this.memResource.limitsUsage + "%"
     },
   },
   watch: {
@@ -325,18 +384,17 @@ export default {
       }
       this.$router.push({
         path: "/nodes/detail/" + this.name,
-        query: { yamlShow: newValue }
+        query: { yamlShow: newValue },
       })
-    }
+    },
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.yamlShow = this.$route.query.yamlShow === "true"
     this.getNodeByName()
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 </style>

@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16534094",
+      "name": "查看进程",
+      "font_class": "chakanjincheng",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "6246293",
+      "name": "节点",
+      "font_class": "jiedian",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "7983617",
+      "name": "内存",
+      "font_class": "xingzhuang",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "25607850",
+      "name": "磁盘",
+      "font_class": "cipan",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "380629",
+      "name": "镜像仓库",
+      "font_class": "jingxiangcangku",
+      "unicode": "e73a",
+      "unicode_decimal": 59194
+    },
+    {
+      "icon_id": "8634405",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "9923110",
+      "name": "系统日志",
+      "font_class": "xitongrizhi",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
       "icon_id": "10284537",
       "name": "帮 助",
       "font_class": "bangzhu1",
