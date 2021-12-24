@@ -144,7 +144,12 @@ const message = {
       service: "服务",
     },
     dashboard: {
-      dashboard: "概览"
+      dashboard: "概览",
+      metric_server_help: "未能检测到 metric server 服务，点击安装或重置",
+      metric_server_install_help: "meterics-server 将在集群 kube-system 命名空间下，创建以下内容: ",
+      has_permission: "已有权限",
+      has_not_permission: "缺少权限",
+      image: "镜像",
     },
     cluster: {
       cluster: "集群",
@@ -221,7 +226,7 @@ const message = {
       last_week: "最近一周",
       last_month: "最近一月",
       last_three_month: "最近三月",
-      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动),所以 Cpu(Cores)、Memory(bytes) 暂无数据"
+      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动)，所以暂无数据"
     },
     namespace: {
       namespace: "命名空间",

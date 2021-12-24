@@ -4,6 +4,8 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
@@ -15,7 +17,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
 )
 
 func (h *Handler) UpdateClusterMember() iris.Handler {
@@ -181,12 +182,12 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 		}
 		if req.Name == "" {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("username can not be none"))
+			ctx.Values().Set("message", "username can not be none")
 			return
 		}
 		if len(req.ClusterRoles) == 0 && len(req.NamespaceRoles) == 0 {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message", fmt.Sprintf("must select one role"))
+			ctx.Values().Set("message", "must select one role")
 			return
 		}
 		u := ctx.Values().Get("profile")
@@ -203,7 +204,7 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 			ClusterRef: name,
 		}
 
-		tx, err := server.DB().Begin(true)
+		tx, _ := server.DB().Begin(true)
 		c, err := h.clusterService.Get(name, common.DBOptions{DB: tx})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

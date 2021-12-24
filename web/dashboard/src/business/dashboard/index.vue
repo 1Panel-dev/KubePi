@@ -29,6 +29,28 @@
       </el-col>
     </el-row>
     <br>
+
+    <el-row :gutter="20" v-if="hasMetric === 'true'">
+      <el-col :span="12">
+        <el-card style="background-color: #212e38" class="n-card el-card">
+          <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatCpu}}</span>
+          <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.cpuPercent"></el-progress>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card style="background-color: #212e38" class="n-card el-card">
+          <span>Memory(Gi) {{clusterInfo.metricMemory}} / {{clusterInfo.allocatMemory}}</span>
+          <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.memoryPercent"></el-progress>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row v-if="!hasMetric === 'true'">
+      <el-alert type="info" :closable="false">
+        <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
+      </el-alert> 
+    </el-row>
+    <br>
+
     <el-row :gutter="20" class="resources row-box">
       <el-col v-for="(resource,index) in resources" v-bind:key="resource.name" :xs="8" :sm="8" :lg="6">
         <el-card :body-style="{padding: '0px'}" @click.native="jumpTo(resource.name)" class="d-card el-card">
@@ -49,8 +71,8 @@
       </el-col>
     </el-row>
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
-      <h4 style="margin-left: 10px">{{$t('business.event.event')}}</h4>
-      <complex-table :data="events" @search="search" v-loading="loading" :pagination-config="paginationConfig"
+      <h4 style="margin-left: 10px;float: left">{{$t('business.event.event')}}</h4>
+      <complex-table style="margin-top:20px" :data="events" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                      :search-config="searchConfig">
         <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
           <template v-slot:default="{row}">
@@ -83,6 +105,9 @@
         </el-table-column>
       </complex-table>
     </el-row>
+    <div v-if="dialogMetricVisible">
+      <metric-server @changeVisble="changeVisble" :clusterName="clusterName" :visible="dialogMetricVisible" />
+    </div>
   </layout-content>
 </template>
 
@@ -90,11 +115,8 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import KoCharts from "@/components/ko-charts"
 import {listNamespace} from "@/api/namespaces"
-import {listIngresses} from "@/api/ingress"
-import {listPvs} from "@/api/pv"
 import {listDeployments} from "@/api/deployments"
 import {listStatefulSets} from "@/api/statefulsets"
-import {listJobs} from "@/api/jobs"
 import {listDaemonSets} from "@/api/daemonsets"
 import {listServices} from "@/api/services"
 import {listNodes} from "@/api/nodes"
@@ -104,12 +126,14 @@ import {getCluster} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission"
 import {mixin} from "@/utils/resourceRoutes"
 import {listConfigMaps} from "@/api/configmaps"
-import {listCronJobs} from "@/api/cronjobs"
 import {listSecrets} from "@/api/secrets"
+import {listNodeMetrics} from "@/api/apis"
+import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
+import MetricServer from '@/components/ko-plugin/metric-server'
 
 export default {
   name: "Dashboard",
-  components: {ComplexTable, KoCharts, LayoutContent},
+  components: {ComplexTable, KoCharts, MetricServer, LayoutContent},
   mixins: [mixin],
   data() {
     return {
@@ -125,10 +149,29 @@ export default {
       searchConfig: {
         keywords: ""
       },
+      hasMetric: "false",
+      clusterInfo: {
+        allocatCpu: 0,
+        allocatMemory: 0,
+        cpuPercent: 0,
+        metricCpu: 0,
+        metricMemory: 0,
+        metricPercent: 0,
+      },
+      dialogMetricVisible: false,
       loading: false
     }
   },
   methods: {
+    formatCpu(percentage) {
+      return `${percentage}% \nCPU`
+    },
+    formatMemory(percentage) {
+      return `${percentage}% \nMemory`
+    },
+    changeVisble(val) {
+      this.dialogMetricVisible = val
+    },
     jumpTo(val) {
       this.$router.push({name: val})
     },
@@ -145,7 +188,38 @@ export default {
               value: res.items? res.items.length : 0
             }]
           }
+          this.clusterInfo.allocatCpu = 0
+          this.clusterInfo.allocatMemory = 0
+          for(const n of res.items) {
+            if (n.status?.allocatable?.cpu) {
+              this.clusterInfo.allocatCpu += cpuUnitConvert(n.status.allocatable.cpu)
+            }
+            if (n.status?.allocatable?.memory) {
+              this.clusterInfo.allocatMemory += memoryUnitConvert(n.status.allocatable.memory)
+            }
+          }
           this.resources.push(nodes)
+          listNodeMetrics(this.clusterName).then(metricNodes => {
+            this.hasMetric = "true"
+            this.clusterInfo.metricCpu = 0
+            this.clusterInfo.metricMemory = 0
+            for(const n of metricNodes.items) {
+              if (n.usage?.cpu) {
+                this.clusterInfo.metricCpu += cpuUnitConvert(n.usage.cpu)
+              }
+              if (n.usage?.memory) {
+                this.clusterInfo.metricMemory += memoryUnitConvert(n.usage.memory)
+              }
+            }
+            this.clusterInfo.allocatCpu = Number((this.clusterInfo.allocatCpu / 1000).toFixed(2))
+            this.clusterInfo.allocatMemory = Number((this.clusterInfo.allocatMemory / 1024).toFixed(2))
+            this.clusterInfo.metricCpu = Number((this.clusterInfo.metricCpu / 1000).toFixed(2))
+            this.clusterInfo.metricMemory = Number((this.clusterInfo.metricMemory / 1024).toFixed(2))
+            this.clusterInfo.cpuPercent = Number((this.clusterInfo.metricCpu / this.clusterInfo.allocatCpu).toFixed(2) * 100)
+            this.clusterInfo.memoryPercent = Number((this.clusterInfo.metricMemory / this.clusterInfo.allocatMemory).toFixed(2) * 100)
+          }).catch(() => {
+            this.hasMetric = "false"
+          })
         })
       }
       if (checkPermissions({scope: 'cluster', apiGroup: "", resource: "namespaces", verb: "list"})) {
@@ -158,31 +232,6 @@ export default {
             }]
           }
           this.resources.push(namespaces)
-        })
-      }
-      if (checkPermissions({scope: "namespace", apiGroup: "networking.k8s.io", resource: "ingresses", verb: "list"})) {
-        listIngresses(this.clusterName).then(res => {
-          const ingresses = {
-            name: "Ingresses",
-            count: res.items? res.items.length : 0,
-            data: [{
-              value: res.items? res.items.length : 0,
-              name: ""
-            }]
-          }
-          this.resources.push(ingresses)
-        })
-      }
-      if (checkPermissions({scope: "cluster", apiGroup: "", resource: "persistentvolumes", verb: "list"})) {
-        listPvs(this.clusterName).then(res => {
-          const persistentVolumes = {
-            name: "PersistentVolumes",
-            count: res.items? res.items.length : 0,
-            data: [{
-              value: res.items? res.items.length : 0
-            }]
-          }
-          this.resources.push(persistentVolumes)
         })
       }
       if (checkPermissions({scope: "namespace", apiGroup: "apps", resource: "deployments", verb: "list"})) {
@@ -207,18 +256,6 @@ export default {
             }]
           }
           this.resources.push(statefulSets)
-        })
-      }
-      if (checkPermissions({scope: "namespace", apiGroup: "batch", resource: "jobs", verb: "list"})) {
-        listJobs(this.clusterName).then(res => {
-          const jobs = {
-            name: "Jobs",
-            count: res.items? res.items.length : 0,
-            data: [{
-              value: res.items? res.items.length : 0
-            }]
-          }
-          this.resources.push(jobs)
         })
       }
       if (checkPermissions({scope: "namespace", apiGroup: "apps", resource: "daemonsets", verb: "list"})) {
@@ -249,18 +286,6 @@ export default {
         listConfigMaps(this.clusterName).then(res => {
           const services = {
             name: "ConfigMaps",
-            count: res.items? res.items.length : 0,
-            data: [{
-              value: res.items? res.items.length : 0
-            }]
-          }
-          this.resources.push(services)
-        })
-      }
-      if (checkPermissions({scope: "namespace", apiGroup: "", resource: "cronjobs", verb: "list"})) {
-        listCronJobs(this.clusterName).then(res => {
-          const services = {
-            name: "CronJobs",
             count: res.items? res.items.length : 0,
             data: [{
               value: res.items? res.items.length : 0
@@ -373,6 +398,13 @@ export default {
   height: 90px;
   background-color: #1d3e4d;
   margin-top: 10px;
+}
+
+.n-card {
+  height: 100px;
+  background-color: #1d3e4d;
+  margin-top: 10px;
+  border: none;
 }
 
 .card-content {

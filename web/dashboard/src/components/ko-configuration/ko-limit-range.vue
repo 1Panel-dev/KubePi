@@ -54,7 +54,7 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item"
-import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
+import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoLimitRange",
@@ -68,13 +68,13 @@ export default {
         if (newVal) {
           this.form.type = newVal.type
           if (newVal.type === "PersistentVolumeClaim") {
-            this.form.storageMin = newVal.min?.storage ? memeryUnitConvert(newVal.min.storage) : ""
-            this.form.storageMax = newVal.max?.storage ? memeryUnitConvert(newVal.max.storage) : ""
+            this.form.storageMin = newVal.min?.storage ? memoryUnitConvert(newVal.min.storage) : ""
+            this.form.storageMax = newVal.max?.storage ? memoryUnitConvert(newVal.max.storage) : ""
           } else {
             this.form.cpuMin = newVal.min?.cpu ? cpuUnitConvert(newVal.min.cpu) : ""
             this.form.cpuMax = newVal.max?.cpu ? cpuUnitConvert(newVal.max.cpu) : ""
-            this.form.memoryMin = newVal.min?.memory ? memeryUnitConvert(newVal.min.memory) : ""
-            this.form.memoryMax = newVal.max?.memory ? memeryUnitConvert(newVal.max.memory) : ""
+            this.form.memoryMin = newVal.min?.memory ? memoryUnitConvert(newVal.min.memory) : ""
+            this.form.memoryMax = newVal.max?.memory ? memoryUnitConvert(newVal.max.memory) : ""
           }
         }
       },

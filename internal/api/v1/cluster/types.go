@@ -1,9 +1,10 @@
 package cluster
 
 import (
+	"time"
+
 	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
 	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
-	"time"
 )
 
 const (
@@ -36,6 +37,7 @@ type ExtraClusterInfo struct {
 	MemoryAllocatable float64 `json:"memoryAllocatable"`
 	MemoryRequested   float64 `json:"memoryRequested"`
 	Health            bool    `json:"health"`
+	Message           string  `json:"message"`
 }
 
 type NamespaceRoles struct {

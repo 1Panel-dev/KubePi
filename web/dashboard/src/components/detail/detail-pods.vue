@@ -70,7 +70,7 @@ import KoTableOperations from "@/components/ko-table-operations"
 import {listPodsWithNsSelector, evictionPod} from "@/api/pods"
 import {cordonNode} from "@/api/nodes"
 import {checkPermissions} from "@/utils/permission"
-import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
+import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoDetailPods",
@@ -152,19 +152,19 @@ export default {
               cpuLimit += cpuUnitConvert(c.resources.limits.cpu)
             }
             if(c.resources?.limits?.memory) {
-              memoryLimit += memeryUnitConvert(c.resources.limits.memory)
+              memoryLimit += memoryUnitConvert(c.resources.limits.memory)
             }
             if(c.resources?.requests?.cpu) {
               cpuRequest += cpuUnitConvert(c.resources.requests.cpu)
             }
             if(c.resources?.requests?.memory) {
-              memoryRequest += memeryUnitConvert(c.resources.requests.memory)
+              memoryRequest += memoryUnitConvert(c.resources.requests.memory)
             }
           }
           item.cpuLimit = cpuLimit !== 0 ? (cpuLimit + "m (" + (Math.floor(cpuLimit / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
-          item.memoryLimit = memoryLimit !== 0 ? (memoryLimit + "Mi (" + (Math.floor(memoryLimit / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+          item.memoryLimit = memoryLimit !== 0 ? (memoryLimit + "Mi (" + (Math.floor(memoryLimit / memoryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
           item.cpuRequest = cpuRequest !== 0 ? (cpuRequest  + "m (" + (Math.floor(cpuRequest / cpuUnitConvert(this.allocatable.cpu) * 100)) + "%)") : 0
-          item.memoryRequest = memoryRequest !== 0 ? (memoryRequest  + "Mi (" + (Math.floor(memoryRequest / memeryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
+          item.memoryRequest = memoryRequest !== 0 ? (memoryRequest  + "Mi (" + (Math.floor(memoryRequest / memoryUnitConvert(this.allocatable.memory) * 100)) + "%)") : 0
         }
         this.loading = false
       })

@@ -3,14 +3,15 @@ package cluster
 import (
 	goContext "context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
-	"time"
 )
 
 func (h *Handler) UpdateClusterRole() iris.Handler {
@@ -74,7 +75,7 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 
 		if req.Name == "" {
 			ctx.StatusCode(iris.StatusBadRequest)
-			ctx.Values().Set("message","username can not be none")
+			ctx.Values().Set("message", "username can not be none")
 			return
 		}
 		if len(req.Rules) == 0 {
@@ -142,7 +143,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 		if ok {
 			if createBy == "system" {
 				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", fmt.Sprintf("can not delete it ,beacuse it created by system"))
+				ctx.Values().Set("message", "can not delete it ,beacuse it created by system")
 				return
 			}
 		}

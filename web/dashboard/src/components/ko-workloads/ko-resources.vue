@@ -31,7 +31,7 @@
           
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import { cpuUnitConvert, memeryUnitConvert } from "@/utils/unitConvert"
+import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 
 export default {
   name: "KoResources",
@@ -68,7 +68,7 @@ export default {
       if (this.resourceParentObj.resources) {
         if (this.resourceParentObj.resources.requests) {
           if (this.resourceParentObj.resources.requests.memory) {
-            this.form.requests.memory = memeryUnitConvert(this.resourceParentObj.resources.requests.memory)
+            this.form.requests.memory = memoryUnitConvert(this.resourceParentObj.resources.requests.memory)
           }
           if (this.resourceParentObj.resources.requests.cpu) {
             this.form.requests.cpu = cpuUnitConvert(this.resourceParentObj.resources.requests.cpu)
@@ -76,7 +76,7 @@ export default {
         }
         if (this.resourceParentObj.resources.limits) {
           if (this.resourceParentObj.resources.limits.memory) {
-            this.form.limits.memory = memeryUnitConvert(this.resourceParentObj.resources.limits.memory)
+            this.form.limits.memory = memoryUnitConvert(this.resourceParentObj.resources.limits.memory)
           }
           if (this.resourceParentObj.resources.limits.cpu) {
             this.form.limits.cpu = cpuUnitConvert(this.resourceParentObj.resources.limits.cpu)
