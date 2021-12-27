@@ -199,6 +199,8 @@ const message = {
       pid_statu_help: "如果节点进程压力过大，则会调度失败。",
       node_statu: "节点就绪状态",
       node_statu_help: "节点是否可以接收新的容器组。",
+      usage: "用量",
+      core: "核",
     },
     pod: {
       image: "镜像",
@@ -499,7 +501,7 @@ const message = {
       path_or_node: "路径或节点",
       storage: "存储",
       accessModes: "访问模式",
-      capacity: "容量 Gib",
+      capacity: "容量 Gi",
       reclaimPolicy: "回收策略",
       storageClass: "存储类",
       volumeBindingMode: "卷绑定模式",

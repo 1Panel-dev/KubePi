@@ -25,12 +25,12 @@
         <el-row :gutter="20" style="margin-left: 5px">
           <el-col :span="6">
             <el-form-item label="Min Memory" prop="memoryMin">
-              <ko-form-item itemType="number" deviderName="MiB" v-model="form.memoryMin" />
+              <ko-form-item itemType="number" deviderName="Mi" v-model="form.memoryMin" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Max Memory" prop="memoryMax">
-              <ko-form-item itemType="number" deviderName="MiB" v-model="form.memoryMax" />
+              <ko-form-item itemType="number" deviderName="Mi" v-model="form.memoryMax" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -39,12 +39,12 @@
       <el-row :gutter="20" style="margin-left: 5px" v-if="form.type === 'PersistentVolumeClaim'">
         <el-col :span="6">
           <el-form-item label="Min Storage" prop="storageMin">
-            <ko-form-item itemType="number" deviderName="MiB" v-model="form.storageMin" />
+            <ko-form-item itemType="number" deviderName="Mi" v-model="form.storageMin" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="Max Storage" prop="storageMax">
-            <ko-form-item itemType="number" deviderName="MiB" v-model="form.storageMax" />
+            <ko-form-item itemType="number" deviderName="Mi" v-model="form.storageMax" />
           </el-form-item>
         </el-col>
       </el-row>

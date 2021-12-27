@@ -40,7 +40,7 @@
           <template v-slot:default="{row}">
             <div v-for="(c, index) in row.containers" :key="index">
               <div>
-                <span>{{ c.usage.memory | memory }}</span>
+                <span>{{ c.usage.memory | mi-memory }} Mi</span>
               </div>
             </div>
           </template>

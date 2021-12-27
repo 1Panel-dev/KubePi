@@ -198,6 +198,8 @@ const message = {
       pid_statu_help: "If pressure exists on the processes—that is, if there are too many processes on the node.",
       node_statu: "Node Readiness",
       node_statu_help: "Whether the node is ready to accept new pods.",
+      usage: " usage",
+      core: "core",
     },
     pod: {
       image: "Image",

@@ -35,31 +35,59 @@ export function AgeFormat (value) {
   return result
 }
 
+export function mCpuFormat (value) {
+  if (value == null) {
+    return ""
+  }
+  if (value.indexOf("u") !== -1) {
+    return (Number(value.replace("u", "")) / 1000000000).toFixed(2)
+  } else if (value.indexOf("n") !== -1) {
+    return (Number(value.replace("n", "")) / 1000000).toFixed(2)
+  } else if (value.indexOf("m") !== -1) {
+    return value.replace("m", "")
+  } else {
+    return (Number(value) * 1000)
+  }
+}
+
 export function CpuFormat (value) {
   if (value == null) {
     return ""
   }
   if (value.indexOf("u") !== -1) {
-    return (Number(value.replace("u", "")) / 1000000000).toFixed(2) + "m"
+    return (Number(value.replace("u", "")) / 1000000000000).toFixed(2)
   } else if (value.indexOf("n") !== -1) {
-    return (Number(value.replace("n", "")) / 1000000).toFixed(2) + "m"
+    return (Number(value.replace("n", "")) / 1000000000).toFixed(2)
   } else if (value.indexOf("m") !== -1) {
-    return value
+    return (Number(value.replace("m", "")) / 1000).toFixed(2)
   } else {
-    return (Number(value) * 1000) + "m"
+    return value
   }
 }
 
-export function MemoryFormat (value) {
+export function miMemoryFormat (value) {
   if (value == null) {
     return ""
   }
   if (value.indexOf("Ki") !== -1) {
-    return (Number(value.replace("Ki", "")) / 1024).toFixed(2) + "Mi"
+    return (Number(value.replace("Ki", "")) / 1024).toFixed(2)
   } else if (value.indexOf("Mi") !== -1) {
-    return value
+    return value.replace("Mi", "")
   } else if (value.indexOf("Gi") !== -1) {
-    return (Number(value) * 1000) + "Mi"
+    return (Number(value.replace("Gi", "")) * 1000)
+  }
+}
+
+export function giMemoryFormat (value) {
+  if (value == null) {
+    return ""
+  }
+  if (value.indexOf("Ki") !== -1) {
+    return (Number(value.replace("Ki", "")) / 1048576).toFixed(2)
+  } else if (value.indexOf("Mi") !== -1) {
+    return (Number(value.replace("Mi", "")) / 1024).toFixed(2)
+  } else if (value.indexOf("Gi") !== -1) {
+    return value.replace("Gi", "")
   }
 }
 
@@ -67,8 +95,10 @@ const filters = {
   "dateFormat": dateFormat,
   "datetimeFormat": datetimeFormat,
   "age": AgeFormat,
+  "m-cpu": mCpuFormat,
   "cpu": CpuFormat,
-  "memory": MemoryFormat
+  "mi-memory": miMemoryFormat,
+  "gi-memory": giMemoryFormat,
 }
 
 export default {

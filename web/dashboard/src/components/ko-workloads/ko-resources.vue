@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')" prop="requests.memory">
-            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.requests.memory" />
+            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="Mi" v-model.number="form.requests.memory" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')" prop="limits.memory">
-            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="MiB" v-model.number="form.limits.memory" />
+            <ko-form-item placeholder="e.g. 128" itemType="number" deviderName="Mi" v-model.number="form.limits.memory" />
           </el-form-item>
         </el-col>
       </el-row>

@@ -62,12 +62,12 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation')">
-                  <span>{{ memResource.requests }} Mib ({{ memResource.requestsUsage }}%)</span>
+                  <span>{{ memResource.requests }} Mi ({{ memResource.requestsUsage }}%)</span>
                 </el-form-item>
               </el-col>
               <el-col :span="4">
                 <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit')">
-                  <span>{{ memResource.limits }} Mib ({{ memResource.limitsUsage }}%)</span>
+                  <span>{{ memResource.limits }} Mi ({{ memResource.limitsUsage }}%)</span>
                 </el-form-item>
               </el-col>
               <el-col :span="4">
@@ -96,7 +96,7 @@
                     <div slot="content">
                       <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
-                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
                     <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.network_statu')">
                       <span>{{ $t('business.node.network_statu_help') }}</span>
@@ -113,7 +113,7 @@
                     <div slot="content">
                       <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
-                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
                     <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.memory_statu')">
                       <span>{{ $t('business.node.memory_statu_help') }}</span>
@@ -130,7 +130,7 @@
                     <div slot="content">
                       <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
-                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
                     <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.disk_statu')">
                       <span>{{ $t('business.node.disk_statu_help') }}</span>
@@ -147,7 +147,7 @@
                     <div slot="content">
                       <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
-                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
                     <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.pid_statu')">
                       <span>{{ $t('business.node.pid_statu_help') }}</span>
@@ -164,7 +164,7 @@
                     <div slot="content">
                       <div><span style="font-wight: blod">{{ cond.reason }}</span></div>
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
-                      <div style="margin-top: 2px"><span>{{ cond.lastTransitionTime | datetimeFormat }}</span></div>
+                      <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
                     <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.node_statu')">
                       <span>{{ $t('business.node.node_statu_help') }}</span>

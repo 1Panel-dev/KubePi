@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="Memory Reservation" prop="requestsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.requestsMemory" />
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="Mi" v-model="form.requestsMemory" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="Memory Limit" prop="limitsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="MiB" v-model="form.limitsMemory" />
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="Mi" v-model="form.limitsMemory" />
           </el-form-item>
         </el-col>
       </el-row>

@@ -15,7 +15,7 @@
               <ko-form-item itemType="select2" v-model="item.storageClass" :selections="sc_list" />
             </el-form-item>
             <el-form-item :label="$t('business.workload.size')" v-if="item.type === 'new'">
-              <ko-form-item itemType="number" deviderName="GiB" v-model.number="item.storage" />
+              <ko-form-item itemType="number" deviderName="Gi" v-model.number="item.storage" />
             </el-form-item>
           </div>
           <el-form-item v-if="item.type === 'existing'" :label="$t('business.workload.pvc')">
