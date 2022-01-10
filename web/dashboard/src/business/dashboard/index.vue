@@ -44,7 +44,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="!hasMetric === 'true'">
+    <el-row v-if="hasMetric !== 'true'">
       <el-alert type="info" :closable="false">
         <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
       </el-alert> 

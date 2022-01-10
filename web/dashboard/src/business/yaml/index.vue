@@ -17,6 +17,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {getK8sObject} from "@/utils/k8s"
 import {postYaml} from "@/api/k8s"
+import {getCluster} from "@/api/clusters"
 
 export default {
   name: "YamlCreate",
@@ -80,7 +81,9 @@ export default {
     this.type = this.$route.query.type
     this.clusterName = this.$route.query.cluster
     this.namespace = sessionStorage.getItem("namespace")?sessionStorage.getItem("namespace"):"default"
-    this.yamlValue = getK8sObject(this.type, this.namespace)
+    getCluster(this.clusterName).then(res => {
+      this.yamlValue = getK8sObject(this.type, this.namespace, res.data.status.version)
+    })
   }
 }
 </script>
