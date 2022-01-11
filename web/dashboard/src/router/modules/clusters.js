@@ -150,6 +150,22 @@ const Clusters = {
                 activeMenu: "/customResources",
             },
         },
+        {
+          path: "/resource/:group/:names/:version/:namespace/:name/edit",
+          component: () => import("@/business/custom-resource/cr/edit"),
+          hidden: true,
+          props: true,
+          name: "CustomResourceEdit",
+          requirePermission: {
+            apiGroup: "apiextensions.k8s.io",
+            resource: "customresourcedefinitions",
+            verb: "update",
+            scope:"namespace"
+          },
+          meta: {
+            activeMenu: "/customResources",
+          },
+        },
     ]
 }
 
