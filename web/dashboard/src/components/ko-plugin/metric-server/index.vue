@@ -1,12 +1,12 @@
 <template>
   <div v-loading="loading">
     <el-dialog title="Metric Server" :visible.sync="dialogMetricVisible" width="50%" @close="onCancel" :close-on-click-modal="false">
-      <el-form label-position="top" style="margin-left: 20px">
+      <el-form label-position="top" :model="createForm" ref="createForm" style="margin-left: 20px">
         <el-form-item :label="$t('business.dashboard.metric_server_install_help')">
           <el-tree :data="data" :props="defaultProps"></el-tree>
         </el-form-item>
-        <el-form-item :label="$t('business.dashboard.image')">
-          <el-input v-model="image" />
+        <el-form-item :label="$t('business.dashboard.image')" prop="image" :rules="inputRule">
+          <el-input v-model="createForm.image" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -26,6 +26,7 @@ import { createRoleBinding, listRoleBindings, updateRoleBinding } from "@/api/ro
 import { createServiceAccount, listServiceAccounts, updateServiceAccount } from "@/api/serviceaccounts"
 import { createWorkLoad, listWorkLoads, updateWorkLoad } from "@/api/workloads"
 import { createApiServer, listApiServices, updateApiServer } from "@/api/apis"
+import Rule from "@/utils/rules"
 
 export default {
   name: "MetricServer",
@@ -50,7 +51,10 @@ export default {
         children: "children",
         label: "label",
       },
-      image: "",
+      createForm: {
+        image: "",
+      },
+      inputRule: Rule.RequiredRule,
       form: {
         apiVersion: "v1",
         kind: "List",
@@ -300,117 +304,121 @@ export default {
   methods: {
     onSubmit() {
       this.loading = true
-      let ps = []
-      for (const item of this.form.items) {
-        let isExist = false
-        switch (item.kind.toLowerCase() + "s") {
-          case "serviceaccounts":
-            for (const s of this.serviceAccountList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+      this.$refs["createForm"].validate((valid) => {
+        if (valid) {
+          let ps = []
+          for (const item of this.form.items) {
+            let isExist = false
+            switch (item.kind.toLowerCase() + "s") {
+              case "serviceaccounts":
+                for (const s of this.serviceAccountList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateServiceAccount(this.clusterName, item.metadata.namespace, item.metadata.name, item))
+                } else {
+                  ps.push(createServiceAccount(this.clusterName, item.metadata.namespace, item))
+                }
                 break
-              }
-            }
-            if (isExist) {
-              ps.push(updateServiceAccount(this.clusterName, item.metadata.namespace, item.metadata.name, item))
-            } else {
-              ps.push(createServiceAccount(this.clusterName, item.metadata.namespace, item))
-            }
-            break
-          case "rolebindings":
-            for (const s of this.roleBindingList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+              case "rolebindings":
+                for (const s of this.roleBindingList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateRoleBinding(this.clusterName, item.metadata.namespace, item.metadata.name, item))
+                } else {
+                  ps.push(createRoleBinding(this.clusterName, item.metadata.namespace, item))
+                }
                 break
-              }
-            }
-            if (isExist) {
-              ps.push(updateRoleBinding(this.clusterName, item.metadata.namespace, item.metadata.name, item))
-            } else {
-              ps.push(createRoleBinding(this.clusterName, item.metadata.namespace, item))
-            }
-            break
-          case "clusterroles":
-            for (const s of this.clusterRoleList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+              case "clusterroles":
+                for (const s of this.clusterRoleList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateClusterRole(this.clusterName, item.metadata.name, item))
+                } else {
+                  ps.push(createClusterRole(this.clusterName, item))
+                }
                 break
-              }
-            }
-            if (isExist) {
-              ps.push(updateClusterRole(this.clusterName, item.metadata.name, item))
-            } else {
-              ps.push(createClusterRole(this.clusterName, item))
-            }
-            break
-          case "clusterrolebindings":
-            for (const s of this.clusterRoleBindingList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+              case "clusterrolebindings":
+                for (const s of this.clusterRoleBindingList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateClusterRoleBinding(this.clusterName, item.metadata.name, item))
+                } else {
+                  ps.push(createClusterRoleBinding(this.clusterName, item))
+                }
                 break
-              }
-            }
-            if (isExist) {
-              ps.push(updateClusterRoleBinding(this.clusterName, item.metadata.name, item))
-            } else {
-              ps.push(createClusterRoleBinding(this.clusterName, item))
-            }
-            break
-          case "services":
-            for (const s of this.serviceList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
-                item.metadata.resourceVersion = s.metadata.resourceVersion
+              case "services":
+                for (const s of this.serviceList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    item.metadata.resourceVersion = s.metadata.resourceVersion
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateService(this.clusterName, item.metadata.namespace, item.metadata.name, item))
+                } else {
+                  ps.push(createService(this.clusterName, item.metadata.namespace, item))
+                }
                 break
-              }
-            }
-            if (isExist) {
-              ps.push(updateService(this.clusterName, item.metadata.namespace, item.metadata.name, item))
-            } else {
-              ps.push(createService(this.clusterName, item.metadata.namespace, item))
-            }
-            break
-          case "deployments":
-            for (const s of this.deploymentList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+              case "deployments":
+                for (const s of this.deploymentList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                item.spec.template.spec.containers[0].image = this.createForm.image
+                if (isExist) {
+                  ps.push(updateWorkLoad(this.clusterName, "deployments", item.metadata.namespace, item.metadata.name, item))
+                } else {
+                  ps.push(createWorkLoad(this.clusterName, "deployments", item.metadata.namespace, item))
+                }
                 break
-              }
-            }
-            item.spec.template.spec.containers[0].image = this.image
-            if (isExist) {
-              ps.push(updateWorkLoad(this.clusterName, "deployments", item.metadata.namespace, item.metadata.name, item))
-            } else {
-              ps.push(createWorkLoad(this.clusterName, "deployments", item.metadata.namespace, item))
-            }
-            break
-          case "apiservices":
-            for (const s of this.apiServiceList) {
-              if (s.metadata.name === item.metadata.name) {
-                isExist = true
+              case "apiservices":
+                for (const s of this.apiServiceList) {
+                  if (s.metadata.name === item.metadata.name) {
+                    isExist = true
+                    break
+                  }
+                }
+                if (isExist) {
+                  ps.push(updateApiServer(this.clusterName, item.metadata.name, item))
+                } else {
+                  ps.push(createApiServer(this.clusterName, item))
+                }
                 break
-              }
             }
-            if (isExist) {
-              ps.push(updateApiServer(this.clusterName, item.metadata.name, item))
-            } else {
-              ps.push(createApiServer(this.clusterName, item))
-            }
-            break
+          }
+          Promise.all(ps)
+            .then(() => {
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.operation_success"),
+              })
+              this.loading = false
+              this.onCancel()
+            })
+            .catch(() => {
+              this.loading = false
+            })
         }
-      }
-      Promise.all(ps)
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: this.$t("commons.msg.operation_success"),
-          })
-          this.loading = false
-          this.onCancel()
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      })
     },
     onCancel() {
       this.dialogMetricVisible = false
@@ -469,7 +477,7 @@ export default {
               hasPermission = checkPermissions({ scope: "namespace", apiGroup: "", resource: "services", verb: "*" })
               break
             case "Deployment":
-              this.image = item.spec.template.spec.containers[0].image
+              this.createForm.image = item.spec.template.spec.containers[0].image
               hasPermission = checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "deployments", verb: "*" })
               break
             case "APIService":
@@ -483,7 +491,7 @@ export default {
         if (!item.hasPermission) {
           this.hasPermission = false
         }
-        item.label = item.label + "  [" + item.count + "]    ---" + (item.hasPermission ? this.$t("business.dashboard.has_permission") : this.$t("business.dashboard.has-not_permission"))
+        item.label = item.label + "  [" + item.count + "]    ---" + (item.hasPermission ? this.$t("business.dashboard.has_permission") : this.$t("business.dashboard.has_not_permission"))
       }
       this.loadDatas()
     },
