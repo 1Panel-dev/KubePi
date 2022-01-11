@@ -3,9 +3,9 @@
     <layout-content header="Top Pod">
       <el-alert v-if="showText" :title="$t('business.pod.metric_server_tip')" type="warning" />
       <br>
-      <el-button style="margin-left: 20px" icon="el-icon-sort-down" type="text" @click="sortBy('namespace')">{{ $t('business.namespace.namespace') }} / {{ $t('business.workload.name') }}</el-button>
-      <el-button icon="el-icon-sort-down" type="text" @click="sortBy('cpu')">CPU</el-button>
-      <el-button icon="el-icon-sort-down" type="text" @click="sortBy('memory')">{{ $t('business.workload.memory') }}</el-button>
+      <el-button style="margin-left: 20px" :disabled="namespaceDisabled" icon="el-icon-sort-down" type="text" @click="sortBy('namespace')">{{ $t('business.namespace.namespace') }} / {{ $t('business.workload.name') }}</el-button>
+      <el-button icon="el-icon-sort-down" :disabled="cpuDisabled" type="text" @click="sortBy('cpu')">CPU</el-button>
+      <el-button icon="el-icon-sort-down" :disabled="memoryDisabled" type="text" @click="sortBy('memory')">{{ $t('business.workload.memory') }}</el-button>
 
       <complex-table :data="data" v-loading="loading">
         <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="60" show-overflow-tooltip fix>
@@ -74,6 +74,9 @@ export default {
       showText: false,
       data: [],
       clusterName: "",
+      namespaceDisabled: false,
+      cpuDisabled: true,
+      memoryDisabled: false,
     }
   },
   methods: {
@@ -127,18 +130,27 @@ export default {
             }
             return 0
           })
+          this.namespaceDisabled = true
+          this.cpuDisabled = false
+          this.memoryDisabled = false
           this.loading = false
           break
         case "cpu":
           this.data.sort(function (a, b) {
             return b.cpu - a.cpu
           })
+          this.namespaceDisabled = false
+          this.cpuDisabled = true
+          this.memoryDisabled = false
           this.loading = false
           break
         case "memory":
           this.data.sort(function (a, b) {
             return b.memory - a.memory
           })
+          this.namespaceDisabled = false
+          this.cpuDisabled = false
+          this.memoryDisabled = true
           this.loading = false
           break
       }
