@@ -45,7 +45,11 @@ export default {
       getRepo(this.repo).then(res => {
         this.repoObj = res.data
         const repo = this.repoObj.repoName === ""? "":this.repoObj.repoName+"/"
-        this.tip =  this.$t('business.image_repos.push_image') + "docker push" + this.repoObj.downloadUrl + "/" + repo + "REPOSITORY[:TAG]"
+        if (this.repoObj.type === 'Harbor') {
+          this.tip =  this.$t('business.image_repos.push_image') + "docker push " + this.repoObj.downloadUrl + "/" + repo + "REPOSITORY[:TAG]"
+        }else {
+          this.tip =  this.$t('business.image_repos.push_image') + "docker push " + this.repoObj.downloadUrl  + "/REPOSITORY[:TAG]"
+        }
       })
     }
   },

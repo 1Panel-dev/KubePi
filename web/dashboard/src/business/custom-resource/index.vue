@@ -2,17 +2,19 @@
   <layout-content header="Custom Resource Definitions">
     <el-row>
       <el-col :span="6">
-        <el-tree
-                class="filter-tree"
-                :default-expand-all="true"
-                :data="data"
-                :props="props"
-                node-key="id"
-                ref="tree"
-                :highlight-current="true"
-                @node-click="handleNodeClick"
-                style="margin: 5px">
-        </el-tree>
+        <el-scrollbar style="height:900px">
+          <el-tree
+                  class="filter-tree"
+                  :default-expand-all="true"
+                  :data="data"
+                  :props="props"
+                  node-key="id"
+                  ref="tree"
+                  :highlight-current="true"
+                  @node-click="handleNodeClick"
+                  style="margin: 5px">
+          </el-tree>
+        </el-scrollbar>
       </el-col>
       <el-col :span="18">
           <c-r-d-list v-if="resourceType==='Definitions'"></c-r-d-list>
@@ -25,10 +27,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {downloadYaml} from "@/utils/actions"
-import {
-  deleteCustomResourceDefinition, getCustomResourceDefinition,
-  listCustomResourceDefinitions,
-} from "@/api/customresourcedefinitions"
+import {deleteCustomResourceDefinition, getCustomResourceDefinition, listCustomResourceDefinitions,} from "@/api/customresourcedefinitions"
 import {checkPermissions} from "@/utils/permission"
 import CRDList from "@/business/custom-resource/crd"
 import CRList from "@/business/custom-resource/cr/cr"
