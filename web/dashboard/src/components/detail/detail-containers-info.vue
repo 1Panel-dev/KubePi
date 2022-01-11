@@ -106,7 +106,7 @@
               </el-form-item>
             </el-col>
             <el-col v-if="container.resources.requests.cpu" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.reservation') + ' (MiB)'">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.reservation') + ' (Mi)'">
                 <span>{{container.resources.requests.memory}}</span>
               </el-form-item>
             </el-col>
@@ -118,7 +118,7 @@
               </el-form-item>
             </el-col>
             <el-col v-if="container.resources.limits.memory" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.limit') + ' (MiB)'">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.limit') + ' (Mi)'">
                 <span>{{container.resources.limits.memory}}</span>
               </el-form-item>
             </el-col>

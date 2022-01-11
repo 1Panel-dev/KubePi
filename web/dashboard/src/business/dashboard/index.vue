@@ -44,7 +44,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="!hasMetric === 'true'">
+    <el-row v-if="hasMetric !== 'true'">
       <el-alert type="info" :closable="false">
         <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
       </el-alert> 
@@ -215,8 +215,8 @@ export default {
             this.clusterInfo.allocatMemory = Number((this.clusterInfo.allocatMemory / 1024).toFixed(2))
             this.clusterInfo.metricCpu = Number((this.clusterInfo.metricCpu / 1000).toFixed(2))
             this.clusterInfo.metricMemory = Number((this.clusterInfo.metricMemory / 1024).toFixed(2))
-            this.clusterInfo.cpuPercent = Number((this.clusterInfo.metricCpu / this.clusterInfo.allocatCpu).toFixed(2) * 100)
-            this.clusterInfo.memoryPercent = Number((this.clusterInfo.metricMemory / this.clusterInfo.allocatMemory).toFixed(2) * 100)
+            this.clusterInfo.cpuPercent = Math.round((this.clusterInfo.metricCpu / this.clusterInfo.allocatCpu).toFixed(2) * 100)
+            this.clusterInfo.memoryPercent = Math.round((this.clusterInfo.metricMemory / this.clusterInfo.allocatMemory).toFixed(2) * 100)
           }).catch(() => {
             this.hasMetric = "false"
           })

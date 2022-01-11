@@ -173,7 +173,7 @@ export default {
       this.loading = true
       checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then(res => {
         this.newVersion = res
-        this.form.apiVersion = this.res ? "networking.k8s.io/v1" : "networking.k8s.io/v1beta1"
+        this.form.apiVersion = res ? "networking.k8s.io/v1" : "networking.k8s.io/v1beta1"
         if (this.mode === "edit") {
           this.getDetail()
         }
