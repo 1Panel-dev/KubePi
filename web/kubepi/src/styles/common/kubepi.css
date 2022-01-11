@@ -1,0 +1,152 @@
+.el-loading-mask {
+    background: rgba(0, 0, 0, 0.8)
+}
+
+.el-drawer__header {
+    color: #FFFFFF;
+    background-color: #3884c5;
+    padding-bottom: 20px;
+}
+
+.myTable {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+}
+
+.myTable td {
+    width: 50%;
+    padding: 8px;
+    height: 23px;
+    border-bottom: 1px solid #383c42;
+    word-wrap: break-word;
+}
+
+.myTable td div {
+    margin-top: 2px
+}
+
+.myTable th {
+    border: 0;
+    height: 30px;
+}
+
+.myTable tr:hover {
+    background-color: #2b2f33;
+}
+
+.myTable tr:first-child:hover {
+    background-color: transparent !important;
+}
+
+.myTable tr td:nth-child(even) {
+    color: #85888e;
+}
+
+
+.myTag {
+    display: inline-block;
+    margin: 2px;
+}
+
+.el-progress-circle__track {
+    stroke: #414248;
+}
+
+.dTable {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+    margin-top: -10px;
+}
+
+.dTable td {
+    width: 50%;
+    padding: 8px;
+    height: 23px;
+    word-wrap: break-word;
+}
+
+.dTable td div {
+    margin-top: 2px
+}
+
+.dTable th {
+    border: 0;
+    height: 40px;
+}
+
+.dTable tr:hover {
+    background-color: transparent !important;
+}
+
+.dTable tr:nth-child(odd) td {
+    color: #85888e;
+}
+
+.card_title {
+    margin-top: -10px;
+}
+
+.tab-table {
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+    margin: auto;
+}
+
+.tab-table td {
+    height: 23px;
+    word-wrap: break-word;
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.tab-table th {
+    border: 0;
+    height: 25px;
+    font-size: 15px;
+    color: #868690;
+    padding: 5px;
+}
+
+.tab-table tr:hover {
+    background-color: transparent !important;
+}
+
+.tab-table tr:nth-child(odd) td {
+    color: #85888e;
+}
+
+.tab-content {
+    margin-top: 10px;
+}
+
+.tab-title {
+    font-size: large;
+}
+
+.el-divider--horizontal {
+    display: block;
+    height: 1px;
+    width: 100%;
+    margin: 12px 0;
+}
+
+.el-form--label-top .el-form-item__label {
+    float: none;
+    display: inline-block;
+    text-align: left;
+    padding: 0;
+}
+
+.bottom-button {
+    padding-bottom: 10px;
+    padding-top: 5px;
+    float: right;
+}
+
+.yaml-button {
+    margin-left: 20px;
+}
+

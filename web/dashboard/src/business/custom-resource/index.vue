@@ -1,26 +1,29 @@
 <template>
-  <layout-content header="Custom Resource Definitions">
-    <el-row>
-      <el-col :span="6">
-        <el-scrollbar style="height:900px">
-          <el-tree
-                  class="filter-tree"
-                  :default-expand-all="true"
-                  :data="data"
-                  :props="props"
-                  node-key="id"
-                  ref="tree"
-                  :highlight-current="true"
-                  @node-click="handleNodeClick"
-                  style="margin: 5px">
-          </el-tree>
-        </el-scrollbar>
-      </el-col>
-      <el-col :span="18">
-          <c-r-d-list v-if="resourceType==='Definitions'"></c-r-d-list>
-          <c-r-list :key="key" v-if="resourceType==='CustomResources'" :version="crItem.version" :names="crItem.names" :group="crItem.group" :scope="crItem.scope"></c-r-list>
-      </el-col>
-    </el-row>
+  <layout-content>
+    <div v-loading="loading">
+      <el-row>
+        <el-col :span="6">
+          <el-scrollbar style="height:900px">
+            <el-tree
+                    :empty-text="$t('commons.table.empty_text')"
+                    class="filter-tree"
+                    :default-expand-all="true"
+                    :data="data"
+                    :props="props"
+                    node-key="id"
+                    ref="tree"
+                    :highlight-current="true"
+                    @node-click="handleNodeClick"
+                    style="margin: 5px">
+            </el-tree>
+          </el-scrollbar>
+        </el-col>
+        <el-col :span="18">
+            <c-r-d-list v-if="resourceType==='Definitions'"></c-r-d-list>
+            <c-r-list :key="key" v-if="resourceType==='CustomResources'" :version="crItem.version" :names="crItem.names" :group="crItem.group" :scope="crItem.scope"></c-r-list>
+        </el-col>
+      </el-row>
+    </div>
   </layout-content>
 </template>
 

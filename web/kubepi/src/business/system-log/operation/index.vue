@@ -1,24 +1,26 @@
 <template>
   <layout-content :header="$t('business.system.operation_log')">
-    <complex-table :search-config="searchConfig" :data="data" :pagination-config="paginationConfig" @search="search">
-      <el-table-column :label="$t('business.system.operator')" prop="operator" fix />
-      <el-table-column :label="$t('business.system.operation')" prop="operation" fix>
-        <template v-slot:default="{row}">
-          {{ translate(row.operation) }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('business.system.operation_domain')" prop="operationDomain" fix>
-        <template v-slot:default="{row}">
-          {{ translate(row.operationDomain) }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('business.system.specific_information')" prop="specificInformation" fix />
-      <el-table-column :label="$t('commons.table.created_time')" fix>
-        <template v-slot:default="{row}">
-          {{ row.createAt | datetimeFormat }}
-        </template>
-      </el-table-column>
-    </complex-table>
+    <div v-loading="loading">
+      <complex-table :search-config="searchConfig" :data="data" :pagination-config="paginationConfig" @search="search">
+        <el-table-column :label="$t('business.system.operator')" prop="operator" fix />
+        <el-table-column :label="$t('business.system.operation')" prop="operation" fix>
+          <template v-slot:default="{row}">
+            {{ translate(row.operation) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('business.system.operation_domain')" prop="operationDomain" fix>
+          <template v-slot:default="{row}">
+            {{ translate(row.operationDomain) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('business.system.specific_information')" prop="specificInformation" fix />
+        <el-table-column :label="$t('commons.table.created_time')" fix>
+          <template v-slot:default="{row}">
+            {{ row.createAt | datetimeFormat }}
+          </template>
+        </el-table-column>
+      </complex-table>
+    </div>
   </layout-content>
 </template>
 
@@ -37,6 +39,7 @@ export default {
         pageSize: 10,
         total: 0,
       },
+      loading: false,
       searchConfig: {
         quickPlaceholder: this.$t("commons.search.quickSearch"),
         components: [

@@ -2,6 +2,7 @@ import Vue from "vue"
 import "@/styles/index.scss"
 import "@/assets/iconfont/iconfont"
 import '@/assets/iconfont/iconfont.css'
+import "@/styles/common/kubepi.css"
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 import {far} from '@fortawesome/free-regular-svg-icons'
