@@ -16,7 +16,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip prop="metadata.name">
       </el-table-column>
-      <el-table-column  v-if="show" :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+      <el-table-column v-if="show" :label="$t('business.namespace.namespace')" prop="metadata.namespace">
         <template v-slot:default="{row}">
           {{ row.metadata.namespace }}
         </template>
@@ -63,9 +63,36 @@ export default {
       show: false,
       buttons: [
         {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            console.log(this.cluster, this.version, this.group)
+            this.$router.push({
+              name: "CustomResourceEdit",
+              params: {
+                name: row.metadata.name,
+                cluster: this.cluster,
+                version: this.version,
+                group: this.group,
+                names: this.names,
+                namespace: row.metadata.namespace
+              }
+            })
+          },
+          disabled: () => {
+            return !checkPermissions({
+              scope: "namespace",
+              apiGroup: "apiextensions.k8s.io",
+              resource: "customresourcedefinitions",
+              verb: "update"
+            })
+          }
+        },
+        {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
+            console.log(this.cluster, this.version, this.group)
             downloadYaml(row.metadata.name + ".yml", getResource(this.cluster, this.version, this.group, this.names, row.metadata.namespace, row.metadata.name))
           }
         },

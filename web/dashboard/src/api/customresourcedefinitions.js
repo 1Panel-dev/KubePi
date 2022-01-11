@@ -75,3 +75,11 @@ export function getResource (cluster_name, version, group, names, namespace, nam
   }
   return get(`${url}/${name}`)
 }
+
+export function updateResource(cluster_name, version, group, names, namespace, name,data) {
+  let url = resourceUrl(cluster_name, version, group, names)
+  if (namespace && namespace !== "") {
+    url = resourceNSUrl(cluster_name, version, group, names, namespace)
+  }
+  return put(`${url}/${name}`,data)
+}
