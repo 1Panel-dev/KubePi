@@ -75,6 +75,8 @@ export default {
                 version: this.version,
                 group: this.group,
                 names: this.names,
+              },
+              query: {
                 namespace: row.metadata.namespace
               }
             })
