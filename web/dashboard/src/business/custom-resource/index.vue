@@ -1,10 +1,11 @@
 <template>
   <layout-content>
-    <div v-loading="loading">
+    <div>
       <el-row>
         <el-col :span="6">
           <el-scrollbar style="height:900px">
             <el-tree
+                    v-loading="loading"
                     :empty-text="$t('commons.table.empty_text')"
                     class="filter-tree"
                     :default-expand-all="true"

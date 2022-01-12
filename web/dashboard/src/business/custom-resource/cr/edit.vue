@@ -22,8 +22,7 @@ export default {
     name: String,
     names: String,
     version: String,
-    group: String,
-    namespace: String,
+    group: String
   },
   data () {
     return {
@@ -61,6 +60,7 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
+    this.namespace = this.$route.query.namespace
     this.getDetail()
   }
 }
