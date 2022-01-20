@@ -180,7 +180,7 @@
         <br>
         <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
           <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-            <ko-detail-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-pods>
+            <ko-detail-node-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-node-pods>
           </el-tab-pane>
           <el-tab-pane :label="$t('business.pod.image')">
             <table style="width: 90%" class="myTable">
@@ -255,13 +255,13 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import { getNode } from "@/api/nodes"
 import { listPodsWithNsSelector } from "@/api/pods"
 import YamlEditor from "@/components/yaml-editor"
-import KoDetailPods from "@/components/detail/detail-pods"
+import KoDetailNodePods from "@/components/detail/detail-node-pods"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "NodeDetail",
-  components: { KoDetailBasic, KoDetailPods, YamlEditor, LayoutContent },
+  components: { KoDetailBasic, KoDetailNodePods, YamlEditor, LayoutContent },
   props: {
     name: String,
   },

@@ -111,6 +111,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 		txOptions := common.DBOptions{DB: tx}
 		req.Cluster.Status.Phase = clusterStatusSaved
 		if err := h.clusterService.Create(&req.Cluster, txOptions); err != nil {
+			tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -125,11 +126,13 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		notAllowed, err := checkRequiredPermissions(client, requiredPermissions)
 		if err != nil {
+			tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 		if notAllowed != "" {
+			tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
