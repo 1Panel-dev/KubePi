@@ -214,6 +214,7 @@ const message = {
           repo_null: "Repo is null",
           images: "Image List",
           push_image: "Push the mirror to the current project",
+          version: "Version",
         }
     },
 }

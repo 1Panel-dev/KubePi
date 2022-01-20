@@ -44,6 +44,7 @@ func (s *service) ListInternalRepos(repo imagerepo.ImageRepo) (names []string, e
 			Username: repo.Credential.Username,
 			Password: repo.Credential.Password,
 		},
+		Version: repo.Version,
 	})
 	if client == nil {
 		return nil, errors.New("repo client is not found")
@@ -70,6 +71,7 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 			Username: rp.Credential.Username,
 			Password: rp.Credential.Password,
 		},
+		Version: rp.Version,
 	})
 	images, err2 := client.ListImages(rp.RepoName)
 	if err2 != nil {
@@ -95,6 +97,7 @@ func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names
 			Username: rp.Credential.Username,
 			Password: rp.Credential.Password,
 		},
+		Version: rp.Version,
 	})
 	images, err2 := client.ListImages(rp.RepoName)
 	if err2 != nil {
@@ -106,7 +109,6 @@ func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names
 	}
 	return
 }
-
 
 func (s *service) ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error) {
 	db := s.GetDB(options)
@@ -212,7 +214,7 @@ func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options c
 		repo.Credential.Password = ""
 		repo.Credential.Username = ""
 		repo.Credential = V1ImageRepo.Credential{}
-		err = db.UpdateField(repo, "Credential",repo.Credential)
+		err = db.UpdateField(repo, "Credential", repo.Credential)
 		if err != nil {
 			return
 		}

@@ -12,6 +12,7 @@ type ImageRepo struct {
 	Credential     Credential `json:"credential"`
 	Auth           bool       `json:"auth"`
 	AllowAnonymous bool       `json:"allowAnonymous"`
+	Version        string     `json:"version"`
 }
 
 type Credential struct {

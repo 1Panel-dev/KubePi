@@ -1,6 +1,7 @@
 package repos
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -15,9 +16,10 @@ type HttpClient struct {
 }
 
 type NameResult struct {
-	Name    string
-	Version string
-	Format  string
+	Name      string
+	Version   string
+	Format    string
+	ProjectID int `json:"project_id"`
 }
 
 func (h *HttpClient) NewRequest(method, endpoint string) (request *http.Request, err error) {
@@ -61,4 +63,16 @@ func (h *HttpClient) http(method, endpoint string) ([]byte, *http.Response, erro
 
 func (h *HttpClient) Get(endpoint string) ([]byte, *http.Response, error) {
 	return h.http(http.MethodGet, endpoint)
+}
+
+func (h *HttpClient) GetNameResult(url string) ([]NameResult, error) {
+	body, _, err := h.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	var result []NameResult
+	if err = json.Unmarshal(body, &result); err != nil {
+		return result, err
+	}
+	return result, err
 }

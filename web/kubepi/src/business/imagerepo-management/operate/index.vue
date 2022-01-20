@@ -18,6 +18,12 @@
             <el-form-item :label="$t('business.image_repos.endpoint')" prop="endPoint">
               <el-input v-model="form.endPoint" :placeholder="'http://172.16.10.10:8080'"></el-input>
             </el-form-item>
+            <el-form-item :label="$t('business.image_repos.version')" prop="version" v-if="form.type === 'Harbor'">
+              <el-select v-model="form.version" style="width:100%" >
+                <el-option :value="'v1'" :label="'v1'"></el-option>
+                <el-option :value="'v2'" :label="'v2'"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item :label="$t('business.image_repos.auth')" prop="auth">
               <el-radio-group v-model="form.auth">
                 <el-radio :label="true">{{ $t("commons.bool.true") }}</el-radio>
@@ -86,6 +92,7 @@ export default {
         auth: true,
         credential: {},
         allowAnonymous: false,
+        version: "v1"
       },
       rules: {
         name: [
@@ -96,6 +103,9 @@ export default {
           Rules.RequiredRule
         ],
         endPoint: [
+          Rules.RequiredRule
+        ],
+        version:[
           Rules.RequiredRule
         ],
         auth: [
