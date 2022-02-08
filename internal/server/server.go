@@ -3,14 +3,15 @@ package server
 import (
 	"embed"
 	"fmt"
-	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
-	"k8s.io/klog/v2"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"path"
 	"strings"
+
+	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+	"k8s.io/klog/v2"
 
 	"github.com/KubeOperator/kubepi/internal/config"
 	v1Config "github.com/KubeOperator/kubepi/internal/model/v1/config"
@@ -33,10 +34,10 @@ var EmbedWebDashboard embed.FS
 var EmbedWebTerminal embed.FS
 var WebkubectlEntrypoint string
 
-type Option func(server *KubePiSerer)
+type Option func(server *KubePiServer)
 
 func WithServerBindHost(host string) Option {
-	return func(server *KubePiSerer) {
+	return func(server *KubePiServer) {
 		if host != "" {
 			server.config.Spec.Server.Bind.Host = host
 		}
@@ -44,7 +45,7 @@ func WithServerBindHost(host string) Option {
 }
 
 func WithServerBindPort(port int) Option {
-	return func(server *KubePiSerer) {
+	return func(server *KubePiServer) {
 		if port != 0 {
 			server.config.Spec.Server.Bind.Port = port
 		}
@@ -52,14 +53,14 @@ func WithServerBindPort(port int) Option {
 }
 
 func WithCustomConfigFilePath(path string) Option {
-	return func(server *KubePiSerer) {
+	return func(server *KubePiServer) {
 		if path != "" {
 			server.configCustomFilePath = path
 		}
 	}
 }
 
-type KubePiSerer struct {
+type KubePiServer struct {
 	app                  *iris.Application
 	db                   *storm.DB
 	logger               *logrus.Logger
@@ -68,8 +69,8 @@ type KubePiSerer struct {
 	rootRoute            iris.Party
 }
 
-func NewKubePiSerer(opts ...Option) *KubePiSerer {
-	c := &KubePiSerer{}
+func NewKubePiSerer(opts ...Option) *KubePiServer {
+	c := &KubePiServer{}
 	c.app = iris.New()
 	c.config = getDefaultConfig()
 	for _, op := range opts {
@@ -82,14 +83,14 @@ func NewKubePiSerer(opts ...Option) *KubePiSerer {
 	return c.bootstrap()
 }
 
-func (e *KubePiSerer) setUpConfig() {
+func (e *KubePiServer) setUpConfig() {
 	err := config.ReadConfig(e.config, e.configCustomFilePath)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (e *KubePiSerer) setUpLogger() {
+func (e *KubePiServer) setUpLogger() {
 	klog.SetLogger(TodoLogger{})
 	e.logger = logrus.New()
 	l, err := logrus.ParseLevel(e.config.Spec.Logger.Level)
@@ -99,7 +100,7 @@ func (e *KubePiSerer) setUpLogger() {
 	e.logger.SetLevel(l)
 }
 
-func (e *KubePiSerer) setUpDB() {
+func (e *KubePiServer) setUpDB() {
 	realDir := file.ReplaceHomeDir(e.config.Spec.DB.Path)
 	if !fileutil.Exist(realDir) {
 		if err := os.MkdirAll(realDir, 0755); err != nil {
@@ -113,14 +114,14 @@ func (e *KubePiSerer) setUpDB() {
 	e.db = d
 }
 
-func (e *KubePiSerer) setUpRootRoute() {
+func (e *KubePiServer) setUpRootRoute() {
 	e.app.Any("/", func(ctx *context.Context) {
 		ctx.Redirect("/kubepi")
 	})
 	e.rootRoute = e.app.Party("/kubepi")
 }
 
-func (e *KubePiSerer) setUpStaticFile() {
+func (e *KubePiServer) setUpStaticFile() {
 	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
 	party := e.rootRoute.Party("/")
 	party.Use(iris.Compression)
@@ -137,14 +138,14 @@ func (e *KubePiSerer) setUpStaticFile() {
 	party.HandleDir("/", kubePiFS, spaOption)
 }
 
-func (e *KubePiSerer) setUpSession() {
+func (e *KubePiServer) setUpSession() {
 	sess := sessions.New(sessions.Config{Cookie: sessionCookieName, AllowReclaim: true})
 	e.rootRoute.Use(sess.Handler())
 }
 
 const ContentTypeDownload = "application/download"
 
-func (e *KubePiSerer) setResultHandler() {
+func (e *KubePiServer) setResultHandler() {
 	e.rootRoute.Use(func(ctx *context.Context) {
 		ctx.Next()
 		contentType := ctx.ResponseWriter().Header().Get("Content-Type")
@@ -180,7 +181,7 @@ func (e *KubePiSerer) setResultHandler() {
 	})
 }
 
-func (e *KubePiSerer) setUpErrHandler() {
+func (e *KubePiServer) setUpErrHandler() {
 	e.rootRoute.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.Values().GetString("message") == "" {
 			switch ctx.GetStatusCode() {
@@ -220,10 +221,10 @@ func (e *KubePiSerer) setUpErrHandler() {
 	})
 }
 
-func (e *KubePiSerer) runMigrations() {
+func (e *KubePiServer) runMigrations() {
 	migrate.RunMigrate(e.db, e.logger)
 }
-func (e *KubePiSerer) setWebkubectlProxy() {
+func (e *KubePiServer) setWebkubectlProxy() {
 	handler := func(ctx *context.Context) {
 		p := ctx.Params().Get("p")
 		if strings.Contains(p, "root") {
@@ -247,7 +248,7 @@ func (e *KubePiSerer) setWebkubectlProxy() {
 	e.rootRoute.Any("webkubectl", handler)
 }
 
-func (e *KubePiSerer) setUpTtyEntrypoint() {
+func (e *KubePiServer) setUpTtyEntrypoint() {
 	f, err := os.OpenFile("init-kube.sh", os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		e.logger.Error(err)
@@ -259,7 +260,7 @@ func (e *KubePiSerer) setUpTtyEntrypoint() {
 	}
 }
 
-func (e *KubePiSerer) bootstrap() *KubePiSerer {
+func (e *KubePiServer) bootstrap() *KubePiServer {
 	e.setUpRootRoute()
 	e.setUpStaticFile()
 	e.setUpLogger()
@@ -274,7 +275,7 @@ func (e *KubePiSerer) bootstrap() *KubePiSerer {
 	return e
 }
 
-var es *KubePiSerer
+var es *KubePiServer
 
 func DB() *storm.DB {
 	return es.db

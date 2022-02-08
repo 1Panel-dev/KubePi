@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-func (e *KubePiSerer) startTty() {
+func (e *KubePiServer) startTty() {
 	cmd := "gotty"
 	params := []string{"--permit-write", "unshare", "--fork", "--pid", "--mount-proc", "--mount", "bash", "init-kube.sh"}
 	go func() {

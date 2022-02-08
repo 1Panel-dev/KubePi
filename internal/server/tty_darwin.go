@@ -8,8 +8,8 @@ import (
 	"os/exec"
 )
 
-func (e *KubePiSerer) startTty() {
-	cmd := "/Users/shenchenyang/go/bin/gotty"
+func (e *KubePiServer) startTty() {
+	cmd := "gotty"
 	params := []string{"--permit-write", "bash", "init-kube.sh"}
 	go func() {
 		c := exec.Command(cmd, params...)
