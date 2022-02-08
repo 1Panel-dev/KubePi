@@ -214,6 +214,7 @@ const message = {
           repo_null: "镜像库为空",
           images: "镜像列表",
           push_image: "推送镜像到当前项目",
+          version: "版本",
         }
     },
 }
