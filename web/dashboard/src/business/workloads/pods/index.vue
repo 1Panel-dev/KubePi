@@ -73,10 +73,10 @@
                 </el-popover>
               </div>
               <div v-if="row.containers.length == 1">
-                <el-dropdown-item icon="iconfont iconline-terminalzhongduan" command="terminal">
+                <el-dropdown-item :disabled="!checkExecPermissions()" icon="iconfont iconline-terminalzhongduan" command="terminal">
                   {{ $t("commons.button.terminal") }}
                 </el-dropdown-item>
-                <el-dropdown-item icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
+                <el-dropdown-item :disabled="!checkLogPermissions()" icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
                 </el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}</el-dropdown-item>
@@ -129,6 +129,12 @@ export default {
     },
     onCheckPermissions () {
       return checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "delete" })
+    },
+    checkExecPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/exec', verb: '*' })
+    },
+    checkLogPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/log', verb: '*' })
     },
     handleClick (btn, row) {
       switch (btn) {

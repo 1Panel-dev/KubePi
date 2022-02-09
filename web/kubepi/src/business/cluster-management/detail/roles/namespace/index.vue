@@ -170,7 +170,7 @@ export default {
       apiGroupResources: {
         "core": ["events", "services", "endpoints",
           "configmaps", "secrets", "resourcequotas", "limitranges", "persistentvolumeclaims",
-          "pods", "containers", "serviceaccounts"
+          "pods", "pods/log", "pods/exec", "containers", "serviceaccounts"
         ],
         "apps": ["deployments", "daemonsets", "replicasets", "statefulsets"],
         "batch": ["jobs", "cronjobs"],

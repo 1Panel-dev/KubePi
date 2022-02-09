@@ -93,12 +93,18 @@ export default {
           click: (row) => {
             this.openTerminal(row)
           },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "*" })
+          },
         },
         {
           label: this.$t("commons.button.logs"),
           icon: "el-icon-tickets",
           click: (row) => {
             this.openTerminalLogs(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/log", verb: "*" })
           },
         },
       ],
