@@ -15,10 +15,9 @@
       </el-table-column>
       <el-table-column label="Resources" min-width="300px">
         <template v-slot:default="{row}">
-          <span v-for="(resource,index) in row.resources" :key="index">{{ resource }}</span>
+          <el-tag v-for="(resource,index) in row.resources" type="success" :key="index">{{ resource }}</el-tag>
         </template>
       </el-table-column>
-      <!--      <el-table-column label="Custom Verbs"></el-table-column>-->
       <el-table-column label="Create" width="80px">
         <template v-slot:default="{row}">
           <i v-if="checkVerb(row.verbs,'create')" class="el-icon-check"></i>
