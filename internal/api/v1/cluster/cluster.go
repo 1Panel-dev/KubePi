@@ -111,7 +111,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 		txOptions := common.DBOptions{DB: tx}
 		req.Cluster.Status.Phase = clusterStatusSaved
 		if err := h.clusterService.Create(&req.Cluster, txOptions); err != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -126,13 +126,13 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		notAllowed, err := checkRequiredPermissions(client, requiredPermissions)
 		if err != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 		if notAllowed != "" {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
@@ -320,6 +320,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 					}(i, ctx1)
 				}
 				wg.Wait()
+				cancel()
 			}(result)
 
 			<-ctx1.Done()

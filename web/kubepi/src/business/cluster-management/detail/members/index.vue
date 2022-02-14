@@ -1,14 +1,11 @@
 <template>
   <layout-content>
-    <complex-table :data="data">
-      <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
-            {{ $t("commons.button.add") }}
-          </el-button>
-        </el-button-group>
-        <br/>
-      </template>
+    <div style="float: left; margin-bottom: 20px">
+      <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+    </div>
+    <complex-table :data="data" :selects.sync="selects">
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ row.name }}
@@ -21,7 +18,6 @@
       </el-table-column>
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
     </complex-table>
-
 
     <el-dialog
         :close-on-click-modal="false"
@@ -166,6 +162,7 @@ export default {
         },
       ],
       data: [],
+      selects: [],
     }
   },
   computed: {
@@ -292,10 +289,29 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: 'warning'
       }).then(() => {
-        deleteClusterMember(this.name, raw.name, raw.kind).then(() => {
-          this.$message.success(this.$t('commons.msg.delete_success'))
-          this.list()
-        })
+        this.ps = []
+        if (raw) {
+          this.ps.push(deleteClusterMember(this.name, raw.name, raw.kind))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteClusterMember(this.name, select.name, select.kind))
+            }
+          }
+        }
+        if (this.ps.length !== 0) { 
+          Promise.all(this.ps)
+            .then(() => {
+              this.list()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.list()
+            })
+        }
       });
     },
     onNamespaceRoleCreate() {

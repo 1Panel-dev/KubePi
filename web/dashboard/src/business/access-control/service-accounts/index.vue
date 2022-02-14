@@ -1,17 +1,17 @@
 <template>
   <layout-content header="Service Accounts">
+    <div style="float: left">
+      <el-button type="primary" size="small" @click="onCreate"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">
+        YAML
+      </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
-      <template #header>
-        <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">
-          YAML
-        </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">

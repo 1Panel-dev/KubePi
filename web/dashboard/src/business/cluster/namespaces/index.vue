@@ -1,9 +1,7 @@
 <template>
   <layout-content header="Namespaces" v-loading="loading">
-    <complex-table :selects.sync="selects" :pagination-config="paginationConfig" :search-config="searchConfig"
-                   :data="data" @search="search">
-      <template #header>
-        <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
+    <div style="float: left">
+      <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
                    type="primary" size="small"
                    @click="yamlCreate">
           YAML
@@ -18,7 +16,9 @@
                    :disabled="selects.length===0" @click="onDelete()">
           {{ $t("commons.button.delete") }}
         </el-button>
-      </template>
+    </div>
+    <complex-table :selects.sync="selects" :pagination-config="paginationConfig" :search-config="searchConfig"
+                   :data="data" @search="search">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip fix>
         <template v-slot:default="{row}">

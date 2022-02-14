@@ -1,16 +1,14 @@
 <template>
   <layout-content :header="$t('business.chart.chart')">
+    <div style="float: left; margin-bottom: 10px">
+      <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.org',resource:'appmarkets',verb:'create'}"
+                  type="primary" size="small"
+                  @click="onCreate">
+        {{ $t("commons.button.add") }}
+      </el-button>
+    </div>
     <complex-table v-loading="loading" :selects.sync="selects" :data="data"
                    @search="search">
-      <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.org',resource:'appmarkets',verb:'create'}"
-                     type="primary" size="small"
-                     @click="onCreate">
-            {{ $t("commons.button.add") }}
-          </el-button>
-        </el-button-group>
-      </template>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" fix>
         <template v-slot:default="{row}">
           <span :style="{color: row.color}">{{ row.name }}</span>
