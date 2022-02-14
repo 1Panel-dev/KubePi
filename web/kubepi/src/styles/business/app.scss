@@ -150,3 +150,7 @@ a:hover {
   color: rgb(255, 255, 255);
   border-bottom:1px solid;
 }
+
+.el-checkbox.is-disabled .el-checkbox__inner {
+  background-color: #45494c;
+}
