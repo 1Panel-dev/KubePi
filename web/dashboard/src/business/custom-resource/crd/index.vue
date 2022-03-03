@@ -1,11 +1,11 @@
 <template>
   <layout-content header="Custom Resource Definitions">
+    <div style="float: left">
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
-      <template #header>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column label="Kind" show-overflow-tooltip>
         <template v-slot:default="{row}">

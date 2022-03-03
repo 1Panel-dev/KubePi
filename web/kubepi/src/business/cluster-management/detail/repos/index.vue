@@ -1,14 +1,12 @@
 <template>
   <layout-content>
-    <complex-table :data="data">
-      <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
-            {{ $t("commons.button.add") }}
-          </el-button>
-        </el-button-group>
-        <br/>
-      </template>
+    <div style="float: left; margin-bottom: 20px">
+      <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+    </div>
+
+    <complex-table :data="data" :selects.sync="selects">
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="100" fix>
         <template v-slot:default="{row}">
           {{ row.repo }}
@@ -59,6 +57,7 @@ export default {
   data () {
     return {
       data: [],
+      selects: [],
       loading: false,
       isSubmitGoing: false,
       formDialogOpened: false,
@@ -94,10 +93,29 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: 'warning'
       }).then(() => {
-        deleteClusterRepo(this.name, raw.repo).then(() => {
-          this.$message.success(this.$t('commons.msg.delete_success'))
-          this.list()
-        })
+        this.ps = []
+        if (raw) {
+          this.ps.push(deleteClusterRepo(this.name, raw.repo))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteClusterRepo(this.name, select.repo))
+            }
+          }
+        }
+        if (this.ps.length !== 0) { 
+          Promise.all(this.ps)
+            .then(() => {
+              this.list()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.list()
+            })
+        }
       });
     },
     listRepos () {

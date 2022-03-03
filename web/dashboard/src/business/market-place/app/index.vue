@@ -1,16 +1,14 @@
 <template>
   <layout-content :header="$t('business.chart.app_installed')">
+    <div style="float: left">
+      <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.org',resource:'appmarkets',verb:'create'}" type="primary" size="small"
+                  @click="onDelete()" :disabled="selects.length === 0">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects"
                    :pagination-config="paginationConfig"
                    @search="search">
-      <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{scope:'cluster',apiGroup:'kubepi.org',resource:'appmarkets',verb:'create'}" type="primary" size="small"
-                     @click="onDelete()" :disabled="selects.length === 0">
-            {{ $t("commons.button.delete") }}
-          </el-button>
-        </el-button-group>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" fix>
       </el-table-column>

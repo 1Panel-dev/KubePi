@@ -1,22 +1,22 @@
 <template>
   <div>
   <layout-content header="Pods">
+    <div style="float: left">
+      <el-button type="primary" size="small" @click="onCreate"
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
+        YAML
+      </el-button>
+      <el-button type="primary" size="small" @click="onTop"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+        Top
+      </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig" @search="search">
-      <template #header>
-        <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
-          YAML
-        </el-button>
-        <el-button type="primary" size="small" @click="onTop"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-          Top
-        </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
@@ -73,10 +73,10 @@
                 </el-popover>
               </div>
               <div v-if="row.containers.length == 1">
-                <el-dropdown-item icon="iconfont iconline-terminalzhongduan" command="terminal">
+                <el-dropdown-item :disabled="!checkExecPermissions()" icon="iconfont iconline-terminalzhongduan" command="terminal">
                   {{ $t("commons.button.terminal") }}
                 </el-dropdown-item>
-                <el-dropdown-item icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
+                <el-dropdown-item :disabled="!checkLogPermissions()" icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
                 </el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}</el-dropdown-item>
@@ -129,6 +129,12 @@ export default {
     },
     onCheckPermissions () {
       return checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "delete" })
+    },
+    checkExecPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/exec', verb: '*' })
+    },
+    checkLogPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/log', verb: '*' })
     },
     handleClick (btn, row) {
       switch (btn) {

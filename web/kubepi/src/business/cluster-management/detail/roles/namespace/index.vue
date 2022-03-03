@@ -1,14 +1,12 @@
 <template>
   <layout-content>
-    <complex-table :data="data">
-      <template #header>
-        <el-button-group>
-          <el-button type="primary" size="small" @click="onCreate">
-            {{ $t("commons.button.create") }}
-          </el-button>
-        </el-button-group>
-        <br/>
-      </template>
+    <div style="float: left; margin-bottom: 20px">
+      <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+    </div>
+
+    <complex-table :data="data" :selects.sync="selects">
+      <el-table-column type="selection" :selectable="isBuildIn" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="100" fix show-overflow-tooltip> 
         <template v-slot:default="{row}">
           <span class="span-link" @click="onOpenDetail(row)">{{ row.metadata.name }}</span>
@@ -170,7 +168,7 @@ export default {
       apiGroupResources: {
         "core": ["events", "services", "endpoints",
           "configmaps", "secrets", "resourcequotas", "limitranges", "persistentvolumeclaims",
-          "pods", "containers", "serviceaccounts"
+          "pods", "pods/log", "pods/exec", "containers", "serviceaccounts"
         ],
         "apps": ["deployments", "daemonsets", "replicasets", "statefulsets"],
         "batch": ["jobs", "cronjobs"],
@@ -211,15 +209,18 @@ export default {
         },
       ],
       data: [],
+      selects: [],
     }
   },
   computed: {
     formTitle() {
       return `commons.button.${this.operation}`
     }
-
   },
   methods: {
+    isBuildIn(row) {
+      return !(row.metadata.annotations['builtin'] === 'true')
+    },
     list() {
       this.loading = false
       listClusterRoles(this.name, "namespace").then(data => {
@@ -309,9 +310,29 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: 'warning'
       }).then(() => {
-        deleteClusterRole(this.name, row.metadata.name).then(() => {
-          this.list()
-        })
+        this.ps = []
+        if (row) {
+          this.ps.push(deleteClusterRole(this.name, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteClusterRole(this.name, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) { 
+          Promise.all(this.ps)
+            .then(() => {
+              this.list()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.list()
+            })
+        }
       });
     }
     ,

@@ -1,17 +1,17 @@
 <template>
   <layout-content header="Pod Disruption Budget">
+    <div style="float: left">
+      <el-button type="primary" size="small" @click="onCreate"
+                  v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'create'}">
+        YAML
+      </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
+                  v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'delete'}">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table :selects.sync="selects" :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig">
-      <template #header>
-        <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'create'}">
-          YAML
-        </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">

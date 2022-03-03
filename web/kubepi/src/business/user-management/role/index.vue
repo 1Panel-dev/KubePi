@@ -1,16 +1,13 @@
 <template>
   <layout-content :header="$t('business.user.role_list')">
+    <div style="float: left; margin-bottom: 20px">
+      <el-button v-has-permissions="{resource:'roles',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button v-has-permissions="{resource:'roles',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+    </div>
+
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
                    :pagination-config="paginationConfig" @search="search">
-      <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{resource:'roles',verb:'create'}" type="primary"
-                     size="small"
-                     @click="onCreate">
-            {{ $t("commons.button.create") }}
-          </el-button>
-        </el-button-group>
-      </template>
+      <el-table-column type="selection" :selectable="isBuildIn" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="100" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
           <span class="span-link" @click="onDetail(row.name)">
@@ -93,10 +90,12 @@ export default {
       },
       data: [],
       selects: [],
-      isSubmitGoing: false,
     }
   },
   methods: {
+    isBuildIn(row) {
+      return !row.builtIn
+    },
     search(conditions) {
       console.log(conditions)
       this.loading = true
@@ -109,7 +108,6 @@ export default {
     },
     onCreate() {
       this.$router.push({name: "RoleCreate"})
-
     },
 
     translate(a) {
@@ -123,25 +121,35 @@ export default {
       this.$router.push({name: "RoleEdit", params: {name: name}})
     },
     onDelete(name) {
-      if (this.isSubmitGoing) {
-        return
-      }
-      this.isSubmitGoing = false
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {
         confirmButtonText: this.$t("commons.button.confirm"),
         cancelButtonText: this.$t("commons.button.cancel"),
         type: 'warning'
       }).then(() => {
-        deleteRole(name).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t("commons.msg.delete_success"),
-          });
-          this.search()
-        })
-      }).finally(() => {
-        this.isSubmitGoing = false
-      });
+        this.ps = []
+        if (name) {
+          this.ps.push(deleteRole(name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteRole(select.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) { 
+          Promise.all(this.ps)
+            .then(() => {
+              this.search()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search()
+            })
+        }
+      })
     }
   },
   created() {

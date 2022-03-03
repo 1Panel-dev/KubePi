@@ -1,18 +1,13 @@
 <template>
   <layout-content :header="$t('business.cluster.list')">
+    <div style="float: left">
+      <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button v-has-permissions="{resource:'clusters',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+    </div>
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
                    :pagination-config="paginationConfig" @search="search"
                    element-loading-background="rgba(0, 0, 0, 0.8)">
-      <template #header>
-        <el-button-group>
-          <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small"
-                     @click="onCreate">
-            {{ $t("commons.button.add") }}
-          </el-button>
-        </el-button-group>
-      </template>
-
-
+      <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
           <el-tag type="success" v-if="row.extraClusterInfo.health">{{ $t('business.cluster.ready') }}</el-tag>
@@ -280,13 +275,29 @@ export default {
         cancelButtonText: this.$t("commons.button.cancel"),
         type: 'warning'
       }).then(() => {
-        deleteCluster(name).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t("commons.msg.delete_success"),
-          });
-          this.search()
-        })
+        this.ps = []
+        if (name) {
+          this.ps.push(deleteCluster(name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(deleteCluster(select.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search()
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search()
+            })
+        }
       });
     },
     onGotoDashboard(row) {

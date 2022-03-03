@@ -1,24 +1,24 @@
 <template>
   <layout-content header="Persistent Volume Claims">
+    <div style="float: left">
+      <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
+                  type="primary" size="small"
+                  @click="yamlCreate">
+        YAML
+      </el-button>
+      <el-button type="primary" size="small"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
+                  @click="onCreate">
+        {{ $t("commons.button.create") }}
+      </el-button>
+      <el-button type="primary" size="small"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}"
+                  :disabled="selects.length===0" @click="onDelete()">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+    </div>
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
-      <template #header>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
-                   type="primary" size="small"
-                   @click="yamlCreate">
-          YAML
-        </el-button>
-        <el-button type="primary" size="small"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
-                   @click="onCreate">
-          {{ $t("commons.button.create") }}
-        </el-button>
-        <el-button type="primary" size="small"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'delete'}"
-                   :disabled="selects.length===0" @click="onDelete()">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">

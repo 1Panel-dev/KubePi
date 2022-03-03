@@ -58,11 +58,11 @@ func (h *Handler) AddCLusterRepo() iris.Handler {
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
-				tx.Rollback()
+				_ = tx.Rollback()
 				return
 			}
 		}
-		tx.Commit()
+		_ = tx.Commit()
 		ctx.Values().Set("data", &req)
 	}
 }

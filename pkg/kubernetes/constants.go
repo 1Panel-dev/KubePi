@@ -1,9 +1,10 @@
 package kubernetes
 
 import (
+	"time"
+
 	rbacV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"time"
 )
 
 const (
@@ -457,7 +458,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"pods", "containers"},
+				Resources: []string{"pods", "pods/exec", "pods/log", "containers"},
 				Verbs:     []string{"*"},
 			},
 			{

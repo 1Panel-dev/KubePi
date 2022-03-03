@@ -1,9 +1,7 @@
 <template>
   <layout-content header="Nodes">
-    <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search"
-                   :search-config="searchConfig">
-      <template #header>
-        <el-button type="primary" size="small"
+    <div style="float: left">
+      <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
                    @click="cordon(true)" icon="el-icon-video-pause">
           {{$t('business.node.cordon')}}
@@ -18,7 +16,9 @@
                    @click="drain()" icon="el-icon-refresh-right">
           {{$t('business.node.drain')}}
         </el-button>
-      </template>
+    </div>
+    <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search"
+                   :search-config="searchConfig">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" fix show-overflow-tooltip max-width="30px">
         <template v-slot:default="{row}">

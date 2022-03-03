@@ -111,7 +111,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 		txOptions := common.DBOptions{DB: tx}
 		req.Cluster.Status.Phase = clusterStatusSaved
 		if err := h.clusterService.Create(&req.Cluster, txOptions); err != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -126,13 +126,13 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 		notAllowed, err := checkRequiredPermissions(client, requiredPermissions)
 		if err != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 		if notAllowed != "" {
-			tx.Rollback()
+			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
 			return
@@ -305,20 +305,25 @@ func (h *Handler) SearchClusters() iris.Handler {
 			result = append(result, c)
 		}
 		if showExtra {
-			wg := &sync.WaitGroup{}
-			for i := range result {
-				c := kubernetes.NewKubernetes(&result[i].Cluster)
-				wg.Add(1)
-				i := i
-				goCtx, cancel := goContext.WithTimeout(goContext.Background(), 1*time.Second)
-				go func() {
-					info, _ := getExtraClusterInfo(goCtx, c)
-					result[i].ExtraClusterInfo = info
-					cancel()
-					wg.Done()
-				}()
-			}
-			wg.Wait()
+			ctx1, cancel := goContext.WithTimeout(goContext.Background(), 2*time.Second)
+			defer cancel()
+
+			wg := sync.WaitGroup{}
+			go func(result []Cluster) {
+				for i := range result {
+					wg.Add(1)
+					c := kubernetes.NewKubernetes(&result[i].Cluster)
+					go func(i int, ctx1 goContext.Context) {
+						defer wg.Done()
+						info, _ := getExtraClusterInfo(ctx1, c)
+						result[i].ExtraClusterInfo = info
+					}(i, ctx1)
+				}
+				wg.Wait()
+				cancel()
+			}(result)
+
+			<-ctx1.Done()
 		}
 		ctx.Values().Set("data", pkgV1.Page{Items: result, Total: total})
 	}

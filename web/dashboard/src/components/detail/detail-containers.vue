@@ -44,19 +44,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('commons.table.action')" min-width="60">
-        <template v-slot:default="{row}">
-          <el-tooltip class="item" effect="dark" :content="$t('commons.form.detail')" placement="bottom">
-            <el-button size="mini" circle @click="openDetail(row)" icon="el-icon-view"></el-button>
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" :content="$t('commons.button.logs')" placement="bottom">
-            <el-button size="mini" circle @click="openTerminalLogs(row)" icon="el-icon-tickets"></el-button>
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" :content="$t('commons.button.terminal')" placement="bottom">
-            <el-button size="mini" circle @click="openTerminal(row)" icon="iconfont iconline-terminalzhongduan"></el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
 
     <el-row v-if="data.length !== 0" style="margin-top: 20px">
@@ -67,11 +55,13 @@
 
 <script>
 import ComplexTable from "@/components/complex-table"
+import KoTableOperations from "@/components/ko-table-operations"
 import KoDetailContainersInfo from "@/components/detail/detail-containers-info"
+import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "KoDetailContainers",
-  components: { ComplexTable, KoDetailContainersInfo },
+  components: { ComplexTable, KoTableOperations, KoDetailContainersInfo },
   props: {
     cluster: String,
     yamlInfo: Object,
@@ -109,6 +99,35 @@ export default {
   },
   data() {
     return {
+      buttons: [
+        {
+          label: this.$t("commons.form.detail"),
+          icon: "el-icon-view",
+          click: (row) => {
+            this.openDetail(row)
+          }
+        },
+        {
+          label: this.$t("commons.button.logs"),
+          icon: "el-icon-tickets",
+          click: (row) => {
+            this.openTerminalLogs(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/log", verb: "*" })
+          },
+        },
+        {
+          label: this.$t("commons.button.terminal"),
+          icon: "iconfont iconline-terminalzhongduan",
+          click: (row) => {
+            this.openTerminalLogs(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "*" })
+          },
+        },
+      ],
       form: {},
       namespace: "",
       name: "",

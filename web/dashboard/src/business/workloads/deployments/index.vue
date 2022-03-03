@@ -1,17 +1,21 @@
 <template>
   <layout-content header="Deployments">
-    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
-      <template #header>
-        <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}" type="primary" size="small" @click="yamlCreate">
+    <div style="float: left">
+      <el-button v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}" type="primary" size="small" @click="yamlCreate">
           YAML
-        </el-button>
-        <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}">
-          {{ $t("commons.button.create") }}
-        </el-button>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'delete'}">
-          {{ $t("commons.button.delete") }}
-        </el-button>
-      </template>
+      </el-button>
+      <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}">
+        {{ $t("commons.button.create") }}
+      </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'delete'}">
+        {{ $t("commons.button.delete") }}
+      </el-button>
+
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onScale()" v-has-permissions="{ scope: 'namespace', apiGroup: 'apps', resource: 'deployments', verb: 'update' }">
+        {{ $t("commons.button.scale") }}
+      </el-button>
+    </div>
+    <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
@@ -35,8 +39,8 @@
     <el-dialog :title="$t('commons.button.scale')" width="30%" :close-on-click-modal="false" :visible.sync="dialogScaleVisible">
       <el-form label-position="top" style="margin-left: 30px" ref="form" :model="form">
         <div>
-          <el-form-item :label="$t('business.common.basic')">
-            <div><span>{{form.namespace}} / {{form.name}}</span></div>
+          <el-form-item :label="$t('business.common.basic') + '  (namespace / name / replicas)'">
+            <div v-for="(item, index) in selects" v-bind:key="index"><span>{{item.metadata.namespace}} / {{item.metadata.name}} * {{item.spec.replicas}}</span></div>
           </el-form-item>
           <el-form-item :label="$t('business.workload.replicas')" prop="replicas">
             <ko-form-item itemType="number" v-model.number="form.replicas" />
@@ -49,7 +53,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="$t('commons.button.scale')" width="70%" :close-on-click-modal="false" :visible.sync="dialogModifyVersionVisible">
+    <el-dialog :title="$t('commons.button.modifying_version')" width="70%" :close-on-click-modal="false" :visible.sync="dialogModifyVersionVisible">
       <complex-table :data="imagesData" v-loading="loading">
         <el-table-column :label="$t('business.workload.container_type')" prop="type" min-width="10" />
         <el-table-column :label="$t('business.workload.name')" prop="name" min-width="20" show-overflow-tooltip />
@@ -231,27 +235,28 @@ export default {
       })
     },
     onScale(row) {
-      this.form.name = row.metadata.name
-      this.form.namespace = row.metadata.namespace
-      this.form.replicas = row.spec.replicas
+      if (row) {
+        this.selects.push(row)
+      }
       this.dialogScaleVisible = true
-      this.scaleRow = row
     },
     onScaleSubmit() {
       this.loading = true
-      this.scaleRow.spec.replicas = this.form.replicas
-      scaleDeployment(this.clusterName, this.form.namespace, this.form.name, this.scaleRow)
-        .then(() => {
-          this.dialogScaleVisible = false
-          this.loading = true
-          this.$message({
-            type: "success",
-            message: this.$t("commons.msg.operation_success"),
+      for (const row of this.selects) {
+        row.spec.replicas = this.form.replicas
+        scaleDeployment(this.clusterName, row.metadata.namespace, row.metadata.name, row)
+          .then(() => {
+            this.dialogScaleVisible = false
+            this.loading = true
+            this.$message({
+              type: "success",
+              message: this.$t("commons.msg.operation_success"),
+            })
           })
-        })
-        .finally(() => {
-          this.loading = false
-        })
+          .finally(() => {
+            this.loading = false
+          })
+      }
     },
     onModifyVersion(row) {
       this.imagesData = []
