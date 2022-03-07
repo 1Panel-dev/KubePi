@@ -121,7 +121,7 @@ export default {
           label: this.$t("commons.button.terminal"),
           icon: "iconfont iconline-terminalzhongduan",
           click: (row) => {
-            this.openTerminalLogs(row)
+            this.openTerminal(row)
           },
           disabled: () => {
             return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "*" })
