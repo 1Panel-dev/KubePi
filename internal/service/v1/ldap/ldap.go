@@ -156,7 +156,11 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 			server.Logger().Errorf("can not get ldap mappings")
 			return
 		}
-		entries, _ := lc.Search(ldap.Dn, ldap.Filter, attributes)
+		entries, err := lc.Search(ldap.Dn, ldap.Filter, attributes)
+		if err != nil {
+			server.Logger().Errorf(err.Error())
+			return
+		}
 		for _, entry := range entries {
 			us := new(v1User.User)
 			rv := reflect.ValueOf(&us).Elem().Elem()
