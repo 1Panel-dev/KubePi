@@ -45,12 +45,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.table.created_time')" min-width="35" show-overflow-tooltip prop="metadata.timestamp" fix>
+        <el-table-column :label="$t('business.pod.time_stamp')" min-width="35" show-overflow-tooltip prop="metadata.timestamp" fix>
           <template v-slot:default="{row}">
             {{ row.timestamp | age }}
           </template>
         </el-table-column>
-        <el-table-column label="window" show-overflow-tooltip prop="window" min-width="35" fix>
+        <el-table-column :label="$t('business.pod.windows')" show-overflow-tooltip prop="window" min-width="35" fix>
           <template v-slot:default="{row}">
             {{ row.window }}
           </template>

@@ -209,6 +209,7 @@ const message = {
       eviction_help2: "2. Eviction the pod",
       eviction_help3: "3. Set the node to the schedulable state",
       drain_success: "Pod eviction succeeded, please refresh the page later",
+      time_stamp: "Timestamp",
       windows: "Windows",
       ready: "Ready",
       restart_count: "Restart count",
