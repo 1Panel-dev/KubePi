@@ -23,9 +23,11 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/common v0.29.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
+	github.com/xlzd/gotp v0.0.0-20220110052318-fab697c03c2c // indirect
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
