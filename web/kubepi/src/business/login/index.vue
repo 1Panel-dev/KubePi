@@ -1,5 +1,32 @@
 <template xmlns:el-col="http://www.w3.org/1999/html">
   <div class="login-background">
+<!--    <el-row>-->
+<!--      <el-col>-->
+<!--        <div style="text-align: center">-->
+<!--          <div>-->
+<!--            <span>{{ $t("commons.login.mfa_helper") }}</span>-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <img :src="otp.qrUrl">-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <span>Secret:{{otp.secret}}</span>-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <el-form>-->
+<!--              <el-form-item  class="login">-->
+<!--                <el-input></el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--            <div>-->
+<!--              <el-button type="primary" class="submit" @click="submit('form')" size="default">-->
+<!--                {{ $t("commons.button.bind") }}-->
+<!--              </el-button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </el-col>-->
+<!--    </el-row>-->
     <div class="login-container">
       <el-row type="flex" v-loading="loading">
         <el-col :span="12">
@@ -37,7 +64,6 @@
 </template>
 <script>
 
-
 export default {
   name: "Login",
   data () {
@@ -68,7 +94,11 @@ export default {
       redirect: undefined,
       otherQuery: {},
       systemName: this.$t("commons.login.title"),
-      loadingPage: false
+      loadingPage: false,
+      otp: {
+        secret: "21121212",
+        qrUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAABlBMVEX///8AAABVwtN+AAACZUlEQVR42uyZP3LmKhDEW0VAyBE4Chd7pT/li3EUjkBIQKlf9SCvPq83t9j9CGSX/EswM909CO/1Xv/kWkjy9EQ4AceDRNyR9DZPBDQAqyewIrGsgS0eNQEIUwGRdfV0FZ6IZCaPmjz74wDA1dXnHlnhyzIp4HMPp2ePRwWwTQjAisnVrcGVrSbri99L7oeB0by5h6MlV9aQrey/dfezgc/Vg9RHi2WrfxDURwNLg23J6Wnd3eIesi/bLaQ/DkB9C1XUiiSALZ4hs7h7KxMA0tBN29yROtZgug+W/66+mAJYWKCWkATlHnegxVOPu3EmAIAIbMysC4f9Nmxk+6VRjwA8O6BUs3u6gkDPU2cxFWDdfSL1sHuLDmjyrC9RbQYg9rBLSCl014+lAvFRAOlUQF2/mQT5YmLU72z/fMDsavdURWVIQ9vwhKkAS0Eb2bE1BSBle9ZXIX0A8Nm8fZzKqRfyLH7cnjUFAChrVqh592AHQj8bUHRiQ4Jgc6DKyt957QHASMWwvEY7EJ0FfXFfYvPDAfii13mIUbGQAyRP3v+HCQDYnAVnY0pkTU0hQi/yYwDzrMPUviWWhVmamVVnmAhgUZ5PuPJkyKOi+HEHzgkAuZO624xBjT1S54tnzQFQE8rID9BgPjr+JSb9OHB1sGX7bJ4FbPVysmmAzzsQyA6ciol2afYyDM4AXLesjodtUzO5bfODTwLGLWu3AylXrCeLmxGwK4Q+/ibjit8vkx8PaKQ9tU0Nt/KE15H2CcBwXvsCIrUfX0Bep8UZgOs7Tg/nSBIJI6/1MBHwXu/1l63/AwAA//8FHjSXDI6EdgAAAABJRU5ErkJggg=="
+      },
     }
   },
   watch: {

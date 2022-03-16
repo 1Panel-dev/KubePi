@@ -41,7 +41,8 @@ const message = {
             upload: "Upload",
             search: "Search",
             rbac_manage: "RBAC Manage",
-            sync: "Sync"
+            sync: "Sync",
+            bind: "Bind"
         },
         table: {
             name: "Name",
@@ -54,6 +55,7 @@ const message = {
             built_in: "Built in",
             description: "Description",
             empty_text: "There are no rows to show.",
+            mfa_enable: "MFA Auth"
         },
         header: {
             help_doc: "document",
@@ -64,6 +66,10 @@ const message = {
         bool: {
             true: "true",
             false: "false"
+        },
+        enable: {
+          true: "Enable",
+          false: "Disable"
         },
         search: {
             quickSearch: "quick search"
@@ -98,7 +104,8 @@ const message = {
             password: "password",
             title: "login KubePi",
             welcome: "Welcome back, please enter your user name and password to log in",
-            expires: "The authentication information has expired. Please log in again."
+            expires: "The authentication information has expired. Please log in again.",
+            mfa_helper: "Scan the QR code below with the MFA Authenticator app to get a 6-digit verification code",
         },
     },
     business: {

@@ -41,7 +41,8 @@ const message = {
             upload: "上传文件",
             search: "搜索",
             rbac_manage: "授权",
-            sync: "同步"
+            sync: "同步",
+            bind: "绑定"
         },
         table: {
             name: "名称",
@@ -54,6 +55,7 @@ const message = {
             built_in: "内置",
             description: "描述",
             empty_text: "没有内容显示",
+            mfa_enable: "MFA认证"
         },
         header: {
             help_doc: "帮助文档",
@@ -64,6 +66,10 @@ const message = {
         bool: {
             true: "是",
             false: "否"
+        },
+        enable: {
+            true: "启用",
+            false: "禁用"
         },
         search: {
             quickSearch: "搜索"
@@ -99,6 +105,7 @@ const message = {
             title: "登录 KubePi",
             welcome: "欢迎回来，请输入用户名和密码登录",
             expires: "认证信息已过期，请重新登录",
+            mfa_helper: "使用 MFA 验证器应用扫描以下二维码，获取6位验证码",
         },
     },
     business: {

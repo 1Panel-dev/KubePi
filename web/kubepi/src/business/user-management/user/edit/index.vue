@@ -5,21 +5,15 @@
       <el-col :span="10">
         <div class="grid-content bg-purple-light">
           <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
-
             <el-form-item :label="$t('business.user.username')" prop="name">
               <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
-
             <el-form-item :label="$t('business.user.nickname')" prop="nickname">
               <el-input v-model="form.nickname" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.email')" prop="email">
               <el-input v-model="form.email" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.role')" prop="roles">
               <el-select v-model="form.roles" filterable
                          multiple
@@ -33,13 +27,12 @@
                 </el-option>
               </el-select>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.password')" v-if="form.type !=='LDAP'">
               <el-link @click="openedChangePassword">{{ $t("business.user.change_password") }}</el-link>
             </el-form-item>
-
-
+            <el-form-item :label="$t('commons.table.mfa_enable')" prop="mfa.enable">
+              <el-checkbox v-model="form.mfa.enable">{{$t('commons.enable.true')}}</el-checkbox>
+            </el-form-item>
             <el-form-item>
               <div style="float: right">
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
@@ -131,6 +124,9 @@ export default {
         roles: [
           Rules.RequiredRule,
         ],
+        mfa:{
+          // enable:Rules.RequiredRule,
+        }
       },
       changePasswordOpened: false,
       passwordChangeRules: {
@@ -154,7 +150,10 @@ export default {
         nickname: "",
         email: "",
         roles: [],
-        type: "LOCAL"
+        type: "LOCAL",
+        mfa: {
+
+        }
       },
     }
   },

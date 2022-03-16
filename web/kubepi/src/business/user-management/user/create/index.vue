@@ -9,27 +9,18 @@
             <el-form-item :label="$t('business.user.username')" prop="name">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.nickname')" prop="nickname">
               <el-input v-model="form.nickname"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.email')" prop="email">
               <el-input v-model="form.email"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.password')" prop="password">
               <el-input type="password" v-model="form.password"></el-input>
             </el-form-item>
-
-
             <el-form-item :label="$t('business.user.confirm_password')" prop="confirmPassword">
               <el-input type="password" v-model="form.confirmPassword"></el-input>
             </el-form-item>
-
             <el-form-item :label="$t('business.user.role')" prop="roles">
               <el-select v-model="form.roles" multiple filterable
                          style="width: 100%"
@@ -42,8 +33,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
-
-
+            <el-form-item :label="$t('commons.table.mfa_enable')" prop="mfa.enable">
+              <el-checkbox v-model="form.mfa.enable">{{$t('commons.enable.true')}}</el-checkbox>
+            </el-form-item>
             <el-form-item>
               <div style="float: right">
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
@@ -51,7 +43,6 @@
                 </el-button>
               </div>
             </el-form-item>
-
           </el-form>
         </div>
       </el-col>
@@ -116,6 +107,9 @@ export default {
         roles: [
           Rules.RequiredRule,
         ],
+        mfa:{
+          // enable:Rules.RequiredRule,
+        }
       },
       form: {
         name: "",
@@ -124,6 +118,9 @@ export default {
         password: "",
         confirmPassword: "",
         roles: [],
+        mfa: {
+          enbale: false
+        }
       },
     }
   },

@@ -11,11 +11,17 @@ type User struct {
 	IsAdmin      bool         `json:"isAdmin"`
 	Authenticate Authenticate `json:"authenticate"`
 	Type         string       `json:"type"`
+	Mfa          Mfa          `json:"mfa"`
 }
 
 type Authenticate struct {
 	Password string `json:"password"`
 	Token    string `json:"token"`
+}
+
+type Mfa struct {
+	Enable bool   `json:"enable"`
+	Secret string `json:"secret"`
 }
 
 const (
