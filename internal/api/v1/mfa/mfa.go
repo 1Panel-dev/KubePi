@@ -1,7 +1,7 @@
 package mfa
 
 import (
-	serrionAuth "github.com/KubeOperator/kubepi/internal/api/v1/session"
+	sessionAuth "github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
@@ -31,7 +31,7 @@ func (m *Handler) MfaValidate() iris.Handler {
 			ctx.Values().Set("message", "no login user")
 			return
 		}
-		p, ok := loginUser.(serrionAuth.UserProfile)
+		p, ok := loginUser.(sessionAuth.UserProfile)
 		if !ok {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "can not parse to session user")
@@ -41,7 +41,7 @@ func (m *Handler) MfaValidate() iris.Handler {
 			ctx.StatusCode(iris.StatusOK)
 			return
 		}
-		var mfa serrionAuth.MfaCredential
+		var mfa sessionAuth.MfaCredential
 		if err := ctx.ReadJSON(&mfa); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
@@ -70,7 +70,7 @@ func (m *Handler) MfaBind() iris.Handler {
 			ctx.Values().Set("message", "no login user")
 			return
 		}
-		p, ok := loginUser.(serrionAuth.UserProfile)
+		p, ok := loginUser.(sessionAuth.UserProfile)
 		if !ok {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "can not parse to session user")
@@ -80,7 +80,7 @@ func (m *Handler) MfaBind() iris.Handler {
 			ctx.StatusCode(iris.StatusOK)
 			return
 		}
-		var mfa serrionAuth.MfaCredential
+		var mfa sessionAuth.MfaCredential
 		if err := ctx.ReadJSON(&mfa); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
@@ -122,7 +122,7 @@ func (m *Handler) GetMfa() iris.Handler {
 			ctx.Values().Set("message", "no login user")
 			return
 		}
-		p, ok := loginUser.(serrionAuth.UserProfile)
+		p, ok := loginUser.(sessionAuth.UserProfile)
 		if !ok {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "can not parse to session user")
