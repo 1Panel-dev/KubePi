@@ -14,7 +14,7 @@
               <span>Secret:{{ otp.secret }}</span>
             </div>
           </div>
-          <div style="width: 50%;margin-left: 25%">
+          <div style="width: 50%;margin-left: 25%" v-if="mfaInit">
             <el-form>
               <el-form-item class="login">
                 <el-input v-model="mfaCredential.code"></el-input>
@@ -23,6 +23,26 @@
             <div>
               <el-button type="primary" class="submit" @click="bindMfa()" size="default">
                 {{ $t("commons.button.bind") }}
+              </el-button>
+            </div>
+          </div>
+          <div style="text-align: center;width: 50%;margin-top: 15%;margin-left: 25%" v-if="!mfaInit">
+            <div>
+              <div>
+                <span>{{ $t("commons.login.mfa_login_helper") }}</span>
+              </div>
+              <div>
+                <span>Secret:{{ user.secret }}</span>
+              </div>
+            </div>
+            <el-form>
+              <el-form-item class="login">
+                <el-input v-model="mfaCredential.code"></el-input>
+              </el-form-item>
+            </el-form>
+            <div>
+              <el-button type="primary" class="submit" @click="mfaLogin()" size="default">
+                {{ $t("commons.button.login") }}
               </el-button>
             </div>
           </div>
@@ -66,7 +86,7 @@
 </template>
 <script>
 
-import {bind, getOtp} from "@/api/mfa"
+import {bind, getOtp, valid} from "@/api/mfa"
 
 export default {
   name: "Login",
@@ -86,7 +106,6 @@ export default {
           },
         ],
         password: [
-          // 先去掉方便测试
           {
             required: true,
             message: this.$tm("commons.validate.input", "commons.login.password"),
@@ -100,8 +119,8 @@ export default {
       systemName: this.$t("commons.login.title"),
       loadingPage: false,
       otp: {
-        secret: "21121212",
-        qrImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAABlBMVEX///8AAABVwtN+AAACZUlEQVR42uyZP3LmKhDEW0VAyBE4Chd7pT/li3EUjkBIQKlf9SCvPq83t9j9CGSX/EswM909CO/1Xv/kWkjy9EQ4AceDRNyR9DZPBDQAqyewIrGsgS0eNQEIUwGRdfV0FZ6IZCaPmjz74wDA1dXnHlnhyzIp4HMPp2ePRwWwTQjAisnVrcGVrSbri99L7oeB0by5h6MlV9aQrey/dfezgc/Vg9RHi2WrfxDURwNLg23J6Wnd3eIesi/bLaQ/DkB9C1XUiiSALZ4hs7h7KxMA0tBN29yROtZgug+W/66+mAJYWKCWkATlHnegxVOPu3EmAIAIbMysC4f9Nmxk+6VRjwA8O6BUs3u6gkDPU2cxFWDdfSL1sHuLDmjyrC9RbQYg9rBLSCl014+lAvFRAOlUQF2/mQT5YmLU72z/fMDsavdURWVIQ9vwhKkAS0Eb2bE1BSBle9ZXIX0A8Nm8fZzKqRfyLH7cnjUFAChrVqh592AHQj8bUHRiQ4Jgc6DKyt957QHASMWwvEY7EJ0FfXFfYvPDAfii13mIUbGQAyRP3v+HCQDYnAVnY0pkTU0hQi/yYwDzrMPUviWWhVmamVVnmAhgUZ5PuPJkyKOi+HEHzgkAuZO624xBjT1S54tnzQFQE8rID9BgPjr+JSb9OHB1sGX7bJ4FbPVysmmAzzsQyA6ciol2afYyDM4AXLesjodtUzO5bfODTwLGLWu3AylXrCeLmxGwK4Q+/ibjit8vkx8PaKQ9tU0Nt/KE15H2CcBwXvsCIrUfX0Bep8UZgOs7Tg/nSBIJI6/1MBHwXu/1l63/AwAA//8FHjSXDI6EdgAAAABJRU5ErkJggg=="
+        secret: "",
+        qrImage: "",
       },
       mfaPage: false,
       mfaInit: false,
@@ -109,6 +128,9 @@ export default {
         userName: "",
         secret: "",
         code: "",
+      },
+      user: {
+        secret: ""
       }
     }
   },
@@ -144,6 +166,7 @@ export default {
           this.loading = true
           this.$store.dispatch("user/login", this.form).then((res) => {
             const user = res.data
+            this.user.secret = user.mfa.secret
             if (user.mfa.enable) {
               this.mfaPage = true
               if (user.mfa.secret === "") {
@@ -173,6 +196,14 @@ export default {
         this.$router.push({ path: "/" })
       })
     },
+    mfaLogin() {
+      this.mfaCredential.secret = this.user.secret
+      this.mfaCredential.userName = this.form.username
+      valid(this.mfaCredential).then(() => {
+        this.$router.push({ path: "/" })
+      })
+    },
+
     getOtherQuery (query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== "redirect") {

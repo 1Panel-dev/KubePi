@@ -106,6 +106,7 @@ const message = {
             welcome: "Welcome back, please enter your user name and password to log in",
             expires: "The authentication information has expired. Please log in again.",
             mfa_helper: "Scan the QR code below with the MFA Authenticator app to get a 6-digit verification code",
+            mfa_login_helper:"Please enter 6-digit verification for MFA Authenticator",
         },
     },
     business: {
