@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 	"io/ioutil"
 	"strings"
 
@@ -391,6 +392,7 @@ func AddV1Route(app iris.Party) {
 	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
 	session.Install(v1Party)
+	mfa.Install(v1Party)
 	authParty := v1Party.Party("")
 
 	authParty.Use(WarpedJwtHandler())

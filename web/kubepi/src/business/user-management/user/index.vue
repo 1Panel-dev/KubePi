@@ -26,22 +26,22 @@
           <el-tag style="margin-left: 5px" size="small" v-if="row.roles.length===0 && row.isAdmin">Supper User</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.user.email')" min-width="100" fix>
+      <el-table-column :label="$t('business.user.email')" min-width="200" fix>
         <template v-slot:default="{row}">
           {{ row.email }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.built_in')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.built_in')" min-width="50" fix>
         <template v-slot:default="{row}">
           {{ $t("commons.bool." + row.builtIn) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.mfa_enable')" min-width="100" fix>
+      <el-table-column :label="$t('commons.table.mfa_enable')" min-width="50" fix>
         <template v-slot:default="{row}">
           {{ $t("commons.enable." + row.mfa.enable) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.user.type')" min-width="100" fix>
+      <el-table-column :label="$t('business.user.type')" min-width="50" fix>
         <template v-slot:default="{row}">
           {{ row.type ? row.type : "LOCAL" }}
         </template>

@@ -150,6 +150,10 @@ export default {
         "email": this.form.email,
         "authenticate": {
           "password": this.form.confirmPassword
+        },
+        "mfa":{
+          "enable":this.form.mfa.enbale,
+          "secret":"",
         }
       }
       createUser(req).then(() => {

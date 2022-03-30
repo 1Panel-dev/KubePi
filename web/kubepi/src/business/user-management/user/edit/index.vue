@@ -31,7 +31,7 @@
               <el-link @click="openedChangePassword">{{ $t("business.user.change_password") }}</el-link>
             </el-form-item>
             <el-form-item :label="$t('commons.table.mfa_enable')" prop="mfa.enable">
-              <el-checkbox v-model="form.mfa.enable">{{$t('commons.enable.true')}}</el-checkbox>
+              <el-checkbox v-model="form.mfa.enable">{{ $t("commons.enable.true") }}</el-checkbox>
             </el-form-item>
             <el-form-item>
               <div style="float: right">
@@ -124,7 +124,7 @@ export default {
         roles: [
           Rules.RequiredRule,
         ],
-        mfa:{
+        mfa: {
           // enable:Rules.RequiredRule,
         }
       },
@@ -151,9 +151,7 @@ export default {
         email: "",
         roles: [],
         type: "LOCAL",
-        mfa: {
-
-        }
+        mfa: {}
       },
     }
   },
@@ -200,6 +198,7 @@ export default {
       this.user.nickName = this.form.nickname
       this.user.email = this.form.email
       this.user.roles = this.form.roles
+      this.user.mfa = this.form.mfa
       updateUser(this.name, this.user).then(() => {
         this.$message({
           type: "success",

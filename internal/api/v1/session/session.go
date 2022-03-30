@@ -110,6 +110,11 @@ func (h *Handler) Login() iris.Handler {
 			Language:            u.Language,
 			ResourcePermissions: permissions,
 			IsAdministrator:     u.IsAdmin,
+			Mfa: Mfa{
+				Secret:   u.Mfa.Secret,
+				Enable:   u.Mfa.Enable,
+				Approved: false,
+			},
 		}
 
 		authMethod := ctx.GetHeader("authMethod")

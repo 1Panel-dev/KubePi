@@ -7,6 +7,11 @@ type LoginCredential struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+type MfaCredential struct {
+	Username string `json:"username"`
+	Secret   string `json:"secret"`
+	Code     string `json:"code"`
+}
 
 type PasswordSetter struct {
 	NewPassword string `json:"newPassword"`
@@ -26,9 +31,16 @@ type UserProfile struct {
 	Language            string              `json:"language"`
 	ResourcePermissions map[string][]string `json:"resourcePermissions"`
 	IsAdministrator     bool                `json:"isAdministrator"`
+	Mfa                 Mfa                 `json:"mfa"`
 }
 
 type ClusterUserProfile struct {
 	UserProfile
 	ClusterRoles []v1.ClusterRole `json:"clusterRoles"`
+}
+
+type Mfa struct {
+	Enable   bool   `json:"enable"`
+	Secret   string `json:"secret"`
+	Approved bool   `json:"approved"`
 }
