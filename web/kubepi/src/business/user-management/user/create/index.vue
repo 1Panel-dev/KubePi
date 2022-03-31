@@ -119,7 +119,7 @@ export default {
         confirmPassword: "",
         roles: [],
         mfa: {
-          enbale: false
+          enable: false
         }
       },
     }
@@ -152,7 +152,7 @@ export default {
           "password": this.form.confirmPassword
         },
         "mfa":{
-          "enable":this.form.mfa.enbale,
+          "enable":this.form.mfa.enable,
           "secret":"",
         }
       }
