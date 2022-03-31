@@ -9,12 +9,12 @@
               <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.user.nickname')" prop="nickname">
-              <el-input v-model="form.nickname" :disabled="form.type ==='LDAP'"></el-input>
+              <el-input v-model="form.nickname" :disabled="form.type ==='LDAP' || form.name === 'admin'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.user.email')" prop="email">
-              <el-input v-model="form.email" :disabled="form.type ==='LDAP'"></el-input>
+              <el-input v-model="form.email" :disabled="form.type ==='LDAP' || form.name === 'admin'"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('business.user.role')" prop="roles">
+            <el-form-item :label="$t('business.user.role')" prop="roles" v-if="form.name !== 'admin'">
               <el-select v-model="form.roles" filterable
                          multiple
                          style="width: 100%"
@@ -199,6 +199,7 @@ export default {
       this.user.email = this.form.email
       this.user.roles = this.form.roles
       this.user.mfa = this.form.mfa
+      // this.user.builtIn = true
       updateUser(this.name, this.user).then(() => {
         this.$message({
           type: "success",
@@ -221,6 +222,7 @@ export default {
         this.form.email = data.data.email
         this.form.roles = data.data.roles
         this.form.type = data.data.type
+        this.form.mfa = data.data.mfa
         this.user = data.data
         listRoles().then(d => {
           d.data.forEach(r => {

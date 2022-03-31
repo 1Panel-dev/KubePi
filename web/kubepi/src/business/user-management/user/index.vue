@@ -76,8 +76,8 @@ export default {
           click: (row) => {
             this.onEdit(row.name)
           },
-          disabled: (row) => {
-            return row.builtIn || !checkPermissions({resource: "users", verb: "update"})
+          disabled: () => {
+            return  !checkPermissions({resource: "users", verb: "update"})
           }
         },
         {
