@@ -3,7 +3,7 @@
     <complex-table :data="pods" v-loading="loading" @search="search">
       <el-table-column :label="$t('commons.table.version')" prop="name" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <span>{{ row.metadata.generation }}</span>
+          <span>{{ row.version }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.image')" prop="image" min-width="80" show-overflow-tooltip>
@@ -72,11 +72,16 @@ export default {
         return
       }
       listNsReplicaSetsWorkload(this.cluster, this.namespace, this.selector).then((res) => {
-        this.pods = res.items
         this.loading = false
         listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
           this.podUsage = res.items
         })
+
+        res.items.sort((a, b) => new Date(b.metadata.creationTimestamp).getTime() - new Date(a.metadata.creationTimestamp).getTime())
+        for (var i = 0; i < res.items.length; i++) {
+          res.items[i]["version"] = res.items.length - i;
+          this.pods.push(res.items[i])
+        }
       })
     },
   },
