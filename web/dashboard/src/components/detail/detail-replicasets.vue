@@ -6,11 +6,16 @@
           <span>{{ row.metadata.generation }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.image')" prop="dolphin" min-width="80" show-overflow-tooltip>
+      <el-table-column :label="$t('commons.table.image')" prop="image" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(k, index) in row.spec.template.spec.containers" :key="index">
                 <span class="label-custom wd" type="info">{{ k.image }}</span>
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('commons.table.time')" prop="time" min-width="80" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span>{{ row.metadata.creationTimestamp | age }}</span>
         </template>
       </el-table-column>
     </complex-table>
@@ -79,8 +84,8 @@ export default {
 </script>
 
 <style scoped>
-    .btnSize {
-        width: 28px;
-        height: 28px;
-    }
+.btnSize {
+  width: 28px;
+  height: 28px;
+}
 </style>
