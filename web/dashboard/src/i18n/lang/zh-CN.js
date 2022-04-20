@@ -55,6 +55,7 @@ const message = {
       restart: "重启",
       modifying_version: "修改镜像版本",
       sync: "同步"
+      rollback: "回滚到该版本"
     },
     table: {
       name: "名称",

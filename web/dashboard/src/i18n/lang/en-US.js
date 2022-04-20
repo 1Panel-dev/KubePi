@@ -54,6 +54,7 @@ const message = {
       restart: "Restart",
       modifying_version: "Modifying version",
       sync: "Sync"
+      rollback: "Roll Back"
     },
     table: {
       name: "Name",

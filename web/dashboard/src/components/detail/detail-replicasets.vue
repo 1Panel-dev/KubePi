@@ -18,24 +18,28 @@
           <span>{{ row.metadata.creationTimestamp | age }}</span>
         </template>
       </el-table-column>
+      <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </div>
 </template>
 
 <script>
 import ComplexTable from "@/components/complex-table"
-import {listNsReplicaSetsWorkload} from "@/api/replicasets"
+import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
-import {listPodMetrics} from "@/api/apis"
+import {listNsReplicaSetsWorkload} from "@/api/replicasets"
+import { patchDeployment } from "@/api/deployments"
+
 
 export default {
   name: "KoDetailReplicasets",
-  components: { ComplexTable },
+  components: { ComplexTable, KoTableOperations },
   props: {
     cluster: String,
     namespace: String,
     selector: String,
     fieldSelector: String,
+    name: String,
   },
   watch: {
     selector: {
@@ -57,6 +61,18 @@ export default {
   },
   data () {
     return {
+      buttons: [
+        {
+          label: this.$t("commons.button.rollback"),
+          icon: "el-icon-back",
+          click: (row) => {
+            this.OptionRollback(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/log", verb: "*" })
+          },
+        },
+      ],
       loading: false,
       pods: [],
       podUsage: [],
@@ -71,19 +87,41 @@ export default {
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
         return
       }
-      listNsReplicaSetsWorkload(this.cluster, this.namespace, this.selector).then((res) => {
+      listNsReplicaSetsWorkload(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.loading = false
-        listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
-          this.podUsage = res.items
-        })
-
         res.items.sort((a, b) => new Date(b.metadata.creationTimestamp).getTime() - new Date(a.metadata.creationTimestamp).getTime())
         for (var i = 0; i < res.items.length; i++) {
           res.items[i]["version"] = res.items.length - i;
           this.pods.push(res.items[i])
         }
       })
+
     },
+    OptionRollback (row) {
+      this.$confirm(
+          this.$t("commons.confirm_message.rollback"),
+          this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
+        patchDeployment(this.cluster, row.metadata.namespace, this.name, {"spec": {"template": row.spec.template}})
+            .then(() => {
+              this.dialogModifyVersionVisible = false
+              this.loading = true
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.operation_success"),
+              })
+            })
+            .finally(() => {
+              this.loading = false
+            })
+      })
+    },
+  },
+  mounted() {
+    this.clusterName = this.$route.query.cluster
   },
 }
 </script>
