@@ -27,3 +27,11 @@ export function listReplicaSets (cluster_name, search, keywords, pageNum, pageSi
 export function listNsReplicaSets (cluster_name, namespace) {
   return get(`${replicaSetNamespaceUrl(cluster_name, namespace)}`)
 }
+
+const replicaWorkloadSetNamespaceUrl = (cluster_name, namespace,  selector) => {
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/replicasets?labelSelector=${selector}`
+}
+
+export function listNsReplicaSetsWorkload (cluster_name, namespace,  selector) {
+  return get(`${replicaWorkloadSetNamespaceUrl(cluster_name, namespace, selector)}`)
+}

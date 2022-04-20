@@ -51,6 +51,12 @@
           <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
         </el-card>
       </el-row>
+      <el-row style="margin-top:20px" class="row-box">
+        <el-card class="el-card">
+          <h3>History</h3>
+          <Ko-detail-replicasets :cluster="clusterName" :namespace="namespace" :selector="selectors" />
+        </el-card>
+      </el-row>
     </div>
     <div v-if="yamlShow">
       <yaml-editor :value="form" :read-only="true" />
@@ -73,10 +79,11 @@ import KoDetailIngress from "@/components/detail/detail-ingress"
 import KoDetailPause from "@/components/detail/detail-pause"
 import KoDetailUpdate from "@/components/detail/detail-update"
 import KoDetailImage from "@/components/detail/detail-image"
+import KoDetailReplicasets from "@/components/detail/detail-replicasets"
 
 export default {
   name: "DeploymentDetail",
-  components: { KoDetailPods, KoDetailBasic, KoDetailConditions, KoDetailService, KoDetailIngress, KoDetailPause, KoDetailUpdate, KoDetailImage, LayoutContent, YamlEditor },
+  components: { KoDetailPods, KoDetailBasic, KoDetailConditions, KoDetailService, KoDetailIngress, KoDetailPause, KoDetailUpdate, KoDetailImage, LayoutContent, YamlEditor, KoDetailReplicasets},
   props: {
     name: String,
     namespace: String,

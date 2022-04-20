@@ -68,6 +68,8 @@ const message = {
       type: "类型",
       resourceInformation: "资源信息",
       empty_text: "没有内容显示",
+      version: "版本",
+      image: "镜像",
     },
     status: {
       Running: "运行中",

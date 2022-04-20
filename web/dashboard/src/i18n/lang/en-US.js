@@ -67,6 +67,8 @@ const message = {
       type: "Type",
       resourceInformation: "Resource Information",
       empty_text: "There are no rows to show.",
+      version: "Version",
+      image: "Image",
     },
     status: {
       Running: "Running",
