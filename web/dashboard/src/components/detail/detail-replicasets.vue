@@ -3,7 +3,7 @@
     <complex-table :data="pods" v-loading="loading" @search="search">
       <el-table-column :label="$t('commons.table.version')" prop="name" min-width="80" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          <span>{{ row.version }}</span>
+          <span>{{ row.metadata.annotations["deployment.kubernetes.io/revision"] }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.image')" prop="image" min-width="80" show-overflow-tooltip>
@@ -89,9 +89,8 @@ export default {
       }
       listNsReplicaSetsWorkload(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.loading = false
-        res.items.sort((a, b) => new Date(b.metadata.creationTimestamp).getTime() - new Date(a.metadata.creationTimestamp).getTime())
+        res.items.sort((a, b) => b.metadata.annotations["deployment.kubernetes.io/revision"] - a.metadata.annotations["deployment.kubernetes.io/revision"])
         for (var i = 0; i < res.items.length; i++) {
-          res.items[i]["version"] = res.items.length - i;
           this.pods.push(res.items[i])
         }
       })
