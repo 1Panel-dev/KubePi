@@ -18,17 +18,18 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.2.0
+	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha2.0.20210427211137-fa175eb84754
 	github.com/klauspost/compress v1.13.5 // indirect
+	github.com/onsi/gomega v1.15.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/common v0.29.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
-	github.com/xlzd/gotp v0.0.0-20220110052318-fab697c03c2c // indirect
-	go.uber.org/zap v1.19.1 // indirect
+	github.com/xlzd/gotp v0.0.0-20220110052318-fab697c03c2c
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
@@ -45,7 +46,6 @@ require (
 	k8s.io/cli-runtime v0.22.1
 	k8s.io/client-go v0.22.2
 	k8s.io/klog/v2 v2.9.0
-	sigs.k8s.io/controller-runtime v0.10.3
 )
 
 replace github.com/KubeOperator/webkubectl/gotty v0.0.0-20210927072155-e9ce79172471 => ./thirdparty/gotty
