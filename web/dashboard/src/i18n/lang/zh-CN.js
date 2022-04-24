@@ -55,6 +55,7 @@ const message = {
       restart: "重启",
       modifying_version: "修改镜像版本",
       sync: "同步"
+      rollback: "回滚到该版本"
     },
     table: {
       name: "名称",
@@ -68,6 +69,8 @@ const message = {
       type: "类型",
       resourceInformation: "资源信息",
       empty_text: "没有内容显示",
+      version: "版本",
+      image: "镜像",
     },
     status: {
       Running: "运行中",

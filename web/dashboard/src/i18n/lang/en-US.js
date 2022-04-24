@@ -54,6 +54,7 @@ const message = {
       restart: "Restart",
       modifying_version: "Modifying version",
       sync: "Sync"
+      rollback: "Roll Back"
     },
     table: {
       name: "Name",
@@ -67,6 +68,8 @@ const message = {
       type: "Type",
       resourceInformation: "Resource Information",
       empty_text: "There are no rows to show.",
+      version: "Version",
+      image: "Image",
     },
     status: {
       Running: "Running",

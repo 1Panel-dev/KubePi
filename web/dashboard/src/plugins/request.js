@@ -120,6 +120,7 @@ export const del = (url, loading) => {
 
 export const patch = (url, data, headers, loading) => {
     if (headers) {
+        headers["Content-type"] = "application/merge-patch+json"
         return promise(request({url: url, headers: headers, method: "patch", data}), loading)
     }
     return promise(request({url: url, method: "patch", data}), loading)
