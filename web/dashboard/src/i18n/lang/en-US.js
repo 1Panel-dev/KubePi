@@ -53,7 +53,8 @@ const message = {
       scale: "Scale",
       restart: "Restart",
       modifying_version: "Modifying version",
-      sync: "Sync"
+      sync: "Sync",
+      rollback: "Roll Back"
     },
     table: {
       name: "Name",
@@ -67,6 +68,8 @@ const message = {
       type: "Type",
       resourceInformation: "Resource Information",
       empty_text: "There are no rows to show.",
+      version: "Version",
+      image: "Image",
     },
     status: {
       Running: "Running",
@@ -110,6 +113,7 @@ const message = {
       delete: "This operation cannot be undone, do you want to continue?",
       back_form: "Return form editing does not preserve all changes made to YAML",
       open_yaml: ", still want to open YAML edit?",
+      rollback: "This action rolls back the current Deployment to the changed version, do you want to continue?",
     },
     login: {
       username: "Username",
@@ -256,6 +260,7 @@ const message = {
       container_type: "Container type",
       current_version: "Current version",
       new_version: "New version",
+      specific_information: "Specific information",
       initContainer: "InitContainer",
       standardContainer: "StandardContainer",
       schedule: "Schedule",

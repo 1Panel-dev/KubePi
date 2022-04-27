@@ -125,7 +125,7 @@ export default {
         },
         {
           label: this.$t("commons.button.restart"),
-          icon: "el-icon-refresh-right",
+          icon: "el-icon-refresh",
           click: (row) => {
             this.onRestart(row)
           },

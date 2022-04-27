@@ -54,7 +54,8 @@ const message = {
       scale: "伸缩",
       restart: "重启",
       modifying_version: "修改镜像版本",
-      sync: "同步"
+      sync: "同步",
+      rollback: "回滚到该版本"
     },
     table: {
       name: "名称",
@@ -68,6 +69,8 @@ const message = {
       type: "类型",
       resourceInformation: "资源信息",
       empty_text: "没有内容显示",
+      version: "版本",
+      image: "镜像",
     },
     status: {
       Running: "运行中",
@@ -111,6 +114,7 @@ const message = {
       delete: "此操作不可撤销, 是否继续?",
       back_form: "返回表单编辑不会保留对 YAML 做出的所有更改",
       open_yaml: "，仍要打开 YAML 编辑？",
+      rollback: "此操作将回滚当前 deployment 到改版本，是否继续?",
     },
     login: {
       username: "用户名",
@@ -257,6 +261,7 @@ const message = {
       container_type: "容器类型",
       current_version: "当前版本",
       new_version: "新版本",
+      specific_information: "具体信息",
       initContainer: "初始化容器",
       standardContainer: "标准容器",
       schedule: "调度",
@@ -283,7 +288,6 @@ const message = {
       list_image: "镜像仓库",
       repo_image: "镜像",
       repo_disabled: "不使用镜像仓库",
-
 
       port: "服务端口",
       service_type: "服务类型",

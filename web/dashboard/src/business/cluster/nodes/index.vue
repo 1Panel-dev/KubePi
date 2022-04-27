@@ -13,7 +13,7 @@
         </el-button>
         <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
-                   @click="drain()" icon="el-icon-refresh-right">
+                   @click="drain()" icon="el-icon-position">
           {{$t('business.node.drain')}}
         </el-button>
     </div>
