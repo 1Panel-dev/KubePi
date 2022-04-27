@@ -3,6 +3,7 @@ package podfile
 import (
 	"archive/tar"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -41,6 +42,11 @@ func NewPodConfig(namespace, podName, containerName string, restConfig *rest.Con
 		K8sClient:     k8sClient,
 	}
 }
+
+type ActionType string
+
+const Upload ActionType = "Upload"
+const Download ActionType = "Download"
 
 func (p *PodCp) CopyToPod(srcPath, destPath string) error {
 	reader, writer := io.Pipe()
@@ -95,10 +101,22 @@ func (p *PodCp) CopyFromPod(filePath string, destPath string) error {
 	return err
 }
 
-type ActionType string
+func (p *PodCp) ListFiles() ([]byte, error) {
+	p.Command = []string{"ls", "-lQ", "--color=never", "--full-time", "/"}
+	var stdout, stderr bytes.Buffer
+	p.Stdout = &stdout
+	p.Stderr = &stderr
+	p.Tty = false
+	err := p.Exec(Upload)
+	if err != nil {
+		return nil, err
+	}
+	if stderr.String() != "" {
+		err = errors.New(stderr.String())
+	}
 
-const Upload ActionType = "Upload"
-const Download ActionType = "Download"
+	return []byte(stdout.String()), err
+}
 
 func (p *PodCp) Exec(actionType ActionType) error {
 	req := p.K8sClient.CoreV1().RESTClient().Get().
@@ -109,7 +127,7 @@ func (p *PodCp) Exec(actionType ActionType) error {
 		VersionedParams(&coreV1.PodExecOptions{
 			Command:   p.Command,
 			Container: p.ContainerName,
-			Stdin:     true,
+			Stdin:     p.Stdin != nil,
 			Stdout:    true,
 			Stderr:    true,
 			TTY:       false,
@@ -140,7 +158,6 @@ func (p *PodCp) stream(exec remotecommand.Executor) error {
 }
 
 func makeTar(srcPath, destPath string, writer io.Writer) error {
-	// TODO: use compression here?
 	tarWriter := tar.NewWriter(writer)
 	defer tarWriter.Close()
 
@@ -285,7 +302,6 @@ func getPrefix(file string) string {
 	return strings.TrimLeft(file, "/")
 }
 
-// stripPathShortcuts removes any leading or trailing "../" from a given path
 func stripPathShortcuts(p string) string {
 
 	newPath := path.Clean(p)
@@ -296,7 +312,6 @@ func stripPathShortcuts(p string) string {
 		trimmed = strings.TrimPrefix(newPath, "../")
 	}
 
-	// trim leftover {".", ".."}
 	if newPath == "." || newPath == ".." {
 		newPath = ""
 	}
