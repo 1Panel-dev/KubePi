@@ -83,7 +83,12 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	us.UpdateAt = time.Now()
 	if us.Mfa.Enable == false {
 		us.Mfa.Secret = ""
+		err = db.UpdateField(us, "Mfa", us.Mfa)
+		if err != nil {
+			return err
+		}
 	}
+
 	return db.Update(us)
 }
 
