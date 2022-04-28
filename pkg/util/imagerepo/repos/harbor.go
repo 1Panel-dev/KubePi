@@ -65,6 +65,9 @@ func (c *harborClient) ListImages(project string) (images []string, err error) {
 			repoName := strings.Replace(r.Name, project+"/", "", -1)
 			body, _, err2 := c.HttpClient.Get(fmt.Sprintf("%s/%s/%s", repoUrl, repoName, artifactUrl))
 			if err2 != nil {
+				if strings.Contains(err2.Error(), "404") {
+					continue
+				}
 				err = err2
 				return
 			}
