@@ -35,6 +35,6 @@ export function listImages(cluster,repo) {
   return get(`${baseUrl}/images/${cluster}/${repo}`)
 }
 
-export function listImagesByRepo(repo){
-  return get(`${baseUrl}/images/${repo}`)
+export function listImagesByRepo(repo,searchRequest){
+  return post(`${baseUrl}/images/${repo}`,searchRequest)
 }

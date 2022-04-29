@@ -25,7 +25,7 @@ type Service interface {
 	UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
 	ListByCluster(cluster string, options common.DBOptions) (result []V1ImageRepo.ImageRepo, err error)
 	ListImages(repo, cluster string, options common.DBOptions) (names []string, err error)
-	ListImagesByRepo(repo string, options common.DBOptions) (names []string, err error)
+	ListImagesByRepo(repo string, page, limit int, search string, options common.DBOptions) (res V1ImageRepo.RepoResponse, err error)
 }
 
 func NewService() Service {
@@ -95,7 +95,7 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 	return
 }
 
-func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names []string, err error) {
+func (s *service) ListImagesByRepo(repo string, page, limit int, search string, options common.DBOptions) (response V1ImageRepo.RepoResponse, err error) {
 	rp, err1 := s.GetByName(repo, options)
 	if err1 != nil {
 		err = err1
@@ -111,16 +111,22 @@ func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names
 		Version: rp.Version,
 	})
 	request := repos.RepoRequest{
-		Repo: rp.RepoName,
+		Repo:   rp.RepoName,
+		Page:   page,
+		Limit:  limit,
+		Search: search,
 	}
 	res, err2 := client.ListImages(request)
 	if err2 != nil {
 		err = err2
 		return
 	}
+	var names []string
 	for _, image := range res.Items {
 		names = append(names, rp.DownloadUrl+"/"+image)
 	}
+	response.Items = names
+	response.ContinueToken = res.ContinueToken
 	return
 }
 

@@ -19,3 +19,8 @@ type Credential struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type RepoResponse struct {
+	Items         []string `json:"items"`
+	ContinueToken string   `json:"continueToken"`
+}

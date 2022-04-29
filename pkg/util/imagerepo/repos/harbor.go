@@ -53,14 +53,12 @@ func (c *harborClient) ListRepos(request ProjectRequest) (names []string, err er
 	if request.Name != "" {
 		projectUrl = projectUrl + "&q=name=~" + request.Name
 	}
-	body, _, err1 := c.HttpClient.Get(projectUrl)
-	if err1 != nil {
-		err = err1
+	body, _, err := c.HttpClient.Get(projectUrl)
+	if err != nil {
 		return
 	}
 	var projects []harborBody
-	if err1 = json.Unmarshal(body, &projects); err1 != nil {
-		err = err1
+	if err = json.Unmarshal(body, &projects); err != nil {
 		return
 	}
 	for _, r := range projects {
@@ -71,7 +69,6 @@ func (c *harborClient) ListRepos(request ProjectRequest) (names []string, err er
 
 func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, err error) {
 	project := request.Repo
-	//计数器
 	startCount := (request.Page - 1) * request.Limit
 
 	if c.Version == "v2" {
@@ -80,6 +77,7 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 		limit := 100
 		artifactCount := 0
 		repoArCount := 0
+		artifactStart := 0
 		var repos []harborBody
 		for start {
 			repoUrl := fmt.Sprintf("%s/%s/%s?page=%d&&page_size=%d", getProjectUrl(c.Version), project, repositoryUrl, p, limit)
@@ -93,26 +91,31 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 				err = err1
 				return
 			}
+			if len(items) < limit {
+				start = false
+			}
 			for _, v := range items {
 				if v.ArtifactCount == 0 {
 					continue
 				}
+				artifactCount = artifactCount + v.ArtifactCount
 				if artifactCount >= startCount {
 					repoArCount = repoArCount + v.ArtifactCount
-					if repoArCount >= limit {
+					if repoArCount >= request.Limit {
 						start = false
 						break
 					}
 					repos = append(repos, v)
 					continue
 				}
-				if artifactCount+v.ArtifactCount <= startCount {
-					artifactCount = artifactCount + v.ArtifactCount
+				if artifactCount >= startCount {
+					artifactStart = artifactCount - startCount
 				}
 			}
 			p++
 		}
 		repoUrl := fmt.Sprintf("%s/%s/%s", getProjectUrl(c.Version), project, repositoryUrl)
+		var items []string
 		for _, r := range repos {
 			repoName := strings.Replace(r.Name, project+"/", "", -1)
 			body, res, err2 := c.HttpClient.Get(fmt.Sprintf("%s/%s/%s?page=%d&&page_size=%d", repoUrl, repoName, artifactUrl, 1, r.ArtifactCount))
@@ -132,10 +135,23 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 			}
 			for _, art := range artifacts {
 				for _, tag := range art.Tags {
-					response.Items = append(response.Items, r.Name+":"+tag.Name)
+					items = append(items, r.Name+":"+tag.Name)
 				}
 			}
 		}
+		artifactEnd := artifactStart + limit
+		if artifactStart+limit > len(items) {
+			artifactEnd = len(items) - 1
+		}
+		if artifactStart > artifactEnd {
+			response.Items = []string{}
+			return
+		}
+		response.Items = items[artifactStart : artifactEnd+1]
+		if len(response.Items) == request.Limit {
+			response.ContinueToken = "continue"
+		}
+
 	} else {
 		result, err1 := c.HttpClient.GetNameResult(getProjectUrl(c.Version))
 		if err1 != nil {

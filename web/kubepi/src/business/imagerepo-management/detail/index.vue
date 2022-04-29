@@ -1,6 +1,5 @@
 <template>
   <layout-content :header="$t('business.image_repos.images')" :back-to="{ name: 'ImageRepos' }">
-
     <el-alert
             :title="tip"
             type="info">
@@ -12,6 +11,11 @@
         </template>
       </el-table-column>
     </complex-table>
+    <div style="float: right">
+      <el-button icon="el-icon-arrow-left" @click="prePage" :disabled="searchRequest.page<=1"></el-button>
+      <span>{{searchRequest.page}}</span>
+      <el-button icon="el-icon-arrow-right" @click="nextPage" :disabled="searchRequest.continueToken===''"></el-button>
+    </div>
   </layout-content>
 </template>
 
@@ -32,13 +36,29 @@ export default {
       loading: false,
       repoObj: {},
       tip: "",
+      searchRequest: {
+        page:1,
+        limit:10,
+        search: "",
+        continueToken: ""
+      }
     }
   },
   methods: {
+    nextPage() {
+      this.searchRequest.page ++
+      this.search()
+    },
+    prePage() {
+      this.searchRequest.page --
+      this.search()
+    },
+
     search () {
       this.loading = true
-      listImagesByRepo(this.repo).then(res => {
-        this.images = res.data
+      listImagesByRepo(this.repo,this.searchRequest).then(res => {
+        this.images = res.data.items
+        this.searchRequest.continueToken = res.data.continueToken
       }).finally(() => {
         this.loading = false
       })
