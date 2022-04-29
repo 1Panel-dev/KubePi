@@ -38,7 +38,7 @@
             </el-form-item>
             <el-form-item v-if="form.type !== 'DockerRegistry'" :label="$t('business.image_repos.repo')"
                           prop="repoName">
-              <el-select v-model="form.repoName" style="width:100%" filterable>
+              <el-select v-model="form.repoName" style="width:100%" filterable remote :remote-method="searchByName">
                 <el-option v-for="(repo,index) in repos" :key="index" :value="repo" :label="repo">
                 </el-option>
               </el-select>
@@ -130,7 +130,12 @@ export default {
         ]
       },
       repos: [],
-      isSubmitGoing: false
+      isSubmitGoing: false,
+      searchRequest: {
+        page:1,
+        limit:20,
+        search:"",
+      }
     }
   },
   methods: {
@@ -178,8 +183,21 @@ export default {
     },
     list () {
       this.checkAuth()
+      const request = {...this.form}
+      request.page = 1
+      request.limit = 20
+      this.search(request)
+    },
+    searchByName(name){
+      const request = {...this.form}
+      request.page = this.searchRequest.page
+      request.limit = this.searchRequest.limit
+      request.search = name
+      this.search(request)
+    },
+    search(request) {
       this.loading = true
-      listInternalRepos(this.form).then(res => {
+      listInternalRepos(request).then(res => {
         this.repos = res.data
         if (res.data === null || res.data.length === 0) {
           this.$message({

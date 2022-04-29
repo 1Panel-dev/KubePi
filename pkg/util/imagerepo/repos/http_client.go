@@ -66,7 +66,8 @@ func (h *HttpClient) Get(endpoint string) ([]byte, *http.Response, error) {
 }
 
 func (h *HttpClient) GetNameResult(url string) ([]NameResult, error) {
-	body, _, err := h.Get(url)
+	body, res, err := h.Get(url)
+	fmt.Println(res)
 	if err != nil {
 		return nil, err
 	}

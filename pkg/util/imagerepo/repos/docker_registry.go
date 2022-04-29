@@ -23,11 +23,12 @@ type dockerRegistryClient struct {
 	EndPoint string
 }
 
-func (c *dockerRegistryClient) ListRepos() (names []string, err error) {
+func (c *dockerRegistryClient) ListRepos(request ProjectRequest) (names []string, err error) {
 	return
 }
 
-func (c *dockerRegistryClient) ListImages(project string) (images []string, err error) {
+func (c *dockerRegistryClient) ListImages(request RepoRequest) (response RepoResponse, err error) {
+
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true, //nolint:gosec
@@ -69,7 +70,7 @@ func (c *dockerRegistryClient) ListImages(project string) (images []string, err 
 
 		if len(tags) != 0 {
 			for _, tag := range tags {
-				images = append(images, image+":"+tag)
+				response.Items = append(response.Items, image+":"+tag)
 			}
 		}
 	}

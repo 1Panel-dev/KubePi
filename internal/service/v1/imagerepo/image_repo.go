@@ -3,11 +3,11 @@ package imagerepo
 import (
 	"errors"
 	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
-	"github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	V1ImageRepo "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	repoClient "github.com/KubeOperator/kubepi/pkg/util/imagerepo"
+	"github.com/KubeOperator/kubepi/pkg/util/imagerepo/repos"
 	"github.com/KubeOperator/kubepi/pkg/util/lang"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
@@ -17,7 +17,7 @@ import (
 
 type Service interface {
 	common.DBService
-	ListInternalRepos(repo imagerepo.ImageRepo) (names []string, err error)
+	ListInternalRepos(repo V1ImageRepo.ImageRepo, page, limit int, search string) (names []string, err error)
 	Search(num, size int, conditions common.Conditions, options common.DBOptions) (result []V1ImageRepo.ImageRepo, count int, err error)
 	Create(repo *V1ImageRepo.ImageRepo, options common.DBOptions) (err error)
 	Delete(name string, options common.DBOptions) (err error)
@@ -36,11 +36,12 @@ type service struct {
 	common.DefaultDBService
 }
 
-func (s *service) ListInternalRepos(repo imagerepo.ImageRepo) (names []string, err error) {
-	client := repoClient.NewClient(repoClient.Config{
+func (s *service) ListInternalRepos(repo V1ImageRepo.ImageRepo, page, limit int, search string) (names []string, err error) {
+
+	client := repoClient.NewClient(repos.Config{
 		Type:     repo.Type,
 		EndPoint: repo.EndPoint,
-		Credential: repoClient.Credential{
+		Credential: repos.Credential{
 			Username: repo.Credential.Username,
 			Password: repo.Credential.Password,
 		},
@@ -49,7 +50,13 @@ func (s *service) ListInternalRepos(repo imagerepo.ImageRepo) (names []string, e
 	if client == nil {
 		return nil, errors.New("repo client is not found")
 	}
-	return client.ListRepos()
+	request := repos.ProjectRequest{
+		Name:  search,
+		Page:  page,
+		Limit: limit,
+	}
+
+	return client.ListRepos(request)
 }
 
 func (s *service) ListImages(repo, cluster string, options common.DBOptions) (names []string, err error) {
@@ -64,21 +71,25 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 		err = err1
 		return
 	}
-	client := repoClient.NewClient(repoClient.Config{
+	client := repoClient.NewClient(repos.Config{
 		Type:     rp.Type,
 		EndPoint: rp.EndPoint,
-		Credential: repoClient.Credential{
+		Credential: repos.Credential{
 			Username: rp.Credential.Username,
 			Password: rp.Credential.Password,
 		},
 		Version: rp.Version,
 	})
-	images, err2 := client.ListImages(rp.RepoName)
+	request := repos.RepoRequest{
+		Repo: rp.RepoName,
+	}
+
+	res, err2 := client.ListImages(request)
 	if err2 != nil {
 		err = err2
 		return
 	}
-	for _, image := range images {
+	for _, image := range res.Items {
 		names = append(names, rp.DownloadUrl+"/"+image)
 	}
 	return
@@ -90,21 +101,24 @@ func (s *service) ListImagesByRepo(repo string, options common.DBOptions) (names
 		err = err1
 		return
 	}
-	client := repoClient.NewClient(repoClient.Config{
+	client := repoClient.NewClient(repos.Config{
 		Type:     rp.Type,
 		EndPoint: rp.EndPoint,
-		Credential: repoClient.Credential{
+		Credential: repos.Credential{
 			Username: rp.Credential.Username,
 			Password: rp.Credential.Password,
 		},
 		Version: rp.Version,
 	})
-	images, err2 := client.ListImages(rp.RepoName)
+	request := repos.RepoRequest{
+		Repo: rp.RepoName,
+	}
+	res, err2 := client.ListImages(request)
 	if err2 != nil {
 		err = err2
 		return
 	}
-	for _, image := range images {
+	for _, image := range res.Items {
 		names = append(names, rp.DownloadUrl+"/"+image)
 	}
 	return

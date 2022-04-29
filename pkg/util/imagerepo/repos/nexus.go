@@ -32,14 +32,15 @@ type nexusClient struct {
 }
 
 type ItemResult struct {
-	Items []NameResult
+	Items             []NameResult
+	ContinuationToken string
 }
 
 func (c *nexusClient) Auth() error {
 	return nil
 }
 
-func (c *nexusClient) ListRepos() (names []string, err error) {
+func (c *nexusClient) ListRepos(request ProjectRequest) (names []string, err error) {
 	body, _, err1 := c.HttpClient.Get(RepoUrl)
 	if err1 != nil {
 		err = err1
@@ -57,8 +58,9 @@ func (c *nexusClient) ListRepos() (names []string, err error) {
 	return
 }
 
-func (c *nexusClient) ListImages(repository string) (images []string, err error) {
-	body, _, err1 := c.HttpClient.Get(fmt.Sprintf("%s%s", ComponentUrl, repository))
+func (c *nexusClient) ListImages(request RepoRequest) (response RepoResponse, err error) {
+	body, res, err1 := c.HttpClient.Get(fmt.Sprintf("%s%s", ComponentUrl, request.Repo))
+	fmt.Println(res)
 	if err1 != nil {
 		err = err1
 		return
@@ -68,7 +70,7 @@ func (c *nexusClient) ListImages(repository string) (images []string, err error)
 		return
 	}
 	for _, r := range result.Items {
-		images = append(images, r.Name+":"+r.Version)
+		response.Items = append(response.Items, r.Name+":"+r.Version)
 	}
 	return
 }

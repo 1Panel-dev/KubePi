@@ -71,7 +71,8 @@ func (h *Handler) ListInternalRepos() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		names, err := h.imageRepoService.ListInternalRepos(req.ImageRepo)
+
+		names, err := h.imageRepoService.ListInternalRepos(req.ImageRepo, req.Page, req.Limit, req.Search)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -164,7 +165,7 @@ func (h *Handler) ListImages() iris.Handler {
 	}
 }
 
-func (h *Handler) ListImagesByRepo() iris.Handler  {
+func (h *Handler) ListImagesByRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("repo")
 		imageRepos, err := h.imageRepoService.ListImagesByRepo(name, common.DBOptions{})

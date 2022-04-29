@@ -3,12 +3,11 @@ package imagerepo
 import "github.com/KubeOperator/kubepi/pkg/util/imagerepo/repos"
 
 type RepoClient interface {
-	//Auth() error
-	ListRepos() ([]string, error)
-	ListImages(repository string) (images []string, err error)
+	ListRepos(request repos.ProjectRequest) ([]string, error)
+	ListImages(request repos.RepoRequest) (response repos.RepoResponse, err error)
 }
 
-func NewClient(config Config) RepoClient {
+func NewClient(config repos.Config) RepoClient {
 	switch config.Type {
 	case "Nexus":
 		return repos.NewNexusClient(config.EndPoint, config.Credential.Username, config.Credential.Password)
@@ -18,17 +17,4 @@ func NewClient(config Config) RepoClient {
 		return repos.NewDockerRegistryClient(config.EndPoint, config.Credential.Username, config.Credential.Password)
 	}
 	return nil
-}
-
-type Config struct {
-	Type     string
-	EndPoint string
-	//DownloadUrl string
-	Credential Credential
-	Version    string
-}
-
-type Credential struct {
-	Username string
-	Password string
 }
