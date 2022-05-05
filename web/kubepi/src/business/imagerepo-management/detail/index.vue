@@ -12,9 +12,9 @@
       </el-table-column>
     </complex-table>
     <div style="float: right">
-      <el-button icon="el-icon-arrow-left" @click="prePage" :disabled="searchRequest.page<=1"></el-button>
+      <el-button icon="el-icon-arrow-left" @click="prePage" :disabled="searchRequest.page<=1 || repoObj.type === 'Nexus'"></el-button>
       <span>{{searchRequest.page}}</span>
-      <el-button icon="el-icon-arrow-right" @click="nextPage" :disabled="searchRequest.continueToken===''"></el-button>
+      <el-button icon="el-icon-arrow-right" @click="nextPage" :disabled="searchRequest.continueToken==='' "></el-button>
     </div>
   </layout-content>
 </template>
@@ -56,9 +56,11 @@ export default {
 
     search () {
       this.loading = true
+      console.log(this.searchRequest)
       listImagesByRepo(this.repo,this.searchRequest).then(res => {
         this.images = res.data.items
         this.searchRequest.continueToken = res.data.continueToken
+        console.log(this.searchRequest)
       }).finally(() => {
         this.loading = false
       })

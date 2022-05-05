@@ -174,7 +174,7 @@ func (h *Handler) ListImagesByRepo() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		res, err := h.imageRepoService.ListImagesByRepo(name, req.Page, req.Limit, req.Search, common.DBOptions{})
+		res, err := h.imageRepoService.ListImagesByRepo(name, req.Page, req.Limit, req.Search, req.ContinueToken, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

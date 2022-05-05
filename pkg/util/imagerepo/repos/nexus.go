@@ -33,7 +33,7 @@ type nexusClient struct {
 
 type ItemResult struct {
 	Items             []NameResult
-	ContinuationToken string
+	ContinuationToken string `json:"continuationToken"`
 }
 
 func (c *nexusClient) Auth() error {
@@ -59,8 +59,13 @@ func (c *nexusClient) ListRepos(request ProjectRequest) (names []string, err err
 }
 
 func (c *nexusClient) ListImages(request RepoRequest) (response RepoResponse, err error) {
-	body, res, err1 := c.HttpClient.Get(fmt.Sprintf("%s%s", ComponentUrl, request.Repo))
-	fmt.Println(res)
+	var url string
+	url = fmt.Sprintf("%s%s", ComponentUrl, request.Repo)
+	if request.ContinueToken != "" {
+		url += "&&continuationToken=" + request.ContinueToken
+	}
+
+	body, _, err1 := c.HttpClient.Get(url)
 	if err1 != nil {
 		err = err1
 		return
@@ -72,5 +77,6 @@ func (c *nexusClient) ListImages(request RepoRequest) (response RepoResponse, er
 	for _, r := range result.Items {
 		response.Items = append(response.Items, r.Name+":"+r.Version)
 	}
+	response.ContinueToken = result.ContinuationToken
 	return
 }
