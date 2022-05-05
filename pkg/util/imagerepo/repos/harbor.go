@@ -72,14 +72,14 @@ func (c *harborClient) ListRepos(request ProjectRequest) (names []string, err er
 	return
 }
 
+const LIMIT = 100
+
 func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, err error) {
 	project := request.Repo
 	startCount := (request.Page - 1) * request.Limit
 
-	//if c.Version == "v2" {
 	start := true
 	p := 1
-	limit := 100
 	artifactCount := 0
 	repoArCount := 0
 	artifactStart := 0
@@ -87,7 +87,7 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 	for start {
 		var repoUrl string
 		if c.Version == "v2" {
-			repoUrl = fmt.Sprintf("%s/%s/%s?page=%d&&page_size=%d", getProjectUrl(c.Version), project, repositoryUrl, p, limit)
+			repoUrl = fmt.Sprintf("%s/%s/%s?page=%d&&page_size=%d", getProjectUrl(c.Version), project, repositoryUrl, p, LIMIT)
 		} else {
 			result, err1 := c.HttpClient.GetNameResult(getProjectUrl(c.Version))
 			if err1 != nil {
@@ -112,7 +112,7 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 			err = err1
 			return
 		}
-		if len(items) < limit {
+		if len(items) < LIMIT {
 			start = false
 		}
 		for _, v := range items {
@@ -126,7 +126,7 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 				continue
 			}
 			artifactCount = artifactCount + count
-			if artifactCount >= startCount {
+			if artifactCount > startCount {
 				repos = append(repos, v)
 				repoArCount = repoArCount + count
 				if repoArCount >= request.Limit {
@@ -187,49 +187,18 @@ func (c *harborClient) ListImages(request RepoRequest) (response RepoResponse, e
 			}
 		}
 	}
-	artifactEnd := artifactStart + limit
-	if artifactStart+limit > len(items) {
-		artifactEnd = len(items) - 1
+	artifactEnd := artifactStart + request.Limit
+	if artifactStart+request.Limit > len(items) {
+		artifactEnd = len(items)
 	}
 	if artifactStart > artifactEnd {
 		response.Items = []string{}
 		return
 	}
-	response.Items = items[artifactStart : artifactEnd+1]
+	response.Items = items[artifactStart:artifactEnd]
 	if len(response.Items) == request.Limit {
 		response.ContinueToken = "continue"
 	}
-
-	//} else {
-	//	result, err1 := c.HttpClient.GetNameResult(getProjectUrl(c.Version))
-	//	if err1 != nil {
-	//		err = err1
-	//		return
-	//	}
-	//	var repoUrl string
-	//	for _, value := range result {
-	//		if value.Name == project {
-	//			repoUrl = fmt.Sprintf("%s/%s%s", v1Url, repositoryUrl, "?project_id="+strconv.Itoa(value.ProjectID))
-	//			break
-	//		}
-	//	}
-	//	repos, err1 := c.HttpClient.GetNameResult(repoUrl)
-	//	if err1 != nil {
-	//		err = err1
-	//		return
-	//	}
-	//	for _, repo := range repos {
-	//		tagUrl := fmt.Sprintf("%s/%s/%s/%s", v1Url, repositoryUrl, repo.Name, tagUrl)
-	//		tags, err1 := c.HttpClient.GetNameResult(tagUrl)
-	//		if err1 != nil {
-	//			err = err1
-	//			return
-	//		}
-	//		for _, tag := range tags {
-	//			response.Items = append(response.Items, repo.Name+":"+tag.Name)
-	//		}
-	//	}
-	//}
 	return
 }
 
