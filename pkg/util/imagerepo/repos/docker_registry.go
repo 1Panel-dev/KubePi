@@ -61,6 +61,7 @@ func (c *dockerRegistryClient) ListImages(request RepoRequest) (response RepoRes
 		last = imageNoTags[count-1]
 		allImages = append(allImages, imageNoTags...)
 	}
+	var items []string
 	for _, image := range allImages {
 		tags, err3 := c.listImageTags(image, basicTransport)
 		if err3 != nil {
@@ -70,10 +71,19 @@ func (c *dockerRegistryClient) ListImages(request RepoRequest) (response RepoRes
 
 		if len(tags) != 0 {
 			for _, tag := range tags {
-				response.Items = append(response.Items, image+":"+tag)
+				items = append(items, image+":"+tag)
+				//response.Items = append(response.Items, image+":"+tag)
 			}
 		}
 	}
+	response.ContinueToken = "continue"
+	start := (request.Page - 1) * request.Limit
+	end := start + request.Limit
+	if end > len(items) {
+		end = len(items)
+		response.ContinueToken = ""
+	}
+	response.Items = items[start:end]
 	return
 }
 
