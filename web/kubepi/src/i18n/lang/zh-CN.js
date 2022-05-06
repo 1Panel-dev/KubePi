@@ -152,7 +152,7 @@ const message = {
             ready: "正常",
             not_ready: "异常",
             repo: "仓库",
-            repo_auth: "仓库授权"
+            repo_auth: "仓库授权",
         },
         cluster_role: {
             none: "无",

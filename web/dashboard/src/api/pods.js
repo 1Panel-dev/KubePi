@@ -11,6 +11,9 @@ const evictionUrl = (cluster_name,namespace,pod) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/pods/${pod}/eviction`
 }
 
+
+const podFileUrl = "/api/v1/pod/files"
+
 export function listPods (cluster_name, search) {
   let url = podUrl(cluster_name)
   const param = {}
@@ -57,4 +60,8 @@ export function updatePod (cluster_name, namespace,name, pod) {
 
 export function evictionPod(cluster_name, namespace,name,data) {
   return post(`${evictionUrl(cluster_name, namespace,name)}`, data)
+}
+
+export function listPodFiles(data) {
+  return post(podFileUrl,data)
 }

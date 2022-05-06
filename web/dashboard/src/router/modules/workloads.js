@@ -75,6 +75,22 @@ const Workloads = {
       },
     },
     {
+      path: "pods/:namespace/:name/files",
+      requirePermission: {
+        apiGroup: "",
+        resource: "pods",
+        verb: "update",
+        scope:"namespace"
+      },
+      name: "PodFile",
+      hidden: true,
+      component: () => import("@/business/workloads/pods/podfilebrowser"),
+      props: true,
+      meta: {
+        activeMenu: "/pods",
+      },
+    },
+    {
       path: "/pods/detail/:namespace/:name",
       requirePermission: {
         apiGroup: "",

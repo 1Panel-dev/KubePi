@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/file"
 	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 	"io/ioutil"
 	"strings"
@@ -413,4 +414,5 @@ func AddV1Route(app iris.Party) {
 	webkubectl.Install(authParty, v1Party)
 	ldap.Install(authParty)
 	imagerepo.Install(authParty)
+	file.Install(authParty)
 }

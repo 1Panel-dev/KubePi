@@ -101,7 +101,7 @@ func (p *PodCp) CopyFromPod(filePath string, destPath string) error {
 	return err
 }
 
-func (p *PodCp) ListFiles() ([]byte, error) {
+func (p *PodCp) ListFiles() (string, error) {
 	p.Command = []string{"ls", "-lQ", "--color=never", "--full-time", "/"}
 	var stdout, stderr bytes.Buffer
 	p.Stdout = &stdout
@@ -109,13 +109,13 @@ func (p *PodCp) ListFiles() ([]byte, error) {
 	p.Tty = false
 	err := p.Exec(Upload)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if stderr.String() != "" {
 		err = errors.New(stderr.String())
 	}
 
-	return []byte(stdout.String()), err
+	return stdout.String(), err
 }
 
 func (p *PodCp) Exec(actionType ActionType) error {

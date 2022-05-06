@@ -11,13 +11,15 @@ type Config struct {
 }
 
 func NewKubernetesClient(c *Config) (*kubernetes.Clientset, error) {
-	kubeConf := &rest.Config{
+	return kubernetes.NewForConfig(NewClusterConfig(c))
+}
+
+func NewClusterConfig(c *Config) *rest.Config {
+	return &rest.Config{
 		Host:        c.Host,
 		BearerToken: c.Token,
 		TLSClientConfig: rest.TLSClientConfig{
 			Insecure: true,
 		},
 	}
-	return kubernetes.NewForConfig(kubeConf)
-
 }

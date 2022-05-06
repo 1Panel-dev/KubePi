@@ -245,7 +245,9 @@ const message = {
       last_week: "最近一周",
       last_month: "最近一月",
       last_three_month: "最近三月",
-      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动)，所以暂无数据"
+      metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动)，所以暂无数据",
+      pod_file: "文件管理"
+
     },
     namespace: {
       namespace: "命名空间",
@@ -472,6 +474,7 @@ const message = {
       single_read_write: "单节点读写",
       many_read_only: "多节点只读",
       many_read_write: "多节点读写",
+
     },
     network: {
       service_discovery: "服务发现",
