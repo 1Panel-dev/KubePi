@@ -29,7 +29,7 @@ export function listNsReplicaSets (cluster_name, namespace) {
 }
 
 const replicaWorkloadSetNamespaceUrl = (cluster_name, namespace,  selector) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/replicasets?labelSelector=${selector}`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/replicasets?labelSelector=${selector}&`
 }
 
 export function listNsReplicaSetsWorkload (cluster_name, namespace,  selector) {
