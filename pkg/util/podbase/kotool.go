@@ -16,7 +16,7 @@ import (
 
 //const KotoolsPath = "/kubepi/kotools"
 
-const KotoolsPath = "/Users/zk.wang/go/src/github.com/KubeOperator/kotools/binary"
+const KotoolsPath = "/Users/zk.wang/go/src/github.com/kubefilebrowser/utils/kftoolsbinary"
 
 type PodBase struct {
 	Namespace  string
@@ -93,12 +93,11 @@ func (p *PodBase) InstallKFTools() error {
 		return err
 	}
 	osType, arch := p.OsAndArch(pod.Spec.NodeName)
-	kfToolsPath := fmt.Sprintf(KotoolsPath+"/kotools_%s_%s", osType, arch)
+	kfToolsPath := fmt.Sprintf(KotoolsPath+"/kftools_%s_%s", osType, arch)
 	if osType == "windows" {
 		kfToolsPath += ".exe"
 	}
 	exec := p.NewPodExec()
-
 	err = exec.CopyToPod(kfToolsPath, "/kotools")
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ import filters from "./filters";
 import JsonViewer from 'vue-json-viewer'
 import directives from "./directive";
 import "fit2cloud-ui/src/styles/components/steps.scss";
-
+import moment from 'moment'
 
 
 Vue.config.productionTip = false
@@ -45,6 +45,10 @@ Vue.directive('title', {
   inserted: function (el) {
     document.title = el.dataset.title
   }
+})
+
+Vue.filter('dateFormat', function(dataStr, pattern='YYYY-MM-DD HH:mm:ss'){
+  return moment(dataStr).format(pattern)
 })
 
 new Vue({

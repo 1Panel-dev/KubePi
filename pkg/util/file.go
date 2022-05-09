@@ -3,11 +3,11 @@ package util
 import "time"
 
 type File struct {
-	Name    string      `json:"Name"`
-	Path    string      `json:"Path"`
-	Size    int64       `json:"Size"`
-	Mode    string      `json:"Mode"`
-	ModTime time.Time   `json:"ModTime"`
-	IsDir   bool        `json:"IsDir"`
-	Sys     interface{} `json:"SysInfo"`
+	Name    string      `json:"name"`
+	Path    string      `json:"path"`
+	Size    int64       `json:"size"`
+	Mode    string      `json:"mode"`
+	ModTime time.Time   `json:"modTime"`
+	IsDir   bool        `json:"isDir"`
+	Sys     interface{} `json:"sys"`
 }

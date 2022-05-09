@@ -48,7 +48,7 @@ func (p *PodExec) CopyToPod(srcPath, destPath string) error {
 		cmdutil.CheckErr(MakeTar(srcPath, destPath, writer))
 	}()
 	p.Tty = false
-	p.NoPreserve = false
+	p.NoPreserve = true
 	p.Stdin = reader
 	p.Stdout = os.Stdout
 	if p.NoPreserve {

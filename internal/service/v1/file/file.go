@@ -28,7 +28,7 @@ func NewService() Service {
 
 func (f service) ListFiles(request file.Request) ([]util.File, error) {
 
-	request.Commands = []string{"/kotools", "ls", request.Path}
+	request.Commands = []string{"./kotools", "ls", request.Path}
 	var res []util.File
 	bs, err := f.fileBrowser(request)
 	if err != nil {
@@ -63,7 +63,7 @@ func (f service) fileBrowser(request file.Request) (res []byte, err error) {
 	}
 	res, err = pb.Exec(request.Stdin, request.Commands...)
 	if err != nil {
-		if strings.Contains(err.Error(), "kotools") ||
+		if strings.Contains(err.Error(), "no such file or directory") ||
 			err.Error() == "command terminated with exit code 126" {
 			err = pb.InstallKFTools()
 			if err != nil {
