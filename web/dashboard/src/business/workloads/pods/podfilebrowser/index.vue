@@ -4,7 +4,7 @@
       <el-button size="mini" icon="el-icon-plus">{{ $t("commons.button.create") }}<i
               class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item >
+        <el-dropdown-item>
           <span @click="openFolderCreate"> {{ $t("business.pod.create_folder") }}</span>
         </el-dropdown-item>
         <el-dropdown-item>
@@ -42,23 +42,24 @@
       <el-table-column width="90px" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
           <el-button circle size="mini" icon="el-icon-download">
-
+          </el-button>
+          <el-button circle size="mini" icon="el-icon-delete" @click="folderDelete(row.name)">
           </el-button>
         </template>
       </el-table-column>
     </complex-table>
     <el-dialog
-              :title="$t('business.pod.create_folder')"
-              :visible.sync="openAddFolder"
-              width="30%">
+            :title="$t('business.pod.create_folder')"
+            :visible.sync="openAddFolder"
+            width="30%">
       <el-form label-position="top" :model="folderForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" required prop="name">
           <el-input clearable v-model="folderForm.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-      <el-button @click="openAddFolder = false">{{$t('commons.button.cancel')}}</el-button>
-      <el-button type="primary" @click="folderCreate">{{$t('commons.button.confirm')}}</el-button>
+      <el-button @click="openAddFolder = false">{{ $t("commons.button.cancel") }}</el-button>
+      <el-button type="primary" @click="folderCreate">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>
   </layout-content>
@@ -66,7 +67,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createFolder, listPodFiles} from "@/api/pods"
+import {createFolder, delFolder, listPodFiles} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
 
@@ -87,9 +88,9 @@ export default {
       folders: [],
       openAddFolder: false,
       openAddFile: false,
-      folderForm:{},
+      folderForm: {},
       rules: {
-        name: [Rule.RequiredRule,Rule.CommonNameRule],
+        name: [Rule.RequiredRule, Rule.CommonNameRule],
       }
     }
   },
@@ -125,7 +126,7 @@ export default {
         this.loading = false
       })
     },
-    openFolderCreate(){
+    openFolderCreate () {
       this.openAddFolder = true
       this.folderForm = {}
     },
@@ -139,9 +140,27 @@ export default {
               type: "success",
               message: this.$t("commons.msg.create_success"),
             })
-            this.listFiles(this.folder,this.folders)
+            this.listFiles(this.folder, this.folders)
           })
         }
+      })
+    },
+    folderDelete (name) {
+      this.$confirm(
+        this.$t("commons.confirm_message.delete"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "warning",
+        }).then(() => {
+        this.fileRequest.path = this.folder + "/" + name
+        delFolder(this.fileRequest).then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t("commons.msg.delete_success"),
+          })
+          this.listFiles(this.folder, this.folders)
+        })
       })
     }
   },

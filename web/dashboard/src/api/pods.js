@@ -69,3 +69,7 @@ export function listPodFiles(data) {
 export function createFolder(data) {
   return post(podFileUrl+"/folder/create",data)
 }
+
+export function delFolder(data) {
+  return post(podFileUrl+"/folder/delete",data)
+}
