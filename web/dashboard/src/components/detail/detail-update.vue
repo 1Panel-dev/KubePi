@@ -9,7 +9,7 @@
           <el-col :span="12">
             <el-form-item :label="$t('business.workload.strategy')" prop="spec.strategy.type" required>
               <span style="margin-left: 10px;" v-if="!enableEdit">{{getLabels(form.spec.strategy.type)}}</span>
-              <el-select v-else style="width:100%" v-model="form.spec.strategy.type">
+              <el-select v-else style="width:100%" @change="changeStrategy" v-model="form.spec.strategy.type">
                 <el-option v-for="(item, index) in deployment_strategy_list" :key="index" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -79,11 +79,17 @@ export default {
       form: {
         spec: {
           strategy: {
-            maxSurge: 0,
-            maxUnavailable: 0,
+            rollingUpdate: {
+              maxSurge: 0,
+              maxUnavailable: 0,
+            },
           },
           type: "",
         },
+      },
+      rollingUpdate: {
+        maxSurge: 0,
+        maxUnavailable: 0,
       },
       enableEdit: false,
       numberPersentRule: Rule.NumberPersentRule,
@@ -96,8 +102,19 @@ export default {
         this.loading = false
       }
     },
+    changeStrategy(value) {
+      if (value === "Recreate") {
+        delete this.form.spec.strategy.rollingUpdate
+      } else {
+        console.log("走到了这里")
+        this.form.spec.strategy.rollingUpdate = this.rollingUpdate
+      }
+    },
     updateForm() {
       this.loading = true
+      if (this.form.spec.strategy.type === "Recreate") {
+        delete this.form.spec.strategy.rollingUpdate
+      }
       updateWorkLoad(this.cluster, this.resourceType, this.form.metadata.namespace, this.form.metadata.name, this.form)
         .then(() => {
           this.$message({
