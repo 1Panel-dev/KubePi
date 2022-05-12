@@ -25,6 +25,7 @@ func (h *Handler) ListFiles() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req.Commands = []string{"./kotools", "ls", req.Path}
 		res, err := h.fileService.ListFiles(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -35,8 +36,26 @@ func (h *Handler) ListFiles() iris.Handler {
 	}
 }
 
+func (h *Handler) CreateFolder() iris.Handler {
+	return func(ctx *context.Context) {
+		var req fileModel.Request
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		req.Commands = []string{"./kotools", "mkdir", req.Path}
+		if err := h.fileService.ExecCommand(req); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
-	sp := parent.Party("/pod/files")
-	sp.Post("", handler.ListFiles())
+	sp := parent.Party("/pod")
+	sp.Post("/files", handler.ListFiles())
+	sp.Post("/folder/create", handler.CreateFolder())
 }

@@ -12,7 +12,7 @@ const evictionUrl = (cluster_name,namespace,pod) => {
 }
 
 
-const podFileUrl = "/api/v1/pod/files"
+const podFileUrl = "/api/v1/pod"
 
 export function listPods (cluster_name, search) {
   let url = podUrl(cluster_name)
@@ -63,5 +63,9 @@ export function evictionPod(cluster_name, namespace,name,data) {
 }
 
 export function listPodFiles(data) {
-  return post(podFileUrl,data)
+  return post(podFileUrl+"/files",data)
+}
+
+export function createFolder(data) {
+  return post(podFileUrl+"/folder/create",data)
 }

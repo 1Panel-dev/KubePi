@@ -248,6 +248,10 @@ const message = {
       pod_file: "File Manager",
       permission: "Permission",
       last_update: "Last Update Time",
+      create_folder: "Create Folder",
+      del_folder: "Delete Folder",
+      create_file: "Create File",
+      del_file: "Delete File",
     },
     namespace: {
       namespace: "Namespace",

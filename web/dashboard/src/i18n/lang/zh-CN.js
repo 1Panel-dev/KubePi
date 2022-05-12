@@ -249,6 +249,10 @@ const message = {
       pod_file: "文件管理",
       permission: "权限",
       last_update: "最后修改时间",
+      create_folder: "创建文件夹",
+      del_folder: "删除文件夹",
+      create_file: "创建文件",
+      del_file: "删除文件",
     },
     namespace: {
       namespace: "命名空间",

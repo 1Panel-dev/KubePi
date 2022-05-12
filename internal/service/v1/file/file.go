@@ -13,6 +13,7 @@ import (
 )
 
 type Service interface {
+	ExecCommand(request file.Request) error
 	ListFiles(request file.Request) ([]util.File, error)
 }
 
@@ -26,9 +27,16 @@ func NewService() Service {
 	}
 }
 
-func (f service) ListFiles(request file.Request) ([]util.File, error) {
+func (f service) ExecCommand(request file.Request) error {
+	_, err := f.fileBrowser(request)
+	if err != nil {
+		return err
+	}
 
-	request.Commands = []string{"./kotools", "ls", request.Path}
+	return nil
+}
+
+func (f service) ListFiles(request file.Request) ([]util.File, error) {
 	var res []util.File
 	bs, err := f.fileBrowser(request)
 	if err != nil {
