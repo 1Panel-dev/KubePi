@@ -27,7 +27,7 @@
         <template v-slot:default="{row}">
           <span v-if="row.isDir" class="span-link" @click="toFolder(row.name)"><i
                   class="el-icon-folder"></i> {{ row.name }} </span>
-          <span v-else>{{ row.name }}</span>
+          <el-link v-else type="info" @click="openFile(row.name)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.pod.size')" prop="size">
@@ -65,13 +65,13 @@
     <el-dialog
             :title="$t('business.pod.create_file')"
             :visible.sync="openAddFile"
-            width="30%">
+            width="60%">
       <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" required prop="name">
           <el-input clearable v-model="fileForm.name"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.pod.file_content')" prop="content">
-          <el-input type="textarea" v-model="fileForm.content"></el-input>
+          <el-input type="textarea" :autosize="{ minRows: 15, maxRows: 20}"  v-model="fileForm.content"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -84,7 +84,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createFile, createFolder, delFolder, listPodFiles} from "@/api/pods"
+import {createFile, createFolder, delFolder, listPodFiles, openFile} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
 
@@ -155,10 +155,17 @@ export default {
       this.openAddFile = true
       this.fileForm = {}
     },
+    getPath(name) {
+      if (this.folder === "/") {
+        return this.folder +  name
+      }else {
+        return this.folder + "/" + name
+      }
+    },
     folderCreate () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          this.fileRequest.path = this.folder + "/" + this.folderForm.name
+          this.fileRequest.path = this.getPath(this.folderForm.name)
           createFolder(this.fileRequest).then(() => {
             this.openAddFolder = false
             this.$message({
@@ -178,7 +185,7 @@ export default {
           cancelButtonText: this.$t("commons.button.cancel"),
           type: "warning",
         }).then(() => {
-        this.fileRequest.path = this.folder + "/" + name
+        this.fileRequest.path = this.getPath(name)
         delFolder(this.fileRequest).then(() => {
           this.$message({
             type: "success",
@@ -191,11 +198,7 @@ export default {
     fileCreate () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.folder === "/") {
-            this.fileRequest.path = this.folder +  this.fileForm.name
-          }else {
-            this.fileRequest.path = this.folder + "/" + this.fileForm.name
-          }
+          this.fileRequest.path = this.getPath(this.fileForm.name)
           this.fileRequest.content = this.fileForm.content
           createFile(this.fileRequest).then(() => {
             this.openAddFile = false
@@ -208,6 +211,19 @@ export default {
         }
       })
     },
+    openFile(name) {
+      if (this.folder === "/") {
+        this.fileRequest.path = this.folder +  name
+      }else {
+        this.fileRequest.path = this.folder + "/" + name
+      }
+      this.fileRequest.path = this.getPath(name)
+      openFile(this.fileRequest).then((res) => {
+        this.openAddFile = true
+        this.fileForm.name = name
+        this.fileForm.content = res.data
+      })
+    }
   },
   created () {
     this.fileRequest = {

@@ -12,7 +12,7 @@ import (
 )
 
 type Service interface {
-	ExecCommand(request file.Request) error
+	ExecCommand(request file.Request) ([]byte, error)
 	ListFiles(request file.Request) ([]util.File, error)
 }
 
@@ -26,13 +26,12 @@ func NewService() Service {
 	}
 }
 
-func (f service) ExecCommand(request file.Request) error {
-	_, err := f.fileBrowser(request)
+func (f service) ExecCommand(request file.Request) ([]byte, error) {
+	bs, err := f.fileBrowser(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return nil
+	return bs, nil
 }
 
 func (f service) ListFiles(request file.Request) ([]util.File, error) {

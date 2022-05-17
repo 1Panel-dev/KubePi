@@ -77,3 +77,8 @@ export function delFolder(data) {
 export function createFile(data) {
   return postFile(podFileUrl+"/files/create",data)
 }
+
+export function openFile(data) {
+  return postFile(podFileUrl+"/files/open",data)
+}
+
