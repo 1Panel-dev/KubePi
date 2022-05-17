@@ -90,6 +90,29 @@ func (h *Handler) OpenFile() iris.Handler {
 	}
 }
 
+func (h *Handler) ReNameFile() iris.Handler {
+	return func(ctx *context.Context) {
+		var req fileModel.Request
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if req.OldPath == "" {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", "file or path is not exist")
+			return
+		}
+		req.Commands = []string{"./kotools", "mv",req.OldPath,req.Path}
+		_, err := h.fileService.ExecCommand(req)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func (h *Handler) RmFolder() iris.Handler {
 	return func(ctx *context.Context) {
 		var req fileModel.Request
@@ -115,4 +138,5 @@ func Install(parent iris.Party) {
 	sp.Post("/folder/delete", handler.RmFolder())
 	sp.Post("/files/create", handler.CreateFile())
 	sp.Post("/files/open", handler.OpenFile())
+	sp.Post("/files/rename", handler.ReNameFile())
 }

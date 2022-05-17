@@ -82,3 +82,7 @@ export function openFile(data) {
   return postFile(podFileUrl+"/files/open",data)
 }
 
+export function renameFile(data) {
+  return postFile(podFileUrl+"/files/rename",data)
+}
+

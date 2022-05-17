@@ -77,7 +77,7 @@
                       <el-button @click="openPodFiles(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
-                  <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
+                  <el-dropdown-item slot="reference" icon="el-icon-files" command="files">
                     {{ $t("business.pod.pod_file") }}
                     <i class="el-icon-arrow-right"/>
                   </el-dropdown-item>
@@ -89,7 +89,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item :disabled="!checkLogPermissions()" icon="el-icon-tickets" command="logs">{{ $t("commons.button.logs") }}
                 </el-dropdown-item>
-                <el-dropdown-item :disabled="!checkExecPermissions()" icon="el-icon-tickets" command="files">{{ $t("business.pod.pod_file") }}
+                <el-dropdown-item :disabled="!checkExecPermissions()" icon="el-icon-files" command="files">{{ $t("business.pod.pod_file") }}
                 </el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}</el-dropdown-item>
@@ -216,7 +216,6 @@ export default {
       } else {
         c = row.containers[0]
       }
-      console.log(c)
       this.$router.push({ name: "PodFile", params: { namespace: row.metadata.namespace, name: row.metadata.name },query:{
           container: c
         }})

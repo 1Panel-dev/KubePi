@@ -48,6 +48,8 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-edit" command="edit" :disabled="row.isDir">{{ $t("commons.button.edit") }}
               </el-dropdown-item>
+              <el-dropdown-item icon="el-icon-edit" command="rename" >{{ $t("business.pod.rename") }}
+              </el-dropdown-item>
               <el-dropdown-item icon="el-icon-delete" command="delete">{{ $t("commons.button.delete") }}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -70,7 +72,21 @@
       </span>
     </el-dialog>
     <el-dialog
-            :title="$t('business.pod.create_file')"
+            :title="$t('business.pod.rename')+ '   ' +this.renameForm.oldName"
+            :visible.sync="openRenamePage"
+            width="30%">
+      <el-form label-position="top" :model="renameForm" ref="form" :rules="rules">
+        <el-form-item :label="$t('commons.table.name')" required prop="name">
+          <el-input clearable v-model="renameForm.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+      <el-button @click="openRenamePage = false">{{ $t("commons.button.cancel") }}</el-button>
+      <el-button type="primary" @click="rename()">{{ $t("commons.button.confirm") }}</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+            :title="openAddFile?$t('business.pod.create_file'):$t('business.pod.edit_file')"
             :visible.sync="openAddFile"
             :before-close="handleFileClose"
             width="60%">
@@ -92,7 +108,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createFile, createFolder, delFolder, listPodFiles, openFile} from "@/api/pods"
+import {createFile, createFolder, delFolder, listPodFiles, openFile, renameFile} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
 
@@ -114,7 +130,9 @@ export default {
       openAddFolder: false,
       openAddFile: false,
       editFile: false,
+      openRenamePage: false,
       folderForm: {},
+      renameForm: {},
       fileForm: {
         name: "",
         content: ""
@@ -138,6 +156,9 @@ export default {
           break
         case "delete":
           this.folderDelete(row.name)
+          break
+        case "rename":
+          this.openRename(row.name)
           break
       }
     },
@@ -176,6 +197,12 @@ export default {
     openFileCreate() {
       this.openAddFile = true
       this.fileForm = {}
+    },
+    openRename(name) {
+      this.openRenamePage = true
+      this.renameForm = {
+        oldName: name
+      }
     },
     handleFileClose() {
       this.openAddFile = false
@@ -252,6 +279,18 @@ export default {
         this.fileForm.content = res.data
       }).finally(() => {
         this.loading = false
+      })
+    },
+    rename() {
+      this.fileRequest.path = this.getPath(this.renameForm.name)
+      this.fileRequest.oldPath = this.getPath(this.renameForm.oldName)
+      renameFile(this.fileRequest).then(() => {
+        this.openRenamePage = false
+        this.listFiles(this.folder, this.folders)
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.update_success"),
+        })
       })
     }
   },
