@@ -8,7 +8,6 @@ import (
 	"github.com/KubeOperator/kubepi/pkg/util"
 	"github.com/KubeOperator/kubepi/pkg/util/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util/podbase"
-	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -75,16 +74,13 @@ func (f service) fileBrowser(request file.Request) (res []byte, err error) {
 			err.Error() == "command terminated with exit code 126" {
 			err = pb.InstallKFTools()
 			if err != nil {
-				logrus.Error(err)
 				return nil, err
 			}
 			res, err = pb.Exec(request.Stdin, request.Commands...)
 			if err != nil {
-				logrus.Error(err)
 				return nil, err
 			}
 		} else {
-			logrus.Error(err)
 			return nil, err
 		}
 	}

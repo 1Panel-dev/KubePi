@@ -5,6 +5,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/file"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"strings"
 )
 
 type Handler struct {
@@ -36,8 +37,6 @@ func (h *Handler) ListFiles() iris.Handler {
 	}
 }
 
-
-
 func (h *Handler) CreateFolder() iris.Handler {
 	return func(ctx *context.Context) {
 		var req fileModel.Request
@@ -47,6 +46,24 @@ func (h *Handler) CreateFolder() iris.Handler {
 			return
 		}
 		req.Commands = []string{"./kotools", "mkdir", req.Path}
+		if err := h.fileService.ExecCommand(req); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
+func (h *Handler) CreateFile() iris.Handler {
+	return func(ctx *context.Context) {
+		var req fileModel.Request
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		req.Commands = []string{"./kotools", "touch", req.Path}
+		req.Stdin = strings.NewReader(req.Content)
 		if err := h.fileService.ExecCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -72,11 +89,11 @@ func (h *Handler) RmFolder() iris.Handler {
 	}
 }
 
-
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/pod")
 	sp.Post("/files", handler.ListFiles())
 	sp.Post("/folder/create", handler.CreateFolder())
 	sp.Post("/folder/delete", handler.RmFolder())
+	sp.Post("/files/create", handler.CreateFile())
 }

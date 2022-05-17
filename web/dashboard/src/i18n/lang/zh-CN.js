@@ -253,6 +253,7 @@ const message = {
       del_folder: "删除文件夹",
       create_file: "创建文件",
       del_file: "删除文件",
+      file_content: "内容"
     },
     namespace: {
       namespace: "命名空间",

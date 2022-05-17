@@ -1,4 +1,4 @@
-import {get, del, post, put} from "@/plugins/request"
+import {get, del, post, put, postFile} from "@/plugins/request"
 
 const podUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/pods`
@@ -72,4 +72,8 @@ export function createFolder(data) {
 
 export function delFolder(data) {
   return post(podFileUrl+"/folder/delete",data)
+}
+
+export function createFile(data) {
+  return postFile(podFileUrl+"/files/create",data)
 }

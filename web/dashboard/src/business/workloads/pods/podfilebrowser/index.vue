@@ -8,7 +8,7 @@
           <span @click="openFolderCreate"> {{ $t("business.pod.create_folder") }}</span>
         </el-dropdown-item>
         <el-dropdown-item>
-          <span @click="openAddFile = true"> {{ $t("business.pod.create_file") }}</span>
+          <span @click="openFileCreate"> {{ $t("business.pod.create_file") }}</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -62,12 +62,29 @@
       <el-button type="primary" @click="folderCreate">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+            :title="$t('business.pod.create_file')"
+            :visible.sync="openAddFile"
+            width="30%">
+      <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
+        <el-form-item :label="$t('commons.table.name')" required prop="name">
+          <el-input clearable v-model="fileForm.name"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('business.pod.file_content')" prop="content">
+          <el-input type="textarea" v-model="fileForm.content"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+      <el-button @click="openAddFile = false">{{ $t("commons.button.cancel") }}</el-button>
+      <el-button type="primary" @click="fileCreate">{{ $t("commons.button.confirm") }}</el-button>
+      </span>
+    </el-dialog>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createFolder, delFolder, listPodFiles} from "@/api/pods"
+import {createFile, createFolder, delFolder, listPodFiles} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
 
@@ -89,6 +106,10 @@ export default {
       openAddFolder: false,
       openAddFile: false,
       folderForm: {},
+      fileForm: {
+        name: "",
+        content: ""
+      },
       rules: {
         name: [Rule.RequiredRule, Rule.CommonNameRule],
       }
@@ -130,6 +151,10 @@ export default {
       this.openAddFolder = true
       this.folderForm = {}
     },
+    openFileCreate() {
+      this.openAddFile = true
+      this.fileForm = {}
+    },
     folderCreate () {
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -162,7 +187,27 @@ export default {
           this.listFiles(this.folder, this.folders)
         })
       })
-    }
+    },
+    fileCreate () {
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.folder === "/") {
+            this.fileRequest.path = this.folder +  this.fileForm.name
+          }else {
+            this.fileRequest.path = this.folder + "/" + this.fileForm.name
+          }
+          this.fileRequest.content = this.fileForm.content
+          createFile(this.fileRequest).then(() => {
+            this.openAddFile = false
+            this.$message({
+              type: "success",
+              message: this.$t("commons.msg.create_success"),
+            })
+            this.listFiles(this.folder, this.folders)
+          })
+        }
+      })
+    },
   },
   created () {
     this.fileRequest = {

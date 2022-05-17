@@ -11,4 +11,5 @@ type Request struct {
 	Path          string    `json:"path"`
 	Commands      []string  `json:"-"`
 	Stdin         io.Reader `json:"-"`
+	Content       string    `json:"content"`
 }
