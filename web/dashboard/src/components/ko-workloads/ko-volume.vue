@@ -299,7 +299,7 @@ export default {
           }
           if (volume.persistentVolumeClaim) {
             item.type = "PVC"
-            itemClild = volume.persistentVolumeClaim
+            itemClild.name = volume.persistentVolumeClaim.claimName
           }
           if (volume.emptyDir) {
             item.type = "EmptyDir"
