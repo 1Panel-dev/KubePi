@@ -56,11 +56,9 @@ export default {
 
     search () {
       this.loading = true
-      console.log(this.searchRequest)
       listImagesByRepo(this.repo,this.searchRequest).then(res => {
         this.images = res.data.items
         this.searchRequest.continueToken = res.data.continueToken
-        console.log(this.searchRequest)
       }).finally(() => {
         this.loading = false
       })

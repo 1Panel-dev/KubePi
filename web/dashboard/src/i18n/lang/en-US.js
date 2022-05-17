@@ -292,6 +292,7 @@ const message = {
       container_name: "Container Name",
       container_image: "Container Image",
       pull_policy: "Pull Policy",
+      repo_help: "Using the mirror repository will generate secret containing the mirror repository connection information under the current namespace, check will update this information",
       pull_secrets: "Pull Secrets",
       list_image: "Image Repo",
       repo_image: "Image",
