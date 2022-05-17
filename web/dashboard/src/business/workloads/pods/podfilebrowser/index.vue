@@ -75,7 +75,7 @@
             :before-close="handleFileClose"
             width="60%">
       <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
-        <el-form-item :label="$t('commons.table.name')" required prop="name">
+        <el-form-item :label="$t('commons.table.name')" prop="name">
           <el-input clearable v-model="fileForm.name" :disabled="editFile"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.pod.file_content')" prop="content">
@@ -229,9 +229,13 @@ export default {
           this.fileRequest.content = this.fileForm.content
           createFile(this.fileRequest).then(() => {
             this.openAddFile = false
+            let message = this.$t("commons.msg.create_success")
+            if (this.editFile) {
+              message =  this.$t("commons.msg.update_success")
+            }
             this.$message({
               type: "success",
-              message: this.$t("commons.msg.create_success"),
+              message: message,
             })
             this.listFiles(this.folder, this.folders)
           })
@@ -239,12 +243,15 @@ export default {
       })
     },
     openFile(name) {
+      this.loading = true
       this.fileRequest.path = this.getPath(name)
       openFile(this.fileRequest).then((res) => {
         this.openAddFile = true
         this.editFile = true
         this.fileForm.name = name
         this.fileForm.content = res.data
+      }).finally(() => {
+        this.loading = false
       })
     }
   },

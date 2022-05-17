@@ -252,6 +252,7 @@ const message = {
       del_folder: "Delete Folder",
       create_file: "Create File",
       del_file: "Delete File",
+      file_content: "Content"
     },
     namespace: {
       namespace: "Namespace",
