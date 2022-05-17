@@ -43,8 +43,15 @@
         <template v-slot:default="{row}">
           <el-button circle size="mini" icon="el-icon-download">
           </el-button>
-          <el-button circle size="mini" icon="el-icon-delete" @click="folderDelete(row.name)">
-          </el-button>
+          <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
+            <el-button circle icon="el-icon-more" size="mini"/>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-edit" command="edit" :disabled="row.isDir">{{ $t("commons.button.edit") }}
+              </el-dropdown-item>
+              <el-dropdown-item icon="el-icon-delete" command="delete">{{ $t("commons.button.delete") }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </complex-table>
@@ -65,17 +72,18 @@
     <el-dialog
             :title="$t('business.pod.create_file')"
             :visible.sync="openAddFile"
+            :before-close="handleFileClose"
             width="60%">
       <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" required prop="name">
-          <el-input clearable v-model="fileForm.name"></el-input>
+          <el-input clearable v-model="fileForm.name" :disabled="editFile"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.pod.file_content')" prop="content">
           <el-input type="textarea" :autosize="{ minRows: 15, maxRows: 20}"  v-model="fileForm.content"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-      <el-button @click="openAddFile = false">{{ $t("commons.button.cancel") }}</el-button>
+      <el-button @click="handleFileClose()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button type="primary" @click="fileCreate">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>
@@ -105,6 +113,7 @@ export default {
       folders: [],
       openAddFolder: false,
       openAddFile: false,
+      editFile: false,
       folderForm: {},
       fileForm: {
         name: "",
@@ -118,6 +127,19 @@ export default {
   methods: {
     openRoot () {
       this.listFiles("/", [])
+    },
+    handleClick (btn, row) {
+      switch (btn) {
+        // case "download":
+        //   downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
+        //   break
+        case "edit":
+          this.openFile(row.name)
+          break
+        case "delete":
+          this.folderDelete(row.name)
+          break
+      }
     },
     linkTo (folder) {
       let folderDir = "/"
@@ -153,6 +175,11 @@ export default {
     },
     openFileCreate() {
       this.openAddFile = true
+      this.fileForm = {}
+    },
+    handleFileClose() {
+      this.openAddFile = false
+      this.editFile = false
       this.fileForm = {}
     },
     getPath(name) {
@@ -212,14 +239,10 @@ export default {
       })
     },
     openFile(name) {
-      if (this.folder === "/") {
-        this.fileRequest.path = this.folder +  name
-      }else {
-        this.fileRequest.path = this.folder + "/" + name
-      }
       this.fileRequest.path = this.getPath(name)
       openFile(this.fileRequest).then((res) => {
         this.openAddFile = true
+        this.editFile = true
         this.fileForm.name = name
         this.fileForm.content = res.data
       })
