@@ -447,7 +447,7 @@ const message = {
       non_root: "是，容器必须以非 root 用户的身份",
       filesystem_read_only: "是，容器有一个只读的文件系统",
       privilege_escalation: "允许权限提升",
-      run_as_non_root: "是否以 root 方式运行",
+      run_as_non_root: "是否以非 root 方式运行",
       read_only_root_filesystem: "只读 root 文件系统",
       run_as_user: "用户",
       run_as_group: "用户组",

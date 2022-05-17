@@ -106,7 +106,6 @@ export default {
       if (value === "Recreate") {
         delete this.form.spec.strategy.rollingUpdate
       } else {
-        console.log("走到了这里")
         this.form.spec.strategy.rollingUpdate = this.rollingUpdate
       }
     },
