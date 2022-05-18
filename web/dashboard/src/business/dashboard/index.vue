@@ -7,21 +7,27 @@
             <el-col :span="8">
               <span class="title">{{ $t("commons.table.name") }}</span>
               <div style="text-align: center">
-                <h1>{{ cluster.name }}</h1>
+                <el-tooltip class="item" effect="dark" :content="cluster.name" placement="top">
+                  <h1>{{ cluster.name }}</h1>
+                </el-tooltip>
               </div>
             </el-col>
             <el-col :span="8">
               <span class="title">{{ $t("business.cluster.version") }}</span>
               <div class="line"></div>
               <div style="text-align: center">
-                <h1>{{ cluster.status.version }}</h1>
+                <el-tooltip class="item" effect="dark" :content="cluster.status.version" placement="top">
+                  <h1>{{ cluster.status.version | max15letter}}</h1>
+                </el-tooltip>
               </div>
             </el-col>
             <el-col :span="8">
               <span class="title">{{ $t("commons.table.created_time") }}</span>
               <div class="line"></div>
               <div style="text-align: center">
-                <h1>{{ cluster.createAt | age }} </h1>
+                <el-tooltip class="item" effect="dark" :content="cluster.createAt | age" placement="top">
+                  <h1>{{ cluster.createAt | age }} </h1>
+                </el-tooltip>
               </div>
             </el-col>
           </el-row>

@@ -91,6 +91,13 @@ export function giMemoryFormat (value) {
   }
 }
 
+export function len15Format (value) {
+  if (value.length > 15) {
+    return value.substring(0, 15) + "..."
+  }
+  return value
+}
+
 const filters = {
   "dateFormat": dateFormat,
   "datetimeFormat": datetimeFormat,
@@ -99,6 +106,7 @@ const filters = {
   "cpu": CpuFormat,
   "mi-memory": miMemoryFormat,
   "gi-memory": giMemoryFormat,
+  "max15letter": len15Format,
 }
 
 export default {
