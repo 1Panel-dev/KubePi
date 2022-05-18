@@ -94,7 +94,7 @@ export default {
             this.openTerminal(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "*" })
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "create" })
           },
         },
         {
@@ -104,7 +104,7 @@ export default {
             this.openTerminalLogs(row)
           },
           disabled: () => {
-            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/log", verb: "*" })
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/log", verb: "get" })
           },
         },
       ],

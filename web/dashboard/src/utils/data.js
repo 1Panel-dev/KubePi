@@ -17,7 +17,6 @@ export function isJSON(str) {
       return !!(typeof obj == 'object' && obj);
 
     } catch(e) {
-      // console.log('error：'+str+'!!!'+e);
       return false;
     }
   }
