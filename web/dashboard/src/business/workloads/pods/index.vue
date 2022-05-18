@@ -52,7 +52,7 @@
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
                     <p style="margin: 0">
-                      <el-button @click="openTerminal(row, c)" type="text">{{ c }}</el-button>
+                      <el-button :disabled="!checkExecPermissions()" @click="openTerminal(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
                   <el-dropdown-item slot="reference" icon="el-icon-date" command="terminal">
@@ -63,7 +63,7 @@
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
                     <p style="margin: 0">
-                      <el-button @click="openTerminalLogs(row, c)" type="text">{{ c }}</el-button>
+                      <el-button :disabled="!checkLogPermissions()" @click="openTerminalLogs(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
                   <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
@@ -74,7 +74,7 @@
                 <el-popover placement="left" trigger="hover">
                   <div v-for="c in row.containers" :key="c">
                     <p style="margin: 0">
-                      <el-button @click="openPodFiles(row, c)" type="text">{{ c }}</el-button>
+                      <el-button :disabled="!checkExecPermissions()" @click="openPodFiles(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
                   <el-dropdown-item slot="reference" icon="el-icon-files" command="files">
@@ -144,10 +144,10 @@ export default {
       return checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "delete" })
     },
     checkExecPermissions () {
-      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/exec', verb: '*' })
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/exec', verb: 'create' })
     },
     checkLogPermissions () {
-      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/log', verb: '*' })
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/log', verb: 'get' })
     },
     handleClick (btn, row) {
       switch (btn) {
