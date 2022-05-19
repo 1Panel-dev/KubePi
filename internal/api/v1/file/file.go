@@ -5,6 +5,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/file"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"path"
 	"strings"
 )
 
@@ -103,7 +104,7 @@ func (h *Handler) ReNameFile() iris.Handler {
 			ctx.Values().Set("message", "file or path is not exist")
 			return
 		}
-		req.Commands = []string{"./kotools", "mv",req.OldPath,req.Path}
+		req.Commands = []string{"./kotools", "mv", req.OldPath, req.Path}
 		_, err := h.fileService.ExecCommand(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -130,6 +131,32 @@ func (h *Handler) RmFolder() iris.Handler {
 	}
 }
 
+func (h *Handler) DownloadFile() iris.Handler {
+	return func(ctx *context.Context) {
+
+		var req fileModel.Request
+		req.Path = ctx.URLParam("path")
+		req.Namespace = ctx.URLParam("namespace")
+		req.Cluster = ctx.URLParam("cluster")
+		req.PodName = ctx.URLParam("podName")
+		req.ContainerName = ctx.URLParam("containerName")
+
+		file, err := h.fileService.DownloadFile(req)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		filename := path.Base(file)
+		err = ctx.SendFile(file, filename)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/pod")
@@ -139,4 +166,5 @@ func Install(parent iris.Party) {
 	sp.Post("/files/create", handler.CreateFile())
 	sp.Post("/files/open", handler.OpenFile())
 	sp.Post("/files/rename", handler.ReNameFile())
+	sp.Get("/files/download", handler.DownloadFile())
 }

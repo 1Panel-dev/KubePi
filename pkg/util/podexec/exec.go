@@ -40,8 +40,14 @@ func NewPodExec(namespace, podName, containerName string, restConfig *rest.Confi
 	}
 }
 
+type ActionType string
+
+const Upload ActionType = "Upload"
+const Exec ActionType = "Exec"
+const Download ActionType = "Download"
+
 // Exec 在给定容器中执行命令
-func (p *PodExec) Exec() error {
+func (p *PodExec) Exec(actionType ActionType) error {
 	req := p.K8sClient.CoreV1().RESTClient().Post().
 		Resource("pods").
 		Name(p.PodName).
@@ -59,13 +65,32 @@ func (p *PodExec) Exec() error {
 	if err != nil {
 		return err
 	}
-	var sizeQueue remotecommand.TerminalSizeQueue
+
+	if actionType == Download {
+		go func() {
+			p.stream(exec)
+		}()
+	} else {
+		err = p.stream(exec)
+	}
+	return nil
+
+	//var sizeQueue remotecommand.TerminalSizeQueue
+	//return exec.Stream(remotecommand.StreamOptions{
+	//	Stdin:             p.Stdin,
+	//	Stdout:            p.Stdout,
+	//	Stderr:            p.Stderr,
+	//	Tty:               p.Tty,
+	//	TerminalSizeQueue: sizeQueue,
+	//})
+}
+
+func (p *PodExec) stream(exec remotecommand.Executor) error {
 	return exec.Stream(remotecommand.StreamOptions{
-		Stdin:             p.Stdin,
-		Stdout:            p.Stdout,
-		Stderr:            p.Stderr,
-		Tty:               p.Tty,
-		TerminalSizeQueue: sizeQueue,
+		Stdin:  p.Stdin,
+		Stdout: p.Stdout,
+		Stderr: p.Stderr,
+		Tty:    p.Tty,
 	})
 }
 

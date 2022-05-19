@@ -2,18 +2,24 @@ package file
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/KubeOperator/kubepi/internal/model/v1/file"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/pkg/util"
 	"github.com/KubeOperator/kubepi/pkg/util/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util/podbase"
+	"os"
+	"path"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Service interface {
 	ExecCommand(request file.Request) ([]byte, error)
 	ListFiles(request file.Request) ([]util.File, error)
+	DownloadFile(request file.Request) (string, error)
 }
 
 type service struct {
@@ -44,6 +50,47 @@ func (f service) ListFiles(request file.Request) ([]util.File, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func (f service) DownloadFile(request file.Request) (string, error) {
+	var fileP string
+	clu, err := f.clusterService.Get(request.Cluster, common.DBOptions{})
+	if err != nil {
+		return fileP, err
+	}
+	config := &kubernetes.Config{
+		Host:  clu.Spec.Connect.Forward.ApiServer,
+		Token: clu.Spec.Authentication.BearerToken,
+	}
+	k8sConfig := kubernetes.NewClusterConfig(config)
+	k8sClient, err := kubernetes.NewKubernetesClient(config)
+	if err != nil {
+		return fileP, err
+	}
+	pb := podbase.PodBase{
+		Namespace:  request.Namespace,
+		PodName:    request.PodName,
+		Container:  request.ContainerName,
+		K8sClient:  k8sClient,
+		RestClient: k8sConfig,
+	}
+	exec := pb.NewPodExec()
+	fileNameWithSuffix := path.Base(request.Path)
+	fileType := path.Ext(fileNameWithSuffix)
+	fileName := strings.TrimSuffix(fileNameWithSuffix, fileType)
+	fileP = filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
+	err = os.MkdirAll(fileP, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+	fileP = filepath.Join(fileP, fileName+".tar")
+	//requestPath := "." + request.Path
+	err = exec.CopyFromPod(request.Path, fileP)
+	if err != nil {
+		return "", err
+	}
+
+	return fileP, nil
 }
 
 func (f service) fileBrowser(request file.Request) (res []byte, err error) {

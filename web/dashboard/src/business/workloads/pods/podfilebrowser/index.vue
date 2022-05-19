@@ -41,14 +41,14 @@
       </el-table-column>
       <el-table-column width="90px" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-button circle size="mini" icon="el-icon-download">
+          <el-button circle size="mini" icon="el-icon-download" @click="download(row.name)">
           </el-button>
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini"/>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-edit" command="edit" :disabled="row.isDir">{{ $t("commons.button.edit") }}
               </el-dropdown-item>
-              <el-dropdown-item icon="el-icon-edit" command="rename" >{{ $t("business.pod.rename") }}
+              <el-dropdown-item icon="el-icon-edit-outline" command="rename" >{{ $t("business.pod.rename") }}
               </el-dropdown-item>
               <el-dropdown-item icon="el-icon-delete" command="delete">{{ $t("commons.button.delete") }}
               </el-dropdown-item>
@@ -108,7 +108,14 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {createFile, createFolder, delFolder, listPodFiles, openFile, renameFile} from "@/api/pods"
+import {
+  createFile,
+  createFolder,
+  delFolder,
+  listPodFiles,
+  openFile,
+  renameFile
+} from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
 
@@ -292,6 +299,34 @@ export default {
           message: this.$t("commons.msg.update_success"),
         })
       })
+    },
+    download(name) {
+      this.fileRequest.path = this.getPath(name)
+      // this.loading = true
+
+      let url = ""
+      const keys = Object.keys(this.fileRequest)
+      for(let i=0;i<keys.length;i++) {
+        if (!this.fileRequest[keys[i]]) {
+          continue
+        }
+        if (url) {
+          url += `&${keys[i]}=${this.fileRequest[keys[i]]}`
+        }else {
+          url += `?${keys[i]}=${this.fileRequest[keys[i]]}`
+        }
+      }
+      window.open("/kubepi/api/v1/pod/files/download"+url,"_blank")
+
+      // downloadFile(this.fileRequest).finally(() => {
+      //   this.loading = false
+      // }).finally(() => {
+      //   this.loading = false
+      // })
+
+
+      // window.open("/kubepi/api/v1/pod/files/down","_blank")
+      // getFile()
     }
   },
   created () {

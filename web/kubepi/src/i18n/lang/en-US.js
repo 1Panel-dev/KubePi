@@ -183,6 +183,7 @@ const message = {
             password_not_equal: "two passwords are inconsistent",
             ldap: "LDAP",
             ldap_address: "Address",
+            ldap_tls: "tls",
             ldap_port: "Port",
             ldap_username: "Username",
             ldap_password: "Password",

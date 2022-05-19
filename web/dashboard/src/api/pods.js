@@ -83,6 +83,15 @@ export function openFile(data) {
 }
 
 export function renameFile(data) {
-  return postFile(podFileUrl+"/files/rename",data)
+  return post(podFileUrl+"/files/rename",data)
 }
+
+export function downloadFile(data) {
+  return get(podFileUrl+"/files/download",data)
+}
+
+export function getFile() {
+  return get(podFileUrl+"/files/down")
+}
+
 

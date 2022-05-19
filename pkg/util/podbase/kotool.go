@@ -74,7 +74,7 @@ func (p *PodBase) Exec(stdin io.Reader, command ...string) ([]byte, error) {
 	exec.Stdin = stdin
 	exec.Stdout = &stdout
 	exec.Stderr = &stderr
-	err := exec.Exec()
+	err := exec.Exec(podexec.Exec)
 	if err != nil {
 		if len(stderr.Bytes()) != 0 {
 			return nil, fmt.Errorf("%s %s", err.Error(), stderr.String())
@@ -107,7 +107,7 @@ func (p *PodBase) InstallKFTools() error {
 		exec.Command = chmodCmd
 		var stderr bytes.Buffer
 		exec.Stderr = &stderr
-		err = exec.Exec()
+		err = exec.Exec(podexec.Exec)
 		if err != nil {
 			return fmt.Errorf(err.Error(), stderr)
 		}

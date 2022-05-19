@@ -24,7 +24,7 @@ func (p *PodExec) ToPodContainer(destPath string) error {
 	p.Tty = false
 	var stderr bytes.Buffer
 	p.Stderr = &stderr
-	err := p.Exec()
+	err := p.Exec(Exec)
 	if err != nil {
 		return fmt.Errorf(err.Error(), stderr)
 	}
@@ -58,7 +58,7 @@ func (p *PodExec) CopyToPod(srcPath, destPath string) error {
 	}
 	var stderr bytes.Buffer
 	p.Stderr = &stderr
-	err := p.Exec()
+	err := p.Exec(Exec)
 	if err != nil {
 		return fmt.Errorf(err.Error(), p.Stderr)
 	}

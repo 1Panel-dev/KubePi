@@ -183,6 +183,7 @@ const message = {
             password_not_equal: "两次输入密码不一致",
             ldap: "LDAP",
             ldap_address: "地址",
+            ldap_tls: "tls",
             ldap_port: "端口",
             ldap_username: "用户名",
             ldap_password: "密码",
