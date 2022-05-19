@@ -1,12 +1,18 @@
 package file
 
 import (
+	"bufio"
+	"fmt"
 	fileModel "github.com/KubeOperator/kubepi/internal/model/v1/file"
 	"github.com/KubeOperator/kubepi/internal/service/v1/file"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"io"
+	"os"
 	"path"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Handler struct {
@@ -154,6 +160,84 @@ func (h *Handler) DownloadFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		os.RemoveAll(file)
+	}
+}
+
+func (h *Handler) UploadFile() iris.Handler {
+	return func(ctx *context.Context) {
+		f, header, err := ctx.FormFile("file")
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
+		var req fileModel.Request
+		req.Path = ctx.URLParam("path")
+		req.Namespace = ctx.URLParam("namespace")
+		req.Cluster = ctx.URLParam("cluster")
+		req.PodName = ctx.URLParam("podName")
+		req.ContainerName = ctx.URLParam("containerName")
+
+		path := filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
+		err = os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+
+		path = filepath.Join(path, "/"+header.Filename)
+		file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		r := bufio.NewReader(f)
+		w := bufio.NewWriter(file)
+
+		size := 4 * 1024
+		buf := make([]byte, 4*1024)
+		for {
+			n, err := r.Read(buf)
+			if err != nil && err != io.EOF {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			if n == 0 {
+				break
+			}
+			_, err = w.Write(buf[:n])
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			if n < size {
+				break
+			}
+		}
+		err = w.Flush()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		req.FilePath = path
+		if req.Path == "/" {
+			req.Path = req.Path + header.Filename
+		} else {
+			req.Path = req.Path + "/" + header.Filename
+		}
+		err = h.fileService.UploadFile(req)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 	}
 }
 
@@ -166,5 +250,6 @@ func Install(parent iris.Party) {
 	sp.Post("/files/create", handler.CreateFile())
 	sp.Post("/files/open", handler.OpenFile())
 	sp.Post("/files/rename", handler.ReNameFile())
+	sp.Post("/files/upload", handler.UploadFile())
 	sp.Get("/files/download", handler.DownloadFile())
 }

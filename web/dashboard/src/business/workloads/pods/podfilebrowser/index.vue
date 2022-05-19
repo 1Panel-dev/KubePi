@@ -12,6 +12,18 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    <el-dropdown>
+      <el-button size="mini" icon="el-icon-upload2">{{ $t("business.pod.upload") }}<i
+              class="el-icon-arrow-down el-icon--right"></i></el-button>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item>
+          <span @click="openUploadPage"> {{ $t("business.pod.upload_file") }}</span>
+        </el-dropdown-item>
+<!--        <el-dropdown-item>-->
+<!--          <span @click="openFileCreate"> {{ $t("business.pod.upload_folder") }}</span>-->
+<!--        </el-dropdown-item>-->
+      </el-dropdown-menu>
+    </el-dropdown>
     <div style="margin-top: 10px">
       <i class="el-icon-folder-opened" @click="openRoot"></i>
       <span v-for="(v,i) in folders" :key="i">
@@ -102,6 +114,18 @@
       <el-button type="primary" @click="fileCreate">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+            :title="$t('business.pod.upload')"
+            :visible.sync="openUpload"
+            width="30%">
+        <el-upload :on-change="onUploadChange" action="" :auto-upload="false" class="upload-demo">
+          <el-button>{{$t('business.pod.choose_file')}}</el-button>
+        </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="openUpload=false">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button type="primary" @click="upload">{{ $t("commons.button.confirm") }}</el-button>
+      </span>
+    </el-dialog>
   </layout-content>
 </template>
 
@@ -113,7 +137,7 @@ import {
   delFolder,
   listPodFiles,
   openFile,
-  renameFile
+  renameFile, uploadFile
 } from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
@@ -137,6 +161,7 @@ export default {
       openAddFile: false,
       editFile: false,
       openRenamePage: false,
+      openUpload: false,
       folderForm: {},
       renameForm: {},
       fileForm: {
@@ -145,7 +170,9 @@ export default {
       },
       rules: {
         name: [Rule.RequiredRule, Rule.CommonNameRule],
-      }
+      },
+      uploadAction: "",
+      file: {}
     }
   },
   methods: {
@@ -154,9 +181,6 @@ export default {
     },
     handleClick (btn, row) {
       switch (btn) {
-        // case "download":
-        //   downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
-        //   break
         case "edit":
           this.catFile(row)
           break
@@ -209,6 +233,9 @@ export default {
       this.renameForm = {
         oldName: name
       }
+    },
+    openUploadPage() {
+      this.openUpload = true
     },
     handleFileClose() {
       this.openAddFile = false
@@ -304,6 +331,10 @@ export default {
       })
     },
     download(name) {
+      const url = this.getUrl(name)
+      window.open("/kubepi/api/v1/pod/files/download"+url,"_blank")
+    },
+    getUrl(name) {
       this.fileRequest.path = this.getPath(name)
       let url = ""
       const keys = Object.keys(this.fileRequest)
@@ -317,8 +348,26 @@ export default {
           url += `?${keys[i]}=${this.fileRequest[keys[i]]}`
         }
       }
-      window.open("/kubepi/api/v1/pod/files/download"+url,"_blank")
-    }
+      return url
+    },
+    upload() {
+      this.loading = true
+      const formData = new FormData()
+      formData.append("file", this.file.raw)
+      uploadFile(formData,this.fileRequest).then(() => {
+        this.listFiles(this.folder, this.folders)
+        this.$message({
+          type: "success",
+          message: this.$t("commons.msg.upload_success"),
+        })
+        this.openUpload = false
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    onUploadChange(file) {
+      this.file = file
+    },
   },
   created () {
     this.fileRequest = {
@@ -328,7 +377,7 @@ export default {
       containerName: this.$route.query.container
     }
     this.listFiles("/", [])
-  }
+  },
 }
 </script>
 

@@ -168,21 +168,24 @@ func logHandler() iris.Handler {
 				}
 			}
 		}
-		if method == "post" {
-			var req logHelper
-			data, _ := ctx.GetBody()
-			if err := json.Unmarshal(data, &req); err != nil {
-				ctx.Next()
+
+		if !strings.Contains(currentPath, "upload") {
+			if method == "post" {
+				var req logHelper
+				data, _ := ctx.GetBody()
+				if err := json.Unmarshal(data, &req); err != nil {
+					ctx.Next()
+				}
+				if len(req.Name) == 0 {
+					req.Name = req.Metadata.Name
+				}
+				if strings.HasPrefix(currentPath, "clusters/:name") {
+					log.SpecificInformation = fmt.Sprintf("[%s] %s", pathResource[1], req.Name)
+				} else {
+					log.SpecificInformation = req.Name
+				}
+				ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(data))
 			}
-			if len(req.Name) == 0 {
-				req.Name = req.Metadata.Name
-			}
-			if strings.HasPrefix(currentPath, "clusters/:name") {
-				log.SpecificInformation = fmt.Sprintf("[%s] %s", pathResource[1], req.Name)
-			} else {
-				log.SpecificInformation = req.Name
-			}
-			ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		}
 		systemService := v1SystemService.NewService()
 		go systemService.CreateOperationLog(&log, common.DBOptions{})

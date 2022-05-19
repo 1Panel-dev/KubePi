@@ -20,6 +20,7 @@ type Service interface {
 	ExecCommand(request file.Request) ([]byte, error)
 	ListFiles(request file.Request) ([]util.File, error)
 	DownloadFile(request file.Request) (string, error)
+	UploadFile(request file.Request) error
 }
 
 type service struct {
@@ -90,6 +91,35 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 	}
 
 	return fileP, nil
+}
+
+func (f service) UploadFile(request file.Request) error {
+	clu, err := f.clusterService.Get(request.Cluster, common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	config := &kubernetes.Config{
+		Host:  clu.Spec.Connect.Forward.ApiServer,
+		Token: clu.Spec.Authentication.BearerToken,
+	}
+	k8sConfig := kubernetes.NewClusterConfig(config)
+	k8sClient, err := kubernetes.NewKubernetesClient(config)
+	if err != nil {
+		return err
+	}
+	pb := podbase.PodBase{
+		Namespace:  request.Namespace,
+		PodName:    request.PodName,
+		Container:  request.ContainerName,
+		K8sClient:  k8sClient,
+		RestClient: k8sConfig,
+	}
+	exec := pb.NewPodExec()
+	err = exec.CopyToPod(request.FilePath, request.Path)
+	if err != nil {
+		return nil
+	}
+	return nil
 }
 
 func (f service) fileBrowser(request file.Request) (res []byte, err error) {

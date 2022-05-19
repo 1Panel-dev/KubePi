@@ -108,7 +108,8 @@ const message = {
       create_success: "创建成功",
       update_success: "修改成功",
       create_failed: "创建失败",
-      sync_success: "同步成功"
+      sync_success: "同步成功",
+      upload_success: "上传成功",
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",
@@ -256,6 +257,10 @@ const message = {
       file_content: "内容",
       edit_file: "修改文件",
       rename: "重命名",
+      upload: "上传",
+      upload_file: "上传文件",
+      upload_folder: "上传文件夹",
+      choose_file: "选择文件",
     },
     namespace: {
       namespace: "命名空间",

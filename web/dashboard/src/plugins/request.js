@@ -118,10 +118,9 @@ export const del = (url, loading) => {
     return promise(request({url: url, method: "delete"}), loading)
 }
 
-export const postFile= (url,data,loading) => {
-  return promise(request({url: url, method: "post",data: data,headers:{"Content-Type":"multipart/form-data"}}), loading)
+export const postFile= (url,data, params,loading) => {
+  return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"multipart/form-data"}}), loading)
 }
-
 
 export const patch = (url, data, headers, loading) => {
     if (headers) {

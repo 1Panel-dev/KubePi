@@ -2,14 +2,162 @@ package podfile
 
 import (
 	"archive/tar"
+	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	coreV1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/remotecommand"
+	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 )
+
+type PodCp struct {
+	K8sClient     *kubernetes.Clientset
+	RESTConfig    *rest.Config
+	Namespace     string
+	PodName       string
+	ContainerName string
+	Command       []string
+	Stdin         io.Reader
+	Stdout        io.Writer
+	Stderr        io.Writer
+	Tty           bool
+	NoPreserve    bool
+}
+
+func NewPodConfig(namespace, podName, containerName string, restConfig *rest.Config, k8sClient *kubernetes.Clientset) *PodCp {
+	return &PodCp{
+		Namespace:     namespace,
+		PodName:       podName,
+		ContainerName: containerName,
+		RESTConfig:    restConfig,
+		K8sClient:     k8sClient,
+	}
+}
+
+type ActionType string
+
+const Upload ActionType = "Upload"
+const Download ActionType = "Download"
+
+func (p *PodCp) CopyToPod(srcPath, destPath string) error {
+	reader, writer := io.Pipe()
+	go func() {
+		defer writer.Close()
+		cmdutil.CheckErr(makeTar(srcPath, destPath, writer))
+	}()
+	p.Tty = false
+	p.NoPreserve = false
+	p.Stdin = reader
+	p.Stdout = os.Stdout
+	if p.NoPreserve {
+		p.Command = []string{"tar", "--no-same-permissions", "--no-same-owner", "-xmf", "-"}
+	} else {
+		p.Command = []string{"tar", "-xmf", "-"}
+	}
+	var stderr bytes.Buffer
+	p.Stderr = &stderr
+	err := p.Exec(Upload)
+	if err != nil {
+		return fmt.Errorf(err.Error(), p.Stderr)
+	}
+	if len(stderr.Bytes()) != 0 {
+		for _, line := range strings.Split(stderr.String(), "\n") {
+			if len(strings.TrimSpace(line)) == 0 {
+				continue
+			}
+			if !strings.Contains(strings.ToLower(line), "removing") {
+				return fmt.Errorf(line)
+			}
+		}
+	}
+	return nil
+}
+
+func (p *PodCp) CopyFromPod(filePath string, destPath string) error {
+	reader, outStream := io.Pipe()
+
+	p.Command = []string{"tar", "cf", "-", filePath}
+	p.Stdin = os.Stdin
+	p.Stdout = outStream
+	p.Stderr = os.Stderr
+
+	err := p.Exec(Download)
+	if err != nil {
+		return err
+	}
+	prefix := getPrefix(filePath)
+	prefix = path.Clean(prefix)
+	prefix = stripPathShortcuts(prefix)
+
+	err = unTarAll(reader, destPath, prefix)
+
+	return err
+}
+
+func (p *PodCp) ListFiles() (string, error) {
+	p.Command = []string{"ls", "-lQ", "--color=never", "--full-time", "/"}
+	var stdout, stderr bytes.Buffer
+	p.Stdout = &stdout
+	p.Stderr = &stderr
+	p.Tty = false
+	err := p.Exec(Upload)
+	if err != nil {
+		return "", err
+	}
+	if stderr.String() != "" {
+		err = errors.New(stderr.String())
+	}
+
+	return stdout.String(), err
+}
+
+func (p *PodCp) Exec(actionType ActionType) error {
+	req := p.K8sClient.CoreV1().RESTClient().Get().
+		Resource("pods").
+		Name(p.PodName).
+		Namespace(p.Namespace).
+		SubResource("exec").
+		VersionedParams(&coreV1.PodExecOptions{
+			Command:   p.Command,
+			Container: p.ContainerName,
+			Stdin:     p.Stdin != nil,
+			Stdout:    true,
+			Stderr:    true,
+			TTY:       false,
+		}, scheme.ParameterCodec)
+	exec, err := remotecommand.NewSPDYExecutor(p.RESTConfig, "POST", req.URL())
+	if err != nil {
+		return err
+	}
+
+	if actionType == Upload {
+		err = p.stream(exec)
+	}
+	if actionType == Download {
+		go func() {
+			p.stream(exec)
+		}()
+	}
+	return err
+}
+
+func (p *PodCp) stream(exec remotecommand.Executor) error {
+	return exec.Stream(remotecommand.StreamOptions{
+		Stdin:  p.Stdin,
+		Stdout: p.Stdout,
+		Stderr: p.Stderr,
+		Tty:    p.Tty,
+	})
+}
 
 func makeTar(srcPath, destPath string, writer io.Writer) error {
 	tarWriter := tar.NewWriter(writer)

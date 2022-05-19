@@ -107,7 +107,8 @@ const message = {
       create_success: "Created successfully",
       update_success: "Modified successfully",
       create_failed: "Created failed",
-      sync_success: "Sync successfully"
+      sync_success: "Sync successfully",
+      upload_success: "Upload successfully",
     },
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",
@@ -254,6 +255,11 @@ const message = {
       del_file: "Delete File",
       file_content: "Content",
       edit_file: "Edit File",
+      rename: "Rename",
+      upload: "Upload",
+      upload_file: "Upload File",
+      upload_folder: "Upload Folder",
+      choose_file: "File",
     },
     namespace: {
       namespace: "Namespace",
