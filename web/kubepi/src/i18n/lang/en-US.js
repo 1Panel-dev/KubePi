@@ -84,7 +84,7 @@ const message = {
             required: "required",
             email: "please input a valid email",
             number_limit: "Please enter the correct number",
-            password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (optional)",
+            password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (~!@_#$%^&*)",
             name_not_compliant: "The name does not conform to the naming convention!",
         },
         msg: {

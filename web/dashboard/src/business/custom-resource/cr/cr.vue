@@ -66,7 +66,6 @@ export default {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            console.log(this.cluster, this.version, this.group)
             this.$router.push({
               name: "CustomResourceEdit",
               params: {
@@ -94,7 +93,6 @@ export default {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
-            console.log(this.cluster, this.version, this.group)
             downloadYaml(row.metadata.name + ".yml", getResource(this.cluster, this.version, this.group, this.names, row.metadata.namespace, row.metadata.name))
           }
         },
@@ -146,8 +144,6 @@ export default {
         }).then(() => {
         this.ps = []
         if (row) {
-          console.log(this.version)
-          console.log(this.group)
           this.ps.push(deleteResource(this.cluster, this.version, this.group, this.names, row.metadata.namespace.row.metadata.name))
         } else {
           if (this.selects.length > 0) {

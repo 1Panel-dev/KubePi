@@ -294,6 +294,7 @@ const message = {
       container_name: "容器名称",
       container_image: "容器镜像",
       pull_policy: "拉取策略",
+      repo_help: "用镜像仓库将在当前 namespace 下生成包含镜像仓库连接信息的 secret，勾选将更新该信息",
       pull_secrets: "拉取密钥",
       list_image: "镜像仓库",
       repo_image: "镜像",

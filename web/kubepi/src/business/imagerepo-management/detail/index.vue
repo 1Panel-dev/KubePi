@@ -11,11 +11,7 @@
         </template>
       </el-table-column>
     </complex-table>
-    <div style="float: right">
-      <el-button icon="el-icon-arrow-left" @click="prePage" :disabled="searchRequest.page<=1 || repoObj.type === 'Nexus'"></el-button>
-      <span>{{searchRequest.page}}</span>
-      <el-button icon="el-icon-arrow-right" @click="nextPage" :disabled="searchRequest.continueToken==='' "></el-button>
-    </div>
+    <k8s-page style="float: right" @pageChange="pageChange" :currentPage="page.currentPage" :nextToken="page.nextToken" />
   </layout-content>
 </template>
 
@@ -23,10 +19,11 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {getRepo, listImagesByRepo} from "@/api/imagerepos"
+import K8sPage from "@/components/k8s-page"
 
 export default {
   name: "ImageRepoDetail",
-  components: { ComplexTable, LayoutContent },
+  components: { ComplexTable, LayoutContent, K8sPage },
   props: {
     repo: String,
   },
@@ -36,31 +33,24 @@ export default {
       loading: false,
       repoObj: {},
       tip: "",
-      searchRequest: {
-        page:1,
-        limit:10,
-        search: "",
-        continueToken: ""
-      }
+      page: {
+        continueToken: "",
+        currentPage: 1,
+        nextToken: "",
+      },
     }
   },
   methods: {
-    nextPage() {
-      this.searchRequest.page ++
+    pageChange(continueToken) {
+      this.page.continueToken = continueToken.token
+      this.page.currentPage = continueToken.page
       this.search()
     },
-    prePage() {
-      this.searchRequest.page --
-      this.search()
-    },
-
     search () {
       this.loading = true
-      console.log(this.searchRequest)
-      listImagesByRepo(this.repo,this.searchRequest).then(res => {
+      listImagesByRepo(this.repo,this.page).then(res => {
         this.images = res.data.items
-        this.searchRequest.continueToken = res.data.continueToken
-        console.log(this.searchRequest)
+        this.page.nextToken = res.data.continueToken || ""
       }).finally(() => {
         this.loading = false
       })

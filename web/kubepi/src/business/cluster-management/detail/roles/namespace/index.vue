@@ -36,7 +36,7 @@
         :title="$t(formTitle)+$t('business.cluster.role')"
         :visible.sync="clusterRoleFormDialogOpened"
         width="70%"
-        center z-index="10">
+        center  :close-on-click-modal="false" z-index="10">
 
       <el-form :model="clusterRoleForm" label-position="left" label-width="144px">
         <el-form-item :label="$t('commons.table.name')">
@@ -87,7 +87,7 @@
                 </el-select>
               </td>
               <td>
-                <el-button icon="el-icon-delete" size="mini" @click="onRuleDelete(item)" circle></el-button>
+                <el-button icon="el-icon-delete" size="mini" @click="onRuleDelete(index)" circle></el-button>
               </td>
             </tr>
             </tbody>

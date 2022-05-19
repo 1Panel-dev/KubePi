@@ -36,6 +36,9 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row v-if="repo.name !== ''" :gutter="20" style="margin-left: 2px">
+        <el-checkbox v-model="checked">{{$t('business.workload.repo_help')}}</el-checkbox>
+      </el-row>
     </el-form>
   </div>
 </template>
@@ -103,6 +106,7 @@ export default {
         image: "",
         repo: {}
       },
+      checked: false,
       rules: {
         name: [Rule.CommonNameRule],
       },
@@ -145,6 +149,7 @@ export default {
         secrets = "kubepi-repo-init-" + parentFrom.name + "/" + this.repo.name
       }
       metadata.annotations[secrets] = this.form.image
+      metadata.annotations["operation"] = this.checked ? "update" : "check"
     },
     changeRepo (repo) {
       if (repo === "") {

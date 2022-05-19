@@ -12,7 +12,7 @@ const EmailRule = {
     trigger: ['blur']
 }
 
-const PasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@#$%^&*]{8,30}$/
+const PasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@_#$%^&*]{8,30}$/
 
 const PasswordRule = {
     required: true,

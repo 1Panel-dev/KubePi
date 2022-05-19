@@ -97,7 +97,6 @@ export default {
       return !row.builtIn
     },
     search(conditions) {
-      console.log(conditions)
       this.loading = true
       const {currentPage, pageSize} = this.paginationConfig
       searchRoles(currentPage, pageSize, conditions).then(data => {

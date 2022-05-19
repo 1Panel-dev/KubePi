@@ -111,9 +111,6 @@ export default {
     this.defaultBackend = this.defaultBackendObj ? this.defaultBackendObj : this.getDefaultBackend()
     this.$emit("update:defaultBackendObj", this.defaultBackend)
     this.getServices()
-    console.log(this.servicePath)
-    console.log(this.newVersion)
-    console.log(this.portPath)
   }
 }
 </script>

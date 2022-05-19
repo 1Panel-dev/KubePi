@@ -29,7 +29,6 @@ export default {
   },
   computed: {
     language() {
-      console.log(this.$store.getters.language)
       return this.$store.getters.language
     }
   },
