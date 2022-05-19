@@ -1,6 +1,7 @@
 package ldap
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/go-ldap/ldap"
@@ -12,26 +13,35 @@ type Ldap struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Conn     *ldap.Conn
+	TLS      bool `json:"tls"`
 }
 
-func NewLdapClient(address, port, username, password string) *Ldap {
+func NewLdapClient(address, port, username, password string, tls bool) *Ldap {
 	return &Ldap{
 		Username: username,
 		Address:  address,
 		Password: password,
 		Port:     port,
+		TLS:      tls,
 	}
 }
 
 func (l *Ldap) Connect() error {
-	conn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%s", l.Address, l.Port))
+	var err error
+	if l.TLS {
+		l.Conn, err = ldap.DialTLS("tcp", fmt.Sprintf("%s:%s", l.Address, l.Port), &tls.Config{
+			InsecureSkipVerify: true,
+		})
+	} else {
+		l.Conn, err = ldap.Dial("tcp", fmt.Sprintf("%s:%s", l.Address, l.Port))
+	}
+
 	if err != nil {
 		return err
 	}
-	if err := conn.Bind(l.Username, l.Password); err != nil {
+	if err := l.Conn.Bind(l.Username, l.Password); err != nil {
 		return err
 	}
-	l.Conn = conn
 	return nil
 }
 

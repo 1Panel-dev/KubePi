@@ -51,7 +51,7 @@ func (l *service) Create(ldap *v1Ldap.Ldap, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	err = lc.Connect()
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (l *service) Update(id string, ldap *v1Ldap.Ldap, options common.DBOptions)
 	if err != nil {
 		return err
 	}
-	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func (l *service) Login(user v1User.User, password string, options common.DBOpti
 			userFilter = "(" + v + "=" + user.Name + ")"
 		}
 	}
-	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 	if err != nil {
 		return err
 	}
-	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password)
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
 		return err
 	}
