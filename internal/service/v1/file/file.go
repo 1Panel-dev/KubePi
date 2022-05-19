@@ -84,7 +84,6 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 		return "", err
 	}
 	fileP = filepath.Join(fileP, fileName+".tar")
-	//requestPath := "." + request.Path
 	err = exec.CopyFromPod(request.Path, fileP)
 	if err != nil {
 		return "", err

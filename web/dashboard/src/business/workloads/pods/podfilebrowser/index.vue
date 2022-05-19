@@ -22,12 +22,11 @@
       </span>
     </div>
     <complex-table :selects.="selects" :data="data" v-loading="loading">
-      <!--      <el-table-column type="selection" fix></el-table-column>-->
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
           <span v-if="row.isDir" class="span-link" @click="toFolder(row.name)"><i
                   class="el-icon-folder"></i> {{ row.name }} </span>
-          <el-link v-else type="info" @click="openFile(row.name)">{{ row.name }}</el-link>
+          <el-link v-else type="info" @click="catFile(row)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.pod.size')" prop="size">
@@ -159,7 +158,7 @@ export default {
         //   downloadYaml(row.metadata.name + ".yml", getWorkLoadByName(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
         //   break
         case "edit":
-          this.openFile(row.name)
+          this.catFile(row)
           break
         case "delete":
           this.folderDelete(row.name)
@@ -276,17 +275,21 @@ export default {
         }
       })
     },
-    openFile(name) {
-      this.loading = true
-      this.fileRequest.path = this.getPath(name)
-      openFile(this.fileRequest).then((res) => {
-        this.openAddFile = true
-        this.editFile = true
-        this.fileForm.name = name
-        this.fileForm.content = res.data
-      }).finally(() => {
-        this.loading = false
-      })
+    catFile(row) {
+      if (row.size < 10240) {
+        this.loading = true
+        this.fileRequest.path = this.getPath(row.name)
+        openFile(this.fileRequest).then((res) => {
+          this.openAddFile = true
+          this.editFile = true
+          this.fileForm.name = row.name
+          this.fileForm.content = res.data
+        }).finally(() => {
+          this.loading = false
+        })
+      }else  {
+        this.download(row.name)
+      }
     },
     rename() {
       this.fileRequest.path = this.getPath(this.renameForm.name)
@@ -302,8 +305,6 @@ export default {
     },
     download(name) {
       this.fileRequest.path = this.getPath(name)
-      // this.loading = true
-
       let url = ""
       const keys = Object.keys(this.fileRequest)
       for(let i=0;i<keys.length;i++) {
@@ -317,16 +318,6 @@ export default {
         }
       }
       window.open("/kubepi/api/v1/pod/files/download"+url,"_blank")
-
-      // downloadFile(this.fileRequest).finally(() => {
-      //   this.loading = false
-      // }).finally(() => {
-      //   this.loading = false
-      // })
-
-
-      // window.open("/kubepi/api/v1/pod/files/down","_blank")
-      // getFile()
     }
   },
   created () {

@@ -38,13 +38,14 @@ func (p *PodExec) CopyFromPod(filePath string, destPath string) error {
 	p.Stdin = os.Stdin
 	p.Stdout = outStream
 	p.Stderr = os.Stderr
+	p.NoPreserve = true
 
 	err := p.Exec(Download)
 	if err != nil {
 		return err
 	}
 
-	file, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	file, err := os.OpenFile(destPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}
