@@ -1,6 +1,7 @@
 package repos
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -35,8 +36,10 @@ func (h *HttpClient) NewRequest(method, endpoint string) (request *http.Request,
 }
 
 func (h *HttpClient) Do(request *http.Request) (body []byte, resp *http.Response, err error) {
-
-	client := &http.Client{Timeout: 30 * time.Second}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Timeout: 30 * time.Second, Transport: tr}
 	resp, err = client.Do(request)
 	if err != nil {
 		return nil, nil, err
