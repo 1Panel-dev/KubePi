@@ -12,10 +12,9 @@
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_tls')" prop="tls" >
             <el-checkbox v-model="form.tls">{{$t('commons.bool.true')}}</el-checkbox>
-            <!--            <el-input v-model="form.port" :placeholder="'389'" type="number"></el-input>-->
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username">
-            <el-input v-model="form.username" :placeholder="'cn=Manager,dc=ko,dc=com'"></el-input>
+            <el-input v-model="form.username" :placeholder="'cn=Manager,dc=ko,dc=com  or Manager@ko.com'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password">
             <el-input type="password" v-model="form.password"></el-input>
