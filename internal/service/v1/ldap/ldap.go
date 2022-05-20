@@ -146,6 +146,8 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 		return err
 	}
 	go func() {
+		server.Logger().Info("start sync ldap user")
+		insertCount := 0
 		attributes, err := ldap.GetAttributes()
 		if err != nil {
 			server.Logger().Errorf("can not get ldap map attributes")
@@ -216,8 +218,11 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 					continue
 				}
 				_ = tx.Commit()
+				insertCount++
 			}
 		}
+
+		server.Logger().Infof("sync ldap user %d , insert user %d", len(entries), insertCount)
 	}()
 
 	return nil
