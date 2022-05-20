@@ -14,9 +14,7 @@ import (
 	"os"
 )
 
-//const KotoolsPath = "/kubepi/kotools"
-
-const KotoolsPath = "/Users/zk.wang/go/src/github.com/KubeOperator/kotools/utils/binary"
+const KotoolsPath = "/kotools"
 
 type PodBase struct {
 	Namespace  string

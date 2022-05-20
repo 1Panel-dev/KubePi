@@ -51,6 +51,13 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* && \
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
+RUN wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_amd64 \
+    && mv ./kotools_linux_amd64 /kotools
+RUN https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_arm64 \
+    && mv ./kotools_linux_arm64 /kotools
+RUN https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_windows_amd64.exe \
+    && mv ./kotools_windows_amd64.exe /kotools
+
 ENV TZ='Asia/Shanghai';
 
 COPY vimrc.local /etc/vim
