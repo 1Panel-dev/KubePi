@@ -261,6 +261,7 @@ const message = {
       upload_folder: "Upload Folder",
       choose_file: "File",
       download: "Download",
+      upload_tip: "Upload at most one file",
     },
     namespace: {
       namespace: "Namespace",

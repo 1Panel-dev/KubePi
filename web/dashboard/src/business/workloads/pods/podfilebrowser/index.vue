@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="name" :back-to="{name: 'Pods'}">
     <el-dropdown>
-      <el-button size="mini" icon="el-icon-plus">{{ $t("commons.button.create") }}<i
+      <el-button size="mini" icon="el-icon-plus" type="primary">{{ $t("commons.button.create") }}<i
               class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
@@ -12,8 +12,9 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    &nbsp;&nbsp;&nbsp;
     <el-dropdown>
-      <el-button size="mini" icon="el-icon-upload2">{{ $t("business.pod.upload") }}<i
+      <el-button size="mini" icon="el-icon-upload2"  type="primary">{{ $t("business.pod.upload") }}<i
               class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
@@ -124,8 +125,9 @@
             :visible.sync="openUpload"
             :close-on-click-modal="false"
             width="30%">
-        <el-upload :on-change="onUploadChange" action="" :auto-upload="false" class="upload-demo">
+        <el-upload :on-change="onUploadChange" action="" :auto-upload="false" class="upload-demo" :multiple="false" :limit="1">
           <el-button>{{$t('business.pod.choose_file')}}</el-button>
+          <div slot="tip" class="el-upload__tip">{{$t('business.pod.upload_tip')}}</div>
         </el-upload>
       <span slot="footer" class="dialog-footer">
         <el-button @click="openUpload=false">{{ $t("commons.button.cancel") }}</el-button>
@@ -372,6 +374,7 @@ export default {
       })
     },
     onUploadChange(file) {
+      this.file = {}
       this.file = file
     },
   },

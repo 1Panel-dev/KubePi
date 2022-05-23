@@ -6,6 +6,7 @@ import (
 	"io"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -24,6 +25,8 @@ func (p *PodExec) CopyToPod(srcPath, destPath string) error {
 	} else {
 		p.Command = []string{"tar", "-xmf", "-"}
 	}
+	dest := path.Dir(destPath)
+	p.Command = append(p.Command, "-C", dest)
 	var stderr bytes.Buffer
 	p.Stderr = &stderr
 	err := p.Exec(Exec)
