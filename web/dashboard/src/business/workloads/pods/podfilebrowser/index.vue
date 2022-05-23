@@ -211,7 +211,7 @@ export default {
       this.listFiles(folderDir, folders)
     },
     toFolder (folder) {
-      const folderDir = this.folder + folder + "/"
+      const folderDir = this.getPath(folder)
       const newFolders = this.folders.concat([folder])
       this.listFiles(folderDir, newFolders)
     },
