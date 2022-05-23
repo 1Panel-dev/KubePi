@@ -51,7 +51,8 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/* && \
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
-RUN mkdir /kotools
+
+RUN mkdir /kotools \
     && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_amd64 \
     && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_arm64 \
     && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_windows_amd64.exe \
