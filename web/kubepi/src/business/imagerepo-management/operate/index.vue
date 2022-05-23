@@ -92,7 +92,7 @@ export default {
         auth: true,
         credential: {},
         allowAnonymous: false,
-        version: "v1"
+        version: "v2"
       },
       rules: {
         name: [
