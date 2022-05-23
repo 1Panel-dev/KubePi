@@ -76,7 +76,7 @@
             :close-on-click-modal="false"
             width="30%">
       <el-form label-position="top" :model="folderForm" ref="form" :rules="rules">
-        <el-form-item :label="$t('commons.table.name')" required prop="name">
+        <el-form-item :label="$t('commons.table.name')" prop="name">
           <el-input clearable v-model="folderForm.name"></el-input>
         </el-form-item>
       </el-form>
@@ -91,7 +91,7 @@
             :close-on-click-modal="false"
             width="30%">
       <el-form label-position="top" :model="renameForm" ref="form" :rules="rules">
-        <el-form-item :label="$t('commons.table.name')" required prop="name">
+        <el-form-item :label="$t('commons.table.name')"  prop="name">
           <el-input clearable v-model="renameForm.name"></el-input>
         </el-form-item>
       </el-form>
