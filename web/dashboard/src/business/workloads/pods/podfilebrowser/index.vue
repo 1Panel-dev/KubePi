@@ -38,7 +38,7 @@
         <template v-slot:default="{row}">
           <span v-if="row.isDir" class="span-link" @click="toFolder(row.name)"><i
                   class="el-icon-folder"></i> {{ row.name }} </span>
-          <el-link v-else type="info" @click="catFile(row)">{{ row.name }}</el-link>
+          <el-link v-else @click="catFile(row)"><i class="el-icon-tickets"></i> {{ row.name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.pod.size')" prop="size">
