@@ -102,7 +102,7 @@
       </span>
     </el-dialog>
     <el-dialog
-            :title="openAddFile?$t('business.pod.create_file'):$t('business.pod.edit_file')"
+            :title="editFile?$t('business.pod.edit_file'):$t('business.pod.create_file')"
             :visible.sync="openAddFile"
             :before-close="handleFileClose"
             :close-on-click-modal="false"
