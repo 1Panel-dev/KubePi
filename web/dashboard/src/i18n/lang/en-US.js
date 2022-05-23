@@ -260,6 +260,7 @@ const message = {
       upload_file: "Upload File",
       upload_folder: "Upload Folder",
       choose_file: "File",
+      download: "Download",
     },
     namespace: {
       namespace: "Namespace",

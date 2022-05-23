@@ -261,6 +261,7 @@ const message = {
       upload_file: "上传文件",
       upload_folder: "上传文件夹",
       choose_file: "选择文件",
+      download: "下载",
     },
     namespace: {
       namespace: "命名空间",

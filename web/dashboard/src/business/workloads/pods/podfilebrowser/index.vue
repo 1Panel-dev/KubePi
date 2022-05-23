@@ -24,13 +24,13 @@
 <!--        </el-dropdown-item>-->
       </el-dropdown-menu>
     </el-dropdown>
-    <div style="margin-top: 10px">
-      <i class="el-icon-folder-opened" @click="openRoot"></i>
+    <div style="margin-top: 20px;height:20px" >
+      <el-link><i class="el-icon-folder-opened" @click="openRoot"></i></el-link>
       <span v-for="(v,i) in folders" :key="i">
         &nbsp;&nbsp;&nbsp;&nbsp;
         <span>/</span>
          &nbsp;&nbsp;&nbsp;&nbsp;
-        <el-link class="primary" :disabled="i === (folders.length -1 )" @click="linkTo(v)"> {{ v }}</el-link>
+        <el-link class="primary" :disabled="i === (folders.length -1 )" @click="linkTo(v)"><span style="font-size: 17px"> {{ v }}</span> </el-link>
       </span>
     </div>
     <complex-table :selects.="selects" :data="data" v-loading="loading">
@@ -52,8 +52,10 @@
       </el-table-column>
       <el-table-column width="90px" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
-          <el-button circle size="mini" icon="el-icon-download" @click="download(row.name)">
-          </el-button>
+          <el-tooltip placement="bottom" :content="$t('business.pod.download')">
+            <el-button circle size="mini" icon="el-icon-download" @click="download(row.name)">
+            </el-button>
+          </el-tooltip>
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
             <el-button circle icon="el-icon-more" size="mini"/>
             <el-dropdown-menu slot="dropdown">
@@ -71,6 +73,7 @@
     <el-dialog
             :title="$t('business.pod.create_folder')"
             :visible.sync="openAddFolder"
+            :close-on-click-modal="false"
             width="30%">
       <el-form label-position="top" :model="folderForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" required prop="name">
@@ -85,6 +88,7 @@
     <el-dialog
             :title="$t('business.pod.rename')+ '   ' +this.renameForm.oldName"
             :visible.sync="openRenamePage"
+            :close-on-click-modal="false"
             width="30%">
       <el-form label-position="top" :model="renameForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" required prop="name">
@@ -100,6 +104,7 @@
             :title="openAddFile?$t('business.pod.create_file'):$t('business.pod.edit_file')"
             :visible.sync="openAddFile"
             :before-close="handleFileClose"
+            :close-on-click-modal="false"
             width="60%">
       <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" prop="name">
@@ -117,6 +122,7 @@
     <el-dialog
             :title="$t('business.pod.upload')"
             :visible.sync="openUpload"
+            :close-on-click-modal="false"
             width="30%">
         <el-upload :on-change="onUploadChange" action="" :auto-upload="false" class="upload-demo">
           <el-button>{{$t('business.pod.choose_file')}}</el-button>
