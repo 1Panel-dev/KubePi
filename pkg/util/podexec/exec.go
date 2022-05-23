@@ -73,24 +73,17 @@ func (p *PodExec) Exec(actionType ActionType) error {
 	} else {
 		err = p.stream(exec)
 	}
-	return nil
-
-	//var sizeQueue remotecommand.TerminalSizeQueue
-	//return exec.Stream(remotecommand.StreamOptions{
-	//	Stdin:             p.Stdin,
-	//	Stdout:            p.Stdout,
-	//	Stderr:            p.Stderr,
-	//	Tty:               p.Tty,
-	//	TerminalSizeQueue: sizeQueue,
-	//})
+	return err
 }
 
 func (p *PodExec) stream(exec remotecommand.Executor) error {
+	var sizeQueue remotecommand.TerminalSizeQueue
 	return exec.Stream(remotecommand.StreamOptions{
-		Stdin:  p.Stdin,
-		Stdout: p.Stdout,
-		Stderr: p.Stderr,
-		Tty:    p.Tty,
+		Stdin:             p.Stdin,
+		Stdout:            p.Stdout,
+		Stderr:            p.Stderr,
+		Tty:               p.Tty,
+		TerminalSizeQueue: sizeQueue,
 	})
 }
 
