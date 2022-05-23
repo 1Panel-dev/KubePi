@@ -489,7 +489,7 @@ var initClusterRoles = []rbacV1.ClusterRole{
 		Rules: []rbacV1.PolicyRule{
 			{
 				APIGroups: []string{""},
-				Resources: []string{"pods", "containers"},
+				Resources: []string{"pods", "containers", "pods/log"},
 				Verbs:     []string{"list", "get", "watch"},
 			},
 			{
