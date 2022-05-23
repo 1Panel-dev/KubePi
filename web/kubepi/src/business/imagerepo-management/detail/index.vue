@@ -38,19 +38,26 @@ export default {
         currentPage: 1,
         nextToken: "",
       },
+      searchRequest: {
+        page:1,
+        limit:10,
+        search: "",
+        continueToken: ""
+      }
     }
   },
   methods: {
     pageChange(continueToken) {
-      this.page.continueToken = continueToken.token
-      this.page.currentPage = continueToken.page
+      this.searchRequest.continueToken = continueToken.token
+      this.searchRequest.page = continueToken.page
       this.search()
     },
+
     search () {
       this.loading = true
-      listImagesByRepo(this.repo,this.page).then(res => {
+      listImagesByRepo(this.repo,this.searchRequest).then(res => {
         this.images = res.data.items
-        this.page.nextToken = res.data.continueToken || ""
+        this.page.nextToken = res.data.continueToken
       }).finally(() => {
         this.loading = false
       })
