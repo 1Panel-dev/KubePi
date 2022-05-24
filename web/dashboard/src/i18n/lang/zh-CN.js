@@ -116,6 +116,7 @@ const message = {
       back_form: "返回表单编辑不会保留对 YAML 做出的所有更改",
       open_yaml: "，仍要打开 YAML 编辑？",
       rollback: "此操作将回滚当前 deployment 到改版本，是否继续?",
+      change_to_download: "该文件超过 10M，直接打开将导致浏览器卡顿，是否下载？",
     },
     login: {
       username: "用户名",

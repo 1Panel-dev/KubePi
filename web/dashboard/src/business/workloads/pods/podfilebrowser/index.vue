@@ -327,7 +327,15 @@ export default {
           this.loading = false
         })
       }else  {
-        this.download(row.name)
+        this.$confirm(
+        this.$t("commons.confirm_message.change_to_download"),
+        this.$t("commons.message_box.prompt"), {
+          confirmButtonText: this.$t("commons.button.confirm"),
+          cancelButtonText: this.$t("commons.button.cancel"),
+          type: "info",
+        }).then(() => {
+          this.download(row.name)
+        })
       }
     },
     rename() {
