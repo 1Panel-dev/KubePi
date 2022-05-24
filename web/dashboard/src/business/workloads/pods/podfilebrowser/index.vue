@@ -148,7 +148,6 @@ import {
   renameFile, uploadFile
 } from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
-import Rule from "@/utils/rules"
 
 export default {
   name: "PodFileBrowser",
@@ -177,7 +176,7 @@ export default {
         content: ""
       },
       rules: {
-        name: [Rule.RequiredRule, Rule.CommonNameRule],
+        // name: [Rule.RequiredRule, Rule.CommonNameRule],
       },
       uploadAction: "",
       file: {}
