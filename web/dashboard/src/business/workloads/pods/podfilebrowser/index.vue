@@ -251,7 +251,6 @@ export default {
     handleFileClose() {
       this.openAddFile = false
       this.editFile = false
-      this.fileForm = {}
       this.$refs["fileForm"].resetFields()
     },
     getPath(name) {
@@ -326,7 +325,7 @@ export default {
         }).finally(() => {
           this.loading = false
         })
-      }else  {
+      } else  {
         this.$confirm(
         this.$t("commons.confirm_message.change_to_download"),
         this.$t("commons.message_box.prompt"), {
