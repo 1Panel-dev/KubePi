@@ -148,6 +148,8 @@ import {
   renameFile, uploadFile
 } from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
+import Rule from "@/utils/rules"
+
 
 export default {
   name: "PodFileBrowser",
@@ -176,7 +178,7 @@ export default {
         content: ""
       },
       rules: {
-        // name: [Rule.RequiredRule, Rule.CommonNameRule],
+        name: [Rule.RequiredRule],
       },
       uploadAction: "",
       file: {}
@@ -230,6 +232,7 @@ export default {
     openFolderCreate () {
       this.openAddFolder = true
       this.folderForm = {}
+      this.$refs["folderForm"].resetFields()
     },
     openFileCreate() {
       this.openAddFile = true
@@ -240,6 +243,7 @@ export default {
       this.renameForm = {
         oldName: name
       }
+      this.$refs["renameForm"].resetFields()
     },
     openUploadPage() {
       this.openUpload = true
@@ -248,6 +252,7 @@ export default {
       this.openAddFile = false
       this.editFile = false
       this.fileForm = {}
+      this.$refs["fileForm"].resetFields()
     },
     getPath(name) {
       if (this.folder === "/") {
