@@ -725,7 +725,7 @@ export default {
     },
     onEdit(data) {
       let ps = []
-      if (this.podMetadata.annotations["operation"] === "update") {
+      if (this.podMetadata.annotations && this.podMetadata.annotations["operation"] === "update") {
         ps = this.handleSecret(ps)
       }
       Promise.all(ps).then(() => {

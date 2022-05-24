@@ -5,6 +5,7 @@ import "github.com/KubeOperator/kubepi/pkg/util/imagerepo/repos"
 type RepoClient interface {
 	ListRepos(request repos.ProjectRequest) ([]string, error)
 	ListImages(request repos.RepoRequest) (response repos.RepoResponse, err error)
+	ListImagesWithoutPage(repository string) (images []string, err error)
 }
 
 func NewClient(config repos.Config) RepoClient {
