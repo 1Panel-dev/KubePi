@@ -262,6 +262,7 @@ const message = {
       choose_file: "File",
       download: "Download",
       upload_tip: "Upload at most one file",
+      name_helper: "Support '/' to create multi-level directories",
     },
     namespace: {
       namespace: "Namespace",

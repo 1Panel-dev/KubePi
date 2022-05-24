@@ -78,7 +78,7 @@
             width="30%">
       <el-form label-position="top" :model="folderForm" ref="folderForm" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" prop="name">
-          <el-input clearable v-model="folderForm.name"></el-input>
+          <el-input clearable v-model="folderForm.name" :placeholder="$t('business.pod.name_helper')"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -109,7 +109,7 @@
             width="60%">
       <el-form label-position="top" :model="fileForm" ref="fileForm" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" prop="name">
-          <el-input clearable v-model="fileForm.name" :disabled="editFile"></el-input>
+          <el-input clearable v-model="fileForm.name" :disabled="editFile" :placeholder="$t('business.pod.name_helper')"></el-input>
         </el-form-item>
         <el-form-item :label="$t('business.pod.file_content')" prop="content">
           <el-input type="textarea" :autosize="{ minRows: 15, maxRows: 20}"  v-model="fileForm.content"></el-input>
