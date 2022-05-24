@@ -76,7 +76,7 @@
             :visible.sync="openAddFolder"
             :close-on-click-modal="false"
             width="30%">
-      <el-form label-position="top" :model="folderForm" ref="form" :rules="rules">
+      <el-form label-position="top" :model="folderForm" ref="folderForm" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" prop="name">
           <el-input clearable v-model="folderForm.name"></el-input>
         </el-form-item>
@@ -91,7 +91,7 @@
             :visible.sync="openRenamePage"
             :close-on-click-modal="false"
             width="30%">
-      <el-form label-position="top" :model="renameForm" ref="form" :rules="rules">
+      <el-form label-position="top" :model="renameForm" ref="renameForm" :rules="rules">
         <el-form-item :label="$t('commons.table.name')"  prop="name">
           <el-input clearable v-model="renameForm.name"></el-input>
         </el-form-item>
@@ -107,7 +107,7 @@
             :before-close="handleFileClose"
             :close-on-click-modal="false"
             width="60%">
-      <el-form label-position="top" :model="fileForm" ref="form" :rules="rules">
+      <el-form label-position="top" :model="fileForm" ref="fileForm" :rules="rules">
         <el-form-item :label="$t('commons.table.name')" prop="name">
           <el-input clearable v-model="fileForm.name" :disabled="editFile"></el-input>
         </el-form-item>
@@ -257,7 +257,7 @@ export default {
       }
     },
     folderCreate () {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["folderForm"].validate((valid) => {
         if (valid) {
           this.fileRequest.path = this.getPath(this.folderForm.name)
           createFolder(this.fileRequest).then(() => {
@@ -290,7 +290,7 @@ export default {
       })
     },
     fileCreate () {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["fileForm"].validate((valid) => {
         if (valid) {
           this.fileRequest.path = this.getPath(this.fileForm.name)
           this.fileRequest.content = this.fileForm.content
@@ -326,15 +326,19 @@ export default {
       }
     },
     rename() {
-      this.fileRequest.path = this.getPath(this.renameForm.name)
-      this.fileRequest.oldPath = this.getPath(this.renameForm.oldName)
-      renameFile(this.fileRequest).then(() => {
-        this.openRenamePage = false
-        this.listFiles(this.folder, this.folders)
-        this.$message({
-          type: "success",
-          message: this.$t("commons.msg.update_success"),
-        })
+      this.$refs["renameForm"].validate((valid) => {
+        if (valid) {
+          this.fileRequest.path = this.getPath(this.renameForm.name)
+          this.fileRequest.oldPath = this.getPath(this.renameForm.oldName)
+          renameFile(this.fileRequest).then(() => {
+            this.openRenamePage = false
+            this.listFiles(this.folder, this.folders)
+            this.$message({
+              type: "success",
+              message: this.$t("commons.msg.update_success"),
+            })
+          })
+        }
       })
     },
     download(name) {
