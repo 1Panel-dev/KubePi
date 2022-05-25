@@ -88,7 +88,7 @@ func (m *Handler) MfaBind() iris.Handler {
 		}
 		success := mfaUtil.ValidCode(mfa.Code, mfa.Secret)
 		if !success {
-			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "code is not valid")
 			return
 		} else {

@@ -191,9 +191,9 @@ export default {
       this.mfaCredential.secret = this.otp.secret
       this.mfaCredential.userName = this.form.username
       bind(this.mfaCredential).then(() => {
-
-      }).finally(() => {
         this.$router.push({ path: "/" })
+      }).finally(() => {
+        // this.$router.push({ path: "/" })
       })
     },
     mfaLogin() {
