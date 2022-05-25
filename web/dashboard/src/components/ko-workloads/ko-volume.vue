@@ -251,6 +251,8 @@ export default {
             }
             item.configMap = itemClild
             item.configMap.name = volume.resource || undefined
+            item.configMap.items = item.items
+            delete item.items
             break
           case "Secret":
             if (volume.items.length !== 0) {
@@ -258,6 +260,8 @@ export default {
             }
             item.secret = itemClild
             item.secret.secretName = volume.resource || undefined
+            item.secret.items = item.items
+            delete item.items
             break
           case "PVC":
             item.persistentVolumeClaim = itemClild

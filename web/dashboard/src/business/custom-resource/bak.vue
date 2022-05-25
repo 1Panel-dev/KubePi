@@ -158,8 +158,7 @@ export default {
   created () {
     this.cluster = this.$route.query.cluster
     this.search()
-    listApis(this.cluster).then(res => {
-      console.log(res)
+    listApis(this.cluster).then(() => {
     })
   }
 }

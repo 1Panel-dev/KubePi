@@ -107,9 +107,6 @@ export default {
     readFile (file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onerror = e => {
-        console.log("error" + e)
-      }
       reader.onload = () => {
         this.$refs.editor.codemirror.setValue(reader.result)
       }

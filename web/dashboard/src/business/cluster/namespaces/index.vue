@@ -148,8 +148,6 @@ export default {
       listNamespace(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then((res) => {
         this.data = res.items
         this.paginationConfig.total = res.total
-      }).catch(error => {
-        console.log(error)
       }).finally(() => {
         this.loading = false
       })

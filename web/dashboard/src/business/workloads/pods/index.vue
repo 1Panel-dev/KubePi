@@ -295,11 +295,7 @@ export default {
             item.containers = container
           }
           this.paginationConfig.total = res.total
-        })
-        .catch(error => {
-          console.log(error.message)
-        })
-        .finally(() => {
+        }).finally(() => {
           this.loading = false
         })
     },

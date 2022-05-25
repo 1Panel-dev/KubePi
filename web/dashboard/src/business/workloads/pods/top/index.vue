@@ -101,10 +101,9 @@ export default {
           })
           this.loading = false
         })
-        .catch((error) => {
+        .catch(() => {
           this.showText = true
           this.loading = false
-          console.log(error.message)
         })
     },
     sortBy(val) {

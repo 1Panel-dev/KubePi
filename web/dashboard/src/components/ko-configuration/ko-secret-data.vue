@@ -75,9 +75,6 @@ export default {
     readFile (file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onerror = e => {
-        console.log("error" + e)
-      }
       reader.onload = () => {
         const item = {
           index: Math.random(),
