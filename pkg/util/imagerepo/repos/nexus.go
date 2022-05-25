@@ -80,3 +80,30 @@ func (c *nexusClient) ListImages(request RepoRequest) (response RepoResponse, er
 	response.ContinueToken = result.ContinuationToken
 	return
 }
+
+func (c *nexusClient) ListImagesWithoutPage(repository string) (images []string, err error) {
+	continuationToken := ""
+	for {
+		token := ""
+		if continuationToken != "" {
+			token = fmt.Sprintf("&&continuationToken=%s", continuationToken)
+		}
+		body, _, err1 := c.HttpClient.Get(fmt.Sprintf("%s%s", ComponentUrl, repository) + token)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		var result ItemResult
+		if err = json.Unmarshal(body, &result); err != nil {
+			return
+		}
+		for _, r := range result.Items {
+			images = append(images, r.Name+":"+r.Version)
+		}
+		if result.ContinuationToken == "" {
+			break
+		}
+		continuationToken = result.ContinuationToken
+	}
+	return
+}

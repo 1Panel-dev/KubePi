@@ -2,6 +2,8 @@ package imagerepo
 
 import (
 	"errors"
+	"time"
+
 	V1ClusterRepo "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
 	V1ImageRepo "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
@@ -12,7 +14,6 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Service interface {
@@ -66,9 +67,8 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 	if err = query.First(&cRepo); err != nil {
 		return
 	}
-	rp, err1 := s.GetByName(repo, options)
-	if err1 != nil {
-		err = err1
+	rp, err := s.GetByName(repo, options)
+	if err != nil {
 		return
 	}
 	client := repoClient.NewClient(repos.Config{
@@ -80,16 +80,11 @@ func (s *service) ListImages(repo, cluster string, options common.DBOptions) (na
 		},
 		Version: rp.Version,
 	})
-	request := repos.RepoRequest{
-		Repo: rp.RepoName,
-	}
-
-	res, err2 := client.ListImages(request)
-	if err2 != nil {
-		err = err2
+	images, err := client.ListImagesWithoutPage(rp.RepoName)
+	if err != nil {
 		return
 	}
-	for _, image := range res.Items {
+	for _, image := range images {
 		names = append(names, rp.DownloadUrl+"/"+image)
 	}
 	return
@@ -231,7 +226,7 @@ func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options c
 	repo.CreateAt = old.CreateAt
 	repo.UpdateAt = time.Now()
 
-	if old.Auth == false {
+	if !old.Auth {
 		repo.Credential.Password = ""
 		repo.Credential.Username = ""
 		repo.Credential = V1ImageRepo.Credential{}
