@@ -75,6 +75,9 @@ export default {
           click: (row) => {
             this.OptionRollback(row)
           },
+          disabled: (row) => {
+            return !(row.status.readyReplicas === undefined)
+          }
         },
         {
           label: this.$t("business.workload.specific_information"),
