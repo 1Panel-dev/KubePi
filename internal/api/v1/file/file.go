@@ -33,7 +33,6 @@ func (h *Handler) ListFiles() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"./kotools", "ls", req.Path}
 		res, err := h.fileService.ListFiles(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -52,7 +51,7 @@ func (h *Handler) CreateFolder() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"./kotools", "mkdir", req.Path}
+		req.Commands = []string{"mkdir", req.Path}
 		if _, err := h.fileService.ExecCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -69,7 +68,7 @@ func (h *Handler) CreateFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"./kotools", "touch", req.Path}
+		req.Commands = []string{"touch", req.Path}
 		req.Stdin = strings.NewReader(req.Content)
 		if _, err := h.fileService.ExecCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -86,7 +85,7 @@ func (h *Handler) OpenFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"./kotools", "cat", req.Path}
+		req.Commands = []string{"cat", req.Path}
 		res, err := h.fileService.ExecCommand(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -110,7 +109,7 @@ func (h *Handler) ReNameFile() iris.Handler {
 			ctx.Values().Set("message", "file or path is not exist")
 			return
 		}
-		req.Commands = []string{"./kotools", "mv", req.OldPath, req.Path}
+		req.Commands = []string{"mv", req.OldPath, req.Path}
 		_, err := h.fileService.ExecCommand(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -128,7 +127,7 @@ func (h *Handler) RmFolder() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"./kotools", "rm", req.Path}
+		req.Commands = []string{"rm", req.Path}
 		if _, err := h.fileService.ExecCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

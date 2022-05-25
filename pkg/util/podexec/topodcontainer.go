@@ -31,7 +31,14 @@ func (p *PodExec) CopyToPod(srcPath, destPath string) error {
 	p.Stderr = &stderr
 	err := p.Exec(Exec)
 	if err != nil {
-		return fmt.Errorf(err.Error(), stdout.String())
+		result := ""
+		if len(stdout.Bytes()) != 0 {
+			result = stdout.String()
+		}
+		if len(stderr.Bytes()) != 0 {
+			result = stderr.String()
+		}
+		return fmt.Errorf(err.Error(), result)
 	}
 	if len(stderr.Bytes()) != 0 {
 		for _, line := range strings.Split(stderr.String(), "\n") {

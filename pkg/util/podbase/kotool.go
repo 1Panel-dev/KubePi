@@ -10,9 +10,10 @@ import (
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"strings"
 )
 
-const KotoolsPath = "/Users/zk.wang/go/src/github.com/KubeOperator/kotools/utils/binary"
+const KotoolsPath = "/kotools"
 
 type PodBase struct {
 	Namespace  string
@@ -94,12 +95,17 @@ func (p *PodBase) InstallKOTools() error {
 		kfToolsPath += ".exe"
 	}
 	exec := p.NewPodExec()
-	err = exec.CopyToPod(kfToolsPath, "/kotools")
+	userPath, err := p.GetUserPath()
+	if err != nil {
+		return err
+	}
+	remotePath := userPath + "/kotools"
+	err = exec.CopyToPod(kfToolsPath, remotePath)
 	if err != nil {
 		return err
 	}
 	if osType != "windows" {
-		chmodCmd := []string{"chmod", "+x", "/kotools"}
+		chmodCmd := []string{"chmod", "+x", remotePath}
 		exec.Command = chmodCmd
 		var stderr bytes.Buffer
 		exec.Stderr = &stderr
@@ -109,4 +115,38 @@ func (p *PodBase) InstallKOTools() error {
 		}
 	}
 	return nil
+}
+
+func (p *PodBase) GetUserPath() (string, error) {
+	var path string
+	user, err := p.ExecCommand([]string{"whoami"})
+	if err != nil {
+		return path, err
+	}
+	user = strings.Replace(user, "\n", "", 1)
+	passwds, err := p.ExecCommand([]string{"cat", "/etc/passwd"})
+	if err != nil {
+		return path, err
+	}
+	for _, passwd := range strings.Split(passwds, "\n") {
+		if strings.Contains(passwd, user) {
+			strArr := strings.Split(passwd, ":")
+			if len(strArr)-2 >= 0 {
+				path = strArr[len(strArr)-2]
+			}
+		}
+	}
+	return path, nil
+}
+
+func (p *PodBase) ExecCommand(commands []string) (string, error) {
+	exec := p.NewPodExec()
+	var stdout bytes.Buffer
+	exec.Stdout = &stdout
+	exec.Command = commands
+	err := exec.Exec(podexec.Exec)
+	if err != nil {
+		return "", err
+	}
+	return stdout.String(), nil
 }
