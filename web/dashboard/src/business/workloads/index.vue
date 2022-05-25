@@ -666,9 +666,9 @@ export default {
       }
       let operation = this.podMetadata.labels["operation"]
       for (const key in this.podMetadata.labels) {
-        if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
-          let repoName = key.split("/")[1]
-          let secretName = "kubepi-" + key.split("/")[1] + "-secret"
+        if (key.indexOf("kubepi-repo-") !== -1) {
+          let repoName = this.podMetadata.labels[key]
+          let secretName = "kubepi-" + repoName + "-secret"
           let exist = false
           for (const item of this.secret_list_of_ns) {
             if (item.metadata.name === secretName) {
