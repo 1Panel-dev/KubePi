@@ -152,8 +152,8 @@ export default {
       metadata.annotations["operation"] = this.checked ? "update" : "check"
     },
     changeRepo (repo) {
+      this.repo.images = []
       if (repo === "") {
-        this.repo.images = []
         this.repo.repo = {}
         this.repo.name = ""
         return

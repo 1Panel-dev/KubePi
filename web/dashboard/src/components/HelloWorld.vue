@@ -44,8 +44,6 @@
         },
         methods: {},
         created() {
-            console.log(model.V1Pod.attributeTypeMap)
-            console.log(model.V1ObjectMeta.getAttributeTypeMap())
         }
     }
 </script>

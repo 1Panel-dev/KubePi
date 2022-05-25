@@ -20,5 +20,4 @@ export function isJSON(str) {
       return false;
     }
   }
-  console.log('It is not a string!')
 }

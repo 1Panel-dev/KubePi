@@ -117,7 +117,6 @@ export class WebTTY {
                         break;
                     case msgSetReconnect:
                         const autoReconnect = JSON.parse(payload);
-                        console.log("Enabling reconnect: " + autoReconnect + " seconds")
                         this.reconnect = autoReconnect;
                         break;
                 }

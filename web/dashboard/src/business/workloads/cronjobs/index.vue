@@ -174,11 +174,7 @@ export default {
         .then((res) => {
           this.data = res.items
           this.paginationConfig.total = res.total
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
+        }).finally(() => {
           this.loading = false
         })
     },

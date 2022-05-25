@@ -244,7 +244,6 @@ export default {
       }
       for (const rule of this.detailForm.rules) {
         for (let i = 0; i < rule.apiGroups.length; i++) {
-          console.log(rule)
           if (rule.apiGroups[i] === "") {
             rule.apiGroups[i] = "core"
           }
