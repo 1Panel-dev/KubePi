@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
-	"os"
 	"path"
 	"strings"
 )
@@ -19,19 +18,20 @@ func (p *PodExec) CopyToPod(srcPath, destPath string) error {
 	p.Tty = false
 	p.NoPreserve = false
 	p.Stdin = reader
-	p.Stdout = os.Stdout
 	if p.NoPreserve {
 		p.Command = []string{"tar", "--no-same-permissions", "--no-same-owner", "-xmf", "-"}
 	} else {
 		p.Command = []string{"tar", "-xmf", "-"}
 	}
+	var stdout bytes.Buffer
+	p.Stdout = &stdout
 	dest := path.Dir(destPath)
 	p.Command = append(p.Command, "-C", dest)
 	var stderr bytes.Buffer
 	p.Stderr = &stderr
 	err := p.Exec(Exec)
 	if err != nil {
-		return fmt.Errorf(err.Error(), p.Stderr)
+		return fmt.Errorf(err.Error(), stdout.String())
 	}
 	if len(stderr.Bytes()) != 0 {
 		for _, line := range strings.Split(stderr.String(), "\n") {

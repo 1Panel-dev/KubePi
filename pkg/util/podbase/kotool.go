@@ -12,7 +12,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-const KotoolsPath = "/kotools"
+const KotoolsPath = "/Users/zk.wang/go/src/github.com/KubeOperator/kotools/utils/binary"
 
 type PodBase struct {
 	Namespace  string
@@ -105,7 +105,7 @@ func (p *PodBase) InstallKOTools() error {
 		exec.Stderr = &stderr
 		err = exec.Exec(podexec.Exec)
 		if err != nil {
-			return fmt.Errorf(err.Error(), stderr)
+			return fmt.Errorf(err.Error(), stderr.String())
 		}
 	}
 	return nil
