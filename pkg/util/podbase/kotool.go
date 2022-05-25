@@ -5,13 +5,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/KubeOperator/kubepi/pkg/util/podexec"
-	"github.com/sirupsen/logrus"
 	"io"
 	coreV1 "k8s.io/api/core/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"os"
 )
 
 const KotoolsPath = "/kotools"
@@ -85,7 +83,7 @@ func (p *PodBase) Exec(stdin io.Reader, command ...string) ([]byte, error) {
 	return stdout.Bytes(), nil
 }
 
-func (p *PodBase) InstallKFTools() error {
+func (p *PodBase) InstallKOTools() error {
 	pod, err := p.PodInfo()
 	if err != nil {
 		return err
@@ -111,37 +109,4 @@ func (p *PodBase) InstallKFTools() error {
 		}
 	}
 	return nil
-}
-
-func TarKFTools(name string, writer io.Writer) error {
-	//tw := tar.NewWriter(writer)
-	// 如果关闭失败会造成tar包不完整
-	//defer tw.Close()
-	f, err := os.Open(name)
-	if err != nil {
-		logrus.Error(err)
-		return err
-	}
-	defer f.Close()
-	//fi, err := f.Stat()
-	//if err != nil {
-	//	logrus.Error(err)
-	//	return err
-	//}
-	//hdr, err := tar.FileInfoHeader(fi, name)
-	//if err != nil {
-	//	logrus.Error(err)
-	//	return err
-	//}
-	//hdr.Name = "kotools"
-	//// 将tar的文件信息hdr写入到tw
-	//err = tw.WriteHeader(hdr)
-	//if err != nil {
-	//	logrus.Error(err)
-	//	return err
-	//}
-	// 将文件数据写入
-	_, err = io.Copy(writer, f)
-
-	return err
 }

@@ -147,7 +147,7 @@ func (f service) fileBrowser(request file.Request) (res []byte, err error) {
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file or directory") ||
 			err.Error() == "command terminated with exit code 126" {
-			err = pb.InstallKFTools()
+			err = pb.InstallKOTools()
 			if err != nil {
 				return nil, err
 			}
