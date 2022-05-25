@@ -20,7 +20,7 @@ func GetOtp(username string) (otp Otp, err error) {
 	secret := gotp.RandomSecret(secretLength)
 	otp.Secret = secret
 	totp := gotp.NewDefaultTOTP(secret)
-	uri := totp.ProvisioningUri(username, "Kubepi")
+	uri := totp.ProvisioningUri(username, "KubePi")
 	subImg, err := qrcode.Encode(uri, qrcode.Medium, 256)
 	dist := make([]byte, 3000)
 	base64.StdEncoding.Encode(dist, subImg)
