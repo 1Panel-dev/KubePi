@@ -40,7 +40,7 @@ import (
 	"github.com/kataras/iris/v12/sessions"
 )
 
-var resourceWhiteList = WhiteList{"sessions", "proxy", "ws", "charts", "webkubectl", "apps"}
+var resourceWhiteList = WhiteList{"sessions", "proxy", "ws", "charts", "webkubectl", "apps", "mfa", "pod"}
 
 type WhiteList []string
 
