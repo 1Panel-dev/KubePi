@@ -8,7 +8,7 @@
               <span class="title">{{ $t("commons.table.name") }}</span>
               <div style="text-align: center">
                 <el-tooltip class="item" effect="dark" :content="cluster.name" placement="top">
-                  <h1>{{ cluster.name }}</h1>
+                  <h1>{{ cluster.name | max15letter }}</h1>
                 </el-tooltip>
               </div>
             </el-col>
