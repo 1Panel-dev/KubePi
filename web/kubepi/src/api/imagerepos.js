@@ -12,7 +12,7 @@ export function createRepo (data) {
 }
 
 export function listInternalRepos (data) {
-  return post(baseUrl + "/repositories", data)
+  return post(baseUrl + "/repositories/search", data)
 }
 
 export function deleteRepo (name) {
@@ -36,5 +36,5 @@ export function listImages(cluster,repo) {
 }
 
 export function listImagesByRepo(repo,searchRequest){
-  return post(`${baseUrl}/images/${repo}`,searchRequest)
+  return post(`${baseUrl}/images/${repo}/search`,searchRequest)
 }

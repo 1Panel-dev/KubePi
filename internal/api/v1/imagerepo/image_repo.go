@@ -2,6 +2,7 @@ package imagerepo
 
 import (
 	"errors"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
@@ -190,10 +191,10 @@ func Install(parent iris.Party) {
 	sp.Post("/search", handler.SearchRepos())
 	sp.Post("/", handler.CreateRepo())
 	sp.Delete("/:name", handler.DeleteRepo())
-	sp.Post("/repositories", handler.ListInternalRepos())
+	sp.Post("/repositories/search", handler.ListInternalRepos())
 	sp.Get("/:name", handler.GetRepo())
 	sp.Put("/:name", handler.UpdateRepo())
 	sp.Get("/cluster/:cluster", handler.ListRepoForCluster())
 	sp.Get("/images/:cluster/:repo", handler.ListImages())
-	sp.Post("/images/:repo", handler.ListImagesByRepo())
+	sp.Post("/images/:repo/search", handler.ListImagesByRepo())
 }
