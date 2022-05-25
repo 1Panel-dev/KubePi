@@ -293,13 +293,14 @@ export default {
           let itemClild = {}
           if (volume.configMap) {
             item.type = "ConfigMap"
-            item.items = volume.items || []
             itemClild = volume.configMap
+            item.items = volume.configMap.items || []
           }
           if (volume.secret) {
             item.type = "Secret"
-            item.items = volume.items || []
             itemClild = volume.secret
+            item.items = volume.secret.items || []
+            item.resource = volume.secret.secretName
           }
           if (volume.persistentVolumeClaim) {
             item.type = "PVC"

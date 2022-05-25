@@ -661,11 +661,11 @@ export default {
         })
     },
     handleSecret(ps) {
-      if (!this.podMetadata.annotations) {
+      if (!this.podMetadata.labels) {
         return ps
       }
-      let operation = this.podMetadata.annotations["operation"]
-      for (const key in this.podMetadata.annotations) {
+      let operation = this.podMetadata.labels["operation"]
+      for (const key in this.podMetadata.labels) {
         if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
           let repoName = key.split("/")[1]
           let secretName = "kubepi-" + key.split("/")[1] + "-secret"
@@ -725,7 +725,7 @@ export default {
     },
     onEdit(data) {
       let ps = []
-      if (this.podMetadata.annotations && this.podMetadata.annotations["operation"] === "update") {
+      if (this.podMetadata.labels && this.podMetadata.labels["operation"] === "update") {
         ps = this.handleSecret(ps)
       }
       Promise.all(ps).then(() => {

@@ -194,20 +194,33 @@ export default {
       return row.key === "kubepi.org/name"
     },
     transformation(parentForm, podMetadata) {
+      if (!podMetadata.labels) {
+        podMetadata.labels = {}
+      }
       if (this.isCreate) {
         let labels = parseArryToObj(this.labels)
-        parentForm.spec.selector = { matchLabels: labels }
-        podMetadata.labels = labels
-        parentForm.metadata.labels = labels
+        parentForm.spec.selector = { matchLabels: {} }
+        for (const key in labels) {
+          podMetadata.labels[key] = labels[key]
+          if (key.indexOf("kubepi-repo-") === -1) {
+            parentForm.metadata.labels[key] = labels[key]
+            parentForm.spec.selector.matchLabels[key] = labels[key]
+          }
+        }
         parentForm.metadata.annotations = parseArryToObj(this.annotations)
         return
       }
+
       let selectors = parseArryToObj(this.selectors)
-      parentForm.spec.selector = { matchLabels: selectors }
-      podMetadata.labels = selectors
-      parentForm.metadata.labels = selectors
-      parentForm.metadata.annotations = parseArryToObj(this.annotations)
+      parentForm.spec.selector = { matchLabels: {} }
+      for (const key in selectors) {
+        podMetadata.labels[key] = selectors[key]
+        if (key.indexOf("kubepi-repo-") === -1) {
+          parentForm.spec.selector.matchLabels[key] = selectors[key]
+        }
+      }
       parentForm.metadata.labels = parseArryToObj(this.labels)
+      parentForm.metadata.annotations = parseArryToObj(this.annotations)
     },
   },
   mounted() {

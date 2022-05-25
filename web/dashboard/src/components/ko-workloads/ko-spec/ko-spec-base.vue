@@ -125,13 +125,13 @@ export default {
       for (const item of this.form.imagePullSecrets) {
         imagePullSecrets.push({ name: item })
       }
-      if (!metadata.annotations) {
+      if (!metadata.labels) {
         parentFrom.imagePullSecrets = imagePullSecrets.length !== 0 ? imagePullSecrets : undefined
         return
       }
-      for (const key in metadata.annotations) {
-        if (key.indexOf("kubepi-repo-") !== -1 && key.indexOf("/") !== -1) {
-          let secretName = "kubepi-" + key.split("/")[1] + "-secret"
+      for (const key in metadata.labels) {
+        if (key.indexOf("kubepi-repo-") !== -1) {
+          let secretName = "kubepi-" + metadata.labels[key] + "-secret"
           if (!this.existSecret(secretName, imagePullSecrets)) {
             imagePullSecrets.push({ name: secretName })
           }
