@@ -200,6 +200,7 @@ export default {
                 prefix: en.prefix_or_alias,
                 secretRef: {
                   name: en.source,
+                  optional: en.optional,
                 },
               })
               break
@@ -208,6 +209,7 @@ export default {
                 prefix: en.prefix_or_alias,
                 configMapRef: {
                   name: en.source,
+                  optional: en.optional,
                 },
               })
               break
@@ -240,9 +242,9 @@ export default {
       if (this.envParentObj.envFrom) {
         for (const en of this.envParentObj.envFrom) {
           if (en.configMapRef) {
-            this.form.envResource.push({ source: en.configMapRef.name, type: "ConfigMap", prefix_or_alias: en.prefix })
+            this.form.envResource.push({ source: en.configMapRef.name, type: "ConfigMap", prefix_or_alias: en.prefix, optional: en.configMapRef.optional })
           } else if (en.secretRef) {
-            this.form.envResource.push({ source: en.secretRef.name, type: "Secret", prefix_or_alias: en.prefix })
+            this.form.envResource.push({ source: en.secretRef.name, type: "Secret", prefix_or_alias: en.prefix, optional: en.secretRef.optional })
           }
         }
       }
