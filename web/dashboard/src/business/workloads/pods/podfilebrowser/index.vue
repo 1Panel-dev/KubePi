@@ -124,8 +124,9 @@
             :title="$t('business.pod.upload')"
             :visible.sync="openUpload"
             :close-on-click-modal="false"
+            :before-close="handleUploadClose"
             width="30%">
-        <el-upload :on-change="onUploadChange" action="" :auto-upload="false" class="upload-demo" :multiple="false" :limit="1">
+        <el-upload :on-change="onUploadChange"  ref="upload" action="" :auto-upload="false" class="upload-demo" :multiple="false" :limit="1">
           <el-button>{{$t('business.pod.choose_file')}}</el-button>
           <div slot="tip" class="el-upload__tip">{{$t('business.pod.upload_tip')}}</div>
         </el-upload>
@@ -246,7 +247,12 @@ export default {
       this.$refs["renameForm"].resetFields()
     },
     openUploadPage() {
+      this.file= {}
       this.openUpload = true
+    },
+    handleUploadClose() {
+      this.openUpload = false
+      this.$refs.upload.clearFiles();
     },
     handleFileClose() {
       this.openAddFile = false
@@ -383,7 +389,7 @@ export default {
           type: "success",
           message: this.$t("commons.msg.upload_success"),
         })
-        this.openUpload = false
+        this.handleUploadClose()
       }).finally(() => {
         this.loading = false
       })
