@@ -14,7 +14,7 @@
             <el-checkbox v-model="form.tls">{{$t('commons.bool.true')}}</el-checkbox>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username">
-            <el-input v-model="form.username" :placeholder="'cn=Manager'"></el-input>
+            <el-input v-model="form.username" :placeholder="'cn=Manager,ou=users,dc=ko,dc=com or  Manager@ko.com'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password">
             <el-input type="password" v-model="form.password"></el-input>
