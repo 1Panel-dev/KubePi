@@ -6,9 +6,10 @@ import (
 	"github.com/KubeOperator/kubepi/internal/model/v1/file"
 	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	kubeClient "github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util"
-	"github.com/KubeOperator/kubepi/pkg/util/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util/podbase"
+	"k8s.io/client-go/kubernetes"
 	"os"
 	"path"
 	"path/filepath"
@@ -74,26 +75,6 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 	if err != nil {
 		return fileP, err
 	}
-	//clu, err := f.clusterService.Get(request.Cluster, common.DBOptions{})
-	//if err != nil {
-	//	return fileP, err
-	//}
-	//config := &kubernetes.Config{
-	//	Host:  clu.Spec.Connect.Forward.ApiServer,
-	//	Token: clu.Spec.Authentication.BearerToken,
-	//}
-	//k8sConfig := kubernetes.NewClusterConfig(config)
-	//k8sClient, err := kubernetes.NewKubernetesClient(config)
-	//if err != nil {
-	//	return fileP, err
-	//}
-	//pb := podbase.PodBase{
-	//	Namespace:  request.Namespace,
-	//	PodName:    request.PodName,
-	//	Container:  request.ContainerName,
-	//	K8sClient:  k8sClient,
-	//	RestClient: k8sConfig,
-	//}
 	exec := pb.NewPodExec()
 	fileNameWithSuffix := path.Base(request.Path)
 	fileType := path.Ext(fileNameWithSuffix)
@@ -113,28 +94,6 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 }
 
 func (f service) UploadFile(request file.Request) error {
-	//clu, err := f.clusterService.Get(request.Cluster, common.DBOptions{})
-	//if err != nil {
-	//	return err
-	//}
-	//config := &kubernetes.Config{
-	//	Host:  clu.Spec.Connect.Forward.ApiServer,
-	//	Token: clu.Spec.Authentication.BearerToken,
-	//}
-	//k8sConfig := kubernetes.NewClusterConfig(config)
-	//k8sClient, err := kubernetes.NewKubernetesClient(config)
-	//if err != nil {
-	//	return err
-	//}
-	//pb := podbase.PodBase{
-	//	Namespace:  request.Namespace,
-	//	PodName:    request.PodName,
-	//	Container:  request.ContainerName,
-	//	K8sClient:  k8sClient,
-	//	RestClient: k8sConfig,
-	//}
-	//exec := pb.NewPodExec()
-
 	pb, err := f.GetPodBase(request)
 	if err != nil {
 		return err
@@ -153,12 +112,12 @@ func (f service) GetPodBase(request file.Request) (podbase.PodBase, error) {
 	if err != nil {
 		return pb, err
 	}
-	config := &kubernetes.Config{
-		Host:  clu.Spec.Connect.Forward.ApiServer,
-		Token: clu.Spec.Authentication.BearerToken,
+	client := kubeClient.Kubernetes{clu}
+	config, err := client.Config()
+	if err != nil {
+		return pb, err
 	}
-	k8sConfig := kubernetes.NewClusterConfig(config)
-	k8sClient, err := kubernetes.NewKubernetesClient(config)
+	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return pb, err
 	}
@@ -166,8 +125,8 @@ func (f service) GetPodBase(request file.Request) (podbase.PodBase, error) {
 		Namespace:  request.Namespace,
 		PodName:    request.PodName,
 		Container:  request.ContainerName,
-		K8sClient:  k8sClient,
-		RestClient: k8sConfig,
+		K8sClient:  clientset,
+		RestClient: config,
 	}
 	return pb, nil
 }
