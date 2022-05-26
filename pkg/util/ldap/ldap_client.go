@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/go-ldap/ldap"
+	"github.com/go-ldap/ldap/v3"
 )
 
 type Ldap struct {
