@@ -41,6 +41,9 @@ func (p *PodBase) PodInfo() (*coreV1.Pod, error) {
 
 func (p *PodBase) OsAndArch(nodeName string) (osType string, arch string) {
 	// get pod system arch and type
+	osType = "linux"
+	arch = "amd64"
+
 	node, err := p.K8sClient.CoreV1().Nodes().
 		Get(context.TODO(), nodeName, metaV1.GetOptions{})
 	if err == nil {
