@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/KubeOperator/kubepi/internal/api/v1/file"
-	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 	"io/ioutil"
 	"strings"
+
+	"github.com/KubeOperator/kubepi/internal/api/v1/file"
+	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 
 	"github.com/kataras/iris/v12/middleware/jwt"
 
@@ -312,9 +313,14 @@ func roleAccessHandler() iris.Handler {
 		//// 通过api resource 过滤出来资源主体,method 过滤操作
 		p := ctx.Values().Get("profile")
 		u := p.(session.UserProfile)
-		if !strings.Contains(ctx.Request().URL.Path, "/proxy") && !strings.Contains(ctx.Request().URL.Path, "/ws") &&
-			!strings.Contains(ctx.Request().URL.Path, "/webkubectl") && !strings.Contains(ctx.Request().URL.Path, "/webkubectl") &&
-			!strings.Contains(ctx.Request().URL.Path, "/charts") && !strings.Contains(ctx.Request().URL.Path, "/apps") {
+		isInWhiteList := false
+		for _, path := range resourceWhiteList {
+			if strings.Contains(ctx.Request().URL.Path, fmt.Sprintf("/%s", path)) && path != "sessions" {
+				isInWhiteList = true
+				break
+			}
+		}
+		if !isInWhiteList {
 			// 放通admin权限
 			if u.IsAdministrator {
 				ctx.Next()

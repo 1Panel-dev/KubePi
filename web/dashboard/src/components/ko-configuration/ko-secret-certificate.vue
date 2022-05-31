@@ -5,12 +5,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item  :label="$t('business.configuration.privateKey')" prop="crt">
-              <ko-form-item itemType="textarea" v-model="form.crt" @change.native="transform"></ko-form-item>
+              <ko-form-item itemType="textarea" v-model="form.key" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item  :label="$t('business.configuration.certificate')" prop="key">
-              <ko-form-item itemType="textarea" v-model="form.key" @change.native="transform"></ko-form-item>
+              <ko-form-item itemType="textarea" v-model="form.crt" @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>
         </el-row>
