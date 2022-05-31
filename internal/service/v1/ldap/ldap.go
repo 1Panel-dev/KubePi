@@ -177,7 +177,7 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 					}
 				}
 			}
-			if us.Email == "" {
+			if us.Email == "" || us.Name == "" {
 				continue
 			}
 			if us.NickName == "" {
