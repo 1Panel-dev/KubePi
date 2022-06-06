@@ -1,0 +1,225 @@
+basePath: /kubepi/api/v1
+definitions:
+  api.Page:
+    properties:
+      items: {}
+      total:
+        type: integer
+    type: object
+  docs.Authenticate:
+    properties:
+      password:
+        type: string
+    type: object
+  docs.Mfa:
+    properties:
+      enable:
+        type: boolean
+    type: object
+  docs.UserCreate:
+    properties:
+      authenticate:
+        $ref: '#/definitions/docs.Authenticate'
+      email:
+        type: string
+      isAdmin:
+        type: boolean
+      mfa:
+        $ref: '#/definitions/docs.Mfa'
+      name:
+        type: string
+      nickName:
+        type: string
+    type: object
+  user.Authenticate:
+    properties:
+      password:
+        type: string
+      token:
+        type: string
+    type: object
+  user.Mfa:
+    properties:
+      enable:
+        type: boolean
+      secret:
+        type: string
+    type: object
+  user.User:
+    properties:
+      apiVersion:
+        type: string
+      authenticate:
+        $ref: '#/definitions/user.Authenticate'
+      builtIn:
+        type: boolean
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      isAdmin:
+        type: boolean
+      kind:
+        type: string
+      language:
+        type: string
+      mfa:
+        $ref: '#/definitions/user.Mfa'
+      name:
+        type: string
+      nickName:
+        type: string
+      type:
+        type: string
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+info:
+  contact:
+    email: support@fit2cloud.com
+    name: Fit2cloud Support
+    url: https://www.fit2cloud.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://kubeoperator.io
+  title: KubePi Restful API
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: List all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/user.User'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create user
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/docs.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Create user
+      tags:
+      - users
+  /users/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by name
+      parameters:
+      - description: 用户名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user by name
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get user by name
+      parameters:
+      - description: 用户名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user by name
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update user by name
+      parameters:
+      - description: 用户名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user by name
+      tags:
+      - users
+  /users/search:
+    post:
+      consumes:
+      - application/json
+      description: Search users by Condition
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.Page'
+      security:
+      - ApiKeyAuth: []
+      summary: Search users
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -5,6 +5,8 @@ import (
 	"runtime"
 
 	_ "github.com/KubeOperator/kubepi/cmd/server/docs"
+	_ "github.com/KubeOperator/kubepi/internal/model/v1/docs"
+	_ "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/pkg/network/ip"
@@ -13,7 +15,7 @@ import (
 
 //go:generate swag init
 
-//swag init -g "cmd/server/main.go" -o "cmd/server/docs"
+//swag init -g "cmd/server/main.go" -o "cmd/server/docs" --parseDependency --parseInternal --parseDepth 2
 
 var (
 	configPath     string

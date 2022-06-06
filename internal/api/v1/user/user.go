@@ -36,16 +36,15 @@ func NewHandler() *Handler {
 
 // List User
 // @Tags users
-// @Summary Show all users
-// @Description Show clusters
+// @Summary Search users
+// @Description Search users by Condition
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} api.Page
 // @Security ApiKeyAuth
-// @Router /users/search [get]
+// @Router /users/search [post]
 func (h *Handler) SearchUsers() iris.Handler {
 	return func(ctx *context.Context) {
-
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 
@@ -85,6 +84,16 @@ func (h *Handler) SearchUsers() iris.Handler {
 	}
 }
 
+// Create User
+// @Tags users
+// @Summary Create user
+// @Description Create user
+// @Accept  json
+// @Produce  json
+// @Param request body docs.UserCreate true "request"
+// @Success 200 {object} v1User.User
+// @Security ApiKeyAuth
+// @Router /users [post]
 func (h *Handler) CreateUser() iris.Handler {
 	return func(ctx *context.Context) {
 		var req User
@@ -158,6 +167,16 @@ func (h *Handler) CreateUser() iris.Handler {
 	}
 }
 
+// Delete User
+// @Tags users
+// @Summary Delete user by name
+// @Description Delete user by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "用户名称"
+// @Success 200 {object} v1User.User
+// @Security ApiKeyAuth
+// @Router /users/{name} [delete]
 func (h *Handler) DeleteUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
@@ -217,6 +236,16 @@ func (h *Handler) DeleteUser() iris.Handler {
 	}
 }
 
+// Get User
+// @Tags users
+// @Summary Get user by name
+// @Description Get user by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "用户名称"
+// @Success 200 {object} v1User.User
+// @Security ApiKeyAuth
+// @Router /users/{name} [get]
 func (h *Handler) GetUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
@@ -240,6 +269,15 @@ func (h *Handler) GetUser() iris.Handler {
 	}
 }
 
+// List User
+// @Tags users
+// @Summary List all users
+// @Description List all users
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} []v1User.User
+// @Security ApiKeyAuth
+// @Router /users [get]
 func (h *Handler) GetUsers() iris.Handler {
 	return func(ctx *context.Context) {
 		us, err := h.userService.List(common.DBOptions{})
@@ -252,6 +290,16 @@ func (h *Handler) GetUsers() iris.Handler {
 	}
 }
 
+// Update User
+// @Tags users
+// @Summary Update user by name
+// @Description Update user by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "用户名称"
+// @Success 200 {object} v1User.User
+// @Security ApiKeyAuth
+// @Router /users/{name} [put]
 func (h *Handler) UpdateUser() iris.Handler {
 	return func(ctx *context.Context) {
 		userName := ctx.Params().GetString("name")
