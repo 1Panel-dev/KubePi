@@ -35,6 +35,107 @@ definitions:
           type: string
         type: array
     type: object
+  imagerepo.Credential:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  imagerepo.ImageRepo:
+    properties:
+      allowAnonymous:
+        type: boolean
+      apiVersion:
+        type: string
+      auth:
+        type: boolean
+      builtIn:
+        type: boolean
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      credential:
+        $ref: '#/definitions/imagerepo.Credential'
+      description:
+        type: string
+      downloadUrl:
+        type: string
+      endPoint:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      repoName:
+        type: string
+      type:
+        type: string
+      updateAt:
+        type: string
+      uuid:
+        type: string
+      version:
+        type: string
+    type: object
+  imagerepo.RepoConfig:
+    properties:
+      allowAnonymous:
+        type: boolean
+      apiVersion:
+        type: string
+      auth:
+        type: boolean
+      builtIn:
+        type: boolean
+      continueToken:
+        type: string
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      credential:
+        $ref: '#/definitions/imagerepo.Credential'
+      description:
+        type: string
+      downloadUrl:
+        type: string
+      endPoint:
+        type: string
+      kind:
+        type: string
+      limit:
+        type: integer
+      name:
+        type: string
+      page:
+        type: integer
+      repoName:
+        type: string
+      search:
+        type: string
+      type:
+        type: string
+      updateAt:
+        type: string
+      uuid:
+        type: string
+      version:
+        type: string
+    required:
+    - limit
+    - page
+    type: object
+  imagerepo.RepoResponse:
+    properties:
+      continueToken:
+        type: string
+      items:
+        items:
+          type: string
+        type: array
+    type: object
   role.PolicyRule:
     properties:
       resource:
@@ -135,6 +236,207 @@ info:
   termsOfService: http://kubeoperator.io
   title: KubePi Restful API
 paths:
+  /imagerepos:
+    post:
+      consumes:
+      - application/json
+      description: Create repo
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/imagerepo.RepoConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/imagerepo.RepoConfig'
+      security:
+      - ApiKeyAuth: []
+      summary: Create repo
+      tags:
+      - repos
+  /imagerepos/{cluster}/{repo}:
+    put:
+      consumes:
+      - application/json
+      description: Get images for cluster
+      parameters:
+      - description: 集群名称
+        in: path
+        name: cluster
+        required: true
+        type: string
+      - description: 镜像仓库名称
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List images for cluster
+      tags:
+      - repos
+  /imagerepos/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete repo by name
+      parameters:
+      - description: 镜像仓库名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/imagerepo.ImageRepo'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete repo by name
+      tags:
+      - repos
+    get:
+      consumes:
+      - application/json
+      description: Get repo by name
+      parameters:
+      - description: 镜像仓库名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/imagerepo.ImageRepo'
+      security:
+      - ApiKeyAuth: []
+      summary: Get repo by name
+      tags:
+      - repos
+    put:
+      consumes:
+      - application/json
+      description: Update repo by name
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/imagerepo.RepoConfig'
+      - description: 镜像仓库名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/imagerepo.ImageRepo'
+      security:
+      - ApiKeyAuth: []
+      summary: Update repo by name
+      tags:
+      - repos
+  /imagerepos/{repo}/search:
+    get:
+      consumes:
+      - application/json
+      description: Get images by repo
+      parameters:
+      - description: 镜像仓库名称
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/imagerepo.RepoResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List images by repo
+      tags:
+      - repos
+  /imagerepos/cluster/{cluster}:
+    get:
+      consumes:
+      - application/json
+      description: Get repo for cluster
+      parameters:
+      - description: 集群名称
+        in: path
+        name: cluster
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/imagerepo.ImageRepo'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List repo for cluster
+      tags:
+      - repos
+  /imagerepos/repositories/search:
+    post:
+      consumes:
+      - application/json
+      description: List Internal repos
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/imagerepo.RepoConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List Internal repos
+      tags:
+      - repos
   /roles:
     get:
       consumes:

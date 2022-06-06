@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
+	v1ImageRepo "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterrepo"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
@@ -47,6 +48,17 @@ func (h *Handler) SearchRepos() iris.Handler {
 		ctx.Values().Set("data", pkgV1.Page{Items: repos, Total: total})
 	}
 }
+
+// Create Repo
+// @Tags repos
+// @Summary Create repo
+// @Description Create repo
+// @Accept  json
+// @Produce  json
+// @Param request body RepoConfig true "request"
+// @Success 200 {object} RepoConfig
+// @Security ApiKeyAuth
+// @Router /imagerepos [post]
 func (h *Handler) CreateRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		var req RepoConfig
@@ -64,6 +76,16 @@ func (h *Handler) CreateRepo() iris.Handler {
 	}
 }
 
+// List Internal Repos
+// @Tags repos
+// @Summary List Internal repos
+// @Description List Internal repos
+// @Accept  json
+// @Produce  json
+// @Param request body RepoConfig true "request"
+// @Success 200 {object} []string
+// @Security ApiKeyAuth
+// @Router /imagerepos/repositories/search [post]
 func (h *Handler) ListInternalRepos() iris.Handler {
 	return func(ctx *context.Context) {
 		var req RepoConfig
@@ -83,6 +105,17 @@ func (h *Handler) ListInternalRepos() iris.Handler {
 	}
 }
 
+// Update Repo
+// @Tags repos
+// @Summary Update repo by name
+// @Description Update repo by name
+// @Accept  json
+// @Produce  json
+// @Param request body RepoConfig true "request"
+// @Param name path string true "镜像仓库名称"
+// @Success 200 {object} v1ImageRepo.ImageRepo
+// @Security ApiKeyAuth
+// @Router /imagerepos/{name} [put]
 func (h *Handler) UpdateRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		var req RepoConfig
@@ -100,6 +133,16 @@ func (h *Handler) UpdateRepo() iris.Handler {
 	}
 }
 
+// Delete Repo
+// @Tags repos
+// @Summary Delete repo by name
+// @Description Delete repo by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "镜像仓库名称"
+// @Success 200 {object} v1ImageRepo.ImageRepo
+// @Security ApiKeyAuth
+// @Router /imagerepos/{name} [delete]
 func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		imageRepoName := ctx.Params().GetString("name")
@@ -126,6 +169,16 @@ func (h *Handler) DeleteRepo() iris.Handler {
 	}
 }
 
+// Get Repo
+// @Tags repos
+// @Summary Get repo by name
+// @Description Get repo by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "镜像仓库名称"
+// @Success 200 {object} v1ImageRepo.ImageRepo
+// @Security ApiKeyAuth
+// @Router /imagerepos/{name} [get]
 func (h *Handler) GetRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		imageRepoName := ctx.Params().GetString("name")
@@ -139,9 +192,20 @@ func (h *Handler) GetRepo() iris.Handler {
 	}
 }
 
+// List Repo for Cluster
+// @Tags repos
+// @Summary List repo for cluster
+// @Description Get repo for cluster
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Success 200 {object} []v1ImageRepo.ImageRepo
+// @Security ApiKeyAuth
+// @Router /imagerepos/cluster/{cluster} [get]
 func (h *Handler) ListRepoForCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
+		var imageRepos []v1ImageRepo.ImageRepo
 		imageRepos, err := h.imageRepoService.ListByCluster(cluster, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -152,6 +216,17 @@ func (h *Handler) ListRepoForCluster() iris.Handler {
 	}
 }
 
+// List Images for Cluster
+// @Tags repos
+// @Summary List images for cluster
+// @Description Get images for cluster
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param repo path string true "镜像仓库名称"
+// @Success 200 {object} []string
+// @Security ApiKeyAuth
+// @Router /imagerepos/{cluster}/{repo} [put]
 func (h *Handler) ListImages() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
@@ -166,6 +241,16 @@ func (h *Handler) ListImages() iris.Handler {
 	}
 }
 
+// List Images By Repo
+// @Tags repos
+// @Summary List images by repo
+// @Description Get images by repo
+// @Accept  json
+// @Produce  json
+// @Param repo path string true "镜像仓库名称"
+// @Success 200 {object} v1ImageRepo.RepoResponse
+// @Security ApiKeyAuth
+// @Router /imagerepos/{repo}/search [get]
 func (h *Handler) ListImagesByRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("repo")
