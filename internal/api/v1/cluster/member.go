@@ -19,6 +19,18 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Update Cluster Member
+// @Tags clusters
+// @Summary Update Cluster Member
+// @Description Update Cluster Member
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param member path string true "成员名称"
+// @Param request body Member true "request"
+// @Success 200 {object} Member
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/members/{member} [put]
 func (h *Handler) UpdateClusterMember() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -72,6 +84,17 @@ func (h *Handler) UpdateClusterMember() iris.Handler {
 	}
 }
 
+// Get Cluster Member By name
+// @Tags clusters
+// @Summary Get Cluster Member By name
+// @Description Get Cluster Member By name
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param member path string true "成员名称"
+// @Success 200 {object} Member
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/members/{member} [get]
 func (h *Handler) GetClusterMember() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -149,6 +172,16 @@ func (h *Handler) GetClusterMember() iris.Handler {
 
 }
 
+// List ClusterMembers
+// @Tags clusters
+// @Summary List all ClusterMembers
+// @Description List all ClusterMembers
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Success 200 {object} []Member
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/members [get]
 func (h *Handler) ListClusterMembers() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -170,6 +203,17 @@ func (h *Handler) ListClusterMembers() iris.Handler {
 	}
 }
 
+// Create Cluster Member
+// @Tags clusters
+// @Summary Create Cluster Member
+// @Description Create Cluster Member
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param request body Member true "request"
+// @Success 200 {object} Member
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/members [post]
 func (h *Handler) CreateClusterMember() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -252,6 +296,17 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 	}
 }
 
+// Delete ClusterMember
+// @Tags clusters
+// @Summary Delete clusterMember by name
+// @Description Delete clusterMember by name
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param members path string true "成员名称"
+// @Success 200 {number} 200
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/members/{member} [delete]
 func (h *Handler) DeleteClusterMember() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")

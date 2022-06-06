@@ -14,6 +14,18 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Update Cluster Role
+// @Tags clusters
+// @Summary Update Cluster Role
+// @Description Update Cluster Role
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param clusterrole path string true "权限名称"
+// @Param request body rbacV1.ClusterRole true "request"
+// @Success 200 {object} rbacV1.ClusterRole
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/clusterroles/{clusterrole} [put]
 func (h *Handler) UpdateClusterRole() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -63,6 +75,17 @@ func (h *Handler) UpdateClusterRole() iris.Handler {
 	}
 }
 
+// Create Cluster Role
+// @Tags clusters
+// @Summary Create Cluster Role
+// @Description Create Cluster Role
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param request body rbacV1.ClusterRole true "request"
+// @Success 200 {object} rbacV1.ClusterRole
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/clusterroles [post]
 func (h *Handler) CreateClusterRole() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -116,6 +139,18 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 		ctx.Values().Set("data", resp)
 	}
 }
+
+// Delete ClusterRole
+// @Tags clusters
+// @Summary Delete clusterRole by name
+// @Description Delete clusterRole by name
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Param clusterrole path string true "权限名称"
+// @Success 200 {number} 200
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/clusterroles/{clusterrole} [delete]
 func (h *Handler) DeleteClusterRole() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -155,6 +190,16 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 	}
 }
 
+// List ClusterRoles
+// @Tags clusters
+// @Summary List all clusterRoles
+// @Description List all clusterRoles
+// @Accept  json
+// @Produce  json
+// @Param cluster path string true "集群名称"
+// @Success 200 {object} []rbacV1.ClusterRole
+// @Security ApiKeyAuth
+// @Router /clusters/{cluster}/clusterroles [get]
 func (h *Handler) ListClusterRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")

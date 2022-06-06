@@ -5,6 +5,8 @@ import (
 	"runtime"
 
 	_ "github.com/KubeOperator/kubepi/cmd/server/docs"
+	_ "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
+	_ "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
 	_ "github.com/KubeOperator/kubepi/internal/model/v1/docs"
 	_ "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
 	_ "github.com/KubeOperator/kubepi/internal/model/v1/role"
@@ -13,6 +15,7 @@ import (
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/pkg/network/ip"
 	"github.com/spf13/cobra"
+	_ "k8s.io/api/rbac/v1"
 )
 
 //go:generate swag init

@@ -48,6 +48,16 @@ func NewHandler() *Handler {
 	}
 }
 
+// Create Cluster
+// @Tags clusters
+// @Summary Create Cluster
+// @Description Create Cluster
+// @Accept  json
+// @Produce  json
+// @Param request body Cluster true "request"
+// @Success 200 {object} Cluster
+// @Security ApiKeyAuth
+// @Router /clusters [post]
 func (h *Handler) CreateCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		var req Cluster
@@ -389,6 +399,16 @@ func getExtraClusterInfo(context goContext.Context, client kubernetes.Interface)
 
 }
 
+// Get Cluster
+// @Tags clusters
+// @Summary Get cluster by name
+// @Description Get cluster by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "集群名称"
+// @Success 200 {object} v1Cluster.Cluster
+// @Security ApiKeyAuth
+// @Router /clusters/{name} [get]
 func (h *Handler) GetCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -402,6 +422,17 @@ func (h *Handler) GetCluster() iris.Handler {
 	}
 }
 
+// Update Cluster
+// @Tags clusters
+// @Summary Update cluster by name
+// @Description Update cluster by name
+// @Accept  json
+// @Produce  json
+// @Param request body UpdateCluster true "request"
+// @Param name path string true "集群名称"
+// @Success 200 {object} UpdateCluster
+// @Security ApiKeyAuth
+// @Router /clusters/{name} [put]
 func (h *Handler) UpdateCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -431,6 +462,15 @@ func (h *Handler) UpdateCluster() iris.Handler {
 	}
 }
 
+// List Clusters
+// @Tags clusters
+// @Summary List all clusters
+// @Description List all clusters
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} []v1Cluster.Cluster
+// @Security ApiKeyAuth
+// @Router /clusters [get]
 func (h *Handler) ListClusters() iris.Handler {
 	return func(ctx *context.Context) {
 		var clusters []v1Cluster.Cluster
@@ -465,6 +505,16 @@ func (h *Handler) ListClusters() iris.Handler {
 	}
 }
 
+// Delete Cluster
+// @Tags clusters
+// @Summary Delete cluster by name
+// @Description Delete cluster by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "集群名称"
+// @Success 200 {object} v1Cluster.Cluster
+// @Security ApiKeyAuth
+// @Router /clusters/{name} [delete]
 func (h *Handler) DeleteCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
