@@ -7,6 +7,7 @@ type UserCreate struct {
 	IsAdmin      bool         `json:"isAdmin"`
 	Authenticate Authenticate `json:"authenticate"`
 	Mfa          Mfa          `json:"mfa"`
+	Roles        []string     `json:"roles"`
 }
 
 type Authenticate struct {

@@ -50,6 +50,15 @@ func (h *Handler) SearchRoles() iris.Handler {
 	}
 }
 
+// List Roles
+// @Tags roles
+// @Summary List all roles
+// @Description List all roles
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} []v1Role.Role
+// @Security ApiKeyAuth
+// @Router /roles [get]
 func (h *Handler) ListRoles() iris.Handler {
 	return func(ctx *context.Context) {
 		roles, err := h.roleService.List(common.DBOptions{})
@@ -64,6 +73,16 @@ func (h *Handler) ListRoles() iris.Handler {
 	}
 }
 
+// Create Role
+// @Tags roles
+// @Summary Create role
+// @Description Create role
+// @Accept  json
+// @Produce  json
+// @Param request body v1Role.Role true "request"
+// @Success 200 {object} v1Role.Role
+// @Security ApiKeyAuth
+// @Router /roles [post]
 func (h *Handler) CreateRole() iris.Handler {
 	return func(ctx *context.Context) {
 		var req v1Role.Role
@@ -84,6 +103,16 @@ func (h *Handler) CreateRole() iris.Handler {
 	}
 }
 
+// Delete Role
+// @Tags roles
+// @Summary Delete role by name
+// @Description Delete role by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "角色名称"
+// @Success 200 {object} v1Role.Role
+// @Security ApiKeyAuth
+// @Router /roles/{name} [delete]
 func (h *Handler) DeleteRole() iris.Handler {
 	return func(ctx *context.Context) {
 		roleName := ctx.Params().GetString("name")
@@ -114,6 +143,16 @@ func (h *Handler) DeleteRole() iris.Handler {
 	}
 }
 
+// Update Role
+// @Tags roles
+// @Summary Update role by name
+// @Description Update role by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "角色名称"
+// @Success 200 {object} v1Role.Role
+// @Security ApiKeyAuth
+// @Router /roles/{name} [put]
 func (h *Handler) UpdateRole() iris.Handler {
 	return func(ctx *context.Context) {
 		roleName := ctx.Params().GetString("name")
@@ -137,6 +176,16 @@ func (h *Handler) UpdateRole() iris.Handler {
 	}
 }
 
+// Get Role
+// @Tags roles
+// @Summary Get role by name
+// @Description Get role by name
+// @Accept  json
+// @Produce  json
+// @Param name path string true "权限名称"
+// @Success 200 {object} v1Role.Role
+// @Security ApiKeyAuth
+// @Router /roles/{name} [get]
 func (h *Handler) GetRole() iris.Handler {
 	return func(ctx *context.Context) {
 		roleName := ctx.Params().GetString("name")

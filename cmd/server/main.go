@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/KubeOperator/kubepi/cmd/server/docs"
 	_ "github.com/KubeOperator/kubepi/internal/model/v1/docs"
+	_ "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	_ "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"

@@ -34,7 +34,7 @@ func NewHandler() *Handler {
 	}
 }
 
-// List User
+// Search User
 // @Tags users
 // @Summary Search users
 // @Description Search users by Condition

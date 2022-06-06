@@ -30,6 +30,50 @@ definitions:
         type: string
       nickName:
         type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  role.PolicyRule:
+    properties:
+      resource:
+        items:
+          type: string
+        type: array
+      resourceNames:
+        items:
+          type: string
+        type: array
+      verbs:
+        items:
+          type: string
+        type: array
+    type: object
+  role.Role:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      rules:
+        items:
+          $ref: '#/definitions/role.PolicyRule'
+        type: array
+      updateAt:
+        type: string
+      uuid:
+        type: string
     type: object
   user.Authenticate:
     properties:
@@ -91,6 +135,115 @@ info:
   termsOfService: http://kubeoperator.io
   title: KubePi Restful API
 paths:
+  /roles:
+    get:
+      consumes:
+      - application/json
+      description: List all roles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/role.Role'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: List all roles
+      tags:
+      - roles
+    post:
+      consumes:
+      - application/json
+      description: Create role
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/role.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/role.Role'
+      security:
+      - ApiKeyAuth: []
+      summary: Create role
+      tags:
+      - roles
+  /roles/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete role by name
+      parameters:
+      - description: 角色名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/role.Role'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete role by name
+      tags:
+      - roles
+    get:
+      consumes:
+      - application/json
+      description: Get role by name
+      parameters:
+      - description: 权限名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/role.Role'
+      security:
+      - ApiKeyAuth: []
+      summary: Get role by name
+      tags:
+      - roles
+    put:
+      consumes:
+      - application/json
+      description: Update role by name
+      parameters:
+      - description: 角色名称
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/role.Role'
+      security:
+      - ApiKeyAuth: []
+      summary: Update role by name
+      tags:
+      - roles
   /users:
     get:
       consumes:
