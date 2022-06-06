@@ -34,8 +34,18 @@ func NewHandler() *Handler {
 	}
 }
 
+// List User
+// @Tags users
+// @Summary Show all users
+// @Description Show clusters
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} api.Page
+// @Security ApiKeyAuth
+// @Router /users/search [get]
 func (h *Handler) SearchUsers() iris.Handler {
 	return func(ctx *context.Context) {
+
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
 		pageSize, _ := ctx.Values().GetInt(pkgV1.PageSize)
 

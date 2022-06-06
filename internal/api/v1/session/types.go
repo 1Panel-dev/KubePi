@@ -3,9 +3,10 @@ package session
 import v1 "k8s.io/api/rbac/v1"
 
 type LoginCredential struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+	AuthMethod string `json:"authMethod"`
 }
 type MfaCredential struct {
 	Username string `json:"username"`

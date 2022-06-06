@@ -3,6 +3,8 @@ package server
 import (
 	"embed"
 	"fmt"
+	"github.com/iris-contrib/swagger/v12"
+	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -118,6 +120,10 @@ func (e *KubePiServer) setUpRootRoute() {
 	e.app.Any("/", func(ctx *context.Context) {
 		ctx.Redirect("/kubepi")
 	})
+	c := swagger.Config{
+		URL: "/swagger/doc.json",
+	}
+	e.app.Get("/swagger/{any:path}", swagger.CustomWrapHandler(&c, swaggerFiles.Handler))
 	e.rootRoute = e.app.Party("/kubepi")
 }
 
@@ -171,11 +177,15 @@ func (e *KubePiServer) setResultHandler() {
 		}()
 		if !isProxyPath {
 			if ctx.GetStatusCode() >= iris.StatusOK && ctx.GetStatusCode() < iris.StatusBadRequest {
-				resp := iris.Map{
-					"success": true,
-					"data":    ctx.Values().Get("data"),
+				if ctx.Values().Get("token") != nil {
+					_, _ = ctx.Write(ctx.Values().Get("token").([]uint8))
+				} else {
+					resp := iris.Map{
+						"success": true,
+						"data":    ctx.Values().Get("data"),
+					}
+					_, _ = ctx.JSON(resp)
 				}
-				_, _ = ctx.JSON(resp)
 			}
 		}
 	})
@@ -190,6 +200,10 @@ func (e *KubePiServer) setUpErrHandler() {
 			}
 		}
 		message := ctx.Values().Get("message")
+		if message == nil || message == "" {
+			message = ctx.Values().Get("iris.context.error")
+		}
+
 		lang := ctx.Values().GetString("language")
 		var (
 			translateMessage string
@@ -206,6 +220,9 @@ func (e *KubePiServer) setUpErrHandler() {
 			if len(value) > 0 {
 				translateMessage, err = i18n.Translate(lang, value[0], value[1:])
 			}
+		case context.ErrPrivate:
+			err := message.(context.ErrPrivate)
+			translateMessage = err.Error()
 		}
 		msg := translateMessage
 		if err != nil {

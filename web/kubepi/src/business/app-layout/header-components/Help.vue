@@ -8,6 +8,7 @@
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item command="docs">{{ $t('commons.help.ko_docs') }}</el-dropdown-item>
       <el-dropdown-item command="support">{{ $t('commons.help.business_support') }}</el-dropdown-item>
+      <el-dropdown-item command="api">API</el-dropdown-item>
       <el-dropdown-item class="iconfont iconguanyu" command="about">{{$t("commons.help.about")}}</el-dropdown-item>
     </el-dropdown-menu>
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="50%">
@@ -56,6 +57,9 @@ export default {
         case "docs":
           window.open("https://kubeoperator.io/docs/kubepi/", "_blank")
           break
+        case "api":
+          window.open("/swagger/index.html", "_blank");
+          break
         default:
           this.aboutDialogVisible = true
           break
@@ -71,7 +75,7 @@ export default {
       window.open("https://kubeoperator.io/#contact", "_blank")
     },
     toGithubStar() {
-      window.open("https://github.com/KubeOperator/KubePi", "_blank")
+      window.open("https://github.com/KubeOperator/KubePi")
     },
   },
 }
@@ -79,7 +83,7 @@ export default {
 
 <style lang="scss" scoped>
   @import "~@/styles/business/header-menu.scss";
-  
+
 .sidebar-logo {
   height: $logo-height;
   vertical-align: middle;

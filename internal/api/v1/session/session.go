@@ -136,7 +136,7 @@ func (h *Handler) Login() iris.Handler {
 			},
 		}
 
-		authMethod := ctx.GetHeader("authMethod")
+		authMethod := loginCredential.AuthMethod
 
 		switch authMethod {
 		case "jwt":
@@ -146,7 +146,7 @@ func (h *Handler) Login() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 			}
 			ctx.StatusCode(iris.StatusOK)
-			ctx.Values().Set("data", token)
+			ctx.Values().Set("token", token)
 			return
 		default:
 			session := sessions.Get(ctx)

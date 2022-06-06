@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 	"io/ioutil"
 	"strings"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/file"
-	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
-
 	"github.com/kataras/iris/v12/middleware/jwt"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/chart"
@@ -381,6 +380,7 @@ func resourceNameInvalidHandler() iris.Handler {
 }
 
 func WarpedJwtHandler() iris.Handler {
+
 	verifier := jwt.NewVerifier(jwt.HS256, session.JwtSigKey)
 	verifier.WithDefaultBlocklist()
 	verifyMiddleware := verifier.Verify(func() interface{} {

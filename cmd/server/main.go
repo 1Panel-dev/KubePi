@@ -4,11 +4,16 @@ import (
 	"embed"
 	"runtime"
 
+	_ "github.com/KubeOperator/kubepi/cmd/server/docs"
 	"github.com/KubeOperator/kubepi/internal/route"
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/pkg/network/ip"
 	"github.com/spf13/cobra"
 )
+
+//go:generate swag init
+
+//swag init -g "cmd/server/main.go" -o "cmd/server/docs"
 
 var (
 	configPath     string
@@ -60,6 +65,18 @@ var RootCmd = &cobra.Command{
 	},
 }
 
+// @title KubePi Restful API
+// @version.go 1.0
+// @termsOfService http://kubeoperator.io
+// @contact.name Fit2cloud Support
+// @contact.url https://www.fit2cloud.com
+// @contact.email support@fit2cloud.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @BasePath /kubepi/api/v1
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	if err := RootCmd.Execute(); err != nil {
 		panic(err)
