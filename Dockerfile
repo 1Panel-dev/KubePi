@@ -52,12 +52,6 @@ RUN ARCH=$(uname -m) && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd6
     chmod -R 755 /tmp && mkdir -p /opt/webkubectl
 
 
-RUN mkdir /kotools \
-    && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_amd64 \
-    && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_linux_arm64 \
-    && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kotools/kotools_windows_amd64.exe \
-    && mv ./kotools_* /kotools
-
 ENV TZ='Asia/Shanghai';
 
 COPY vimrc.local /etc/vim

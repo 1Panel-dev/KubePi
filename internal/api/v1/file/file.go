@@ -11,7 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -52,7 +51,7 @@ func (h *Handler) CreateFolder() iris.Handler {
 			return
 		}
 		req.Commands = []string{"mkdir", req.Path}
-		if _, err := h.fileService.ExecCommand(req); err != nil {
+		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -68,15 +67,32 @@ func (h *Handler) CreateFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"touch", req.Path}
-		req.Stdin = strings.NewReader(req.Content)
-		if _, err := h.fileService.ExecCommand(req); err != nil {
+		command := "echo '" + req.Content + "' >> " + req.Path
+		req.Commands = []string{"sh", "-c", command}
+		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 	}
 }
+
+func (h *Handler) UpdateFile() iris.Handler {
+	return func(ctx *context.Context) {
+		var req fileModel.Request
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if err := h.fileService.EditFile(req); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func (h *Handler) OpenFile() iris.Handler {
 	return func(ctx *context.Context) {
 		var req fileModel.Request
@@ -86,7 +102,7 @@ func (h *Handler) OpenFile() iris.Handler {
 			return
 		}
 		req.Commands = []string{"cat", req.Path}
-		res, err := h.fileService.ExecCommand(req)
+		res, err := h.fileService.ExecNewCommand(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -110,7 +126,7 @@ func (h *Handler) ReNameFile() iris.Handler {
 			return
 		}
 		req.Commands = []string{"mv", req.OldPath, req.Path}
-		_, err := h.fileService.ExecCommand(req)
+		_, err := h.fileService.ExecNewCommand(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -128,7 +144,7 @@ func (h *Handler) RmFolder() iris.Handler {
 			return
 		}
 		req.Commands = []string{"rm", req.Path}
-		if _, err := h.fileService.ExecCommand(req); err != nil {
+		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -250,5 +266,6 @@ func Install(parent iris.Party) {
 	sp.Post("/files/open", handler.OpenFile())
 	sp.Post("/files/rename", handler.ReNameFile())
 	sp.Post("/files/upload", handler.UploadFile())
+	sp.Post("/files/update", handler.UpdateFile())
 	sp.Get("/files/download", handler.DownloadFile())
 }

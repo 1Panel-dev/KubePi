@@ -146,7 +146,7 @@ import {
   delFolder,
   listPodFiles,
   openFile,
-  renameFile, uploadFile
+  renameFile, updateFile, uploadFile
 } from "@/api/pods"
 import ComplexTable from "@/components/complex-table"
 import Rule from "@/utils/rules"
@@ -304,18 +304,26 @@ export default {
         if (valid) {
           this.fileRequest.path = this.getPath(this.fileForm.name)
           this.fileRequest.content = this.fileForm.content
-          createFile(this.fileRequest).then(() => {
-            this.openAddFile = false
-            let message = this.$t("commons.msg.create_success")
-            if (this.editFile) {
-              message =  this.$t("commons.msg.update_success")
-            }
-            this.$message({
-              type: "success",
-              message: message,
+
+          if (this.editFile) {
+            updateFile(this.fileRequest).then(() => {
+              this.openAddFile = false
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.update_success"),
+              })
+              this.listFiles(this.folder, this.folders)
             })
-            this.listFiles(this.folder, this.folders)
-          })
+          }else {
+            createFile(this.fileRequest).then(() => {
+              this.openAddFile = false
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.create_success"),
+              })
+              this.listFiles(this.folder, this.folders)
+            })
+          }
         }
       })
     },

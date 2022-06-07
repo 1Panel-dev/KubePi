@@ -78,6 +78,10 @@ export function createFile(data) {
   return postFile(podFileUrl+"/files/create",data)
 }
 
+export function updateFile(data) {
+  return postFile(podFileUrl+"/files/update",data)
+}
+
 export function openFile(data) {
   return postFile(podFileUrl+"/files/open",data)
 }

@@ -1,4 +1,4 @@
-package podexec
+package podtool
 
 import (
 	"bufio"
@@ -6,14 +6,16 @@ import (
 	"os"
 )
 
-func (p *PodExec) CopyFromPod(filePath string, destPath string) error {
+func (p *PodTool) CopyFromPod(filePath string, destPath string) error {
 	reader, outStream := io.Pipe()
 
-	p.Command = []string{"tar", "cf", "-", filePath}
-	p.Stdin = os.Stdin
-	p.Stdout = outStream
-	p.Stderr = os.Stderr
-	p.NoPreserve = true
+	p.ExecConfig = ExecConfig{
+		Command:    []string{"tar", "cf", "-", filePath},
+		Stdin:      os.Stdin,
+		Stdout:     outStream,
+		Stderr:     os.Stderr,
+		NoPreserve: true,
+	}
 
 	err := p.Exec(Download)
 	if err != nil {
