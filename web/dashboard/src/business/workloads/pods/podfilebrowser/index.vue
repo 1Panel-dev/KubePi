@@ -54,7 +54,7 @@
       <el-table-column width="90px" :label="$t('commons.table.action')">
         <template v-slot:default="{row}">
           <el-tooltip placement="bottom" :content="$t('business.pod.download')">
-            <el-button circle size="mini" icon="el-icon-download" @click="download(row.name)">
+            <el-button circle size="mini" icon="el-icon-download" @click="download(row)">
             </el-button>
           </el-tooltip>
           <el-dropdown style="margin-left: 10px" @command="handleClick($event,row)" :hide-on-click="false">
@@ -354,7 +354,7 @@ export default {
           cancelButtonText: this.$t("commons.button.cancel"),
           type: "info",
         }).then(() => {
-          this.download(row.name)
+          this.download(row)
         })
       }
     },
@@ -374,8 +374,11 @@ export default {
         }
       })
     },
-    download(name) {
-      const url = this.getUrl(name)
+    download(row) {
+      if (!this.checkLink(row)) {
+        return
+      }
+      const url = this.getUrl(row.name)
       window.open("/kubepi/api/v1/pod/files/download"+url,"_blank")
     },
     getUrl(name) {
