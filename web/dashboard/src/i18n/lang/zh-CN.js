@@ -265,6 +265,7 @@ const message = {
       download: "下载",
       upload_tip: "最多上传一个文件",
       name_helper: "支持 '/' 来创建多级目录",
+      link_tip: "链接文件/文件夹 不支持此操作",
     },
     namespace: {
       namespace: "命名空间",

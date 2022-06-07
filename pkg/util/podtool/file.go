@@ -1,14 +1,12 @@
 package podtool
 
 type File struct {
-	Name string `json:"name"`
-	//Path    string      `json:"path"`
-	Size string `json:"size"`
-	Mode string `json:"mode"`
-	//ModTime time.Time   `json:"modTime"`
-	IsDir bool `json:"isDir"`
-	//Sys     interface{} `json:"sys"`
+	Name      string `json:"name"`
+	Size      string `json:"size"`
+	Mode      string `json:"mode"`
+	IsDir     bool   `json:"isDir"`
 	ModTime   string `json:"modTime"`
 	User      string `json:"user"`
 	UserGroup string `json:"group"`
+	Link      string `json:"link"`
 }

@@ -37,9 +37,9 @@
     <complex-table :selects.="selects" :data="data" v-loading="loading">
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
-          <span v-if="row.isDir" class="span-link" @click="toFolder(row.name)"><i
-                  class="el-icon-folder"></i> {{ row.name }} </span>
-          <el-link v-else @click="catFile(row)"><i class="el-icon-tickets"></i> {{ row.name }}</el-link>
+          <span v-if="row.isDir" class="span-link" @click="toFolder(row)"><i
+                  class="el-icon-folder"></i> {{ row.name}}{{row.link?' -> '+ row.link:''}} </span>
+          <el-link v-else @click="catFile(row)"><i class="el-icon-tickets"></i>{{ row.name}}{{row.link?' -> '+ row.link:''}}</el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.pod.size')" prop="size">
@@ -214,7 +214,11 @@ export default {
       }
       this.listFiles(folderDir, folders)
     },
-    toFolder (folder) {
+    toFolder (row) {
+      if (!this.checkLink(row)) {
+        return
+      }
+      const folder = row.name
       const folderDir = this.getPath(folder)
       const newFolders = this.folders.concat([folder])
       this.listFiles(folderDir, newFolders)
@@ -328,6 +332,9 @@ export default {
       })
     },
     catFile(row) {
+      if (!this.checkLink(row)) {
+        return
+      }
       if (row.size < 10240) {
         this.loading = true
         this.fileRequest.path = this.getPath(row.name)
@@ -406,6 +413,17 @@ export default {
       this.file = {}
       this.file = file
     },
+    checkLink(row){
+      if (row.link !== "") {
+        this.$message({
+          showClose: true,
+          type: "info",
+          message: this.$t("business.pod.link_tip"),
+        })
+        return false
+      }
+      return true
+    }
   },
   created () {
     this.fileRequest = {

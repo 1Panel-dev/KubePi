@@ -264,6 +264,7 @@ const message = {
       download: "Download",
       upload_tip: "Upload at most one file",
       name_helper: "Support '/' to create multi-level directories",
+      link_tip: "This operation is not supported for linked files/folders",
     },
     namespace: {
       namespace: "Namespace",
