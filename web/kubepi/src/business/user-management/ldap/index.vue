@@ -26,7 +26,8 @@
             <el-input v-model="form.filter" :placeholder="'(&(objectClass=organizationalPerson))'"></el-input>
           </el-form-item>
           <el-form-item  style="width: 100%" :label="$t('business.user.ldap_mapping')" prop="mapping">
-            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>
+            <codemirror ref="editor" class="yaml-editor" v-model="form.mapping" :options="options"></codemirror>
+<!--            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>-->
           </el-form-item>
           <el-form-item>
             <div style="font-size: 12px;color: #4E5051;">
@@ -55,6 +56,9 @@
 </template>
 
 <script>
+import "codemirror/lib/codemirror.css"
+import "codemirror/theme/ayu-dark.css"
+import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
 import {createLdap, getLdap, syncLdap, updateLdap} from "@/api/ldap"
@@ -66,7 +70,11 @@ export default {
   data () {
     return {
       form: {
-        mapping: "{\"Name\":\"sAMAccountName\",\"NickName\":\"cn\",\"Email\":\"mail\"}"
+        mapping: "{\n" +
+          "   \"Name\":\"sAMAccountName\",\n" +
+          "   \"NickName\":\"cn\",\n" +
+          "   \"Email\":\"mail\"\n" +
+          "}"
       },
       loading: false,
       rules: {
@@ -78,7 +86,17 @@ export default {
         filter: [Rule.RequiredRule],
         mapping: [Rule.RequiredRule],
       },
-      isSubmitGoing: false
+      isSubmitGoing: false,
+      options: {
+        value: "",
+        mode: "application/json",
+        theme: "ayu-dark",
+        lineNumbers: true,
+        tabSize: 2,
+        // readOnly: true,
+        lineWrapping: true,
+        gutters: ["CodeMirror-lint-markers"],
+      },
     }
   },
   methods: {
@@ -158,5 +176,13 @@ export default {
 </script>
 
 <style scoped>
+    .yaml-editor {
+        height: 100%;
+        position: relative;
+    }
 
+    .yaml-editor >>> .CodeMirror {
+        height: auto;
+        min-height: 100px;
+    }
 </style>
