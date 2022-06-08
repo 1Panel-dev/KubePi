@@ -30,6 +30,7 @@ type Service interface {
 	Delete(id string, options common.DBOptions) error
 	Sync(id string, options common.DBOptions) error
 	Login(user v1User.User, password string, options common.DBOptions) error
+	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error)
 }
 
 func NewService() Service {
@@ -110,6 +111,54 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 		return err
 	}
 	return db.DeleteStruct(ldap)
+}
+
+func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error) {
+	var users []v1User.User
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
+	if err := lc.Connect(); err != nil {
+		return users,err
+	}
+	attributes, err := ldap.GetAttributes()
+	if err != nil {
+		return users,err
+	}
+	mappings, err := ldap.GetMappings()
+	if err != nil {
+		return users,err
+	}
+	entries, err := lc.Search(ldap.Dn, ldap.Filter, attributes)
+	if err != nil {
+		return users, err
+	}
+	if len(entries) == 0{
+		return users,nil
+	}
+	for _, entry := range entries {
+		us := new(v1User.User)
+		rv := reflect.ValueOf(&us).Elem().Elem()
+
+		for _, at := range entry.Attributes {
+			for k, v := range mappings {
+				if v == at.Name && len(at.Values) > 0 {
+					fv := rv.FieldByName(k)
+					if fv.IsValid() {
+						fv.Set(reflect.ValueOf(strings.Trim(at.Values[0], " ")))
+					}
+				}
+			}
+		}
+		if us.Email == "" || us.Name == "" {
+			continue
+		}
+		if us.NickName == "" {
+			us.NickName = us.Name
+		}
+		us.Type = v1User.LDAP
+		users = append(users, *us)
+	}
+
+	return users, nil
 }
 
 func (l *service) Login(user v1User.User, password string, options common.DBOptions) error {

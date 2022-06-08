@@ -195,6 +195,8 @@ const message = {
             type: "类型",
             ldap_mapping: "用户属性映射",
             ldap_mapping_helper: "用户属性映射代表怎样将LDAP中用户属性映射到kubepi用户上，name, nickName,email 是kubepi的用户需要属性",
+            ldap_test: "测试连接",
+            test_result: "连接成功,匹配到{count}个用户"
         },
         system: {
             system_log: "日志审计",

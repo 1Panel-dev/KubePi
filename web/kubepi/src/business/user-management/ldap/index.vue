@@ -39,6 +39,10 @@
 
           <div style="float: right">
             <el-form-item>
+              <el-button @click="test" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
+                  $t("business.user.ldap_test")
+                }}
+              </el-button>
               <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
                   $t("commons.button.sync")
                 }}
@@ -61,7 +65,7 @@ import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
-import {createLdap, getLdap, syncLdap, updateLdap} from "@/api/ldap"
+import {createLdap, getLdap, syncLdap, testConnect, updateLdap} from "@/api/ldap"
 
 export default {
   name: "LDAP",
@@ -97,6 +101,7 @@ export default {
         lineWrapping: true,
         gutters: ["CodeMirror-lint-markers"],
       },
+      users:[]
     }
   },
   methods: {
@@ -116,6 +121,27 @@ export default {
         })
       }).finally(() => {
         this.isSubmitGoing = false
+      })
+    },
+    test() {
+      if (this.isSubmitGoing) {
+        return
+      }
+      let isFormReady = false
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          isFormReady = true
+        }
+      })
+      if (!isFormReady) {
+        return
+      }
+      testConnect(this.form).then(res => {
+        this.users = res.data
+        this.$message({
+          type: "success",
+          message: this.$t("business.user.test_result",{count:res.data.length})
+        })
       })
     },
     onSubmit () {

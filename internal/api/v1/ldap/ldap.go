@@ -63,6 +63,24 @@ func (h *Handler) UpdateLdap() iris.Handler {
 	}
 }
 
+func (h *Handler) TestConnect() iris.Handler  {
+	return func(ctx *context.Context) {
+		var req Ldap
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+		users,err := h.ldapService.TestConnect(&req.Ldap)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", users)
+	}
+}
+
+
 func (h *Handler) SyncLdapUser() iris.Handler {
 	return func(ctx *context.Context) {
 		uuid := ctx.Params().Get("id")
@@ -83,4 +101,5 @@ func Install(parent iris.Party) {
 	sp.Post("/", handler.AddLdap())
 	sp.Put("/", handler.UpdateLdap())
 	sp.Post("/sync/:id", handler.SyncLdapUser())
+	sp.Post("/test", handler.TestConnect())
 }
