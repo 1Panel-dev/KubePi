@@ -8,7 +8,7 @@
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item command="docs">{{ $t('commons.help.ko_docs') }}</el-dropdown-item>
       <el-dropdown-item command="support">{{ $t('commons.help.business_support') }}</el-dropdown-item>
-      <el-dropdown-item command="api">API</el-dropdown-item>
+<!--      <el-dropdown-item command="api">API</el-dropdown-item>-->
       <el-dropdown-item class="iconfont iconguanyu" command="about">{{$t("commons.help.about")}}</el-dropdown-item>
     </el-dropdown-menu>
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="50%">

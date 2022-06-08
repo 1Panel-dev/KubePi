@@ -16,6 +16,9 @@
                       :base-path="route.path"/>
       </el-menu>
     </el-scrollbar>
+    <div style="float:left;margin-left: 50px">
+      <el-link type="info" @click="openApi"> <span style="font-size: 16px"> KubePi API V1.0</span></el-link>
+    </div>
   </div>
 </template>
 
@@ -29,6 +32,11 @@ export default {
   components: { SidebarItem, Logo },
   data () {
     return {}
+  },
+  methods: {
+    openApi(){
+      window.open("/swagger/index.html", "_blank");
+    }
   },
   computed: {
     ...mapGetters([
@@ -113,7 +121,7 @@ export default {
     .el-scrollbar {
       box-sizing: border-box;
       padding: 10px 0;
-      height: calc(100% - #{$header-height});
+      height: calc(95% - #{$header-height});
 
       .el-scrollbar__bar {
         &.is-vertical {
