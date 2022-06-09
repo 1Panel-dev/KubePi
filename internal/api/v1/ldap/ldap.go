@@ -94,6 +94,22 @@ func (h *Handler) SyncLdapUser() iris.Handler {
 	}
 }
 
+func (h *Handler) TestLogin() iris.Handler  {
+	return func(ctx *context.Context) {
+		var req TestLogin
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+		err := h.ldapService.TestLogin(req.Username,req.Password)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/ldap")
@@ -101,5 +117,6 @@ func Install(parent iris.Party) {
 	sp.Post("/", handler.AddLdap())
 	sp.Put("/", handler.UpdateLdap())
 	sp.Post("/sync/:id", handler.SyncLdapUser())
-	sp.Post("/test", handler.TestConnect())
+	sp.Post("/test/connect", handler.TestConnect())
+	sp.Post("/test/login", handler.TestLogin())
 }

@@ -195,6 +195,11 @@ const message = {
             type: "Type",
             ldap_mapping: "User Attribute Mapping",
             ldap_mapping_helper: "User attribute mapping represents how to map user attributes in LDAP to kubepi users, name, nickName, email are the attributes required by kubepi users",
+            ldap_test: "Test connection",
+            test_result: "The connection is successful, matching {count} users",
+            test_login: "Test Login",
+            login_success: "Test login success",
+            login_failed: "Login failed",
         },
         system: {
             system_log: "Audits",

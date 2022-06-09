@@ -39,6 +39,10 @@
 
           <div style="float: right">
             <el-form-item>
+              <el-button @click="openLoginPage" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
+                  $t("business.user.test_login")
+                }}
+              </el-button>
               <el-button @click="test" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
                   $t("business.user.ldap_test")
                 }}
@@ -56,6 +60,25 @@
       </div>
     </el-col>
     <el-col :span="4"><br/></el-col>
+    <el-dialog :visible.sync="loginPageOpen" :title="$t('business.user.test_login')" width="30%">
+      <el-form ref="loginForm" v-loading="loginLoading" label-position="left" :rules="rules" :model="loginForm" label-width="20%">
+        <el-form-item style="width: 100%" :label="$t('business.user.username')"  prop="username" >
+          <el-input v-model="loginForm.username" ></el-input>
+        </el-form-item>
+        <el-form-item style="width: 100%" :label="$t('business.user.password')"  prop="password" >
+          <el-input v-model="loginForm.password" ></el-input>
+        </el-form-item>
+        <div style="height: 30px">
+          <div style="float: right">
+            <el-button @click="loginPageOpen=false" :disabled="loginLoading" v-has-permissions="{resource:'ldap',verb:'create'}">
+              {{$t("commons.button.cancel") }}
+            </el-button>
+            <el-button type="primary" @click="loginTest" :disabled="loginLoading" v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+            </el-button>
+          </div>
+        </div>
+      </el-form>
+    </el-dialog>
   </layout-content>
 </template>
 
@@ -65,7 +88,7 @@ import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
-import {createLdap, getLdap, syncLdap, testConnect, updateLdap} from "@/api/ldap"
+import {createLdap, getLdap, syncLdap, testConnect, testLogin, updateLdap} from "@/api/ldap"
 
 export default {
   name: "LDAP",
@@ -101,7 +124,10 @@ export default {
         lineWrapping: true,
         gutters: ["CodeMirror-lint-markers"],
       },
-      users:[]
+      users:[],
+      loginPageOpen: false,
+      loginLoading: false,
+      loginForm: {}
     }
   },
   methods: {
@@ -142,6 +168,29 @@ export default {
           type: "success",
           message: this.$t("business.user.test_result",{count:res.data.length})
         })
+      })
+    },
+    openLoginPage(){
+      this.loginPageOpen = true
+      this.loginForm ={}
+    },
+    loginTest(){
+      let isFormReady = false
+      this.$refs["loginForm"].validate((valid) => {
+        if (valid) {
+          isFormReady = true
+        }
+      })
+      if (!isFormReady) {
+        return
+      }
+      testLogin(this.loginForm).then(() => {
+        this.$message({
+          type: "success",
+          message: this.$t("business.user.login_success")
+        })
+      }).finally(() => {
+        this.loginLoading = false
       })
     },
     onSubmit () {

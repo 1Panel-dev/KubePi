@@ -31,6 +31,7 @@ type Service interface {
 	Sync(id string, options common.DBOptions) error
 	Login(user v1User.User, password string, options common.DBOptions) error
 	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error)
+	TestLogin(username string,password string) error
 }
 
 func NewService() Service {
@@ -159,6 +160,30 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error) {
 	}
 
 	return users, nil
+}
+
+func (l *service) TestLogin(username string,password string) error  {
+	ldaps, err := l.List(common.DBOptions{})
+	if err != nil {
+		return err
+	}
+	ldap := ldaps[0]
+
+	mappings, err := ldap.GetMappings()
+	if err != nil {
+		return err
+	}
+	var userFilter string
+	for k, v := range mappings {
+		if k == "Name" {
+			userFilter = "(" + v + "=" + username + ")"
+		}
+	}
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
+	if err := lc.Connect(); err != nil {
+		return err
+	}
+	return lc.Login(ldap.Dn, userFilter, password)
 }
 
 func (l *service) Login(user v1User.User, password string, options common.DBOptions) error {
