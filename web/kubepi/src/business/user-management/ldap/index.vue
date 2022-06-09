@@ -166,6 +166,8 @@ export default {
         dn: [Rule.RequiredRule],
         filter: [Rule.RequiredRule],
         mapping: [Rule.RequiredRule],
+        timeLimit: [Rule.RequiredRule],
+        sizeLimit: [Rule.RequiredRule],
       },
       isSubmitGoing: false,
       options: {
