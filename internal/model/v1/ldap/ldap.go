@@ -17,6 +17,8 @@ type Ldap struct {
 	Mapping      string `json:"mapping"`
 	TLS          bool   `json:"tls"`
 	Enable       bool   `json:"enable"`
+	SizeLimit    int    `json:"sizeLimit"`
+	TimeLimit    int    `json:"timeLimit"`
 }
 
 func (l *Ldap) GetAttributes() ([]string, error) {

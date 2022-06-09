@@ -45,9 +45,9 @@ func (l *Ldap) Connect() error {
 	return nil
 }
 
-func (l *Ldap) Search(dn, filter string, attributes []string) ([]*ldap.Entry, error) {
+func (l *Ldap) Search(dn, filter string, sizeLimit, timeLimit int, attributes []string) ([]*ldap.Entry, error) {
 	searchRequest := ldap.NewSearchRequest(dn,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, sizeLimit, timeLimit, false,
 		filter,
 		attributes,
 		nil)
@@ -62,9 +62,9 @@ func (l *Ldap) Search(dn, filter string, attributes []string) ([]*ldap.Entry, er
 	return sr.Entries, err
 }
 
-func (l *Ldap) Login(dn, filter, password string) error {
+func (l *Ldap) Login(dn, filter, password string, sizeLimit, timeLimit int) error {
 	searchRequest := ldap.NewSearchRequest(dn,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, sizeLimit, timeLimit, false,
 		filter,
 		[]string{"dn", "cn", "uid"},
 		nil)

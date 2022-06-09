@@ -205,6 +205,8 @@ const message = {
             import_user_success: "导入成功",
             import_user_failed: "导入失败用户{user}",
             ldap_remake: "重置",
+            time_limit: "连接超时时间",
+            size_limit: "搜索分页数量",
         },
         system: {
             system_log: "日志审计",

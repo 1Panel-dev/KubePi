@@ -141,7 +141,7 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 	if err != nil {
 		return users, err
 	}
-	entries, err := lc.Search(ldap.Dn, ldap.Filter, attributes)
+	entries, err := lc.Search(ldap.Dn, ldap.Filter, ldap.SizeLimit, ldap.TimeLimit, attributes)
 	if err != nil {
 		return users, err
 	}
@@ -200,7 +200,7 @@ func (l *service) TestLogin(username string, password string) error {
 	if err := lc.Connect(); err != nil {
 		return err
 	}
-	return lc.Login(ldap.Dn, userFilter, password)
+	return lc.Login(ldap.Dn, userFilter, password, ldap.SizeLimit, ldap.TimeLimit)
 }
 
 func (l *service) Login(user v1User.User, password string, options common.DBOptions) error {
@@ -224,7 +224,7 @@ func (l *service) Login(user v1User.User, password string, options common.DBOpti
 	if err := lc.Connect(); err != nil {
 		return err
 	}
-	return lc.Login(ldap.Dn, userFilter, password)
+	return lc.Login(ldap.Dn, userFilter, password, ldap.SizeLimit, ldap.TimeLimit)
 }
 
 func (l *service) ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, error) {
@@ -302,7 +302,7 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 			server.Logger().Errorf("can not get ldap mappings")
 			return
 		}
-		entries, err := lc.Search(ldap.Dn, ldap.Filter, attributes)
+		entries, err := lc.Search(ldap.Dn, ldap.Filter, ldap.SizeLimit, ldap.TimeLimit, attributes)
 		if err != nil {
 			server.Logger().Errorf(err.Error())
 			return

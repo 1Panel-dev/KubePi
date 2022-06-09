@@ -205,6 +205,8 @@ const message = {
             import_user_success: "Import successful",
             import_user_failed: "Import failed user {user}",
             ldap_remake: "Reset",
+            time_limit: "Connection timeout",
+            size_limit: "Number of search pages",
         },
         system: {
             system_log: "Audits",

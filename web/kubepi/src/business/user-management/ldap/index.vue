@@ -28,7 +28,12 @@
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_mapping')" prop="mapping">
             <codemirror ref="editor" class="yaml-editor" v-model="form.mapping" :options="options"></codemirror>
-            <!--            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>-->
+          </el-form-item>
+          <el-form-item style="width: 100%" :label="$t('business.user.time_limit')" prop="timeLimit">
+            <el-input v-model.number="form.timeLimit" :placeholder="'30'" type="number"></el-input>
+          </el-form-item>
+          <el-form-item style="width: 100%" :label="$t('business.user.size_limit')" prop="sizeLimit">
+            <el-input v-model.number="form.sizeLimit" :placeholder="'1000'" type="number"></el-input>
           </el-form-item>
           <el-form-item>
             <div style="font-size: 12px;color: #4E5051;">
@@ -148,7 +153,9 @@ export default {
           "   \"Name\":\"sAMAccountName\",\n" +
           "   \"NickName\":\"cn\",\n" +
           "   \"Email\":\"mail\"\n" +
-          "}"
+          "}",
+        sizeLimit: 1000,
+        timeLimit: 30,
       },
       loading: false,
       rules: {
@@ -167,7 +174,6 @@ export default {
         theme: "ayu-dark",
         lineNumbers: true,
         tabSize: 2,
-        // readOnly: true,
         lineWrapping: true,
         gutters: ["CodeMirror-lint-markers"],
       },
