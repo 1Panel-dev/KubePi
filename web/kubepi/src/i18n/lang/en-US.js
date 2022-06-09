@@ -200,6 +200,11 @@ const message = {
             test_login: "Test Login",
             login_success: "Test login success",
             login_failed: "Login failed",
+            import_user: "Import User",
+            import_enable: "Whether it can be imported",
+            import_user_success: "Import successful",
+            import_user_failed: "Import failed user {user}",
+            ldap_remake: "Reset",
         },
         system: {
             system_log: "Audits",

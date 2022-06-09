@@ -203,7 +203,8 @@ const message = {
             import_user: "导入用户",
             import_enable: "是否可导入",
             import_user_success: "导入成功",
-            import_user_failed: "导入失败用户{user}"
+            import_user_failed: "导入失败用户{user}",
+            ldap_remake: "重置",
         },
         system: {
             system_log: "日志审计",

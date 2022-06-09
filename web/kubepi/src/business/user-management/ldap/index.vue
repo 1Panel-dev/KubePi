@@ -37,7 +37,9 @@
               {{ $t("business.user.ldap_helper") }}
             </div>
           </el-form-item>
-
+          <el-form-item style="width: 100%" prop="enable">
+            <el-checkbox v-model="form.enable">{{ $t('commons.enable.true') }}</el-checkbox>
+          </el-form-item>
           <div style="float: right">
             <el-form-item>
               <el-button @click="connectTest" :disabled="isSubmitGoing"
@@ -55,10 +57,15 @@
                   $t("business.user.import_user")
                 }}
               </el-button>
-              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
-                  $t("commons.button.sync")
+              <el-button @click="remake" :disabled="isSubmitGoing"
+                         v-has-permissions="{resource:'ldap',verb:'create'}">{{
+                  $t("business.user.ldap_remake")
                 }}
               </el-button>
+<!--              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{-->
+<!--                  $t("commons.button.sync")-->
+<!--                }}-->
+<!--              </el-button>-->
               <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing"
                          v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
               </el-button>
@@ -171,7 +178,8 @@ export default {
       loginForm: {},
       importUserPageOpen: false,
       importLoading: false,
-      connectLoading: false
+      connectLoading: false,
+      oldConfig: {}
     }
   },
   methods: {
@@ -226,6 +234,9 @@ export default {
     },
     importAvailable(row) {
       return row.available
+    },
+    remake(){
+      this.form = JSON.parse(JSON.stringify( this.oldConfig))
     },
     loginTest () {
       let isFormReady = false
@@ -316,6 +327,7 @@ export default {
       getLdap().then((res) => {
         if (res.data.length > 0) {
           this.form = res.data[0]
+          this.oldConfig =  res.data[0]
         }
       }).finally(() => {
         this.loading = false

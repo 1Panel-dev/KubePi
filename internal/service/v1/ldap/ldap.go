@@ -93,6 +93,18 @@ func (l *service) Update(id string, ldap *v1Ldap.Ldap, options common.DBOptions)
 	ldap.CreateAt = old.CreateAt
 	ldap.UpdateAt = time.Now()
 	db := l.GetDB(options)
+	if ldap.Enable != old.Enable {
+		err = db.UpdateField(ldap, "Enable", ldap.Enable)
+		if err != nil {
+			return err
+		}
+	}
+	if ldap.TLS != old.TLS {
+		err = db.UpdateField(ldap, "TLS", ldap.TLS)
+		if err != nil {
+			return err
+		}
+	}
 	return db.Update(ldap)
 }
 
