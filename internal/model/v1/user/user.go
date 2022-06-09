@@ -28,3 +28,16 @@ const (
 	LDAP  = "LDAP"
 	LOCAL = "LOCAL"
 )
+
+type ImportUser struct {
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	NickName  string `json:"nickName"`
+	Available bool   `json:"available"`
+}
+
+type ImportResult struct {
+	Success  bool     `json:"success"`
+	Failures []string `json:"failures"`
+	Msg      string   `json:"msg"`
+}

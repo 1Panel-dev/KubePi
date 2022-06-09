@@ -19,9 +19,14 @@ export function syncLdap(id,data) {
 }
 
 export function testConnect(data) {
-  return post(`${baseUrl}/test/login`, data)
+  return post(`${baseUrl}/test/connect`, data)
 }
 
 export function testLogin(data){
   return post(`${baseUrl}/test/login`, data)
+}
+
+
+export function importUser(data){
+  return post(`${baseUrl}/import`, data)
 }

@@ -63,14 +63,14 @@ func (h *Handler) UpdateLdap() iris.Handler {
 	}
 }
 
-func (h *Handler) TestConnect() iris.Handler  {
+func (h *Handler) TestConnect() iris.Handler {
 	return func(ctx *context.Context) {
 		var req Ldap
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		users,err := h.ldapService.TestConnect(&req.Ldap)
+		users, err := h.ldapService.TestConnect(&req.Ldap)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -79,7 +79,6 @@ func (h *Handler) TestConnect() iris.Handler  {
 		ctx.Values().Set("data", users)
 	}
 }
-
 
 func (h *Handler) SyncLdapUser() iris.Handler {
 	return func(ctx *context.Context) {
@@ -94,19 +93,36 @@ func (h *Handler) SyncLdapUser() iris.Handler {
 	}
 }
 
-func (h *Handler) TestLogin() iris.Handler  {
+func (h *Handler) TestLogin() iris.Handler {
 	return func(ctx *context.Context) {
 		var req TestLogin
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.ldapService.TestLogin(req.Username,req.Password)
+		err := h.ldapService.TestLogin(req.Username, req.Password)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+	}
+}
+
+func (h *Handler) ImportUser() iris.Handler {
+	return func(ctx *context.Context) {
+		var req ImportRequest
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+		}
+		result, err := h.ldapService.ImportUsers(req.Users)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", result)
 	}
 }
 
@@ -119,4 +135,5 @@ func Install(parent iris.Party) {
 	sp.Post("/sync/:id", handler.SyncLdapUser())
 	sp.Post("/test/connect", handler.TestConnect())
 	sp.Post("/test/login", handler.TestLogin())
+	sp.Post("/import", handler.ImportUser())
 }

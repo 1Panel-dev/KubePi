@@ -4,17 +4,18 @@
     <el-col :span="15">
       <div class="grid-content bg-purple-light">
         <el-form ref="form" v-loading="loading" label-position="left" :rules="rules" :model="form" label-width="150px">
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')"  prop="address" >
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_address')" prop="address">
             <el-input v-model="form.address" :placeholder="'172.16.10.1'"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port" >
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_port')" prop="port">
             <el-input v-model="form.port" :placeholder="'389'" type="number"></el-input>
           </el-form-item>
-          <el-form-item style="width: 100%" :label="$t('business.user.ldap_tls')" prop="tls" >
-            <el-checkbox v-model="form.tls">{{$t('commons.bool.true')}}</el-checkbox>
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_tls')" prop="tls">
+            <el-checkbox v-model="form.tls">{{ $t("commons.bool.true") }}</el-checkbox>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_username')" prop="username">
-            <el-input v-model="form.username" :placeholder="'cn=Manager,ou=users,dc=ko,dc=com or  Manager@ko.com'"></el-input>
+            <el-input v-model="form.username"
+                      :placeholder="'cn=Manager,ou=users,dc=ko,dc=com or  Manager@ko.com'"></el-input>
           </el-form-item>
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_password')" prop="password">
             <el-input type="password" v-model="form.password"></el-input>
@@ -25,13 +26,13 @@
           <el-form-item style="width: 100%" :label="$t('business.user.ldap_filter_rule')" prop="filter">
             <el-input v-model="form.filter" :placeholder="'(&(objectClass=organizationalPerson))'"></el-input>
           </el-form-item>
-          <el-form-item  style="width: 100%" :label="$t('business.user.ldap_mapping')" prop="mapping">
+          <el-form-item style="width: 100%" :label="$t('business.user.ldap_mapping')" prop="mapping">
             <codemirror ref="editor" class="yaml-editor" v-model="form.mapping" :options="options"></codemirror>
-<!--            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>-->
+            <!--            <el-input v-model="form.mapping" :placeholder="$t('business.user.ldap_mapping_helper')" ></el-input>-->
           </el-form-item>
           <el-form-item>
             <div style="font-size: 12px;color: #4E5051;">
-              {{$t('business.user.ldap_mapping_helper')}}
+              {{ $t("business.user.ldap_mapping_helper") }}
               <br>
               {{ $t("business.user.ldap_helper") }}
             </div>
@@ -39,19 +40,27 @@
 
           <div style="float: right">
             <el-form-item>
-              <el-button @click="openLoginPage" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
+              <el-button @click="connectTest" :disabled="isSubmitGoing"
+                         v-has-permissions="{resource:'ldap',verb:'create'}">{{
+                  $t("business.user.ldap_test")
+                }}
+              </el-button>
+              <el-button @click="openLoginPage" :disabled="isSubmitGoing"
+                         v-has-permissions="{resource:'ldap',verb:'create'}">{{
                   $t("business.user.test_login")
                 }}
               </el-button>
-              <el-button @click="test" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
-                  $t("business.user.ldap_test")
+              <el-button @click="openImportPage" :disabled="isSubmitGoing"
+                         v-has-permissions="{resource:'ldap',verb:'create'}">{{
+                  $t("business.user.import_user")
                 }}
               </el-button>
               <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{
                   $t("commons.button.sync")
                 }}
               </el-button>
-              <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+              <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing"
+                         v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
               </el-button>
             </el-form-item>
           </div>
@@ -61,23 +70,53 @@
     </el-col>
     <el-col :span="4"><br/></el-col>
     <el-dialog :visible.sync="loginPageOpen" :title="$t('business.user.test_login')" width="30%">
-      <el-form ref="loginForm" v-loading="loginLoading" label-position="left" :rules="rules" :model="loginForm" label-width="20%">
-        <el-form-item style="width: 100%" :label="$t('business.user.username')"  prop="username" >
-          <el-input v-model="loginForm.username" ></el-input>
+      <el-form ref="loginForm" v-loading="loginLoading" label-position="left" :rules="rules" :model="loginForm"
+               label-width="20%">
+        <el-form-item style="width: 100%" :label="$t('business.user.username')" prop="username">
+          <el-input v-model="loginForm.username"></el-input>
         </el-form-item>
-        <el-form-item style="width: 100%" :label="$t('business.user.password')"  prop="password" >
-          <el-input v-model="loginForm.password" ></el-input>
+        <el-form-item style="width: 100%" :label="$t('business.user.password')" prop="password">
+          <el-input v-model="loginForm.password"></el-input>
         </el-form-item>
         <div style="height: 30px">
           <div style="float: right">
-            <el-button @click="loginPageOpen=false" :disabled="loginLoading" v-has-permissions="{resource:'ldap',verb:'create'}">
-              {{$t("commons.button.cancel") }}
+            <el-button @click="loginPageOpen=false" :disabled="loginLoading"
+                       v-has-permissions="{resource:'ldap',verb:'create'}">
+              {{ $t("commons.button.cancel") }}
             </el-button>
-            <el-button type="primary" @click="loginTest" :disabled="loginLoading" v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+            <el-button type="primary" @click="loginTest" :disabled="loginLoading"
+                       v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
             </el-button>
           </div>
         </div>
       </el-form>
+    </el-dialog>
+    <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')">
+      <complex-table :data="users" style="width: 100%" :selects.sync="selects" :loading="connectLoading">
+        <el-table-column type="selection" fix :selectable="importAvailable"></el-table-column>
+        <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
+        </el-table-column>
+        <el-table-column :label="$t('business.user.nickname')" prop="nickName" min-width="100" fix>
+        </el-table-column>
+        <el-table-column :label="$t('business.user.email')" prop="email" min-width="100" fix>
+        </el-table-column>
+        <el-table-column :label="$t('business.user.import_enable')" prop="available" min-width="100" fix>
+          <template v-slot:default="{row}">
+            {{ row.available ? $t("commons.bool.true") : $t("commons.bool.false") }}
+          </template>
+        </el-table-column>
+      </complex-table>
+      <div style="height: 30px;margin-top: 10px">
+        <div style="float: right">
+          <el-button @click="importUserPageOpen=false" :disabled="importLoading"
+                     v-has-permissions="{resource:'ldap',verb:'create'}">
+            {{ $t("commons.button.cancel") }}
+          </el-button>
+          <el-button type="primary" @click="userImport" :disabled="importLoading"
+                     v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+          </el-button>
+        </div>
+      </div>
     </el-dialog>
   </layout-content>
 </template>
@@ -88,11 +127,12 @@ import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
-import {createLdap, getLdap, syncLdap, testConnect, testLogin, updateLdap} from "@/api/ldap"
+import {createLdap, getLdap, importUser, syncLdap, testConnect, testLogin, updateLdap} from "@/api/ldap"
+import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "LDAP",
-  components: { LayoutContent },
+  components: { ComplexTable,LayoutContent },
   props: {},
   data () {
     return {
@@ -124,10 +164,14 @@ export default {
         lineWrapping: true,
         gutters: ["CodeMirror-lint-markers"],
       },
-      users:[],
+      selects: [],
+      users: [],
       loginPageOpen: false,
       loginLoading: false,
-      loginForm: {}
+      loginForm: {},
+      importUserPageOpen: false,
+      importLoading: false,
+      connectLoading: false
     }
   },
   methods: {
@@ -149,10 +193,7 @@ export default {
         this.isSubmitGoing = false
       })
     },
-    test() {
-      if (this.isSubmitGoing) {
-        return
-      }
+    connectTest () {
       let isFormReady = false
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -162,19 +203,31 @@ export default {
       if (!isFormReady) {
         return
       }
+      this.connectLoading = true
       testConnect(this.form).then(res => {
         this.users = res.data
         this.$message({
           type: "success",
-          message: this.$t("business.user.test_result",{count:res.data.length})
+          message: this.$t("business.user.test_result", { count: res.data.length })
         })
+      }).finally(() => {
+        this.connectLoading = false
       })
     },
-    openLoginPage(){
+    openLoginPage () {
       this.loginPageOpen = true
-      this.loginForm ={}
+      this.loginForm = {}
     },
-    loginTest(){
+    openImportPage () {
+      this.importUserPageOpen = true
+      if (this.users.length === 0) {
+        this.connectTest()
+      }
+    },
+    importAvailable(row) {
+      return row.available
+    },
+    loginTest () {
       let isFormReady = false
       this.$refs["loginForm"].validate((valid) => {
         if (valid) {
@@ -191,6 +244,31 @@ export default {
         })
       }).finally(() => {
         this.loginLoading = false
+      })
+    },
+    userImport(){
+      if (this.selects.length === 0) {
+        return
+      }
+      let req = {
+        users : this.selects
+      }
+      this.importLoading = true
+      importUser(req).then(res => {
+        if (res.success) {
+          this.$message({
+            type: "success",
+            message: this.$t("business.user.import_user_success")
+          })
+          this.importUserPageOpen = false
+        }else {
+          this.$message({
+            type: "failed",
+            message: this.$t("business.user.import_user_failed",{user:res.failures})
+          })
+        }
+      }).finally(() => {
+        this.importLoading = false
       })
     },
     onSubmit () {

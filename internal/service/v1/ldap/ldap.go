@@ -30,8 +30,9 @@ type Service interface {
 	Delete(id string, options common.DBOptions) error
 	Sync(id string, options common.DBOptions) error
 	Login(user v1User.User, password string, options common.DBOptions) error
-	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error)
-	TestLogin(username string,password string) error
+	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error)
+	TestLogin(username string, password string) error
+	ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, error)
 }
 
 func NewService() Service {
@@ -114,29 +115,30 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 	return db.DeleteStruct(ldap)
 }
 
-func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error) {
-	var users []v1User.User
+func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
+	var users []v1User.ImportUser
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
-		return users,err
+		return users, err
 	}
 	attributes, err := ldap.GetAttributes()
 	if err != nil {
-		return users,err
+		return users, err
 	}
 	mappings, err := ldap.GetMappings()
 	if err != nil {
-		return users,err
+		return users, err
 	}
 	entries, err := lc.Search(ldap.Dn, ldap.Filter, attributes)
 	if err != nil {
 		return users, err
 	}
-	if len(entries) == 0{
-		return users,nil
+	if len(entries) == 0 {
+		return users, nil
 	}
 	for _, entry := range entries {
-		us := new(v1User.User)
+		us := new(v1User.ImportUser)
+		us.Available = true
 		rv := reflect.ValueOf(&us).Elem().Elem()
 
 		for _, at := range entry.Attributes {
@@ -155,14 +157,17 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.User, error) {
 		if us.NickName == "" {
 			us.NickName = us.Name
 		}
-		us.Type = v1User.LDAP
+		_, err = l.userService.GetByNameOrEmail(us.Name, common.DBOptions{})
+		if err == nil {
+			us.Available = false
+		}
 		users = append(users, *us)
 	}
 
 	return users, nil
 }
 
-func (l *service) TestLogin(username string,password string) error  {
+func (l *service) TestLogin(username string, password string) error {
 	ldaps, err := l.List(common.DBOptions{})
 	if err != nil {
 		return err
@@ -208,6 +213,59 @@ func (l *service) Login(user v1User.User, password string, options common.DBOpti
 		return err
 	}
 	return lc.Login(ldap.Dn, userFilter, password)
+}
+
+func (l *service) ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, error) {
+	var result v1User.ImportResult
+	for _, imp := range users {
+		us := &v1User.User{
+			NickName: imp.NickName,
+			Metadata: v1.Metadata{
+				Name: imp.Name,
+			},
+			Type:  v1User.LDAP,
+			Email: imp.Email,
+		}
+		result.Failures = append(result.Failures, us.Name)
+		tx, err := server.DB().Begin(true)
+		if err != nil {
+			server.Logger().Errorf("create tx err:  %s", err)
+			continue
+		}
+		err = l.userService.Create(us, common.DBOptions{DB: tx})
+		if err != nil {
+			_ = tx.Rollback()
+			server.Logger().Errorf("can not insert user %s , err:  %s", us.Name, err)
+			continue
+		}
+		roleName := "Common User"
+		binding := v1Role.Binding{
+			BaseModel: v1.BaseModel{
+				Kind:       "RoleBind",
+				ApiVersion: "v1",
+				CreatedBy:  "admin",
+			},
+			Metadata: v1.Metadata{
+				Name: fmt.Sprintf("role-binding-%s-%s", roleName, us.Name),
+			},
+			Subject: v1Role.Subject{
+				Kind: "User",
+				Name: us.Name,
+			},
+			RoleRef: roleName,
+		}
+		if err := l.roleBindingService.CreateRoleBinding(&binding, common.DBOptions{DB: tx}); err != nil {
+			_ = tx.Rollback()
+			server.Logger().Errorf("can not create  user role %s , err:  %s", us.Name, err)
+			continue
+		}
+		_ = tx.Commit()
+		result.Failures = result.Failures[:len(result.Failures)-1]
+	}
+	if len(result.Failures) == 0 {
+		result.Success = true
+	}
+	return result, nil
 }
 
 func (l *service) Sync(id string, options common.DBOptions) error {

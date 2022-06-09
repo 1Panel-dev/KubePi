@@ -200,6 +200,10 @@ const message = {
             test_login: "测试登录",
             login_success: "测试登录成功",
             login_failed: "登录失败",
+            import_user: "导入用户",
+            import_enable: "是否可导入",
+            import_user_success: "导入成功",
+            import_user_failed: "导入失败用户{user}"
         },
         system: {
             system_log: "日志审计",
