@@ -47,11 +47,11 @@ func (l *Ldap) Connect() error {
 
 func (l *Ldap) Search(dn, filter string, sizeLimit, timeLimit int, attributes []string) ([]*ldap.Entry, error) {
 	searchRequest := ldap.NewSearchRequest(dn,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, sizeLimit, timeLimit, false,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, timeLimit, false,
 		filter,
 		attributes,
 		nil)
-	sr, err := l.Conn.Search(searchRequest)
+	sr, err := l.Conn.SearchWithPaging(searchRequest, uint32(sizeLimit))
 	if err != nil {
 		return nil, err
 	}
@@ -81,5 +81,6 @@ func (l *Ldap) Login(dn, filter, password string, sizeLimit, timeLimit int) erro
 		return err
 	}
 	defer l.Conn.Close()
+
 	return nil
 }

@@ -43,7 +43,7 @@
             </div>
           </el-form-item>
           <el-form-item style="width: 100%" prop="enable">
-            <el-checkbox v-model="form.enable">{{ $t('commons.enable.true') }}</el-checkbox>
+            <el-checkbox v-model="form.enable">{{ $t("commons.enable.true") }}</el-checkbox>
           </el-form-item>
           <div style="float: right">
             <el-form-item>
@@ -67,10 +67,10 @@
                   $t("business.user.ldap_remake")
                 }}
               </el-button>
-<!--              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{-->
-<!--                  $t("commons.button.sync")-->
-<!--                }}-->
-<!--              </el-button>-->
+              <!--              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{-->
+              <!--                  $t("commons.button.sync")-->
+              <!--                }}-->
+              <!--              </el-button>-->
               <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing"
                          v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
               </el-button>
@@ -103,8 +103,14 @@
         </div>
       </el-form>
     </el-dialog>
-    <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')">
-      <complex-table :data="users" style="width: 100%" :selects.sync="selects" :loading="connectLoading">
+    <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')" style="height: 900px">
+      <div style="text-align: right;margin-bottom: 10px">
+        <el-input v-model="searchName" style="width: 30%" size="mini" clearable @blur="handleSearch"/>
+      </div>
+      <el-table
+              :data="tableUsers.slice((pageConfig.currentPage-1)*pageConfig.pageSize,pageConfig.currentPage*pageConfig.pageSize)"
+              :loading="connectLoading"
+              @selection-change="handleSelectionChange">
         <el-table-column type="selection" fix :selectable="importAvailable"></el-table-column>
         <el-table-column :label="$t('commons.table.name')" prop="name" min-width="100" fix>
         </el-table-column>
@@ -117,17 +123,21 @@
             {{ row.available ? $t("commons.bool.true") : $t("commons.bool.false") }}
           </template>
         </el-table-column>
-      </complex-table>
-      <div style="height: 30px;margin-top: 10px">
-        <div style="float: right">
-          <el-button @click="importUserPageOpen=false" :disabled="importLoading"
-                     v-has-permissions="{resource:'ldap',verb:'create'}">
-            {{ $t("commons.button.cancel") }}
-          </el-button>
-          <el-button type="primary" @click="userImport" :disabled="importLoading"
-                     v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
-          </el-button>
-        </div>
+      </el-table>
+      <div style="height: 30px;margin-top: 10px;margin-bottom: 20px;text-align: right">
+        <el-pagination
+                :current-page.sync="pageConfig.currentPage"
+                :page-size="pageConfig.pageSize"
+                layout="prev, pager, next"
+                :total="tableUsers.length">
+        </el-pagination>
+        <el-button @click="importUserPageOpen=false" :disabled="importLoading"
+                   v-has-permissions="{resource:'ldap',verb:'create'}">
+          {{ $t("commons.button.cancel") }}
+        </el-button>
+        <el-button type="primary" @click="userImport" :disabled="importLoading"
+                   v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+        </el-button>
       </div>
     </el-dialog>
   </layout-content>
@@ -144,7 +154,7 @@ import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "LDAP",
-  components: { ComplexTable,LayoutContent },
+  components: { ComplexTable, LayoutContent },
   props: {},
   data () {
     return {
@@ -187,7 +197,13 @@ export default {
       importUserPageOpen: false,
       importLoading: false,
       connectLoading: false,
-      oldConfig: {}
+      oldConfig: {},
+      pageConfig: {
+        currentPage: 1,
+        pageSize: 10,
+      },
+      tableUsers: [],
+      searchName: ""
     }
   },
   methods: {
@@ -219,14 +235,18 @@ export default {
       if (!isFormReady) {
         return
       }
+      this.tableUsers = []
+      this.loading = true
       this.connectLoading = true
       testConnect(this.form).then(res => {
         this.users = res.data
+        this.tableUsers = this.users
         this.$message({
           type: "success",
           message: this.$t("business.user.test_result", { count: res.data.length })
         })
       }).finally(() => {
+        this.loading = false
         this.connectLoading = false
       })
     },
@@ -236,15 +256,17 @@ export default {
     },
     openImportPage () {
       this.importUserPageOpen = true
+      this.searchName = ""
       if (this.users.length === 0) {
         this.connectTest()
       }
+      this.tableUsers = this.users
     },
-    importAvailable(row) {
+    importAvailable (row) {
       return row.available
     },
-    remake(){
-      this.form = JSON.parse(JSON.stringify( this.oldConfig))
+    remake () {
+      this.form = JSON.parse(JSON.stringify(this.oldConfig))
     },
     loginTest () {
       let isFormReady = false
@@ -256,6 +278,7 @@ export default {
       if (!isFormReady) {
         return
       }
+      this.loginLoading = true
       testLogin(this.loginForm).then(() => {
         this.$message({
           type: "success",
@@ -265,12 +288,12 @@ export default {
         this.loginLoading = false
       })
     },
-    userImport(){
+    userImport () {
       if (this.selects.length === 0) {
         return
       }
       let req = {
-        users : this.selects
+        users: this.selects
       }
       this.importLoading = true
       importUser(req).then(res => {
@@ -280,10 +303,10 @@ export default {
             message: this.$t("business.user.import_user_success")
           })
           this.importUserPageOpen = false
-        }else {
+        } else {
           this.$message({
             type: "failed",
-            message: this.$t("business.user.import_user_failed",{user:res.failures})
+            message: this.$t("business.user.import_user_failed", { user: res.failures })
           })
         }
       }).finally(() => {
@@ -335,10 +358,18 @@ export default {
       getLdap().then((res) => {
         if (res.data.length > 0) {
           this.form = res.data[0]
-          this.oldConfig =  res.data[0]
+          this.oldConfig = res.data[0]
         }
       }).finally(() => {
         this.loading = false
+      })
+    },
+    handleSelectionChange(val) {
+      this.selects = val
+    },
+    handleSearch(){
+      this.tableUsers =this.users.filter(user => {
+        return user.name.indexOf(this.searchName) > -1
       })
     }
   },
