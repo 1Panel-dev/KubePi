@@ -114,9 +114,5 @@ func (f service) UploadFile(request file.Request) error {
 	if err != nil {
 		return err
 	}
-	err = pt.CopyToPod(request.FilePath, request.Path)
-	if err != nil {
-		return nil
-	}
-	return nil
+	return pt.CopyToPod(request.FilePath, request.Path)
 }
