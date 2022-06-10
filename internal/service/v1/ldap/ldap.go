@@ -33,6 +33,7 @@ type Service interface {
 	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error)
 	TestLogin(username string, password string) error
 	ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, error)
+	CheckStatus() bool
 }
 
 func NewService() Service {
@@ -177,6 +178,15 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 	}
 
 	return users, nil
+}
+
+func (l *service) CheckStatus() bool {
+	ldaps, err := l.List(common.DBOptions{})
+	if err != nil {
+		return false
+	}
+	ldap := ldaps[0]
+	return ldap.Enable
 }
 
 func (l *service) TestLogin(username string, password string) error {

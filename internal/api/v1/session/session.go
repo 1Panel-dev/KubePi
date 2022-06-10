@@ -103,8 +103,13 @@ func (h *Handler) Login() iris.Handler {
 		}
 
 		if u.Type == v1User.LDAP {
+			if !h.ldapService.CheckStatus() {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", "ldap is not enable!")
+				return
+			}
 			if err := h.ldapService.Login(*u, loginCredential.Password, common.DBOptions{}); err != nil {
-				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", "username or password error")
 				return
 			}
