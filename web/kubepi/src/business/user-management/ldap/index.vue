@@ -150,11 +150,10 @@ import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
 import {createLdap, getLdap, importUser, syncLdap, testConnect, testLogin, updateLdap} from "@/api/ldap"
-import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "LDAP",
-  components: { ComplexTable, LayoutContent },
+  components: { LayoutContent },
   props: {},
   data () {
     return {
