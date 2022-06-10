@@ -38,6 +38,11 @@
           {{ row.spec.clusterIP || "" }}
         </template>
       </el-table-column>
+      <el-table-column label="ExternalIP" prop="spec.externalIPs" min-width="100px" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          {{ row.spec.externalIPs || "" }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('business.network.target_port')" min-width="120px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(value,key,index) in row.spec.ports" v-bind:key="index" type="info" size="mini">
