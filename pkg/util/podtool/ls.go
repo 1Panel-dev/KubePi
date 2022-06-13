@@ -4,7 +4,7 @@ import "strings"
 
 func (p *PodTool) ListFiles(path string) ([]File, error) {
 	var files []File
-	commands := []string{"ls", "-lF", "--full-time", path}
+	commands := []string{"ls", "-l", "--full-time", path}
 
 	res, err := p.ExecCommand(commands)
 	if err != nil {
@@ -28,18 +28,13 @@ func (p *PodTool) ListFiles(path string) ([]File, error) {
 				UserGroup: fArray[3],
 			}
 			name := fArray[8]
-			if strings.HasPrefix(fArray[0], "l") && len(fArray) > 10 {
-				f.IsDir = strings.HasSuffix(fArray[10],"/")
-				f.Link =  strings.Replace(fArray[10],"/","",1)
+			if strings.HasPrefix(f.Mode, "l") && len(fArray) > 10 {
+				f.Link = fArray[10]
 			}
-			if strings.HasSuffix(name,"/") {
+			if strings.HasPrefix(f.Mode,"d") {
 				f.IsDir = true
-				name = strings.Replace(name,"/","",1)
 			}
-			if strings.HasSuffix(name,"*") {
-				name = strings.Replace(name,"*","",1)
-			}
-			
+
 			f.Name = name
 			files = append(files, f)
 		}

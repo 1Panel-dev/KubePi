@@ -197,7 +197,7 @@ export default {
     handleClick (btn, row) {
       switch (btn) {
         case "edit":
-          this.ile(row)
+          this.catFile(row)
           break
         case "delete":
           this.folderDelete(row.name)
@@ -301,6 +301,13 @@ export default {
         return this.folder + name
       } else {
         return this.folder + "/" + name
+      }
+    },
+    getLinkPath(row){
+      if (row.link !== "") {
+        return row.path
+      }else {
+        return this.getPath(row.name)
       }
     },
     folderCreate () {
