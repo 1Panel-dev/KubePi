@@ -262,7 +262,7 @@ const message = {
       upload_folder: "Upload Folder",
       choose_file: "File",
       download: "Download",
-      upload_tip: "Upload at most one file",
+      upload_tip: "Files with the same name will be overwritten",
       name_helper: "Support '/' to create multi-level directories",
       link_tip: "This operation is not supported for linked files/folders",
     },

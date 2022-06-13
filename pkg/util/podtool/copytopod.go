@@ -13,6 +13,35 @@ import (
 	"strings"
 )
 
+func (p *PodTool) CopyToContainer(destPath string) error {
+	if p.ExecConfig.NoPreserve {
+		p.ExecConfig.Command = []string{"tar", "--no-same-permissions", "--no-same-owner", "-xmf", "-"}
+	} else {
+		p.ExecConfig.Command = []string{"tar", "-xmf", "-"}
+	}
+	if len(destPath) > 0 {
+		p.ExecConfig.Command = append(p.ExecConfig.Command, "-C", destPath)
+	}
+	p.ExecConfig.Tty = false
+	var stderr bytes.Buffer
+	p.ExecConfig.Stderr = &stderr
+	err := p.Exec(Exec)
+	if err != nil {
+		return fmt.Errorf(err.Error(), stderr)
+	}
+	if len(stderr.Bytes()) != 0 {
+		for _, line := range strings.Split(stderr.String(), "\n") {
+			if len(strings.TrimSpace(line)) == 0 {
+				continue
+			}
+			if !strings.Contains(strings.ToLower(line), "removing") {
+				return fmt.Errorf(line)
+			}
+		}
+	}
+	return nil
+}
+
 func (p *PodTool) CopyToPod(srcPath, destPath string) error {
 	reader, writer := io.Pipe()
 	go func() {

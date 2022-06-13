@@ -263,7 +263,7 @@ const message = {
       upload_folder: "上传文件夹",
       choose_file: "选择文件",
       download: "下载",
-      upload_tip: "最多上传一个文件",
+      upload_tip: "同名文件会被覆盖",
       name_helper: "支持 '/' 来创建多级目录",
       link_tip: "链接文件/文件夹 不支持此操作",
     },

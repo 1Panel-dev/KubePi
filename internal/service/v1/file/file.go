@@ -7,6 +7,8 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	kubeClient "github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/KubeOperator/kubepi/pkg/util/podtool"
+	"github.com/sirupsen/logrus"
+	"io"
 	"k8s.io/client-go/kubernetes"
 	"os"
 	"path"
@@ -114,5 +116,21 @@ func (f service) UploadFile(request file.Request) error {
 	if err != nil {
 		return err
 	}
-	return pt.CopyToPod(request.FilePath, request.Path)
+	reader, writer := io.Pipe()
+	pt.ExecConfig.Stdin = reader
+	go func() {
+		defer func() {
+			_ = writer.Close()
+		}()
+		tarFile, err := os.Open(request.FilePath)
+		if err != nil {
+			logrus.Error(err)
+			return
+		}
+		_, err = io.Copy(writer, tarFile)
+		if err != nil {
+			logrus.Error(err)
+		}
+	}()
+	return pt.CopyToContainer(request.Path)
 }

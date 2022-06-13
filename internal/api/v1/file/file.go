@@ -1,7 +1,8 @@
 package file
 
 import (
-	"bufio"
+	"archive/tar"
+	"errors"
 	"fmt"
 	fileModel "github.com/KubeOperator/kubepi/internal/model/v1/file"
 	"github.com/KubeOperator/kubepi/internal/service/v1/file"
@@ -181,13 +182,6 @@ func (h *Handler) DownloadFile() iris.Handler {
 
 func (h *Handler) UploadFile() iris.Handler {
 	return func(ctx *context.Context) {
-		f, header, err := ctx.FormFile("file")
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-
 		var req fileModel.Request
 		req.Path = ctx.URLParam("path")
 		req.Namespace = ctx.URLParam("namespace")
@@ -195,58 +189,15 @@ func (h *Handler) UploadFile() iris.Handler {
 		req.PodName = ctx.URLParam("podName")
 		req.ContainerName = ctx.URLParam("containerName")
 
-		path := filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
-		err = os.MkdirAll(path, os.ModePerm)
+		srcPath := filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
+		err := saveTarFile(ctx, srcPath)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 
-		path = filepath.Join(path, "/"+header.Filename)
-		file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		r := bufio.NewReader(f)
-		w := bufio.NewWriter(file)
-
-		size := 4 * 1024
-		buf := make([]byte, 4*1024)
-		for {
-			n, err := r.Read(buf)
-			if err != nil && err != io.EOF {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			if n == 0 {
-				break
-			}
-			_, err = w.Write(buf[:n])
-			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			if n < size {
-				break
-			}
-		}
-		err = w.Flush()
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-		req.FilePath = path
-		if req.Path == "/" {
-			req.Path = req.Path + header.Filename
-		} else {
-			req.Path = req.Path + "/" + header.Filename
-		}
+		req.FilePath = srcPath
 		err = h.fileService.UploadFile(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -254,6 +205,46 @@ func (h *Handler) UploadFile() iris.Handler {
 			return
 		}
 	}
+}
+
+func saveTarFile(ctx *context.Context, srcPath string) error {
+	maxSize := ctx.Application().ConfigurationReadOnly().GetPostMaxMemory()
+	err := ctx.Request().ParseMultipartForm(maxSize)
+	if err != nil {
+		return err
+	}
+	form := ctx.Request().MultipartForm
+	files := form.File["files"]
+	if len(files) == 0 {
+		return errors.New("files is null")
+	}
+	fw, err := os.Create(srcPath)
+	defer fw.Close()
+	if err != nil {
+		return err
+	}
+	tw := tar.NewWriter(fw)
+	defer tw.Close()
+	for _, f := range files {
+		hdr := &tar.Header{
+			Name: f.Filename,
+			Mode: 0644,
+			Size: f.Size,
+		}
+		err = tw.WriteHeader(hdr)
+		if err != nil {
+			return err
+		}
+		_f, err := f.Open()
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(tw, _f)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func Install(parent iris.Party) {
