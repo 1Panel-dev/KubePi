@@ -109,7 +109,7 @@ const message = {
       create_failed: "Created failed",
       sync_success: "Sync successfully",
       upload_success: "Upload successfully",
-      change_to_download: "The file is over 10M. Opening it directly will cause browser lag. Should I download it?",
+      change_to_download: "The file is over 1M. Opening it directly will cause browser lag. Should I download it?",
     },
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",

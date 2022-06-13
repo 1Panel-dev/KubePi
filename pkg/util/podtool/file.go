@@ -9,4 +9,5 @@ type File struct {
 	User      string `json:"user"`
 	UserGroup string `json:"group"`
 	Link      string `json:"link"`
+	Path      string `json:"path"`
 }
