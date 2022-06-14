@@ -88,7 +88,7 @@
           <el-input v-model="loginForm.username"></el-input>
         </el-form-item>
         <el-form-item style="width: 100%" :label="$t('business.user.password')" prop="password">
-          <el-input v-model="loginForm.password"></el-input>
+          <el-input v-model="loginForm.password" type="password"></el-input>
         </el-form-item>
         <div style="height: 30px">
           <div style="float: right">
