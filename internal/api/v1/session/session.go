@@ -82,6 +82,14 @@ func (h *Handler) IsLogin() iris.Handler {
 	}
 }
 
+// Auth
+// @Tags sessions
+// @Summary User Login
+// @Description User Login
+// @Accept  json
+// @Produce  json
+// @Param request body LoginCredential true "request"
+// @Router /sessions [post]
 func (h *Handler) Login() iris.Handler {
 	return func(ctx *context.Context) {
 		var loginCredential LoginCredential

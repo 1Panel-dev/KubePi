@@ -79,7 +79,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_api_v1_cluster.Cluster"
+                            "$ref": "#/definitions/internal_model_v1_cluster.Cluster"
                         }
                     }
                 ],
@@ -87,7 +87,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_api_v1_cluster.Cluster"
+                            "$ref": "#/definitions/internal_model_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -1233,6 +1233,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/sessions": {
+            "post": {
+                "description": "User Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sessions"
+                ],
+                "summary": "User Login",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/session.LoginCredential"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -1447,54 +1474,6 @@ const docTemplate = `{
                 }
             }
         },
-        "cluster.Authentication": {
-            "type": "object",
-            "properties": {
-                "bearerToken": {
-                    "type": "string"
-                },
-                "certificate": {
-                    "$ref": "#/definitions/cluster.Certificate"
-                },
-                "configFileContent": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "mode": {
-                    "type": "string"
-                }
-            }
-        },
-        "cluster.Certificate": {
-            "type": "object",
-            "properties": {
-                "certData": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "keyData": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "cluster.Connect": {
-            "type": "object",
-            "properties": {
-                "direction": {
-                    "type": "string"
-                },
-                "forward": {
-                    "$ref": "#/definitions/cluster.Forward"
-                }
-            }
-        },
         "cluster.CreateRepo": {
             "type": "object",
             "properties": {
@@ -1506,46 +1485,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "cluster.ExtraClusterInfo": {
-            "type": "object",
-            "properties": {
-                "cpuAllocatable": {
-                    "type": "number"
-                },
-                "cpuRequested": {
-                    "type": "number"
-                },
-                "health": {
-                    "type": "boolean"
-                },
-                "memoryAllocatable": {
-                    "type": "number"
-                },
-                "memoryRequested": {
-                    "type": "number"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "readyNodeNum": {
-                    "type": "integer"
-                },
-                "totalNodeNum": {
-                    "type": "integer"
-                }
-            }
-        },
-        "cluster.Forward": {
-            "type": "object",
-            "properties": {
-                "apiServer": {
-                    "type": "string"
-                },
-                "proxy": {
-                    "$ref": "#/definitions/cluster.Proxy"
                 }
             }
         },
@@ -1586,48 +1525,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "cluster.Proxy": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "cluster.Spec": {
-            "type": "object",
-            "properties": {
-                "authentication": {
-                    "$ref": "#/definitions/cluster.Authentication"
-                },
-                "connect": {
-                    "$ref": "#/definitions/cluster.Connect"
-                },
-                "local": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "cluster.Status": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "phase": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
                 }
             }
         },
@@ -1725,6 +1622,43 @@ const docTemplate = `{
                 }
             }
         },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication": {
+            "type": "object",
+            "properties": {
+                "bearerToken": {
+                    "type": "string"
+                },
+                "certificate": {
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate"
+                },
+                "configFileContent": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "mode": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate": {
+            "type": "object",
+            "properties": {
+                "certData": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "keyData": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster": {
             "type": "object",
             "properties": {
@@ -1735,7 +1669,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "caCertificate": {
-                    "$ref": "#/definitions/cluster.Certificate"
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate"
                 },
                 "createAt": {
                     "type": "string"
@@ -1765,15 +1699,79 @@ const docTemplate = `{
                     }
                 },
                 "spec": {
-                    "$ref": "#/definitions/cluster.Spec"
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec"
                 },
                 "status": {
-                    "$ref": "#/definitions/cluster.Status"
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status"
                 },
                 "updateAt": {
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect": {
+            "type": "object",
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "forward": {
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward": {
+            "type": "object",
+            "properties": {
+                "apiServer": {
+                    "type": "string"
+                },
+                "proxy": {
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec": {
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication"
+                },
+                "connect": {
+                    "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect"
+                },
+                "local": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "phase": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -1931,12 +1929,46 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_api_v1_cluster.Cluster": {
+        "internal_model_v1_cluster.Authentication": {
             "type": "object",
             "properties": {
-                "accessable": {
-                    "type": "boolean"
+                "bearerToken": {
+                    "type": "string"
                 },
+                "certificate": {
+                    "$ref": "#/definitions/internal_model_v1_cluster.Certificate"
+                },
+                "configFileContent": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "mode": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Certificate": {
+            "type": "object",
+            "properties": {
+                "certData": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "keyData": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "internal_model_v1_cluster.Cluster": {
+            "type": "object",
+            "properties": {
                 "apiVersion": {
                     "type": "string"
                 },
@@ -1944,16 +1976,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "caCertificate": {
-                    "$ref": "#/definitions/cluster.Certificate"
-                },
-                "caDataStr": {
-                    "type": "string"
-                },
-                "certDataStr": {
-                    "type": "string"
-                },
-                "configContentStr": {
-                    "type": "string"
+                    "$ref": "#/definitions/internal_model_v1_cluster.Certificate"
                 },
                 "createAt": {
                     "type": "string"
@@ -1962,12 +1985,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
-                },
-                "extraClusterInfo": {
-                    "$ref": "#/definitions/cluster.ExtraClusterInfo"
-                },
-                "keyDataStr": {
                     "type": "string"
                 },
                 "kind": {
@@ -1979,9 +1996,6 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "memberCount": {
-                    "type": "integer"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -1992,15 +2006,79 @@ const docTemplate = `{
                     }
                 },
                 "spec": {
-                    "$ref": "#/definitions/cluster.Spec"
+                    "$ref": "#/definitions/internal_model_v1_cluster.Spec"
                 },
                 "status": {
-                    "$ref": "#/definitions/cluster.Status"
+                    "$ref": "#/definitions/internal_model_v1_cluster.Status"
                 },
                 "updateAt": {
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Connect": {
+            "type": "object",
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "forward": {
+                    "$ref": "#/definitions/internal_model_v1_cluster.Forward"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Forward": {
+            "type": "object",
+            "properties": {
+                "apiServer": {
+                    "type": "string"
+                },
+                "proxy": {
+                    "$ref": "#/definitions/internal_model_v1_cluster.Proxy"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Proxy": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Spec": {
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "$ref": "#/definitions/internal_model_v1_cluster.Authentication"
+                },
+                "connect": {
+                    "$ref": "#/definitions/internal_model_v1_cluster.Connect"
+                },
+                "local": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "internal_model_v1_cluster.Status": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "phase": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -2062,6 +2140,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "session.LoginCredential": {
+            "type": "object",
+            "properties": {
+                "authMethod": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
