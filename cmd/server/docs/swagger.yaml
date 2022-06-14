@@ -30,41 +30,6 @@ definitions:
           type: integer
         type: array
     type: object
-  cluster.Cluster:
-    properties:
-      apiVersion:
-        type: string
-      builtIn:
-        type: boolean
-      caCertificate:
-        $ref: '#/definitions/cluster.Certificate'
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      kind:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      privateKey:
-        items:
-          type: integer
-        type: array
-      spec:
-        $ref: '#/definitions/cluster.Spec'
-      status:
-        $ref: '#/definitions/cluster.Status'
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
   cluster.Connect:
     properties:
       direction:
@@ -80,6 +45,25 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  cluster.ExtraClusterInfo:
+    properties:
+      cpuAllocatable:
+        type: number
+      cpuRequested:
+        type: number
+      health:
+        type: boolean
+      memoryAllocatable:
+        type: number
+      memoryRequested:
+        type: number
+      message:
+        type: string
+      readyNodeNum:
+        type: integer
+      totalNodeNum:
+        type: integer
     type: object
   cluster.Forward:
     properties:
@@ -202,6 +186,41 @@ definitions:
           type: string
         type: array
     type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      caCertificate:
+        $ref: '#/definitions/cluster.Certificate'
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      privateKey:
+        items:
+          type: integer
+        type: array
+      spec:
+        $ref: '#/definitions/cluster.Spec'
+      status:
+        $ref: '#/definitions/cluster.Status'
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
   imagerepo.Credential:
     properties:
       password:
@@ -302,6 +321,55 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  internal_api_v1_cluster.Cluster:
+    properties:
+      accessable:
+        type: boolean
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      caCertificate:
+        $ref: '#/definitions/cluster.Certificate'
+      caDataStr:
+        type: string
+      certDataStr:
+        type: string
+      configContentStr:
+        type: string
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      extraClusterInfo:
+        $ref: '#/definitions/cluster.ExtraClusterInfo'
+      keyDataStr:
+        type: string
+      kind:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      memberCount:
+        type: integer
+      name:
+        type: string
+      privateKey:
+        items:
+          type: integer
+        type: array
+      spec:
+        $ref: '#/definitions/cluster.Spec'
+      status:
+        $ref: '#/definitions/cluster.Status'
+      updateAt:
+        type: string
+      uuid:
+        type: string
     type: object
   role.PolicyRule:
     properties:
@@ -822,7 +890,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/cluster.Cluster'
+              $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
             type: array
       security:
       - ApiKeyAuth: []
@@ -839,14 +907,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.Cluster'
+          $ref: '#/definitions/internal_api_v1_cluster.Cluster'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/internal_api_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Create Cluster
@@ -1205,7 +1273,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Delete cluster by name
@@ -1227,7 +1295,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Get cluster by name

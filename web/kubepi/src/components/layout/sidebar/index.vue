@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     openApi(){
-      window.open("/swagger/index.html", "_blank");
+      window.open("/kubepi/swagger/index.html", "_blank");
     }
   },
   computed: {

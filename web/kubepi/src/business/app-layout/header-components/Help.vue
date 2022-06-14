@@ -58,7 +58,7 @@ export default {
           window.open("https://kubeoperator.io/docs/kubepi/", "_blank")
           break
         case "api":
-          window.open("/swagger/index.html", "_blank");
+          window.open("/kubepi/swagger/index.html", "_blank");
           break
         default:
           this.aboutDialogVisible = true

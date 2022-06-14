@@ -49,7 +49,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/cluster.Cluster"
+                                "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
                             }
                         }
                     }
@@ -79,7 +79,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/cluster.Cluster"
+                            "$ref": "#/definitions/internal_api_v1_cluster.Cluster"
                         }
                     }
                 ],
@@ -87,7 +87,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cluster.Cluster"
+                            "$ref": "#/definitions/internal_api_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -652,7 +652,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cluster.Cluster"
+                            "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -731,7 +731,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cluster.Cluster"
+                            "$ref": "#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -1484,59 +1484,6 @@ const docTemplate = `{
                 }
             }
         },
-        "cluster.Cluster": {
-            "type": "object",
-            "properties": {
-                "apiVersion": {
-                    "type": "string"
-                },
-                "builtIn": {
-                    "type": "boolean"
-                },
-                "caCertificate": {
-                    "$ref": "#/definitions/cluster.Certificate"
-                },
-                "createAt": {
-                    "type": "string"
-                },
-                "createdBy": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "labels": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "privateKey": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "spec": {
-                    "$ref": "#/definitions/cluster.Spec"
-                },
-                "status": {
-                    "$ref": "#/definitions/cluster.Status"
-                },
-                "updateAt": {
-                    "type": "string"
-                },
-                "uuid": {
-                    "type": "string"
-                }
-            }
-        },
         "cluster.Connect": {
             "type": "object",
             "properties": {
@@ -1559,6 +1506,35 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "cluster.ExtraClusterInfo": {
+            "type": "object",
+            "properties": {
+                "cpuAllocatable": {
+                    "type": "number"
+                },
+                "cpuRequested": {
+                    "type": "number"
+                },
+                "health": {
+                    "type": "boolean"
+                },
+                "memoryAllocatable": {
+                    "type": "number"
+                },
+                "memoryRequested": {
+                    "type": "number"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "readyNodeNum": {
+                    "type": "integer"
+                },
+                "totalNodeNum": {
+                    "type": "integer"
                 }
             }
         },
@@ -1749,6 +1725,59 @@ const docTemplate = `{
                 }
             }
         },
+        "github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "builtIn": {
+                    "type": "boolean"
+                },
+                "caCertificate": {
+                    "$ref": "#/definitions/cluster.Certificate"
+                },
+                "createAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "privateKey": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "spec": {
+                    "$ref": "#/definitions/cluster.Spec"
+                },
+                "status": {
+                    "$ref": "#/definitions/cluster.Status"
+                },
+                "updateAt": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
         "imagerepo.Credential": {
             "type": "object",
             "properties": {
@@ -1899,6 +1928,80 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "internal_api_v1_cluster.Cluster": {
+            "type": "object",
+            "properties": {
+                "accessable": {
+                    "type": "boolean"
+                },
+                "apiVersion": {
+                    "type": "string"
+                },
+                "builtIn": {
+                    "type": "boolean"
+                },
+                "caCertificate": {
+                    "$ref": "#/definitions/cluster.Certificate"
+                },
+                "caDataStr": {
+                    "type": "string"
+                },
+                "certDataStr": {
+                    "type": "string"
+                },
+                "configContentStr": {
+                    "type": "string"
+                },
+                "createAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "extraClusterInfo": {
+                    "$ref": "#/definitions/cluster.ExtraClusterInfo"
+                },
+                "keyDataStr": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "memberCount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "privateKey": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "spec": {
+                    "$ref": "#/definitions/cluster.Spec"
+                },
+                "status": {
+                    "$ref": "#/definitions/cluster.Status"
+                },
+                "updateAt": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
                 }
             }
         },
