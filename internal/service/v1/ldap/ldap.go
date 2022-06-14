@@ -130,6 +130,11 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 
 func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 	var users []v1User.ImportUser
+
+	if !ldap.Enable {
+		return users, errors.New("请先启用LDAP")
+	}
+
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
 		return users, err
@@ -182,7 +187,7 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 
 func (l *service) CheckStatus() bool {
 	ldaps, err := l.List(common.DBOptions{})
-	if err != nil {
+	if err != nil || len(ldaps) == 0 {
 		return false
 	}
 	ldap := ldaps[0]
@@ -193,6 +198,9 @@ func (l *service) TestLogin(username string, password string) error {
 	ldaps, err := l.List(common.DBOptions{})
 	if err != nil {
 		return err
+	}
+	if len(ldaps) == 0 {
+		return errors.New("请先保存LDAP配置")
 	}
 	ldap := ldaps[0]
 
