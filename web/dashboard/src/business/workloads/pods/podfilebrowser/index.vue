@@ -36,7 +36,7 @@
       </span>
     </div>
     <complex-table :selects.="selects" :data="data" v-loading="loading">
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="200" show-overflow-tooltip fix>
         <template v-slot:default="{row}">
           <span v-if="row.isDir" class="span-link" @click="toFolder(row)"><i
                   class="el-icon-folder"></i> {{ row.name }}{{ row.link ? " -> " + row.link : "" }} </span>
