@@ -128,6 +128,11 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 	return db.DeleteStruct(ldap)
 }
 
+//func (l *service) GetLdapUser()  ([]v1User.ImportUser, error) {
+//	users := []v1User.ImportUser{}
+//
+//}
+
 func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 	users := []v1User.ImportUser{}
 	if !ldap.Enable {

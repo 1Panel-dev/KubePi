@@ -27,11 +27,14 @@ func (p *PodTool) ListFiles(path string) ([]File, error) {
 				User:      fArray[2],
 				UserGroup: fArray[3],
 			}
-			name := fArray[8]
+			var name string
 			if strings.HasPrefix(f.Mode, "l") && len(fArray) > 10 {
-				f.Link = fArray[10]
+				f.Link = getLink(line)
+				name = getLinkName(fArray[8], line)
+			} else {
+				name = getName(fArray[8], line)
 			}
-			if strings.HasPrefix(f.Mode,"d") {
+			if strings.HasPrefix(f.Mode, "d") {
 				f.IsDir = true
 			}
 
@@ -40,4 +43,21 @@ func (p *PodTool) ListFiles(path string) ([]File, error) {
 		}
 	}
 	return files, nil
+}
+
+func getName(sub string, line string) string {
+	return strings.TrimSpace(line[strings.Index(line, sub):])
+}
+
+func getLink(line string) string {
+	const linkTag = "->"
+	in := strings.Index(line, linkTag)
+	return strings.TrimSpace(line[in+len(linkTag):])
+}
+
+func getLinkName(sub string, line string) string {
+	const linkTag = "->"
+	linkIn := strings.Index(line, linkTag)
+	nameIn := strings.Index(line, sub)
+	return strings.TrimSpace(line[nameIn:linkIn])
 }
