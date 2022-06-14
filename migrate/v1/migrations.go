@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"time"
+
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
@@ -8,11 +10,11 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 var Migrations = []migrations.Migration{
 	CreateAdministrator,
+	AddRoleManagerRepo,
 }
 
 // 创建默认系统角色: Admin |Manage Cluster| Manage User|Read only|Common User | Manage Chart
@@ -140,5 +142,33 @@ var CreateAdministrator = migrations.Migration{
 			}
 		}
 		return nil
+	},
+}
+
+var AddRoleManagerRepo = migrations.Migration{
+	Version: 2,
+	Message: "Add role repo manager",
+	Handler: func(db storm.Node) error {
+		roleManageRepo := v1Role.Role{
+			BaseModel: v1.BaseModel{
+				ApiVersion: "v1",
+				Kind:       "Role",
+				BuiltIn:    true,
+				CreateAt:   time.Now(),
+				UpdateAt:   time.Now(),
+			},
+			Metadata: v1.Metadata{
+				Name:        "Manage Image Registries",
+				Description: "i18n_user_manage_repo",
+				UUID:        uuid.New().String(),
+			},
+			Rules: []v1Role.PolicyRule{
+				{
+					Resource: []string{"imagerepos"},
+					Verbs:    []string{"*"},
+				},
+			},
+		}
+		return db.Save(&roleManageRepo)
 	},
 }
