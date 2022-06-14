@@ -129,8 +129,7 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 }
 
 func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
-	var users []v1User.ImportUser
-
+	users := []v1User.ImportUser{}
 	if !ldap.Enable {
 		return users, errors.New("请先启用LDAP")
 	}
@@ -180,6 +179,9 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 			us.Available = false
 		}
 		users = append(users, *us)
+	}
+	if len(users) == 0 && len(entries) > 0 {
+		return users, errors.New("Mapping 映射失败!")
 	}
 
 	return users, nil
