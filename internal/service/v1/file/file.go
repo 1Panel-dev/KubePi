@@ -23,6 +23,7 @@ type Service interface {
 	UploadFile(request file.Request) error
 	ExecNewCommand(request file.Request) ([]byte, error)
 	EditFile(request file.Request) error
+	CatFile(request file.Request) ([]byte, error)
 }
 
 type service struct {
@@ -133,4 +134,12 @@ func (f service) UploadFile(request file.Request) error {
 		}
 	}()
 	return pt.CopyToContainer(request.Path)
+}
+
+func (f service) CatFile(request file.Request) ([]byte, error) {
+	pt, err := f.GetPodTool(request)
+	if err != nil {
+		return nil, err
+	}
+	return pt.CatFile(request.Path)
 }
