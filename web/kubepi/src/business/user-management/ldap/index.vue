@@ -105,7 +105,7 @@
     </el-dialog>
     <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')" style="height: 900px">
       <div style="text-align: right;margin-bottom: 10px">
-        <el-input v-model="searchName" style="width: 30%" size="mini" clearable @blur="handleSearch"/>
+        <el-input v-model="searchName" suffix-icon="el-icon-search" style="width: 30%" size="mini" clearable @change="handleSearch" />
       </div>
       <el-table
               :data="tableUsers.slice((pageConfig.currentPage-1)*pageConfig.pageSize,pageConfig.currentPage*pageConfig.pageSize)"
