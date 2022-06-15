@@ -47,7 +47,7 @@ func (l *Ldap) Connect() error {
 
 func (l *Ldap) Search(dn, filter string, sizeLimit, timeLimit int, attributes []string) ([]*ldap.Entry, error) {
 	searchRequest := ldap.NewSearchRequest(dn,
-		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, timeLimit, false,
+		ldap.ScopeWholeSubtree, ldap.DerefAlways, 0, timeLimit, false,
 		filter,
 		attributes,
 		nil)

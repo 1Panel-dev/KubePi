@@ -189,7 +189,7 @@ const message = {
             ldap_password: "Password",
             ldap_filter_dn: "User Filtering DN",
             ldap_filter_rule: "User Filtering Rules",
-            ldap_helper: "Note: Users without mailboxes will not be synchronized, and those with the same login name as local users will not be synchronized!",
+            ldap_helper: "Note: Users who cannot get the Name mapping attribute will not be matched",
             ldap_sync: "Start syncing, please check the user list later",
             ldap_sync_error: "Please save first",
             type: "Type",

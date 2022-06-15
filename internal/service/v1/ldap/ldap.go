@@ -30,10 +30,11 @@ type Service interface {
 	Delete(id string, options common.DBOptions) error
 	Sync(id string, options common.DBOptions) error
 	Login(user v1User.User, password string, options common.DBOptions) error
-	TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error)
+	TestConnect(ldap *v1Ldap.Ldap) (int, error)
 	TestLogin(username string, password string) error
 	ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, error)
 	CheckStatus() bool
+	GetLdapUser() ([]v1User.ImportUser, error)
 }
 
 func NewService() Service {
@@ -128,17 +129,19 @@ func (l *service) Delete(id string, options common.DBOptions) error {
 	return db.DeleteStruct(ldap)
 }
 
-//func (l *service) GetLdapUser()  ([]v1User.ImportUser, error) {
-//	users := []v1User.ImportUser{}
-//
-//}
-
-func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
+func (l *service) GetLdapUser() ([]v1User.ImportUser, error) {
 	users := []v1User.ImportUser{}
+	ldaps, err := l.List(common.DBOptions{})
+	if err != nil {
+		return users, err
+	}
+	if len(ldaps) == 0 {
+		return users, errors.New("请先保存LDAP配置")
+	}
+	ldap := ldaps[0]
 	if !ldap.Enable {
 		return users, errors.New("请先启用LDAP")
 	}
-
 	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
 	if err := lc.Connect(); err != nil {
 		return users, err
@@ -162,7 +165,6 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 		us := new(v1User.ImportUser)
 		us.Available = true
 		rv := reflect.ValueOf(&us).Elem().Elem()
-
 		for _, at := range entry.Attributes {
 			for k, v := range mappings {
 				if v == at.Name && len(at.Values) > 0 {
@@ -173,11 +175,8 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 				}
 			}
 		}
-		if us.Email == "" || us.Name == "" {
+		if us.Name == "" {
 			continue
-		}
-		if us.NickName == "" {
-			us.NickName = us.Name
 		}
 		_, err = l.userService.GetByNameOrEmail(us.Name, common.DBOptions{})
 		if err == nil {
@@ -185,11 +184,32 @@ func (l *service) TestConnect(ldap *v1Ldap.Ldap) ([]v1User.ImportUser, error) {
 		}
 		users = append(users, *us)
 	}
-	if len(users) == 0 && len(entries) > 0 {
-		return users, errors.New("Mapping 映射失败!")
+	return users, nil
+}
+
+func (l *service) TestConnect(ldap *v1Ldap.Ldap) (int, error) {
+	users := 0
+	if !ldap.Enable {
+		return users, errors.New("请先启用LDAP")
 	}
 
-	return users, nil
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
+	if err := lc.Connect(); err != nil {
+		return users, err
+	}
+	attributes, err := ldap.GetAttributes()
+	if err != nil {
+		return users, err
+	}
+	entries, err := lc.Search(ldap.Dn, ldap.Filter, ldap.SizeLimit, ldap.TimeLimit, attributes)
+	if err != nil {
+		return users, err
+	}
+	if len(entries) == 0 {
+		return users, nil
+	}
+
+	return len(entries), nil
 }
 
 func (l *service) CheckStatus() bool {
@@ -263,6 +283,13 @@ func (l *service) ImportUsers(users []v1User.ImportUser) (v1User.ImportResult, e
 			Type:  v1User.LDAP,
 			Email: imp.Email,
 		}
+		if us.Email == "" {
+			us.Email = us.Name + "@example.com"
+		}
+		if us.NickName == "" {
+			us.NickName = us.Name
+		}
+
 		result.Failures = append(result.Failures, us.Name)
 		tx, err := server.DB().Begin(true)
 		if err != nil {
