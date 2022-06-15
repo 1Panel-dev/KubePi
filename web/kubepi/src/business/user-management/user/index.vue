@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('business.user.user_list')">
     <div style="float: left">
-      <el-button v-has-permissions="{resource:'users',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button v-has-permissions="{resource:'users',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.create") }}</el-button>
       <el-button v-has-permissions="{resource:'users',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
 

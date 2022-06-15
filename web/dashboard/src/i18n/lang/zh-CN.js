@@ -248,7 +248,7 @@ const message = {
       last_month: "最近一月",
       last_three_month: "最近三月",
       metric_server_tip: "由于 Metrics-Server 服务异常(可能是未启动)，所以暂无数据",
-      pod_file: "文件管理",
+      pod_file: "文件浏览器",
       permission: "权限",
       last_update: "最后修改时间",
       create_folder: "创建文件夹",

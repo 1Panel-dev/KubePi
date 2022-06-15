@@ -1,7 +1,7 @@
 <template>
   <layout-content :header="$t('business.cluster.list')">
     <div style="float: left">
-      <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.import") }}</el-button>
       <el-button v-has-permissions="{resource:'clusters',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
