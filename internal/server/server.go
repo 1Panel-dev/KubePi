@@ -121,9 +121,9 @@ func (e *KubePiServer) setUpRootRoute() {
 		ctx.Redirect("/kubepi")
 	})
 	c := swagger.Config{
-		URL: "/swagger/doc.json",
+		URL: "/kubepi/swagger/doc.json",
 	}
-	e.app.Get("/swagger/{any:path}", swagger.CustomWrapHandler(&c, swaggerFiles.Handler))
+	e.app.Get("/kubepi/swagger/{any:path}", swagger.CustomWrapHandler(&c, swaggerFiles.Handler))
 	e.rootRoute = e.app.Party("/kubepi")
 }
 

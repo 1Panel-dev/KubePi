@@ -6,72 +6,6 @@ definitions:
       total:
         type: integer
     type: object
-  cluster.Authentication:
-    properties:
-      bearerToken:
-        type: string
-      certificate:
-        $ref: '#/definitions/cluster.Certificate'
-      configFileContent:
-        items:
-          type: integer
-        type: array
-      mode:
-        type: string
-    type: object
-  cluster.Certificate:
-    properties:
-      certData:
-        items:
-          type: integer
-        type: array
-      keyData:
-        items:
-          type: integer
-        type: array
-    type: object
-  cluster.Cluster:
-    properties:
-      apiVersion:
-        type: string
-      builtIn:
-        type: boolean
-      caCertificate:
-        $ref: '#/definitions/cluster.Certificate'
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      kind:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      privateKey:
-        items:
-          type: integer
-        type: array
-      spec:
-        $ref: '#/definitions/cluster.Spec'
-      status:
-        $ref: '#/definitions/cluster.Status'
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
-  cluster.Connect:
-    properties:
-      direction:
-        type: string
-      forward:
-        $ref: '#/definitions/cluster.Forward'
-    type: object
   cluster.CreateRepo:
     properties:
       cluster:
@@ -80,13 +14,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  cluster.Forward:
-    properties:
-      apiServer:
-        type: string
-      proxy:
-        $ref: '#/definitions/cluster.Proxy'
     type: object
   cluster.Member:
     properties:
@@ -113,33 +40,6 @@ definitions:
         items:
           type: string
         type: array
-    type: object
-  cluster.Proxy:
-    properties:
-      password:
-        type: string
-      url:
-        type: string
-      username:
-        type: string
-    type: object
-  cluster.Spec:
-    properties:
-      authentication:
-        $ref: '#/definitions/cluster.Authentication'
-      connect:
-        $ref: '#/definitions/cluster.Connect'
-      local:
-        type: boolean
-    type: object
-  cluster.Status:
-    properties:
-      message:
-        type: string
-      phase:
-        type: string
-      version:
-        type: string
     type: object
   cluster.UpdateCluster:
     properties:
@@ -201,6 +101,106 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication:
+    properties:
+      bearerToken:
+        type: string
+      certificate:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+      configFileContent:
+        items:
+          type: integer
+        type: array
+      mode:
+        type: string
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate:
+    properties:
+      certData:
+        items:
+          type: integer
+        type: array
+      keyData:
+        items:
+          type: integer
+        type: array
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      caCertificate:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      privateKey:
+        items:
+          type: integer
+        type: array
+      spec:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
+      status:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect:
+    properties:
+      direction:
+        type: string
+      forward:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward'
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward:
+    properties:
+      apiServer:
+        type: string
+      proxy:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy'
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy:
+    properties:
+      password:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec:
+    properties:
+      authentication:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication'
+      connect:
+        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect'
+      local:
+        type: boolean
+    type: object
+  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status:
+    properties:
+      message:
+        type: string
+      phase:
+        type: string
+      version:
+        type: string
     type: object
   imagerepo.Credential:
     properties:
@@ -303,6 +303,106 @@ definitions:
           type: string
         type: array
     type: object
+  internal_model_v1_cluster.Authentication:
+    properties:
+      bearerToken:
+        type: string
+      certificate:
+        $ref: '#/definitions/internal_model_v1_cluster.Certificate'
+      configFileContent:
+        items:
+          type: integer
+        type: array
+      mode:
+        type: string
+    type: object
+  internal_model_v1_cluster.Certificate:
+    properties:
+      certData:
+        items:
+          type: integer
+        type: array
+      keyData:
+        items:
+          type: integer
+        type: array
+    type: object
+  internal_model_v1_cluster.Cluster:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      caCertificate:
+        $ref: '#/definitions/internal_model_v1_cluster.Certificate'
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      privateKey:
+        items:
+          type: integer
+        type: array
+      spec:
+        $ref: '#/definitions/internal_model_v1_cluster.Spec'
+      status:
+        $ref: '#/definitions/internal_model_v1_cluster.Status'
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  internal_model_v1_cluster.Connect:
+    properties:
+      direction:
+        type: string
+      forward:
+        $ref: '#/definitions/internal_model_v1_cluster.Forward'
+    type: object
+  internal_model_v1_cluster.Forward:
+    properties:
+      apiServer:
+        type: string
+      proxy:
+        $ref: '#/definitions/internal_model_v1_cluster.Proxy'
+    type: object
+  internal_model_v1_cluster.Proxy:
+    properties:
+      password:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_model_v1_cluster.Spec:
+    properties:
+      authentication:
+        $ref: '#/definitions/internal_model_v1_cluster.Authentication'
+      connect:
+        $ref: '#/definitions/internal_model_v1_cluster.Connect'
+      local:
+        type: boolean
+    type: object
+  internal_model_v1_cluster.Status:
+    properties:
+      message:
+        type: string
+      phase:
+        type: string
+      version:
+        type: string
+    type: object
   role.PolicyRule:
     properties:
       resource:
@@ -341,6 +441,17 @@ definitions:
       updateAt:
         type: string
       uuid:
+        type: string
+    type: object
+  session.LoginCredential:
+    properties:
+      authMethod:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      username:
         type: string
     type: object
   user.Authenticate:
@@ -822,7 +933,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/cluster.Cluster'
+              $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
             type: array
       security:
       - ApiKeyAuth: []
@@ -839,14 +950,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.Cluster'
+          $ref: '#/definitions/internal_model_v1_cluster.Cluster'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Create Cluster
@@ -1205,7 +1316,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Delete cluster by name
@@ -1227,7 +1338,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Cluster'
+            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Get cluster by name
@@ -1571,6 +1682,24 @@ paths:
       summary: Update role by name
       tags:
       - roles
+  /sessions:
+    post:
+      consumes:
+      - application/json
+      description: User Login
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/session.LoginCredential'
+      produces:
+      - application/json
+      responses: {}
+      summary: User Login
+      tags:
+      - sessions
   /users:
     get:
       consumes:

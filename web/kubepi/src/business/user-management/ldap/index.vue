@@ -88,7 +88,7 @@
           <el-input v-model="loginForm.username"></el-input>
         </el-form-item>
         <el-form-item style="width: 100%" :label="$t('business.user.password')" prop="password">
-          <el-input v-model="loginForm.password"></el-input>
+          <el-input v-model="loginForm.password" type="password"></el-input>
         </el-form-item>
         <div style="height: 30px">
           <div style="float: right">
@@ -105,7 +105,7 @@
     </el-dialog>
     <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')" style="height: 900px">
       <div style="text-align: right;margin-bottom: 10px">
-        <el-input v-model="searchName" style="width: 30%" size="mini" clearable @blur="handleSearch"/>
+        <el-input v-model="searchName" suffix-icon="el-icon-search" style="width: 30%" size="mini" clearable @change="handleSearch" />
       </div>
       <el-table
               :data="tableUsers.slice((pageConfig.currentPage-1)*pageConfig.pageSize,pageConfig.currentPage*pageConfig.pageSize)"

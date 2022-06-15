@@ -102,8 +102,7 @@ func (h *Handler) OpenFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		req.Commands = []string{"cat", req.Path}
-		res, err := h.fileService.ExecNewCommand(req)
+		res, err := h.fileService.CatFile(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
