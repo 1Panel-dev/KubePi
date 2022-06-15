@@ -72,7 +72,7 @@ const message = {
           false: "Disable"
         },
         search: {
-            quickSearch: "quick search"
+            quickSearch: "Search"
         },
         form: {
             select_placeholder: "please select"

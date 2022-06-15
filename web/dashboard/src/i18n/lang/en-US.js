@@ -247,7 +247,7 @@ const message = {
       last_month: "A month ago",
       last_three_month: "3 months ago",
       metric_server_tip: "Since the  Metrics-Server service is not started, there is no data in the Cpu (Cores) and Memory (bytes) ",
-      pod_file: "File Manager",
+      pod_file: "File Browser",
       permission: "Permission",
       last_update: "Last Update Time",
       create_folder: "Create Folder",

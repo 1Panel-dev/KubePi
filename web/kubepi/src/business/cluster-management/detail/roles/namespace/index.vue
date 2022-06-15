@@ -1,7 +1,7 @@
 <template>
   <layout-content>
     <div style="float: left; margin-bottom: 20px">
-      <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
+      <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.create") }}</el-button>
       <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
 

@@ -2,13 +2,14 @@ package role
 
 import (
 	"errors"
+	"time"
+
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
 	"github.com/KubeOperator/kubepi/pkg/util/lang"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
-	"time"
 )
 
 type Service interface {
@@ -128,7 +129,7 @@ func (s *service) Search(num, size int, conditions common.Conditions, options co
 			}
 		}
 	}
-	query := db.Select(ms...).OrderBy("CreateAt")
+	query := db.Select(ms...).OrderBy("Name")
 	count, err := query.Count(&v1Role.Role{})
 	if err != nil {
 		return nil, 0, err
