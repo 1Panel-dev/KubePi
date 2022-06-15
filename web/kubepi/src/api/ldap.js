@@ -14,8 +14,8 @@ export function updateLdap(data){
   return put(`${baseUrl}`, data)
 }
 
-export function syncLdap(id,data) {
-  return post(`${baseUrl}/sync/${id}`, data)
+export function syncLdap(data) {
+  return post(`${baseUrl}/sync`, data)
 }
 
 export function testConnect(data) {

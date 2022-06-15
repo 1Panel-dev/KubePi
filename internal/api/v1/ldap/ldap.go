@@ -82,14 +82,13 @@ func (h *Handler) TestConnect() iris.Handler {
 
 func (h *Handler) SyncLdapUser() iris.Handler {
 	return func(ctx *context.Context) {
-		uuid := ctx.Params().Get("id")
-		err := h.ldapService.Sync(uuid, common.DBOptions{})
+		users, err := h.ldapService.GetLdapUser()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		ctx.Values().Set("data", "")
+		ctx.Values().Set("data", users)
 	}
 }
 
@@ -132,7 +131,7 @@ func Install(parent iris.Party) {
 	sp.Get("/", handler.ListLdap())
 	sp.Post("/", handler.AddLdap())
 	sp.Put("/", handler.UpdateLdap())
-	sp.Post("/sync/:id", handler.SyncLdapUser())
+	sp.Post("/sync", handler.SyncLdapUser())
 	sp.Post("/test/connect", handler.TestConnect())
 	sp.Post("/test/login", handler.TestLogin())
 	sp.Post("/import", handler.ImportUser())

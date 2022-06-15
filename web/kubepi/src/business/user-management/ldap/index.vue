@@ -67,10 +67,6 @@
                   $t("business.user.ldap_remake")
                 }}
               </el-button>
-              <!--              <el-button @click="sync" :disabled="isSubmitGoing" v-has-permissions="{resource:'ldap',verb:'create'}">{{-->
-              <!--                  $t("commons.button.sync")-->
-              <!--                }}-->
-              <!--              </el-button>-->
               <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing"
                          v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
               </el-button>
@@ -104,6 +100,7 @@
       </el-form>
     </el-dialog>
     <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')" style="height: 900px">
+      <span>{{ $t("business.user.ldap_helper") }}</span>
       <div style="text-align: right;margin-bottom: 10px">
         <el-input v-model="searchName" suffix-icon="el-icon-search" style="width: 30%" size="mini" clearable @change="handleSearch" />
       </div>
@@ -159,7 +156,7 @@ export default {
     return {
       form: {
         mapping: "{\n" +
-          "   \"Name\":\"sAMAccountName\",\n" +
+          "   \"Name\":\"cn\",\n" +
           "   \"NickName\":\"cn\",\n" +
           "   \"Email\":\"mail\"\n" +
           "}",
@@ -206,24 +203,6 @@ export default {
     }
   },
   methods: {
-    sync () {
-      if (this.form.uuid === undefined || this.form.uuid === "") {
-        this.$message({
-          type: "warning",
-          message: this.$t("business.user.ldap_sync_error")
-        })
-        return
-      }
-      this.isSubmitGoing = true
-      syncLdap(this.form.uuid, {}).then(() => {
-        this.$message({
-          type: "success",
-          message: this.$t("business.user.ldap_sync")
-        })
-      }).finally(() => {
-        this.isSubmitGoing = false
-      })
-    },
     connectTest () {
       let isFormReady = false
       this.$refs["form"].validate((valid) => {
@@ -234,15 +213,12 @@ export default {
       if (!isFormReady) {
         return
       }
-      this.tableUsers = []
       this.loading = true
       this.connectLoading = true
       testConnect(this.form).then(res => {
-        this.users = res.data
-        this.tableUsers = this.users
         this.$message({
           type: "success",
-          message: this.$t("business.user.test_result", { count: res.data.length })
+          message: this.$t("business.user.test_result", { count: res.data })
         })
       }).finally(() => {
         this.loading = false
@@ -254,12 +230,15 @@ export default {
       this.loginForm = {}
     },
     openImportPage () {
-      this.importUserPageOpen = true
       this.searchName = ""
-      if (this.users.length === 0) {
-        this.connectTest()
-      }
-      this.tableUsers = this.users
+      this.loading = true
+      syncLdap({}).then(res => {
+        this.users = res.data
+        this.tableUsers = this.users
+        this.importUserPageOpen = true
+      }).finally(() => {
+        this.loading = false
+      })
     },
     importAvailable (row) {
       return row.available
