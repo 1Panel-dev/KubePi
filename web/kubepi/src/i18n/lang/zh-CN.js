@@ -269,6 +269,10 @@ const system_logs = {
     clusters_repos: "集群仓库",
     imagerepos: "镜像仓库",
     ldap: "LDAP",
+    sync: "同步",
+    import: "导入",
+    testConnect: "测试",
+    testLogin: "测试",
 }
 
 

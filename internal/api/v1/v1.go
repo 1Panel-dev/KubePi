@@ -141,6 +141,22 @@ func logHandler() iris.Handler {
 		log.Operator = profile.Name
 		log.Operation = method
 
+		//handle ldap operate
+		if strings.Contains(path,"ldap") {
+			if strings.Contains(path,"import") {
+				log.Operation = "import"
+			}
+			if strings.Contains(path,"sync") {
+				log.Operation = "sync"
+			}
+			if strings.Contains(path,"connect") {
+				log.Operation = "testConnect"
+			}
+			if strings.Contains(path,"login") {
+				log.Operation = "testLogin"
+			}
+		}
+
 		pathResource := strings.Split(path, "/")
 		if strings.HasPrefix(currentPath, "clusters/:name") {
 			if len(pathResource) < 3 {
