@@ -7,13 +7,13 @@
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onScale()" v-has-permissions="{ scope: 'namespace', apiGroup: 'apps', resource: 'deployments', verb: 'update' }">
+        {{ $t("commons.button.scale") }}
+      </el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'deployments',verb:'delete'}">
         {{ $t("commons.button.delete") }}
       </el-button>
 
-      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onScale()" v-has-permissions="{ scope: 'namespace', apiGroup: 'apps', resource: 'deployments', verb: 'update' }">
-        {{ $t("commons.button.scale") }}
-      </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" @search="search">
       <el-table-column type="selection" fix></el-table-column>
