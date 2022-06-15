@@ -136,7 +136,7 @@
         <div slot="tip" class="el-upload__tip">{{ $t("business.pod.upload_tip") }}</div>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="openUpload=false" :disabled="loading">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button @click="handleUploadClose" :disabled="loading">{{ $t("commons.button.cancel") }}</el-button>
         <el-button type="primary" @click="upload" :loading="loading">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>

@@ -10,7 +10,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 )
 
 func (p *PodTool) CopyToContainer(destPath string) error {
@@ -26,18 +25,17 @@ func (p *PodTool) CopyToContainer(destPath string) error {
 	var stderr bytes.Buffer
 	p.ExecConfig.Stderr = &stderr
 	err := p.Exec(Exec)
+	var stdout bytes.Buffer
+	p.ExecConfig.Stdout = &stdout
 	if err != nil {
-		return fmt.Errorf(err.Error(), stderr)
-	}
-	if len(stderr.Bytes()) != 0 {
-		for _, line := range strings.Split(stderr.String(), "\n") {
-			if len(strings.TrimSpace(line)) == 0 {
-				continue
-			}
-			if !strings.Contains(strings.ToLower(line), "removing") {
-				return fmt.Errorf(line)
-			}
+		result := ""
+		if len(stdout.Bytes()) != 0 {
+			result = stdout.String()
 		}
+		if len(stderr.Bytes()) != 0 {
+			result = stderr.String()
+		}
+		return fmt.Errorf(err.Error(), result)
 	}
 	return nil
 }
@@ -76,16 +74,6 @@ func (p *PodTool) CopyToPod(srcPath, destPath string) error {
 			result = stderr.String()
 		}
 		return fmt.Errorf(err.Error(), result)
-	}
-	if len(stderr.Bytes()) != 0 {
-		for _, line := range strings.Split(stderr.String(), "\n") {
-			if len(strings.TrimSpace(line)) == 0 {
-				continue
-			}
-			if !strings.Contains(strings.ToLower(line), "removing") {
-				return fmt.Errorf(line)
-			}
-		}
 	}
 	return nil
 }
