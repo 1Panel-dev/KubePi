@@ -1,23 +1,17 @@
 <template>
   <layout-content header="Ingresses">
     <div style="float: left">
-      <el-button
-              v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}"
-              type="primary" size="small"
-              @click="yamlCreate">
+      <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}" type="primary" size="small" @click="yamlCreate">
         YAML
       </el-button>
-      <el-button type="primary" size="small" @click="onCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
+      <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>
-      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                  v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'delete'}">
         {{ $t("commons.button.delete") }}
       </el-button>
     </div>
-    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
-                   :pagination-config="paginationConfig" :search-config="searchConfig">
+    <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
@@ -26,20 +20,20 @@
       </el-table-column>
       <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace">
       </el-table-column>
-      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="200px"
-                       show-overflow-tooltip>
+      <el-table-column :label="$t('business.network.target')" prop="metadata.rules" min-width="200px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
             <div v-for="(path,index) in rule.http.paths" :key="index">
-              <span class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+              <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
-              </span>
+              </el-link>
               --->
-              <span class="span-link" @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
+              <el-link class="span-link" @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
                 {{ getService(path.backend) }}:{{ getPort(path.backend) }}
-              </span>
+              </el-link>
             </div>
           </div>
+          <el-button v-if="row.spec.rules.length > 3" type="text" @click="showMore(row)">{{ $t("commons.button.show_more") }}</el-button>
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" min-width="40px" fix>
@@ -49,25 +43,42 @@
       </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
+
+    <el-dialog :title="$t('business.network.target')" :visible.sync="showMoreDialog" width="50%">
+      <div v-for="(rule,index) in currentIngress.spec.rules" :key="index">
+        <div v-for="(path,index) in rule.http.paths" :key="index">
+          <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+            {{ "http://" + rule.host + (path.path ? path.path : "") }}
+          </el-link>
+          --->
+          <el-link class="span-link" @click="toResource('Service',currentIngress.metadata.namespace,getService(path.backend))">
+            {{ getService(path.backend) }}:{{ getPort(path.backend) }}
+          </el-link>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showMoreDialog = false">{{ $t("commons.button.cancel") }}</el-button>
+      </span>
+    </el-dialog>
   </layout-content>
 </template>
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {downloadYaml} from "@/utils/actions"
+import { downloadYaml } from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
-import {deleteIngress, getIngress, listIngresses} from "@/api/ingress"
-import {mixin} from "@/utils/resourceRoutes"
-import {checkPermissions} from "@/utils/permission"
-import {checkApi} from "@/utils/apis"
-import {get} from "@/utils/object"
+import { deleteIngress, getIngress, listIngresses } from "@/api/ingress"
+import { mixin } from "@/utils/resourceRoutes"
+import { checkPermissions } from "@/utils/permission"
+import { checkApi } from "@/utils/apis"
+import { get } from "@/utils/object"
 
 export default {
   name: "Ingresses",
   components: { LayoutContent, ComplexTable, KoTableOperations },
   mixins: [mixin],
-  data () {
+  data() {
     return {
       data: [],
       selects: [],
@@ -83,7 +94,7 @@ export default {
           click: (row) => {
             this.$router.push({
               path: `/ingresses/${row.metadata.namespace}/${row.metadata.name}/edit`,
-              query: { yamlShow: false, mode: "edit" }
+              query: { yamlShow: false, mode: "edit" },
             })
           },
           disabled: () => {
@@ -91,9 +102,9 @@ export default {
               scope: "namespace",
               apiGroup: "networking.k8s.io",
               resource: "ingresses",
-              verb: "update"
+              verb: "update",
             })
-          }
+          },
         },
         {
           label: this.$t("commons.button.edit_yaml"),
@@ -101,7 +112,7 @@ export default {
           click: (row) => {
             this.$router.push({
               path: `/ingresses/${row.metadata.namespace}/${row.metadata.name}/edit`,
-              query: { yamlShow: true, mode: "edit" }
+              query: { yamlShow: true, mode: "edit" },
             })
           },
           disabled: () => {
@@ -109,16 +120,16 @@ export default {
               scope: "namespace",
               apiGroup: "networking.k8s.io",
               resource: "ingresses",
-              verb: "update"
+              verb: "update",
             })
-          }
+          },
         },
         {
           label: this.$t("commons.button.download_yaml"),
           icon: "el-icon-download",
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", getIngress(this.cluster, row.metadata.namespace, row.metadata.name))
-          }
+          },
         },
         {
           label: this.$t("commons.button.delete"),
@@ -131,9 +142,9 @@ export default {
               scope: "namespace",
               apiGroup: "networking.k8s.io",
               resource: "ingresses",
-              verb: "delete"
+              verb: "delete",
             })
-          }
+          },
         },
       ],
       paginationConfig: {
@@ -142,42 +153,50 @@ export default {
         total: 0,
       },
       searchConfig: {
-        keywords: ""
-      }
+        keywords: "",
+      },
+      showMoreDialog: false,
+      currentIngress: {
+        spec: {
+          rules: [],
+        },
+      },
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listIngresses(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      listIngresses(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then((res) => {
         this.data = res.items
         this.paginationConfig.total = res.total
         this.loading = false
       })
     },
-    onCreate () {
+    showMore(row) {
+      this.currentIngress = row
+      this.showMoreDialog = true
+    },
+    onCreate() {
       this.$router.push({
         path: `/ingresses/create`,
-        query: { yamlShow: false, mode: "create" }
+        query: { yamlShow: false, mode: "create" },
       })
     },
-    yamlCreate () {
+    yamlCreate() {
       this.$router.push({
         path: `/ingresses/create/yaml`,
-        query: { type: "ingresses"}
+        query: { type: "ingresses" },
       })
     },
-    onDelete (row) {
-      this.$confirm(
-        this.$t("commons.confirm_message.delete"),
-        this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+    onDelete(row) {
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteIngress(this.cluster, row.metadata.namespace, row.metadata.name))
@@ -203,46 +222,45 @@ export default {
         }
       })
     },
-    list () {
+    list() {
       this.loading = true
-      checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then(res => {
+      checkApi(this.cluster, "networking.k8s.io", "v1", "Ingress").then((res) => {
         this.newVersion = res
         this.servicePath = this.serviceNamePath()
         this.portPath = this.servicePortPath()
         this.search()
       })
     },
-    getService (backend) {
+    getService(backend) {
       return get(backend, this.servicePath)
     },
-    getPort (backend) {
+    getPort(backend) {
       return get(backend, this.portPath)
     },
-    serviceNamePath () {
+    serviceNamePath() {
       const nestedPath = "service.name"
       const flatPath = "serviceName"
       return this.newVersion ? nestedPath : flatPath
     },
-    servicePortPath () {
+    servicePortPath() {
       const nestedPath = "service.port.number"
       const flatPath = "servicePort"
       return this.newVersion ? nestedPath : flatPath
     },
-    openDetail (row) {
+    openDetail(row) {
       this.$router.push({
         name: "IngressDetail",
         params: { name: row.metadata.name, namespace: row.metadata.namespace },
-        query: { yamlShow: false }
+        query: { yamlShow: false },
       })
     },
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.list()
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 </style>

@@ -55,7 +55,9 @@ const message = {
       restart: "重启",
       modifying_version: "修改镜像版本",
       sync: "同步",
-      rollback: "回滚到该版本"
+      rollback: "回滚到该版本",
+      refresh: "刷新",
+      show_more: "更多",
     },
     table: {
       name: "名称",
@@ -71,6 +73,7 @@ const message = {
       empty_text: "没有内容显示",
       version: "版本",
       image: "镜像",
+      ready: "就绪",
     },
     status: {
       Running: "运行中",
@@ -78,7 +81,8 @@ const message = {
       Failed: "失败",
       Terminated: "已销毁",
       Warninng: "警告",
-      Pending: "等待"
+      Pending: "等待",
+      Unknown: "未知",
     },
     search: {
       quickSearch: "搜索"
@@ -288,7 +292,8 @@ const message = {
       lastScheduleTime: "最后的调度",
       suspend: "暂停",
       duration: "耗时",
-      lastTransitionTime: "最后更新时间",
+      lastProbeTime: "最后采集时间",
+      lastTransitionTime: "最后变更时间",
       restarts: "重启",
       current: "当前调度",
       desired: "期望期望",

@@ -1,232 +1,159 @@
 <template>
   <div v-loading="loading">
     <h3 style="display: inline-block;">{{container.name}}</h3>
-    <el-form label-position="top">
-      <h4 style="display: inline-block;">{{$t('business.pod.image')}}</h4>
-      <el-row>
-        <el-form-item style="margin-left: 20px;" :label="$t('business.workload.pull_policy')">
-          <span>{{container.imagePullPolicy}}</span>
-        </el-form-item>
+    <el-form>
+      <el-row :gutter="20" style="margin-top: 20px" class="row-box">
+        <el-col :span="8">
+          <el-card class="el-card" :title="$t('business.pod.image')">
+            <el-form-item :label="$t('business.workload.pull_policy')">
+              <span>{{container.imagePullPolicy}}</span>
+            </el-form-item>
+            <el-form-item :label="$t('business.workload.container_image')">
+              <span>{{container.image}}</span>
+            </el-form-item>
+
+            <div v-if="container.workingDir || container.command || container.args">
+              <h4 style="display: inline-block;">{{$t('business.workload.command')}}</h4>
+              <el-form-item v-if="container.workingDir" :label="$t('business.workload.working_dir')">
+                <span>{{container.workingDir}}</span>
+              </el-form-item>
+              <el-form-item v-if="container.command" :label="$t('business.workload.commands')">
+                <el-tag type="success" v-for="(item, index) in container.command" :key="index">{{item}}</el-tag>
+              </el-form-item>
+              <el-form-item v-if="container.args" :label="$t('business.workload.arguments')">
+                <el-tag type="success" v-for="(item, index) in container.args" :key="index">{{item}}</el-tag>
+              </el-form-item>
+            </div>
+
+            <div v-if="container.ports">
+              <h4 style="display: inline-block;">{{$t('business.workload.port')}}</h4>
+              <complex-table :header-cell-style="{background: '#19191c'}" :data="container.ports">
+                <el-table-column :label="$t('commons.table.name')" prop="name" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.container_port')" prop="containerPort" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.protocol')" prop="protocol" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.host_port')" prop="hostPort" show-overflow-tooltip fix />
+              </complex-table>
+            </div>
+          </el-card>
+        </el-col>
+
+        <el-col :span="16" v-if="container.volumeMounts">
+          <el-card class="el-card" :title="$t('business.network.port')">
+            <div v-if="container.env">
+              <h4 style="display: inline-block;">{{$t('business.workload.variable')}}</h4>
+              <el-form-item :label="$t('business.workload.variable')">
+                <el-tag type="success" style="margin-right: 10px;" v-for="(item, index) in container.env" :key="index">{{item.name + " = " + item.value}}</el-tag>
+              </el-form-item>
+            </div>
+
+            <div v-if="container.volumeMounts">
+              <h4 style="display: inline-block;">{{$t('business.workload.mount')}}</h4>
+              <complex-table :header-cell-style="{background: '#19191c'}" :data="container.volumeMounts">
+                <el-table-column :label="$t('commons.table.name')" prop="name" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.path')" prop="mountPath" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.read_only')" prop="readOnly" show-overflow-tooltip fix />
+                <el-table-column :label="$t('business.workload.sub_path_in_volume')" prop="subPath" show-overflow-tooltip fix />
+              </complex-table>
+            </div>
+
+            <div v-if="container.resources.limits || container.resources.requests">
+              <h4 style="display: inline-block;">{{$t('business.workload.resource')}}</h4>
+              <el-row :gutter="20">
+                <div v-if="container.resources.requests">
+                  <el-col v-if="container.resources.requests.cpu" :span="6">
+                    <el-form-item :label="'CPU ' + $t('business.workload.reservation') + ' (mCPUs)'">
+                      <span>{{container.resources.requests.cpu}}</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col v-if="container.resources.requests.cpu" :span="6">
+                    <el-form-item :label="$t('business.workload.memory') + $t('business.workload.reservation') + ' (Mi)'">
+                      <span>{{container.resources.requests.memory}}</span>
+                    </el-form-item>
+                  </el-col>
+                </div>
+                <div v-if="container.resources.limits">
+                  <el-col v-if="container.resources.limits.cpu" :span="6">
+                    <el-form-item :label="'CPU ' + $t('business.workload.limit') + ' (mCPUs)'">
+                      <span>{{container.resources.limits.cpu}}</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col v-if="container.resources.limits.memory" :span="6">
+                    <el-form-item :label="$t('business.workload.memory') + $t('business.workload.limit') + ' (Mi)'">
+                      <span>{{container.resources.limits.memory}}</span>
+                    </el-form-item>
+                  </el-col>
+                </div>
+              </el-row>
+            </div>
+          </el-card>
+        </el-col>
       </el-row>
-      <el-row>
-        <el-form-item style="margin-left: 20px;" :label="$t('business.workload.container_image')">
-          <span>{{container.image}}</span>
-        </el-form-item>
-      </el-row>
-
-      <div v-if="container.ports">
-        <h4 style="display: inline-block;">{{$t('business.network.port')}}</h4>
-        <div v-for="(item, index) in container.ports" :key="index">
-          <el-row :gutter="20">
-            <el-col v-if="item.name" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('commons.table.name')">
-                <span>{{item.name}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.containerPort" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.container_port')">
-                <span>{{item.containerPort}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.protocol" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.protocol')">
-                <span>{{item.protocol}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.hostPort" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.public_port')">
-                <span>{{item.hostPort}}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-
-      <div v-if="container.env">
-        <h4 style="display: inline-block;">{{$t('business.workload.variable')}}</h4>
-        <el-form-item style="margin-left: 20px;" :label="$t('business.workload.variable')">
-          <el-tag type="success" style="margin-right: 10px;" v-for="(item, index) in container.env" :key="index">{{item.name + " = " + item.value}}</el-tag>
-        </el-form-item>
-      </div>
-
-      <div v-if="container.workingDir || container.command || container.args">
-        <h4 style="display: inline-block;">{{$t('business.workload.command')}}</h4>
-        <el-row v-if="container.workingDir">
-          <el-form-item style="margin-left: 20px;" :label="$t('business.workload.working_dir')">
-            <span>{{container.workingDir}}</span>
-          </el-form-item>
-        </el-row>
-        <el-row v-if="container.command">
-          <el-form-item style="margin-left: 20px;" :label="$t('business.workload.commands')">
-            <el-tag type="success" style="margin-left: 20px;" v-for="(item, index) in container.command" :key="index">{{item}}</el-tag>
-          </el-form-item>
-        </el-row>
-        <el-row v-if="container.args">
-          <el-form-item style="margin-left: 20px;" :label="$t('business.workload.arguments')">
-            <el-tag type="success" style="margin-left: 20px;" v-for="(item, index) in container.args" :key="index">{{item}}</el-tag>
-          </el-form-item>
-        </el-row>
-      </div>
-
-      <div v-if="container.volumeMounts">
-        <h4 style="display: inline-block;">{{$t('business.workload.mount')}}</h4>
-        <div v-for="(item, index) in container.volumeMounts" :key="index">
-          <el-row :gutter="20">
-            <el-col v-if="item.name" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('commons.table.name')">
-                <div class="spanInFormStyle"><span :title="item.name">{{item.name}}</span></div>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.mountPath" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.path')">
-                <div class="spanInFormStyle"><span :title="item.mountPath">{{item.mountPath}}</span></div>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.readOnly" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.read_only')">
-                <span>{{item.readOnly}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="item.subPath" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.sub_path_in_volume')">
-                <div class="spanInFormStyle"><span :title="item.subPath">{{item.subPath}}</span></div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-
-      <div v-if="container.resources.limits || container.resources.requests">
-        <h4 style="display: inline-block;">{{$t('business.workload.resource')}}</h4>
-        <el-row :gutter="20">
-          <div v-if="container.resources.requests">
-            <el-col v-if="container.resources.requests.cpu" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="'CPU ' + $t('business.workload.reservation') + ' (mCPUs)'">
-                <span>{{container.resources.requests.cpu}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="container.resources.requests.cpu" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.reservation') + ' (Mi)'">
-                <span>{{container.resources.requests.memory}}</span>
-              </el-form-item>
-            </el-col>
-          </div>
-          <div v-if="container.resources.limits">
-            <el-col v-if="container.resources.limits.cpu" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="'CPU ' + $t('business.workload.limit') + ' (mCPUs)'">
-                <span>{{container.resources.limits.cpu}}</span>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="container.resources.limits.memory" :span="6">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.memory') + $t('business.workload.limit') + ' (Mi)'">
-                <span>{{container.resources.limits.memory}}</span>
-              </el-form-item>
-            </el-col>
-          </div>
-        </el-row>
-      </div>
 
       <div v-if="container.livenessProbe || container.readinessProbe || container.startupProbe">
-        <h4 style="display: inline-block;">{{$t('business.workload.health_check')}}</h4>
-        <div v-for="(item, index) in container.healthCheck" :key="index">
-          <h5 style="display: inline-block;margin-left: 10px;">{{item._type}}</h5>
-          <div v-if="item._model.exec">
-            <el-row :gutter="20">
-              <el-col :span="4">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+        <h4>{{$t('business.workload.health_check')}}</h4>
+        <el-row :gutter="20" class="row-box">
+          <el-col v-for="(item, index) in container.healthCheck" :key="index" :span="6">
+            <el-card class="el-card">
+              <h4>{{item._type}}</h4>
+              <div v-if="item._model.exec">
+                <el-form-item :label="$t('business.workload.type')">
                   <span>exec</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.exec.command" :span="20">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.command')">
+                <el-form-item v-if="item._model.exec.command" :label="$t('business.workload.command')">
                   <div v-for="(item, index) in item._model.exec.command" :key="index">
                     <el-tag v-if="item.length < 200" type="success">{{item}}</el-tag>
                     <div v-else style="background-color: #1F261E;line-height: 20px;"><span class="spanStyle">{{item}}</span></div>
                   </div>
                 </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <div v-if="item._model.tcpSocket">
-            <el-row :gutter="20">
-              <el-col :span="4">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+              </div>
+              <div v-if="item._model.tcpSocket">
+                <el-form-item :label="$t('business.workload.type')">
                   <span>tcpSocket</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.exec.port" :span="8">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.network.port')">
+                <el-form-item v-if="item._model.exec.port" :label="$t('business.network.port')">
                   <span>{{item._model.exec.port}}</span>
                 </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <div v-if="item._model.httpGet">
-            <el-row :gutter="20">
-              <el-col :span="4">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+              </div>
+              <div v-if="item._model.httpGet">
+                <el-form-item :label="$t('business.workload.type')">
                   <span>httpGet</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.httpGet.path" :span="8">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
+                <el-form-item v-if="item._model.httpGet.path" :label="$t('business.workload.check_path')">
                   <span>{{item._model.httpGet.path}}</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.httpGet.port" :span="8">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
+                <el-form-item v-if="item._model.httpGet.port" :label="$t('business.workload.check_port')">
                   <span>{{item._model.httpGet.port}}</span>
                 </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <div v-if="item._model.httpsGet">
-            <el-row :gutter="20">
-              <el-col :span="4">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.type')">
+              </div>
+              <div v-if="item._model.httpsGet">
+                <el-form-item :label="$t('business.workload.type')">
                   <span>httpsGet</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.httpsGet.path" :span="8">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_path')">
+                <el-form-item v-if="item._model.httpsGet.path" :label="$t('business.workload.check_path')">
                   <span>{{item._model.httpsGet.path}}</span>
                 </el-form-item>
-              </el-col>
-              <el-col v-if="item._model.httpsGet.port" :span="8">
-                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_port')">
+                <el-form-item v-if="item._model.httpsGet.port" :label="$t('business.workload.check_port')">
                   <span>{{item._model.httpsGet.port}}</span>
                 </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <el-row :gutter="20">
-            <el-col v-if="item._model.failureThreshold" :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.failure_threshold')">
+              </div>
+              <el-form-item v-if="item._model.failureThreshold" :label="$t('business.workload.failure_threshold')">
                 <span>{{item._model.failureThreshold}}</span>
               </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.initialDelaySeconds" :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.initial_delay')">
+              <el-form-item v-if="item._model.initialDelaySeconds" :label="$t('business.workload.initial_delay')">
                 <span>{{item._model.initialDelaySeconds}}</span>
               </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.periodSeconds" :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.check_interval')">
+              <el-form-item v-if="item._model.periodSeconds" :label="$t('business.workload.check_interval')">
                 <span>{{item._model.periodSeconds}}</span>
               </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.successThreshold" :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.seccess_threshold')">
+              <el-form-item v-if="item._model.successThreshold" :label="$t('business.workload.seccess_threshold')">
                 <span>{{item._model.successThreshold}}</span>
               </el-form-item>
-            </el-col>
-            <el-col v-if="item._model.timeoutSeconds" :span="4">
-              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.timeout')">
+              <el-form-item v-if="item._model.timeoutSeconds" :label="$t('business.workload.timeout')">
                 <span>{{item._model.timeoutSeconds}}</span>
               </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
+            </el-card>
+          </el-col>
+        </el-row>
       </div>
     </el-form>
     <br>
@@ -234,8 +161,11 @@
 </template>
 
 <script>
+import ComplexTable from "@/components/complex-table"
+
 export default {
   name: "KoDetailContainerInfo",
+  components: { ComplexTable },
   props: {
     yamlInfo: Object,
     containerInfo: Object,
@@ -339,7 +269,7 @@ export default {
   padding-left: 10px;
   margin-top: 5px;
   font-size: 12px;
-  color:#67c23a;
+  color: #67c23a;
   white-space: pre;
 }
 </style>

@@ -54,7 +54,9 @@ const message = {
       restart: "Restart",
       modifying_version: "Modifying version",
       sync: "Sync",
-      rollback: "Roll Back"
+      rollback: "Roll Back",
+      refresh: "Refresh",
+      show_more: "Show More",
     },
     table: {
       name: "Name",
@@ -70,6 +72,7 @@ const message = {
       empty_text: "There are no rows to show.",
       version: "Version",
       image: "Image",
+      ready: "Ready",
     },
     status: {
       Running: "Running",
@@ -77,7 +80,8 @@ const message = {
       Failed: "Failed",
       Terminated: "Terminated",
       Warninng: "Warninng",
-      Pending: "Pending"
+      Pending: "Pending",
+      Unknown: "Unknown",
     },
     search: {
       quickSearch: "Search"
@@ -287,6 +291,7 @@ const message = {
       lastScheduleTime: "Last Schedule Time",
       suspend: "Suspend",
       duration: "Duration",
+      lastProbeTime: "lastProbeTime",
       lastTransitionTime: "lastTransitionTime",
       restarts: "Restarts",
       current: "Current",

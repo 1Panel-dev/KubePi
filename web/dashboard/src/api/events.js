@@ -33,3 +33,12 @@ export function listEventsWithNsSelector (cluster_name, namespace, selectors) {
   }
   return get(url, param)
 }
+
+export function listEventsWithPodSelector (cluster_name, namespace, fieldSelector) {
+  let url = eventUrlWithNs(cluster_name, namespace)
+  const param = {}
+  if (fieldSelector && fieldSelector !== "") {
+    param.fieldSelector = fieldSelector
+  }
+  return get(url, param)
+}

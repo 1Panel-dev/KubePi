@@ -62,7 +62,7 @@ const Configuration = {
       requirePermission: {
         apiGroup: "",
         resource: "configmaps",
-        verb: "edit",
+        verb: "update",
         scope:"namespace"
       },
       path: "/configmaps/edit/:namespace/:name",

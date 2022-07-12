@@ -26,12 +26,31 @@
       <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
       <el-table-column :label="$t('commons.table.status')" min-width="30">
         <template v-slot:default="{row}">
-          {{ getPodStatus(row) }}
+          <div v-if="row.status.phase ==='Running'">
+            <i class="el-icon-check" />&nbsp; &nbsp; &nbsp;
+            {{ $t("commons.status.Running") }}
+          </div>
+          <div v-if="row.status.phase ==='Failed'">
+            <i class="el-icon-close" />&nbsp; &nbsp; &nbsp;
+            {{ $t("commons.status.Failed") }}
+          </div>
+          <div v-if="row.status.phase ==='Pending'">
+            <i class="el-icon-loading" />&nbsp; &nbsp; &nbsp;
+            {{ $t("commons.status.Pending") }}
+          </div>
+          <div v-if="row.status.phase ==='Succeeded'">
+            <i class="el-icon-finished" />&nbsp; &nbsp; &nbsp;
+            {{ $t("commons.status.Succeeded") }}
+          </div>
+          <div v-if="row.status.phase ==='Unknown'">
+            <i class="iconfont iconwenhao" />&nbsp; &nbsp; &nbsp;
+            {{ $t("commons.status.Unknown") }}
+          </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.workload.restarts')" min-width="35">
+      <el-table-column :label="$t('commons.table.ready')" min-width="30">ready
         <template v-slot:default="{row}">
-          {{ getRestartTimes(row) }}
+          {{ getPodStatus(row) }}
         </template>
       </el-table-column>
       <el-table-column label="IP" min-width="40" prop="status.podIP"/>

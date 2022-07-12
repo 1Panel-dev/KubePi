@@ -7,6 +7,8 @@
       <el-button icon="el-icon-sort-down" :disabled="cpuDisabled" type="text" @click="sortBy('cpu')">CPU</el-button>
       <el-button icon="el-icon-sort-down" :disabled="memoryDisabled" type="text" @click="sortBy('memory')">{{ $t('business.workload.memory') }}</el-button>
 
+      <el-button icon="el-icon-refresh" type="text" @click="listPodMetric">{{ $t('commons.button.refresh') }}</el-button>
+
       <complex-table :data="data" v-loading="loading">
         <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="60" show-overflow-tooltip fix>
           <template v-slot:default="{row}">

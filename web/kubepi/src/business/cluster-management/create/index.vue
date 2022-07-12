@@ -54,7 +54,7 @@
               </el-form-item>
             </div>
             <div v-if="form.authenticationMode==='configFile'">
-              <el-form-item v-if="form.configContent" :label="$t('business.cluster.config_content')">
+              <el-form-item :label="$t('business.cluster.config_content')">
                 <el-input :autosize="{ minRows: 5, maxRows: 10}" type="textarea"  v-model="form.configContent"></el-input>
               </el-form-item>
               <el-form-item>
