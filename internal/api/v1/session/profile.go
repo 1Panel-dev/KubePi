@@ -1,10 +1,10 @@
 package session
 
 import (
+	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/kataras/iris/v12/sessions"
 )
 
 func (h Handler) UpdateProfile() iris.Handler {
@@ -15,7 +15,7 @@ func (h Handler) UpdateProfile() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		u := session.Get("profile")
 		profile := u.(UserProfile)
 		user, err := h.userService.GetByNameOrEmail(profile.Name, common.DBOptions{})
@@ -58,7 +58,7 @@ func (h Handler) UpdatePassword() iris.Handler {
 			ctx.Values().Set("message", err)
 			return
 		}
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		u := session.Get("profile")
 		profile := u.(UserProfile)
 		if err := h.userService.UpdatePassword(profile.Name, pass.OldPassword, pass.NewPassword, common.DBOptions{}); err != nil {

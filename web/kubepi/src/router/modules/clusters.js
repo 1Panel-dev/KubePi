@@ -4,7 +4,6 @@ const Clusters = {
     path: "/clusters",
     sort: 1,
     component: Layout,
-    name: "ClusterManagement",
     requirePermission: {
         resource: "clusters",
         verb: "list"
@@ -57,7 +56,6 @@ const Clusters = {
                     props: true,
                     component: () => import("@/business/cluster-management/detail/roles"),
                     hidden: true,
-                    name: "ClusterRoles",
                     meta: {
                         activeMenu: "/clusters",
                     },

@@ -4,12 +4,12 @@ import (
 	sessionAuth "github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
+	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
 	mfaUtil "github.com/KubeOperator/kubepi/pkg/util/mfa"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/kataras/iris/v12/sessions"
 )
 
 type Handler struct {
@@ -24,7 +24,7 @@ func NewHandler() *Handler {
 
 func (m *Handler) MfaValidate() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
@@ -63,7 +63,7 @@ func (m *Handler) MfaValidate() iris.Handler {
 
 func (m *Handler) MfaBind() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
@@ -115,7 +115,7 @@ func (m *Handler) MfaBind() iris.Handler {
 
 func (m *Handler) GetMfa() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusUnauthorized)

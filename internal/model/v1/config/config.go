@@ -8,10 +8,11 @@ type Config struct {
 	Spec Spec `json:"spec"`
 }
 type Spec struct {
-	Server ServerConfig `json:"server"`
-	DB     DBConfig     `json:"db"`
-	Logger LoggerConfig `json:"logger"`
-	AppId  string       `json:"appId"`
+	Server  ServerConfig  `json:"server"`
+	DB      DBConfig      `json:"db"`
+	Session SessionConfig `json:"session"`
+	Logger  LoggerConfig  `json:"logger"`
+	AppId   string        `json:"appId"`
 }
 
 type ServerConfig struct {
@@ -36,4 +37,8 @@ type LoggerConfig struct {
 
 type DBConfig struct {
 	Path string `json:"path"`
+}
+
+type SessionConfig struct {
+	Expires int `json:"expires"`
 }

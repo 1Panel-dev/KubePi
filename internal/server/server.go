@@ -3,14 +3,16 @@ package server
 import (
 	"embed"
 	"fmt"
-	"github.com/iris-contrib/swagger/v12"
-	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"path"
 	"strings"
+	"time"
+
+	"github.com/iris-contrib/swagger/v12"
+	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	"k8s.io/klog/v2"
@@ -30,6 +32,8 @@ import (
 )
 
 const sessionCookieName = "SESS_COOKIE_KUBEPI"
+
+var SessionMgr *sessions.Sessions
 
 var EmbedWebKubePi embed.FS
 var EmbedWebDashboard embed.FS
@@ -145,8 +149,8 @@ func (e *KubePiServer) setUpStaticFile() {
 }
 
 func (e *KubePiServer) setUpSession() {
-	sess := sessions.New(sessions.Config{Cookie: sessionCookieName, AllowReclaim: true})
-	e.rootRoute.Use(sess.Handler())
+	SessionMgr = sessions.New(sessions.Config{Cookie: sessionCookieName, AllowReclaim: true, Expires: time.Duration(e.config.Spec.Session.Expires) * time.Hour})
+	e.rootRoute.Use(SessionMgr.Handler())
 }
 
 const ContentTypeDownload = "application/download"
@@ -331,6 +335,9 @@ func getDefaultConfig() *v1Config.Config {
 			},
 			DB: v1Config.DBConfig{
 				Path: "/var/lib/kubepi/db",
+			},
+			Session: v1Config.SessionConfig{
+				Expires: 72,
 			},
 			Logger: v1Config.LoggerConfig{Level: "debug"},
 		},

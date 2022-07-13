@@ -25,7 +25,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/middleware/jwt"
-	"github.com/kataras/iris/v12/sessions"
 	"golang.org/x/crypto/bcrypt"
 	v1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,7 +55,7 @@ func NewHandler() *Handler {
 
 func (h *Handler) IsLogin() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusOK)
@@ -76,6 +75,11 @@ func (h *Handler) IsLogin() iris.Handler {
 				return
 			}
 		} else {
+			if err := session.Man.ShiftExpiration(ctx); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Errorf("shift expiration falied, err: %v", err))
+				return
+			}
 			ctx.StatusCode(iris.StatusOK)
 			ctx.Values().Set("data", loginUser != nil)
 		}
@@ -162,7 +166,7 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("token", token)
 			return
 		default:
-			session := sessions.Get(ctx)
+			session := server.SessionMgr.Start(ctx)
 			session.Set("profile", profile)
 		}
 
@@ -238,7 +242,7 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 
 func (h *Handler) Logout() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
@@ -253,7 +257,7 @@ func (h *Handler) Logout() iris.Handler {
 
 func (h *Handler) GetProfile() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		loginUser := session.Get("profile")
 		if loginUser == nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
@@ -304,7 +308,7 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		u := session.Get("profile")
 		profile := u.(UserProfile)
 
@@ -321,7 +325,7 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 
 func (h *Handler) GetClusterProfile() iris.Handler {
 	return func(ctx *context.Context) {
-		session := sessions.Get(ctx)
+		session := server.SessionMgr.Start(ctx)
 		clusterName := ctx.Params().GetString("cluster_name")
 		namesapce := ctx.URLParam("namespace")
 		c, err := h.clusterService.Get(clusterName, common.DBOptions{})

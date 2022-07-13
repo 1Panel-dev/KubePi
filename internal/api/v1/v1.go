@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
 	"io/ioutil"
 	"strings"
+
+	"github.com/KubeOperator/kubepi/internal/api/v1/mfa"
+	"github.com/KubeOperator/kubepi/internal/server"
 
 	"github.com/KubeOperator/kubepi/internal/api/v1/file"
 	"github.com/kataras/iris/v12/middleware/jwt"
@@ -37,7 +39,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/core/router"
-	"github.com/kataras/iris/v12/sessions"
 )
 
 var resourceWhiteList = WhiteList{"sessions", "proxy", "ws", "charts", "webkubectl", "apps", "mfa", "pod"}
@@ -61,7 +62,7 @@ func authHandler() iris.Handler {
 			p = *pr
 
 		} else {
-			p = sessions.Get(ctx).Get("profile").(session.UserProfile)
+			p = server.SessionMgr.Start(ctx).Get("profile").(session.UserProfile)
 		}
 		if p.Name == "" {
 			ctx.Values().Set("message", "please login")
@@ -142,17 +143,17 @@ func logHandler() iris.Handler {
 		log.Operation = method
 
 		//handle ldap operate
-		if strings.Contains(path,"ldap") {
-			if strings.Contains(path,"import") {
+		if strings.Contains(path, "ldap") {
+			if strings.Contains(path, "import") {
 				log.Operation = "import"
 			}
-			if strings.Contains(path,"sync") {
+			if strings.Contains(path, "sync") {
 				log.Operation = "sync"
 			}
-			if strings.Contains(path,"connect") {
+			if strings.Contains(path, "connect") {
 				log.Operation = "testConnect"
 			}
-			if strings.Contains(path,"login") {
+			if strings.Contains(path, "login") {
 				log.Operation = "testLogin"
 			}
 		}
@@ -403,7 +404,7 @@ func WarpedJwtHandler() iris.Handler {
 		return new(session.UserProfile)
 	})
 	return func(ctx *context.Context) {
-		sess := sessions.Get(ctx)
+		sess := server.SessionMgr.Start(ctx)
 		if sess.Get("profile") != nil {
 			ctx.Next()
 			return
