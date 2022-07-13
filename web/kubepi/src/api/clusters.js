@@ -63,8 +63,8 @@ export function updateClusterRole(name, clusterRoleName, clusterRole) {
     return put(`${baseUrl}/${name}/clusterroles/${clusterRoleName}`, clusterRole)
 }
 
-export function listClusterApiGroups(name) {
-    return get(`${baseUrl}/${name}/apigroups`)
+export function listClusterApiGroups(name, scope) {
+    return get(`${baseUrl}/${name}/${scope}/apigroups`)
 }
 
 export function listClusterResourceByGroupVersion(name, groupVersion, scope) {

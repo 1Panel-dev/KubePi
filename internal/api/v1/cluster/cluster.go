@@ -593,7 +593,7 @@ func Install(parent iris.Party) {
 	sp.Post("/:name/clusterroles", handler.CreateClusterRole())
 	sp.Put("/:name/clusterroles/:clusterrole", handler.UpdateClusterRole())
 	sp.Delete("/:name/clusterroles/:clusterrole", handler.DeleteClusterRole())
-	sp.Get("/:name/apigroups", handler.ListApiGroups())
+	sp.Get("/:name/:scope/apigroups", handler.ListApiGroups())
 	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())

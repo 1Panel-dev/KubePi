@@ -36,7 +36,7 @@
     </el-row>
     <br>
 
-    <el-row :gutter="20" v-if="hasMetric === 'true'">
+    <el-row :gutter="20" v-if="showMetric && hasMetric === 'true'">
       <el-col :span="12">
         <el-card style="background-color: #212e38" class="n-card el-card">
           <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatCpu}}</span>
@@ -50,7 +50,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="hasMetric !== 'true'">
+    <el-row v-if="showMetric && hasMetric !== 'true'">
       <el-alert type="info" :closable="false">
         <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
       </el-alert> 
@@ -155,6 +155,7 @@ export default {
       searchConfig: {
         keywords: ""
       },
+      showMetric: true,
       hasMetric: "false",
       clusterInfo: {
         allocatCpu: 0,
@@ -381,6 +382,7 @@ export default {
   },
   created() {
     this.clusterName = this.$route.query.cluster
+    this.showMetric = checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"})
     this.listResources()
   }
 }
