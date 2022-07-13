@@ -3,18 +3,21 @@ package user
 import (
 	"errors"
 	"fmt"
+
 	"github.com/KubeOperator/kubepi/internal/api/v1/commons"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
 	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/KubeOperator/kubepi/internal/service/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/service/v1/clusterbinding"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
 	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
 	"github.com/KubeOperator/kubepi/pkg/collectons"
+	"github.com/KubeOperator/kubepi/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -24,6 +27,7 @@ type Handler struct {
 	userService           user.Service
 	roleBindingService    rolebinding.Service
 	clusterBindingService clusterbinding.Service
+	clusterService        cluster.Service
 }
 
 func NewHandler() *Handler {
@@ -31,6 +35,7 @@ func NewHandler() *Handler {
 		userService:           user.NewService(),
 		roleBindingService:    rolebinding.NewService(),
 		clusterBindingService: clusterbinding.NewService(),
+		clusterService:        cluster.NewService(),
 	}
 }
 
@@ -219,6 +224,20 @@ func (h *Handler) DeleteUser() iris.Handler {
 		}
 
 		for i := range cbs {
+			c, err := h.clusterService.Get(cbs[i].ClusterRef, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
+				return
+			}
+			k := kubernetes.NewKubernetes(c)
+			if err := k.CleanManagedClusterRoleBinding(cbs[i].UserRef); err != nil {
+				server.Logger().Errorf("can not delete cluster member %s : %s", cbs[i].UserRef, err)
+			}
+			if err := k.CleanManagedRoleBinding(cbs[i].UserRef); err != nil {
+				server.Logger().Errorf("can not delete cluster member %s : %s", cbs[i].UserRef, err)
+			}
+
 			if err := h.clusterBindingService.Delete(cbs[i].Name, txOptions); err != nil {
 				_ = tx.Rollback()
 				ctx.StatusCode(iris.StatusInternalServerError)

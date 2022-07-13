@@ -382,7 +382,7 @@ export default {
   },
   created() {
     this.clusterName = this.$route.query.cluster
-    this.showMetric = checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"})
+    this.showMetric = checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"}) && checkPermissions({scope: 'cluster', apiGroup: "metrics.k8s.io", resource: "nodes", verb: "list"})
     this.listResources()
   }
 }
