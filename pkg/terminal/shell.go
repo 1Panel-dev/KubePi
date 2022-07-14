@@ -4,11 +4,13 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"gopkg.in/igm/sockjs-go.v2/sockjs"
 	v1 "k8s.io/api/core/v1"
@@ -19,6 +21,7 @@ import (
 )
 
 const END_OF_TRANSMISSION = "\u0004"
+const SessionTerminalStoreTime = 5 // session timeout (minute)
 
 // PtyHandler is what remotecommand expects from a pty
 type PtyHandler interface {
@@ -34,6 +37,7 @@ type TerminalSession struct {
 	sockJSSession sockjs.Session
 	SizeChan      chan remotecommand.TerminalSize
 	doneChan      chan struct{}
+	TimeOut       time.Time
 }
 
 // TerminalMessage is the messaging protocol between ShellController and TerminalSession.
@@ -64,7 +68,13 @@ func (t TerminalSession) Next() *remotecommand.TerminalSize {
 // Read handles pty->process messages (stdin, resize)
 // Called in a loop from remotecommand as long as the process is running
 func (t TerminalSession) Read(p []byte) (int, error) {
-	m, err := t.sockJSSession.Recv()
+	session := TerminalSessions.Get(t.Id)
+	if session.TimeOut.Before(time.Now()) {
+		_ = TerminalSessions.Sessions[session.Id].sockJSSession.Close(2, "the connection has been disconnected. Please reconnect")
+		return 0, errors.New("the connection has been disconnected. Please reconnect")
+	}
+	TerminalSessions.Set(session.Id, session)
+	m, err := session.sockJSSession.Recv()
 	if err != nil {
 		// Send terminated signal to process to avoid resource leak
 		return copy(p, END_OF_TRANSMISSION), err
@@ -79,7 +89,7 @@ func (t TerminalSession) Read(p []byte) (int, error) {
 	case "stdin":
 		return copy(p, msg.Data), nil
 	case "resize":
-		t.SizeChan <- remotecommand.TerminalSize{Width: msg.Cols, Height: msg.Rows}
+		session.SizeChan <- remotecommand.TerminalSize{Width: msg.Cols, Height: msg.Rows}
 		return 0, nil
 	default:
 		return copy(p, END_OF_TRANSMISSION), fmt.Errorf("unknown message type '%s'", msg.Op)
@@ -89,6 +99,12 @@ func (t TerminalSession) Read(p []byte) (int, error) {
 // Write handles process->pty stdout
 // Called from remotecommand whenever there is any output
 func (t TerminalSession) Write(p []byte) (int, error) {
+	session := TerminalSessions.Get(t.Id)
+	if session.TimeOut.Before(time.Now()) {
+		_ = TerminalSessions.Sessions[session.Id].sockJSSession.Close(2, "the connection has been disconnected. Please reconnect")
+		return 0, errors.New("the connection has been disconnected. Please reconnect")
+	}
+	TerminalSessions.Set(session.Id, session)
 	msg, err := json.Marshal(TerminalMessage{
 		Op:   "stdout",
 		Data: string(p),
@@ -97,7 +113,7 @@ func (t TerminalSession) Write(p []byte) (int, error) {
 		return 0, err
 	}
 
-	if err = t.sockJSSession.Send(string(msg)); err != nil {
+	if err = session.sockJSSession.Send(string(msg)); err != nil {
 		return 0, err
 	}
 	return len(p), nil
@@ -137,6 +153,7 @@ func (sm *SessionMap) Get(sessionId string) TerminalSession {
 func (sm *SessionMap) Set(sessionId string, session TerminalSession) {
 	sm.Lock.Lock()
 	defer sm.Lock.Unlock()
+	session.TimeOut = time.Now().Add(SessionTerminalStoreTime * time.Minute)
 	sm.Sessions[sessionId] = session
 }
 
@@ -144,6 +161,9 @@ func (sm *SessionMap) Set(sessionId string, session TerminalSession) {
 // Can happen if the process exits or if there is an error starting up the process
 // For now the status code is unused and reason is shown to the user (unless "")
 func (sm *SessionMap) Close(sessionId string, status uint32, reason string) {
+	if _, ok := sm.Sessions[sessionId]; !ok {
+		return
+	}
 	sm.Lock.Lock()
 	defer sm.Lock.Unlock()
 	err := sm.Sessions[sessionId].sockJSSession.Close(status, reason)
@@ -152,6 +172,14 @@ func (sm *SessionMap) Close(sessionId string, status uint32, reason string) {
 	}
 
 	delete(sm.Sessions, sessionId)
+}
+
+// Clean all session when system logout
+func (sm *SessionMap) Clean() {
+	for _, v := range sm.Sessions {
+		v.sockJSSession.Close(2, "system is logout, please retry...")
+	}
+	sm.Sessions = make(map[string]TerminalSession)
 }
 
 var TerminalSessions = SessionMap{Sessions: make(map[string]TerminalSession)}

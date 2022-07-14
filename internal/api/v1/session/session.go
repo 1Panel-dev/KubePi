@@ -20,7 +20,9 @@ import (
 	"github.com/KubeOperator/kubepi/internal/service/v1/user"
 	"github.com/KubeOperator/kubepi/pkg/collectons"
 	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/KubeOperator/kubepi/pkg/logging"
 	"github.com/KubeOperator/kubepi/pkg/network/ip"
+	"github.com/KubeOperator/kubepi/pkg/terminal"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -250,6 +252,8 @@ func (h *Handler) Logout() iris.Handler {
 			return
 		}
 		session.Delete("profile")
+		logging.LogSessions.Clean()
+		terminal.TerminalSessions.Clean()
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", "logout success")
 	}

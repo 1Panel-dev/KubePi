@@ -87,6 +87,7 @@ import { getPodLogsByName } from "@/api/pods"
 import KoFormItem from "@/components/ko-form-item/index"
 import FileSaver from "file-saver"
 import { datetimeFormat } from "fit2cloud-ui/src/filters/time"
+import { isLogin } from "@/api/auth"
 export default {
   name: "Terminal",
   components: { KoFormItem },
@@ -226,6 +227,16 @@ export default {
         FileSaver.saveAs(blob, this.terminal.pod + "_" + this.terminal.container + ".log")
       })
     },
+    pullingSession() {
+      this.timer = setInterval(() => {
+        isLogin().then(data => {
+          this.items = data.data;
+        }).catch(() => {
+          this.$message.error(this.$t('commons.login.expires'))
+          clearInterval(this.timer)
+        })
+      }, 5000)
+    },
   },
   created() {
     this.terminal = {
@@ -239,6 +250,7 @@ export default {
     this.loadContainters()
 
     this.getHeight()
+    this.pullingSession()
   },
 }
 </script>

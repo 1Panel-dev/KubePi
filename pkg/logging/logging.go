@@ -5,14 +5,15 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/igm/sockjs-go.v2/sockjs"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/client-go/kubernetes"
 	"log"
 	"math/rand"
 	"net/http"
 	"strings"
 	"sync"
+
+	"gopkg.in/igm/sockjs-go.v2/sockjs"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 func GenLoggingSessionId() (string, error) {
@@ -49,6 +50,9 @@ func (sm *SessionMap) Set(sessionId string, session LogSession) {
 }
 
 func (sm *SessionMap) Close(sessionId, reason string, status uint32) {
+	if _, ok := sm.Sessions[sessionId]; !ok {
+		return
+	}
 	sm.Lock.Lock()
 	defer sm.Lock.Unlock()
 	err := sm.Sessions[sessionId].sockJSSession.Close(status, reason)
@@ -56,6 +60,13 @@ func (sm *SessionMap) Close(sessionId, reason string, status uint32) {
 		log.Println(err)
 	}
 	delete(sm.Sessions, sessionId)
+}
+
+func (sm *SessionMap) Clean() {
+	for _, v := range sm.Sessions {
+		v.sockJSSession.Close(2, "system is logout, please retry...")
+	}
+	sm.Sessions = make(map[string]LogSession)
 }
 
 var LogSessions = SessionMap{Sessions: make(map[string]LogSession)}
