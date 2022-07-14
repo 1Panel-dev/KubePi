@@ -26,7 +26,14 @@ type Cluster struct {
 }
 
 type UpdateCluster struct {
-	Labels []string `json:"labels"`
+	Mode              string   `json:"mode"`
+	ApiServer         string   `json:"apiServer"`
+	Token             string   `json:"token"`
+	KeyData           string   `json:"keyData"`
+	CertData          string   `json:"certData"`
+	ConfigFileContent string   `json:"configFileContent"`
+	WithLabel         bool     `json:"withLabel"`
+	Labels            []string `json:"labels"`
 }
 
 type ExtraClusterInfo struct {

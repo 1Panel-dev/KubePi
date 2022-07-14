@@ -32,6 +32,16 @@ const Clusters = {
             }
         },
         {
+            path: "edit/:name",
+            props: true,
+            component: () => import("@/business/cluster-management/edit"),
+            hidden: true,
+            name: "ClusterEdit",
+            meta: {
+                activeMenu: "/clusters",
+            }
+        },
+        {
             path: "detail/:name",
             props: true,
             component: () => import("@/business/cluster-management/detail"),

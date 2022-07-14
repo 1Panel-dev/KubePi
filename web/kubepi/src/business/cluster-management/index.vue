@@ -185,6 +185,16 @@ export default {
       },
       buttons: [
         {
+          label: this.$t("commons.button.edit"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.onEdit(row.name)
+          },
+          disabled: () => {
+            return !(checkPermissions({resource: "clusters", verb: "update"}))
+          }
+        },
+        {
           label: this.$t("commons.button.rbac_manage"),
           icon: "el-icon-user",
           click: (row) => {
@@ -253,7 +263,7 @@ export default {
           }
           if (row.labels.indexOf(key) === -1) {
             row.labels.push(key)
-            updateCluster(row.name, {"labels": row.labels}).then(() => {
+            updateCluster(row.name, {"labels": row.labels, "withLabel": true}).then(() => {
               row.showAddLabelVisible = false
             })
           } else {
@@ -268,6 +278,9 @@ export default {
     },
     onDetail(name) {
       this.$router.push({name: "ClusterMembers", params: {name: name}})
+    },
+    onEdit(name) {
+      this.$router.push({name: "ClusterEdit", params: {name: name}})
     },
     onDelete(name) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {

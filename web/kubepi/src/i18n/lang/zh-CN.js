@@ -117,6 +117,7 @@ const message = {
             version: "版本",
             list: "集群列表",
             import: "导入集群",
+            edit_cluster: "编辑集群信息",
             edit: "编辑",
             nodes: "节点",
             label: "标签",

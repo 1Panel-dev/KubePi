@@ -117,6 +117,7 @@ const message = {
             version: "Version",
             list: "Clusters",
             import: "import cluster",
+            edit_cluster: "edit cluster",
             edit: "edit",
             nodes: "Nodes",
             label: "Label",

@@ -88,7 +88,6 @@ func (h *Handler) CreateCluster() iris.Handler {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
-
 		}
 		req.PrivateKey = privateKey
 		client := kubernetes.NewKubernetes(&req.Cluster)
@@ -449,9 +448,18 @@ func (h *Handler) UpdateCluster() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		c.Labels = req.Labels
-		if req.Labels == nil {
-			req.Labels = []string{}
+		if req.WithLabel {
+			c.Labels = req.Labels
+			if req.Labels == nil {
+				req.Labels = []string{}
+			}
+		} else {
+			c.Spec.Authentication.ConfigFileContent = []byte(req.ConfigFileContent)
+			c.Spec.Authentication.Certificate.CertData = []byte(req.CertData)
+			c.Spec.Authentication.Certificate.KeyData = []byte(req.KeyData)
+			c.Spec.Connect.Forward.ApiServer = req.ApiServer
+			c.Spec.Authentication.Mode = req.Mode
+			c.Spec.Authentication.BearerToken = req.Token
 		}
 		err = h.clusterService.Update(name, c, common.DBOptions{})
 		if err != nil {

@@ -2,6 +2,10 @@ import {post, get, del, put} from "@/plugins/request"
 
 const baseUrl = "/api/v1/clusters"
 
+export function getCluster(name) {
+    return get(`${baseUrl}/${name}`)
+}
+
 export function createCluster(data) {
     return post(baseUrl, data)
 }
