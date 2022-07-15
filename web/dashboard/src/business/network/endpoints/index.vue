@@ -1,9 +1,13 @@
 <template>
   <layout-content header="Endpoints">
     <div style="float: left">
-      <el-button type="primary" size="small" @click="onCreate"
+      <el-button type="primary" size="small" @click="yamlCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'create'}">
         YAML
+      </el-button>
+      <el-button type="primary" size="small" @click="onCreate"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'create'}">
+        {{ $t("commons.button.create") }}
       </el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'delete'}">
@@ -70,6 +74,21 @@ export default {
             this.$router.push({
               name: "EndpointEdit",
               params: { namespace: row.metadata.namespace, name: row.metadata.name },
+              query: { yamlShow: false }
+            })
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "endpoints", verb: "update" })
+          }
+        },
+        {
+          label: this.$t("commons.button.edit_yaml"),
+          icon: "el-icon-edit",
+          click: (row) => {
+            this.$router.push({
+              name: "EndpointEdit",
+              params: { name: row.metadata.name, namespace: row.metadata.namespace },
+              query: { yamlShow: true }
             })
           },
           disabled: () => {
@@ -118,11 +137,13 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        name: "EndpointCreateYaml",
-        query: {
-          type: "endpoints"
-        }
-      },)
+        name: "EndpointCreate", query: { yamlShow: false }
+      })
+    },
+    yamlCreate () {
+      this.$router.push({
+        name: "EndpointCreateYaml", query: { type: "endpoints" }
+      })
     },
     onDelete (row) {
       this.$confirm(
