@@ -292,7 +292,8 @@ const apiVerbs = {
     "delete": "delete",
     "get": "get",
     "list": "list",
-    "create": "create"
+    "create": "create",
+    "authorization": "authorization"
 }
 
 const system_logs = {

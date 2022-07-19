@@ -254,7 +254,8 @@ const apiVerbs = {
     get: "详情",
     list: "列表",
     create: "创建",
-    privilege: "特权"
+    privilege: "特权",
+    authorization: "授权"
 }
 
 const system_logs = {
