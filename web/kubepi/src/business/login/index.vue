@@ -348,7 +348,7 @@ export default {
 
   }
 
-  .login /deep/ input {
+  .login ::v-deep input {
     background-color: #FFFFFF !important;
     color: #000000 !important;
 

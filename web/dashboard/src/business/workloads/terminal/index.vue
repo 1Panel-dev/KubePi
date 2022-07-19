@@ -269,7 +269,7 @@ export default {
 .interval {
   margin-left: 10px;
 }
-/deep/ .scrollbar {
+::v-deep .scrollbar {
   .el-scrollbar__thumb {
     background-color: black;
   }
