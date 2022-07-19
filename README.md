@@ -14,7 +14,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 ### UI 展示
 
-![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/kubepi-demo.gif)
+![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/02-dashboard.png)
 
 ### 快速开始
 
