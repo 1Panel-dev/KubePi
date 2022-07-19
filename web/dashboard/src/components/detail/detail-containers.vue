@@ -157,7 +157,7 @@ export default {
 
 <style lang="scss" scoped>
 .complex-table {
-  /deep/tbody tr:hover > td {
+  ::v-deep tbody tr:hover > td {
     cursor: pointer;
   }
 }

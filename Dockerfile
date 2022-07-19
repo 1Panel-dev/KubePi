@@ -2,7 +2,7 @@ FROM node:14.18.1 as stage-web-build
 
 LABEL stage=stage-web-build
 
-RUN apt-get install -y make python gcc g++
+#RUN apt-get install -y make python gcc g++
 
 WORKDIR /build/kubepi/web
 
