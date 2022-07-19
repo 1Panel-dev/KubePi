@@ -10,7 +10,6 @@ spec:
       certificate:
       certificateKey:
   db:
-    path: /var/lib/kubepi/db/kubepi1.db
+    path: /var/lib/kubepi/db/kubepi.db
   session:
-    # session expiration time (hour)
-    expires: 72
+    expires: 24
