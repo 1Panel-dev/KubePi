@@ -76,6 +76,9 @@ export class LoggingComponent implements AfterViewInit {
         this.conn_.onmessage = (msg) => {
           this.term.write(msg.data)
         }
+        this.conn_.onclose = () => {
+          alert("The connection has been disconnected. Please close the current page and check the system login status...")
+        }
         this.term.focus();
         this.cdr_.markForCheck()
       }
