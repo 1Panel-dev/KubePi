@@ -4,12 +4,12 @@
       <el-form label-position="top" :model="form" ref="form" :rules="rules">
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
+            <el-form-item :label="$t('commons.table.name')" prop="metadata.name">
               <el-input clearable v-model="form.metadata.name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
+            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace">
               <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
             </el-form-item>
           </el-col>
@@ -46,7 +46,7 @@
                   </table>
                 </ko-card>
               </el-tab-pane>
-              <el-tab-pane name="Port" label="ports">
+              <el-tab-pane name="Port" :label="$t('business.network.port')">
                 <ko-card :title="$t('business.network.port')">
                   <table style="width: 100%;padding: 0" class="tab-table">
                     <tr>
@@ -111,7 +111,6 @@ import Rule from "@/utils/rules"
 import KoCard from "@/components/ko-card"
 import { listNodes } from "@/api/nodes"
 import { checkPermissions } from "@/utils/permission"
-// import KoFormItem from "@/components/ko-form-item/index"
 
 export default {
   name: "EndpointCreate",
@@ -150,8 +149,21 @@ export default {
       this.$router.push({ name: "Endpoints" })
     },
     onEditYaml() {
-      this.showYaml = true
-      this.yaml = this.transformYaml()
+      this.$refs["form"].validate((valid) => {
+        if (!valid) {
+          this.$confirm(this.$t("commons.validate.params_not_complete") + this.$t("commons.confirm_message.open_yaml"), this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
+            this.showYaml = true
+            this.yaml = this.transformYaml()
+          })
+        } else {
+          this.showYaml = true
+          this.yaml = this.transformYaml()
+        }
+      })
     },
     backToForm() {
       this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
@@ -174,7 +186,7 @@ export default {
       })
     },
     handleAdd(subset) {
-      const item = {ip: ""}
+      const item = { ip: "" }
       subset.addresses.push(item)
     },
     handleDelete(subset, index) {

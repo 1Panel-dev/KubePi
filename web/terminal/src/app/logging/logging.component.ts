@@ -77,13 +77,13 @@ export class LoggingComponent implements AfterViewInit {
           this.term.write(msg.data)
         }
         this.conn_.onclose = () => {
-          alert("The connection has been disconnected. Please close the current page and check the system login status...")
+          this.term.write("\n\n******** Connection failure, terminal not supported or connection timeout... *******")
         }
         this.term.focus();
         this.cdr_.markForCheck()
       }
     } catch (e) {
-      alert(e.error.message)
+      this.term.write(e.error.message)
     }
 
   }

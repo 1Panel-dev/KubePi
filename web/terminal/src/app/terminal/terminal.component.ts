@@ -174,7 +174,7 @@ export class TerminalComponent implements AfterViewInit {
       this.initTerm()
       this.cdr_.markForCheck();
     } catch (e) {
-      console.log(e.error.message)
+      this.term.write(e.error.message)
     }
   }
 
@@ -198,7 +198,7 @@ export class TerminalComponent implements AfterViewInit {
   }
 
   private onConnectionClose(_evt?: SJSCloseEvent): void {
-    alert("The connection has been disconnected. Please close the current page and check the system login status...")
+    this.term.write("\n\n******** Connection failure, terminal not supported or connection timeout... *******")
     if (!this.connected_) {
       return;
     }
