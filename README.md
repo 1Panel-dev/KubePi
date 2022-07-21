@@ -1,5 +1,5 @@
 <p align="center"><a href="https://kubeoperator.io"><img src="https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/logo-red.png" alt="kubepi" width="300" /></a></p>
-<P align="center"><b>KubePi</b> [kubəˈpaɪ]，一款简单易用的开源 Kubernetes 可视化管理面板。</P>
+<P align="center"><b>KubePi</b> [kubəˈpaɪ]，一个现代化的 K8s 面板。</P>
 <p align="center">
   <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/kubeoperator/kubepi?color=%231890FF&style=flat-square" alt="License: Apache License v2"></a>
   <a href="https://app.codacy.com/gh/kubeoperator/kubepi?utm_source=github.com&utm_medium=referral&utm_content=kubeoperator/kubepi&utm_campaign=Badge_Grade_Dashboard"><img src="https://app.codacy.com/project/badge/Grade/da67574fd82b473992781d1386b937ef" alt="Codacy"></a>
@@ -8,13 +8,13 @@
 </p>
 <hr />
 
-KubePi 是一款简单易用的开源 Kubernetes 可视化管理面板。
+KubePi 是一个现代化的 K8s 面板。
 
 KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户。它允许开发人员管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地处理 Kubernetes 集群中的复杂性。
 
 ### UI 展示
 
-![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/kubepi-demo.gif)
+![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/02-dashboard.png)
 
 ### 快速开始
 
