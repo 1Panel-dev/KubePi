@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('business.cluster.cluster_detail')" :back-to="{ name: 'Clusters' }">
+  <layout-content :header="$t('business.cluster.cluster_detail')+'-'+name" :back-to="{ name: 'Clusters' }">
     <el-menu class="menuClass" router :default-active="activeRoute()" mode="horizontal"  background-color="#222629">
       <el-menu-item :index="membersPath">{{ $t('business.cluster.member') }}</el-menu-item>
       <el-menu-item :index="rolesPath">{{ $t('business.cluster.role') }}</el-menu-item>
