@@ -117,7 +117,7 @@ export const del = (url, loading) => {
 }
 
 export const postFile= (url,data, params,loading) => {
-  return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"multipart/form-data"}}), loading)
+  return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"multipart/form-data"},timeout:600000}), loading)
 }
 
 export const patch = (url, data, headers, loading) => {
