@@ -4,6 +4,7 @@
       <sidebar-toggle-button/>
       <home></home>
       <project-switch style="margin-left: 20px"></project-switch>
+      <cluster-name></cluster-name>
     </div>
     <div class="header-right">
       <TerminalEnter></TerminalEnter>
@@ -22,10 +23,11 @@ import ProjectSwitch from "@/business/app-layout/header-components/ProjectSwitch
 import Help from "@/business/app-layout/header-components/Help";
 import LanguageSwitch from "@/business/app-layout/header-components/LanguageSwitch"
 import TerminalEnter from "@/business/app-layout/header-components/TerminalEnter";
+import ClusterName from "@/business/app-layout/header-components/Cluster"
 
 export default {
   name: "HorizontalHeader",
-  components: {TerminalEnter, LanguageSwitch, ProjectSwitch, Help, Home, UserSetting, SidebarToggleButton}
+  components: { ClusterName, TerminalEnter, LanguageSwitch, ProjectSwitch, Help, Home, UserSetting, SidebarToggleButton}
 }
 </script>
 
