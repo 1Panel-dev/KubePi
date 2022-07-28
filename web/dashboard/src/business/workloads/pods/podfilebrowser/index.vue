@@ -136,8 +136,8 @@
         <div slot="tip" class="el-upload__tip">{{ $t("business.pod.upload_tip") }}</div>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUploadClose" :disabled="loading">{{ $t("commons.button.cancel") }}</el-button>
-        <el-button type="primary" @click="upload" :loading="loading">{{ $t("commons.button.confirm") }}</el-button>
+        <el-button @click="handleUploadClose" :disabled="uploadLoading">{{ $t("commons.button.cancel") }}</el-button>
+        <el-button type="primary" @click="upload" :loading="uploadLoading">{{ $t("commons.button.confirm") }}</el-button>
       </span>
     </el-dialog>
   </layout-content>
@@ -188,6 +188,7 @@ export default {
       },
       uploadAction: "",
       files: [],
+      uploadLoading: false
     }
   },
   methods: {
@@ -281,7 +282,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.upload.$children[0].$refs.input.webkitdirectory = true
         })
-      }else{
+      } else {
         this.$nextTick(() => {
           this.$refs.upload.$children[0].$refs.input.webkitdirectory = false
         })
@@ -303,10 +304,10 @@ export default {
         return this.folder + "/" + name
       }
     },
-    getLinkPath(row){
+    getLinkPath (row) {
       if (row.link !== "") {
         return row.path
-      }else {
+      } else {
         return this.getPath(row.name)
       }
     },
@@ -438,7 +439,7 @@ export default {
       return url
     },
     upload () {
-      this.loading = true
+      this.uploadLoading = true
       const formData = new FormData()
       const files = this.files
       for (let i = 0; i < files.length; i++) {
@@ -452,7 +453,7 @@ export default {
         })
         this.handleUploadClose()
       }).finally(() => {
-        this.loading = false
+        this.uploadLoading = false
       })
     },
     onUploadChange (file) {
