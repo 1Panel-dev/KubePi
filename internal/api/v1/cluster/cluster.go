@@ -460,6 +460,24 @@ func (h *Handler) UpdateCluster() iris.Handler {
 			c.Spec.Connect.Forward.ApiServer = req.ApiServer
 			c.Spec.Authentication.Mode = req.Mode
 			c.Spec.Authentication.BearerToken = req.Token
+
+			client := kubernetes.NewKubernetes(c)
+			if err := client.Ping(); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			v, _ := client.Version()
+			c.Status.Version = v.GitVersion
+			if c.Spec.Authentication.Mode == "configFile" {
+				kubeCfg, err := client.Config()
+				if err != nil {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
+				}
+				c.Spec.Connect.Forward.ApiServer = kubeCfg.Host
+			}
 		}
 		err = h.clusterService.Update(name, c, common.DBOptions{})
 		if err != nil {

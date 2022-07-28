@@ -130,6 +130,7 @@ func (h *Handler) CreateClusterRole() iris.Handler {
 		req.Annotations["builtin"] = "false"
 		req.Annotations["created-at"] = time.Now().Format("2006-01-02 15:04:05")
 		req.Labels[kubernetes.LabelManageKey] = "kubepi"
+		req.Labels[kubernetes.LabelClusterId] = c.Metadata.UUID
 		resp, err := client.RbacV1().ClusterRoles().Create(goContext.TODO(), &req, metav1.CreateOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

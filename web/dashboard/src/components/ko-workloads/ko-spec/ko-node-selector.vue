@@ -110,10 +110,9 @@ export default {
             }
           }
         }
-        if (!isMatch) {
-          break
+        if (isMatch) {
+          itemList.push(node.metadata.name)
         }
-        itemList.push(node.metadata.name)
       }
       this.matchNode = itemList.join(",")
     },

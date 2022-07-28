@@ -68,20 +68,6 @@ export default {
       loading: false,
       buttons: [
         {
-          label: this.$t("commons.button.edit"),
-          icon: "el-icon-edit",
-          click: (row) => {
-            this.$router.push({
-              name: "EndpointEdit",
-              params: { namespace: row.metadata.namespace, name: row.metadata.name },
-              query: { yamlShow: false }
-            })
-          },
-          disabled: () => {
-            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "endpoints", verb: "update" })
-          }
-        },
-        {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {

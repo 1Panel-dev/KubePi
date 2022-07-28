@@ -76,11 +76,14 @@ export class LoggingComponent implements AfterViewInit {
         this.conn_.onmessage = (msg) => {
           this.term.write(msg.data)
         }
+        this.conn_.onclose = () => {
+          this.term.write("\n\n******** Connection failure, terminal not supported or connection timeout... *******")
+        }
         this.term.focus();
         this.cdr_.markForCheck()
       }
     } catch (e) {
-      alert(e.error.message)
+      this.term.write(e.error.message)
     }
 
   }

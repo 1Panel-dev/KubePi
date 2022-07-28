@@ -198,6 +198,7 @@ export class TerminalComponent implements AfterViewInit {
   }
 
   private onConnectionClose(_evt?: SJSCloseEvent): void {
+    this.term.write("\n\n******** Connection failure, terminal not supported or connection timeout... *******")
     if (!this.connected_) {
       return;
     }

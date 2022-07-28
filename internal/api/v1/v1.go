@@ -319,6 +319,10 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 				displayMap[k] = verbs.ToSlice()
 			}
 		}
+		if ops, ok := displayMap["clusters"]; ok {
+			ops = append(ops, "authorization")
+			displayMap["clusters"] = ops
+		}
 		ctx.Values().Set("data", displayMap)
 	}
 }

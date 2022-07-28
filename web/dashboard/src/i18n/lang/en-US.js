@@ -16,7 +16,7 @@ const message = {
       talk: "Participate in the discussion",
       star: "Star",
       version: "Version",
-      introduction: "KubePi is an easy to use open source Kubernetes visual management panel.",
+      introduction: "KubePi is a modern K8s panel.",
       introduction2: "KubePi allows administrators to import multiple Kubernetes clusters and assign permissions of different clusters and namespaces to specific users through permission control. It allows developers to manage and troubleshoot applications running in the Kubernetes cluster to better deal with the complexity in the Kubernetes cluster."
     },
     help: {

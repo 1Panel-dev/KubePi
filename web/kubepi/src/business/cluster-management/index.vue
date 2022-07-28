@@ -201,7 +201,7 @@ export default {
             this.onDetail(row.name)
           },
           disabled: (row) => {
-            return !(checkPermissions({resource: "clusters", verb: "update"}) && row.extraClusterInfo.health)
+            return !(checkPermissions({resource: "clusters", verb: "authorization"}) && row.extraClusterInfo.health)
           }
         },
         {

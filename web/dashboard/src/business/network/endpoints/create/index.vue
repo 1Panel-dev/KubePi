@@ -2,40 +2,36 @@
   <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'Endpoints'}" v-loading="loading">
     <div v-if="!showYaml">
       <el-form label-position="top" :model="form" ref="form" :rules="rules">
-        <el-col :span="6">
-          <el-form-item :label="$t('commons.table.name')" required prop="metadata.name">
-            <el-input clearable v-model="form.metadata.name"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="3">
-          <el-form-item :label="$t('business.namespace.namespace')" required prop="metadata.namespace">
-            <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
-          </el-form-item>
-        </el-col>
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item :label="$t('commons.table.name')" prop="metadata.name">
+              <el-input clearable v-model="form.metadata.name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item :label="$t('business.namespace.namespace')" prop="metadata.namespace">
+              <ko-select :namespace.sync="form.metadata.namespace"></ko-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-col :span="24">
           <div v-for="(subset,index) in form.subsets" v-bind:key="index">
             <el-tabs v-model="activeName" tab-position="top" type="border-card" @tab-click="handleClick" ref=tabs>
-              <el-tab-pane name="Address" label="addresses">
+              <el-tab-pane name="Address" :label="$t('business.pod.address')">
                 <ko-card :title="$t('business.pod.address')">
                   <table style="width: 100%;padding: 0" class="tab-table">
                     <tr>
                       <th scope="col" width="30%" align="left">
                         <label>ip</label>
                       </th>
-                      <th scope="col" width="30%" align="left">
-                        <label>hostname</label>
-                      </th>
-                      <th scope="col" width="30%" align="left">
-                        <label>nodeName</label>
-                      </th>
                       <th>
                       </th>
                     </tr>
                     <tr v-for="(address,index2) in subset.addresses" v-bind:key="index2">
-                      <td><el-input v-model="address.ip"></el-input></td>
-                      <td><el-input v-model="address.hostname"></el-input></td>
-                      <td><ko-form-item itemType="select2" v-model="address.nodeName" :selections="node_list" /></td>
+                      <td>
+                        <el-input v-model="address.ip"></el-input>
+                      </td>
                       <td>
                         <el-button type="text" style="font-size: 10px" @click="handleDelete(subset, index2)">
                           {{ $t("commons.button.delete") }}
@@ -50,7 +46,7 @@
                   </table>
                 </ko-card>
               </el-tab-pane>
-              <el-tab-pane name="Port" label="ports">
+              <el-tab-pane name="Port" :label="$t('business.network.port')">
                 <ko-card :title="$t('business.network.port')">
                   <table style="width: 100%;padding: 0" class="tab-table">
                     <tr>
@@ -61,8 +57,12 @@
                       </th>
                     </tr>
                     <tr v-for="(row,index) in subset.ports" v-bind:key="index">
-                      <td><el-input v-model="row.name"></el-input></td>
-                      <td><el-input v-model.number="row.port" placeholder="8080"></el-input></td>
+                      <td>
+                        <el-input v-model="row.name"></el-input>
+                      </td>
+                      <td>
+                        <el-input v-model.number="row.port" placeholder="8080"></el-input>
+                      </td>
                       <td>
                         <el-select v-model="row.protocol" style="width: 100%">
                           <el-option label="TCP" value="TCP"></el-option>
@@ -111,11 +111,10 @@ import Rule from "@/utils/rules"
 import KoCard from "@/components/ko-card"
 import { listNodes } from "@/api/nodes"
 import { checkPermissions } from "@/utils/permission"
-import KoFormItem from "@/components/ko-form-item/index"
 
 export default {
   name: "EndpointCreate",
-  components: { KoSelect, YamlEditor, LayoutContent, KoCard, KoFormItem },
+  components: { KoSelect, YamlEditor, LayoutContent, KoCard },
   props: {},
   data() {
     return {
@@ -150,8 +149,21 @@ export default {
       this.$router.push({ name: "Endpoints" })
     },
     onEditYaml() {
-      this.showYaml = true
-      this.yaml = this.transformYaml()
+      this.$refs["form"].validate((valid) => {
+        if (!valid) {
+          this.$confirm(this.$t("commons.validate.params_not_complete") + this.$t("commons.confirm_message.open_yaml"), this.$t("commons.message_box.prompt"), {
+            confirmButtonText: this.$t("commons.button.confirm"),
+            cancelButtonText: this.$t("commons.button.cancel"),
+            type: "warning",
+          }).then(() => {
+            this.showYaml = true
+            this.yaml = this.transformYaml()
+          })
+        } else {
+          this.showYaml = true
+          this.yaml = this.transformYaml()
+        }
+      })
     },
     backToForm() {
       this.$confirm(this.$t("commons.confirm_message.back_form"), this.$t("commons.message_box.prompt"), {
@@ -174,11 +186,7 @@ export default {
       })
     },
     handleAdd(subset) {
-      const item = {
-        ip: "",
-        hostname: "",
-        nodeName: ""
-      }
+      const item = { ip: "" }
       subset.addresses.push(item)
     },
     handleDelete(subset, index) {
@@ -188,7 +196,7 @@ export default {
       const item = {
         name: "",
         port: "",
-        protocol: "TCP"
+        protocol: "TCP",
       }
       subset.ports.push(item)
     },
@@ -197,14 +205,6 @@ export default {
     },
     transformYaml() {
       for (const subset of this.form.subsets) {
-        for (const address of subset.addresses) {
-          if (!address.nodeName) {
-            delete address.nodeName
-          }
-          if (!address.hostname) {
-            delete address.hostname
-          }
-        }
         for (const port of subset.ports) {
           if (!port.port) {
             delete port.port

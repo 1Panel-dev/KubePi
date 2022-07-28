@@ -57,7 +57,7 @@
         </el-col>
       </el-row>
 
-      <h2 style="margin-top: 40px">Event</h2>
+      <h2 style="margin-top: 40px">{{$t('business.event.event')}}</h2>
       <complex-table :data="eventList">
         <el-table-column :label="$t('commons.table.type')" prop="type" min-width="20" show-overflow-tooltip fix />
         <el-table-column :label="$t('business.pod.reason')" prop="reason" min-width="20" show-overflow-tooltip fix />

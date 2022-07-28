@@ -17,7 +17,7 @@ const message = {
             talk: "参与讨论",
             star: "点亮 Star",
             version: "版本",
-            introduction: "KubePi 是一款简单易用的开源 Kubernetes 可视化管理面板。",
+            introduction: "KubePi 是一个现代化的 K8s 面板。",
             introduction2: "KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制，将不同 cluster、namespace 的权限分配给指定用户。它允许开发人员管理 Kubernetes 集群中运行的应用程序并对其进行故障排查，供开发人员更好地处理 Kubernetes 集群中的复杂性。",
         },
         help: {
@@ -254,7 +254,8 @@ const apiVerbs = {
     get: "详情",
     list: "列表",
     create: "创建",
-    privilege: "特权"
+    privilege: "特权",
+    authorization: "授权"
 }
 
 const system_logs = {
