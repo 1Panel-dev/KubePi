@@ -42,10 +42,6 @@ type Config struct {
 	KubeConfig    *rest.Config
 }
 type Client struct {
-	//installActionConfig   *action.Configuration
-	//unInstallActionConfig *action.Configuration
-	//listActionConfig      *action.Configuration
-	//getActionConfig       *action.Configuration
 	actionConfig  *action.Configuration
 	Namespace     string
 	settings      *cli.EnvSettings
@@ -288,16 +284,21 @@ func (c Client) GetChartDetail(repoName, name, version string) (*chart.Chart, er
 	if re == nil {
 		return nil, errors.New("get chart detail failed, repo not found")
 	}
-	client := action.NewShow(action.ShowAll)
-	client.Version = version
-	client.RepoURL = re.URL
-	client.Username = re.Username
-	client.Password = re.Password
-	p, err := client.LocateChart(name, c.settings)
+
+	cacheFilePath := c.settings.RepositoryCache + "/" + name + "-" + version + ".tgz"
+	_, err = os.Stat(cacheFilePath)
 	if err != nil {
-		return nil, err
+		client := action.NewShow(action.ShowAll)
+		client.Version = version
+		client.RepoURL = re.URL
+		client.Username = re.Username
+		client.Password = re.Password
+		cacheFilePath, err = client.LocateChart(name, c.settings)
+		if err != nil {
+			return nil, err
+		}
 	}
-	ct, err := loader.Load(p)
+	ct, err := loader.Load(cacheFilePath)
 	if err != nil {
 		return nil, err
 	}
