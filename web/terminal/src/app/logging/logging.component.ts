@@ -77,7 +77,7 @@ export class LoggingComponent implements AfterViewInit {
           this.term.write(msg.data)
         }
         this.conn_.onclose = () => {
-          this.term.write("\n\n******** Connection failure, terminal not supported or connection timeout... *******")
+          this.term.write("\n\n******** The connection failed. Unsupported, interrupted or timed out. ********")
         }
         this.term.focus();
         this.cdr_.markForCheck()
