@@ -263,7 +263,7 @@ export default {
       for (const pod of items) {
         if (pod.spec.nodeName === nodeName) {
           if (pod.metadata.ownerReferences && pod.metadata.ownerReferences[0].kind === "DaemonSet") {
-            return
+            continue
           }
           const rmPod = {
             apiVersion: "policy/v1beta1",

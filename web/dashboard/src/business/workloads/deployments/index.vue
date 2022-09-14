@@ -236,7 +236,7 @@ export default {
     },
     onScale(row) {
       if (row) {
-        this.selects.push(row)
+        this.selects = [row]
       }
       this.dialogScaleVisible = true
     },
