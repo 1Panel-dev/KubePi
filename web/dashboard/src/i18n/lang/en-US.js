@@ -113,13 +113,13 @@ const message = {
       create_failed: "Created failed",
       sync_success: "Sync successfully",
       upload_success: "Upload successfully",
-      change_to_download: "The file is over 1M. Opening it directly will cause browser lag. Should I download it?",
     },
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",
       back_form: "Return form editing does not preserve all changes made to YAML",
       open_yaml: ", still want to open YAML edit?",
       rollback: "This action rolls back the current Deployment to the changed version, do you want to continue?",
+      change_to_download: "The file is over 1M. Opening it directly will cause browser lag. Should I download it?",
     },
     login: {
       username: "Username",
