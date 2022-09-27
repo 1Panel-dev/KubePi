@@ -38,7 +38,7 @@ COPY --from=stage-bin-build /build/kubepi/bin/dist/usr /usr
 RUN ARCH=$(uname -m) \
     && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd64";; esac \
     && echo "ARCH: " $ARCH \
-    && apk add --update --no-cache bash bash-completion curl wget openssl iputils busybox-extras vim \
+    && apk add --update --no-cache bash bash-completion curl wget openssl iputils busybox-extras vim tini \
     && sed -i "s/nobody:\//nobody:\/nonexistent/g" /etc/passwd \
     && curl -sLf https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kubectl/v1.22.1/${ARCH}/kubectl > /usr/bin/kubectl \
     && chmod +x /usr/bin/kubectl \
@@ -84,4 +84,5 @@ EXPOSE 80
 
 USER root
 
+ENTRYPOINT ["tini", "-g", "--"]
 CMD ["kubepi-server"]
