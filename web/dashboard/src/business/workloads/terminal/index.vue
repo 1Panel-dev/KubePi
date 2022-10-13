@@ -213,7 +213,6 @@ export default {
       let params = {}
       params.container = this.terminal.container
       params.pretty = true
-      params.timestamps = true
       if (this.form.limitDate) {
         if (Math.floor((new Date().getTime() - this.form.limitDate.getTime()) / 1000) > 0) {
           params.sinceSeconds = Math.floor((new Date().getTime() - this.form.limitDate.getTime()) / 1000)
