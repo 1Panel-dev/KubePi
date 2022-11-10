@@ -40,7 +40,13 @@
       </el-table-column>
       <el-table-column label="ExternalIP" prop="spec.externalIPs" min-width="100px" show-overflow-tooltip>
         <template v-slot:default="{row}">
-          {{ row.spec.externalIPs || "" }}
+          <div v-for="(value,key,index) in row.status.loadBalancer.ingress" v-bind:key="index">
+            <div>
+              <span style="font-size: 12px">
+                {{ value.ip }}
+              </span>
+            </div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.network.target_port')" min-width="120px" show-overflow-tooltip>
