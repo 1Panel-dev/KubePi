@@ -74,7 +74,7 @@
                       <el-button :disabled="!checkExecPermissions()" @click="openTerminal(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
-                  <el-dropdown-item slot="reference" icon="el-icon-date" command="terminal">
+                  <el-dropdown-item slot="reference" :disabled="!checkExecPermissions()" icon="el-icon-date" command="terminal">
                     {{ $t("commons.button.terminal") }}
                     <i class="el-icon-arrow-right"/>
                   </el-dropdown-item>
@@ -85,7 +85,7 @@
                       <el-button :disabled="!checkLogPermissions()" @click="openTerminalLogs(row, c)" type="text">{{ c }}</el-button>
                     </p>
                   </div>
-                  <el-dropdown-item slot="reference" icon="el-icon-notebook-2" command="logs">
+                  <el-dropdown-item slot="reference" :disabled="!checkLogPermissions()" icon="el-icon-notebook-2" command="logs">
                     {{ $t("commons.button.logs") }}
                     <i class="el-icon-arrow-right"/>
                   </el-dropdown-item>
