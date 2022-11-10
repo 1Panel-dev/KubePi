@@ -86,6 +86,7 @@ const message = {
             number_limit: "请输入正确的数字",
             password_help: "有效密码:8-30位,英文字母+数字+特殊字符(~!@_#$%^&*,可选)",
             name_not_compliant: "该名称不符合命名规范",
+            name_rules: "仅支持小写英文、数字和-",
         },
         msg: {
             create_success: "创建成功",

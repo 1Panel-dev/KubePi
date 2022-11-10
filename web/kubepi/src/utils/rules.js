@@ -35,12 +35,12 @@ const LengthRule = {
     message: i18n.t("commons.validate.limit", [1, 30]),
     trigger: "blur"
 }
-const NamePattern = /^[a-z0-9]([-_a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-_a-z0-9]*[a-z0-9])?)*$/
+const NamePattern = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
 
 const CommonNameRule = {
     required: true,
     pattern: NamePattern,
-    message: i18n.t("commons.validate.name_not_compliant"),
+    message: i18n.t("commons.validate.name_rules"),
     trigger: "blur"
 }
 

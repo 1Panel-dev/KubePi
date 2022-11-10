@@ -86,6 +86,7 @@ const message = {
             number_limit: "Please enter the correct number",
             password_help: "Valid password: 8-30 digits, English letters + numbers + special characters (~!@_#$%^&*)",
             name_not_compliant: "The name does not conform to the naming convention!",
+            name_rules: "Only lowercase English, numbers and-are supported",
         },
         msg: {
             create_success: "create success",
