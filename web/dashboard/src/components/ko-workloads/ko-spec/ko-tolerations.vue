@@ -70,7 +70,7 @@ export default {
         { label: "=", value: "Equal" },
       ],
       effect_list: [
-        { label: this.$t("business.workload.all"), value: "All" },
+        { label: this.$t("business.workload.all"), value: "" },
         { label: this.$t("business.workload.no_schedule"), value: "NoSchedule" },
         { label: this.$t("business.workload.prefer_no_schedule"), value: "PreferNoSchedule" },
         { label: this.$t("business.workload.no_execute"), value: "NoExecute" },
