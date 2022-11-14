@@ -1,6 +1,10 @@
 FROM node:14.18.1 as stage-web-build
+ARG NPM_REGISTRY="https://registry.npmmirror.com"
+ENV NPM_REGISTY=$NPM_REGISTRY
 
 LABEL stage=stage-web-build
+RUN set -ex \
+    && npm config set registry ${NPM_REGISTRY}
 
 WORKDIR /build/kubepi/web
 
