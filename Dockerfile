@@ -71,7 +71,11 @@ RUN ARCH=$(uname -m) \
     && tar -xvf kubectx_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz \
     && chmod +x kubectx \
     && mv kubectx /usr/bin \
-    && curl -L https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/get-helm-3 | bash \
+    && HELM_VERSION=v3.10.2 \
+    && wget http://kubeoperator.oss-cn-beijing.aliyuncs.com/helm/${HELM_VERSION}/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
+    && tar -xvf helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
+    && mv linux-${ARCH}/helm /usr/local/bin \
+    && chmod +x /usr/local/bin/helm \
     && chmod +x /usr/local/bin/gotty \
     && chmod 555 /bin/busybox \
     && rm -rf /tmp/* /var/tmp/* /var/cache/apk/* \
