@@ -2,6 +2,8 @@ package user
 
 import (
 	"errors"
+	"time"
+
 	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/role"
@@ -11,7 +13,6 @@ import (
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 type Service interface {
@@ -81,6 +82,8 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	us.UUID = cu.UUID
 	us.CreateAt = cu.CreateAt
 	us.UpdateAt = time.Now()
+	us.Authenticate.Password = cu.Authenticate.Password
+	us.Authenticate.Token = cu.Authenticate.Token
 	if us.Mfa.Enable == false {
 		us.Mfa.Secret = ""
 		err = db.UpdateField(us, "Mfa", us.Mfa)

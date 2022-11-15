@@ -9,10 +9,10 @@
               <el-input v-model="form.name" disabled></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.user.nickname')" prop="nickname">
-              <el-input v-model="form.nickname" :disabled="form.type ==='LDAP' || form.name === 'admin'"></el-input>
+              <el-input v-model="form.nickname" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.user.email')" prop="email">
-              <el-input v-model="form.email" :disabled="form.type ==='LDAP' || form.name === 'admin'"></el-input>
+              <el-input v-model="form.email" :disabled="form.type ==='LDAP'"></el-input>
             </el-form-item>
             <el-form-item :label="$t('business.user.role')" prop="roles" v-if="form.name !== 'admin'">
               <el-select v-model="form.roles" filterable
