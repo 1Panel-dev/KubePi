@@ -65,7 +65,7 @@ import {checkPermissions} from "@/utils/permission"
 
 
 export default {
-  name: "ClusterList",
+  name: "Users",
   components: {ComplexTable, LayoutContent},
   data() {
     return {
@@ -75,6 +75,16 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.onEdit(row.name)
+          },
+          disabled: () => {
+            return  !checkPermissions({resource: "users", verb: "update"})
+          }
+        },
+        {
+          label: this.$t("commons.button.change_password"),
+          icon: "el-icon-edit-outline",
+          click: (row) => {
+            this.onChangePassword(row.name)
           },
           disabled: () => {
             return  !checkPermissions({resource: "users", verb: "update"})
@@ -131,6 +141,9 @@ export default {
     },
     onEdit(name) {
       this.$router.push({name: "UserEdit", params: {name: name}})
+    },
+    onChangePassword(name) {
+      this.$router.push({name: "UserPassword", params: {name: name}})
     },
     onDelete(name) {
       this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.alert"), {

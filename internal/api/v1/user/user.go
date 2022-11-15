@@ -329,9 +329,9 @@ func (h *Handler) UpdateUser() iris.Handler {
 			return
 		}
 		if req.Password != "" {
-			if err := h.userService.ResetPassword(userName, req.Password, common.DBOptions{}); err != nil {
+			if err := h.userService.UpdatePassword(userName, req.OldPassword, req.Password, common.DBOptions{}); err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
+				ctx.Values().Set("message", "can not match original password")
 				return
 			}
 			ctx.Values().Set("data", "ok")

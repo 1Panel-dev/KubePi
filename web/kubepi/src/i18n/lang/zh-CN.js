@@ -42,7 +42,8 @@ const message = {
             search: "搜索",
             rbac_manage: "授权",
             sync: "同步",
-            bind: "绑定"
+            bind: "绑定",
+            change_password: '改密',
         },
         table: {
             name: "名称",

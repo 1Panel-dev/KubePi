@@ -27,9 +27,6 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('business.user.password')" v-if="form.type !=='LDAP'">
-              <el-link @click="openedChangePassword">{{ $t("business.user.change_password") }}</el-link>
-            </el-form-item>
             <el-form-item :label="$t('commons.table.mfa_enable')" prop="mfa.enable">
               <el-checkbox v-model="form.mfa.enable">{{ $t("commons.enable.true") }}</el-checkbox>
             </el-form-item>
@@ -46,31 +43,6 @@
       </el-col>
       <el-col :span="4"><br/></el-col>
     </el-row>
-
-
-    <el-dialog
-            :title="$t('business.user.change_password')"
-            :visible.sync="changePasswordOpened"
-            :close-on-click-modal="false"
-            width="30%">
-      <div>
-        <el-form :rules="passwordChangeRules" ref="passwordChangeFrom" :model="passwordChangeFrom" label-width="150px"
-                 label-position="left">
-          <el-form-item :label="$t('business.user.new_password')" prop="newPassword">
-            <el-input type="password" v-model="passwordChangeFrom.newPassword"></el-input>
-          </el-form-item>
-          <el-form-item :label="$t('business.user.confirm_password')" prop="confirmPassword">
-            <el-input type="password" v-model="passwordChangeFrom.confirmPassword"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer">
-    <el-button @click="changePasswordOpened = false">{{ $t("commons.button.cancel") }}</el-button>
-    <el-button type="primary" @click="onChangePasswordConfirm">{{ $t("commons.button.confirm") }}</el-button>
-  </span>
-    </el-dialog>
-
-
   </layout-content>
 </template>
 
@@ -86,25 +58,6 @@ export default {
   props: ["name"],
   components: { LayoutContent },
   data () {
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error(this.$t("business.user.please_input_password")))
-      } else {
-        if (this.passwordChangeFrom.newPassword !== "") {
-          this.$refs.form.validateField("checkPass")
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error(this.$t("business.user.please_input_password")))
-      } else if (value !== this.passwordChangeFrom.newPassword) {
-        callback(new Error(this.$t("business.user.password_not_equal")))
-      } else {
-        callback()
-      }
-    }
     return {
       loading: false,
       isSubmitGoing: false,
@@ -128,23 +81,6 @@ export default {
           // enable:Rules.RequiredRule,
         }
       },
-      changePasswordOpened: false,
-      passwordChangeRules: {
-        newPassword: [
-          Rules.RequiredRule,
-          Rules.PasswordRule,
-          { validator: validatePass, trigger: "blur" },
-        ],
-        confirmPassword: [
-          Rules.RequiredRule,
-          Rules.PasswordRule,
-          { validator: validatePass2, trigger: "blur" }
-        ],
-      },
-      passwordChangeFrom: {
-        newPassword: "",
-        confirmPassword: ""
-      },
       form: {
         name: "",
         nickname: "",
@@ -156,26 +92,6 @@ export default {
     }
   },
   methods: {
-    onChangePasswordConfirm () {
-      let isFormReady = false
-      this.$refs["passwordChangeFrom"].validate((valid) => {
-        if (valid) {
-          isFormReady = true
-        }
-      })
-      if (!isFormReady) {
-        return
-      }
-      updateUser(this.name, {
-        "password": this.passwordChangeFrom.newPassword
-      }).then(() => {
-        this.$message.success(this.$t("commons.msg.update_success"))
-        this.changePasswordOpened = false
-      })
-    },
-    openedChangePassword () {
-      this.changePasswordOpened = true
-    },
     onConfirm () {
       if (this.isSubmitGoing) {
         return

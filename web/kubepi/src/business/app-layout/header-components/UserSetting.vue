@@ -9,6 +9,9 @@
       <el-dropdown-item style="text-align: center" command="profile">
         {{ $t("commons.personal.profile") }}
       </el-dropdown-item>
+      <el-dropdown-item style="text-align: center" command="password">
+        {{ $t("business.user.change_password") }}
+      </el-dropdown-item>
 
 
       <el-dropdown-item style="text-align: center" divided command="exit">
@@ -27,7 +30,8 @@ export default {
   name: "UserSetting",
   computed: {
     ...mapGetters([
-      "nickName"
+      "nickName",
+      "name"
     ])
   },
   methods: {
@@ -38,6 +42,9 @@ export default {
           break
         case "profile":
           this.$router.push("/profile")
+          break
+        case "password":
+          this.$router.push({name: "UserPassword", params: {name: this.name}})
           break
         default:
           this.aboutDialogVisible = true

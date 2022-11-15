@@ -47,6 +47,16 @@ const UserManagement = {
       }
     },
     {
+      props: true,
+      path: "users/password/:name",
+      component: () => import("@/business/user-management/user/password"),
+      name: "UserPassword",
+      hidden: true,
+      meta: {
+        activeMenu: "/user-management/users",
+      }
+    },
+    {
       path: "roles",
       component: () => import("@/business/user-management/role"),
       name: "Roles",

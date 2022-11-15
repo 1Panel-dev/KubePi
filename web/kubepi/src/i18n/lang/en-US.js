@@ -42,7 +42,8 @@ const message = {
             search: "Search",
             rbac_manage: "RBAC Manage",
             sync: "Sync",
-            bind: "Bind"
+            bind: "Bind",
+            change_password: 'Change Password',
         },
         table: {
             name: "Name",
