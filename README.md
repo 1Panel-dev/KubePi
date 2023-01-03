@@ -48,7 +48,7 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 ### License & Copyright
 
-Copyright (c) 2014-2022 FIT2CLOUD 飞致云
+Copyright (c) 2014-2023 FIT2CLOUD 飞致云
 
 [https://www.fit2cloud.com](https://www.fit2cloud.com)<br>
 
