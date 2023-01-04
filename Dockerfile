@@ -86,6 +86,8 @@ RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && apk del tzdata
 
+COPY conf/app.yml /etc/kubepi/app.yml
+
 COPY vimrc.local /etc/vim
 
 EXPOSE 80

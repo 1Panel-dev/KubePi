@@ -10,7 +10,7 @@ spec:
       certificate:
       certificateKey:
   db:
-    path: /var/lib/kubepi/db/kubepi.db
+    path: /var/lib/kubepi/db
   session:
     expires: 24
   jwt:
