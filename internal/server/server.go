@@ -340,6 +340,7 @@ func getDefaultConfig() *v1Config.Config {
 				Expires: 72,
 			},
 			Logger: v1Config.LoggerConfig{Level: "debug"},
+			Jwt:    v1Config.JwtConfig{},
 		},
 	}
 }

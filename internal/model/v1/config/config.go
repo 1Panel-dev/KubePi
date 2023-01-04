@@ -12,6 +12,7 @@ type Spec struct {
 	DB      DBConfig      `json:"db"`
 	Session SessionConfig `json:"session"`
 	Logger  LoggerConfig  `json:"logger"`
+	Jwt     JwtConfig     `json:"jwt"`
 	AppId   string        `json:"appId"`
 }
 
@@ -41,4 +42,8 @@ type DBConfig struct {
 
 type SessionConfig struct {
 	Expires int `json:"expires"`
+}
+
+type JwtConfig struct {
+	Key string `json:"key"`
 }

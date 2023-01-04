@@ -32,7 +32,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var JwtSigKey = []byte("signature_hmac_secret_shared_key")
 var jwtMaxAge = 10 * time.Minute
 
 type Handler struct {
@@ -51,7 +50,7 @@ func NewHandler() *Handler {
 		roleService:        role.NewService(),
 		rolebindingService: rolebinding.NewService(),
 		ldapService:        ldap.NewService(),
-		jwtSigner:          jwt.NewSigner(jwt.HS256, JwtSigKey, jwtMaxAge),
+		jwtSigner:          jwt.NewSigner(jwt.HS256, server.Config().Spec.Jwt.Key, jwtMaxAge),
 	}
 }
 

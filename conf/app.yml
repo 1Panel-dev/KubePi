@@ -13,3 +13,5 @@ spec:
     path: /var/lib/kubepi/db/kubepi.db
   session:
     expires: 24
+  jwt:
+    key:

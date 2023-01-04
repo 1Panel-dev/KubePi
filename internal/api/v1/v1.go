@@ -401,8 +401,7 @@ func resourceNameInvalidHandler() iris.Handler {
 }
 
 func WarpedJwtHandler() iris.Handler {
-
-	verifier := jwt.NewVerifier(jwt.HS256, session.JwtSigKey)
+	verifier := jwt.NewVerifier(jwt.HS256, server.Config().Spec.Jwt.Key)
 	verifier.WithDefaultBlocklist()
 	verifyMiddleware := verifier.Verify(func() interface{} {
 		return new(session.UserProfile)
