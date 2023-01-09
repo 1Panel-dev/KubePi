@@ -419,11 +419,12 @@ func WarpedJwtHandler() iris.Handler {
 func AddV1Route(app iris.Party) {
 
 	v1Party := app.Party("/v1")
-	v1Party.Use(langHandler())
-	v1Party.Use(pageHandler())
+
 	session.Install(v1Party)
 	mfa.Install(v1Party)
 	authParty := v1Party.Party("")
+	v1Party.Use(langHandler())
+	v1Party.Use(pageHandler())
 
 	authParty.Use(WarpedJwtHandler())
 	authParty.Use(authHandler())
@@ -436,7 +437,7 @@ func AddV1Route(app iris.Party) {
 	user.Install(authParty)
 	cluster.Install(authParty)
 	role.Install(authParty)
-	system.Install(v1Party)
+	system.Install(authParty)
 	proxy.Install(authParty)
 	ws.Install(authParty)
 	chart.Install(authParty)
