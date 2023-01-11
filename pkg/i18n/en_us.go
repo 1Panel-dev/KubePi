@@ -15,4 +15,5 @@ var enUSMapping = TextMapping{
 	"username already exists":               "username already exists",
 	"email already exists":                  "email already exists",
 	"unable to complete authorization":      "Unable to complete authorization, please check whether the user name is valid:  /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/",
+	"no login user":                         "no login user",
 }

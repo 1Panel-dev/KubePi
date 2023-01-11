@@ -50,7 +50,7 @@ func (m *Handler) MfaValidate() iris.Handler {
 		success := mfaUtil.ValidCode(mfa.Code, mfa.Secret)
 		if !success {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", "code is not valid")
+			ctx.Values().Set("message", "code is invalid")
 			return
 		} else {
 			p.Mfa.Approved = true
@@ -89,7 +89,7 @@ func (m *Handler) MfaBind() iris.Handler {
 		success := mfaUtil.ValidCode(mfa.Code, mfa.Secret)
 		if !success {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", "code is not valid")
+			ctx.Values().Set("message", "code is invalid")
 			return
 		} else {
 			session.Delete("profile")

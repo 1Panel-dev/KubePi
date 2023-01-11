@@ -108,7 +108,7 @@ const message = {
             welcome: "欢迎回来，请输入用户名和密码登录",
             expires: "认证信息已过期，请重新登录",
             mfa_helper: "使用 MFA 验证器应用扫描以下二维码，获取6位验证码",
-            mfa_login_helper: "请输入MFA验证器的6位验证吗",
+            mfa_login_helper: "请输入MFA验证器的6位验证码",
         },
     },
     business: {

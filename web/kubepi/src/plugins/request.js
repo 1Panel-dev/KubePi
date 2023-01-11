@@ -1,7 +1,7 @@
 import axios from "axios"
-import {$alert, $error} from "./message"
-import store from "@/store"
-import i18n, {getLanguage} from "@/i18n"
+import { $error} from "./message"
+// import store from "@/store"
+import {getLanguage} from "@/i18n"
 
 const instance = axios.create({
     baseURL: "/kubepi", // url = base url + request url
@@ -23,12 +23,12 @@ instance.interceptors.request.use(
 const checkAuth = response => {
     // 请根据实际需求修改
     if (response.status === 401) {
-        let message = i18n.t("commons.login.expires")
-        $alert(message, () => {
-            store.dispatch("user/logout").then(() => {
-                location.reload()
-            })
-        })
+        // let message = i18n.t("commons.login.expires")
+        // $alert(message, () => {
+        //     store.dispatch("user/logout").then(() => {
+        //         location.reload()
+        //     })
+        // })
     }
 }
 

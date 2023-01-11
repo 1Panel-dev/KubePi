@@ -209,6 +209,9 @@ func (e *KubePiServer) setUpErrHandler() {
 		}
 
 		lang := ctx.Values().GetString("language")
+		if lang == "" {
+			lang = i18n.LanguageZhCN
+		}
 		var (
 			translateMessage string
 			err              error

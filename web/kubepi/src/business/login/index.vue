@@ -30,17 +30,13 @@
             <div>
               <div>
                 <span>{{ $t("commons.login.mfa_login_helper") }}</span>
-              </div>
-              <div>
-                <span>Secret:{{ user.secret }}</span>
+                <br/>
               </div>
             </div>
-            <el-form>
-              <el-form-item class="login">
-                <el-input v-model="mfaCredential.code"></el-input>
-              </el-form-item>
-            </el-form>
+            <br/>
+                <el-input class="login" v-model="mfaCredential.code"></el-input>
             <div>
+              <br/>
               <el-button type="primary" class="submit" @click="mfaLogin()" size="default">
                 {{ $t("commons.button.login") }}
               </el-button>
@@ -157,7 +153,11 @@ export default {
     watchEnter (e) {
       let keyCode = e.keyCode
       if (keyCode === 13) {
-        this.submit("form")
+        if(this.mfaPage) {
+          this.mfaLogin()
+        }else {
+          this.submit("form")
+        }
       }
     },
     submit (form) {
