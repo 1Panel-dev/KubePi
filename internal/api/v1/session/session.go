@@ -76,11 +76,6 @@ func (h *Handler) IsLogin() iris.Handler {
 				return
 			}
 		} else {
-			if err := session.Man.ShiftExpiration(ctx); err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", fmt.Errorf("shift expiration falied, err: %v", err))
-				return
-			}
 			ctx.StatusCode(iris.StatusOK)
 			ctx.Values().Set("data", loginUser != nil)
 		}
@@ -167,8 +162,14 @@ func (h *Handler) Login() iris.Handler {
 			ctx.Values().Set("token", token)
 			return
 		default:
-			session := server.SessionMgr.Start(ctx)
-			session.Set("profile", profile)
+			sId := ctx.GetCookie(server.SessionCookieName)
+			if sId != "" {
+				ctx.RemoveCookie(server.SessionCookieName)
+				ctx.Request().Header.Del("Cookie")
+			}
+			sess := server.SessionMgr.Start(ctx)
+			ctx.SetCookieKV(server.SessionCookieName, sess.ID())
+			sess.Set("profile", profile)
 		}
 
 		ctx.StatusCode(iris.StatusOK)

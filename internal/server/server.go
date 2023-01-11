@@ -31,7 +31,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const sessionCookieName = "SESS_COOKIE_KUBEPI"
+const SessionCookieName = "SESS_COOKIE_KUBEPI"
 
 var SessionMgr *sessions.Sessions
 
@@ -149,7 +149,7 @@ func (e *KubePiServer) setUpStaticFile() {
 }
 
 func (e *KubePiServer) setUpSession() {
-	SessionMgr = sessions.New(sessions.Config{Cookie: sessionCookieName, AllowReclaim: true, Expires: time.Duration(e.config.Spec.Session.Expires) * time.Hour})
+	SessionMgr = sessions.New(sessions.Config{Cookie: SessionCookieName, AllowReclaim: true, Expires: time.Duration(e.config.Spec.Session.Expires) * time.Hour})
 	e.rootRoute.Use(SessionMgr.Handler())
 }
 

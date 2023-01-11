@@ -7,7 +7,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 )
 
-func (h Handler) UpdateProfile() iris.Handler {
+func (h *Handler) UpdateProfile() iris.Handler {
 	return func(ctx *context.Context) {
 		var req ProfileSetter
 		if err := ctx.ReadJSON(&req); err != nil {
@@ -50,7 +50,7 @@ func (h Handler) UpdateProfile() iris.Handler {
 		ctx.Values().Set("data", "ok")
 	}
 }
-func (h Handler) UpdatePassword() iris.Handler {
+func (h *Handler) UpdatePassword() iris.Handler {
 	return func(ctx *context.Context) {
 		var pass PasswordSetter
 		if err := ctx.ReadJSON(&pass); err != nil {
