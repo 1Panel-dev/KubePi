@@ -443,7 +443,7 @@ func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, profile session.Use
 }
 
 func ensureProxyPathValid(path string) string {
-	if !strings.HasSuffix(path, "/") {
+	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
 	return path
