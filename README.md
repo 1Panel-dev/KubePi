@@ -24,9 +24,6 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 - 用户名：admin
 - 密码：kubepi
 
-### 微信交流群
-
-![wechat-group](https://kubeoperator.io/docs/img/wechat-group.png)
 
 ### 致谢
 
