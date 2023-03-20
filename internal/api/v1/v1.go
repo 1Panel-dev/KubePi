@@ -422,10 +422,10 @@ func AddV1Route(app iris.Party) {
 
 	session.Install(v1Party)
 	mfa.Install(v1Party)
-	authParty := v1Party.Party("")
 	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
-
+	
+	authParty := v1Party.Party("")
 	authParty.Use(WarpedJwtHandler())
 	authParty.Use(authHandler())
 	authParty.Use(resourceExtractHandler())
