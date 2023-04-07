@@ -18,6 +18,7 @@ ENV GOPROXY="https://goproxy.cn,direct"
 
 ENV CGO_ENABLED=0
 
+
 ENV GO111MODULE=on
 
 LABEL stage=stage-bin-build
