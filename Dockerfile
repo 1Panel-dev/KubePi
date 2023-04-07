@@ -14,6 +14,7 @@ RUN make build_web
 
 RUN rm -fr web
 
+
 FROM golang:1.16 as stage-bin-build
 
 ENV GOPROXY="https://goproxy.cn,direct"
