@@ -46,7 +46,7 @@ func (p *PodTool) ListFiles(path string) ([]File, error) {
 }
 
 func getName(sub string, line string) string {
-	return strings.TrimSpace(line[strings.Index(line, sub):])
+	return strings.TrimSpace(line[strings.LastIndex(line, sub):])
 }
 
 func getLink(line string) string {
