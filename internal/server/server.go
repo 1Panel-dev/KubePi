@@ -101,7 +101,8 @@ func (e *KubePiServer) setUpLogger() {
 	e.logger = logrus.New()
 	l, err := logrus.ParseLevel(e.config.Spec.Logger.Level)
 	if err != nil {
-		e.logger.Errorf("cant not parse logger level %s, %s,use default level: INFO", e.config.Spec.Logger.Level, err)
+		fmt.Printf("cant not parse logger level %s, %s,use default level: INFO", e.config.Spec.Logger.Level, err)
+		return
 	}
 	e.logger.SetLevel(l)
 }
