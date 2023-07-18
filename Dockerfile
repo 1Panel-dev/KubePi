@@ -1,4 +1,4 @@
-FROM node:14.18.1 as stage-web-build
+FROM node:20.2.0 as stage-web-build
 ARG NPM_REGISTRY="https://registry.npmmirror.com"
 ENV NPM_REGISTY=$NPM_REGISTRY
 
@@ -14,7 +14,7 @@ RUN make build_web
 
 RUN rm -fr web
 
-FROM golang:1.16 as stage-bin-build
+FROM golang:1.19 as stage-bin-build
 
 ENV GOPROXY="https://goproxy.cn,direct"
 

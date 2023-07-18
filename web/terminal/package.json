@@ -3,21 +3,21 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.config.json --base-href=/terminal/",
-    "build": "ng build --prod --aot --base-href=/kubepi/terminal/",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "ng serve --proxy-config proxy.config.json",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && ng build --aot",
+    "watch": "export NODE_OPTIONS=--openssl-legacy-provider && ng build --watch --configuration development",
+    "test": "export NODE_OPTIONS=--openssl-legacy-provider && ng test"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~12.0.1",
-    "@angular/common": "~12.0.1",
-    "@angular/compiler": "~12.0.1",
-    "@angular/core": "~12.0.1",
-    "@angular/forms": "~12.0.1",
-    "@angular/platform-browser": "~12.0.1",
-    "@angular/platform-browser-dynamic": "~12.0.1",
-    "@angular/router": "~12.0.1",
+    "@angular/animations": "~16.1.0",
+    "@angular/common": "~16.1.0",
+    "@angular/compiler": "~16.1.0",
+    "@angular/core": "~16.1.0",
+    "@angular/forms": "~16.1.0",
+    "@angular/platform-browser": "~16.1.0",
+    "@angular/platform-browser-dynamic": "~16.1.0",
+    "@angular/router": "~16.1.0",
     "@types/lodash": "^4.14.170",
     "loadsh": "0.0.4",
     "rxjs": "~6.6.0",
@@ -25,20 +25,20 @@
     "tslib": "^2.1.0",
     "xterm": "^4.12.0",
     "xterm-addon-fit": "^0.5.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.13.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~12.0.1",
-    "@angular/cli": "~12.0.1",
-    "@angular/compiler-cli": "~12.0.1",
+    "@angular-devkit/build-angular": "~16.1.4",
+    "@angular/cli": "~16.1.0",
+    "@angular/compiler-cli": "~16.1.0",
     "@types/jasmine": "~3.6.0",
-    "@types/node": "^12.11.1",
-    "jasmine-core": "~3.7.0",
-    "karma": "~6.3.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage": "~2.0.3",
-    "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
-    "typescript": "~4.2.3"
+    "@types/node": "^20.4.2",
+    "jasmine-core": "~5.0.1",
+    "karma": "~6.4.2",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "~5.1.6"
   }
 }

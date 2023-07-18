@@ -45,3 +45,4 @@ cmd/server/web
 
 # Go test binaries
 *.test
+web/terminal/.angular

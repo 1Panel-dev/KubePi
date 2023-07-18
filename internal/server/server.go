@@ -1,8 +1,10 @@
 package server
 
 import (
+	context2 "context"
 	"embed"
 	"fmt"
+	"github.com/go-logr/logr"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -97,7 +99,7 @@ func (e *KubePiServer) setUpConfig() {
 }
 
 func (e *KubePiServer) setUpLogger() {
-	klog.SetLogger(TodoLogger{})
+	klog.SetLogger(logr.FromContextOrDiscard(context2.Background()))
 	e.logger = logrus.New()
 	l, err := logrus.ParseLevel(e.config.Spec.Logger.Level)
 	if err != nil {
