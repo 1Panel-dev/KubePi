@@ -70,6 +70,7 @@ func (h *Handler) SearchUsers() iris.Handler {
 		}
 		us := make([]User, 0)
 		for i := range users {
+			users[i].Authenticate = v1User.Authenticate{}
 			bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: users[i].Name}, common.DBOptions{})
 			if err != nil && !errors.As(err, &storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -168,6 +169,7 @@ func (h *Handler) CreateUser() iris.Handler {
 			}
 		}
 		_ = tx.Commit()
+		req.Authenticate = v1User.Authenticate{}
 		ctx.Values().Set("data", req)
 	}
 }
@@ -274,6 +276,7 @@ func (h *Handler) GetUser() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		u.Authenticate = v1User.Authenticate{}
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: u.Name}, common.DBOptions{})
 		if err != nil && !errors.As(err, &storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
