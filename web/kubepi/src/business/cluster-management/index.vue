@@ -250,7 +250,7 @@ export default {
 
     onDeleteLabel(row, key) {
       row.labels.splice(row.labels.indexOf(key), 1)
-      updateCluster(row.name, {"labels": row.labels}).then(() => {
+      updateCluster(row.name, {"labels": row.labels, "withLabel": true}).then(() => {
         row.k++
       })
     },
