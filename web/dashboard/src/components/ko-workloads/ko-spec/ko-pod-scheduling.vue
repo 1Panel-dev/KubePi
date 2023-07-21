@@ -19,11 +19,6 @@
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="Namespace">
-                <ko-form-item itemType="select2" v-model="item.namespaces" multiple :selections="namespace_list" />
-              </el-form-item>
-            </el-col>
             <el-col :span="12" v-if="item.priority === 'Preferred'">
               <el-form-item :label="$t('business.workload.weight')">
                 <ko-form-item itemType="number" v-model="item.weight" />
@@ -151,7 +146,6 @@ export default {
       var item = {
         type: "Affinity",
         priority: "Preferred",
-        namespaces: "",
         weight: 1,
         rules: [],
         labelRules: [],
@@ -208,7 +202,6 @@ export default {
     },
 
     valueTrans(type, priority, s) {
-      let namespaces = s.namespaces || ""
       let rules = []
       if (s.labelSelector.matchExpressions) {
         for (const express of s.labelSelector.matchExpressions) {
@@ -231,7 +224,6 @@ export default {
         type: type,
         priority: priority,
         weight: s.weight || null,
-        namespaces: namespaces || "",
         rules: rules,
         labelRules: labelRules,
         topologyKey: topologyKey,
@@ -263,8 +255,7 @@ export default {
       if (this.podSchedulings.length !== 0) {
         for (const pS of this.podSchedulings) {
           let itemAdd = {}
-          itemAdd.namespaces = (pS.namespaces && pS.namespaces.length !== 0) ? pS.namespaces : undefined
-          itemAdd.topologyKey = pS.topologyKey || undefined
+          const itemTopologyKey = pS.topologyKey || undefined
           const matchs = this.getMatchExpress(pS.rules)
           const labelMatchs = this.getMatchLabels(pS.labelRules)
           switch (pS.type + "+" + pS.priority) {
@@ -274,6 +265,7 @@ export default {
               }
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
+              itemAdd.topologyKey = itemTopologyKey
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Affinity+Preferred":
@@ -281,8 +273,8 @@ export default {
                 parentFrom.affinity.podAffinity = {}
               }
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.podAffinityTerm = { labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
-              itemAdd.weight = pS.weight
+              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
+              itemAdd.weight = pS.weight || 1
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Required":
@@ -291,6 +283,7 @@ export default {
               }
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
+              itemAdd.topologyKey = itemTopologyKey
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Anti-Affinity+Preferred":
@@ -298,14 +291,13 @@ export default {
                 parentFrom.affinity.podAntiAffinity = {}
               }
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.podAffinityTerm = { labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
-              itemAdd.weight = pS.weight
+              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
+              itemAdd.weight = pS.weight || 1
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
           }
         }
       }
-      parentFrom.nodeAffinity = {}
       if (this.nodeSchedulings.length !== 0) {
         for (const nS of this.nodeSchedulings) {
           const matchs = this.getMatchExpress(nS.rules)
@@ -313,19 +305,25 @@ export default {
           let itemAdd = {}
           switch (nS.priority) {
             case "Preferred":
-              parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
+              if (!parentFrom.affinity.nodeAffinity) {
+                parentFrom.affinity.nodeAffinity = {}
+              }
+              parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.weight = nS.weight
               itemAdd.preference = { matchExpressions: matchs, matchFields: fields }
-              parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
+              parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Required":
-              if (!parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-                parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
+              if (!parentFrom.affinity.nodeAffinity) {
+                parentFrom.affinity.nodeAffinity = {}
               }
-              parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
+              if (!parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+                parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
+              }
+              parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
               itemAdd.matchExpressions = matchs
               itemAdd.matchFields = fields
-              parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
+              parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
               break
           }
         }
@@ -369,47 +367,47 @@ export default {
             }
           }
         }
-      }
 
-      if (this.podSchedulingParentObj.nodeAffinity) {
-        if (this.podSchedulingParentObj.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
-          if (this.podSchedulingParentObj.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
-            const schedulings = this.podSchedulingParentObj.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
-            for (const s of schedulings) {
-              let rules = []
-              if (s.matchExpressions) {
-                for (const express of s.matchExpressions) {
-                  rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+        if (this.podSchedulingParentObj.affinity.nodeAffinity) {
+          if (this.podSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution) {
+            if (this.podSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms) {
+              const schedulings = this.podSchedulingParentObj.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms
+              for (const s of schedulings) {
+                let rules = []
+                if (s.matchExpressions) {
+                  for (const express of s.matchExpressions) {
+                    rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                  }
                 }
-              }
-              let fields = []
-              if (s.matchFields) {
-                for (const express of s.matchFields) {
-                  fields.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                let fields = []
+                if (s.matchFields) {
+                  for (const express of s.matchFields) {
+                    fields.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                  }
                 }
+                this.nodeSchedulings.push({ priority: "Required", rules: rules, fields: fields })
               }
-              this.nodeSchedulings.push({ priority: "Required", rules: rules, fields: fields })
             }
           }
-        }
-        if (this.podSchedulingParentObj.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
-          const schedulings = this.podSchedulingParentObj.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
-          for (const s of schedulings) {
-            let rules = []
-            let fields = []
-            if (s.preference) {
-              if (s.preference.matchExpressions) {
-                for (const express of s.preference.matchExpressions) {
-                  rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+          if (this.podSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution) {
+            const schedulings = this.podSchedulingParentObj.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution
+            for (const s of schedulings) {
+              let rules = []
+              let fields = []
+              if (s.preference) {
+                if (s.preference.matchExpressions) {
+                  for (const express of s.preference.matchExpressions) {
+                    rules.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                  }
+                }
+                if (s.preference.matchFields) {
+                  for (const express of s.preference.matchFields) {
+                    fields.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
+                  }
                 }
               }
-              if (s.preference.matchFields) {
-                for (const express of s.preference.matchFields) {
-                  fields.push({ key: express.key, operator: express.operator, value: express.values.join(",") })
-                }
-              }
+              this.nodeSchedulings.push({ priority: "Preferred", rules: rules, fields: fields, weight: s.weight || null })
             }
-            this.nodeSchedulings.push({ priority: "Preferred", rules: rules, fields: fields, weight: s.weight || null })
           }
         }
       }
