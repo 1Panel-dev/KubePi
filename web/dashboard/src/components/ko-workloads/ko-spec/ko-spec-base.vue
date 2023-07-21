@@ -72,15 +72,17 @@ export default {
           for (const sec of newObj.imagePullSecrets) {
             this.form.imagePullSecrets.push(sec.name)
           }
-          if (this.specBaseParentObj.restartPolicy) {
-            this.form.restartPolicy = this.specBaseParentObj.restartPolicy
-          }
-          if (this.specBaseParentObj.serviceAccountName) {
-            this.form.serviceAccountName = this.specBaseParentObj.serviceAccountName
-          }
-          if (this.specBaseParentObj.terminationGracePeriodSeconds) {
-            this.form.terminationGracePeriodSeconds = this.specBaseParentObj.terminationGracePeriodSeconds
-          }
+        }
+        if (this.specBaseParentObj.restartPolicy) {
+          this.form.restartPolicy = this.specBaseParentObj.restartPolicy
+        } else {
+          this.form.restartPolicy = this.isJobs() ? "OnFailure" : "Always"
+        }
+        if (this.specBaseParentObj.serviceAccountName) {
+          this.form.serviceAccountName = this.specBaseParentObj.serviceAccountName
+        }
+        if (this.specBaseParentObj.terminationGracePeriodSeconds) {
+          this.form.terminationGracePeriodSeconds = this.specBaseParentObj.terminationGracePeriodSeconds
         }
       },
       immediate: true,
@@ -109,12 +111,7 @@ export default {
   },
   methods: {
     isJobs() {
-      if (this.resourceType === "jobs" || this.resourceType === "cronjobs") {
-        this.form.restartPolicy = "OnFailure"
-        return true
-      }
-      this.form.restartPolicy = "Always"
-      return false
+      return this.resourceType === "jobs" || this.resourceType === "cronjobs"
     },
     transformation(parentFrom, metadata) {
       parentFrom.restartPolicy = this.form.restartPolicy || undefined
