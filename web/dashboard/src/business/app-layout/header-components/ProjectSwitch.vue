@@ -1,17 +1,14 @@
 <template>
-  <el-dropdown trigger="click" @command="handleProjectSwitch">
-    <span class="el-dropdown-link">
-              <i class="iconfont iconnamesapce" style="color: #3884c5;margin-right: 3px" :icon="['fas', 'globe']"/>
-      <span>{{ getNamespaceName }}</span>
-      <i class="el-icon-arrow-down el-icon--right"></i>
-    </span>
-    <el-dropdown-menu slot="dropdown" style="max-height: 300px;overflow:auto">
-      <el-dropdown-item command="">All Namespaces</el-dropdown-item>
-      <el-dropdown-item disabled divided></el-dropdown-item>
-      <el-dropdown-item v-for="(value,key) in namespaceOptions" :key="key" :command="value">{{ value }}
-      </el-dropdown-item>
-    </el-dropdown-menu>
-  </el-dropdown>
+    <div>
+      <el-select v-model="namespace" filterable @change="handleProjectSwitch">
+        <el-option-group>
+          <el-option label="All Namespaces" value=""></el-option>
+        </el-option-group>
+        <el-option-group>
+          <el-option v-for="(value,key) in namespaceOptions" :key="key" :label="value" :value="value"></el-option>
+        </el-option-group>
+      </el-select>
+    </div>
 </template>
 
 <script>
@@ -23,21 +20,16 @@ export default {
   name: "ProjectSwitch",
   data() {
     return {
+      namespace: "",
       namespaceOptions: [],
     }
   },
-  computed: {
-    getNamespaceName() {
-      const p = sessionStorage.getItem("namespace")
-      return (p === null) ? "All Namespaces" : p
-    }
-  },
   methods: {
-    handleProjectSwitch(command) {
-      if (!command) {
+    handleProjectSwitch() {
+      if (!this.namespace) {
         sessionStorage.removeItem("namespace")
       } else {
-        sessionStorage.setItem("namespace", command)
+        sessionStorage.setItem("namespace", this.namespace)
       }
       location.reload()
     },
@@ -50,6 +42,8 @@ export default {
   },
   created() {
     this.getNamespaceList()
+    let p = sessionStorage.getItem("namespace")
+    this.namespace = p ? p : ""
   },
   mounted: function () {
     Bus.$on('refresh',() => {
