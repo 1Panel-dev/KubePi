@@ -28,9 +28,7 @@ func CreateClientCertificateRequest(userName string, key []byte, org ...string) 
 	subj := pkix.Name{
 		CommonName: userName,
 	}
-	for i := range org {
-		subj.Organization = append(subj.Organization, org[i])
-	}
+	subj.Organization = append(subj.Organization, org...)
 	rawSubj := subj.ToRDNSequence()
 	asn1Subj, err := asn1.Marshal(rawSubj)
 	if err != nil {

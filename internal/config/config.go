@@ -25,9 +25,7 @@ func ReadConfig(c *config.Config, path ...string) error {
 	v.SetConfigName("app")
 	v.SetConfigType("yaml")
 
-	for i := range path {
-		configFilePaths = append(configFilePaths, path[i])
-	}
+	configFilePaths = append(configFilePaths, path...)
 	for i := range configFilePaths {
 		realDir := file.ReplaceHomeDir(configFilePaths[i])
 
