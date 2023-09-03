@@ -214,9 +214,7 @@ func (h *Handler) aggregateResourcePermissions(name string) (map[string][]string
 	var policyRoles []v1Role.PolicyRule
 	//merge permissions
 	for i := range rs {
-		for j := range rs[i].Rules {
-			policyRoles = append(policyRoles, rs[i].Rules[j])
-		}
+		policyRoles = append(policyRoles, rs[i].Rules...)
 	}
 	for i := range policyRoles {
 		for j := range policyRoles[i].Resource {
