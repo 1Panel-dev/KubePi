@@ -36,7 +36,7 @@ require (
 	golang.org/x/text v0.3.7
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/igm/sockjs-go.v2 v2.1.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.0
 	helm.sh/helm/v3 v3.7.0
 	k8s.io/api v0.22.2
 	k8s.io/apiextensions-apiserver v0.22.2
