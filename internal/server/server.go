@@ -97,7 +97,9 @@ func (e *KubePiServer) setUpConfig() {
 }
 
 func (e *KubePiServer) setUpLogger() {
-	klog.SetLogger(TodoLogger{})
+	klog.InitFlags(nil)
+	klog.SetOutput(nil)
+	klog.V(0).Info("This log won't be printed.")
 	e.logger = logrus.New()
 	l, err := logrus.ParseLevel(e.config.Spec.Logger.Level)
 	if err != nil {
@@ -189,7 +191,7 @@ func (e *KubePiServer) setResultHandler() {
 						"success": true,
 						"data":    ctx.Values().Get("data"),
 					}
-					_, _ = ctx.JSON(resp)
+					_ = ctx.JSON(resp)
 				}
 			}
 		}
@@ -242,7 +244,7 @@ func (e *KubePiServer) setUpErrHandler() {
 			"code":    ctx.GetStatusCode(),
 			"message": msg,
 		}
-		_, _ = ctx.JSON(er)
+		_ = ctx.JSON(er)
 	})
 }
 
