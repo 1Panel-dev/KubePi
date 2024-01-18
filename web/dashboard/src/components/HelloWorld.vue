@@ -35,8 +35,6 @@
 
 
 <script>
-    import * as model from "@kubernetes/client-node/dist/gen/model/models"
-
     export default {
         name: 'HelloWorld',
         props: {

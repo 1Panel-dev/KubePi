@@ -173,7 +173,7 @@ export class TerminalComponent implements AfterViewInit {
       this.conn_.onclose = this.onConnectionClose.bind(this);
       this.initTerm()
       this.cdr_.markForCheck();
-    } catch (e) {
+    } catch (e:any) {
       this.term.write(e.error.message)
     }
   }

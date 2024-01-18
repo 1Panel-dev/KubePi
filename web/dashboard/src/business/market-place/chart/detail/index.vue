@@ -129,7 +129,7 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import {getChart, getChartByVersion, installChart} from "@/api/charts"
-import marked from "marked"
+import { marked } from 'marked'
 import DOMPurify from "dompurify"
 import {getNamespaces} from "@/api/auth"
 import YamlEditor from "@/components/yaml-editor"

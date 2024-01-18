@@ -82,7 +82,7 @@ export class LoggingComponent implements AfterViewInit {
         this.term.focus();
         this.cdr_.markForCheck()
       }
-    } catch (e) {
+    } catch (e:any) {
       this.term.write(e.error.message)
     }
 

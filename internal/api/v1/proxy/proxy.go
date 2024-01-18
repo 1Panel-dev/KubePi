@@ -149,7 +149,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 				ctx.Values().Set("message", err)
 				return
 			}
-			_, _ = ctx.JSON(p)
+			_ = ctx.JSON(p)
 			return
 		}
 		if http.MethodGet == requestMethod && namespaced && namespace != "" && !hasNsFilter {
@@ -188,7 +188,7 @@ func (h *Handler) KubernetesAPIProxy() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 				return
 			}
-			_, _ = ctx.JSON(p)
+			_ = ctx.JSON(p)
 			return
 		}
 		ctx.StatusCode(resp.StatusCode)
