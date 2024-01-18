@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import path from "path"
+import { resolve } from '@/utils/resolve'
 import {isExternal} from "@/utils/validate"
 import Item from "./Item"
 import AppLink from "./Link"
@@ -99,7 +99,7 @@ export default {
       if (isExternal(this.basePath)) {
         return this.basePath
       }
-      return path.resolve(this.basePath, routePath)
+      return resolve(this.basePath, routePath)
     }
   }
 }

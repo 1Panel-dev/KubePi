@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "/kubepi/terminal/",
             "outputPath": "../../cmd/server/web/terminal",
             "index": "src/index.html",
             "main": "src/main.ts",

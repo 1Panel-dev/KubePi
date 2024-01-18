@@ -34,6 +34,15 @@ module.exports = {
         }
     },
     configureWebpack: {
+        performance: { 
+            hints: false,
+        },
+        optimization: {
+            minimize: true,
+            splitChunks: {
+                chunks: 'all',
+            }
+        },
         devtool: 'source-map',
         resolve: {
             alias: {

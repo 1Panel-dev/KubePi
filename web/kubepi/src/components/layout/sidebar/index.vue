@@ -229,10 +229,6 @@ export default {
           line-height: $menu-height;
         }
 
-        .el-submenu__title {
-          //padding-left: 20px !important;
-        }
-
         .submenu-title-no-dropdown, .el-submenu__title {
           max-width: 60px;
           text-align: center;
