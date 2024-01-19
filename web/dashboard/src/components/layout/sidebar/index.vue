@@ -6,7 +6,7 @@
                     :default-active="activeMenu"
                     :collapse="isCollapse"
                     :collapse-transition="false"
-                    :unique-opened="false"
+                    :unique-opened="true"
                     mode="vertical"
                     active-text-color="#FFFFFF"
             >
@@ -222,11 +222,6 @@
                     text-align: center;
                     line-height: $menu-height;
                 }
-
-                .el-submenu__title {
-                    //padding-left: 20px !important;
-                }
-
                 .submenu-title-no-dropdown, .el-submenu__title {
                     max-width: 60px;
                     text-align: center;

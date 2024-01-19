@@ -6,7 +6,7 @@
               :default-active="activeMenu"
               :collapse="isCollapse"
               :collapse-transition="false"
-              :unique-opened="false"
+              :unique-opened="true"
               mode="vertical"
               active-text-color="#FFFFFF"
       >

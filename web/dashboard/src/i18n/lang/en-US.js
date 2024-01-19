@@ -22,7 +22,6 @@ const message = {
     help: {
       help: "Help",
       about: "About",
-      business_support: "Business Support",
       ko_docs: "Official Document",
     },
     button: {

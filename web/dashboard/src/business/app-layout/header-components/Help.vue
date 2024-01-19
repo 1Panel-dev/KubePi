@@ -7,7 +7,6 @@
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item command="docs">{{ $t('commons.help.ko_docs') }}</el-dropdown-item>
-      <el-dropdown-item command="support">{{ $t('commons.help.business_support') }}</el-dropdown-item>
       <el-dropdown-item class="iconfont iconguanyu" command="about">{{$t("commons.help.about")}}</el-dropdown-item>
     </el-dropdown-menu>
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="50%">
@@ -15,7 +14,7 @@
         <img style="margin-left: 0;" :src="require('@/assets/KubePi-red.png')" class="sidebar-logo" alt="Sidebar Logo">
         <p>{{ $t("commons.personal.introduction") }}</p>
         <p>{{ $t("commons.personal.introduction2") }}</p>
-        <strong>{{ $t("commons.personal.version") }}: v1.1.2</strong>
+        <strong>{{ $t("commons.personal.version") }}: v1.7.0</strong>
       </div>
       <div style="padding:15px 20px;box-shadow:rgb(69 70 70) 0 -14px 24px -12px;">
         <el-row style="color: #ffffff;text-align: center">
@@ -50,11 +49,8 @@ export default {
   methods: {
     handleCommand(command) {
       switch (command) {
-        case "support":
-          window.open("https://kubeoperator.io/", "_blank")
-          break
         case "docs":
-          window.open("https://kubeoperator.io/docs/kubepi/", "_blank")
+          window.open("https://github.com/1Panel-dev/KubePi/wiki", "_blank")
           break
         default:
           this.aboutDialogVisible = true
@@ -62,16 +58,16 @@ export default {
       }
     },
     toGithub() {
-      window.open("https://github.com/KubeOperator/KubePi", "_blank")
+      window.open("https://github.com/1Panel-dev/KubePi", "_blank")
     },
     toIssue() {
-      window.open("https://github.com/KubeOperator/KubePi/issues", "_blank")
+      window.open("https://github.com/1Panel-dev/KubePi/issues", "_blank")
     },
     toTalk() {
-      window.open("https://kubeoperator.io/#contact", "_blank")
+      window.open("https://github.com/1Panel-dev/KubePi/issues", "_blank")
     },
     toGithubStar() {
-      window.open("https://github.com/KubeOperator/KubePi", "_blank")
+      window.open("https://github.com/1Panel-dev/KubePi", "_blank")
     },
   },
 }

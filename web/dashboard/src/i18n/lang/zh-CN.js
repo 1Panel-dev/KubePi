@@ -23,7 +23,6 @@ const message = {
     help: {
       help: "帮助",
       about: "关于",
-      business_support: "商业支持",
       ko_docs: "官方文档",
     },
     button: {
