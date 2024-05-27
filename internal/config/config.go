@@ -57,7 +57,8 @@ func ReadConfig(c *config.Config, path ...string) error {
 		return nil
 	}
 	if c.Spec.Jwt.Key == "" {
-		v.Set("spec.jwt.key", generate(32))
+		c.Spec.Jwt.Key = generate(32)
+		v.Set("spec.jwt.key", c.Spec.Jwt.Key)
 		if err := v.WriteConfig(); err != nil {
 			return err
 		}
