@@ -16,15 +16,15 @@
       </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig" @search="search">
-      <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix>
+                   :search-config="searchConfig" @search="search" @sort-change='sortTableFun'>
+      <el-table-column type="selection" fix ></el-table-column>
+      <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix sortable="name">
         <template v-slot:default="{row}">
           <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="metadata.namespace"/>
-      <el-table-column :label="$t('commons.table.status')" min-width="30">
+      <el-table-column :label="$t('business.namespace.namespace')" min-width="45" prop="namespace" sortable="namespace"/>
+      <el-table-column :label="$t('commons.table.status')" min-width="30" sortable="status_phase" prop="status_phase">
         <template v-slot:default="{row}">
           <div v-if="row.status.phase ==='Running'">
             <i class="el-icon-check" />&nbsp; &nbsp; &nbsp;
@@ -48,16 +48,21 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.ready')" min-width="30">ready
+      <el-table-column :label="$t('commons.table.ready')" min-width="30" prop="pod_status" sortable="pod_status">ready
         <template v-slot:default="{row}">
           {{ getPodStatus(row) }}
         </template>
       </el-table-column>
-      <el-table-column label="IP" min-width="40" prop="status.podIP"/>
-      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" show-overflow-tooltip prop="spec.nodeName"/>
-      <el-table-column :label="$t('commons.table.created_time')" show-overflow-tooltip min-width="35" prop="metadata.creationTimestamp" fix>
+      <el-table-column label="IP" min-width="40" prop="podIP" sortable="podIP"/>
+      <el-table-column :label="$t('business.cluster.nodes')" min-width="45" show-overflow-tooltip prop="nodeName" sortable="nodeName"/>
+      <el-table-column :label="$t('commons.table.created_time')" show-overflow-tooltip min-width="35" prop="creationTimestamp" fix sortable="creationTimestamp">
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('business.pod.restart_count')" show-overflow-tooltip min-width="35"  fix sortable="restart_count" prop="restart_count">
+        <template v-slot:default="{row}">
+          {{ getRestartTimes(row) }}
         </template>
       </el-table-column>
       <el-table-column width="90px" :label="$t('commons.table.action')">
@@ -149,6 +154,8 @@ export default {
       selects: [],
       clusterName: "",
       podUsage: [],
+      orderField: null,
+      orderMethod: null
     }
   },
   methods: {
@@ -298,26 +305,74 @@ export default {
       }
       return 0
     },
+    doWithPodList(items){
+          let result=[]
+          for (const item of items) {
+            let container = []
+            for (const c of item.spec.containers) {
+              container.push(c.name)
+            }
+            
+            item.containers = container
+            item.namespace=item.metadata.namespace
+            item.status_phase=item.status.phase
+            item.pod_status=this.getPodStatus(item)
+            item.podIP=item.status.podIP
+            item.nodeName=item.spec.nodeName
+            item.creationTimestamp=item.metadata.creationTimestamp
+            item.restart_count=Number(this.getRestartTimes(item))
+            result.push(item)
+          }
+          if(!this.orderField || !this.orderMethod){
+            return result
+          } else{
+            let orderMethod=this.orderMethod
+             let orderField=this.orderField
+            result=result.sort(function(a,b){
+              if(orderMethod=='asc'){
+                
+                return (a[orderField]>b[orderField])?1:-1
+              }else{
+                return (a[orderField]<b[orderField])?1:-1
+              }
+            })
+            return result
+          }
+    },
     search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
+      if(!this.orderField || !this.orderMethod){
       listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
-          this.data = res.items
-          for (const item of this.data) {
-            let container = []
-            for (const c of item.spec.containers) {
-              container.push(c.name)
-            }
-            item.containers = container
-          }
+          this.data =this.doWithPodList( res.items )
           this.paginationConfig.total = res.total
         }).finally(() => {
           this.loading = false
         })
+      } else {
+        let currentPage=this.paginationConfig.currentPage
+        let pageSize=this.paginationConfig.pageSize
+        listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords)
+        .then((res) => {
+          this.data = this.doWithPodList( res.items ).slice(currentPage*pageSize-pageSize,currentPage*pageSize)
+          this.paginationConfig.total = res.total
+        }).finally(() => {
+          this.loading = false
+        })
+      }  
     },
+    sortTableFun(val){
+       this.orderField=null
+       this.orderMethod=null
+       if (val.order) {
+          this.orderField = val.prop
+          this.orderMethod = (val.order == "descending" ? "desc" : "asc");
+          this.search(false);
+       }
+    }
   },
   mounted () {
     this.clusterName = this.$route.query.cluster
