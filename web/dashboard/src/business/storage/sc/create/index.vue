@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'ResourceQuotas'}"
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'StorageClasses'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
     <div class="bottom-button">
