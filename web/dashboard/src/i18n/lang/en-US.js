@@ -42,6 +42,7 @@ const message = {
       view_form: "View Form",
       view_yaml: "View YAML",
       download_yaml: "Download YAML",
+      download_kubeconfig: "Download KubeConfig",
       open_shell: "Open SHELL",
       back_detail: "Back to Details",
       submit: "Submit",
