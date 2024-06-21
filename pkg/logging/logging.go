@@ -105,11 +105,11 @@ func logHandler(session sockjs.Session) {
 	logSession.Bound <- nil
 }
 
-func WaitForLoggingStream(k8sClient kubernetes.Interface, namespace string, pod string, container string, tailLines int, follow bool, sessionId string) {
+func WaitForLoggingStream(k8sClient kubernetes.Interface, namespace string, pod string, container string, tailLines int, follow bool, previous bool , sessionId string) {
 	select {
 	case <-LogSessions.Get(sessionId).Bound:
 		close(LogSessions.Get(sessionId).Bound)
-		err := startLogProcess(k8sClient, namespace, pod, container, int64(tailLines), follow, LogSessions.Get(sessionId))
+		err := startLogProcess(k8sClient, namespace, pod, container, int64(tailLines), follow, previous, LogSessions.Get(sessionId))
 		if err != nil {
 			LogSessions.Close(sessionId, err.Error(), 2)
 			return
@@ -118,13 +118,14 @@ func WaitForLoggingStream(k8sClient kubernetes.Interface, namespace string, pod 
 	}
 }
 
-func startLogProcess(k8sClient kubernetes.Interface, namespace string, pod string, container string, tailLines int64, follow bool, session LogSession) error {
+func startLogProcess(k8sClient kubernetes.Interface, namespace string, pod string, container string, tailLines int64, follow bool, previous bool ,session LogSession) error {
 	reader, err := k8sClient.CoreV1().
 		Pods(namespace).
 		GetLogs(pod, &v1.PodLogOptions{
 			Container: container,
 			Follow:    follow,
 			TailLines: &tailLines,
+            Previous : previous,
 		}).Stream(context.TODO())
 	if err != nil {
 		return err
