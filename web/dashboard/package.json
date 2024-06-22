@@ -13,6 +13,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@fortawesome/vue-fontawesome": "^2.0.2",
+"@peculiar/x509": "^1.11.0",
     "axios": "^1.6.5",
     "core-js": "^3.35.0",
     "diff-match-patch": "^1.0.5",

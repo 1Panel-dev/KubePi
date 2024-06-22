@@ -138,6 +138,9 @@ const message = {
         name: "名称"
       }
     },
+actions:{
+      copy: "复制",
+    }
   },
   business: {
     common: {
@@ -586,6 +589,11 @@ const message = {
       name: "名称",
       split_help: "多个值时以逗号分隔",
       best_effort: "{0} 范围限制了跟踪以下资源的配额:",
+      certificate_info: "证书信息",
+      certificate_signatureAlgorithm: "证书签名算法",
+      certificate_validity: "证书有效期",
+      certificate_outdate: "证书已过期",
+      certificate_errors: "证书错误"
     },
     access_control: {
       access_control: "访问控制",
