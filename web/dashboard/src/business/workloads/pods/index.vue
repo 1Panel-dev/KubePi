@@ -307,6 +307,7 @@ export default {
     },
     doWithPodList(items){
           let result=[]
+          if(items && items.length>0)
           for (const item of items) {
             let container = []
             for (const c of item.spec.containers) {
