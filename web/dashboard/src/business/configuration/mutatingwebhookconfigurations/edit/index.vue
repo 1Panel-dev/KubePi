@@ -62,7 +62,17 @@ export default {
     },
     onCancel() {
       this.$router.push({name: "Mutatingwebhookconfigurations"})
-    }
+    },
+    onEditYaml () {
+      this.showYaml = true
+      this.yaml = this.transformYaml()
+    },
+    transformYaml () {
+      if (this.form?.subjects && this.form?.subjects?.length === 0) {
+        delete this.form.subjects
+      }
+      return JSON.parse(JSON.stringify(this.form))
+    },
   },
   created() {
     this.cluster = this.$route.query.cluster
