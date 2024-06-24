@@ -101,7 +101,7 @@
       </el-row>
     </div>
     <div v-if="yamlShow">
-      <yaml-editor :value="form" :read-only="true"></yaml-editor>
+      <yaml-editor :value="sourceYaml" :read-only="true"></yaml-editor>
       <div class="bottom-button">
         <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
       </div>
@@ -129,6 +129,7 @@ export default {
   },
   data() {
     return {
+sourceYaml:{},
       form: {
         metadata: {},
         spec: {
@@ -150,6 +151,7 @@ export default {
     getDetail() {
       this.loading = true
       getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name).then((res) => {
+        this.sourceYaml= structuredClone(res)
         this.form = res
         this.loadEvents()
         this.loading = false
