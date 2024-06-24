@@ -12,6 +12,10 @@
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'delete'}">
         {{ $t("commons.button.delete") }}
       </el-button>
+      <el-button type="primary" size="small"
+                   @click="exportToXlsx()" icon="el-icon-download">
+          export to excel
+        </el-button>
     </div>
     <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search"
                    :pagination-config="paginationConfig" :search-config="searchConfig">
@@ -79,6 +83,9 @@ import {deleteResourceQuota, getResourceQuota, listResourceQuotas} from "@/api/r
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
+
+import writeXlsxFile from "write-excel-file";
+import { cpuUnitConvert, memoryUnitConvert, numberConvert } from "@/utils/unitConvert"
 
 export default {
   name: "ResourceQuotas",
@@ -205,6 +212,150 @@ export default {
         name: "ResourceQuotaDetail",
         params: { namespace: row.metadata.namespace, name: row.metadata.name }
       })
+    },
+    /*导出配额信息为excel*/
+    async exportToXlsx(){
+      const schema = [
+       {
+        column: this.$t("commons.table.name"),
+        type: String,
+        value: (row) => row.metadata.name,
+       },
+       {
+        column: this.$t("business.namespace.namespace"),
+        type: String,
+        value: (row) => row.metadata.namespace,
+       },
+       {
+        column: "Requests Pods Used",
+        type: Number,
+        value: (row) => {
+          return Number(row.status.used.pods)
+        },
+       },
+       {
+        column: "Requests Pods hard",
+        type: Number,
+        value: (row) => {
+          return Number(row.status.hard.pods)
+        },
+       },
+       {
+        column: "Requests Cpu Used(m)",
+        type: Number,
+        value: (row) => {
+          if(row.status.used["requests.cpu"])
+          return cpuUnitConvert(row.status.used["requests.cpu"])
+          else
+          return cpuUnitConvert(row.status.used["cpu"])
+        },
+       },
+       {
+        column: "Requests Cpu hard(m)",
+        type: Number,
+        value: (row) => {
+          if(row.status.hard["requests.cpu"])
+          return cpuUnitConvert(row.status.hard["requests.cpu"])
+          else
+          return cpuUnitConvert(row.status.hard["cpu"])
+        },
+       },
+       {
+        column: "Requests Mem Used(Mi)",
+        type: Number,
+        value: (row) => {
+          if(row.status.used["requests.memory"])
+          return memoryUnitConvert(row.status.used["requests.memory"])
+          else
+          return memoryUnitConvert(row.status.used["memory"])
+        },
+       },
+       {
+        column: "Requests Mem hard(Mi)",
+        type: Number,
+        value: (row) => {
+          if(row.status.hard["requests.memory"])
+          return memoryUnitConvert(row.status.hard["requests.memory"])
+          else
+          return memoryUnitConvert(row.status.hard["memory"])
+        },
+       },
+       {
+        column: "Limits Cpu Used(m)",
+        type: Number,
+        value: (row) => {
+          return cpuUnitConvert(row.status.used["limits.cpu"])
+        },
+       },
+       {
+        column: "Limits Cpu hard(m)",
+        type: Number,
+        value: (row) => {
+          return cpuUnitConvert(row.status.hard["limits.cpu"])
+        },
+       },
+       {
+        column: "Limits Mem Used(Mi)",
+        type: Number,
+        value: (row) => {
+          return memoryUnitConvert(row.status.used["limits.memory"])
+        },
+       },
+       {
+        column: "Limits Mem hard(Mi)",
+        type: Number,
+        value: (row) => {
+          return memoryUnitConvert(row.status.hard["limits.memory"])
+        },
+       },
+       {
+        column: "configmaps Used",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.used.configmaps||0)
+        },
+       },
+       {
+        column: "configmaps hard",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.hard.configmaps||0)
+        },
+       },
+       {
+        column: "secrets Used",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.used.secrets||0)
+        },
+       },
+       {
+        column: "secrets hard",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.hard.secrets||0)
+        },
+       },
+       {
+        column: "services Used",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.used.services||0)
+        },
+       },
+       {
+        column: "services hard",
+        type: Number,
+        value: (row) => {
+          return numberConvert(row.status.hard.services||0)
+        },
+       },
+      ];
+      const data=await listResourceQuotas(this.cluster, true, this.searchConfig.keywords)
+      await writeXlsxFile((data.items||[]), {
+         schema,
+         fileName: "resource-quotas.xlsx",
+      });
     }
   },
   created () {
