@@ -414,10 +414,48 @@ export default {
         },
        },
       ];
-      await writeXlsxFile(this.data, {
+      this.loading = true
+      try{
+       const res=await listNodes(this.clusterName, true, this.searchConfig.keywords)
+        let data = res.items
+        for (const node of data) {
+          node.nodeStatus = "NotReady"
+          for(const condition of node.status.conditions) {
+            if (condition.type === "Ready") {
+              if (condition.status === "True") {
+                node.nodeStatus = "Ready"
+              }
+              break
+            }
+          }
+          if (node.spec.unschedulable) {
+            node.nodeStatus += ", SchedulingDisabled"
+          }
+          node.pods= await this.getPodsOfNode(node.metadata.name,node.status.allocatable.pods)
+          const listNodeMetricsRes=await listNodeMetrics(this.clusterName)
+          for(const n of data) {
+            for (const item of listNodeMetricsRes.items) {
+              if (n.metadata.name === item.metadata.name) {
+                if (item.usage?.cpu) {
+                  n.cpuUsage = cpuUnitConvert(item.usage.cpu) + "m"
+                  n.cpuUsagePersent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
+                }
+                if (item.usage?.memory) {
+                  n.memoryUsage = memoryUnitConvert(item.usage.memory).toFixed(2) + "Mi"
+                  n.memoryUsagePersent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
+                }
+              }
+            }
+          }
+        }
+        await writeXlsxFile(data, {
          schema,
          fileName: "nodes.xlsx",
       });
+      }catch(e){
+        console.log(e)
+      }
+      this.loading = false
     }
 
   },
