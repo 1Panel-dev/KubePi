@@ -35,7 +35,8 @@
     "vue-codemirror": "^4.0.6",
     "vue-i18n": "^8.15.3",
     "vue-json-viewer": "^2.2.19",
-    "vuex": "^3.6.0"
+    "vuex": "^3.6.0",
+    "write-excel-file": "^2.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.8",
