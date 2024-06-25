@@ -42,6 +42,7 @@ const message = {
       view_form: "View Form",
       view_yaml: "View YAML",
       download_yaml: "Download YAML",
+      download_kubeconfig: "Download KubeConfig",
       open_shell: "Open SHELL",
       back_detail: "Back to Details",
       submit: "Submit",
@@ -268,6 +269,7 @@ const message = {
       upload_tip: "Files with the same name will be overwritten",
       name_helper: "Support '/' to create multi-level directories",
       link_tip: "This operation is not supported for linked files/folders",
+      previous: "last failure log",
     },
     namespace: {
       namespace: "Namespace",

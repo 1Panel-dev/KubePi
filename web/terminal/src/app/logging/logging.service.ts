@@ -15,7 +15,8 @@ export class LoggingService {
                        podName: string,
                        containerName: string,
                        tailLines: number,
-                       follow: boolean): Observable<any> {
+                       follow: boolean,
+                       previous: boolean ): Observable<any> {
     const url = function () {
       let baseUrl = `/kubepi/api/v1/clusters/${clusterName}/logging/session?podName=${podName}`
       if (namespace) {
@@ -29,6 +30,9 @@ export class LoggingService {
       }
       if (follow) {
         baseUrl += `&&follow=${follow}`
+      }
+      if (previous) {
+        baseUrl += `&&previous=${previous}`
       }
       return baseUrl
     }()

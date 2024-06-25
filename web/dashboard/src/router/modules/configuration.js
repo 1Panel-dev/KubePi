@@ -389,6 +389,96 @@ const Configuration = {
         activeMenu: "/poddisruptionbudgets"
       }
     },
+{
+      path: "/mutatingwebhookconfigurations",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "mutatingwebhookconfigurations",
+        verb: "list",
+        scope:"cluster"
+      },
+      component: () => import("@/business/configuration/mutatingwebhookconfigurations"),
+      name: "Mutatingwebhookconfigurations",
+      meta: {
+        title: "Mutatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/mutatingwebhookconfigurations/create",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "mutatingwebhookconfigurations",
+        verb: "create",
+      },
+      component: () => import("@/business/configuration/mutatingwebhookconfigurations/create"),
+      name: "MutatingWebhookConfigurationCreate",
+      hidden: true,
+      meta: {
+        title: "MutatingWebhookConfiguration Create",
+        activeMenu: "/mutatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/mutatingwebhookconfigurations/edit/:name",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "mutatingwebhookconfigurations",
+        verb: "update",
+      },
+      component: () => import("@/business/configuration/mutatingwebhookconfigurations/edit"),
+      name: "MutatingwebhookconfigurationEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        title: "MutatingwebhookconfigurationEdit",
+        activeMenu: "/mutatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/validatingwebhookconfigurations",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "validatingwebhookconfigurations",
+        verb: "list",
+        scope:"cluster"
+      },
+      component: () => import("@/business/configuration/validatingwebhookconfigurations"),
+      name: "Validatingwebhookconfigurations",
+      meta: {
+        title: "Validatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/validatingwebhookconfigurations/create",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "validatingwebhookconfigurations",
+        verb: "create",
+      },
+      component: () => import("@/business/configuration/validatingwebhookconfigurations/create"),
+      name: "ValidatingwebhookconfigurationCreate",
+      hidden: true,
+      meta: {
+        title: "Validatingwebhookconfiguration Create",
+        activeMenu: "/validatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/validatingwebhookconfigurations/edit/:name",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "validatingwebhookconfigurations",
+        verb: "update",
+      },
+      component: () => import("@/business/configuration/validatingwebhookconfigurations/edit"),
+      name: "ValidatingwebhookconfigurationEdit",
+      hidden: true,
+      props: true,
+      meta: {
+        title: "ValidatingwebhookconfigurationEdit",
+        activeMenu: "/validatingwebhookconfigurations",
+      }
+    }
   ]
 }
 
