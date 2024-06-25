@@ -38,6 +38,7 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
+import {downloadKubeconfigFileByServiceAccount} from "@/utils/kubeconfig"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteServiceAccount, getServiceAccount, listServiceAccounts} from "@/api/serviceaccounts"
 import {checkPermissions} from "@/utils/permission"
@@ -70,6 +71,13 @@ export default {
           icon: "el-icon-download",
           click: (row) => {
             downloadYaml(row.metadata.name + ".yml", getServiceAccount(this.cluster,row.metadata.namespace,row.metadata.name))
+          }
+        },
+        {
+          label: this.$t("commons.button.download_kubeconfig"),
+          icon: "el-icon-download",
+          click: (row) => {
+            downloadKubeconfigFileByServiceAccount(this.cluster,row.metadata.name,row.metadata.namespace)
           }
         },
         {

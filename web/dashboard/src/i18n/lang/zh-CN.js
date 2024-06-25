@@ -43,6 +43,7 @@ const message = {
       view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
+      download_kubeconfig: "下载 KubeConfig",
       open_shell: "打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
