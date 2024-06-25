@@ -95,6 +95,8 @@ export default {
         getChartUpdate(this.cluster, res.data.chart.metadata.name, this.name).then(res => {
           this.versions = res.data.versions
           this.repo = res.data.repo
+        }).catch((e) => {
+            
         }).finally(() => {
           this.loading = false
         })
