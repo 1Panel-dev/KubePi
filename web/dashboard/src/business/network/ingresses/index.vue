@@ -24,7 +24,10 @@
         <template v-slot:default="{row}">
           <div v-for="(rule,index) in row.spec.rules" :key="index">
             <div v-for="(path,index) in rule.http.paths" :key="index">
-              <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
+              <el-link class="span-link" :href="'https://' + rule.host + (path.path ? path.path : '')" target="_blank" v-if="row.spec.tls">
+                {{ "https://" + rule.host + (path.path ? path.path : "") }}
+              </el-link>
+              <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank" v-if="!row.spec.tls">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
               </el-link>
               --->
