@@ -138,6 +138,9 @@ const message = {
         name: "Name"
       }
     },
+actions:{
+      copy: "Copy",
+    }
   },
   business: {
     common: {
@@ -586,6 +589,11 @@ const message = {
       name: "Name",
       split_help: "Multiple values are separated by commas",
       best_effort: "The {0} scope restricts a quota to tracking the following resource:",
+certificate_info: "Certificate Info",
+      certificate_signatureAlgorithm: "signatureAlgorithm",
+      certificate_validity: "validity",
+      certificate_outdate: "The certificate is out of date",
+      certificate_errors: "Certificate errors"
     },
     access_control: {
       access_control: "Access Control",
