@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'StorageClasses'}"
+  <layout-content :header="$t('commons.button.create')" :back-to="{name: 'Validatingwebhookconfigurations'}"
                   v-loading="loading">
     <yaml-editor ref="yaml_editor" :value="form"></yaml-editor>
     <div class="bottom-button">
@@ -14,18 +14,18 @@
 <script>
 import YamlEditor from "@/components/yaml-editor";
 import LayoutContent from "@/components/layout/LayoutContent";
-import {createStorageClass} from "@/api/storageclass";
+import {createValidatingwebhookconfiguration} from "@/api/validatingwebhookconfiguration";
 
 export default {
-  name: "StorageClassCreate",
+  name: "ValidatingwebhookconfigurationCreate",
   components: {YamlEditor, LayoutContent},
   props: {},
   data() {
     return {
       loading: false,
       form: {
-        apiVersion: "storage.k8s.io/v1",
-        kind: "StorageClass",
+        apiVersion: "admissionregistration.k8s.io/v1",
+        kind: "ValidatingWebhookConfiguration",
         metadata: {
           name: "",
         },
@@ -39,18 +39,18 @@ export default {
     onSubmit() {
       const data = this.$refs.yaml_editor.getValue()
       this.loading = true
-      createStorageClass(this.cluster, data).then(() => {
+      createValidatingwebhookconfiguration(this.cluster, data).then(() => {
         this.$message({
           type: "success",
           message: this.$t("commons.msg.create_success"),
         })
-        this.$router.push({name: "StorageClasses"})
+        this.$router.push({name: "Validatingwebhookconfigurations"})
       }).finally(() => {
         this.loading = false
       })
     },
     onCancel() {
-      this.$router.push({name: "StorageClasses"})
+      this.$router.push({name: "Validatingwebhookconfigurations"})
     }
   },
   created() {
