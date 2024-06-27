@@ -58,6 +58,7 @@ const message = {
       rollback: "回滚到该版本",
       refresh: "刷新",
       show_more: "更多",
+      export: '导出',
     },
     table: {
       name: "名称",
@@ -215,7 +216,6 @@ actions:{
       usage: "用量",
       core: "核",
       taints: "污点",
-      export_excel: "导出excel",
     },
     pod: {
       image: "镜像",

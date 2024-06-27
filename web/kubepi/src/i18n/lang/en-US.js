@@ -43,6 +43,7 @@ const message = {
             sync: "Sync",
             bind: "Bind",
             change_password: 'Change Password',
+            export: 'Export all helm release',
         },
         table: {
             name: "Name",

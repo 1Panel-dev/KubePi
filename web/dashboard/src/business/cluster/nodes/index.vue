@@ -18,7 +18,7 @@
         </el-button>
         <el-button type="primary" size="small"
                    @click="exportNodesToXlsx()" icon="el-icon-download">
-          {{$t("business.node.export_excel")}}
+            {{ $t("commons.button.export") }}
         </el-button>
     </div>
     <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search"
