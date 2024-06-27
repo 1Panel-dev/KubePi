@@ -56,7 +56,7 @@ const promise = (request, loading = {}) => {
     return new Promise((resolve, reject) => {
         loading.status = true
         request.then(response => {
-            if (response.data.success) {
+            if (response.data.success || (response.status==200 && response.data.kind=="SecretList")) {
                 resolve(response.data)
             } else {
                 reject(response.message)

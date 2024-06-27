@@ -43,3 +43,7 @@ export function editSecret (cluster_name, namespace, name, data) {
   return put(`${namespaceSecretUrl(cluster_name, namespace)}/${name}`, data)
 }
 
+
+export function listSecretsWithNsAndLabelSelector (cluster_name, namespace,labelSelector) {
+  return get(`${namespaceSecretUrl(cluster_name, namespace)}`,{labelSelector:labelSelector})
+}
