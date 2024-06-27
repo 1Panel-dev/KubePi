@@ -5,6 +5,10 @@
                   @click="onDelete()" :disabled="selects.length === 0">
         {{ $t("commons.button.delete") }}
       </el-button>
+      <el-button  type="primary" size="small"
+                  @click="onExportSelected()" :disabled="selects.length === 0">
+        export
+      </el-button>
     </div>
     <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects"
                    :pagination-config="paginationConfig"
@@ -50,7 +54,7 @@ import {deleteApp, searchInstalled} from "@/api/charts"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
 import KoTableOperations from "@/components/ko-table-operations"
-
+import {downloadHelmReleases} from "@/utils/helm"
 export default {
   name: "Apps",
   components: { LayoutContent, ComplexTable, KoTableOperations },
@@ -89,6 +93,13 @@ export default {
           },
           click: (row) => {
             this.onDelete(row)
+          }
+        },
+{
+          label: "export",
+          icon: "el-icon-download",
+          click: (row) => {
+            this.onDownloadHelmReleases(row)
           }
         },
       ]
@@ -149,6 +160,18 @@ export default {
     },
     onUpgrade (row) {
       this.$router.push({ name: "AppUpgrade", params: {name: row.name } })
+},
+    //导出helm releases原始chart
+    async onDownloadHelmReleases(row) {
+       this.loading=true
+       await downloadHelmReleases(this.cluster,[row])
+       this.loading=false
+    },
+    //导出选中行的helm releases原始chart
+    async onExportSelected(){
+       this.loading=true
+       await downloadHelmReleases(this.cluster,this.selects)
+       this.loading=false
     }
   },
   created () {
