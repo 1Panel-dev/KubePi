@@ -214,8 +214,6 @@ actions:{
       node_statu_help: "节点是否可以接收新的容器组。",
       usage: "用量",
       core: "核",
-      taints: "污点",
-      export_excel: "导出excel",
     },
     pod: {
       image: "镜像",

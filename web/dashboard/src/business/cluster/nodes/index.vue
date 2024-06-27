@@ -16,10 +16,6 @@
                    @click="drain()" icon="el-icon-position">
           {{$t('business.node.drain')}}
         </el-button>
-        <el-button type="primary" size="small"
-                   @click="exportNodesToXlsx()" icon="el-icon-download">
-          {{$t("business.node.export_excel")}}
-        </el-button>
     </div>
     <complex-table :data="data" v-loading="loading" :selects.sync="selects" :pagination-config="paginationConfig" @search="search"
                    :search-config="searchConfig">
@@ -60,16 +56,6 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.node.taints')" prop="metadata.labels" min-width="80px" show-overflow-tooltip>
-        <template v-slot:default="{row}">
-          {{row.spec.taints ? row.spec.taints.length+"" : ""}}
-        </template>
-      </el-table-column>
-      <el-table-column label="Pods" min-width="80px">
-        <template v-slot:default="{row}">
-          {{row.pods}}
-        </template>
-      </el-table-column>
       <el-table-column :label="'CPU '+ $t('business.node.usage')" min-width="80px">
         <template v-slot:default="{row}">
           <div v-if="hasMetric === 'true'">
@@ -106,7 +92,6 @@ import {evictionPod, listPodsWithNsSelector} from "@/api/pods"
 import {checkPermissions} from "@/utils/permission"
 import {listNodeMetrics} from "@/api/apis"
 import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
-import writeXlsxFile from "write-excel-file";
 
 export default {
   name: "NodeList",
@@ -151,13 +136,13 @@ export default {
     }
   },
   methods: {
-    async search (resetPage) {
+    search (resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
       const { currentPage, pageSize } = this.paginationConfig
-      const res=await listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize)
+      listNodes(this.clusterName, true, this.searchConfig.keywords, currentPage, pageSize).then(res => {
         let data = res.items
         for (const node of data) {
           node.nodeStatus = "NotReady"
@@ -172,14 +157,12 @@ export default {
           if (node.spec.unschedulable) {
             node.nodeStatus += ", SchedulingDisabled"
           }
-          node.pods= await this.getPodsOfNode(node.metadata.name,node.status.allocatable.pods)
         }
         this.paginationConfig.total = res.total
-        try{
-          const listNodeMetricsRes=await listNodeMetrics(this.clusterName)
+        listNodeMetrics(this.clusterName).then(res => {
           this.hasMetric = "true"
           for(const n of data) {
-            for (const item of listNodeMetricsRes.items) {
+            for (const item of res.items) {
               if (n.metadata.name === item.metadata.name) {
                 if (item.usage?.cpu) {
                   n.cpuUsage = cpuUnitConvert(item.usage.cpu) + "m"
@@ -194,12 +177,12 @@ export default {
           }
           this.data = data
           this.loading = false
-        }catch(e){
+        }).catch(() => {
           this.data = data
           this.loading = false
-          this.hasMetric=false
-        }
-      
+          this.hasMetric = "false"
+        })
+      })
     },
     onDetail (row) {
       this.$router.push({ path: "/nodes/detail/" + row.metadata.name, query: { yamlShow: "false" } })
@@ -302,160 +285,6 @@ export default {
             message: this.$t("business.node.drain_success"),
           })
         })
-    },
-    async getPodsOfNode(nodeName,allocatable_pods) {
-       const res= await listPodsWithNsSelector(this.clusterName, "", "", "spec.nodeName="+nodeName);
-       return res.items.length+"/"+ allocatable_pods
-    },
-    /*导出节点信息为excel*/
-    async exportNodesToXlsx(){
-      const schema = [
-       {
-        column: this.$t("commons.table.name"),
-        type: String,
-        value: (row) => row.metadata.name,
-       },
-       {
-        column: "Internal IP",
-        type: String,
-        value: (row) => {
-          for(let i=0,s=  row.status.addresses.length;i<s;i++){
-              const address = row.status.addresses[i]
-              if(address.type === 'InternalIP'){
-                return address.address
-              }
-          }
-          return ""
-        },
-       },
-       {
-        column: this.$t("commons.table.status"),
-        type: String,
-        value: (row) => {
-          let result=""
-          if(row.nodeStatus.indexOf('NotReady') !== -1){
-              result= 'NotReady'
-          } else {
-              result= 'Ready'
-          }
-          if(row.nodeStatus.indexOf('SchedulingDisabled') !== -1){
-            result ="SchedulingDisabled"
-          }
-          return result
-        },
-       },
-       {
-        column: this.$t("business.node.role"),
-        type: String,
-        value: (row) => {
-          let roles=[]
-          for(let name in row.metadata.labels){
-              if(name.indexOf('node-role.kubernetes.io') > -1){
-                roles.push(name.substring(name.indexOf(".io") + 4))
-              }
-          }
-          return roles.join(",")
-        },
-       },
-       {
-        column: this.$t("business.node.taints"),
-        type: String,
-        value: (row) => {
-          return row.spec.taints ? row.spec.taints.length+"" : ""
-        },
-       },
-       {
-        column: "Pods",
-        type: String,
-        value: (row) => {
-          return row.pods
-        },
-       },
-       {
-        column: "Cpu Used(%)",
-        type: Number,
-        value: (row) => {
-          return row.cpuUsagePersent
-        },
-       },
-       {
-        column: "Cpu Used(m)",
-        type: Number,
-        value: (row) => {
-          return cpuUnitConvert(row.cpuUsage)
-        },
-       },
-       {
-        column: "Cpu allocatable(m)",
-        type: Number,
-        value: (row) => {
-          return cpuUnitConvert(row.status.allocatable.cpu)
-        },
-       },
-       {
-        column: "Mem Used(%)",
-        type: Number,
-        value: (row) => {
-          return row.memoryUsagePersent
-        },
-       },
-       {
-        column: "Mem Used(Mi)",
-        type: Number,
-        value: (row) => {
-          return memoryUnitConvert(row.memoryUsage)
-        },
-       },
-       {
-        column: "Mem allocatable(Mi)",
-        type: Number,
-        value: (row) => {
-          return memoryUnitConvert(row.status.allocatable.memory)
-        },
-       },
-      ];
-      this.loading = true
-      try{
-       const res=await listNodes(this.clusterName, true, this.searchConfig.keywords)
-        let data = res.items
-        for (const node of data) {
-          node.nodeStatus = "NotReady"
-          for(const condition of node.status.conditions) {
-            if (condition.type === "Ready") {
-              if (condition.status === "True") {
-                node.nodeStatus = "Ready"
-              }
-              break
-            }
-          }
-          if (node.spec.unschedulable) {
-            node.nodeStatus += ", SchedulingDisabled"
-          }
-          node.pods= await this.getPodsOfNode(node.metadata.name,node.status.allocatable.pods)
-          const listNodeMetricsRes=await listNodeMetrics(this.clusterName)
-          for(const n of data) {
-            for (const item of listNodeMetricsRes.items) {
-              if (n.metadata.name === item.metadata.name) {
-                if (item.usage?.cpu) {
-                  n.cpuUsage = cpuUnitConvert(item.usage.cpu) + "m"
-                  n.cpuUsagePersent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
-                }
-                if (item.usage?.memory) {
-                  n.memoryUsage = memoryUnitConvert(item.usage.memory).toFixed(2) + "Mi"
-                  n.memoryUsagePersent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
-                }
-              }
-            }
-          }
-        }
-        await writeXlsxFile(data, {
-         schema,
-         fileName: "nodes.xlsx",
-      });
-      }catch(e){
-        console.log(e)
-      }
-      this.loading = false
     }
 
   },

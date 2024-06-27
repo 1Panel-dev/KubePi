@@ -213,8 +213,6 @@ actions:{
       node_statu_help: "Whether the node is ready to accept new pods.",
       usage: " usage",
       core: "core",
-      taints: "Taints",
-      export_excel: "export to excel",
     },
     pod: {
       image: "Image",
