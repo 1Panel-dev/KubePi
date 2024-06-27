@@ -33,4 +33,12 @@ export function memoryUnitConvert(value) {
   }
 }
 
+export function numberConvert(value) {
+  if (value.indexOf("k") !== -1) {
+    return Number((Number(value.replace("k", ""))*1000).toFixed(2))
+  } else {
+    return Number(value)
+  }
+}
+
 
