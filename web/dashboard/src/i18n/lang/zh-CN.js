@@ -43,6 +43,7 @@ const message = {
       view_form: "查看表单",
       view_yaml: "查看 YAML",
       download_yaml: "下载 YAML",
+      download_kubeconfig: "下载 KubeConfig",
       open_shell: "打开 SHELL",
       back_detail: "返回详情",
       submit: "提交",
@@ -138,6 +139,9 @@ const message = {
         name: "名称"
       }
     },
+actions:{
+      copy: "复制",
+    }
   },
   business: {
     common: {
@@ -269,6 +273,7 @@ const message = {
       upload_tip: "同名文件会被覆盖",
       name_helper: "支持 '/' 来创建多级目录",
       link_tip: "链接文件/文件夹 不支持此操作",
+      previous: "上次失败的日志",
     },
     namespace: {
       namespace: "命名空间",
@@ -586,6 +591,11 @@ const message = {
       name: "名称",
       split_help: "多个值时以逗号分隔",
       best_effort: "{0} 范围限制了跟踪以下资源的配额:",
+      certificate_info: "证书信息",
+      certificate_signatureAlgorithm: "证书签名算法",
+      certificate_validity: "证书有效期",
+      certificate_outdate: "证书已过期",
+      certificate_errors: "证书错误"
     },
     access_control: {
       access_control: "访问控制",

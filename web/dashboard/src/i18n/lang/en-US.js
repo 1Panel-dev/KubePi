@@ -42,6 +42,7 @@ const message = {
       view_form: "View Form",
       view_yaml: "View YAML",
       download_yaml: "Download YAML",
+      download_kubeconfig: "Download KubeConfig",
       open_shell: "Open SHELL",
       back_detail: "Back to Details",
       submit: "Submit",
@@ -137,6 +138,9 @@ const message = {
         name: "Name"
       }
     },
+actions:{
+      copy: "Copy",
+    }
   },
   business: {
     common: {
@@ -268,6 +272,7 @@ const message = {
       upload_tip: "Files with the same name will be overwritten",
       name_helper: "Support '/' to create multi-level directories",
       link_tip: "This operation is not supported for linked files/folders",
+      previous: "last failure log",
     },
     namespace: {
       namespace: "Namespace",
@@ -584,6 +589,11 @@ const message = {
       name: "Name",
       split_help: "Multiple values are separated by commas",
       best_effort: "The {0} scope restricts a quota to tracking the following resource:",
+certificate_info: "Certificate Info",
+      certificate_signatureAlgorithm: "signatureAlgorithm",
+      certificate_validity: "validity",
+      certificate_outdate: "The certificate is out of date",
+      certificate_errors: "Certificate errors"
     },
     access_control: {
       access_control: "Access Control",

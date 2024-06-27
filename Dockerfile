@@ -1,4 +1,6 @@
-FROM node:18.10.0 as stage-web-build
+FROM node:18.10.0-alpine as stage-web-build
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --no-cache make
 ARG NPM_REGISTRY="https://registry.npmmirror.com"
 ENV NPM_REGISTY=$NPM_REGISTRY
 
@@ -14,7 +16,7 @@ RUN make build_web
 
 RUN rm -fr web
 
-FROM golang:1.20 as stage-bin-build
+FROM golang:1.22 as stage-bin-build
 
 ENV GOPROXY="https://goproxy.cn,direct"
 
@@ -38,7 +40,7 @@ FROM alpine:3.16
 WORKDIR /
 
 COPY --from=stage-bin-build /build/kubepi/bin/dist/usr /usr
-
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN ARCH=$(uname -m) \
     && case $ARCH in aarch64) ARCH="arm64";; x86_64) ARCH="amd64";; esac \
     && echo "ARCH: " $ARCH \
@@ -95,4 +97,4 @@ EXPOSE 80
 USER root
 
 ENTRYPOINT ["tini", "-g", "--"]
-CMD ["kubepi-server"]
+CMD ["kubepi-server","-c", "/etc/kubepi" ,"--server-bind-host","0.0.0.0","--server-bind-port","80"]

@@ -52,6 +52,10 @@ export function getK8sObject(kind, namespace, version) {
       return clusterRoleBindingObj;
     case "podsecuritypolicies":
       return pspObj;
+case "mutatingwebhookconfigurations":
+      return mutatingwebhookconfigurationsObj;
+    case "validatingwebhookconfigurations":
+      return validatingwebhookconfigurationsObj;
     default:
       return {};
   }
@@ -968,4 +972,21 @@ const pspObj = {
     },
     volumes: ["*"],
   },
+};
+
+const mutatingwebhookconfigurationsObj ={
+  apiVersion: "admissionregistration.k8s.io/v1",
+  kind: "MutatingWebhookConfiguration",
+  metadata: {
+    name: "example",
+  },
+  webhooks:[]
+};
+const validatingwebhookconfigurationsObj ={
+  apiVersion: "admissionregistration.k8s.io/v1",
+  kind: "ValidatingWebhookConfiguration",
+  metadata: {
+    name: "example",
+  },
+  webhooks:[]
 };

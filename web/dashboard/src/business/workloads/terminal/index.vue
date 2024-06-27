@@ -24,6 +24,10 @@
           <span class="spanClass">{{$t('business.pod.watch')}}</span>
           <el-switch class="interval" @change="changeConditions()" v-model="follow" />
         </div>
+        <div style="margin-top: 15px; margin-bottom: 10px; float: left">
+          <span class="spanClass">{{$t('business.pod.previous')}}</span>
+          <el-switch class="interval" @change="changeConditions()" v-model="previous" />
+        </div>
         <div class="terminalOption">
           <el-button style="margin-left: 20px;" size="mini" @click="dialogDownloadVisible = true">{{$t('business.pod.download_logs')}}</el-button>
         </div>
@@ -97,6 +101,8 @@ export default {
       shell: "bash",
       isRefresh: false,
       follow: true,
+      /*是否查看上次失败日志*/
+      previous : false,
       tailLines: 20,
       tailLinesOptions: [
         { label: this.$t("business.pod.last_20_lines"), value: 20 },
@@ -194,7 +200,7 @@ export default {
       if (this.terminal.type == "terminal") {
         return `${process.env.VUE_APP_TERMINAL_PATH}/app?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&shell=${this.shell}`
       } else {
-        return `${process.env.VUE_APP_TERMINAL_PATH}/logging?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&tailLines=${this.tailLines}&follow=${this.follow}`
+        return `${process.env.VUE_APP_TERMINAL_PATH}/logging?cluster=${this.terminal.cluster}&pod=${this.terminal.pod}&namespace=${this.terminal.namespace}&container=${this.terminal.container}&tailLines=${this.tailLines}&follow=${this.follow}&previous=${this.previous}`
       }
     },
     changeConditions() {
