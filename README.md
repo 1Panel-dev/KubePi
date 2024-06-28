@@ -18,18 +18,21 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 ### 快速开始
 
-    sudo docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
+```
+docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 
-- 打开浏览器访问：http://localhost:80/
-- 用户名：admin
-- 密码：kubepi
+# 用户名: admin
+# 密码: kubepi
+```
 
+## 飞致云的其他明星项目
 
-### 致谢
-
-- [Vue](https://cn.vuejs.org) 前端框架
-- [FIT2CLOUD UI](https://github.com/fit2cloud-ui/fit2cloud-ui/) FIT2CLOUD UI 组件库
-- [Vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) 项目脚手架
+- [1Panel](https://github.com/1panel-dev/1panel/) - 现代化、开源的 Linux 服务器运维管理面板
+- [JumpServer](https://github.com/jumpserver/jumpserver/) - 广受欢迎的开源堡垒机
+- [DataEase](https://github.com/dataease/dataease/) - 人人可用的开源数据可视化分析工具
+- [MeterSphere](https://github.com/metersphere/metersphere/) - 开源自动化测试平台
+- [Halo](https://github.com/halo-dev/halo/) - 强大易用的开源建站工具
+- [MaxKB](https://github.com/1Panel-dev/MaxKB/) - 基于 LLM 大语言模型的开源知识库问答系统
 
 ### License & Copyright
 
