@@ -92,13 +92,14 @@ async function helmChartJSONToTgz(clusterName,namespace,chartJSON,tgz) {
     //用户自定义values 文件
     tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/user_provided_values.yaml",data:user_provided_values_yaml});
 
+    let chart_tgz=[]
     //处理Chart.yaml和values.yaml
     const chart_yaml = yaml.dump(chartJSON["chart"]["metadata"]);
-    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/Chart.yaml",data:chart_yaml});
+    chart_tgz.push({name:chart_name+"/Chart.yaml",data:chart_yaml});
 
     //console.log(chart_yaml);
     const values_yaml = yaml.dump(chartJSON["chart"]["values"]);
-    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/values.yaml",data:values_yaml});
+    chart_tgz.push({name:chart_name+"/values.yaml",data:values_yaml});
     //console.log(values_yaml);
 
 
@@ -110,8 +111,10 @@ async function helmChartJSONToTgz(clusterName,namespace,chartJSON,tgz) {
         const template_data = template["data"];
   
         const template_data_raw = Base64.decode(template_data);
-  
-        tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/"+template_name,data:template_data_raw});
+        chart_tgz.push({name:chart_name+"/"+template_name,data:template_data_raw});
     
-      }
+    }
+    const chart_tgz_data=await createTarGzip(chart_tgz)
+    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"-"+chart_version+".tgz",data:chart_tgz_data});
+
 }
