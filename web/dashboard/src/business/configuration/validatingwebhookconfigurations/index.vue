@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Validatingwebhookconfiguration">
+  <layout-content header="Validating Webhook Configuration">
     <div style="float: left">
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'cluster',apiGroup:'admissionregistration.k8s.io',resource:'validatingwebhookconfigurations',verb:'create'}"

@@ -7,7 +7,7 @@
       </el-button>
       <el-button  type="primary" size="small"
                   @click="onExportSelected()" :disabled="selects.length === 0">
-        export
+        {{ $t("commons.button.export") }}
       </el-button>
     </div>
     <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects"

@@ -43,6 +43,7 @@ const message = {
             sync: "同步",
             bind: "绑定",
             change_password: '改密',
+            export: '导出所有 Helm release',
         },
         table: {
             name: "名称",

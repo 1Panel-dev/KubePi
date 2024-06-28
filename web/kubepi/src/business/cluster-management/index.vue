@@ -3,7 +3,7 @@
     <div style="float: left">
       <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.import") }}</el-button>
       <el-button v-has-permissions="{resource:'clusters',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
-      <el-button  :disabled="selects.length===0" type="primary" size="small" @click="onExportAllHelmReleases()">export all helm releases</el-button>
+      <el-button  :disabled="selects.length===0" type="primary" size="small" @click="onExportAllHelmReleases()">{{ $t("commons.button.export") }}</el-button>
     </div>
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
                    :pagination-config="paginationConfig" @search="search"

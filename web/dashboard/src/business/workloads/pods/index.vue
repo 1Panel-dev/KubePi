@@ -16,7 +16,7 @@
       </el-button>
       <el-button type="primary" size="small"
                    @click="exportToXlsx()" icon="el-icon-download">
-          export to excel
+        {{ $t("commons.button.export") }}
       </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
@@ -52,7 +52,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('commons.table.ready')" min-width="30" prop="pod_status" sortable="pod_status">ready
+      <el-table-column :label="$t('commons.table.ready')" min-width="30" prop="pod_status" sortable="pod_status">
         <template v-slot:default="{row}">
           {{ getPodStatus(row) }}
         </template>

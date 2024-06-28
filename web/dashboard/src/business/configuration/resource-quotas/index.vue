@@ -14,7 +14,7 @@
       </el-button>
       <el-button type="primary" size="small"
                    @click="exportToXlsx()" icon="el-icon-download">
-          export to excel
+          {{ $t("commons.button.export") }}
         </el-button>
     </div>
     <complex-table :data="data" :selects.sync="selects" v-loading="loading" @search="search"
@@ -213,7 +213,6 @@ export default {
         params: { namespace: row.metadata.namespace, name: row.metadata.name }
       })
     },
-    /*导出配额信息为excel*/
     async exportToXlsx(){
       const schema = [
        {
@@ -230,14 +229,14 @@ export default {
         column: "Requests Pods Used",
         type: Number,
         value: (row) => {
-          return Number(row.status.used.pods)
+          return row.status.used.pods ? Number(row.status.used.pods) : 0
         },
        },
        {
         column: "Requests Pods hard",
         type: Number,
         value: (row) => {
-          return Number(row.status.hard.pods)
+          return row.status.hard.pods ? Number(row.status.hard.pods) : 0
         },
        },
        {
@@ -246,8 +245,9 @@ export default {
         value: (row) => {
           if(row.status.used["requests.cpu"])
           return cpuUnitConvert(row.status.used["requests.cpu"])
-          else
+          if(row.status.used["cpu"])
           return cpuUnitConvert(row.status.used["cpu"])
+          return 0
         },
        },
        {
@@ -256,8 +256,9 @@ export default {
         value: (row) => {
           if(row.status.hard["requests.cpu"])
           return cpuUnitConvert(row.status.hard["requests.cpu"])
-          else
+          if(row.status.hard["cpu"])
           return cpuUnitConvert(row.status.hard["cpu"])
+          return 0
         },
        },
        {
@@ -266,8 +267,9 @@ export default {
         value: (row) => {
           if(row.status.used["requests.memory"])
           return memoryUnitConvert(row.status.used["requests.memory"])
-          else
+          if(row.status.used["memory"])
           return memoryUnitConvert(row.status.used["memory"])
+          return 0
         },
        },
        {
@@ -276,78 +278,87 @@ export default {
         value: (row) => {
           if(row.status.hard["requests.memory"])
           return memoryUnitConvert(row.status.hard["requests.memory"])
-          else
+          if(row.status.hard["memory"])
           return memoryUnitConvert(row.status.hard["memory"])
+          return 0
         },
        },
        {
         column: "Limits Cpu Used(m)",
         type: Number,
         value: (row) => {
+          if (row.status.used["limits.cpu"])
           return cpuUnitConvert(row.status.used["limits.cpu"])
+          return 0
         },
        },
        {
         column: "Limits Cpu hard(m)",
         type: Number,
         value: (row) => {
+          if (row.status.hard["limits.cpu"])
           return cpuUnitConvert(row.status.hard["limits.cpu"])
+          return 0
         },
        },
        {
         column: "Limits Mem Used(Mi)",
         type: Number,
         value: (row) => {
+          if (row.status.used["limits.memory"])
           return memoryUnitConvert(row.status.used["limits.memory"])
+          return 0
         },
        },
        {
         column: "Limits Mem hard(Mi)",
         type: Number,
         value: (row) => {
+          if (row.status.hard["limits.memory"])
           return memoryUnitConvert(row.status.hard["limits.memory"])
+          return 0
         },
        },
        {
         column: "configmaps Used",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.used.configmaps||0)
+          return numberConvert(row.status.used.configmaps||'')
         },
        },
        {
         column: "configmaps hard",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.hard.configmaps||0)
+          return numberConvert(row.status.hard.configmaps||'')
         },
        },
        {
         column: "secrets Used",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.used.secrets||0)
+          return numberConvert(row.status.used.secrets||'')
         },
        },
        {
         column: "secrets hard",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.hard.secrets||0)
+          return numberConvert(row.status.hard.secrets||'')
         },
        },
        {
         column: "services Used",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.used.services||0)
+          return numberConvert(row.status.used.services||'')
         },
        },
        {
         column: "services hard",
         type: Number,
         value: (row) => {
-          return numberConvert(row.status.hard.services||0)
+          return numberConvert(row.status.hard.services||'')
         },
        },
       ];
