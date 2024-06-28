@@ -4,7 +4,7 @@
   <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/kubeoperator/kubepi?color=%231890FF&style=flat-square" alt="License: Apache License v2"></a>
   <a href="https://app.codacy.com/gh/kubeoperator/kubepi?utm_source=github.com&utm_medium=referral&utm_content=kubeoperator/kubepi&utm_campaign=Badge_Grade_Dashboard"><img src="https://app.codacy.com/project/badge/Grade/da67574fd82b473992781d1386b937ef" alt="Codacy"></a>
   <a href="https://hub.docker.com/r/kubeoperator/kubepi-server"><img src="https://img.shields.io/docker/pulls/kubeoperator/kubepi-server" alt="Docker Pulls"></a>
-  <a href="https://github.com/KubeOperator/KubePi"><img src="https://img.shields.io/github/stars/KubeOperator/KubePi" alt="Stars"></a>
+  <a href="https://github.com/1Panel-dev/KubePi"><img src="https://img.shields.io/github/stars/1Panel-dev/KubePi?color=%231890FF&style=flat-square" alt="GitHub Stars"></a>
 </p>
 <hr />
 
