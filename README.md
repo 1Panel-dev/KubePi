@@ -25,6 +25,8 @@ docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 # 密码: kubepi
 ```
 
+你也可以通过 [1Panel 应用商店](https://apps.fit2cloud.com/1panel) 快速部署 KubePi。
+
 ## 飞致云的其他明星项目
 
 - [1Panel](https://github.com/1panel-dev/1panel/) - 现代化、开源的 Linux 服务器运维管理面板
