@@ -17,12 +17,22 @@ instance.interceptors.request.use(
         const ns = sessionStorage.getItem("namespace")
         if (!config.params) {
             if (ns) {
+                if(
+                    url.indexOf("monitoring.coreos.com/v1/prometheuses")==-1
+                    &&
+                   url.indexOf("api/v1/query_range")==-1
+                )
                 config.params = {
                     "namespace": ns
                 }
             }
         } else {
             if (ns) {
+                if(
+                    url.indexOf("monitoring.coreos.com/v1/prometheuses")==-1
+                   &&
+                   url.indexOf("api/v1/query_range")==-1
+                )
                 config.params["namespace"] = ns
             }
         }
