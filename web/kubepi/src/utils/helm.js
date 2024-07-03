@@ -89,38 +89,41 @@ async function helmSecretToTgz(clusterName,secrets,tgz) {
 //加入加密后的chartjson数据到tgz
 async function helmChartJSONToTgz(clusterName,namespace,chartJSON,tgz) {
 
-    //用户自定义values
-    const user_provided_values_yaml = yaml.dump(chartJSON["config"]);
+  //用户自定义values
+  const user_provided_values_yaml = yaml.dump(chartJSON["config"]);
 
-    //包名
-    const chart_name = chartJSON["chart"]["metadata"]["name"];
-    //版本
-    const chart_version = chartJSON["chart"]["metadata"]["version"];
+  //包名
+  const chart_name = chartJSON["chart"]["metadata"]["name"];
+  //版本
+  const chart_version = chartJSON["chart"]["metadata"]["version"];
 
-    
-    //用户自定义values 文件
-    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/user_provided_values.yaml",data:user_provided_values_yaml});
-
-    //处理Chart.yaml和values.yaml
-    const chart_yaml = yaml.dump(chartJSON["chart"]["metadata"]);
-    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/Chart.yaml",data:chart_yaml});
-
-    //console.log(chart_yaml);
-    const values_yaml = yaml.dump(chartJSON["chart"]["values"]);
-    tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/values.yaml",data:values_yaml});
-    //console.log(values_yaml);
-
-
-    for (let i = 0, s = chartJSON["chart"]["templates"].length; i < s; i++) {
-        const template = chartJSON["chart"]["templates"][i];
-        //模板文件路径
-        const template_name = template["name"];
-        //模板文件base64加密后
-        const template_data = template["data"];
   
-        const template_data_raw = Base64.decode(template_data);
+  //用户自定义values 文件
+  tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/user_provided_values.yaml",data:user_provided_values_yaml});
+
+  let chart_tgz=[]
+  //处理Chart.yaml和values.yaml
+  const chart_yaml = yaml.dump(chartJSON["chart"]["metadata"]);
+  chart_tgz.push({name:chart_name+"/Chart.yaml",data:chart_yaml});
+
+  //console.log(chart_yaml);
+  const values_yaml = yaml.dump(chartJSON["chart"]["values"]);
+  chart_tgz.push({name:chart_name+"/values.yaml",data:values_yaml});
+  //console.log(values_yaml);
+
+
+  for (let i = 0, s = chartJSON["chart"]["templates"].length; i < s; i++) {
+      const template = chartJSON["chart"]["templates"][i];
+      //模板文件路径
+      const template_name = template["name"];
+      //模板文件base64加密后
+      const template_data = template["data"];
+
+      const template_data_raw = Base64.decode(template_data);
+      chart_tgz.push({name:chart_name+"/"+template_name,data:template_data_raw});
   
-        tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"/"+template_name,data:template_data_raw});
-    
-      }
+  }
+  const chart_tgz_data=await createTarGzip(chart_tgz)
+  tgz.push({name:clusterName+"/"+namespace+"/"+chart_name+"/"+chart_version+"/"+chart_name+"-"+chart_version+".tgz",data:chart_tgz_data});
+
 }
