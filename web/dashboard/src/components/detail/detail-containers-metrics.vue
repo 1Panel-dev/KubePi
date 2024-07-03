@@ -40,11 +40,14 @@
 </template>
 <script>
 /*检查已安装在k8s集群中prometheus的服务端*/
-import {listPrometheuses,getContainerMetrics} from "@/api/crds/monitoring.coreos.com/v1/prometheus"
+import {listPrometheuses,getContainerMetricsMemAndFs,getContainerMetricsCpu} from "@/api/crds/monitoring.coreos.com/v1/prometheus"
 /*用户检查prometheus使用的service*/
 import {listServicesWithNs} from "@/api/services"
 import moment from 'moment'
-
+function arrayDuplicateRemovalSort(arr1,arr2){
+const arr = arr1.concat(arr2)
+return [...new Set( arr.sort( ( a , b )  => a > b ? 1 : -1 ) ) ]
+}
 export default {
   name: "KoDetailContainerMetrics",
   props: {
@@ -230,7 +233,8 @@ export default {
           zlevel: 0,
         })
       }
-      getContainerMetrics(
+      
+    Promise.all([getContainerMetricsMemAndFs(
         this.cluster,
         this.currentPrometheusServer.namespace,
         this.currentPrometheusServer.service,
@@ -239,7 +243,16 @@ export default {
         this.yamlInfo.metadata.name,
         this.containerInfo.name,
         this.secs /*半小时*/
-      ).then(res=>{
+      ),getContainerMetricsCpu(
+        this.cluster,
+        this.currentPrometheusServer.namespace,
+        this.currentPrometheusServer.service,
+        this.currentPrometheusServer.prefix,
+        this.yamlInfo.metadata.namespace,
+        this.yamlInfo.metadata.name,
+        this.containerInfo.name,
+        this.secs /*半小时*/
+      )]).then(res=>{
         if(this .myChart!=null){
            this .myChart.hideLoading()
         }
@@ -267,9 +280,11 @@ export default {
              type: 'category',
              boundaryGap: false,
              //min是半小时前，max是当前时间
-             data: res.data.result[0].values.map(items=>{
+             data: arrayDuplicateRemovalSort(res[0].data.result[0].values.map(items=>{
                return   moment(items[0]*1000).format('HH:mm')
-             }),
+             }),res[1].data.result.length>0?res[1].data.result[0].values.map(items=>{
+               return   moment(items[0]*1000).format('HH:mm')
+             }):[]),
              axisLabel: {
                interval:this.time_interval, // 坐标轴刻度间隔
              }
@@ -295,7 +310,7 @@ export default {
                  color: 'rgba(255,255,255,0.3)',
               },
              },
-             name: '(%)', //单位
+             name: 'c', //单位
              nameLocation: 'end', // (单位个也就是在在Y轴的最顶部)
            },
            {
@@ -352,18 +367,18 @@ export default {
            series: [
            {
                 name: "cpu",
-                data: res.data.result[0].values.map(items=>Number(items[1])),
+                data: res[1].data.result.length>0 ? res[1].data.result[0].values.map(items=>Number(items[1])):[],
                 type: 'line',
                 tooltip: {
                     valueFormatter: function (value) {
-                        return value + ' %';
+                        return value + ' c';
                     }
                 }
                 
            },
            {
                 name: "fs",
-                data: res.data.result[1].values.map(items=>Number(items[1])/1024.00/1024.00),
+                data: res[0].data.result[0].values.map(items=>Number(items[1])/1024.00/1024.00),
                 type: 'line',
                 tooltip: {
                     valueFormatter: function (value) {
@@ -373,7 +388,7 @@ export default {
            },
            {
                 name: "mem",
-                data: res.data.result[2].values.map(items=>Number(items[1])/1024.00/1024.00),
+                data: res[0].data.result[1].values.map(items=>Number(items[1])/1024.00/1024.00),
                 type: 'line',
                 tooltip: {
                     valueFormatter: function (value) {
