@@ -148,7 +148,7 @@ export class TerminalComponent implements AfterViewInit {
     this.connectionClosed_ = false;
 
     // Make sure the terminal is with correct display size.
-    // this.onTerminalResize();
+    this.onTerminalResize();
 
     // Focus on connection
     this.term.focus();
