@@ -1,5 +1,5 @@
 <template>
-  <table width="100%">
+  <table width="100%" v-show="currentPrometheusServer!=null">
       <tr>
        <td style="width:150px">Prometheus Sources:</td>
        <td style="width:150px" align="left">
@@ -39,7 +39,11 @@
      </table>
 </template>
 <script>
+
 /*检查已安装在k8s集群中prometheus的服务端*/
+import {
+  listCustomResourceDefinitions,
+} from "@/api/customresourcedefinitions"
 import {listPrometheuses,getContainerMetricsMemAndFs,getContainerMetricsCpu} from "@/api/crds/monitoring.coreos.com/v1/prometheus"
 /*用户检查prometheus使用的service*/
 import {listServicesWithNs} from "@/api/services"
@@ -147,7 +151,21 @@ export default {
     //加载Prometheus服务器列表
     async loadPrometheuses(){
       let prometheusServers=[]
-      const prometheusServers_res=await  listPrometheuses(this.cluster)
+  
+      const crds =await listCustomResourceDefinitions(this.cluster)
+      //检查是否已安装普罗
+      const crd =crds.items.find(item=>item.metadata.name=="prometheuses.monitoring.coreos.com")
+      
+
+      let prometheusServers_res={items:[]}
+      try{
+         if(crd)
+          prometheusServers_res=await  listPrometheuses(this.cluster)
+      }catch(e){
+          console.log(e)
+      }
+
+      if(prometheusServers_res.items && prometheusServers_res.items.length>0){
       for(let i=0,s=prometheusServers_res.items.length;i<s;i++){
          const prometheusServerItem=prometheusServers_res.items[i]
          const name=prometheusServerItem.metadata.name
@@ -169,6 +187,7 @@ export default {
       this.prometheusServers=prometheusServers
       this.currentPrometheusServer=prometheusServers[0]
       this.currentPrometheusServerLabel=prometheusServers[0].namespace+"."+prometheusServers[0].name
+     }
     },
     //切换Prometheus服务器
     handlePrometheusSwitch(value){
@@ -224,6 +243,9 @@ export default {
       this.intervalId = null; //设置为null
     },
     loadMetrics(){
+      if(!this.currentPrometheusServer){
+        return
+      } 
       if(this .myChart!=null){
         this .myChart.showLoading({
           text: 'loading',
@@ -233,7 +255,7 @@ export default {
           zlevel: 0,
         })
       }
-      
+     
     Promise.all([getContainerMetricsMemAndFs(
         this.cluster,
         this.currentPrometheusServer.namespace,
