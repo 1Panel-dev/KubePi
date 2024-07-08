@@ -4,7 +4,7 @@
   <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/kubeoperator/kubepi?color=%231890FF&style=flat-square" alt="License: Apache License v2"></a>
   <a href="https://app.codacy.com/gh/kubeoperator/kubepi?utm_source=github.com&utm_medium=referral&utm_content=kubeoperator/kubepi&utm_campaign=Badge_Grade_Dashboard"><img src="https://app.codacy.com/project/badge/Grade/da67574fd82b473992781d1386b937ef" alt="Codacy"></a>
   <a href="https://hub.docker.com/r/kubeoperator/kubepi-server"><img src="https://img.shields.io/docker/pulls/kubeoperator/kubepi-server" alt="Docker Pulls"></a>
-  <a href="https://github.com/KubeOperator/KubePi"><img src="https://img.shields.io/github/stars/KubeOperator/KubePi" alt="Stars"></a>
+  <a href="https://github.com/1Panel-dev/KubePi"><img src="https://img.shields.io/github/stars/1Panel-dev/KubePi?color=%231890FF&style=flat-square" alt="GitHub Stars"></a>
 </p>
 <hr />
 
@@ -18,18 +18,23 @@ KubePi 允许管理员导入多个 Kubernetes 集群，并且通过权限控制�
 
 ### 快速开始
 
-    sudo docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
+```
+docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 
-- 打开浏览器访问：http://localhost:80/
-- 用户名：admin
-- 密码：kubepi
+# 用户名: admin
+# 密码: kubepi
+```
 
+你也可以通过 [1Panel 应用商店](https://apps.fit2cloud.com/1panel) 快速部署 KubePi。
 
-### 致谢
+## 飞致云的其他明星项目
 
-- [Vue](https://cn.vuejs.org) 前端框架
-- [FIT2CLOUD UI](https://github.com/fit2cloud-ui/fit2cloud-ui/) FIT2CLOUD UI 组件库
-- [Vue-element-admin](https://github.com/PanJiaChen/vue-element-admin) 项目脚手架
+- [1Panel](https://github.com/1panel-dev/1panel/) - 现代化、开源的 Linux 服务器运维管理面板
+- [JumpServer](https://github.com/jumpserver/jumpserver/) - 广受欢迎的开源堡垒机
+- [DataEase](https://github.com/dataease/dataease/) - 人人可用的开源数据可视化分析工具
+- [MeterSphere](https://github.com/metersphere/metersphere/) - 开源自动化测试平台
+- [Halo](https://github.com/halo-dev/halo/) - 强大易用的开源建站工具
+- [MaxKB](https://github.com/1Panel-dev/MaxKB/) - 基于 LLM 大语言模型的开源知识库问答系统
 
 ### License & Copyright
 

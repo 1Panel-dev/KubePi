@@ -17,12 +17,22 @@ instance.interceptors.request.use(
         const ns = sessionStorage.getItem("namespace")
         if (!config.params) {
             if (ns) {
+                if(
+                    url.indexOf("monitoring.coreos.com/v1/prometheuses")==-1
+                    &&
+                   url.indexOf("api/v1/query_range")==-1
+                )
                 config.params = {
                     "namespace": ns
                 }
             }
         } else {
             if (ns) {
+                if(
+                    url.indexOf("monitoring.coreos.com/v1/prometheuses")==-1
+                   &&
+                   url.indexOf("api/v1/query_range")==-1
+                )
                 config.params["namespace"] = ns
             }
         }
@@ -117,7 +127,7 @@ export const del = (url, loading) => {
 }
 
 export const postFile= (url,data, params,loading) => {
-  return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"application/json"},timeout:600000}), loading)
+  return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"multipart/form-data"},timeout:600000}), loading)
 }
 
 export const patch = (url, data, headers, loading) => {

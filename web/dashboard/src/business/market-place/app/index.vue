@@ -7,7 +7,7 @@
       </el-button>
       <el-button  type="primary" size="small"
                   @click="onExportSelected()" :disabled="selects.length === 0">
-        export
+        {{ $t("commons.button.export") }}
       </el-button>
     </div>
     <complex-table v-loading="loading" :data="data" :search-config="searchConfig" :selects.sync="selects"
@@ -106,14 +106,7 @@ export default {
     }
   },
   methods: {
-    search (change) {
-      if (change) {
-        this.paginationConfig = {
-          currentPage: 1,
-          pageSize: 10,
-          total: 0,
-        }
-      }
+    search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
       searchInstalled(this.cluster, currentPage, pageSize, this.searchConfig.keywords).then(res => {

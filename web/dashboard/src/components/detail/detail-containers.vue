@@ -48,7 +48,7 @@
     </complex-table>
 
     <el-row v-if="data.length !== 0" style="margin-top: 20px">
-      <ko-detail-containers-info :yamlInfo="form" :containerInfo="containerInfo" />
+      <ko-detail-containers-info :yamlInfo="form" :containerInfo="containerInfo" :cluster="cluster" />
     </el-row>
   </div>
 </template>

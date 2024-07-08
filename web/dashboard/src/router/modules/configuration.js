@@ -430,7 +430,7 @@ const Configuration = {
       component: () => import("@/business/configuration/mutatingwebhookconfigurations"),
       name: "Mutatingwebhookconfigurations",
       meta: {
-        title: "Mutatingwebhookconfigurations",
+        title: "Mutating Webhook Configurations",
       }
     },
     {
@@ -475,7 +475,7 @@ const Configuration = {
       component: () => import("@/business/configuration/validatingwebhookconfigurations"),
       name: "Validatingwebhookconfigurations",
       meta: {
-        title: "Validatingwebhookconfigurations",
+        title: "Validating Webhook Configurations",
       }
     },
     {
