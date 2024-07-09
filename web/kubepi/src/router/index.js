@@ -43,6 +43,11 @@ export const constantRoutes = [
         hidden: true
     },
     {
+        path: "/sso",
+        component: () => import("@/business/sso"),
+        hidden: true
+    },
+    {
         path: "/403",
         component: Error403,
         hidden: true

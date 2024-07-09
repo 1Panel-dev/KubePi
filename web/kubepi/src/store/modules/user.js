@@ -1,9 +1,11 @@
 import {login, isLogin, logout, getCurrentUser, updateProfile} from "@/api/auth"
+import {isSso} from "@/api/sso"
 import {resetRouter} from "@/router"
 import {getLanguage, setLanguage} from "@/i18n"
 
 const state = {
     login: false,
+    sso: false,
     name: "",
     language: getLanguage(),
     permissions: {},
@@ -13,6 +15,9 @@ const state = {
 const mutations = {
     LOGIN: (state) => {
         state.login = true
+    },
+    SSO: (state) => {
+        state.sso = true
     },
     LOGOUT: (state) => {
         state.login = false
@@ -56,6 +61,23 @@ const actions = {
                 resolve()
             }).catch(error => {
                 reject(error)
+            })
+        })
+    },
+    isSso({commit}) {
+        return new Promise((resolve) => {
+            if (state.sso) {
+                resolve(false)
+            }
+            isSso().then(data => {
+                if (data.data) {
+                    commit("SSO")
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            }).catch(() => {
+                resolve(false)
             })
         })
     },
