@@ -21,6 +21,8 @@ docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 
 你也可以通过 [1Panel 应用商店](https://apps.fit2cloud.com/1panel) 快速部署 KubePi。
 
+使用手册请参考: [https://github.com/1Panel-dev/KubePi/wiki](https://github.com/1Panel-dev/KubePi/wiki)。
+
 ## UI 展示
 
 ![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/02-dashboard.png)
