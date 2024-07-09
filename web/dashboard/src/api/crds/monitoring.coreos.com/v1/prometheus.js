@@ -3,8 +3,8 @@ import qs from "qs";
 const prometheusUrl = (cluster_name) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/monitoring.coreos.com/v1/prometheuses`
 }
-const prometheusMetricsUrl = (cluster_name,namespace,prometheus_service_name,prometheus_prefix) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/services/${prometheus_service_name}:80/proxy${prometheus_prefix}api/v1/query_range`
+const prometheusMetricsUrl = (cluster_name,namespace,prometheus_service_name,prometheus_prefix,prometheus_service_port) => {
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/services/${prometheus_service_name}:${prometheus_service_port}/proxy${prometheus_prefix}api/v1/query_range`
 }
 /*获取已部署的prometheus服务器*/
 export function listPrometheuses (cluster_name) {
@@ -14,8 +14,8 @@ export function listPrometheuses (cluster_name) {
 }
 
 /*获取容器指标（mem and fs）*/
-export function getContainerMetricsMemAndFs (cluster_name,namespace,prometheus_service_name,prometheus_prefix,pod_namespace,pod_name,container_name,secs) {
-  let url = prometheusMetricsUrl(cluster_name,namespace,prometheus_service_name,prometheus_prefix)
+export function getContainerMetricsMemAndFs (cluster_name,namespace,prometheus_service_name,prometheus_prefix,prometheus_service_port,pod_namespace,pod_name,container_name,secs) {
+  let url = prometheusMetricsUrl(cluster_name,namespace,prometheus_service_name,prometheus_prefix,prometheus_service_port)
   const startTimestamp = Math.floor(Date.now() / 1000) - secs; // Unix timestamp for 30 minutes ago
   const endTimestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
   const param = {
@@ -27,8 +27,8 @@ export function getContainerMetricsMemAndFs (cluster_name,namespace,prometheus_s
   return get(url+"?"+qs.stringify(param) , {})
 }
 /*获取容器指标（mem and fs）*/
-export function getContainerMetricsCpu(cluster_name,namespace,prometheus_service_name,prometheus_prefix,pod_namespace,pod_name,container_name,secs) {
-  let url = prometheusMetricsUrl(cluster_name,namespace,prometheus_service_name,prometheus_prefix)
+export function getContainerMetricsCpu(cluster_name,namespace,prometheus_service_name,prometheus_prefix,prometheus_service_port,pod_namespace,pod_name,container_name,secs) {
+  let url = prometheusMetricsUrl(cluster_name,namespace,prometheus_service_name,prometheus_prefix,prometheus_service_port)
   const startTimestamp = Math.floor(Date.now() / 1000) - secs; // Unix timestamp for 30 minutes ago
   const endTimestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
   const param = {
