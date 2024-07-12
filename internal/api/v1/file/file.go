@@ -152,6 +152,32 @@ func (h *Handler) RmFolder() iris.Handler {
 	}
 }
 
+func (h *Handler) DownloadFolder() iris.Handler {
+	return func(ctx *context.Context) {
+
+		var req fileModel.Request
+		req.Path = ctx.URLParam("path")
+		req.Namespace = ctx.URLParam("namespace")
+		req.Cluster = ctx.URLParam("cluster")
+		req.PodName = ctx.URLParam("podName")
+		req.ContainerName = ctx.URLParam("containerName")
+
+		file, err := h.fileService.DownloadFolder(req)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		filename := path.Base(file)
+		err = ctx.SendFile(file, filename)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		os.RemoveAll(file)
+	}
+}
 func (h *Handler) DownloadFile() iris.Handler {
 	return func(ctx *context.Context) {
 
@@ -257,5 +283,6 @@ func Install(parent iris.Party) {
 	sp.Post("/files/rename", handler.ReNameFile())
 	sp.Post("/files/upload", handler.UploadFile())
 	sp.Post("/files/update", handler.UpdateFile())
-	sp.Get("/files/download", handler.DownloadFile())
+	sp.Get("/files/download/folder", handler.DownloadFolder())
+	sp.Get("/files/download/file", handler.DownloadFile())
 }

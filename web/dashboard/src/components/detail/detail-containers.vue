@@ -127,6 +127,16 @@ export default {
             return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "create" })
           },
         },
+        {
+          label: this.$t("business.pod.pod_file"),
+          icon: "el-icon-files",
+          click: (row) => {
+            this.openPodFiles(row)
+          },
+          disabled: () => {
+            return !checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods/exec", verb: "create" })
+          },
+        },
       ],
       form: {},
       namespace: "",
@@ -150,6 +160,11 @@ export default {
     openTerminalLogs(row) {
       let routeUrl = this.$router.resolve({ path: "/terminal", query: { cluster: this.cluster, namespace: this.namespace, pod: this.name, container: row.container.name, type: "log" } })
       window.open(routeUrl.href, "_blank")
+    },
+    openPodFiles(row) {
+      this.$router.push({ name: "PodFile", params: { namespace: this.yamlInfo.metadata.namespace, name: this.yamlInfo.metadata.name },query:{
+          container: row.container.name
+        }})
     },
   },
 }
