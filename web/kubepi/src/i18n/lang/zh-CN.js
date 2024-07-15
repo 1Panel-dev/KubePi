@@ -110,6 +110,9 @@ const message = {
             mfa_helper: "使用 MFA 验证器应用扫描以下二维码，获取6位验证码",
             mfa_login_helper: "请输入MFA验证器的6位验证码",
         },
+        sso: {
+            title: "SSO 跳转中",
+        },
     },
     business: {
         cluster: {
@@ -199,6 +202,13 @@ const message = {
             ldap_mapping: "用户属性映射",
             ldap_mapping_helper: "用户属性映射代表怎样将LDAP中用户属性映射到kubepi用户上，name, nickName,email 是kubepi的用户需要属性",
             ldap_test: "测试连接",
+            sso: "SSO",
+            sso_protocol: "协议",
+            sso_interface_address: "接口地址",
+            sso_client_id: "客户端ID",
+            sso_client_secret: "客户端密钥",
+            sso_test_result: "测试SSO连接成功",
+            sso_helper: "注意：如果开启了SSO，想通过本地账号登录时，请直接访问 \"http(s)://host/kubepi/login\"",
             test_result: "连接成功,匹配到{count}个用户",
             test_login: "测试登录",
             login_success: "测试登录成功",

@@ -110,6 +110,9 @@ const message = {
             mfa_helper: "Scan the QR code below with the MFA Authenticator app to get a 6-digit verification code",
             mfa_login_helper:"Please enter 6-digit verification for MFA Authenticator",
         },
+        sso: {
+            title: "SSO Redirecting",
+        },
     },
     business: {
         cluster: {
@@ -199,6 +202,13 @@ const message = {
             ldap_mapping: "User Attribute Mapping",
             ldap_mapping_helper: "User attribute mapping represents how to map user attributes in LDAP to kubepi users, name, nickName, email are the attributes required by kubepi users",
             ldap_test: "Test connection",
+            sso: "SSO",
+            sso_protocol: "Protocol",
+            sso_interface_address: "Interface Address",
+            sso_client_id: "Client ID",
+            sso_client_secret: "Client Secret",
+            sso_test_result: "Test SSO connection successful",
+            sso_helper: "Note: If SSO is enabled, if you want to log in with a local account, please directly access \"http(s)://host/kubepi/login\"",
             test_result: "The connection is successful, matching {count} users",
             test_login: "Test Login",
             login_success: "Test login success",
