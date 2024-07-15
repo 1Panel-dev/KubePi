@@ -420,7 +420,11 @@ export default {
         return
       }
       const url = this.getUrl(row.name)
-      window.open("/kubepi/api/v1/pod/files/download" + url, "_blank")
+      //区分文件和目录,目录tar打包下载,文件直接下载(应对部分镜像tar命令异常导致下载不了)
+      if(row["mode"].startsWith("d"))
+      window.open("/kubepi/api/v1/pod/files/download/folder" + url, "_blank")
+        else
+      window.open("/kubepi/api/v1/pod/files/download/file" + url, "_blank")
     },
     getUrl (name) {
       this.fileRequest.path = this.getPath(name)
