@@ -276,6 +276,7 @@ actions:{
       name_helper: "支持 '/' 来创建多级目录",
       link_tip: "链接文件/文件夹 不支持此操作",
       previous: "上次失败的日志",
+      timestamps: "显示日志时间"
     },
     namespace: {
       namespace: "命名空间",
