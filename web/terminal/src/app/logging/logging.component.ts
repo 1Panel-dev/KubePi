@@ -24,6 +24,7 @@ export class LoggingComponent implements AfterViewInit {
     this.tailLines = this.activatedRoute_.snapshot.queryParams["tailLines"]
     this.follow = this.activatedRoute_.snapshot.queryParams["follow"]
     this.previous = this.activatedRoute_.snapshot.queryParams["previous"]
+    this.timestamps = this.activatedRoute_.snapshot.queryParams["timestamps"]
   }
 
   @ViewChild('anchor', {static: true}) anchorRef: ElementRef;
@@ -35,6 +36,7 @@ export class LoggingComponent implements AfterViewInit {
   tailLines: number;
   follow: boolean;
   previous: boolean;
+  timestamps: boolean;
 
   private conn_: WebSocket
 
@@ -70,7 +72,7 @@ export class LoggingComponent implements AfterViewInit {
 
   async setupConnection() {
     try {
-      const {data} = await this.loggingService.createLoggingSession(this.clusterName, this.namespace, this.podName, this.container, this.tailLines, this.follow, this.previous).toPromise()
+      const {data} = await this.loggingService.createLoggingSession(this.clusterName, this.namespace, this.podName, this.container, this.tailLines, this.follow, this.previous,this.timestamps).toPromise()
       const id = data.id
       this.conn_ = new SockJS(`/kubepi/api/v1/ws/logging/sockjs?${id}`)
       this.conn_.onopen = () => {

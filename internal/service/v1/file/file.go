@@ -20,6 +20,7 @@ import (
 type Service interface {
 	ListFiles(request file.Request) ([]podtool.File, error)
 	DownloadFile(request file.Request) (string, error)
+	DownloadFolder(request file.Request) (string, error)
 	UploadFile(request file.Request) error
 	ExecNewCommand(request file.Request) ([]byte, error)
 	EditFile(request file.Request) error
@@ -96,6 +97,27 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 		return fileP, err
 	}
 	fileNameWithSuffix := path.Base(request.Path)
+	fileP = filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
+	err = os.MkdirAll(fileP, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+	fileP = filepath.Join(fileP, fileNameWithSuffix)
+	err = pt.CopyFileFromPod(request.Path, fileP)
+	if err != nil {
+		return "", err
+	}
+
+	return fileP, nil
+}
+func (f service) DownloadFolder(request file.Request) (string, error) {
+
+	var fileP string
+	pt, err := f.GetPodTool(request)
+	if err != nil {
+		return fileP, err
+	}
+	fileNameWithSuffix := path.Base(request.Path)
 	fileType := path.Ext(fileNameWithSuffix)
 	fileName := strings.TrimSuffix(fileNameWithSuffix, fileType)
 	fileP = filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
@@ -104,7 +126,7 @@ func (f service) DownloadFile(request file.Request) (string, error) {
 		return "", err
 	}
 	fileP = filepath.Join(fileP, fileName+".tar")
-	err = pt.CopyFromPod(request.Path, fileP)
+	err = pt.CopyFolderFromPod(request.Path, fileP)
 	if err != nil {
 		return "", err
 	}

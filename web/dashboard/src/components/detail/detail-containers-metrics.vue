@@ -179,6 +179,7 @@ export default {
               name:name,
               namespace:namespace,
               service:service.metadata.name,
+              service_port: (service.spec.ports && service.spec.ports.length>0 )?service.spec.ports[0].port : 80,
               prefix:prefix
            })
          }
@@ -261,6 +262,7 @@ export default {
         this.currentPrometheusServer.namespace,
         this.currentPrometheusServer.service,
         this.currentPrometheusServer.prefix,
+        this.currentPrometheusServer.service_port,
         this.yamlInfo.metadata.namespace,
         this.yamlInfo.metadata.name,
         this.containerInfo.name,
@@ -270,6 +272,7 @@ export default {
         this.currentPrometheusServer.namespace,
         this.currentPrometheusServer.service,
         this.currentPrometheusServer.prefix,
+        this.currentPrometheusServer.service_port,
         this.yamlInfo.metadata.namespace,
         this.yamlInfo.metadata.name,
         this.containerInfo.name,

@@ -275,6 +275,7 @@ actions:{
       name_helper: "Support '/' to create multi-level directories",
       link_tip: "This operation is not supported for linked files/folders",
       previous: "last failure log",
+      timestamps: "show timestamps"
     },
     namespace: {
       namespace: "Namespace",
