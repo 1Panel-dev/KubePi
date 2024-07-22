@@ -13,16 +13,34 @@
                   </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item style="width: 100%" :label="$t('business.user.sso_interface_address')" prop="interfaceAddress">
+
+            <!-- OpenID specific fields -->
+            <template v-if="form.protocol === 'openid'">
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_interface_address')" prop="interfaceAddress">
               <el-input v-model="form.interfaceAddress"
                         :placeholder="'http://192.168.56.101:30020/realms/kubepi'"></el-input>
-            </el-form-item>
-            <el-form-item style="width: 100%" :label="$t('business.user.sso_client_id')" prop="clientId">
-              <el-input v-model="form.clientId"></el-input>
-            </el-form-item>
-            <el-form-item style="width: 100%" :label="$t('business.user.sso_client_secret')" prop="clientSecret">
-              <el-input type="password" v-model="form.clientSecret"></el-input>
-            </el-form-item>
+              </el-form-item>
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_client_id')" prop="clientId">
+                <el-input v-model="form.clientId"></el-input>
+              </el-form-item>
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_client_secret')" prop="clientSecret">
+                <el-input type="password" v-model="form.clientSecret"></el-input>
+              </el-form-item>
+            </template>
+
+            <!-- SAML2 specific fields -->
+            <template v-if="form.protocol === 'saml2'">
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_idp_metadata_url')" prop="idpMetadataURL">
+                <el-input v-model="form.idpMetadataURL"></el-input>
+              </el-form-item>
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_x509_cert')" prop="x509Cert">
+                <el-input v-model="form.x509Cert" :autosize="{ minRows: 5, maxRows: 10}" type="textarea" clearable></el-input>
+              </el-form-item>
+              <el-form-item style="width: 100%" :label="$t('business.user.sso_x509_key')" prop="x509Key">
+                <el-input v-model="form.x509Key" :autosize="{ minRows: 5, maxRows: 10}" type="textarea" clearable></el-input>
+              </el-form-item>
+            </template>
+
             <el-form-item>
               <div style="font-size: 12px;color: #4E5051;">
                 {{ $t("business.user.sso_helper") }}
@@ -34,17 +52,17 @@
             <div style="float: right">
               <el-form-item>
                 <el-button @click="connectTest" :disabled="isSubmitGoing"
-                           v-has-permissions="{resource:'ldap',verb:'create'}">{{
-                    $t("business.user.ldap_test")
+                           v-has-permissions="{resource:'sso',verb:'create'}">{{
+                    $t("business.user.sso_test")
                   }}
                 </el-button>
                 <el-button @click="remake" :disabled="isSubmitGoing"
-                           v-has-permissions="{resource:'ldap',verb:'create'}">{{
-                    $t("business.user.ldap_remake")
+                           v-has-permissions="{resource:'sso',verb:'create'}">{{
+                    $t("business.user.sso_remake")
                   }}
                 </el-button>
                 <el-button type="primary" @click="onSubmit" :disabled="isSubmitGoing"
-                           v-has-permissions="{resource:'ldap',verb:'create'}">{{ $t("commons.button.confirm") }}
+                           v-has-permissions="{resource:'sso',verb:'create'}">{{ $t("commons.button.confirm") }}
                 </el-button>
               </el-form-item>
             </div>
@@ -68,20 +86,23 @@
     props: {},
     data () {
       return {
-        protocol: "",
         protocolOptions: [
           {
             value: 'openid',
             label: 'OpenID Connect',
           },
           {
-            value: 'saml',
-            label: 'SAML',
+            value: 'saml2',
+            label: 'SAML2',
           },
         ],
+        protocol: "",
         interfaceAddress: "",
         clientId: "",
         clientSecret: "",
+        idpMetadataURL: "",
+        x509Cert: "",
+        x509Key: "",
         form: {
           enable: false,
         },
@@ -91,8 +112,12 @@
           interfaceAddress: [Rule.RequiredRule],
           clientId: [Rule.RequiredRule],
           clientSecret: [Rule.RequiredRule],
+          idpMetadataURL: [Rule.RequiredRule],
+          x509Cert: [Rule.RequiredRule],
+          x509Key: [Rule.RequiredRule],
         },
         isSubmitGoing: false,
+        oldConfig: {},
       }
     },
     methods: {
@@ -163,10 +188,9 @@
       list () {
         this.loading = true
         getSso().then((res) => {
-          if (res.data.length > 0) {
-            this.form = res.data[0]
-            this.oldConfig = res.data[0]
-          }
+            console.log("res.data)",res.data)
+            this.form = res.data
+            this.oldConfig = res.data
         }).finally(() => {
           this.loading = false
         })
