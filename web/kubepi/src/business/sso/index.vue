@@ -62,7 +62,7 @@ export default {
     },
     cancel () {
       clearInterval(this.intervalId)
-      window.location.href = '/login'
+      window.location.href = '/kubepi/login'
     },
     confirm () {
       clearInterval(this.intervalId)
@@ -72,8 +72,9 @@ export default {
       getSso().then((res) => {
         if (res.data.protocol == "openid") {
           this.authType = " OpenID "
+        } else {
+          this.authType = " SAML2 "
         }
-        this.authType = " SAML2 "
       }).catch(error => {
         console.error('Failed to fetch auth type:', error);
         this.authType = 'OpenID';
