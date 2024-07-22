@@ -30,7 +30,6 @@
               <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank" v-if="!row.spec.tls">
                 {{ "http://" + rule.host + (path.path ? path.path : "") }}
               </el-link>
-              --->
               <el-link class="span-link" @click="toResource('Service',row.metadata.namespace,getService(path.backend))">
                 {{ getService(path.backend) }}:{{ getPort(path.backend) }}
               </el-link>
