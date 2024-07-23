@@ -52,7 +52,6 @@
           <el-link class="span-link" :href="'http://' + rule.host + (path.path ? path.path : '')" target="_blank">
             {{ "http://" + rule.host + (path.path ? path.path : "") }}
           </el-link>
-          --->
           <el-link class="span-link" @click="toResource('Service',currentIngress.metadata.namespace,getService(path.backend))">
             {{ getService(path.backend) }}:{{ getPort(path.backend) }}
           </el-link>
