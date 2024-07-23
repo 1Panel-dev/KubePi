@@ -15,6 +15,9 @@ type Sso struct {
 	InterfaceAddress string `json:"interfaceAddress"`
 	ClientId         string `json:"clientId"`
 	ClientSecret     string `json:"clientSecret"`
+	X509Key          string `json:"x509Key"`
+	X509Cert         string `json:"x509Cert"`
+	IdpMetadataURL   string `json:"idpMetadataURL"`
 }
 
 type OpenID struct {

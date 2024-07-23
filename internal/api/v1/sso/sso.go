@@ -6,8 +6,10 @@ import (
 	"github.com/KubeOperator/kubepi/internal/server"
 	"github.com/KubeOperator/kubepi/internal/service/v1/common"
 	"github.com/KubeOperator/kubepi/internal/service/v1/sso"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"net/http"
 	"strings"
 )
 
@@ -16,6 +18,7 @@ type Handler struct {
 }
 
 var oauth2Config = &v1Sso.OpenID{}
+var saml2Config = &samlsp.Middleware{}
 
 func NewHandler() *Handler {
 	return &Handler{
@@ -80,35 +83,38 @@ func (h *Handler) LoginSso() iris.Handler {
 
 		// 根据协议设置重定向URL
 		referer := ctx.GetHeader("Referer")
-		redirectURL := strings.Replace(referer, "sso", "api/v1/sso/callback", -1)
+		callbakOpenID := strings.Replace(referer, "sso", "api/v1/sso/callback", -1)
+		callbakSaml2 := strings.Replace(referer, "sso", "api/v1/sso/callback_saml2", -1)
+		baseUrl := strings.Replace(referer, "sso", "api/v1/sso/", -1)
 
 		// 目前只支持OpenID
-		switch ssos[0].Protocol {
+		switch ssos.Protocol {
 		case "openid":
-			oauth2Config, err = h.ssoService.OpenIDConfig(ssos[0].ClientId, ssos[0].ClientSecret, ssos[0].InterfaceAddress, redirectURL)
+			oauth2Config, err = h.ssoService.OpenIDConfig(ssos.ClientId, ssos.ClientSecret, ssos.InterfaceAddress, callbakOpenID)
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
 			}
 			ctx.Redirect(oauth2Config.Oauth2Config.AuthCodeURL("state"), iris.StatusFound)
+		case "saml2":
+			saml2Config, err = h.ssoService.Saml2Config(ssos, baseUrl)
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			ctx.Redirect(callbakSaml2, iris.StatusFound)
 		default:
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", "目前只支持OpenID")
+			ctx.Values().Set("message", "目前只支持OpenID & SAML2 SSO认证~")
 			return
 		}
 	}
 }
 
-func (h *Handler) CallbackSso() iris.Handler {
+func (h *Handler) CallbackOpenID() iris.Handler {
 	return func(ctx *context.Context) {
-		ssos, err := h.ssoService.List(common.DBOptions{})
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
-			return
-		}
-
 		r := ctx.Request()
 		language := ctx.GetHeader("Accept-Language")
 		if strings.Contains(language, "zh-CN") {
@@ -118,42 +124,34 @@ func (h *Handler) CallbackSso() iris.Handler {
 		}
 		code := r.URL.Query().Get("code")
 
-		// 目前只支持OpenID
-		switch ssos[0].Protocol {
-		case "openid":
-			oauth2Config.Code = code
-			oauth2Config.Language = language
-			userProfile, err := h.ssoService.OpenID(oauth2Config, common.DBOptions{})
-			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			// 默认为Session
-			sId := ctx.GetCookie(server.SessionCookieName)
-			if sId != "" {
-				ctx.RemoveCookie(server.SessionCookieName)
-				ctx.Request().Header.Del("Cookie")
-			}
-			sess := server.SessionMgr.Start(ctx)
-			ctx.SetCookieKV(server.SessionCookieName, sess.ID())
-			sess.Set("profile", userProfile)
-
-			redirectURL := ""
-			if strings.HasPrefix(strings.ToLower(r.Proto), "https") {
-				redirectURL = "https://" + r.Host
-			} else if strings.HasPrefix(strings.ToLower(r.Proto), "http") {
-				redirectURL = "http://" + r.Host
-			}
-			ctx.Redirect(redirectURL, iris.StatusFound)
-			handler := v1Session.NewHandler()
-			go handler.SaveLoginLog(ctx, userProfile.Name)
-			//ctx.Values().Set("data", userProfile)
-		default:
+		oauth2Config.Code = code
+		oauth2Config.Language = language
+		userProfile, err := h.ssoService.OpenID(oauth2Config, common.DBOptions{})
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", "目前只支持OpenID")
+			ctx.Values().Set("message", err.Error())
 			return
 		}
+		// 默认为Session
+		sId := ctx.GetCookie(server.SessionCookieName)
+		if sId != "" {
+			ctx.RemoveCookie(server.SessionCookieName)
+			ctx.Request().Header.Del("Cookie")
+		}
+		sess := server.SessionMgr.Start(ctx)
+		ctx.SetCookieKV(server.SessionCookieName, sess.ID())
+		sess.Set("profile", userProfile)
+
+		redirectURL := ""
+		if strings.HasPrefix(strings.ToLower(r.Proto), "https") {
+			redirectURL = "https://" + r.Host
+		} else if strings.HasPrefix(strings.ToLower(r.Proto), "http") {
+			redirectURL = "http://" + r.Host
+		}
+		ctx.Redirect(redirectURL, iris.StatusFound)
+		handler := v1Session.NewHandler()
+		go handler.SaveLoginLog(ctx, userProfile.Name)
+		//ctx.Values().Set("data", userProfile)
 	}
 }
 
@@ -183,6 +181,76 @@ func (h *Handler) StatusSso() iris.Handler {
 	}
 }
 
+func (h *Handler) Saml2Auth() iris.Handler {
+	return func(ctx *context.Context) {
+		session, err := saml2Config.Session.GetSession(ctx.Request())
+		if session != nil {
+			r := ctx.Request()
+			ctx.Request().WithContext(samlsp.ContextWithSession(ctx.Request().Context(), session))
+			language := ctx.GetHeader("Accept-Language")
+			if strings.Contains(language, "zh-CN") {
+				language = "zh-CN"
+			} else {
+				language = "en-US"
+			}
+
+			attributes := session.(samlsp.SessionWithAttributes).GetAttributes()
+			givenName := attributes.Get("givenName")
+			email := attributes.Get("email")
+			userProfile, err := h.ssoService.Saml2(givenName, email, language, common.DBOptions{})
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			// 默认为Session
+			sId := ctx.GetCookie(server.SessionCookieName)
+			if sId != "" {
+				ctx.RemoveCookie(server.SessionCookieName)
+				ctx.Request().Header.Del("Cookie")
+			}
+			sess := server.SessionMgr.Start(ctx)
+			ctx.SetCookieKV(server.SessionCookieName, sess.ID())
+			sess.Set("profile", userProfile)
+
+			redirectURL := ""
+			if strings.HasPrefix(strings.ToLower(r.Proto), "https") {
+				redirectURL = "https://" + r.Host
+			} else if strings.HasPrefix(strings.ToLower(r.Proto), "http") {
+				redirectURL = "http://" + r.Host
+			}
+			ctx.Redirect(redirectURL, iris.StatusFound)
+			handler := v1Session.NewHandler()
+			go handler.SaveLoginLog(ctx, userProfile.Name)
+			//ctx.Values().Set("data", userProfile)
+		}
+		if err == samlsp.ErrNoSession {
+			saml2Config.HandleStartAuthFlow(ctx.ResponseWriter(), ctx.Request())
+			return
+		}
+		saml2Config.OnError(ctx.ResponseWriter(), ctx.Request(), err)
+	}
+}
+
+func (h *Handler) Saml2Metadata() iris.Handler {
+	return func(ctx *context.Context) {
+		saml2Config.ServeMetadata(ctx.ResponseWriter(), ctx.Request())
+	}
+}
+
+func (h *Handler) Saml2Acs() iris.Handler {
+	return func(ctx *context.Context) {
+		saml2Config.ServeACS(ctx.ResponseWriter(), ctx.Request())
+	}
+}
+
+func (h *Handler) Saml2Slo() iris.Handler {
+	return func(ctx *context.Context) {
+		saml2Config.Session.DeleteSession(ctx.ResponseWriter(), ctx.Request())
+		ctx.Redirect("/", http.StatusFound)
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/sso")
@@ -190,7 +258,11 @@ func Install(parent iris.Party) {
 	sp.Post("/", handler.AddSso())
 	sp.Put("/", handler.UpdateSso())
 	sp.Get("/login", handler.LoginSso())
-	sp.Get("/callback", handler.CallbackSso())
+	sp.Get("/callback", handler.CallbackOpenID())
+	sp.Get("/callback_saml2", handler.Saml2Auth())
 	sp.Post("/test/connect", handler.TestConnect())
 	sp.Get("/status", handler.StatusSso())
+	sp.Get("/saml/metadata", handler.Saml2Metadata())
+	sp.Post("/saml/acs", handler.Saml2Acs())
+	sp.Get("/saml/slo", handler.Saml2Slo())
 }

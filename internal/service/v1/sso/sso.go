@@ -2,6 +2,9 @@ package sso
 
 import (
 	"context"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	v1Session "github.com/KubeOperator/kubepi/internal/api/v1/session"
@@ -17,20 +20,25 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/coreos/go-oidc"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
+	"net/http"
+	"net/url"
 	"time"
 )
 
 type Service interface {
 	common.DBService
 	TestConnect(sso *v1Sso.Sso) error
-	List(options common.DBOptions) ([]v1Sso.Sso, error)
+	List(options common.DBOptions) (*v1Sso.Sso, error)
 	Create(sso *v1Sso.Sso, options common.DBOptions) error
 	Update(id string, sso *v1Sso.Sso, options common.DBOptions) error
 	Status(options common.DBOptions) bool
 	OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Session.UserProfile, error)
 	OpenIDConfig(clientId, clientSecret, issuerURL, redirectURL string) (*v1Sso.OpenID, error)
+	Saml2Config(sso *v1Sso.Sso, baseUrl string) (*samlsp.Middleware, error)
+	Saml2(givenName, email, language string, options common.DBOptions) (v1Session.UserProfile, error)
 }
 
 func NewService() Service {
@@ -52,11 +60,20 @@ func (s *service) TestConnect(sso *v1Sso.Sso) error {
 	//	return errors.New("请先启用SSO")
 	//}
 
-	sc := ssoClient.NewSsoClient(sso.Protocol, sso.InterfaceAddress, sso.ClientId, sso.ClientSecret, sso.Enable)
-	if err := sc.TestConnect(sso.InterfaceAddress); err != nil {
-		return err
+	switch sso.Protocol {
+	case "openid":
+		sc := ssoClient.NewSsoClient(sso.Protocol, sso.InterfaceAddress, sso.ClientId, sso.ClientSecret, sso.Enable)
+		if err := sc.TestConnect(sso.InterfaceAddress); err != nil {
+			return err
+		}
+	case "saml2":
+		sc := ssoClient.NewSsoClient(sso.Protocol, sso.IdpMetadataURL, sso.ClientId, sso.ClientSecret, sso.Enable)
+		if err := sc.TestConnect(sso.IdpMetadataURL); err != nil {
+			return err
+		}
+	default:
+		return errors.New("目前只支持OpenID & SAML2 SSO认证~")
 	}
-
 	return nil
 }
 
@@ -98,13 +115,13 @@ func (s *service) Update(id string, sso *v1Sso.Sso, options common.DBOptions) er
 	return db.Update(sso)
 }
 
-func (s *service) List(options common.DBOptions) ([]v1Sso.Sso, error) {
+func (s *service) List(options common.DBOptions) (*v1Sso.Sso, error) {
 	db := s.GetDB(options)
 	sso := make([]v1Sso.Sso, 0)
 	if err := db.All(&sso); err != nil {
 		return nil, err
 	}
-	return sso, nil
+	return &sso[0], nil
 }
 
 func (s *service) Status(options common.DBOptions) bool {
@@ -261,4 +278,132 @@ func (s *service) localProfile(username, email string) (v1Session.UserProfile, e
 			Approved: false,
 		},
 	}, nil
+}
+
+func (s *service) Saml2Config(sso *v1Sso.Sso, baseUrl string) (*samlsp.Middleware, error) {
+	cert, key, err := s.strConverterCertKey(sso.X509Cert, sso.X509Key)
+	if err != nil {
+		return nil, err
+	}
+
+	idpMetadataURL, err := url.Parse(sso.IdpMetadataURL)
+	if err != nil {
+		return nil, err
+	}
+
+	idpMetadata, err := samlsp.FetchMetadata(context.Background(), http.DefaultClient, *idpMetadataURL)
+	if err != nil {
+		return nil, errors.New("获取SAML元数据出错: " + err.Error())
+	}
+
+	baseURL, err := url.Parse(baseUrl)
+	if err != nil {
+		return nil, errors.New("解析Base URL出错: " + err.Error())
+	}
+
+	samlSP, err := samlsp.New(samlsp.Options{
+		URL:         *baseURL,
+		Key:         key,
+		Certificate: cert,
+		IDPMetadata: idpMetadata,
+	})
+	return samlSP, err
+}
+
+func (s *service) Saml2(givenName, email, language string, options common.DBOptions) (v1Session.UserProfile, error) {
+	// 初始化用户
+	_, err := s.userService.GetByNameOrEmail(email, options)
+	if err != nil {
+		if errors.Is(err, storm.ErrNotFound) {
+			// 创建本地账号，密码默认设置为`@=7kvi-$l*Pj+,s`，默认不开启MFA
+			userProfile := &v1User.User{
+				BaseModel: v1.BaseModel{
+					ApiVersion: "v1",
+					Kind:       "User",
+				},
+				Metadata: v1.Metadata{
+					Name: givenName,
+				},
+				NickName: givenName,
+				Email:    email,
+				Language: language,
+				IsAdmin:  false,
+				Authenticate: v1User.Authenticate{
+					Password: `@=7kvi-$l*Pj+,s`,
+				},
+				Type: v1User.LOCAL,
+				Mfa: v1User.Mfa{
+					Enable: false,
+				},
+			}
+			tx, err := server.DB().Begin(true)
+			if err != nil {
+				return v1Session.UserProfile{}, err
+			}
+			if err = s.userService.Create(userProfile, common.DBOptions{DB: tx}); err != nil {
+				_ = tx.Rollback()
+				return v1Session.UserProfile{}, err
+			}
+
+			// 用户角色默认为ReadOnly
+			binding := v1Role.Binding{
+				BaseModel: v1.BaseModel{
+					Kind:       "RoleBind",
+					ApiVersion: "v1",
+					CreatedBy:  "admin",
+				},
+				Metadata: v1.Metadata{
+					Name: fmt.Sprintf("role-binding-%s-%s", "ReadOnly", givenName),
+				},
+				Subject: v1Role.Subject{
+					Kind: "User",
+					Name: givenName,
+				},
+				RoleRef: "ReadOnly",
+			}
+			if err = s.roleBindingService.CreateRoleBinding(&binding, common.DBOptions{DB: tx}); err != nil {
+				_ = tx.Rollback()
+				return v1Session.UserProfile{}, err
+			}
+			_ = tx.Commit()
+			fmt.Println("SSO用户" + givenName + "不存在，已自动创建本地账号")
+		} else {
+			return v1Session.UserProfile{}, errors.New(fmt.Sprintf("query user %s failed ,: %s", givenName, err.Error()))
+		}
+	}
+
+	// 设置profile
+	return s.localProfile(givenName, email)
+}
+
+func (s *service) strConverterCertKey(cert, key string) (*x509.Certificate, *rsa.PrivateKey, error) {
+	bc, _ := pem.Decode([]byte(cert))
+	c, err := x509.ParseCertificate(bc.Bytes)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	bk, _ := pem.Decode([]byte(key))
+	k := &rsa.PrivateKey{}
+	switch bk.Type {
+	case "RSA PRIVATE KEY":
+		k, err = x509.ParsePKCS1PrivateKey(bk.Bytes)
+		if err != nil {
+			return nil, nil, err
+		}
+	case "PRIVATE KEY":
+		keyInterface, err := x509.ParsePKCS8PrivateKey(bk.Bytes)
+		if err != nil {
+			return nil, nil, err
+		}
+		switch keyAny := keyInterface.(type) {
+		case *rsa.PrivateKey:
+			k = keyAny
+		default:
+			return nil, nil, errors.New("私钥格式不为 PKCS#8 RSA")
+		}
+	default:
+		return nil, nil, errors.New("私钥格式不为 PKCS#1 或 PKCS#8~")
+	}
+	return c, k, nil
 }

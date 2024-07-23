@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { ssoLogin } from "@/api/sso"
+import { ssoLogin,getSso } from "@/api/sso"
 export default {
   name: "Login",
   data () {
@@ -40,12 +40,13 @@ export default {
       redirect: undefined,
       systemName: this.$t("commons.sso.title"),
       loadingPage: false,
+      authType: "",
     }
   },
   computed: {
     countdownMessage() {
       if (this.countdown > 0) {
-        return `正在跳转OpenID认证，${this.countdown}...`;
+        return `正在跳转${this.authType}认证，${this.countdown}...`;
       } else {
         return '已完成跳转，准备进入...';
       }
@@ -61,14 +62,27 @@ export default {
     },
     cancel () {
       clearInterval(this.intervalId)
-      window.location.href = '/login'
+      window.location.href = '/kubepi/login'
     },
     confirm () {
       clearInterval(this.intervalId)
       window.location.href = '/kubepi'+ssoLogin()
     },
+    getAuthType() {
+      getSso().then((res) => {
+        if (res.data.protocol == "openid") {
+          this.authType = " OpenID "
+        } else {
+          this.authType = " SAML2 "
+        }
+      }).catch(error => {
+        console.error('Failed to fetch auth type:', error);
+        this.authType = 'OpenID';
+      });
+    },
   },
   mounted() {
+    this.getAuthType();
     this.intervalId = setInterval(() => {
       if (this.countdown > 0) {
         this.countdown -= 1;
