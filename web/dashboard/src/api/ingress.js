@@ -44,3 +44,6 @@ export function createIngress (cluster_name, namespace, data) {
 export function updateIngress (cluster_name, namespace, name, data) {
   return put(`${namespaceIngressUrl(cluster_name, namespace)}/${name}`, data)
 }
+export function listAllIngresses (cluster_name ){
+  return get(ingressUrl(cluster_name))
+}

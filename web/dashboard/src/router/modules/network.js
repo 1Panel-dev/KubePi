@@ -198,6 +198,20 @@ const Network = {
         activeMenu: "/ingresses"
       }
     },
+    {
+      path: "/ingresses/search",
+      requirePermission: {
+        apiGroup: "networking.k8s.io",
+        resource: "ingresses",
+        verb: "list",
+        scope:"namespace"
+      },
+      component: () => import("@/business/network/ingresses/ingress-search.vue"),
+      name: "IngressesSearch",
+      meta: {
+        title: "Ingresses Search",
+      }
+    },
 
     {
       path: "/networkpolicies",
