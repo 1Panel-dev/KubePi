@@ -55,9 +55,12 @@
       <el-row>
         <br>
         <el-col :span="24">
-          <el-tabs type="border-card">
+          <el-tabs type="border-card" >
             <el-tab-pane :label="$t('business.network.rule')"  v-if="Object.keys(item.spec).length!==0">
               <ko-resource-rule :data="item.spec.rules"></ko-resource-rule>
+            </el-tab-pane>
+            <el-tab-pane :label="$t('business.network.relationship_chart')"  v-if="Object.keys(item.spec).length!==0">
+              <KoIngressRelationshipChart :namespace="namespace" :cluster="cluster" :ingressObject="yaml" ></KoIngressRelationshipChart>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -82,9 +85,11 @@ import {getSecret} from "@/api/secrets"
 import * as x509 from "@peculiar/x509";
 import { datetimeFormat } from "fit2cloud-ui/src/filters/time"
 
+import KoIngressRelationshipChart from "@/components/ko-network/ingress-relationship-chart.vue"
+
 export default {
   name: "IngressDetail",
-  components: { KoDetailBasic, KoResourceRule, LayoutContent, YamlEditor },
+  components: { KoDetailBasic, KoResourceRule, LayoutContent, YamlEditor,KoIngressRelationshipChart },
   props: {
     name: String,
     namespace: String

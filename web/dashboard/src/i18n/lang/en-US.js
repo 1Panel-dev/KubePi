@@ -532,6 +532,7 @@ actions:{
       non_resource_url: "Non Resource URL",
       api_group: "API Group",
       node_port: "Node Port",
+      relationship_chart: "Relationship Chart",
     },
     storage: {
       provisioner: "Provisioner",
