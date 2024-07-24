@@ -34,6 +34,11 @@
         data() {
             return {}
         },
+        methods: {
+          openApi(){
+            window.open("https://www.fit2cloud.com/", "_blank");
+          }
+        },
         computed: {
             ...mapGetters([
                 "permission_routes",
