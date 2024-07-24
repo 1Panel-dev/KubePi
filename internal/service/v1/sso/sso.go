@@ -121,6 +121,9 @@ func (s *service) List(options common.DBOptions) (*v1Sso.Sso, error) {
 	if err := db.All(&sso); err != nil {
 		return nil, err
 	}
+	if len(sso) == 0 {
+		return nil, errors.New("no such sso in db")
+	}
 	return &sso[0], nil
 }
 
@@ -223,7 +226,7 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 			_ = tx.Commit()
 			fmt.Println("SSO用户" + claims.PreferredUsername + "不存在，已自动创建本地账号")
 		} else {
-			return v1Session.UserProfile{}, errors.New(fmt.Sprintf("query user %s failed ,: %s", claims.PreferredUsername, err.Error()))
+			return v1Session.UserProfile{}, fmt.Errorf("query user %s failed ,: %s", claims.PreferredUsername, err.Error())
 		}
 	}
 

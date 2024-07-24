@@ -6,6 +6,7 @@ require (
 	github.com/asdine/storm/v3 v3.2.1
 	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/coreos/go-oidc v2.2.1+incompatible
+	github.com/crewjam/saml v0.4.14
 	github.com/docker/distribution v2.8.2+incompatible
 	github.com/go-ldap/ldap/v3 v3.4.1
 	github.com/gofrs/flock v0.8.1
@@ -62,7 +63,6 @@ require (
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e // indirect
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/crewjam/httperr v0.2.0 // indirect
-	github.com/crewjam/saml v0.4.14 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/cli v24.0.6+incompatible // indirect
