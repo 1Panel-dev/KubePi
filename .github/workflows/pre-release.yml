@@ -1,12 +1,12 @@
-name: release
+name: pre-release
 
 on:
-  push:
-    tags:
-      - v*
-
-env:
-  DOCKERHUB_REPO: 1panel/kubepi
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'KubePi Version'
+        default: 'v1.8.0-rc1'
+        required: true
 
 jobs:
   docker:
@@ -34,5 +34,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:latest
-            ${{ env.DOCKERHUB_REPO }}:${{ steps.get_version.outputs.VERSION }}
+            1panel/kubepi:${{ github.event.inputs.version }}
