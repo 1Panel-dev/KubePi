@@ -51,7 +51,7 @@ export default {
           window.open("https://github.com/1Panel-dev/KubePi/wiki", "_blank")
           break
         case "dev":
-          window.open("https://www.fit2cloud.com/", "_blank");
+          window.open("/kubepi/swagger/index.html", "_blank");
           break
         default:
           this.aboutDialogVisible = true
