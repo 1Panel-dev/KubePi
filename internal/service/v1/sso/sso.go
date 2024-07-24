@@ -121,9 +121,12 @@ func (s *service) List(options common.DBOptions) (*v1Sso.Sso, error) {
 	if err := db.All(&sso); err != nil {
 		return nil, err
 	}
+
 	if len(sso) == 0 {
-		return nil, errors.New("no such sso in db")
+		var ssoNoData v1Sso.Sso
+		return &ssoNoData, nil
 	}
+
 	return &sso[0], nil
 }
 
