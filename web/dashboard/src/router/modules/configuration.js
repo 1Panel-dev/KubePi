@@ -400,7 +400,7 @@ const Configuration = {
       component: () => import("@/business/configuration/apiservices"),
       name: "Apiservices",
       meta: {
-        title: "Apiservices",
+        title: "APIServices",
       }
     },
     {

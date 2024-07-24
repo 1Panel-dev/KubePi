@@ -7,7 +7,7 @@
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item command="docs">{{ $t('commons.help.ko_docs') }}</el-dropdown-item>
-<!--      <el-dropdown-item command="api">API</el-dropdown-item>-->
+      <el-dropdown-item command="dev">{{ $t('commons.help.dev_doc') }}</el-dropdown-item>
       <el-dropdown-item class="iconfont iconguanyu" command="about">{{$t("commons.help.about")}}</el-dropdown-item>
     </el-dropdown-menu>
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="50%">
@@ -19,18 +19,15 @@
       </div>
       <div style="padding:15px 20px;box-shadow:rgb(69 70 70) 0 -14px 24px -12px;">
         <el-row style="color: #ffffff;text-align: center">
-          <el-col :span="6">
+          <el-col :span="8">
             <el-link @click="toGithub" class="iconfont iconhuaban88"><span>{{
                 $t("commons.personal.project_url")
               }}</span></el-link>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-link @click="toIssue" class="iconfont iconbug">{{ $t("commons.personal.issue") }}</el-link>
           </el-col>
-          <el-col :span="6">
-            <el-link @click="toTalk" class="iconfont icontaolun">{{ $t("commons.personal.talk") }}</el-link>
-          </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-link @click="toGithubStar" class="iconfont iconStarStar">{{ $t("commons.personal.star") }}</el-link>
           </el-col>
         </el-row>
@@ -53,8 +50,8 @@ export default {
         case "docs":
           window.open("https://github.com/1Panel-dev/KubePi/wiki", "_blank")
           break
-        case "api":
-          window.open("/kubepi/swagger/index.html", "_blank");
+        case "dev":
+          window.open("https://www.fit2cloud.com/", "_blank");
           break
         default:
           this.aboutDialogVisible = true
@@ -65,9 +62,6 @@ export default {
       window.open("https://github.com/1Panel-dev/KubePi", "_blank")
     },
     toIssue() {
-      window.open("https://github.com/1Panel-dev/KubePi/issues", "_blank")
-    },
-    toTalk() {
       window.open("https://github.com/1Panel-dev/KubePi/issues", "_blank")
     },
     toGithubStar() {

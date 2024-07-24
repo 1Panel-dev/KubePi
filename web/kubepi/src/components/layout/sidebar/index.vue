@@ -16,9 +16,9 @@
                       :base-path="route.path"/>
       </el-menu>
     </el-scrollbar>
-    <div style="float:left;margin-left: 50px">
-      <el-link type="info" @click="openApi"> <span style="font-size: 16px"> KubePi API V1.0</span></el-link>
-    </div>
+    <el-row style="text-align: center">
+      <el-button style="font-size:14px; margin-top: -10px" type="text" @click="openApi">{{ $t('commons.personal.copy_right') }}</el-button>
+    </el-row>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     openApi(){
-      window.open("/kubepi/swagger/index.html", "_blank");
+      window.open("https://www.fit2cloud.com/", "_blank");
     }
   },
   computed: {
