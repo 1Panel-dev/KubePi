@@ -7,6 +7,7 @@
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item command="docs">{{ $t('commons.help.ko_docs') }}</el-dropdown-item>
+      <el-dropdown-item command="dev">{{ $t('commons.help.dev_doc') }}</el-dropdown-item>
       <el-dropdown-item class="iconfont iconguanyu" command="about">{{$t("commons.help.about")}}</el-dropdown-item>
     </el-dropdown-menu>
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="50%">
@@ -51,6 +52,9 @@ export default {
       switch (command) {
         case "docs":
           window.open("https://github.com/1Panel-dev/KubePi/wiki", "_blank")
+          break
+        case "dev":
+          window.open("/kubepi/swagger/index.html", "_blank");
           break
         default:
           this.aboutDialogVisible = true

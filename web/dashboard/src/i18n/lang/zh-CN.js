@@ -25,6 +25,7 @@ const message = {
       help: "帮助",
       about: "关于",
       ko_docs: "官方文档",
+      dev_doc: "开发文档",
     },
     button: {
       click_to_edit: "编辑信息",

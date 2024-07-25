@@ -24,6 +24,7 @@ const message = {
       help: "Help",
       about: "About",
       ko_docs: "Official Document",
+      dev_doc: "Development Document",
     },
     button: {
       click_to_edit: "Click to edit",
