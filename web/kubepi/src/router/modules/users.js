@@ -112,7 +112,7 @@ const UserManagement = {
     },
     {
       path: "sso",
-      component: () => import("@/business/sso"),
+      component: () => import("@/business/user-management/sso"),
       name: "SSO",
       requirePermission: {
         resource: "sso",
