@@ -262,7 +262,9 @@ export default {
     openFolderCreate () {
       this.openAddFolder = true
       this.folderForm = {}
-      this.$refs["folderForm"].resetFields()
+      this.$nextTick(() => {
+        this.$refs["folderForm"].resetFields()
+      })
     },
     openFileCreate () {
       this.openAddFile = true
@@ -270,10 +272,13 @@ export default {
     },
     openRename (name) {
       this.openRenamePage = true
-      this.renameForm = {
-        oldName: name
-      }
-      this.$refs["renameForm"].resetFields()
+      
+      this.$nextTick(() => {
+         this.$refs["renameForm"].resetFields()
+         this.renameForm = {
+           oldName: name
+         }
+      })
     },
     openUploadPage (dir) {
       this.files = []
@@ -384,7 +389,8 @@ export default {
           this.editFile = true
           this.fileForm.name = row.name
           this.fileForm.content = res.data
-        }).finally(() => {
+        }).catch(error => this.$message.error(error.message))
+        .finally(() => {
           this.loading = false
         })
       } else {
