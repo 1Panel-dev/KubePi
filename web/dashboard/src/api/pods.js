@@ -75,11 +75,11 @@ export function delFolder(data) {
 }
 
 export function createFile(data) {
-  return postFile(podFileUrl+"/files/create",data)
+  return post(podFileUrl+"/files/create",data)
 }
 
 export function updateFile(data) {
-  return postFile(podFileUrl+"/files/update",data)
+  return post(podFileUrl+"/files/update",data)
 }
 
 export function openFile(data) {
