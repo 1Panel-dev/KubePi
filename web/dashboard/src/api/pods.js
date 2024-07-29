@@ -83,7 +83,7 @@ export function updateFile(data) {
 }
 
 export function openFile(data) {
-  return postFile(podFileUrl+"/files/open",data)
+  return post(podFileUrl+"/files/open",data)
 }
 
 export function uploadFile(data,params) {
