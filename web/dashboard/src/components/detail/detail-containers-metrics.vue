@@ -288,8 +288,16 @@ export default {
       const echarts = require('echarts');
       if(this .myChart==null)
       this .myChart = echarts.init(document.getElementById(this.chartId));
-      
-
+      //取不到指标
+      if(!res|| res.length<2){
+        return
+      }
+      if(! res[0].data.result[0] || !res[0].data.result[0].values){
+        return
+      }
+      if(! res[1].data.result[0] || !res[1].data.result[0].values){
+        return
+      }
       // 设置图表的配置项
       let option = {
            tooltip: {
