@@ -87,7 +87,7 @@
               </tr>
               <tr>
                 <td>{{ this.$t("commons.table.name") }}</td>
-                <td colspan="3">{{ item.spec.claimRef.name }}</td>
+                <td colspan="3"><span class="span-link" @click="openChaimDetail(item.spec.claimRef.name,item.spec.claimRef.namespace)" >{{ item.spec.claimRef.name }}</span></td>
               </tr>
               <tr>
                 <td>{{ this.$t("business.namespace.namespace") }}</td>
@@ -184,6 +184,13 @@ export default {
       const { Base64 } = require("js-base64")
       return Base64.decode(value)
     },
+    openChaimDetail(name,namespace){
+      this.$router.push({
+        name: "PersistentVolumeClaimDetail",
+        params: { name: name ,namespace: namespace },
+        query: { yamlShow: false },
+      })
+    }
   },
   watch: {
     yamlShow: function (newValue) {

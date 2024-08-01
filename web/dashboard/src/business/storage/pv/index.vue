@@ -58,6 +58,11 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
+      <el-table-column label="Claim"  fix>
+        <template v-slot:default="{row}" >
+          <span class="span-link" @click="openChaimDetail(row)" v-if="row.spec.claimRef">{{ row.spec.claimRef.name }}</span>
+        </template>
+      </el-table-column>
       <ko-table-operations :buttons="buttons" :label="$t('commons.table.action')"></ko-table-operations>
     </complex-table>
   </layout-content>
@@ -198,6 +203,13 @@ export default {
         query: { yamlShow: false },
       })
     },
+    openChaimDetail(row){
+      this.$router.push({
+        name: "PersistentVolumeClaimDetail",
+        params: { name: row.spec.claimRef.name ,namespace: row.spec.claimRef.namespace },
+        query: { yamlShow: false },
+      })
+    }
   },
   created () {
     this.cluster = this.$route.query.cluster

@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.form.detail')" :back-to="{name: 'PersistentVolumeClaim'}" v-loading="loading">
+  <layout-content :header="$t('commons.form.detail')" :back-to="{ name: 'PersistentVolumeClaim' }" v-loading="loading">
     <div class="grid-content bg-purple-light">
       <div v-if="!yamlShow">
         <el-form label-position="top" :model="form">
@@ -11,11 +11,11 @@
             </el-col>
           </el-row>
           <el-tabs style="margin-top: 20px" v-model="activeName" tab-position="top" type="border-card"
-                   @tab-click="handleClick">
+            @tab-click="handleClick">
             <el-tab-pane lazy :label="$t('commons.table.resourceInformation')">
               <complex-table :data="[form.status]">
                 <el-table-column :label="$t('commons.table.status')" min-width="30">
-                  <template v-slot:default="{row}">
+                  <template v-slot:default="{ row }">
                     <el-button v-if="row.phase && row.phase === 'Bound'" type="success" size="mini" plain round>
                       {{ row.phase }}
                     </el-button>
@@ -27,13 +27,27 @@
                     </el-button>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('business.storage.capacity')" min-width="30"
-                                 prop="capacity.storage"/>
+                <el-table-column :label="$t('business.storage.capacity')" min-width="30" prop="capacity.storage" />
                 <el-table-column :label="$t('business.storage.accessModes')" min-width="30">
-                  <template v-slot:default="{row}">
-                    <div v-for="(name,index) in row.accessModes " :key="index" style="display:inline-block">
+                  <template v-slot:default="{ row }">
+                    <div v-for="(name, index) in row.accessModes " :key="index" style="display:inline-block">
                       <el-tag>{{ name }}</el-tag>
                     </div>
+                  </template>
+                </el-table-column>
+              </complex-table>
+            </el-tab-pane>
+            <el-tab-pane  label="pods" v-if="pods &&  pods.length>0">
+              <complex-table :data="pods">
+                <el-table-column label="namespace" min-width="30" >
+                  <template v-slot:default="{ row }">
+                    {{ row.metadata.namespace }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="name" min-width="30">
+                  <template v-slot:default="{ row }">
+                    <span class="span-link" @click="openPodDetail(row)">{{ row.metadata.name }}</span>
+      
                   </template>
                 </el-table-column>
               </complex-table>
@@ -44,7 +58,7 @@
       <div v-if="yamlShow">
         <yaml-editor :value="yaml" ref="yaml_editor" :read-only="true"></yaml-editor>
         <div class="bottom-button">
-          <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
+          <el-button @click="yamlShow = !yamlShow">{{ $t("commons.button.back_detail") }}</el-button>
         </div>
       </div>
     </div>
@@ -54,13 +68,14 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
-import {getPvc} from "@/api/pvc"
+import { getPvc } from "@/api/pvc"
+import { listPodsWithNsSelector } from "@/api/pods"
 import KoDetailBasic from "@/components/detail/detail-basic";
 import ComplexTable from "@/components/complex-table"
 
 export default {
   name: "PersistentVolumeClaimDetail",
-  components: {KoDetailBasic, ComplexTable, YamlEditor, LayoutContent},
+  components: { KoDetailBasic, ComplexTable, YamlEditor, LayoutContent },
   props: {
     name: String,
     namespace: String
@@ -102,7 +117,9 @@ export default {
       persistentVolumeList: [],
       currentStorageCapacity: 1,
       storageClasses: [],
-      currentVolumeClaimSource: "sc"
+      currentVolumeClaimSource: "sc",
+      //关联pod列表
+      pods: []
     }
   },
   methods: {
@@ -110,7 +127,7 @@ export default {
       this.activeName = tab.index
     },
     onCancel() {
-      this.$router.push({name: "PersistentVolumes"})
+      this.$router.push({ name: "PersistentVolumes" })
     },
     onEditYaml() {
       this.yamlShow = true
@@ -130,6 +147,25 @@ export default {
         this.form = res
         this.yaml = JSON.parse(JSON.stringify(this.form))
         this.currentStorageCapacity = parseInt(this.form.spec.resources.requests.storage)
+        let claimName =this.name
+        let me =this
+        listPodsWithNsSelector(this.cluster, this.namespace).then(podsRes => {
+          
+          me.pods = podsRes.items.filter((pod) => {
+            
+            return (
+              pod.spec.volumes && pod.spec.volumes.filter((volume) => {
+                if (
+                  volume.persistentVolumeClaim &&
+                  volume.persistentVolumeClaim.claimName == claimName
+                ) {
+                  return true;
+                }
+                return false;
+              }).length > 0
+            );
+          });
+        })
       }).finally(() => {
         this.loading = false
       })
@@ -144,14 +180,21 @@ export default {
     },
     setStorageCapacity() {
       this.form.spec.resources.requests.storage = this.currentStorageCapacity.toString() + 'Gi'
-    }
+    },
+    openPodDetail (pod) {
+      this.$router.push({
+        name: "PodDetail",
+        params: { namespace: pod.metadata.namespace, name: pod.metadata.name },
+        query: { yamlShow: false }
+      })
+    },
   },
   watch: {
     yamlShow: function (newValue) {
       this.$router.push({
         name: "PersistentVolumeClaimDetail",
-        params: {name: this.name, namespace: this.namespace},
-        query: {yamlShow: newValue}
+        params: { name: this.name, namespace: this.namespace },
+        query: { yamlShow: newValue }
       })
     },
   },
