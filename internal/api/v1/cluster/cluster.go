@@ -623,6 +623,8 @@ func Install(parent iris.Party) {
 	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
 	sp.Get("/:name/namespaces", handler.ListNamespace())
 	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
+	//node shell
+	sp.Get("/:name/node_terminal/session", handler.NodeTerminalSessionHandler())
 	sp.Get("/:name/logging/session", handler.LoggingHandler())
 	sp.Get("/:name/repos", handler.ListClusterRepos())
 	sp.Get("/:name/repos/detail", handler.ListClusterReposDetail())
