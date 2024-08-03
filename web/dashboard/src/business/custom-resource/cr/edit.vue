@@ -1,7 +1,7 @@
 <template>
-  <layout-content :header="$t('commons.button.edit')" :back-to="{name: 'CustomResourceDefinitions'}" v-loading="loading">
+  <layout-content :header="editable=='1'?$t('commons.button.edit'):$t('commons.button.view_yaml')" :back-to="{name: 'CustomResourceDefinitions'}" v-loading="loading">
     <yaml-editor :value="yaml" :is-edit="true" ref="yaml_editor"></yaml-editor>
-    <div class="bottom-button">
+    <div class="bottom-button" v-if="editable=='1'">
       <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
       <el-button v-loading="loading" @click="onSubmit" type="primary">
         {{ $t("commons.button.submit") }}
@@ -22,7 +22,8 @@ export default {
     name: String,
     names: String,
     version: String,
-    group: String
+    group: String,
+    editable: String
   },
   data () {
     return {

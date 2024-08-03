@@ -151,7 +151,7 @@ const Clusters = {
             },
         },
         {
-          path: "/resource/:group/:names/:version/:name/edit",
+          path: "/resource/:group/:names/:version/:name/edit/:editable",
           component: () => import("@/business/custom-resource/cr/edit"),
           hidden: true,
           props: true,
