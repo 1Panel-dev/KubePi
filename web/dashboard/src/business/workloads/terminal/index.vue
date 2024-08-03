@@ -3,8 +3,8 @@
     <el-row>
       <div class="terminalOption" v-if="terminal.type ==='terminal'">
         <el-radio-group size="mini" @change="changeConditions()" v-model="shell">
-          <el-radio-button label="bash"></el-radio-button>
           <el-radio-button label="sh"></el-radio-button>
+          <el-radio-button label="bash"></el-radio-button>
         </el-radio-group>
       </div>
       <div class="terminalOption">
@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       height: "",
-      shell: "bash",
+      shell: "sh",
       isRefresh: false,
       follow: true,
       /*是否查看上次失败日志*/
