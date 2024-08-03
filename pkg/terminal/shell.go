@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -244,8 +245,8 @@ func startProcess(k8sClient kubernetes.Interface, cfg *rest.Config, cmd []string
 	if err != nil {
 		return err
 	}
-
-	err = exec.Stream(remotecommand.StreamOptions{
+	ctx :=context.Background()
+	err = exec.StreamWithContext(ctx,remotecommand.StreamOptions{
 		Stdin:             ptyHandler,
 		Stdout:            ptyHandler,
 		Stderr:            ptyHandler,
