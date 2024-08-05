@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -18,6 +19,8 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
+	"k8s.io/utils/ptr"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const END_OF_TRANSMISSION = "\u0004"
@@ -244,8 +247,8 @@ func startProcess(k8sClient kubernetes.Interface, cfg *rest.Config, cmd []string
 	if err != nil {
 		return err
 	}
-
-	err = exec.Stream(remotecommand.StreamOptions{
+	ctx :=context.Background()
+	err = exec.StreamWithContext(ctx,remotecommand.StreamOptions{
 		Stdin:             ptyHandler,
 		Stdout:            ptyHandler,
 		Stderr:            ptyHandler,
@@ -310,4 +313,140 @@ func WaitForTerminal(k8sClient kubernetes.Interface, cfg *rest.Config, namespace
 
 		TerminalSessions.Close(sessionId, 1, "Process exited")
 	}
+}
+
+//node shell
+func WaitForNodeShellTerminal(k8sClient kubernetes.Interface, cfg *rest.Config,nodeName string, sessionId string) {
+	select {
+	case <-TerminalSessions.Get(sessionId).Bound:
+		close(TerminalSessions.Get(sessionId).Bound)
+
+		err := startNodeShellProcess(k8sClient, cfg, nodeName, TerminalSessions.Get(sessionId))
+		
+
+		if err != nil {
+			TerminalSessions.Close(sessionId, 2, err.Error())
+			return
+		}
+
+		TerminalSessions.Close(sessionId, 1, "Process exited")
+	}
+}
+func startNodeShellProcess(k8sClient kubernetes.Interface, cfg *rest.Config, nodeName string, ptyHandler PtyHandler) error {
+
+	/*创建特权容器*/
+	containerName := "node-shell"
+	podName :="node-"+nodeName+"-shell"
+	namespace :="default"
+	image := "alpine:latest"
+	ctx :=context.Background()
+
+	getpod ,err :=k8sClient.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{
+	    FieldSelector :"metadata.name="+podName+",metadata.namespace="+namespace,
+	})
+	if err != nil {
+	    return err
+	}
+	//没有pod则创建
+	if len(getpod.Items) == 0 {
+	    container := &v1.Container{
+			Name:            containerName,
+			Image:           image,
+			ImagePullPolicy: v1.PullIfNotPresent,
+			Stdin:           true,
+			StdinOnce:       true,
+			TTY:             true,
+			Command:         []string{"/bin/sh"},
+			SecurityContext: &v1.SecurityContext{
+				Privileged : ptr.To(true),
+			},
+			//挂载hostPath到容器中
+			VolumeMounts: []v1.VolumeMount{
+			    {
+					Name:      "host-root",
+					MountPath: "/host",
+				},
+			},
+		}
+	
+	
+		pod := &v1.Pod{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: podName,
+				Namespace: namespace,
+			},
+			Spec: v1.PodSpec{
+				Containers: []v1.Container{*container},
+				NodeName: nodeName,
+				RestartPolicy: v1.RestartPolicyNever,
+				HostNetwork: true,
+				HostPID: true,
+				Tolerations: []v1.Toleration{
+				  
+					{
+							Key: "CriticalAddonsOnly",
+							Operator: v1.TolerationOpExists,
+					},
+					{
+							Key: "NoExecute",
+							Operator: v1.TolerationOpExists,
+					},
+				},
+				//挂载hostPath到容器中
+				Volumes: []v1.Volume{
+				    v1.Volume{
+						Name: "host-root",
+						VolumeSource: v1.VolumeSource{
+								HostPath: &v1.HostPathVolumeSource{
+									Path: "/",
+								},
+						},
+					},
+				},
+			},
+		}
+		_, err = k8sClient.CoreV1().Pods(namespace).Create(context.TODO(), pod, metav1.CreateOptions{
+		});
+		if err != nil {
+			return err
+		}
+		//等待pod创建完成
+		time.Sleep(5 * time.Second)
+	}
+
+	
+
+	cmd :=[]string{"sh"}
+	req := k8sClient.CoreV1().RESTClient().Post().
+		Resource("pods").
+		Name(podName).
+		Namespace(namespace).
+		SubResource("exec")
+
+	req.VersionedParams(&v1.PodExecOptions{
+		Container: containerName,
+		Command:   cmd,
+		Stdin:     true,
+		Stdout:    true,
+		Stderr:    true,
+		TTY:       true,
+	}, scheme.ParameterCodec)
+
+	exec, err := remotecommand.NewSPDYExecutor(cfg, "POST", req.URL())
+	if err != nil {
+		return err
+	}
+	
+	err = exec.StreamWithContext(ctx,remotecommand.StreamOptions{
+		Stdin:             ptyHandler,
+		Stdout:            ptyHandler,
+		Stderr:            ptyHandler,
+		TerminalSizeQueue: ptyHandler,
+		Tty:               true,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -147,6 +147,26 @@ export default {
             this.$router.push({ path: "/nodes/detail/" + row.metadata.name, query: { yamlShow: "true" } })
           }
         },
+        {
+          label: "Shell",
+          icon: "iconfont iconline-terminalzhongduan",
+          disabled: () => {
+            return !checkPermissions({
+              scope:'namespace',
+              apiGroup: "",
+              resource: "pods/exec",
+              verb: "create"
+            })
+          },
+          click: (row) => {
+            let routeUrl = this.$router.resolve({ path: "/node_terminal" , query: {
+               cluster: this.clusterName,
+               namespace: row.metadata.namespace,
+               nodeName: row.metadata.name,
+            } })
+            window.open(routeUrl.href, "_blank")
+          }
+        },
       ]
     }
   },

@@ -21,4 +21,11 @@ export class TerminalService {
     }()
     return this.http.get<any>(url)
   }
+  createNodeShellTerminalSession(clusterName: string, nodeName: string): Observable<any> {
+    const url = function () {
+      let baseUrl = `/kubepi/api/v1/clusters/${clusterName}/node_terminal/session?nodeName=${nodeName}`
+      return baseUrl
+    }()
+    return this.http.get<any>(url)
+  }
 }

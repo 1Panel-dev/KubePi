@@ -1,10 +1,10 @@
 <template>
   <layout-content header="Custom Resource">
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading"
-                   :pagination-config="paginationConfig" :search-config="searchConfig">
+      :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
-        <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                   v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
+        <el-button type="primary" size="small" :disabled="selects.length === 0" @click="onDelete()"
+          v-has-permissions="{ scope: 'namespace', apiGroup: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'delete' }">
           {{ $t("commons.button.delete") }}
         </el-button>
       </template>
@@ -15,14 +15,20 @@
       <el-table-column label="Kind" show-overflow-tooltip prop="kind">
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip prop="metadata.name">
+        <template v-slot:default="{ row }">
+          <el-link @click="openEditPage(row, '0')" class="iconfont iconhuaban88"><span>
+              {{ row.metadata.name }}
+            </span></el-link>
+
+        </template>
       </el-table-column>
       <el-table-column v-if="show" :label="$t('business.namespace.namespace')" prop="metadata.namespace">
-        <template v-slot:default="{row}">
+        <template v-slot:default="{ row }">
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
-        <template v-slot:default="{row}">
+        <template v-slot:default="{ row }">
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
@@ -34,13 +40,13 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {downloadYaml} from "@/utils/actions"
+import { downloadYaml } from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {
   deleteResource, getResource,
   listResourceByGroup
 } from "@/api/customresourcedefinitions"
-import {checkPermissions} from "@/utils/permission"
+import { checkPermissions } from "@/utils/permission"
 
 export default {
   name: "CRList",
@@ -54,7 +60,7 @@ export default {
       default: "Cluster"
     }
   },
-  data () {
+  data() {
     return {
       data: [],
       selects: [],
@@ -66,19 +72,7 @@ export default {
           label: this.$t("commons.button.edit_yaml"),
           icon: "el-icon-edit",
           click: (row) => {
-            this.$router.push({
-              name: "CustomResourceEdit",
-              params: {
-                name: row.metadata.name,
-                cluster: this.cluster,
-                version: this.version,
-                group: this.group,
-                names: this.names,
-              },
-              query: {
-                namespace: row.metadata.namespace
-              }
-            })
+            this.openEditPage(row, '1')
           },
           disabled: () => {
             return !checkPermissions({
@@ -87,6 +81,13 @@ export default {
               resource: "customresourcedefinitions",
               verb: "update"
             })
+          }
+        },
+        {
+          label: this.$t("commons.button.view_yaml"),
+          icon: "el-icon-view",
+          click: (row) => {
+            this.openEditPage(row, '0')
           }
         },
         {
@@ -123,7 +124,7 @@ export default {
     }
   },
   methods: {
-    search (resetPage) {
+    search(resetPage) {
       this.loading = true
       if (resetPage) {
         this.paginationConfig.currentPage = 1
@@ -134,14 +135,14 @@ export default {
         this.paginationConfig.total = res.total
       })
     },
-    onDelete (row) {
+    onDelete(row) {
       this.$confirm(
         this.$t("commons.confirm_message.delete"),
         this.$t("commons.message_box.prompt"), {
-          confirmButtonText: this.$t("commons.button.confirm"),
-          cancelButtonText: this.$t("commons.button.cancel"),
-          type: "warning",
-        }).then(() => {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
         this.ps = []
         if (row) {
           this.ps.push(deleteResource(this.cluster, this.version, this.group, this.names, row.metadata.namespace.row.metadata.name))
@@ -167,8 +168,24 @@ export default {
         }
       })
     },
+    openEditPage(row, editable) {
+      this.$router.push({
+        name: "CustomResourceEdit",
+        params: {
+          name: row.metadata.name,
+          cluster: this.cluster,
+          version: this.version,
+          group: this.group,
+          names: this.names,
+          editable: editable
+        },
+        query: {
+          namespace: row.metadata.namespace
+        }
+      })
+    }
   },
-  created () {
+  created() {
     this.cluster = this.$route.query.cluster
     this.show = this.scope === "Namespaced"
     this.search()
@@ -176,6 +193,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
