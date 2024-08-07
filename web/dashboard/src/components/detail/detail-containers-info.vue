@@ -5,6 +5,12 @@
       <el-row :gutter="20" style="margin-top: 20px" class="row-box">
         <el-col :span="8">
           <el-card class="el-card" :title="$t('business.pod.image')">
+            <el-form-item label="State" v-if="containerStatusStates[container.name]!=''">
+              <span><pre>{{containerStatusStates[container.name]}}</pre></span>
+            </el-form-item>
+            <el-form-item label="LastState" v-if="containerStatusLastStates[container.name]!=''">
+              <span></span><pre>{{containerStatusLastStates[container.name]}}</pre></span>
+            </el-form-item>
             <el-form-item :label="$t('business.workload.pull_policy')">
               <span>{{container.imagePullPolicy}}</span>
             </el-form-item>
@@ -209,6 +215,14 @@ export default {
             }
             this.loading = false
           }
+          this.containerStatuses={}
+         
+          for(let i=0,s=newYamlInfo.status.containerStatuses.length;i<s;i++){
+            const item=newYamlInfo.status.containerStatuses[i]
+            this.containerStatuses[item.name] = item
+            this.containerStatusStates[item.name] =this.getContainerStatusState(item.name)
+            this.containerStatusLastStates[item.name] =this.getContainerStatusLastState(item.name)
+          }
         }
       },
       immediate: true,
@@ -262,8 +276,43 @@ export default {
         image: "",
         resources: {},
       },
+      containerStatuses:{},
+      containerStatusStates:{},
+      containerStatusLastStates:{}
     }
   },
+  methods:{
+     getContainerStatusState(container_name){
+       
+       const status= this.containerStatuses[container_name]
+
+       let state ="\n"
+       if(status.state){
+        for(let key in status.state) {
+          state = state +key +"\n" 
+          for(let attr in  status.state[key]){
+            state = state +attr+":"+status.state[key][attr] +"\n" 
+          }
+        }
+       }
+       return state
+     },
+     getContainerStatusLastState(container_name){
+       
+       const status= this.containerStatuses[container_name]
+
+       let state ="\n"
+       if(status.lastState){
+        for(let key in status.lastState) {
+          state = state +key +"\n" 
+          for(let attr in  status.lastState[key]){
+            state = state +attr+":"+status.lastState[key][attr] +"\n" 
+          }
+        }
+       }
+       return state
+     }
+  }
 }
 </script>
 
