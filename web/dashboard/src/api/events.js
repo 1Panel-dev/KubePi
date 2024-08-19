@@ -6,6 +6,9 @@ const eventUrl = (cluster_name) => {
 const eventUrlWithNs = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/events`
 }
+const eventUrlWithNsAndName = (cluster_name, namespace,name) => {
+  return `/api/v1/proxy/${cluster_name}/k8s/api/v1/namespaces/${namespace}/events/${name}`
+}
 
 
 export function listEvents (cluster_name, search, keywords, pageNum, pageSize) {
@@ -40,5 +43,11 @@ export function listEventsWithPodSelector (cluster_name, namespace, fieldSelecto
   if (fieldSelector && fieldSelector !== "") {
     param.fieldSelector = fieldSelector
   }
+  return get(url, param)
+}
+
+export function getEventsWithNs (cluster_name, namespace, name) {
+  let url = eventUrlWithNsAndName(cluster_name, namespace,name)
+  const param = {}
   return get(url, param)
 }
