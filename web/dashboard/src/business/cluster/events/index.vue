@@ -6,7 +6,7 @@
       </template>
       <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
         <template v-slot:default="{row}">
-          {{ row.reason }}
+          <span class="span-link" @click="openDetail(row)">{{ row.reason }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.event.type')" prop="type" fix max-width="50px">
@@ -85,6 +85,13 @@ export default {
         this.loading = false
         this.data = res.items
         this.paginationConfig.total = res.total
+      })
+    },
+    openDetail (row) {
+      this.$router.push({
+        name: "EventDetail",
+        params: { name: row.metadata.name,namespace: row.metadata.namespace, cluster: this.clusterName },
+        query: { yamlShow: false },
       })
     },
   },

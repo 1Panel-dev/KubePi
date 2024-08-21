@@ -103,7 +103,17 @@ const Clusters = {
                 title: "Events",
             }
         },
-
+        {
+            path: "/events/detail/:cluster/:namespace/:name",
+            props: true,
+            component: () => import("@/business/cluster/events/detail"),
+            name: "EventDetail",
+            hidden: true,
+            meta: {
+                title: "EventDetail",
+                activeMenu: "/events"
+            }
+        },
         {
             path: "/customResources",
             component: () => import("@/business/custom-resource"),
