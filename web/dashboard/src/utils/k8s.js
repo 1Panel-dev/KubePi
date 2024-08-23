@@ -144,7 +144,7 @@ const deploymentObj = (namespace) => {
 
 const cronjobObj = (namespace) => {
   return {
-    apiVersion: "batch/v1beta1",
+    apiVersion: "batch/v1",
     kind: "CronJob",
     metadata: {
       name: "hello",

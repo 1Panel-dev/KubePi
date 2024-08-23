@@ -1,10 +1,10 @@
 import {get, post, del, put} from "@/plugins/request";
 
 const cornJobUrl = (cluster_name) => {
-    return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/cronjobs`;
+    return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/cronjobs`;
 };
 const cornJobWithNsUrl = (cluster_name, namespaces) => {
-    return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/namespaces/${namespaces}/cronjobs`;
+    return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/namespaces/${namespaces}/cronjobs`;
 };
 
 export function listCronJobs(cluster_name, search) {

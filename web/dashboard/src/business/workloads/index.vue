@@ -538,7 +538,7 @@ export default {
 
       if (this.isCronJob()) {
         delete this.form.spec.template
-        this.form.apiVersion = "batch/v1beta1"
+        this.form.apiVersion = "batch/v1"
         this.form.spec.jobTemplate = { spec: {} }
         this.$refs.ko_upgrade_job.transformation(this.form.spec)
       } else if (this.isJob()) {

@@ -13,10 +13,10 @@ const appsV1UrlWithNsUrl = (cluster_name, type, namespaces) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespaces}/${type}`
 }
 const batchV1beta1Url = (cluster_name, type) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/${type}`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/${type}`
 }
 const batchV1beta1WithNsUrl = (cluster_name, type, namespaces) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/namespaces/${namespaces}/${type}`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/namespaces/${namespaces}/${type}`
 }
 const batchV1Url = (cluster_name, type) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/${type}`
