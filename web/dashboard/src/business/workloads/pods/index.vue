@@ -367,14 +367,14 @@ export default {
 
         listWorkLoads(this.clusterName, "pods", false, "")
         .then((res) => {
+          let results=[]
           if(!this.isFullTextSearch){
-              this.data = this.doWithPodList( res.items  ).slice(currentPage*pageSize-pageSize,currentPage*pageSize)
-              this.paginationConfig.total = res.total
+               results = this.doWithPodList( res.items  );
           } else {
-              const results = this.doWithPodList(searchFullTextItems(res.items,this.searchConfig.keywords));
-              this.data =results.slice(currentPage*pageSize-pageSize,currentPage*pageSize)
-              this.paginationConfig.total = results.length
+               results = this.doWithPodList(searchFullTextItems(res.items,this.searchConfig.keywords));
           } 
+          this.data =results.slice(currentPage*pageSize-pageSize,currentPage*pageSize)
+          this.paginationConfig.total = results.length
         }).finally(() => {
           this.loading = false
         })
