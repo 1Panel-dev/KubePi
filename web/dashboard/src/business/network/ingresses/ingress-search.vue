@@ -121,6 +121,9 @@ export default {
                 for (let key in serviceObject.spec.selector) {
                     selectors.push(key + "=" + serviceObject.spec.selector[key])
                 }
+                if(!selectors || selectors.length==0){
+                    continue
+                }
                 const pods = await listPodsWithNsSelector(this.cluster, serviceObject.metadata.namespace, selectors.join(","), "")
 
                 for (let j = 0, l = pods.items.length; j < l; j++) {
