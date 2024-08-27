@@ -87,7 +87,8 @@ const message = {
       Unknown: "Unknown",
     },
     search: {
-      quickSearch: "Search"
+      quickSearch: "Search",
+      fullTextSearch: "Full Text Search",
     },
     form: {
       name: "Name",

@@ -6,8 +6,21 @@
 
     <div class="complex-table__toolbar">
       <div>
+        
         <div v-if="searchConfig">
-          <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
+          <el-row v-if="showFullTextSwitch">
+            <el-col :span="12">
+              <div  style="margin-top: 5px;  float: left">
+                 <span class="spanClass">{{$t('commons.search.fullTextSearch')}}</span>
+                 <el-switch class="interval"  v-model="isFullTextSearch" @change="OnIsFullTextSearchChange"/>
+              </div>
+            </el-col>  
+            <el-col :span="12">
+              <el-input  :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
+              </el-input>
+            </el-col>
+          </el-row>  
+          <el-input v-if="!showFullTextSwitch" :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
           </el-input>
         </div>
         <slot name="toolbar">
@@ -43,10 +56,15 @@ export default {
     searchConfig: Object,
     paginationConfig: Object,
     selects: Array,
+    showFullTextSwitch: {//是否显示全文本搜索选项
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       pageShow: false,
+      isFullTextSearch :false,//是否全文本搜索
     }
   },
   methods: {
@@ -56,6 +74,9 @@ export default {
     handleSelectionChange(val) {
       this.$emit("update:selects", val)
     },
+    OnIsFullTextSearchChange(val){
+      this.$emit("update:isFullTextSearch", val)
+    }
   },
 }
 </script>
