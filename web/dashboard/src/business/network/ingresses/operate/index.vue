@@ -137,9 +137,18 @@ export default {
       }
     },
     onOperate (data) {
+      let data_to_save=data;
+      if(data_to_save.spec.defaultBackend){
+         if(!data_to_save.spec.defaultBackend.service){
+           data_to_save.spec.defaultBackend=null;
+         } else if(!data_to_save.spec.defaultBackend.service.name || data_to_save.spec.defaultBackend.service.name==""){
+          data_to_save.spec.defaultBackend=null;
+         }
+      }
+
       this.loading = true
       if (this.mode === "edit") {
-        updateIngress(this.cluster, this.namespace, this.name, data).then(() => {
+        updateIngress(this.cluster, this.namespace, this.name, data_to_save).then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.update_success"),
@@ -149,7 +158,7 @@ export default {
           this.loading = false
         })
       } else {
-        createIngress(this.cluster, data.metadata.namespace, data).then(() => {
+        createIngress(this.cluster, data.metadata.namespace, data_to_save).then(() => {
           this.$message({
             type: "success",
             message: this.$t("commons.msg.create_success"),
