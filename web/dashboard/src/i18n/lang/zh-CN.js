@@ -88,7 +88,8 @@ const message = {
       Unknown: "未知",
     },
     search: {
-      quickSearch: "搜索"
+      quickSearch: "搜索",
+      fullTextSearch: "全文搜索",
     },
     form: {
       name: "名称",

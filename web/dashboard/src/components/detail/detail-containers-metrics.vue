@@ -286,8 +286,14 @@ export default {
     },
     initCharts(res) {
       const echarts = require('echarts');
-      if(this .myChart==null)
-      this .myChart = echarts.init(document.getElementById(this.chartId));
+      if(this .myChart==null){
+        if(document.getElementById(this.chartId)!=null){
+         this .myChart = echarts.init(document.getElementById(this.chartId));
+        }
+      }
+      if(this .myChart==null){
+        return
+      }
       //取不到指标
       if(!res|| res.length<2){
         return

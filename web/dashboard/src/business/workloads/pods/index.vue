@@ -20,7 +20,7 @@
       </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig" @search="search" @sort-change='sortTableFun'>
+                   :search-config="searchConfig" @search="search" @sort-change='sortTableFun' :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix ></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip fix sortable="name">
         <template v-slot:default="{row}">
@@ -142,7 +142,7 @@ import {checkPermissions} from "@/utils/permission"
 import writeXlsxFile from "write-excel-file";
 import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 import { listPodMetrics } from "@/api/apis"
-
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 export default {
   name: "Pods",
   components: { LayoutContent, ComplexTable },
@@ -162,7 +162,8 @@ export default {
       clusterName: "",
       podUsage: [],
       orderField: null,
-      orderMethod: null
+      orderMethod: null,
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -352,8 +353,8 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      if(!this.orderField || !this.orderMethod){
-      listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
+      if( (!this.orderField || !this.orderMethod ) && !this.isFullTextSearch){
+        listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data =this.doWithPodList( res.items )
           this.paginationConfig.total = res.total
@@ -363,10 +364,17 @@ export default {
       } else {
         let currentPage=this.paginationConfig.currentPage
         let pageSize=this.paginationConfig.pageSize
-        listWorkLoads(this.clusterName, "pods", true, this.searchConfig.keywords)
+
+        listWorkLoads(this.clusterName, "pods", false, "")
         .then((res) => {
-          this.data = this.doWithPodList( res.items ).slice(currentPage*pageSize-pageSize,currentPage*pageSize)
-          this.paginationConfig.total = res.total
+          let results=[]
+          if(!this.isFullTextSearch){
+               results = this.doWithPodList( res.items  );
+          } else {
+               results = this.doWithPodList(searchFullTextItems(res.items,this.searchConfig.keywords));
+          } 
+          this.data =results.slice(currentPage*pageSize-pageSize,currentPage*pageSize)
+          this.paginationConfig.total = results.length
         }).finally(() => {
           this.loading = false
         })
@@ -488,6 +496,10 @@ export default {
          schema,
          fileName: "pods.xlsx",
       });
+    },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
     }
   },
   mounted () {
