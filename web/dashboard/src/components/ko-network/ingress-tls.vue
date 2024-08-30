@@ -87,12 +87,18 @@ export default {
         secretName: "",
         hosts: []
       })
+      this.$forceUpdate()
     },
     addHost (row) {
+      if (!row.hosts) {
+        row.hosts=[]
+      }
       row.hosts.push("")
+      this.$forceUpdate()
     },
     removeHost (row, index) {
       row.hosts.splice(index, 1)
+      this.$forceUpdate()
     },
     getSecrets () {
       listSecretsWithNs(this.cluster, this.namespace).then(res => {
