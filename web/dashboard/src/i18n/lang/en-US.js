@@ -29,6 +29,7 @@ const message = {
     button: {
       click_to_edit: "Click to edit",
       delete: "Delete",
+      delete_force: "Force Delete",
       import: "Import",
       create: "Create",
       cancel: "Cancel",
@@ -142,7 +143,7 @@ const message = {
         name: "Name"
       }
     },
-actions:{
+    actions:{
       copy: "Copy",
     }
   },
@@ -596,7 +597,7 @@ actions:{
       name: "Name",
       split_help: "Multiple values are separated by commas",
       best_effort: "The {0} scope restricts a quota to tracking the following resource:",
-certificate_info: "Certificate Info",
+      certificate_info: "Certificate Info",
       certificate_signatureAlgorithm: "signatureAlgorithm",
       certificate_validity: "validity",
       certificate_outdate: "The certificate is out of date",

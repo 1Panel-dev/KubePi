@@ -14,6 +14,10 @@
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
         {{ $t("commons.button.delete") }}
       </el-button>
+      <el-button type="primary" size="small" :disabled="selects.length===0" @click="onForceDelete()"
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
+        {{ $t("commons.button.delete_force") }}
+      </el-button>
       <el-button type="primary" size="small"
                    @click="exportToXlsx()" icon="el-icon-download">
         {{ $t("commons.button.export") }}
@@ -121,8 +125,11 @@
                 </el-dropdown-item>
               </div>
               <el-dropdown-item icon="el-icon-download" command="download">{{ $t("commons.button.download_yaml") }}</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckPermissions()" command="delete">
+              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckDeletePermissions()" command="delete">
                 {{ $t("commons.button.delete") }}
+              </el-dropdown-item>
+              <el-dropdown-item icon="el-icon-delete" :disabled="!onCheckDeletePermissions()" command="delete_force">
+                {{ $t("commons.button.delete_force") }}
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -135,7 +142,7 @@
 
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
-import {listWorkLoads, deleteWorkLoad, getWorkLoadByName} from "@/api/workloads"
+import {listWorkLoads, deleteWorkLoad, getWorkLoadByName, forceDeleteWorkLoad} from "@/api/workloads"
 import {downloadYaml} from "@/utils/actions"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
@@ -174,7 +181,7 @@ export default {
         query: { yamlShow: false }
       })
     },
-    onCheckPermissions () {
+    onCheckDeletePermissions () {
       return checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "delete" })
     },
     checkExecPermissions () {
@@ -196,6 +203,9 @@ export default {
           break
         case "delete":
           this.onDelete(row)
+          break
+        case "delete_force":
+          this.onForceDelete(row)
           break
         case "files":
           this.openPodFiles(row)
@@ -267,6 +277,37 @@ export default {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
               this.ps.push(deleteWorkLoad(this.clusterName, "pods", select.metadata.namespace, select.metadata.name))
+            }
+          }
+        }
+        if (this.ps.length !== 0) {
+          Promise.all(this.ps)
+            .then(() => {
+              this.search(true)
+              this.$message({
+                type: "success",
+                message: this.$t("commons.msg.delete_success"),
+              })
+            })
+            .catch(() => {
+              this.search(true)
+            })
+        }
+      })
+    },
+    onForceDelete (row) {
+      this.$confirm(this.$t("commons.confirm_message.delete"), this.$t("commons.message_box.prompt"), {
+        confirmButtonText: this.$t("commons.button.confirm"),
+        cancelButtonText: this.$t("commons.button.cancel"),
+        type: "warning",
+      }).then(() => {
+        this.ps = []
+        if (row) {
+          this.ps.push(forceDeleteWorkLoad(this.clusterName, "pods", row.metadata.namespace, row.metadata.name))
+        } else {
+          if (this.selects.length > 0) {
+            for (const select of this.selects) {
+              this.ps.push(forceDeleteWorkLoad(this.clusterName, "pods", select.metadata.namespace, select.metadata.name))
             }
           }
         }

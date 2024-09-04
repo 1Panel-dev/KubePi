@@ -30,6 +30,7 @@ const message = {
     button: {
       click_to_edit: "编辑信息",
       delete: "删除",
+      delete_force: "强制删除",
       import: "导入",
       create: "创建",
       cancel: "取消",
@@ -143,7 +144,7 @@ const message = {
         name: "名称"
       }
     },
-actions:{
+    actions:{
       copy: "复制",
     }
   },

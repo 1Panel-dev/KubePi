@@ -125,6 +125,9 @@ export const put = (url, data, loading) => {
 export const del = (url, loading) => {
     return promise(request({url: url, method: "delete"}), loading)
 }
+export const delWithData = (url,data, loading) => {
+    return promise(request({url: url, method: "delete",data:data}), loading)
+}
 
 export const postFile= (url,data, params,loading) => {
   return promise(request({url: url, method: "post",data: data,params:params, headers:{"Content-Type":"multipart/form-data"},timeout:600000}), loading)
