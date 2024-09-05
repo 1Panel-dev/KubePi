@@ -38,6 +38,18 @@
                   </div>
                 </td>
               </tr>
+              <tr v-if="this.cluster_domain && this.cluster_domain!=''">
+                <td>{{ $t("business.network.service_whole_domain") }}</td>
+                <td colspan="4">{{ item.metadata.name+"."+item.metadata.namespace+".svc."+this.cluster_domain }}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.network.service_simple_domain") }}</td>
+                <td colspan="4">{{ item.metadata.name+"."+item.metadata.namespace}}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.network.service_domain_same_namespace") }}</td>
+                <td colspan="4">{{ item.metadata.name}}</td>
+              </tr>
             </table>
           </el-card>
         </el-col>
@@ -73,6 +85,7 @@ import {getService} from "@/api/services"
 import ResourcePod from "@/components/detail/detail-pods"
 import ResourcePorts from "@/components/detail/detail-ports"
 import KoDetailBasic from "@/components/detail/detail-basic"
+import {get_cluster_domain} from "@/utils/cluster_domain"
 
 export default {
   name: "ServiceDetail",
@@ -91,17 +104,16 @@ export default {
       yamlShow: false,
       cluster: "",
       yaml: {},
+      cluster_domain: "",
     }
   },
   methods: {
-    getDetail () {
+    async getDetail () {
       this.loading = true
-      getService(this.cluster, this.namespace, this.name).then((res) => {
-        this.item = res
-        this.yaml = JSON.parse(JSON.stringify(this.item))
-      }).finally(() => {
-        this.loading = false
-      })
+      const res =await getService(this.cluster, this.namespace, this.name)
+      this.item = res
+      this.yaml = JSON.parse(JSON.stringify(this.item))
+      this.loading = false
     },
     getSelector (selector) {
       let result = ""
@@ -122,10 +134,12 @@ export default {
       })
     },
   },
-  created () {
+  async created () {
     this.cluster = this.$route.query.cluster
     this.yamlShow = this.$route.query.yamlShow === "true"
-    this.getDetail()
+    this.cluster_domain= await get_cluster_domain(this.cluster)
+    
+    await this.getDetail()
   },
 }
 </script>
