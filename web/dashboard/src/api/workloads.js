@@ -1,4 +1,4 @@
-import {get, del, post, put} from "@/plugins/request"
+import {get, del, post, put,delWithData} from "@/plugins/request"
 
 const apiV1Url = (cluster_name, type) => {
   return `/api/v1/proxy/${cluster_name}/k8s/api/v1/${type}`
@@ -99,6 +99,33 @@ export function deleteWorkLoad (cluster_name, type, namespace, name) {
       return del(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`)
     case "jobs":
       return del(`${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`)
+  }
+}
+
+export function forceDeleteWorkLoad (cluster_name, type, namespace, name) {
+  switch (type) {
+    case "deployments":
+    case "statefulsets":
+    case "daemonsets":
+      return delWithData(
+        `${appsV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`,{
+          gracePeriodSeconds: 0
+        }
+      )
+    case "cronjobs":
+      return delWithData(
+        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`,{
+          gracePeriodSeconds: 0
+        }
+      )
+    case "pods":
+      return delWithData(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`,{
+        gracePeriodSeconds: 0
+      })
+    case "jobs":
+      return delWithData(`${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`,{
+        gracePeriodSeconds: 0
+      })
   }
 }
 
