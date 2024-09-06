@@ -35,6 +35,16 @@
                 <td>{{ $t("commons.table.status") }}</td>
                 <td colspan="4">{{ $t("commons.status." + form.status.phase) }}</td>
               </tr>
+              <tr >
+                <td>{{ $t("business.workload.pod_whole_domain") }}</td>
+                <td colspan="4" v-if="this.controller== 'StatefulSet' && this.pod_st_name != '' ">{{this.pod_st_name}}.{{this.form.metadata.namespace}}.svc.{{this.cluster_domain}}</td>
+                <td colspan="4" v-else-if="this.ip!='' ">{{this.ip}}.pod.{{this.cluster_domain}}</td>
+              </tr>
+              <tr>
+                <td>{{ $t("business.workload.pod_simple_domain") }}</td>
+                <td colspan="4" v-if="this.controller== 'StatefulSet' && this.pod_st_name != '' ">{{this.pod_st_name}}.{{this.form.metadata.namespace}}.svc</td>
+                <td colspan="4" v-else-if="this.ip!='' ">{{this.ip}}.pod</td>
+              </tr>
             </table>
             <div class="bottom-button">
               <el-button @click="yamlShow=!yamlShow">{{ $t("commons.button.view_yaml") }}</el-button>
@@ -119,7 +129,9 @@ import KoDetailVolume from "@/components/detail/pod/detail-volume"
 import KoDetailToleration from "@/components/detail/pod/detail-toleration"
 import { listEventsWithPodSelector } from "@/api/events"
 import ComplexTable from "@/components/complex-table"
-
+import {get_cluster_domain} from "@/utils/cluster_domain"
+import { getStatefulSet } from "@/api/statefulsets"
+import { getService } from "@/api/services"
 export default {
   name: "PodDetail",
   components: { LayoutContent, YamlEditor, ComplexTable, KoDetailGeneral, KoDetailContainers, KoDetailVolume, KoDetailToleration },
@@ -129,7 +141,7 @@ export default {
   },
   data() {
     return {
-sourceYaml:{},
+      sourceYaml:{},
       form: {
         metadata: {},
         spec: {
@@ -145,29 +157,56 @@ sourceYaml:{},
       loading: false,
       clusterName: "",
       eventList: [],
+      cluster_domain: "",
+      pod_st_name:"",
+      ip:"",
+      controller: "",
+      pod_st_name: "" ,
     }
   },
   methods: {
-    getDetail() {
+    async  getDetail() {
       this.loading = true
-      getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name).then((res) => {
-        this.sourceYaml= structuredClone(res)
-        this.form = res
-        this.loadEvents()
-        this.loading = false
-      })
+      const res=await getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name)
+      this.sourceYaml= structuredClone(res)
+      this.form = res
+      await this.loadEvents()
+      await this.get_pod_domain()
+      this.loading = false
     },
-    loadEvents() {
+    async   loadEvents() {
       let selects = "involvedObject.name={PodName}&involvedObject.namespace={Namespace}&involvedObject.uid={Uid}&limit=500"
       selects = selects.replace("{PodName}", this.form.metadata.name).replace("{Namespace}", this.form.metadata.namespace).replace("{Uid}", this.form.metadata.uid)
-      listEventsWithPodSelector(this.clusterName, this.namespace, selects).then((res) => {
-        this.eventList = res.items
-      })
+      const res=await listEventsWithPodSelector(this.clusterName, this.namespace, selects)
+      this.eventList = res.items
+      
     },
+    async get_pod_domain(){
+      let ip = "";
+      if (this.form.status.podIPs.length > 0) {
+         ip = this.form.status.podIP.replaceAll(".", "-");
+      }
+      this.ip=ip
+      if(this.form.metadata.ownerReferences && this.form.metadata.ownerReferences.length>0 ){
+        const owner = this.form.metadata.ownerReferences[0];
+	
+        this.controller = owner.kind;
+        if (this.controller == "StatefulSet") {
+           const st =await getStatefulSet(this.clusterName, this.namespace,owner.name)
+           if (st.spec.serviceName && st.spec.serviceName != ""){
+            const headless_service=await getService(this.clusterName, st.metadata.namespace,st.spec.serviceName)
+            if(headless_service.spec.clusterIP=="None"){
+              this.pod_st_name = this.form.metadata.name + "." + st.spec.serviceName;
+            }
+           }
+        }
+      }
+    }
   },
-  created() {
+  async created() {
     this.clusterName = this.$route.query.cluster
-    this.getDetail()
+    this.cluster_domain= await get_cluster_domain(this.clusterName)
+    await this.getDetail()
   },
 }
 </script>

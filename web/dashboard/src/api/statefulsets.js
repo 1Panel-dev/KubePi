@@ -6,6 +6,9 @@ const statefulsetUrl = (cluster_name) => {
 const statefulsetUrlWithNs = (cluster_name, namespace) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/statefulsets`;
 };
+const statefulsetUrlWithNsAndName = (cluster_name, namespace ,name) => {
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespace}/statefulsets/${name}`;
+};
 
 export function listStatefulSets(cluster_name,  search, keywords, pageNum, pageSize) {
   let url = statefulsetUrl(cluster_name);
@@ -20,6 +23,12 @@ export function listStatefulSets(cluster_name,  search, keywords, pageNum, pageS
       params["pageSize"] = pageSize
     }
   }
+  return get(url,params);
+}
+
+export function getStatefulSet(cluster_name,  namespace ,name) {
+  let url = statefulsetUrlWithNsAndName(cluster_name,  namespace ,name);
+  const params = {}
   return get(url,params);
 }
 

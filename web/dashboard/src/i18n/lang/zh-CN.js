@@ -509,6 +509,9 @@ actions:{
       many_read_only: "多节点只读",
       many_read_write: "多节点读写",
 
+      pod_whole_domain: "完整域名",
+      pod_simple_domain: "域名简称",
+
     },
     network: {
       service_discovery: "服务发现",
@@ -538,6 +541,9 @@ actions:{
       api_group: "API 组",
       node_port: "节点端口",
       relationship_chart: "关系图",
+      service_whole_domain: "完整域名",
+      service_simple_domain: "域名简称",
+      service_domain_same_namespace: "同一命名空间下域名",
     },
     storage: {
       provisioner: "提供商",

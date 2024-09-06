@@ -507,6 +507,9 @@ actions:{
       single_read_write: "Single-Node(Read/Write)",
       many_read_only: "Many-Node(Read-Only)",
       many_read_write: "Many-Node(Read/Write)",
+
+      pod_whole_domain: "Pod whole domain",
+      pod_simple_domain: "Pod simple domain",
     },
     network: {
       service_discovery: "Service Discovery",
@@ -536,6 +539,9 @@ actions:{
       api_group: "API Group",
       node_port: "Node Port",
       relationship_chart: "Relationship Chart",
+service_whole_domain: "Service whole domain",
+      service_simple_domain: "Service simple domain",
+      service_domain_same_namespace: "Service domain in the same namespace",
     },
     storage: {
       provisioner: "Provisioner",
