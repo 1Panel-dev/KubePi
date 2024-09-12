@@ -16,7 +16,8 @@
       </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig">
+                   :search-config="searchConfig"
+                   :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
         <template v-slot:default="{row}">
@@ -46,7 +47,7 @@ import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteRole, getRole, listRoles} from "@/api/roles"
 import {checkPermissions} from "@/utils/permission"
-
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 export default {
   name: "Roles",
   components: { ComplexTable, LayoutContent, KoTableOperations },
@@ -125,7 +126,8 @@ export default {
       },
       searchConfig: {
         keywords: ""
-      }
+      },
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -134,11 +136,22 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listRoles(this.cluster, "", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      if(!this.isFullTextSearch){
+        listRoles(this.cluster,"", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
-        this.paginationConfig.total = res.total
         this.loading = false
-      })
+        this.paginationConfig.total = res.total
+       })
+      } else {
+        listRoles(this.cluster,"", false)
+        .then((res) => {
+          const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+          this.data =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+          this.paginationConfig.total = results.length
+        }).finally(() => {
+          this.loading = false
+        }) 
+      }
     },
     onCreate () {
       this.$router.push({
@@ -187,6 +200,10 @@ export default {
         params: { name: row.metadata.name, namespace: row.metadata.namespace },
         query: { yamlShow: false }
       })
+    },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
     }
   },
   created () {

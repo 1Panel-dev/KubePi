@@ -34,7 +34,6 @@ export default {
         },
         status: {},
       },
-      cluster: "",
       yamlShow: false,
       loading: false,
       yaml: {},

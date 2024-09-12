@@ -15,7 +15,8 @@
       </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig" @search="search">
+                   :search-config="searchConfig" @search="search"
+                   :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="120" show-overflow-tooltip>
         <template v-slot:default="{row}">
@@ -53,6 +54,7 @@ import KoTableOperations from "@/components/ko-table-operations"
 import ComplexTable from "@/components/complex-table"
 import {checkPermissions} from "@/utils/permission"
 import {getCronJobByName} from "@/api/cronjobs"
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 
 export default {
   name: "CronJobs",
@@ -118,6 +120,7 @@ export default {
       },
       selects: [],
       clusterName: "",
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -170,14 +173,29 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listWorkLoads(this.clusterName, "cronjobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
+      if(!this.isFullTextSearch){
+        listWorkLoads(this.clusterName, "cronjobs", true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize)
         .then((res) => {
           this.data = res.items
           this.paginationConfig.total = res.total
         }).finally(() => {
           this.loading = false
         })
+      } else {
+        listWorkLoads(this.clusterName, "cronjobs", false)
+        .then((res) => {
+          const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+          this.data =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+          this.paginationConfig.total = results.length
+        }).finally(() => {
+          this.loading = false
+        })
+      } 
     },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
+    }
   },
   mounted () {
     this.clusterName = this.$route.query.cluster
