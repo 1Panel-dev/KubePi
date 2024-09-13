@@ -28,6 +28,26 @@ export function listEvents (cluster_name, search, keywords, pageNum, pageSize) {
   return get(url, params)
 }
 
+export function listEventsWithNs (cluster_name, ns, search, keywords, pageNum, pageSize) {
+  let url = eventUrl(cluster_name)
+  if(ns && ns !=""){
+     url= eventUrlWithNs(cluster_name, ns)
+  }
+  const params = {}
+  if (search) {
+    params["search"] = true
+    if (keywords) {
+      params["keywords"] = keywords
+    }
+    if (pageNum && pageSize) {
+      params["pageNum"] = pageNum
+      params["pageSize"] = pageSize
+    }
+  }
+  params["sortBy"] = ".metadata.creationTimestamp"
+  return get(url, params)
+}
+
 export function listEventsWithNsSelector (cluster_name, namespace, selectors) {
   let url = eventUrlWithNs(cluster_name, namespace)
   const param = {}

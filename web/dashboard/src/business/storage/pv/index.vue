@@ -18,7 +18,8 @@
       </el-button>
     </div>
     <complex-table :data="data" :selects.sync="selects" @search="search" v-loading="loading"
-                   :pagination-config="paginationConfig" :search-config="searchConfig">
+                   :pagination-config="paginationConfig" :search-config="searchConfig"
+                   :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" min-width="200px" prop="metadata.name"
                        show-overflow-tooltip>
@@ -75,6 +76,7 @@ import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deletePvs, getPv, listPvs} from "@/api/pv"
 import {checkPermissions} from "@/utils/permission"
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 
 export default {
   name: "PersistentVolumes",
@@ -141,17 +143,29 @@ export default {
       searchConfig: {
         keywords: "",
       },
+      isFullTextSearch: false
     }
   },
   methods: {
     search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
-      listPvs(this.cluster, true, this.searchConfig.keywords, currentPage, pageSize).then((res) => {
+      if(!this.isFullTextSearch){
+        listPvs(this.cluster, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
-      })
+       })
+      } else {
+        listPvs(this.cluster, false)
+        .then((res) => {
+          const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+          this.data =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+          this.paginationConfig.total = results.length
+        }).finally(() => {
+          this.loading = false
+        }) 
+      }
     },
     onCreate () {
       this.$router.push({
@@ -209,6 +223,10 @@ export default {
         params: { name: row.spec.claimRef.name ,namespace: row.spec.claimRef.namespace },
         query: { yamlShow: false },
       })
+    },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
     }
   },
   created () {

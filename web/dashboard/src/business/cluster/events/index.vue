@@ -1,7 +1,8 @@
 <template>
   <layout-content header="Events">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
-                   :search-config="searchConfig">
+                   :search-config="searchConfig"
+                   :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <template #toolbar>
       </template>
       <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
@@ -52,8 +53,9 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {listEvents} from "@/api/events"
+import {listEventsWithNs} from "@/api/events"
 import {mixin} from "@/utils/resourceRoutes"
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 
 export default {
   name: "Events",
@@ -72,7 +74,8 @@ export default {
       },
       searchConfig: {
         keywords: ""
-      }
+      },
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -81,11 +84,23 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
-        this.loading = false
+      const ns =sessionStorage.getItem("namespace")
+      if(!this.isFullTextSearch){
+        listEventsWithNs(this.clusterName, ns, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
+        this.loading = false
         this.paginationConfig.total = res.total
-      })
+       })
+      } else {
+        listEventsWithNs(this.clusterName, ns,false)
+        .then((res) => {
+          const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+          this.data =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+          this.paginationConfig.total = results.length
+        }).finally(() => {
+          this.loading = false
+        }) 
+      }
     },
     openDetail (row) {
       this.$router.push({
@@ -94,6 +109,10 @@ export default {
         query: { yamlShow: false },
       })
     },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
+    }
   },
   created () {
     this.clusterName = this.$route.query.cluster

@@ -79,7 +79,8 @@
     <el-row :gutter="24" v-has-permissions="{apiGroup:'',resource:'events',verb:'list'}">
       <h4 style="margin-left: 10px;float: left">{{$t('business.event.event')}}</h4>
       <complex-table style="margin-top:20px" :data="events" @search="search" v-loading="loading" :pagination-config="paginationConfig"
-                     :search-config="searchConfig">
+                     :search-config="searchConfig"
+                     :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
         <el-table-column :label="$t('business.event.reason')" prop="reason" fix max-width="50px">
           <template v-slot:default="{row}">
             {{ row.reason }}
@@ -127,7 +128,7 @@ import {listDaemonSets} from "@/api/daemonsets"
 import {listServices} from "@/api/services"
 import {listNodes} from "@/api/nodes"
 import ComplexTable from "@/components/complex-table"
-import {listEvents} from "@/api/events"
+import {listEventsWithNs} from "@/api/events"
 import {getCluster} from "@/api/clusters"
 import {checkPermissions} from "@/utils/permission"
 import {mixin} from "@/utils/resourceRoutes"
@@ -136,7 +137,7 @@ import {listSecrets} from "@/api/secrets"
 import {listNodeMetrics} from "@/api/apis"
 import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 import MetricServer from '@/components/ko-plugin/metric-server'
-
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 export default {
   name: "Dashboard",
   components: {ComplexTable, KoCharts, MetricServer, LayoutContent},
@@ -166,7 +167,8 @@ export default {
         metricPercent: 0,
       },
       dialogMetricVisible: false,
-      loading: false
+      loading: false,
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -321,11 +323,23 @@ export default {
         this.paginationConfig.currentPage = 1
       }
       if (checkPermissions({scope: "namespace", apiGroup: "", resource: "events", verb: "list"})) {
-        listEvents(this.clusterName, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
-          this.loading = false
+        const ns =sessionStorage.getItem("namespace")
+        if(!this.isFullTextSearch){
+          listEventsWithNs(this.clusterName, ns, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
           this.events = res.items
+          this.loading = false
           this.paginationConfig.total = res.total
-        })
+         })
+        } else {
+          listEventsWithNs(this.clusterName, ns,false)
+          .then((res) => {
+            const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+            this.events =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+            this.paginationConfig.total = results.length
+          }).finally(() => {
+            this.loading = false
+          }) 
+        }
       }
     },
     getData(items, keys) {
@@ -378,6 +392,10 @@ export default {
           return cur[key]
         }, obj)
       }
+    },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
     }
   },
   created() {

@@ -1,7 +1,8 @@
 <template>
   <layout-content header="Custom Resource">
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading"
-      :pagination-config="paginationConfig" :search-config="searchConfig">
+      :pagination-config="paginationConfig" :search-config="searchConfig"
+      :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <template #header>
         <el-button type="primary" size="small" :disabled="selects.length === 0" @click="onDelete()"
           v-has-permissions="{ scope: 'namespace', apiGroup: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'delete' }">
@@ -47,6 +48,8 @@ import {
   listResourceByGroup
 } from "@/api/customresourcedefinitions"
 import { checkPermissions } from "@/utils/permission"
+import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
+
 
 export default {
   name: "CRList",
@@ -120,7 +123,8 @@ export default {
       },
       searchConfig: {
         keywords: ""
-      }
+      },
+      isFullTextSearch: false
     }
   },
   methods: {
@@ -129,11 +133,22 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      listResourceByGroup(this.cluster, this.version, this.group, this.names, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
+      if(!this.isFullTextSearch){
+        listResourceByGroup(this.cluster, this.version, this.group, this.names, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
         this.data = res.items
         this.loading = false
         this.paginationConfig.total = res.total
-      })
+       })
+      } else {
+        listResourceByGroup(this.cluster, this.version, this.group, this.names, false)
+        .then((res) => {
+          const results = searchFullTextItems(res.items,this.searchConfig.keywords);
+          this.data =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
+          this.paginationConfig.total = results.length
+        }).finally(() => {
+          this.loading = false
+        }) 
+      }
     },
     onDelete(row) {
       this.$confirm(
@@ -183,6 +198,10 @@ export default {
           namespace: row.metadata.namespace
         }
       })
+    },
+    //改变选项"是否全文搜索"
+    OnIsFullTextSearchChange(val){
+      this.isFullTextSearch=val
     }
   },
   created() {
