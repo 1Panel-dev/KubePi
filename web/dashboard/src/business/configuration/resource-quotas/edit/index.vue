@@ -1,5 +1,5 @@
 <template>
-  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'Namespaces' }" v-loading="loading">
+  <layout-content :header="$t('commons.button.create')" :back-to="{ name: 'ResourceQuotas' }" v-loading="loading">
     <br>
     <div class="grid-content bg-purple-light" v-if="!showYaml">
       <el-form label-position="top" :model="form" :rules="rules" ref="form">
