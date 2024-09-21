@@ -66,11 +66,13 @@ router.beforeEach(async (to, from, next) => {
                 // }
                 next({path: to.path, query: q})
                 NProgress.done()
+                document.title = q["cluster"] || "KubePi"
             } else {
                 window.open("/kubepi", '_self');
             }
         } else {
             await store.dispatch("user/setCurrentCluster", to.query["cluster"])
+            document.title = to.query["cluster"] || "KubePi"
         }
         await generateRoutes(to, from, next)
     } else {
