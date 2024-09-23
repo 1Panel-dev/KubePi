@@ -318,7 +318,7 @@ export default {
       if (row.accessable) {
         sessionStorage.removeItem("namespace")
         const url = `${process.env.VUE_APP_DASHBOARD_URL_PREFIX}/dashboard?cluster=${row.name}`
-        window.open(url, "_self")
+        window.open(url, "_blank")
       } else {
         this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
       }
