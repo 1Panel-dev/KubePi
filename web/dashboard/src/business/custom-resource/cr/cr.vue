@@ -164,7 +164,7 @@ export default {
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteResource(this.cluster, this.version, this.group, this.names, row.metadata.namespace, select.metadata.name))
+              this.ps.push(deleteResource(this.cluster, this.version, this.group, this.names, select.metadata.namespace, select.metadata.name))
             }
           }
         }
