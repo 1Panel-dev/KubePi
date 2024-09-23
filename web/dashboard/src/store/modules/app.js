@@ -8,7 +8,9 @@ const state = {
   sidebar: {
     opened: get() ? !!+get() : true
   },
-  device: 'desktop'
+  device: 'desktop',
+  /*定时刷新频率，单位为秒，-1为手动刷新*/
+  autorefresh: '-1'
 }
 
 const mutations = {
@@ -27,6 +29,10 @@ const mutations = {
   CLOSE_SIDEBAR: (state) => {
     set('sidebarStatus', 0)
     state.sidebar.opened = false
+  },
+  SET_AUTOREFRESH: (state, value) => {
+    localStorage.setItem('autorefresh',value)
+    state.autorefresh = value
   }
 }
 
@@ -39,6 +45,9 @@ const actions = {
   },
   closeSideBar({commit}) {
     commit('CLOSE_SIDEBAR')
+  },
+  setAutorefresh({commit},value) {
+    commit('SET_AUTOREFRESH',value)
   }
 }
 

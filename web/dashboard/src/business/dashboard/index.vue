@@ -168,7 +168,8 @@ export default {
       },
       dialogMetricVisible: false,
       loading: false,
-      isFullTextSearch: false
+      isFullTextSearch: false,
+      intervalId:null,//定时器
     }
   },
   methods: {
@@ -189,6 +190,7 @@ export default {
         this.cluster = res.data
       })
       if (checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"})) {
+        this.resources=[]
         listNodes(this.clusterName).then(res => {
           const nodes = {
             name: "Nodes",
@@ -315,7 +317,7 @@ export default {
           this.resources.push(services)
         })
       }
-      this.search()
+      
     },
     search(resetPage) {
       this.loading = true
@@ -396,12 +398,48 @@ export default {
     //改变选项"是否全文搜索"
     OnIsFullTextSearchChange(val){
       this.isFullTextSearch=val
+    },
+    stopTimeTick(){
+      if (!this.intervalId) {
+        return;
+      }
+      clearInterval(this.intervalId); //清除计时器
+      this.intervalId = null; //设置为null
+    },
+    startTimeTick(tick){
+      // 计时器为空，操作
+      this.intervalId = setInterval(() => {
+          this.stopTimeTick()
+          //刷新图表
+          this.listResources();
+          console.log(tick)
+          this.startTimeTick(tick)
+      },tick*1000);
     }
   },
   created() {
     this.clusterName = this.$route.query.cluster
     this.showMetric = checkPermissions({scope: 'cluster', apiGroup: "", resource: "nodes", verb: "list"}) && checkPermissions({scope: 'cluster', apiGroup: "metrics.k8s.io", resource: "nodes", verb: "list"})
     this.listResources()
+    this.search()
+  },
+  watch: {
+    /*监控自动刷新变量*/
+   "$store.state.app.autorefresh":{
+    handler:function(newVal,oldVal){
+      if(!newVal || newVal=='-1' || newVal=='undefined' || newVal==''){
+        this.stopTimeTick();
+      } else {
+        this.stopTimeTick();
+        // 计时器为空，操作
+        this.startTimeTick(parseInt(newVal));
+      }
+    }
+   }
+  },
+  destroyed(){
+    // 在页面销毁后，清除计时器
+    this.stopTimeTick();
   }
 }
 </script>
