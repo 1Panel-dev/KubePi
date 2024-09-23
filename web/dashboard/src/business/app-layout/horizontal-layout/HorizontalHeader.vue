@@ -5,6 +5,7 @@
       <home></home>
       <project-switch style="margin-left: 20px"></project-switch>
       <cluster-name></cluster-name>
+      <AutoRefresh></AutoRefresh>
     </div>
     <div class="header-right">
       <TerminalEnter></TerminalEnter>
@@ -24,10 +25,10 @@ import Help from "@/business/app-layout/header-components/Help";
 import LanguageSwitch from "@/business/app-layout/header-components/LanguageSwitch"
 import TerminalEnter from "@/business/app-layout/header-components/TerminalEnter";
 import ClusterName from "@/business/app-layout/header-components/Cluster"
-
+import AutoRefresh from "@/business/app-layout/header-components/AutoRefresh"
 export default {
   name: "HorizontalHeader",
-  components: { ClusterName, TerminalEnter, LanguageSwitch, ProjectSwitch, Help, Home, UserSetting, SidebarToggleButton}
+  components: { ClusterName, TerminalEnter, LanguageSwitch, ProjectSwitch, Help, Home, UserSetting, SidebarToggleButton,AutoRefresh}
 }
 </script>
 

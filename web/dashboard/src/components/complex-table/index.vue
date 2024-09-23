@@ -5,27 +5,34 @@
     </div>
 
     <div class="complex-table__toolbar">
-      <div>
-        
-        <div v-if="searchConfig">
+        <template v-if="searchConfig">
           <el-row v-if="showFullTextSwitch">
-            <el-col :span="12">
+            <el-col :span="8">
               <div  style="margin-top: 5px;  float: left">
                  <span class="spanClass">{{$t('commons.search.fullTextSearch')}}</span>
                  <el-switch class="interval"  v-model="isFullTextSearch" @change="OnIsFullTextSearchChange"/>
               </div>
             </el-col>  
-            <el-col :span="12">
+            <el-col :span="6">
+              <el-button size="mini" @click="search(true)"><i class="el-icon-search"/>{{this.$t('commons.button.search')}}</el-button>
+            </el-col> 
+            <el-col :span="10">
               <el-input  :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
               </el-input>
             </el-col>
           </el-row>  
-          <el-input v-if="!showFullTextSwitch" :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
-          </el-input>
-        </div>
+          <el-row v-if="!showFullTextSwitch">
+            <el-col :span="12">
+              <el-button size="mini" @click="search(true)"><i class="el-icon-search"/>{{this.$t('commons.button.search')}}</el-button>
+            </el-col>  
+            <el-col :span="12">
+              <el-input  :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
+              </el-input>
+            </el-col>
+          </el-row> 
+        </template>
         <slot name="toolbar">
         </slot>
-      </div>
     </div>
 
     <div class="complex-table__body">
@@ -65,6 +72,7 @@ export default {
     return {
       pageShow: false,
       isFullTextSearch :false,//是否全文本搜索
+      intervalId:null,//定时
     }
   },
   methods: {
@@ -76,8 +84,41 @@ export default {
     },
     OnIsFullTextSearchChange(val){
       this.$emit("update:isFullTextSearch", val)
+    },
+    stopTimeTick(){
+      if (!this.intervalId) {
+        return;
+      }
+      clearInterval(this.intervalId); //清除计时器
+      this.intervalId = null; //设置为null
+    },
+    startTimeTick(tick){
+      // 计时器为空，操作
+      this.intervalId = setInterval(() => {
+          this.stopTimeTick()
+          this.search(true);
+          this.startTimeTick(tick)
+      },tick*1000);
     }
   },
+  watch: {
+    /*监控自动刷新变量*/
+   "$store.state.app.autorefresh":{
+    handler:function(newVal,oldVal){
+      if(!newVal ||  newVal=='-1' || newVal=='undefined' || newVal==''){
+        this.stopTimeTick();
+      } else {
+        this.stopTimeTick();
+        // 计时器为空，操作
+        this.startTimeTick(parseInt(newVal));
+      }
+    }
+   }
+  },
+  destroyed(){
+    // 在页面销毁后，清除计时器
+    this.stopTimeTick();
+  }
 }
 </script>
 
