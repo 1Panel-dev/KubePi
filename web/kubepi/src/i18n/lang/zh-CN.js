@@ -256,6 +256,27 @@ const message = {
           images: "镜像列表",
           push_image: "推送镜像到当前项目",
           version: "版本",
+        },
+        monitor: {
+            name: "监控",
+            grafana: {
+                name: "仪表盘",
+                address: "地址",
+                remake: "重置",
+                test: "测试连接",
+                test_result: "测试Grafana连接成功",
+                default_dashboard: "导入默认仪表盘",
+                default_dashboard_success: "导入默认仪表盘成功",
+                service_account_token: "服务账号密钥",
+                iframe_close: "关闭仪表盘",
+                
+            },
+            metrics: {
+                name:  "指标",
+            },
+            alert_rules: {
+                name: "告警策略",
+            }
         }
     },
 }
