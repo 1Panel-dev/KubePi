@@ -94,9 +94,11 @@ func (s *service) GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common
 
 func (s *service) GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
-	// 当用户进行Grafana配置时，应该为用户检测目标是否可连接
-	if err := gc.TestConnect(monitor.Address); err != nil {
-		return err
+	// 当用户进行Grafana配置更新时，应该当功能为开启时才检测连接是否能通信
+	if monitor.Enable {
+		if err := gc.TestConnect(monitor.Address); err != nil {
+			return err
+		}
 	}
 
 	old, err := s.GetById(id, options)
