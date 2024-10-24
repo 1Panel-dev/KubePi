@@ -273,6 +273,15 @@ const message = {
             },
             metrics: {
                 name:  "指标",
+                type: "类型",
+                endpoint: "地址",
+                age: "存活时间",
+                auth: "认证",
+                username: "用户名",
+                password: "密码",
+                instance: "实例",
+                execute: "查询",
+                
             },
             alert_rules: {
                 name: "告警策略",

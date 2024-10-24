@@ -272,6 +272,14 @@ const message = {
             },
             metrics: {
                 name:  "Metrics",
+                type: "Type",
+                endpoint: "Address",
+                age: "Age",
+                auth: "Auth",
+                username: "Username",
+                password: "Password",
+                instance: "Instance",
+                execute: "Execute",
             },
             alert_rules: {
                 name: "Alert Rules",

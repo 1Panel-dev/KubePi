@@ -16,7 +16,7 @@ const Monitor = {
     },
     children: [
       {
-        path: "grafana",
+        path: "/monitor/grafana",
         component: () => import("@/business/monitor/grafana"),
         name: "Grafana",
         requirePermission: {
@@ -28,7 +28,7 @@ const Monitor = {
         }
       },
       {
-        path: "metrics",
+        path: "/monitor/metrics",
         component: () => import("@/business/monitor/metrics"),
         name: "Metrics",
         requirePermission: {
@@ -40,7 +40,37 @@ const Monitor = {
         }
       },
       {
-        path: "alert-rules",
+        path: "/monitor/metrics/create",
+        component: () => import("@/business/monitor/metrics/operate"),
+        name: "MetricsCreate",
+        hidden: true,
+        props: true,
+        meta: {
+          activeMenu: "/metrics",
+        }
+      },
+      {
+        path: "/monitor/metrics/:name/edit",
+        component: () => import("@/business/monitor/metrics/operate"),
+        name: "MetricsEdit",
+        hidden: true,
+        props: true,
+        meta: {
+          activeMenu: "/metrics",
+        }
+      },
+      {
+        path: "/monitor/metrics/:instance/detail",
+        component: () => import("@/business/monitor/metrics/detail"),
+        name: "MetricsDetail",
+        hidden: true,
+        props: true,
+        meta: {
+          activeMenu: "/metrics",
+        }
+      },
+      {
+        path: "/monitor/alert-rules",
         component: () => import("@/business/monitor/alert-rules"),
         name: "Alert Rules",
         requirePermission: {
