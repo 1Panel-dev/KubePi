@@ -256,6 +256,34 @@ const message = {
           images: "Image List",
           push_image: "Push the mirror to the current project",
           version: "Version",
+        },
+        monitor: {
+            name: "Monitor",
+            grafana: {
+                name: "Dashboard",
+                address: "Address",
+                remake: "Reset",
+                test: "Test connection",
+                test_result: "Test Grafana connection successful",
+                default_dashboard: "Importing the default dashboard",
+                default_dashboard_success: "Importing the default dashboard successfully",
+                service_account_token: "Service Access Token",
+                iframe_close: "Close the dashboard",
+            },
+            metrics: {
+                name:  "Metrics",
+                type: "Type",
+                endpoint: "Address",
+                age: "Age",
+                auth: "Auth",
+                username: "Username",
+                password: "Password",
+                instance: "Instance",
+                execute: "Execute",
+            },
+            alert_rules: {
+                name: "Alert Rules",
+            }
         }
     },
 }

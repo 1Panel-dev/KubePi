@@ -1,8 +1,8 @@
 <template>
-  <layout-content :header="$t('business.image_repos.list')">
+  <layout-content :header="$t('business.monitor.metrics.name')">
     <div style="float: left; margin-bottom: 20px">
-      <el-button v-has-permissions="{resource:'imagerepos',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.create") }}</el-button>
-      <el-button v-has-permissions="{resource:'imagerepos',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
+      <el-button v-has-permissions="{resource:'monitor',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.create") }}</el-button>
+      <el-button v-has-permissions="{resource:'monitor',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
 
     <complex-table :search-config="searchConfig" :selects.sync="selects" :data="data"
@@ -13,15 +13,11 @@
           <el-link @click="onDetail(row.name)">{{ row.name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('business.image_repos.type')" prop="type" min-width="100" fix>
+      <el-table-column :label="$t('business.monitor.metrics.type')" prop="type" min-width="100" fix>
       </el-table-column>
-      <el-table-column :label="$t('business.image_repos.endpoint')" prop="endPoint" min-width="100" fix>
+      <el-table-column :label="$t('business.monitor.metrics.endpoint')" prop="endPoint" min-width="100" fix>
       </el-table-column>
-      <el-table-column :label="$t('business.image_repos.downloadUrl')" prop="downloadUrl" min-width="100" fix>
-      </el-table-column>
-      <el-table-column :label="$t('business.image_repos.repo')" prop="repoName" min-width="100" fix>
-      </el-table-column>
-      <el-table-column :label="$t('commons.table.age')" min-width="80" fix>
+      <el-table-column :label="$t('business.monitor.metrics.age')" min-width="80" fix>
         <template v-slot:default="{row}">
           {{ row.createAt | ageFormat }}
         </template>
@@ -34,13 +30,12 @@
 <script>
 import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
-import {deleteRepo, searchRepos} from "@/api/imagerepos"
+import {deleteMetrics, searchMetrics} from "@/api/monitor"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
-  name: "ImageRepo",
+  name: "Metrics",
   components: { ComplexTable, LayoutContent },
-  props: {},
   data () {
     return {
       buttons: [
@@ -49,12 +44,12 @@ export default {
           icon: "el-icon-edit",
           click: (row) => {
             this.$router.push({
-              path: `/imagerepos/${row.name}/edit`,
+              path: `/monitor/metrics/${row.name}/edit`,
               query: {mode: "edit" }
             })
           },
           disabled: () => {
-            return !checkPermissions({ resource: "imagerepos", verb: "update" })
+            return !checkPermissions({ resource: "metrics", verb: "update" })
           }
         },
         {
@@ -64,7 +59,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return !checkPermissions({ resource: "imagerepos", verb: "delete" })
+            return !checkPermissions({ resource: "metrics", verb: "delete" })
           }
         },
       ],
@@ -87,15 +82,16 @@ export default {
     search (conditions) {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig
-      searchRepos(currentPage, pageSize, conditions).then(data => {
+      searchMetrics(currentPage, pageSize, conditions).then(data => {
         this.loading = false
         this.data = data.data.items
         this.paginationConfig.total = data.data.total
       })
     },
+    
     onCreate () {
       this.$router.push({
-        path: "/imagerepos/create",
+        path: "/monitor/metrics/create",
         query: { mode: "create" }
       })
     },
@@ -107,11 +103,11 @@ export default {
       }).then(() => {
         this.ps = []
         if (name) {
-          this.ps.push(deleteRepo(name))
+          this.ps.push(deleteMetrics(name))
         } else {
           if (this.selects.length > 0) {
             for (const select of this.selects) {
-              this.ps.push(deleteRepo(select.name))
+              this.ps.push(deleteMetrics(select.name))
             }
           }
         }
@@ -131,10 +127,10 @@ export default {
       }).catch(() => {
       })
     },
-    onDetail(repo) {
+    onDetail(instance) {
       this.$router.push({
-        name: "ImageRepoDetail",
-        params: { repo: repo }
+        name: "MetricsDetail",
+        params: { instance: instance }
       })
     }
   },
