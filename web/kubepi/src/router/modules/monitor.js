@@ -69,18 +69,18 @@ const Monitor = {
           activeMenu: "/metrics",
         }
       },
-      {
-        path: "/monitor/alert-rules",
-        component: () => import("@/business/monitor/alert-rules"),
-        name: "Alert Rules",
-        requirePermission: {
-          resource: "alert-rules",
-          verb: "list"
-        },
-        meta: {
-          title: "business.monitor.alert_rules.name",
-        }
-      },
+      // {
+      //   path: "/monitor/alert-rules",
+      //   component: () => import("@/business/monitor/alert-rules"),
+      //   name: "Alert Rules",
+      //   requirePermission: {
+      //     resource: "alert-rules",
+      //     verb: "list"
+      //   },
+      //   meta: {
+      //     title: "business.monitor.alert_rules.name",
+      //   }
+      // },
     ]
 }
 
