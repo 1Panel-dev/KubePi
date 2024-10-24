@@ -249,4 +249,5 @@ func Install(parent iris.Party) {
 	metrics.Put("/:name", handler.UpdateMetrics())
 	metrics.Get("/:name/explorer", handler.ExplorerMetrics())
 	metrics.Get("/:name/test/connect", handler.TestConnectMetrics())
+	metrics.Get("/:name/query", handler.QueryMetrics())
 }

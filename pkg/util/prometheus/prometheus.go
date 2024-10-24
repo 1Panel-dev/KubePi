@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 type Prometheus struct {
@@ -77,7 +78,7 @@ func (p *Prometheus) TestConnect(address, username, password string) error {
 }
 
 // 查询
-func (p *Prometheus) QueryMetrics(address, username, password, promql, timestamp string) (data *QueryMetricsResp, err error) {
+func (p *Prometheus) QueryMetrics(address, username, password, promql, timestamp string) (data []*ProcessedMetric, err error) {
 	// 构建带有查询参数的 URL
 	params := url.Values{}
 	params.Set("query", promql)
@@ -97,7 +98,6 @@ func (p *Prometheus) QueryMetrics(address, username, password, promql, timestamp
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		return nil, errors.New("执行Prometheus Promql查询失败,当前状态码为: " + resp.Status)
 	}
@@ -106,11 +106,35 @@ func (p *Prometheus) QueryMetrics(address, username, password, promql, timestamp
 		return nil, errors.New("执行Prometheus Promql查询失败: " + err.Error())
 	}
 
-	// 解析成json格式
-	err = json.Unmarshal(body, &data)
+	var queryMetricsResp QueryMetricsResp
+	err = json.Unmarshal(body, &queryMetricsResp)
 	if err != nil {
 		return nil, errors.New("解析Prometheus Promql json数据失败: " + err.Error())
 	}
 
-	return data, nil
+	// 封装格式：alertmanager_alerts{instance="192.168.1.7:9093", job="durex-alertmanager", state="active"}   1
+	var processedMetrics []*ProcessedMetric
+
+	for _, result := range queryMetricsResp.Data.Result {
+		labels := []string{}
+		metricName := ""
+
+		for key, value := range result.Metric {
+			if key == "__name__" {
+				metricName = value
+			} else {
+				labels = append(labels, fmt.Sprintf(`%s="%s"`, key, value))
+			}
+		}
+
+		labelString := strings.Join(labels, ", ")
+		promql = fmt.Sprintf(`%s{%s}`, metricName, labelString)
+		metricValue, _ := strconv.ParseFloat(result.Value[1].(string), 64)
+
+		processedMetrics = append(processedMetrics, &ProcessedMetric{
+			Metrics: promql,
+			Value:   metricValue,
+		})
+	}
+	return processedMetrics, nil
 }
