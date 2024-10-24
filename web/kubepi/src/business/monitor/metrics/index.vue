@@ -124,6 +124,7 @@ export default {
               this.search()
             })
         }
+      }).catch(() => {
       })
     },
     onDetail(instance) {

@@ -128,6 +128,7 @@ export default {
               this.search()
             })
         }
+      }).catch(() => {
       })
     },
     onDetail(repo) {
