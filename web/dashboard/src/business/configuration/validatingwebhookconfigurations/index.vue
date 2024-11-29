@@ -16,7 +16,11 @@
                    :pagination-config="paginationConfig" :search-config="searchConfig"
                    :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip></el-table-column>
+      <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip>
+        <template v-slot:default="{row}">
+          <span class="span-link" @click="openDetail(row)">{{ row.metadata.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="webhooks" prop="webhooks" fix>
         <template v-slot:default="{row}">
           {{ getWebhooksCount(row) }}
@@ -204,7 +208,14 @@ export default {
     //改变选项"是否全文搜索"
     OnIsFullTextSearchChange(val){
       this.isFullTextSearch=val
-    }
+    },
+    openDetail (row) {
+      this.$router.push({
+        name: "ValidatingwebhookconfigurationDetail",
+        params: { name: row.metadata.name, namespace: row.metadata.namespace },
+        query: { yamlShow: false }
+      })
+    },
   },
   created () {
     this.cluster = this.$route.query.cluster
