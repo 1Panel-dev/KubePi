@@ -44,7 +44,7 @@ export default {
     content: "";
     position: absolute;
     bottom: 0;
-    right: #{$sidebar-close-width / 4};
+    right: #{calc($sidebar-close-width / 4)};
     height: 1px;
     width: calc(100% - #{$sidebar-close-width / 2});
     background-color: hsla(0, 0%, 100%, 0.5);

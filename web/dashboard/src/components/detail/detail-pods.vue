@@ -1,6 +1,18 @@
 <template>
   <div>
-    <complex-table :data="pods" v-loading="loading" @search="search">
+    <div style="float: left ; padding:10px ;" v-if="selects.length>0">
+      <el-button type="primary" size="small"
+                   @click="batchTerminal()"  :disabled="selects.length===0 || !checkExecPermissions()">
+        {{ $t("commons.button.terminal") }}
+      </el-button>
+
+      <el-button type="primary" size="small"
+                   @click="batchLogs()"  :disabled="selects.length===0 || !checkLogPermissions()">
+        {{ $t("commons.button.logs") }}
+      </el-button>
+    </div>
+    <complex-table :selects.sync="selects" :data="pods" v-loading="loading" @search="search">
+      <el-table-column type="selection" fix ></el-table-column>
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
           <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
@@ -111,6 +123,7 @@ export default {
       loading: false,
       pods: [],
       podUsage: [],
+      selects: [],
     }
   },
   methods: {
@@ -200,6 +213,56 @@ export default {
         }
       }
       return result
+    },
+    checkExecPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/exec', verb: 'create' })
+    },
+    checkLogPermissions () {
+      return checkPermissions({ scope: 'namespace', apiGroup: '', resource: 'pods/log', verb: 'get' })
+    },
+    //批量打开终端
+    batchTerminal(){
+      if (this.selects.length > 0) {
+      
+              let routeUrl = this.$router.resolve({
+                   path: "/batch-terminal",
+                   query: {
+                    cluster: this.cluster,
+                    terminals: JSON.stringify( this.selects.map((item) => {
+                      return {
+                         cluster: this.cluster,
+                         namespace: item.metadata.namespace,
+                         pod: item.metadata.name,
+                         container: item.spec.containers[0].name,
+                         type: "terminal"
+                      }
+                    }) )
+                   }
+              })
+              window.open(routeUrl.href, "_blank")
+      }
+    },
+    //批量打开日志
+    batchLogs(){
+      if (this.selects.length > 0) {
+      
+              let routeUrl = this.$router.resolve({
+                   path: "/batch-terminal",
+                   query: {
+                    cluster: this.cluster,
+                    terminals: JSON.stringify( this.selects.map((item) => {
+                      return {
+                         cluster: this.cluster,
+                         namespace: item.metadata.namespace,
+                         pod: item.metadata.name,
+                         container: item.spec.containers[0].name,
+                         type: "log"
+                      }
+                    }) )
+                   }
+              })
+              window.open(routeUrl.href, "_blank")
+      }
     }
   },
 }

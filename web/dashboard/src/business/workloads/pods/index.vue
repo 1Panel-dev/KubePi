@@ -22,6 +22,16 @@
                    @click="exportToXlsx()" icon="el-icon-download">
         {{ $t("commons.button.export") }}
       </el-button>
+
+      <el-button type="primary" size="small"
+                   @click="batchTerminal()"  :disabled="selects.length===0 || !checkExecPermissions()">
+        {{ $t("commons.button.terminal") }}
+      </el-button>
+
+      <el-button type="primary" size="small"
+                   @click="batchLogs()"  :disabled="selects.length===0 || !checkLogPermissions()">
+        {{ $t("commons.button.logs") }}
+      </el-button>
     </div>
     <complex-table :selects.sync="selects" :data="data" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig" @search="search" @sort-change='sortTableFun' :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
@@ -541,6 +551,50 @@ export default {
     //改变选项"是否全文搜索"
     OnIsFullTextSearchChange(val){
       this.isFullTextSearch=val
+    },
+    //批量打开终端
+    batchTerminal(){
+      if (this.selects.length > 0) {
+      
+              let routeUrl = this.$router.resolve({
+                   path: "/batch-terminal",
+                   query: {
+                    cluster: this.clusterName,
+                    terminals: JSON.stringify( this.selects.map((item) => {
+                      return {
+                         cluster: this.clusterName,
+                         namespace: item.metadata.namespace,
+                         pod: item.metadata.name,
+                         container: item.containers[0],
+                         type: "terminal"
+                      }
+                    }) )
+                   }
+              })
+              window.open(routeUrl.href, "_blank")
+      }
+    },
+    //批量打开日志
+    batchLogs(){
+      if (this.selects.length > 0) {
+      
+              let routeUrl = this.$router.resolve({
+                   path: "/batch-terminal",
+                   query: {
+                    cluster: this.clusterName,
+                    terminals: JSON.stringify( this.selects.map((item) => {
+                      return {
+                         cluster: this.clusterName,
+                         namespace: item.metadata.namespace,
+                         pod: item.metadata.name,
+                         container: item.containers[0],
+                         type: "log"
+                      }
+                    }) )
+                   }
+              })
+              window.open(routeUrl.href, "_blank")
+      }
     }
   },
   mounted () {
