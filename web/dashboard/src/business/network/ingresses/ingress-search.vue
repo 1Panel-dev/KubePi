@@ -53,9 +53,9 @@ export default {
             var map = {}
             var result = []
             lines.forEach(m => {
-                if (!map[m.targte + "-" + m.source]) {
+                if (!map[m.target + "-" + m.source]) {
                     result.push(m)
-                    map[m.targte + "-" + m.source] = true
+                    map[m.target + "-" + m.source] = true
                 }
             })
             return result
@@ -159,7 +159,12 @@ export default {
             if (document.getElementById("ingress-search-charts") == null) {
                 return
             }
-            if (!this.search_url && !this.search_url.startsWith("http")) {
+            if (!this.search_url || this.search_url ==""){
+                this.$message.error("please input the url for ingress search")
+                return
+            }
+            if (!this.search_url || !this.search_url.startsWith("http")) {
+                this.$message.error("url is invalid")
                 return
             }
             this.loading = true
@@ -193,14 +198,27 @@ export default {
 
                             for (var k = 0; k < rule.http.paths.length; k++) {
                                 var path = rule.http.paths[k]
+                                if (!this.search_url.endsWith("/")) {
+                                    if ((this.search_url+"/").startsWith("https://" + rule.host + path.path)) {
+                                        is_same_path = true
+                                        break
+                                    }
+                                }
                                 if (this.search_url.startsWith("https://" + rule.host + path.path)) {
                                     is_same_path = true
                                     break
                                 }
+
                             }
                         } else {
                             for (var k = 0; k < rule.http.paths.length; k++) {
                                 var path = rule.http.paths[k]
+                                if (!this.search_url.endsWith("/")) {
+                                    if ((this.search_url+"/").startsWith("http://" + rule.host + path.path)) {
+                                        is_same_path = true
+                                        break
+                                    }
+                                }
                                 if (this.search_url.startsWith("http://" + rule.host + path.path)) {
                                     is_same_path = true
                                     break
