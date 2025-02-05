@@ -155,6 +155,40 @@ export default {
             }
             return { linkDataArray: linkDataArray, nodes: nodes, podsNodes: podsNodes }
         },
+        toEnd(s) {
+            const str = s || "";
+            if (str.endsWith("/")) {
+               return str;
+            } else {
+               return str + "/";
+            }
+        },
+        matchUrl(ingress, url,host ,path,pathType) {
+
+            let urlForMatch ="";
+            if (ingress.spec.tls != null && ingress.spec.tls.length > 0) {
+                urlForMatch=urlForMatch+"https://"+host+path;
+            } else {
+                urlForMatch=urlForMatch+"http://"+host+path;
+            }
+            if(pathType == "Prefix"){
+                return this.toEnd(url).startsWith(this.toEnd(urlForMatch))
+            } else if(pathType == "Exact"){
+                return this.toEnd(url) == this.toEnd(urlForMatch)
+            } else if(pathType == "ImplementationSpecific"){
+                if(this.toEnd(url).startsWith(this.toEnd(urlForMatch))){
+                    return true
+                } else {
+                   if(this.toEnd(url).match(this.toEnd(urlForMatch))){
+                       return true
+                   } else {
+                       return false
+                   }
+                }
+            } else {
+                return this.toEnd(url).startsWith(this.toEnd(urlForMatch))
+            }
+        },
         async renderCharts() {
             if (document.getElementById("ingress-search-charts") == null) {
                 return
@@ -194,36 +228,14 @@ export default {
                     if (rule.host == search_host) {
                         is_same_domain = true
 
-                        if (ingress.spec.tls != null && ingress.spec.tls.length > 0) {
-
-                            for (var k = 0; k < rule.http.paths.length; k++) {
+                        for (var k = 0; k < rule.http.paths.length; k++) {
                                 var path = rule.http.paths[k]
-                                if (!this.search_url.endsWith("/")) {
-                                    if ((this.search_url+"/").startsWith("https://" + rule.host + path.path)) {
-                                        is_same_path = true
-                                        break
-                                    }
-                                }
-                                if (this.search_url.startsWith("https://" + rule.host + path.path)) {
+
+                                if(this.matchUrl(ingress,this.search_url,rule.host,path.path,path.pathType)){
                                     is_same_path = true
                                     break
                                 }
 
-                            }
-                        } else {
-                            for (var k = 0; k < rule.http.paths.length; k++) {
-                                var path = rule.http.paths[k]
-                                if (!this.search_url.endsWith("/")) {
-                                    if ((this.search_url+"/").startsWith("http://" + rule.host + path.path)) {
-                                        is_same_path = true
-                                        break
-                                    }
-                                }
-                                if (this.search_url.startsWith("http://" + rule.host + path.path)) {
-                                    is_same_path = true
-                                    break
-                                }
-                            }
                         }
                     }
                 }
