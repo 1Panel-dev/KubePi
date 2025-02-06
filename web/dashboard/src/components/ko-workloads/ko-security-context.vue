@@ -147,8 +147,8 @@ export default {
       parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation || undefined
       parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
       parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem || undefined
-      parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
-      parentFrom.securityContext.runAsGroup = this.form.runAsGroup || undefined
+      parentFrom.securityContext.runAsUser = (this.form.runAsUser ===  undefined || this.form.runAsUser === "") ? undefined : parseInt(this.form.runAsUser)
+      parentFrom.securityContext.runAsGroup = (this.form.runAsGroup ===  undefined || this.form.runAsGroup === "") ? undefined : parseInt(this.form.runAsGroup)
       parentFrom.securityContext.procMount = this.form.procMount || undefined
       parentFrom.securityContext.capabilities = {
         add: this.form.capabilities.add.length !== 0 ? this.form.capabilities.add : undefined,
@@ -177,10 +177,10 @@ export default {
         if (this.securityContextParentObj.securityContext.readOnlyRootFilesystem !== undefined) {
           this.form.readOnlyRootFilesystem = this.securityContextParentObj.securityContext.readOnlyRootFilesystem
         }
-        if (this.securityContextParentObj.securityContext.runAsUser) {
+        if (this.securityContextParentObj.securityContext.runAsUser !== undefined && this.securityContextParentObj.securityContext.runAsUser !== ""  ) {
           this.form.runAsUser = this.securityContextParentObj.securityContext.runAsUser
         }
-        if (this.securityContextParentObj.securityContext.runAsGroup) {
+        if (this.securityContextParentObj.securityContext.runAsGroup !== undefined && this.securityContextParentObj.securityContext.runAsGroup !== "") {
           this.form.runAsGroup = this.securityContextParentObj.securityContext.runAsGroup
         }
         if (this.securityContextParentObj.securityContext.procMount) {

@@ -167,9 +167,9 @@ export default {
       }
       parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
 
-      parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
-      parentFrom.securityContext.runAsGroup = this.form.runAsGroup || undefined
-      parentFrom.securityContext.fsGroup = this.form.fsGroup || undefined
+      parentFrom.securityContext.runAsUser = (this.form.runAsUser ===  undefined || this.form.runAsUser === "") ? undefined : parseInt(this.form.runAsUser)
+      parentFrom.securityContext.runAsGroup = (this.form.runAsGroup ===  undefined || this.form.runAsGroup === "") ? undefined : parseInt(this.form.runAsGroup)
+      parentFrom.securityContext.fsGroup = (this.form.fsGroup ===  undefined || this.form.fsGroup === "") ? undefined : parseInt(this.form.fsGroup)
 
       let supplementalGroups = []
       for (const s of this.form.supplementalGroups) {
@@ -193,16 +193,16 @@ export default {
           this.form.runAsNonRoot = this.securityContextParentObj.securityContext.runAsNonRoot
         }
 
-        if (this.securityContextParentObj.securityContext.runAsUser) {
-          this.form.runAsUser = this.securityContextParentObj.securityContext.runAsUser
+        if (this.securityContextParentObj.securityContext.runAsUser !== undefined && this.securityContextParentObj.securityContext.runAsUser !== null) {
+          this.form.runAsUser = parseInt(this.securityContextParentObj.securityContext.runAsUser)
         }
-        if (this.securityContextParentObj.securityContext.runAsGroup) {
-          this.form.runAsGroup = this.securityContextParentObj.securityContext.runAsGroup
+        if (this.securityContextParentObj.securityContext.runAsGroup !== undefined && this.securityContextParentObj.securityContext.runAsGroup !== null) {
+          this.form.runAsGroup = parseInt(this.securityContextParentObj.securityContext.runAsGroup)
         }
-        if (this.securityContextParentObj.securityContext.fsGroup) {
-          this.form.fsGroup = this.securityContextParentObj.securityContext.fsGroup
+        if (this.securityContextParentObj.securityContext.fsGroup !== undefined && this.securityContextParentObj.securityContext.fsGroup !== null) {
+          this.form.fsGroup = parseInt(this.securityContextParentObj.securityContext.fsGroup)
         }
-        if (this.securityContextParentObj.securityContext.supplementalGroups) {
+        if (this.securityContextParentObj.securityContext.supplementalGroups ) {
           this.form.supplementalGroups = []
           for (const s of this.securityContextParentObj.securityContext.supplementalGroups) {
             this.form.supplementalGroups.push({ value: s })
@@ -217,6 +217,7 @@ export default {
         }
       }
     }
+    console.log(this.form)
   },
 }
 </script>
