@@ -163,6 +163,14 @@ export default {
                return str + "/";
             }
         },
+        toEndExp(s) {
+            const str = s || "";
+            if (str.endsWith("/")) {
+               return str;
+            } else {
+               return str + "(/|$)";
+            }
+        },
         matchUrl(ingress, url,host ,path,pathType) {
 
             let urlForMatch ="";
@@ -179,7 +187,7 @@ export default {
                 if(this.toEnd(url).startsWith(this.toEnd(urlForMatch))){
                     return true
                 } else {
-                   if(this.toEnd(url).match(this.toEnd(urlForMatch))){
+                   if(this.toEnd(url).match(this.toEndExp(urlForMatch))){
                        return true
                    } else {
                        return false
