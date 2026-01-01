@@ -465,6 +465,21 @@ const Configuration = {
       }
     },
     {
+      path: "/mutatingwebhookconfigurations/detail/:name",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "mutatingwebhookconfigurations",
+        verb: "get",
+      },
+      component: () => import("@/business/configuration/mutatingwebhookconfigurations/detail"),
+      name: "MutatingwebhookconfigurationDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/mutatingwebhookconfigurations"
+      }
+    },
+    {
       path: "/validatingwebhookconfigurations",
       requirePermission: {
         apiGroup: "admissionregistration.k8s.io",
@@ -507,6 +522,21 @@ const Configuration = {
       meta: {
         title: "ValidatingwebhookconfigurationEdit",
         activeMenu: "/validatingwebhookconfigurations",
+      }
+    },
+    {
+      path: "/validatingwebhookconfigurations/detail/:name",
+      requirePermission: {
+        apiGroup: "admissionregistration.k8s.io",
+        resource: "validatingwebhookconfigurations",
+        verb: "get",
+      },
+      component: () => import("@/business/configuration/validatingwebhookconfigurations/detail"),
+      name: "ValidatingwebhookconfigurationDetail",
+      props: true,
+      hidden: true,
+      meta: {
+        activeMenu: "/validatingwebhookconfigurations"
       }
     }
   ]
