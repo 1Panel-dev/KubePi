@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:experimental
 FROM node:18.10.0-alpine as stage-web-build
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache make
@@ -12,11 +13,13 @@ WORKDIR /build/kubepi/web
 
 COPY . .
 
-RUN make build_web
+RUN --mount=type=cache,target=/build/kubepi/web/dashboard/node_modules,id=my_web_dashboard_module,sharing=locked --mount=type=cache,target=/build/kubepi/web/kubepi/node_modules,id=my_web_kubepi_module,sharing=locked --mount=type=cache,target=/build/kubepi/web/terminal/node_modules,id=my_web_terminal_module,sharing=locked make build_web
 
 RUN rm -fr web
 
-FROM golang:1.22 as stage-bin-build
+FROM golang:1.23.2-alpine3.20 as stage-bin-build
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --no-cache make
 
 ENV GOPROXY="https://goproxy.cn,direct"
 
@@ -30,12 +33,12 @@ WORKDIR /build/kubepi/bin
 
 COPY --from=stage-web-build /build/kubepi/web .
 
-RUN go mod download
+RUN --mount=type=cache,target=/root/go,id=my_app_go_module,sharing=locked go mod download
 
-RUN make build_gotty
-RUN make build_bin
+RUN --mount=type=cache,target=/root/go,id=my_app_go_module,sharing=locked make build_gotty
+RUN --mount=type=cache,target=/root/go,id=my_app_go_module,sharing=locked make build_bin
 
-FROM alpine:3.16
+FROM alpine:3.20
 
 WORKDIR /
 
@@ -57,6 +60,7 @@ RUN ARCH=$(uname -m) \
     && tar zxvf fzf.tar.gz \
     && rm -rf fzf.tar.gz \
     && chmod -R 755 fzf \
+    && sed -i 's/https\:\/\/github.com/https\:\/\/gh.llkk.cc\/https\:\/\/github.com/g' fzf/install \
     && yes | fzf/install \
     && ln -s fzf/bin/fzf /usr/local/bin/fzf \
     && cd /tmp/ \

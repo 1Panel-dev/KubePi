@@ -43,7 +43,7 @@
     </el-row>
     <el-row>
       <div>
-        <iframe :key="isRefresh" :src="terminal.url" :style="{'height': height}" style="width: 100%;border: 0"></iframe>
+        <iframe :key="isRefresh" :src="terminal.url" :style="{'height': height}" style="width: 100%;border: 0" ref="myIframe"></iframe>
       </div>
     </el-row>
 
@@ -99,6 +99,7 @@ import { isLogin } from "@/api/auth"
 export default {
   name: "Terminal",
   components: { KoFormItem },
+  props: ["params"],
   data() {
     return {
       height: "",
@@ -248,14 +249,27 @@ export default {
         })
       }, 5000)
     },
+    reloadIframe(){
+      this.$refs.myIframe.contentWindow.location.reload(true)
+    }
   },
   created() {
-    this.terminal = {
+    if(!this.params) {
+     this.terminal = {
       cluster: this.$route.query.cluster,
       namespace: this.$route.query.namespace,
       pod: this.$route.query.pod,
       container: this.$route.query.container,
       type: this.$route.query.type,
+     }
+    }else{
+     this.terminal = {
+      cluster: this.params.cluster,
+      namespace: this.params.namespace,
+      pod: this.params.pod,
+      container: this.params.container,
+      type: this.params.type,
+     }
     }
     this.terminal.url = this.getTerminalUrl()
     this.loadContainters()
