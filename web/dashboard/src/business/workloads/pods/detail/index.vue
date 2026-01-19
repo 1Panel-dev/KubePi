@@ -183,7 +183,7 @@ export default {
     },
     async get_pod_domain(){
       let ip = "";
-      if (this.form.status.podIPs.length > 0) {
+      if (this.form.status.podIPs && this.form.status.podIPs.length > 0) {
          ip = this.form.status.podIP.replaceAll(".", "-");
       }
       this.ip=ip
