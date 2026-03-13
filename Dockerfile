@@ -2,7 +2,7 @@ FROM node:18.10.0-alpine as stage-web-build
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache make
 ARG NPM_REGISTRY="https://registry.npmmirror.com"
-ENV NPM_REGISTY=$NPM_REGISTRY
+ENV NPM_REGISTRY=$NPM_REGISTRY
 
 LABEL stage=stage-web-build
 RUN set -ex \
