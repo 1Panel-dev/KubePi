@@ -93,9 +93,11 @@ func (s *service) Create(sso *v1Sso.Sso, options common.DBOptions) error {
 
 func (s *service) Update(id string, sso *v1Sso.Sso, options common.DBOptions) error {
 	sc := ssoClient.NewSsoClient(sso.Protocol, sso.InterfaceAddress, sso.ClientId, sso.ClientSecret, sso.Enable)
-	// 当用户进行SSO配置时，应该为用户检测目标是否可连接
-	if err := sc.TestConnect(sso.InterfaceAddress); err != nil {
-		return err
+	// 当用户进行SSO配置更新时，应该当功能为开启时才检测连接是否能通信
+	if sso.Enable {
+		if err := sc.TestConnect(sso.InterfaceAddress); err != nil {
+			return err
+		}
 	}
 
 	old, err := s.GetById(id, options)

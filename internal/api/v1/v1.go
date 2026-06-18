@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/KubeOperator/kubepi/internal/api/v1/monitor"
+	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/sso"
 	"io/ioutil"
 	"strings"
@@ -19,7 +21,6 @@ import (
 	"github.com/KubeOperator/kubepi/internal/api/v1/cluster"
 	"github.com/KubeOperator/kubepi/internal/api/v1/imagerepo"
 	"github.com/KubeOperator/kubepi/internal/api/v1/ldap"
-	"github.com/KubeOperator/kubepi/internal/api/v1/proxy"
 	"github.com/KubeOperator/kubepi/internal/api/v1/role"
 	"github.com/KubeOperator/kubepi/internal/api/v1/session"
 	"github.com/KubeOperator/kubepi/internal/api/v1/system"
@@ -440,6 +441,7 @@ func AddV1Route(app iris.Party) {
 	cluster.Install(authParty)
 	role.Install(authParty)
 	system.Install(authParty)
+	monitor.Install(authParty)
 	proxy.Install(authParty)
 	ws.Install(authParty)
 	chart.Install(authParty)
