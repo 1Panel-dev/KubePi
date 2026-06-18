@@ -2,7 +2,6 @@ import {get, post, put, del} from "@/plugins/request"
 
 const baseUrl = "/api/v1/monitor"
 
-// 仪表盘
 export function getGrafana () {
     return get(`${baseUrl}/grafana`)
 }
@@ -23,7 +22,6 @@ export function testConnectGrafana(data) {
     return post(`${baseUrl}/grafana/test/connect`, data)
 }
 
-// 指标
 export function searchMetrics (pageNum, pageSize, conditions) {
     let url = `${baseUrl}/metrics/search?pageNum=${pageNum}&&pageSize=${pageSize}`
     return post(url, { conditions: conditions })
