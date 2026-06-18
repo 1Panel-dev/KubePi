@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { ssoLogin,getSso } from "@/api/sso"
+import { ssoLogin, getSsoAuth } from "@/api/sso"
 export default {
   name: "Login",
   data () {
@@ -69,7 +69,7 @@ export default {
       window.location.href = '/kubepi'+ssoLogin()
     },
     getAuthType() {
-      getSso().then((res) => {
+      getSsoAuth().then((res) => {
         if (res.data.protocol == "openid") {
           this.authType = " OpenID "
         } else {

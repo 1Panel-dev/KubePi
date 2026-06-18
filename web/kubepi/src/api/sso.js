@@ -18,6 +18,10 @@ export function isSso() {
     return get(`${baseUrl}/status`)
 }
 
+export function getSsoAuth() {
+    return get(`${baseUrl}/auth`)
+}
+
 export function ssoLogin() {
     return (`${baseUrl}/login`)
 }

@@ -114,6 +114,7 @@ const UserManagement = {
       path: "sso",
       component: () => import("@/business/user-management/sso"),
       name: "SSO",
+      requireAdmin: true,
       requirePermission: {
         resource: "sso",
         verb: "list"

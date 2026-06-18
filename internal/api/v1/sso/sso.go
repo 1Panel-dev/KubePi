@@ -26,8 +26,21 @@ func NewHandler() *Handler {
 	}
 }
 
+func isAdministrator(ctx *context.Context) bool {
+	profile, ok := ctx.Values().Get("profile").(v1Session.UserProfile)
+	if !ok || !profile.IsAdministrator {
+		ctx.StatusCode(iris.StatusForbidden)
+		ctx.Values().Set("message", "only administrator can manage SSO")
+		return false
+	}
+	return true
+}
+
 func (h *Handler) AddSso() iris.Handler {
 	return func(ctx *context.Context) {
+		if !isAdministrator(ctx) {
+			return
+		}
 		var req v1Sso.Sso
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -45,6 +58,9 @@ func (h *Handler) AddSso() iris.Handler {
 
 func (h *Handler) ListSso() iris.Handler {
 	return func(ctx *context.Context) {
+		if !isAdministrator(ctx) {
+			return
+		}
 		ssos, err := h.ssoService.List(common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -57,6 +73,9 @@ func (h *Handler) ListSso() iris.Handler {
 
 func (h *Handler) UpdateSso() iris.Handler {
 	return func(ctx *context.Context) {
+		if !isAdministrator(ctx) {
+			return
+		}
 		var req v1Sso.Sso
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -157,6 +176,9 @@ func (h *Handler) CallbackOpenID() iris.Handler {
 
 func (h *Handler) TestConnect() iris.Handler {
 	return func(ctx *context.Context) {
+		if !isAdministrator(ctx) {
+			return
+		}
 		var req v1Sso.Sso
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -178,6 +200,22 @@ func (h *Handler) StatusSso() iris.Handler {
 			return
 		}
 		ctx.Values().Set("data", true)
+	}
+}
+
+func (h *Handler) AuthSso() iris.Handler {
+	return func(ctx *context.Context) {
+		ssos, err := h.ssoService.List(common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if !ssos.Enable {
+			ctx.Values().Set("data", map[string]string{})
+			return
+		}
+		ctx.Values().Set("data", map[string]string{"protocol": ssos.Protocol})
 	}
 }
 
@@ -257,11 +295,17 @@ func Install(parent iris.Party) {
 	sp.Get("/", handler.ListSso())
 	sp.Post("/", handler.AddSso())
 	sp.Put("/", handler.UpdateSso())
+	sp.Post("/test/connect", handler.TestConnect())
+}
+
+func InstallPublic(parent iris.Party) {
+	handler := NewHandler()
+	sp := parent.Party("/sso")
 	sp.Get("/login", handler.LoginSso())
 	sp.Get("/callback", handler.CallbackOpenID())
 	sp.Get("/callback_saml2", handler.Saml2Auth())
-	sp.Post("/test/connect", handler.TestConnect())
 	sp.Get("/status", handler.StatusSso())
+	sp.Get("/auth", handler.AuthSso())
 	sp.Get("/saml/metadata", handler.Saml2Metadata())
 	sp.Post("/saml/acs", handler.Saml2Acs())
 	sp.Get("/saml/slo", handler.Saml2Slo())
