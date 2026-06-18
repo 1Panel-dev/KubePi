@@ -424,7 +424,7 @@ func AddV1Route(app iris.Party) {
 
 	session.Install(v1Party)
 	mfa.Install(v1Party)
-	sso.Install(v1Party)
+	sso.InstallPublic(v1Party)
 	v1Party.Use(langHandler())
 	v1Party.Use(pageHandler())
 
@@ -437,6 +437,7 @@ func AddV1Route(app iris.Party) {
 	authParty.Use(resourceNameInvalidHandler())
 	authParty.Use(logHandler())
 	authParty.Get("/", apiResourceHandler(authParty))
+	sso.Install(authParty)
 	user.Install(authParty)
 	cluster.Install(authParty)
 	role.Install(authParty)

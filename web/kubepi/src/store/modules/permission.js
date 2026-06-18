@@ -9,6 +9,9 @@ function hasPermission(user, route) {
     if (user.isAdministrator) {
         return true
     }
+    if (route.requireAdmin) {
+        return false
+    }
     if (route.requirePermission) {
         for (const resource of Object.keys(user.resourcePermissions)) {
             if (resource === "*") {

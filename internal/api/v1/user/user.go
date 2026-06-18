@@ -308,6 +308,9 @@ func (h *Handler) GetUsers() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		for i := range us {
+			us[i].Authenticate = v1User.Authenticate{}
+		}
 		ctx.Values().Set("data", us)
 	}
 }
