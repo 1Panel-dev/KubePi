@@ -11,7 +11,6 @@ type GrafanaConfig struct {
 	ServiceAccountToken string `json:"service_account_token"`
 }
 
-// Grafana默认仪表盘UID
 var GrafanaDashboardUid = []string{
 	"NamespaceOverviewKubePi",
 	"PodsOverviewKubePi",

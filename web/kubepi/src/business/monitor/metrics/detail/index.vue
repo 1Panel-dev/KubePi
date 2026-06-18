@@ -16,7 +16,6 @@
       <el-button type="primary" :span="2" size="large" class="square-button" @click="onExecute()" >{{ $t('business.monitor.metrics.execute') }}</el-button>
     </el-row>
 
-    <!-- 只保留 Table 标签，去掉按钮 -->
     <div class="table-container">
       <h4>Table</h4>
       <el-table :data="promql_query_data"  v-if="promql_query_data.length > 0">
@@ -26,7 +25,6 @@
       <p v-if="promql_query_data.length === 0">No data queried yet</p>
     </div>
 
-    <!-- Dialog Component -->
     <el-dialog title="Metrics Explorer" :visible.sync="dialogVisible" :close-on-click-modal="true" width="60%">
       <el-input
         v-model="explorer_search"
@@ -80,9 +78,6 @@ export default {
       })
     },
     onExporterBox () {
-      // getExplorer(this.$route.params.instance).then(res => {
-      //   this.explorer_list = res.data.data
-      // })
       this.dialogVisible = true;
     },
     filteredPromql(queryString, callback) {
@@ -90,9 +85,9 @@ export default {
         const results = this.promql_list.filter(metric =>
           metric.value.toLowerCase().includes(queryString.toLowerCase())
         );
-        callback(results); // 回传过滤结果
+        callback(results);
       } else {
-        callback(this.promql_list); // 如果没有输入内容，显示全部建议
+        callback(this.promql_list);
       }
     },
     onExecute () {
@@ -102,13 +97,11 @@ export default {
         console.log("1233")
         console.log("promql_query_data",this.promql_query_data)
       }).catch(() => {
-        //this.$router.push({ name: "Metrics" })
       })
     },
   },
   created () {
     this.connectTest()
-    //this.search()
   },
   computed: {
     instance() {
@@ -125,18 +118,18 @@ export default {
 
 <style scoped>
   .square-button {
-    border-radius: 0 !important; /* 直角边框 */
+    border-radius: 0 !important;
     margin-left: -1px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
   .scrollable-content {
-    max-height: 400px;        /* 限制内容的最大高度 */
-    overflow-y: auto;         /* 垂直滚动条 */
-    padding-right: 10px;      /* 防止滚动条遮住内容 */
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
   }
   .metric-item {
-    padding: 10px 0;          /* 每行内容的上下间距 */
+    padding: 10px 0;
   }
   .promql-input {
     flex: 1;
@@ -148,12 +141,11 @@ export default {
     margin-top: 20px;
   }
   .table-container {
-    border: 2px solid #444444; /* 灰色边框 */
-    border-radius: 0 !important; /* 直角边框 */
-    padding: 10px; /* 内边距 */
+    border: 2px solid #444444;
+    border-radius: 0 !important;
+    padding: 10px;
     margin-top: 10px;
   }
-  /* 防止表格内容换行 */
   .el-table-column {
     white-space: nowrap;
     overflow: hidden;

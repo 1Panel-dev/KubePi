@@ -20,7 +20,7 @@ const Monitor = {
         component: () => import("@/business/monitor/grafana"),
         name: "Grafana",
         requirePermission: {
-          resource: "grafana",
+          resource: "monitor",
           verb: "list"
         },
         meta: {
@@ -32,7 +32,7 @@ const Monitor = {
         component: () => import("@/business/monitor/metrics"),
         name: "Metrics",
         requirePermission: {
-          resource: "metrics",
+          resource: "monitor",
           verb: "list"
         },
         meta: {
@@ -69,18 +69,6 @@ const Monitor = {
           activeMenu: "/metrics",
         }
       },
-      // {
-      //   path: "/monitor/alert-rules",
-      //   component: () => import("@/business/monitor/alert-rules"),
-      //   name: "Alert Rules",
-      //   requirePermission: {
-      //     resource: "alert-rules",
-      //     verb: "list"
-      //   },
-      //   meta: {
-      //     title: "business.monitor.alert_rules.name",
-      //   }
-      // },
     ]
 }
 

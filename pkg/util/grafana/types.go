@@ -1,13 +1,11 @@
 package grafana
 
-// 获取文件夹列表返回数据
 type GetFoldersResp struct {
 	Id    int    `json:"id"`
 	Uid   string `json:"uid"`
 	Title string `json:"title"`
 }
 
-// 获取仪表盘列表返回数据
 type GetDashboardsResp struct {
 	Id          int           `json:"id"`
 	Uid         string        `json:"uid"`

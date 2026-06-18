@@ -24,10 +24,8 @@ func NewGrafanaClient(address, token string, enable, defaultDashboard bool) *Gra
 	}
 }
 
-// 强制固定 "KubePi Dashboards" 文件夹的UID
 var folderUid = "nErXDvCkzzkubepi"
 
-// 测试Grafana连接是否能访问
 func (g *Grafana) TestConnect(address string) error {
 	req, err := http.NewRequest("GET", address, nil)
 	if err != nil {
@@ -39,14 +37,12 @@ func (g *Grafana) TestConnect(address string) error {
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		return errors.New("请求Grafana地址失败,当前状态码为: " + resp.Status)
 	}
 	return nil
 }
 
-// 获取文件夹列表
 func (g *Grafana) GetFolders(address, token string) (data []*GetFoldersResp, err error) {
 	reqUrl := address + "/api/folders"
 	req, err := http.NewRequest("GET", reqUrl, nil)
@@ -60,7 +56,6 @@ func (g *Grafana) GetFolders(address, token string) (data []*GetFoldersResp, err
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		return nil, errors.New("获取Grafana文件夹列表失败,当前状态码为: " + resp.Status)
 	}
@@ -69,7 +64,6 @@ func (g *Grafana) GetFolders(address, token string) (data []*GetFoldersResp, err
 		return nil, errors.New("获取Grafana文件夹列表失败: " + err.Error())
 	}
 
-	// 解析成json格式
 	var respData []*GetFoldersResp
 	err = json.Unmarshal(body, &respData)
 	if err != nil {
@@ -79,7 +73,6 @@ func (g *Grafana) GetFolders(address, token string) (data []*GetFoldersResp, err
 	return respData, nil
 }
 
-// 创建文件夹
 func (g *Grafana) CreateFolder(address, token, folderName string) error {
 	folders, err := g.GetFolders(address, token)
 	if err != nil {
@@ -112,14 +105,12 @@ func (g *Grafana) CreateFolder(address, token, folderName string) error {
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		return errors.New("创建Grafana文件夹失败,当前状态码为: " + resp.Status)
 	}
 	return nil
 }
 
-// 获取仪表盘
 func (g *Grafana) GetDashboards(address, token, folderUid string) (data []*GetDashboardsResp, err error) {
 	reqUrl := address + "/api/search?limit=50&type=dash-db&folderUid=" + folderUid
 	req, err := http.NewRequest("GET", reqUrl, nil)
@@ -133,7 +124,6 @@ func (g *Grafana) GetDashboards(address, token, folderUid string) (data []*GetDa
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		return nil, errors.New("获取Grafana仪表盘列表失败,当前状态码为: " + resp.Status)
 	}
@@ -142,7 +132,6 @@ func (g *Grafana) GetDashboards(address, token, folderUid string) (data []*GetDa
 		return nil, errors.New("获取Grafana仪表盘列表失败: " + err.Error())
 	}
 
-	// 解析成json格式
 	var respData []*GetDashboardsResp
 	err = json.Unmarshal(body, &respData)
 	if err != nil {
@@ -152,11 +141,6 @@ func (g *Grafana) GetDashboards(address, token, folderUid string) (data []*GetDa
 	return respData, nil
 }
 
-/*
-导入仪表盘
-仪表盘UID自定义：
-Namespace Overview：NamespaceOverviewKubePi
-*/
 func (g *Grafana) ImportDashboards(address, token, uid, jsonContent string) error {
 	dashboards, err := g.GetDashboards(address, token, folderUid)
 	if err != nil {
@@ -177,7 +161,6 @@ func (g *Grafana) ImportDashboards(address, token, uid, jsonContent string) erro
 		FolderUid: folderUid,
 	}
 
-	// 解析文件中的JSON并将其赋值给params.Dashboard
 	err = json.Unmarshal([]byte(jsonContent), &params.Dashboard)
 	if err != nil {
 		return errors.New("解析jsonContent仪表盘JSON数据失败: " + err.Error())
@@ -199,7 +182,6 @@ func (g *Grafana) ImportDashboards(address, token, uid, jsonContent string) erro
 	}
 	defer resp.Body.Close()
 
-	// 判断是否增加成功
 	if resp.StatusCode != 200 {
 		body, _ := io.ReadAll(resp.Body)
 		return errors.New("导入Grafana仪表盘失败, 当前状态码为: " + resp.Status + ", 错误信息: " + string(body))

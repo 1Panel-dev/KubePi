@@ -49,7 +49,7 @@ export default {
             })
           },
           disabled: () => {
-            return !checkPermissions({ resource: "metrics", verb: "update" })
+            return !checkPermissions({ resource: "monitor", verb: "update" })
           }
         },
         {
@@ -59,7 +59,7 @@ export default {
             this.onDelete(row.name)
           },
           disabled: () => {
-            return !checkPermissions({ resource: "metrics", verb: "delete" })
+            return !checkPermissions({ resource: "monitor", verb: "delete" })
           }
         },
       ],

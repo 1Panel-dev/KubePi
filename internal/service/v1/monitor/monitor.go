@@ -14,22 +14,20 @@ import (
 )
 
 type Service interface {
-	// 仪表盘
-	GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig) error                                 // grafana连通性测试
-	GrafanaList(options common.DBOptions) (*v1Monitor.GrafanaConfig, error)                    // 查看grafana配置
-	GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error            // 创建grafana配置
-	GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error // 更新grafana配置
-	GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) error                            // grafana导入默认仪表盘
+	GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig) error
+	GrafanaList(options common.DBOptions) (*v1Monitor.GrafanaConfig, error)
+	GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
+	GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
+	GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) error
 
-	// 指标
-	MetricsSearch(num, size int, conditions common.Conditions, options common.DBOptions) (result []v1Monitor.MetricsConfig, count int, err error) // 搜索metrics实例
-	MetricsCreate(metr *v1Monitor.MetricsConfig, options common.DBOptions) error                                                                  // 创建Metrics实例
-	MetricsDelete(name string, options common.DBOptions) error                                                                                    // 删除Metrics实例
-	MetricsUpdate(name string, metr *v1Monitor.MetricsConfig, options common.DBOptions) error                                                     // 更新Metrics实例
-	MetricsGetByName(name string, options common.DBOptions) (metr v1Monitor.MetricsConfig, err error)                                             // 根据名称获取Metrics实例
-	MetricsExplorer(name string, options common.DBOptions) (data interface{}, err error)                                                          // 根据Metrics实例名称，到处所有Metrics
-	MetricsTestConnect(name string, options common.DBOptions) error                                                                               // prometheus连通性测试
-	MetricsQuery(name, promql, timestamp string, options common.DBOptions) (data interface{}, err error)                                          // prometheus promql查询（默认为即时查询）
+	MetricsSearch(num, size int, conditions common.Conditions, options common.DBOptions) (result []v1Monitor.MetricsConfig, count int, err error)
+	MetricsCreate(metr *v1Monitor.MetricsConfig, options common.DBOptions) error
+	MetricsDelete(name string, options common.DBOptions) error
+	MetricsUpdate(name string, metr *v1Monitor.MetricsConfig, options common.DBOptions) error
+	MetricsGetByName(name string, options common.DBOptions) (metr v1Monitor.MetricsConfig, err error)
+	MetricsExplorer(name string, options common.DBOptions) (data interface{}, err error)
+	MetricsTestConnect(name string, options common.DBOptions) error
+	MetricsQuery(name, promql, timestamp string, options common.DBOptions) (data interface{}, err error)
 }
 
 func NewService() Service {
@@ -93,7 +91,6 @@ func (s *service) GrafanaList(options common.DBOptions) (*v1Monitor.GrafanaConfi
 
 func (s *service) GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
-	// 当用户进行Grafana配置时，应该为用户检测目标是否可连接
 	if err := gc.TestConnect(monitor.Address); err != nil {
 		return err
 	}
@@ -107,7 +104,6 @@ func (s *service) GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common
 
 func (s *service) GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
-	// 当用户进行Grafana配置更新时，应该当功能为开启时才检测连接是否能通信
 	if monitor.Enable {
 		if err := gc.TestConnect(monitor.Address); err != nil {
 			return err
@@ -147,7 +143,6 @@ func (s *service) GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) erro
 		return err
 	}
 
-	// 创建文件夹
 	if err := gc.CreateFolder(gc.Address, gc.ServiceAccountToken, "KubePi Dashboards"); err != nil {
 		return err
 	}
@@ -163,7 +158,7 @@ func (s *service) GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) erro
 				return err
 			}
 		}
-		time.Sleep(500 * time.Millisecond) // 视乎通过API导入仪表盘需要点时间，因此每一次成功导入都等待500ms
+		time.Sleep(500 * time.Millisecond)
 	}
 	return nil
 }
@@ -242,7 +237,7 @@ func (s *service) MetricsUpdate(name string, metr *v1Monitor.MetricsConfig, opti
 	metr.CreateAt = old.CreateAt
 	metr.UpdateAt = time.Now()
 
-	if !old.Auth {
+	if !metr.Auth {
 		metr.Credential.Password = ""
 		metr.Credential.Username = ""
 		metr.Credential = v1Monitor.Credential{}
@@ -267,7 +262,7 @@ func (s *service) MetricsExplorer(name string, options common.DBOptions) (data i
 	}
 
 	mc := prometheus.NewPrometheusClient(metr.EndPoint, metr.Credential.Username, metr.Credential.Password)
-	return mc.GetMetrics(mc.Address, mc.Username, mc.Username)
+	return mc.GetMetrics(mc.Address, mc.Username, mc.Password)
 }
 
 func (s *service) MetricsTestConnect(name string, options common.DBOptions) error {

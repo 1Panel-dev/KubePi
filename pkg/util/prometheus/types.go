@@ -16,7 +16,6 @@ type QueryMetricsResp struct {
 	} `json:"data"`
 }
 
-// 定义新的结构体用于存储处理后的数据
 type ProcessedMetric struct {
 	Metrics string  `json:"metrics"`
 	Value   float64 `json:"value"`

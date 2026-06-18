@@ -3,15 +3,12 @@
       <el-col :span="2"><br/></el-col>
       <el-col :span="20">
         <div v-if="iframeVisible" class="iframe-container">
-          <!-- 当 iframeVisible 为 true 时，嵌入 iframe -->
           <iframe :src="form.address+'/dashboards/f/nErXDvCkzzkubepi?kiosk=tv'" class="full-screen-iframe"></iframe>
-          <!-- 添加关闭按钮 -->
           <el-button class="close-iframe-btn" type="danger" @click="closeIframe">
             {{ $t('business.monitor.grafana.iframe_close') }}
           </el-button>
         </div>
         <div v-else>
-          <!-- 当 iframeVisible 为 false 时，显示配置表单 -->
           <el-form ref="form" v-loading="loading" label-position="left" :rules="rules" :model="form" label-width="150px" class="config-form">
             <el-form-item style="width: 100%" :label="$t('business.monitor.grafana.address')" prop="address">
               <el-input v-model="form.address" :placeholder="'http://192.168.56.101:30020'"></el-input>
@@ -58,7 +55,7 @@ export default {
           default_dashboard: false,
         },
         loading: false,
-        iframeVisible: false, // 控制 iframe 的可见性
+        iframeVisible: false,
         rules: {
           address: [Rule.RequiredRule],
           service_account_token: [Rule.RequiredRule],
@@ -138,7 +135,6 @@ export default {
             });
         }
 
-        // 如果勾选导入仪表盘
         if (this.form.default_dashboard) {
             importGrafanaDashboard(this.form)
             .then(() => {
@@ -210,7 +206,7 @@ export default {
   }
   
   .config-form {
-    width: 100%; /* 表单宽度 100% */
-    padding: 20px; /* 添加适当的边距 */
+    width: 100%;
+    padding: 20px;
   }
 </style>
