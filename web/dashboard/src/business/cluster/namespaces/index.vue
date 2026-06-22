@@ -35,16 +35,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Active'" type="success" size="mini" plain round>
-            {{
-              row.status.phase
-            }}
-          </el-button>
-          <el-button v-if="row.status.phase ==='Terminating'" type="warning" size="mini" plain round>
-            {{
-              row.status.phase
-            }}
-          </el-button>
+          <ko-status-badge v-if="row.status && row.status.phase" :value="row.status.phase" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -62,6 +53,7 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import ComplexTable from "@/components/complex-table"
 import {listNamespace, deleteNamespace, getNamespace} from "@/api/namespaces"
 import KoTableOperations from "@/components/ko-table-operations"
+import KoStatusBadge from "@/components/ko-status-badge"
 import {downloadYaml} from "@/utils/actions"
 import {checkPermissions} from "@/utils/permission"
 import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
@@ -69,7 +61,7 @@ import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 
 export default {
   name: "NamespaceList",
-  components: { KoTableOperations, ComplexTable, LayoutContent },
+  components: { KoStatusBadge, KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       buttons: [
@@ -215,5 +207,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

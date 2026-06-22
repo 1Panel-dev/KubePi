@@ -12,15 +12,9 @@
             <complex-table :data="jobs">
               <el-table-column :label="$t('commons.table.status')" prop="status.succeeded" min-width="30">
                 <template v-slot:default="{row}">
-                  <el-button v-if="row.status.succeeded" type="success" size="mini" plain round>
-                    Succeeded
-                  </el-button>
-                  <el-button v-if="row.status.failed" type="warning" size="mini" plain round>
-                    Failed
-                  </el-button>
-                  <el-button v-if="row.status.active" type="success" size="mini" plain round>
-                    Active
-                  </el-button>
+                  <ko-status-badge v-if="row.status.succeeded" value="Succeeded" />
+                  <ko-status-badge v-if="row.status.failed" value="Failed" />
+                  <ko-status-badge v-if="row.status.active" value="Active" />
                 </template>
               </el-table-column>
               <el-table-column :label="$t('commons.table.name')" prop="metadata.name" min-width="90" show-overflow-tooltip>
@@ -80,10 +74,11 @@ import ComplexTable from "@/components/complex-table"
 import { mixin } from "@/utils/resourceRoutes"
 import KoDetailBasic from "@/components/detail/detail-basic"
 import KoDetailEvents from "@/components/detail/detail-events"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "CronJobDetail",
-  components: { KoDetailBasic, KoDetailEvents, LayoutContent, YamlEditor, ComplexTable },
+  components: { KoStatusBadge, KoDetailBasic, KoDetailEvents, LayoutContent, YamlEditor, ComplexTable },
   mixins: [mixin],
   props: {
     name: String,

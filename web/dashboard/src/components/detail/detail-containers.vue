@@ -3,21 +3,11 @@
     <complex-table @row-click="openDetail" :data="data">
       <el-table-column :label="$t('commons.table.status')" min-width="35">
         <template v-slot:default="{row}">
-          <el-button v-if="row.container.state.running" type="success" size="mini" plain round>
-            Running
-          </el-button>
-          <el-button v-if="row.container.state.waiting" type="primary" size="mini" plain round>
-            Waiting
-          </el-button>
-          <el-button v-if="row.container.state.pending" type="warning" size="mini" plain round>
-            Pending
-          </el-button>
-          <el-button v-if="row.container.state.terminated" type="warning" size="mini" plain round>
-            Terminated
-          </el-button>
-          <el-button v-if="row.container.state.failed" type="danger" size="mini" plain round>
-            Failed
-          </el-button>
+          <ko-status-badge v-if="row.container.state.running" value="Running" />
+          <ko-status-badge v-if="row.container.state.waiting" value="Waiting" />
+          <ko-status-badge v-if="row.container.state.pending" value="Pending" />
+          <ko-status-badge v-if="row.container.state.terminated" value="Terminated" />
+          <ko-status-badge v-if="row.container.state.failed" value="Failed" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.pod.ready')" prop="ready" min-width="40">
@@ -57,11 +47,12 @@
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
 import KoDetailContainersInfo from "@/components/detail/detail-containers-info"
+import KoStatusBadge from "@/components/ko-status-badge"
 import {checkPermissions} from "@/utils/permission"
 
 export default {
   name: "KoDetailContainers",
-  components: { ComplexTable, KoTableOperations, KoDetailContainersInfo },
+  components: { KoStatusBadge, ComplexTable, KoTableOperations, KoDetailContainersInfo },
   props: {
     cluster: String,
     yamlInfo: Object,

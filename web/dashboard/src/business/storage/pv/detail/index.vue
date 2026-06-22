@@ -18,12 +18,7 @@
               <tr>
                 <td>{{ $t('commons.table.status')}}</td>
                 <td colspan="3">
-                  <el-button v-if="item.status.phase === 'Bound'" type="success" size="mini" plain round>
-                    {{ item.status.phase }}
-                  </el-button>
-                  <el-button v-else type="" size="mini" plain round>
-                    {{ item.status.phase }}
-                  </el-button>
+                  <ko-status-badge :value="item.status.phase" />
                 </td>
               </tr>
               <tr>
@@ -135,10 +130,11 @@ import LayoutContent from "@/components/layout/LayoutContent"
 import { isJSON } from "@/utils/data"
 import { getPv } from "@/api/pv"
 import YamlEditor from "@/components/yaml-editor"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "PersistentVolumeDetail",
-  components: { YamlEditor, LayoutContent },
+  components: { KoStatusBadge, YamlEditor, LayoutContent },
   props: {
     name: String,
   },

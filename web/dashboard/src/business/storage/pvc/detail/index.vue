@@ -16,15 +16,7 @@
               <complex-table :data="[form.status]">
                 <el-table-column :label="$t('commons.table.status')" min-width="30">
                   <template v-slot:default="{ row }">
-                    <el-button v-if="row.phase && row.phase === 'Bound'" type="success" size="mini" plain round>
-                      {{ row.phase }}
-                    </el-button>
-                    <el-button v-if="row.phase && row.phase === 'Available'" type="success" size="mini" plain round>
-                      {{ row.phase }}
-                    </el-button>
-                    <el-button v-if="row.phase && row.phase === 'Pending'" type="warning" size="mini" plain round>
-                      {{ row.phase }}
-                    </el-button>
+                    <ko-status-badge v-if="row.phase" :value="row.phase" />
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('business.storage.capacity')" min-width="30" prop="capacity.storage" />
@@ -72,10 +64,11 @@ import { getPvc } from "@/api/pvc"
 import { listPodsWithNsSelector } from "@/api/pods"
 import KoDetailBasic from "@/components/detail/detail-basic";
 import ComplexTable from "@/components/complex-table"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "PersistentVolumeClaimDetail",
-  components: { KoDetailBasic, ComplexTable, YamlEditor, LayoutContent },
+  components: { KoStatusBadge, KoDetailBasic, ComplexTable, YamlEditor, LayoutContent },
   props: {
     name: String,
     namespace: String

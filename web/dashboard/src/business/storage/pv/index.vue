@@ -29,13 +29,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.namespace">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase ==='Bound' || row.status.phase ==='Available'" type="success" size="mini"
-                     plain round>
-            {{ row.status.phase }}
-          </el-button>
-          <el-button v-else type="" size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
+          <ko-status-badge :value="row.status.phase" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.storage.accessModes')" prop="metadata.labels">
@@ -77,10 +71,11 @@ import KoTableOperations from "@/components/ko-table-operations"
 import {deletePvs, getPv, listPvs} from "@/api/pv"
 import {checkPermissions} from "@/utils/permission"
 import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "PersistentVolumes",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
+  components: { KoStatusBadge, ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],

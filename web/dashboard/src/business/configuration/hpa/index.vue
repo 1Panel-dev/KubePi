@@ -52,14 +52,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.status" fix>
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.currentReplicas ===row.status.desiredReplicas" type="success" size="mini" plain
-                     round>
-            Active
-          </el-button>
-          <el-button v-if="row.status.currentReplicas !==row.status.desiredReplicas" type="danger" size="mini" plain
-                     round>
-            Pending
-          </el-button>
+          <ko-status-badge :value="row.status.currentReplicas === row.status.desiredReplicas ? 'Active' : 'Pending'" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
@@ -79,10 +72,11 @@ import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {deleteHpa, getHpa, listHpas} from "@/api/hpa"
 import {checkPermissions} from "@/utils/permission"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "HPA",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
+  components: { KoStatusBadge, ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],

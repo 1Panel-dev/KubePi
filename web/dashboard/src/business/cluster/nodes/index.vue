@@ -38,16 +38,9 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')">
         <template v-slot:default="{row}">
-          <el-button v-if="row.nodeStatus.indexOf('NotReady') !== -1" type="warning" size="mini" plain round>
-            NotReady
-          </el-button>
-          <el-button v-else type="success" size="mini" plain round>
-            Ready
-          </el-button>
+          <ko-status-badge :value="row.nodeStatus.indexOf('NotReady') !== -1 ? 'NotReady' : 'Ready'" />
           <div v-if="row.nodeStatus.indexOf('SchedulingDisabled') !== -1" style="margin-top:3px">
-            <el-button type="warning" size="mini" plain round>
-              SchedulingDisabled
-            </el-button>
+            <ko-status-badge value="SchedulingDisabled" />
           </div>
         </template>
       </el-table-column>
@@ -109,10 +102,11 @@ import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 import writeXlsxFile from "write-excel-file";
 import {getCluster} from "@/api/clusters"
 import {useLegacyApi} from "@/utils/k8s"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "NodeList",
-  components: { KoTableOperations, ComplexTable, LayoutContent },
+  components: { KoStatusBadge, KoTableOperations, ComplexTable, LayoutContent },
   data () {
     return {
       data: [],

@@ -3,14 +3,7 @@
     <complex-table :data="pods" v-loading="loading" @search="search">
       <el-table-column :label="$t('commons.table.status')" min-width="45">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase === 'Running' || row.status.phase === 'Succeeded'" type="success"
-                     size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
-          <el-button v-if="row.status.phase !== 'Running' && row.status.phase !== 'Succeeded'" type="warning"
-                     size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
+          <ko-status-badge :value="row.status.phase" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="name" min-width="80" show-overflow-tooltip>
@@ -67,6 +60,7 @@
 <script>
 import ComplexTable from "@/components/complex-table"
 import KoTableOperations from "@/components/ko-table-operations"
+import KoStatusBadge from "@/components/ko-status-badge"
 import {listPodsWithNsSelector, evictionPod} from "@/api/pods"
 import {cordonNode} from "@/api/nodes"
 import {checkPermissions} from "@/utils/permission"
@@ -76,7 +70,7 @@ import {useLegacyApi} from "@/utils/k8s"
 
 export default {
   name: "KoDetailNodePods",
-  components: { ComplexTable, KoTableOperations },
+  components: { KoStatusBadge, ComplexTable, KoTableOperations },
   props: {
     cluster: String,
     namespace: String,

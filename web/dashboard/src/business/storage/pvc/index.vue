@@ -28,15 +28,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="status.phase">
         <template v-slot:default="{row}">
-          <el-button v-if="row.status.phase && row.status.phase === 'Bound'" type="success" size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
-          <el-button v-if="row.status.phase && row.status.phase === 'Available'" type="success" size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
-          <el-button v-if="row.status.phase && row.status.phase === 'Pending'" type="warning" size="mini" plain round>
-            {{ row.status.phase }}
-          </el-button>
+          <ko-status-badge v-if="row.status.phase" :value="row.status.phase" />
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
@@ -66,10 +58,11 @@ import KoTableOperations from "@/components/ko-table-operations"
 import {deletePvcs, getPvc, listPvcs} from "@/api/pvc"
 import {checkPermissions} from "@/utils/permission"
 import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
+import KoStatusBadge from "@/components/ko-status-badge"
 
 export default {
   name: "PersistentVolumeClaim",
-  components: { ComplexTable, LayoutContent, KoTableOperations },
+  components: { KoStatusBadge, ComplexTable, LayoutContent, KoTableOperations },
   data () {
     return {
       data: [],
