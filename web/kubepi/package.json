@@ -21,7 +21,7 @@
     "fit2cloud-ui": "^1.8.0",
     "js-base64": "^3.7.7",
     "js-yaml": "^4.1.0",
-    "nanotar": "^0.1.1",
+    "nanotar": "^0.3.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "pako": "^2.1.0",
