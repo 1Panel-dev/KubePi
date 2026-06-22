@@ -33,7 +33,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var jwtMaxAge = 10 * time.Minute
+const defaultJwtExpires = 10
 
 const (
 	loginIPLocalAddress = "127.0.0.1"
@@ -58,8 +58,16 @@ func NewHandler() *Handler {
 		roleService:        role.NewService(),
 		rolebindingService: rolebinding.NewService(),
 		ldapService:        ldap.NewService(),
-		jwtSigner:          jwt.NewSigner(jwt.HS256, server.Config().Spec.Jwt.Key, jwtMaxAge),
+		jwtSigner:          jwt.NewSigner(jwt.HS256, server.Config().Spec.Jwt.Key, jwtMaxAge()),
 	}
+}
+
+func jwtMaxAge() time.Duration {
+	expires := server.Config().Spec.Jwt.Expires
+	if expires <= 0 {
+		expires = defaultJwtExpires
+	}
+	return time.Duration(expires) * time.Minute
 }
 
 func (h *Handler) IsLogin() iris.Handler {

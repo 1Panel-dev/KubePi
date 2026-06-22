@@ -18,7 +18,7 @@
               <tr>
                 <td>{{ $t('commons.table.status')}}</td>
                 <td colspan="3">
-                  <ko-status-badge :value="item.status.phase" />
+                  <ko-status-badge :value="getPvStatus(item)" />
                 </td>
               </tr>
               <tr>
@@ -156,6 +156,12 @@ export default {
     }
   },
   methods: {
+    getPvStatus(item) {
+      if (item.metadata && item.metadata.deletionTimestamp) {
+        return "Terminating"
+      }
+      return item.status.phase
+    },
     getDetail() {
       this.loading = true
       getPv(this.cluster, this.name).then((res) => {

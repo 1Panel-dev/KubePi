@@ -44,7 +44,7 @@
                 <json-viewer v-if="jsonV(value)&&key!=='token'" :value="getContent(value)" :copyable="copyable"
                              theme="jv-dark" :expanded="true" :expand-depth="3"></json-viewer>
                 <el-card v-else style="background: #f8fafc;border: 1px solid #e2e8f0;">
-                  <div style="white-space: pre-line;background: #f8fafc;width: 100%;color: #334155;">
+                  <div style="white-space: pre-wrap;background: #f8fafc;width: 100%;color: #334155;">
                     <span style="word-break:break-all;">{{ getValue(value) }} </span>
                   </div>
                 </el-card>

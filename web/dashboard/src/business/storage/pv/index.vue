@@ -29,7 +29,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.status')" prop="metadata.namespace">
         <template v-slot:default="{row}">
-          <ko-status-badge :value="row.status.phase" />
+          <ko-status-badge :value="getPvStatus(row)" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.storage.accessModes')" prop="metadata.labels">
@@ -142,6 +142,12 @@ export default {
     }
   },
   methods: {
+    getPvStatus (row) {
+      if (row.metadata && row.metadata.deletionTimestamp) {
+        return "Terminating"
+      }
+      return row.status.phase
+    },
     search () {
       this.loading = true
       const { currentPage, pageSize } = this.paginationConfig

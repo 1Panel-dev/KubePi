@@ -260,7 +260,7 @@ export default {
       this.form.name = row.metadata.name
       this.form.namespace = row.metadata.namespace
       if (row.spec.template.spec.initContainers) {
-        for (const c of row.spec.template.spec.containers) {
+        for (const c of row.spec.template.spec.initContainers) {
           let index = c.image.lastIndexOf(":")
           this.form.imagesData.push({
             type: this.$t("business.workload.initContainer"),

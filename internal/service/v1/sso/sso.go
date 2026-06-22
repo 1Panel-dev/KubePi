@@ -170,9 +170,25 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 	// 获取用户名
 	var claims struct {
 		PreferredUsername string `json:"preferred_username"`
+		Username          string `json:"username"`
+		NickName          string `json:"nickname"`
 	}
 	if err = userInfo.Claims(&claims); err != nil {
 		return v1Session.UserProfile{}, err
+	}
+	username := claims.Username
+	if username == "" {
+		username = claims.PreferredUsername
+	}
+	nickName := claims.NickName
+	if nickName == "" {
+		nickName = claims.PreferredUsername
+	}
+	if nickName == "" {
+		nickName = username
+	}
+	if username == "" {
+		return v1Session.UserProfile{}, errors.New("OIDC username is empty")
 	}
 
 	// 初始化用户
@@ -186,9 +202,9 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 					Kind:       "User",
 				},
 				Metadata: v1.Metadata{
-					Name: claims.PreferredUsername,
+					Name: username,
 				},
-				NickName: claims.PreferredUsername,
+				NickName: nickName,
 				Email:    userInfo.Email,
 				Language: openid.Language,
 				IsAdmin:  false,
@@ -217,11 +233,11 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 					CreatedBy:  "admin",
 				},
 				Metadata: v1.Metadata{
-					Name: fmt.Sprintf("role-binding-%s-%s", "ReadOnly", claims.PreferredUsername),
+					Name: fmt.Sprintf("role-binding-%s-%s", "ReadOnly", username),
 				},
 				Subject: v1Role.Subject{
 					Kind: "User",
-					Name: claims.PreferredUsername,
+					Name: username,
 				},
 				RoleRef: "ReadOnly",
 			}
@@ -230,14 +246,14 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 				return v1Session.UserProfile{}, err
 			}
 			_ = tx.Commit()
-			fmt.Println("SSO用户" + claims.PreferredUsername + "不存在，已自动创建本地账号")
+			fmt.Println("SSO用户" + username + "不存在，已自动创建本地账号")
 		} else {
-			return v1Session.UserProfile{}, fmt.Errorf("query user %s failed ,: %s", claims.PreferredUsername, err.Error())
+			return v1Session.UserProfile{}, fmt.Errorf("query user %s failed ,: %s", username, err.Error())
 		}
 	}
 
 	// 设置profile
-	return s.localProfile(claims.PreferredUsername, userInfo.Email)
+	return s.localProfile(username, userInfo.Email)
 }
 
 func (s *service) OpenIDConfig(clientId, clientSecret, issuerURL, redirectURL string) (*v1Sso.OpenID, error) {

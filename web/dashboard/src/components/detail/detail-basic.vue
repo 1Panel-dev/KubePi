@@ -98,15 +98,21 @@ export default {
       this.$emit("update:yamlShow", this.show)
     },
     hasPodContainers() {
-      if (this.item.spec?.template?.spec?.containers) {
-        this.containers = this.item.spec.template.spec.containers
-        return true
-      } else if (this.item.spec?.jobTemplate?.spec?.template?.spec?.containers) {
-        this.containers = this.item.spec.jobTemplate.spec.template.spec.containers
-        return true
-      } else {
+      let podSpec
+      if (this.item.spec?.template?.spec) {
+        podSpec = this.item.spec.template.spec
+      } else if (this.item.spec?.jobTemplate?.spec?.template?.spec) {
+        podSpec = this.item.spec.jobTemplate.spec.template.spec
+      }
+      if (!podSpec || !podSpec.containers) {
         return false
       }
+      this.containers = []
+      if (podSpec.initContainers) {
+        this.containers = this.containers.concat(podSpec.initContainers)
+      }
+      this.containers = this.containers.concat(podSpec.containers)
+      return true
     },
     listResources() {
       listResourceQuotaByNamespace(this.cluster,this.item.metadata.name).then(res => {
