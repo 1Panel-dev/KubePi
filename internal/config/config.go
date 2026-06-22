@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/KubeOperator/kubepi/internal/model/v1/config"
-	"github.com/KubeOperator/kubepi/pkg/file"
+	"github.com/1Panel-dev/KubePi/internal/model/v1/config"
+	"github.com/1Panel-dev/KubePi/pkg/file"
 	"github.com/spf13/viper"
 	"math/big"
 	"strconv"

@@ -1,9 +1,9 @@
 package cluster
 
 import (
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/pkg/kubernetes"
-	"github.com/KubeOperator/kubepi/pkg/terminal"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
+	"github.com/1Panel-dev/KubePi/pkg/terminal"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"k8s.io/client-go/tools/remotecommand"
@@ -60,7 +60,7 @@ func (h *Handler) TerminalSessionHandler() iris.Handler {
 	}
 }
 
-//node shell
+// node shell
 func (h *Handler) NodeTerminalSessionHandler() iris.Handler {
 	return func(ctx *context.Context) {
 		nodeName := ctx.URLParam("nodeName")

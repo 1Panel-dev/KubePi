@@ -1,7 +1,7 @@
 package ws
 
 //import (
-//	shell "github.com/KubeOperator/kubepi/internal/terminal"
+//	shell "github.com/1Panel-dev/KubePi/internal/terminal"
 //	"github.com/kataras/iris/v12"
 //	"github.com/kataras/iris/v12/context"
 //)

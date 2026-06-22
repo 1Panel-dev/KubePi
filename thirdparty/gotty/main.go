@@ -9,9 +9,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/KubeOperator/webkubectl/gotty/backend/localcommand"
-	"github.com/KubeOperator/webkubectl/gotty/server"
-	"github.com/KubeOperator/webkubectl/gotty/utils"
+	"github.com/1Panel-dev/webkubectl/gotty/backend/localcommand"
+	"github.com/1Panel-dev/webkubectl/gotty/server"
+	"github.com/1Panel-dev/webkubectl/gotty/utils"
 	"github.com/urfave/cli/v2"
 )
 

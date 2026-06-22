@@ -1,11 +1,11 @@
 package sso
 
 import (
-	v1Session "github.com/KubeOperator/kubepi/internal/api/v1/session"
-	v1Sso "github.com/KubeOperator/kubepi/internal/model/v1/sso"
-	"github.com/KubeOperator/kubepi/internal/server"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/internal/service/v1/sso"
+	v1Session "github.com/1Panel-dev/KubePi/internal/api/v1/session"
+	v1Sso "github.com/1Panel-dev/KubePi/internal/model/v1/sso"
+	"github.com/1Panel-dev/KubePi/internal/server"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/sso"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"

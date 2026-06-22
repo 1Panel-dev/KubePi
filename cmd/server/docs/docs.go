@@ -9,7 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://kubeoperator.io",
+        "termsOfService": "https://github.com/1Panel-dev/KubePi",
         "contact": {
             "name": "Fit2cloud Support",
             "url": "https://www.fit2cloud.com",
@@ -48,7 +48,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster"
                             }
                         }
                     }
@@ -525,7 +525,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_clusterrepo.ClusterRepo"
                             }
                         }
                     }
@@ -609,7 +609,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo"
                             }
                         }
                     }
@@ -691,7 +691,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -770,7 +770,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster"
                         }
                     }
                 }
@@ -848,7 +848,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo"
                             }
                         }
                     }
@@ -975,7 +975,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo"
                         }
                     }
                 }
@@ -1019,7 +1019,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo"
                         }
                     }
                 }
@@ -1054,7 +1054,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo"
                         }
                     }
                 }
@@ -1091,7 +1091,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.RepoResponse"
                         }
                     }
                 }
@@ -1121,7 +1121,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                             }
                         }
                     }
@@ -1151,7 +1151,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                         }
                     }
                 ],
@@ -1159,7 +1159,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                         }
                     }
                 }
@@ -1196,7 +1196,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                         }
                     }
                 }
@@ -1231,7 +1231,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                         }
                     }
                 }
@@ -1266,7 +1266,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role"
                         }
                     }
                 }
@@ -1323,7 +1323,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User"
+                                "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User"
                             }
                         }
                     }
@@ -1361,7 +1361,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User"
                         }
                     }
                 }
@@ -1426,7 +1426,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User"
                         }
                     }
                 }
@@ -1461,7 +1461,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User"
                         }
                     }
                 }
@@ -1496,7 +1496,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User"
+                            "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User"
                         }
                     }
                 }
@@ -1558,14 +1558,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Authentication": {
             "type": "object",
             "properties": {
                 "bearerToken": {
                     "type": "string"
                 },
                 "certificate": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate"
                 },
                 "configFileContent": {
                     "type": "array",
@@ -1578,7 +1578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate": {
             "type": "object",
             "properties": {
                 "certData": {
@@ -1595,7 +1595,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster": {
             "type": "object",
             "properties": {
                 "apiVersion": {
@@ -1605,7 +1605,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "caCertificate": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate"
                 },
                 "createAt": {
                     "type": "string"
@@ -1635,10 +1635,10 @@ const docTemplate = `{
                     }
                 },
                 "spec": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec"
                 },
                 "status": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status"
                 },
                 "updateAt": {
                     "type": "string"
@@ -1648,29 +1648,29 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Connect": {
             "type": "object",
             "properties": {
                 "direction": {
                     "type": "string"
                 },
                 "forward": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Forward"
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Forward": {
             "type": "object",
             "properties": {
                 "apiServer": {
                     "type": "string"
                 },
                 "proxy": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Proxy"
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Proxy": {
             "type": "object",
             "properties": {
                 "password": {
@@ -1684,21 +1684,21 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec": {
             "type": "object",
             "properties": {
                 "authentication": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Authentication"
                 },
                 "connect": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Connect"
                 },
                 "local": {
                     "type": "boolean"
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status": {
             "type": "object",
             "properties": {
                 "message": {
@@ -1712,7 +1712,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_clusterrepo.ClusterRepo": {
             "type": "object",
             "properties": {
                 "apiVersion": {
@@ -1750,7 +1750,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential": {
             "type": "object",
             "properties": {
                 "password": {
@@ -1761,7 +1761,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo": {
             "type": "object",
             "properties": {
                 "allowAnonymous": {
@@ -1783,7 +1783,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "credential": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential"
                 },
                 "description": {
                     "type": "string"
@@ -1817,7 +1817,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.RepoResponse": {
             "type": "object",
             "properties": {
                 "continueToken": {
@@ -1831,7 +1831,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_role.PolicyRule": {
             "type": "object",
             "properties": {
                 "resource": {
@@ -1854,7 +1854,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_role.Role": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_role.Role": {
             "type": "object",
             "properties": {
                 "apiVersion": {
@@ -1881,7 +1881,7 @@ const docTemplate = `{
                 "rules": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule"
+                        "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.PolicyRule"
                     }
                 },
                 "updateAt": {
@@ -1892,7 +1892,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_user.Authenticate": {
             "type": "object",
             "properties": {
                 "password": {
@@ -1903,7 +1903,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_user.Mfa": {
             "type": "object",
             "properties": {
                 "enable": {
@@ -1914,14 +1914,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_KubeOperator_kubepi_internal_model_v1_user.User": {
+        "github_com_1Panel-dev_KubePi_internal_model_v1_user.User": {
             "type": "object",
             "properties": {
                 "apiVersion": {
                     "type": "string"
                 },
                 "authenticate": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.Authenticate"
                 },
                 "builtIn": {
                     "type": "boolean"
@@ -1948,7 +1948,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "mfa": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.Mfa"
                 },
                 "name": {
                     "type": "string"
@@ -1980,7 +1980,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "caCertificate": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate"
                 },
                 "caDataStr": {
                     "type": "string"
@@ -2028,10 +2028,10 @@ const docTemplate = `{
                     }
                 },
                 "spec": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec"
                 },
                 "status": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status"
                 },
                 "updateAt": {
                     "type": "string"
@@ -2185,7 +2185,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "credential": {
-                    "$ref": "#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential"
+                    "$ref": "#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential"
                 },
                 "description": {
                     "type": "string"

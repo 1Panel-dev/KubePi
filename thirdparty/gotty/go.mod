@@ -1,4 +1,4 @@
-module github.com/KubeOperator/webkubectl/gotty
+module github.com/1Panel-dev/webkubectl/gotty
 
 go 1.16
 

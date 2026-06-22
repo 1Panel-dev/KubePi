@@ -14,16 +14,16 @@ import (
 	noesctmpl "text/template"
 	"time"
 
-	"github.com/KubeOperator/webkubectl/gotty/cache/token"
-	"github.com/KubeOperator/webkubectl/gotty/pkg/randomstring"
-	"github.com/KubeOperator/webkubectl/gotty/webtty"
+	"github.com/1Panel-dev/webkubectl/gotty/cache/token"
+	"github.com/1Panel-dev/webkubectl/gotty/pkg/randomstring"
+	"github.com/1Panel-dev/webkubectl/gotty/webtty"
 	"github.com/NYTimes/gziphandler"
 	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 
-	"github.com/KubeOperator/webkubectl/gotty/pkg/homedir"
+	"github.com/1Panel-dev/webkubectl/gotty/pkg/homedir"
 )
 
 // Server provides a webtty HTTP endpoint.
@@ -36,7 +36,6 @@ type Server struct {
 	titleTemplate    *noesctmpl.Template
 	cache            token.Cache
 }
-
 
 // New creates a new instance of Server.
 // Server will use the New() of the factory provided to handle each request.

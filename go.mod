@@ -1,4 +1,4 @@
-module github.com/KubeOperator/kubepi
+module github.com/1Panel-dev/KubePi
 
 go 1.26.0
 
@@ -194,4 +194,4 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace github.com/KubeOperator/webkubectl/gotty v0.0.0-20210927072155-e9ce79172471 => ./thirdparty/gotty
+replace github.com/1Panel-dev/webkubectl/gotty v0.0.0-20210927072155-e9ce79172471 => ./thirdparty/gotty

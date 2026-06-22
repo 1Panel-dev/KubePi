@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
-	v1Ldap "github.com/KubeOperator/kubepi/internal/model/v1/ldap"
-	v1Role "github.com/KubeOperator/kubepi/internal/model/v1/role"
-	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
-	"github.com/KubeOperator/kubepi/internal/server"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/internal/service/v1/rolebinding"
-	"github.com/KubeOperator/kubepi/internal/service/v1/user"
-	ldapClient "github.com/KubeOperator/kubepi/pkg/util/ldap"
+	v1 "github.com/1Panel-dev/KubePi/internal/model/v1"
+	v1Ldap "github.com/1Panel-dev/KubePi/internal/model/v1/ldap"
+	v1Role "github.com/1Panel-dev/KubePi/internal/model/v1/role"
+	v1User "github.com/1Panel-dev/KubePi/internal/model/v1/user"
+	"github.com/1Panel-dev/KubePi/internal/server"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/rolebinding"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/user"
+	ldapClient "github.com/1Panel-dev/KubePi/pkg/util/ldap"
 	"github.com/asdine/storm/v3"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
@@ -356,7 +356,7 @@ func (l *service) Sync(id string, options common.DBOptions) error {
 		}
 		entries, err := lc.Search(ldap.Dn, ldap.Filter, ldap.SizeLimit, ldap.TimeLimit, attributes)
 		if err != nil {
-			server.Logger().Errorf(err.Error())
+			server.Logger().Error(err)
 			return
 		}
 		for _, entry := range entries {

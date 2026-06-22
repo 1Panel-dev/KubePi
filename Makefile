@@ -31,4 +31,4 @@ build_gotty:
 build_all: build_web build_gotty build_bin
 
 build_docker:
-	docker build -t kubeoperator/kubepi-server:master .
+	docker build -t 1panel/kubepi:master .

@@ -74,7 +74,7 @@ spec:
     spec:
       containers:
         - name: kubepi
-          image: kubeoperator/kubepi-server:latest
+          image: 1panel/kubepi:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

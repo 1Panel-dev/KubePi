@@ -1,9 +1,9 @@
 package cluster
 
 import (
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/pkg/kubernetes"
-	"github.com/KubeOperator/kubepi/pkg/logging"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
+	"github.com/1Panel-dev/KubePi/pkg/logging"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )
@@ -18,9 +18,9 @@ func (h *Handler) LoggingHandler() iris.Handler {
 		tailLines := 100
 		follow := false
 		/*是否查看上次失败的容器日志*/
-		previous :=false
+		previous := false
 		/*是否显示日志时间*/
-		timestamps :=false
+		timestamps := false
 		if ctx.URLParamExists("tailLines") {
 			lines, err := ctx.URLParamInt("tailLines")
 			if err != nil {
@@ -54,7 +54,6 @@ func (h *Handler) LoggingHandler() iris.Handler {
 			timestamps = p
 		}
 
-		
 		sessionId, err := logging.GenLoggingSessionId()
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -76,7 +75,7 @@ func (h *Handler) LoggingHandler() iris.Handler {
 			Id:    sessionId,
 			Bound: make(chan error),
 		})
-		go logging.WaitForLoggingStream(client, namespace, podName, containerName, tailLines,  follow, previous,timestamps, sessionId)
+		go logging.WaitForLoggingStream(client, namespace, podName, containerName, tailLines, follow, previous, timestamps, sessionId)
 		ctx.Values().Set("data", TerminalResponse{ID: sessionId})
 	}
 }

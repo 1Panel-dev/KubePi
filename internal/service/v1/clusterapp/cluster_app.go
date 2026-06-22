@@ -1,8 +1,8 @@
 package clusterapp
 
 import (
-	v1ClusterApp "github.com/KubeOperator/kubepi/internal/model/v1/clusterapp"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
+	v1ClusterApp "github.com/1Panel-dev/KubePi/internal/model/v1/clusterapp"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"

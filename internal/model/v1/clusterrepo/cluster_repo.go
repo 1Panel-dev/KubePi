@@ -1,6 +1,6 @@
 package clusterrepo
 
-import v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+import v1 "github.com/1Panel-dev/KubePi/internal/model/v1"
 
 type ClusterRepo struct {
 	v1.BaseModel `storm:"inline"`
@@ -8,4 +8,3 @@ type ClusterRepo struct {
 	Cluster      string `json:"cluster"`
 	Repo         string `json:"repo"`
 }
-

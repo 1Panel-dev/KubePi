@@ -3,8 +3,8 @@ package cluster
 import (
 	goContext "context"
 	"fmt"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/pkg/kubernetes"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

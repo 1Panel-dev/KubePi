@@ -1,7 +1,7 @@
 version: "2.2"
 services:
   kubepi:
-    image: kubeoperator/kubepi-server:latest
+    image: 1panel/kubepi:latest
     container_name: kubepi
     restart: unless-stopped
     ports:

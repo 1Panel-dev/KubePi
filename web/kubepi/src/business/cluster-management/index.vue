@@ -120,7 +120,7 @@
 
         <div style="font-size: 14px;margin-top: 50px">
           <i class="el-icon-document"></i>{{ $t('commons.header.help_doc') }}：&nbsp;
-          <el-link href="https://doc.kubeoperator.io">https://doc.kubeoperator.io</el-link>
+          <el-link href="https://github.com/1Panel-dev/KubePi/wiki">https://github.com/1Panel-dev/KubePi/wiki</el-link>
           <br/>
           <br/>
           <i class="el-icon-chat-square"></i>{{ $t('commons.header.support') }}：&nbsp;

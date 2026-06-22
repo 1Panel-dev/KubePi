@@ -1,8 +1,8 @@
 package chart
 
 import (
-	"github.com/KubeOperator/kubepi/internal/service/v1/chart"
-	pkgV1 "github.com/KubeOperator/kubepi/pkg/api/v1"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/chart"
+	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"strings"
@@ -116,12 +116,12 @@ func (h *Handler) UpdateRepo() iris.Handler {
 	}
 }
 
-func (h *Handler) SyncRepo() iris.Handler  {
+func (h *Handler) SyncRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.Params().GetString("cluster")
 
-		err := h.chartService.SyncRepo(cluster,name)
+		err := h.chartService.SyncRepo(cluster, name)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

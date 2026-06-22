@@ -2,7 +2,7 @@ package podtool
 
 import (
 	"fmt"
-	"github.com/KubeOperator/kubepi/pkg/util/kubernetes"
+	"github.com/1Panel-dev/KubePi/pkg/util/kubernetes"
 	"strings"
 	"testing"
 )
@@ -27,7 +27,7 @@ func TestPodtool(t *testing.T) {
 		ContainerName: "ingress-nginx-controller",
 	}
 
-	res,err := tool.ExecCommand([]string{"ls","-lF","--full-time", "/tmp/zhengkun2"})
+	res, err := tool.ExecCommand([]string{"ls", "-lF", "--full-time", "/tmp/zhengkun2"})
 	//command := "echo '" +"test1111"+ "' >>  /tmp/files9"
 	//command2 := "cat /dev/null > /tmp/files9"
 	//commands := []string{"sh", "-c", command2}
@@ -38,13 +38,13 @@ func TestPodtool(t *testing.T) {
 	}
 	ss := string(res)
 	fmt.Println(ss)
-	array := strings.Split(ss,"\n")
-	for _,line := range array {
+	array := strings.Split(ss, "\n")
+	for _, line := range array {
 		msgs := strings.Fields(line)
-		if len(msgs) <= 2 || (msgs[0] == "total" && len(msgs) ==2)   {
+		if len(msgs) <= 2 || (msgs[0] == "total" && len(msgs) == 2) {
 			continue
 		}
-		fmt.Println(msgs[5],msgs[6],msgs[7])
+		fmt.Println(msgs[5], msgs[6], msgs[7])
 	}
 
 }

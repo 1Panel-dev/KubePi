@@ -1,8 +1,8 @@
 package ldap
 
 import (
-	v1Ldap "github.com/KubeOperator/kubepi/internal/model/v1/ldap"
-	"github.com/KubeOperator/kubepi/internal/model/v1/user"
+	v1Ldap "github.com/1Panel-dev/KubePi/internal/model/v1/ldap"
+	"github.com/1Panel-dev/KubePi/internal/model/v1/user"
 )
 
 type Ldap struct {

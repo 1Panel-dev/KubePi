@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/KubeOperator/kubepi/internal/server"
+	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/asdine/storm/v3"
 )
 

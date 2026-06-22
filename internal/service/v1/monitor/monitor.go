@@ -1,13 +1,13 @@
 package monitor
 
 import (
-	v1Monitor "github.com/KubeOperator/kubepi/internal/model/v1/monitor"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	costomStorm "github.com/KubeOperator/kubepi/pkg/storm"
-	grafanaClient "github.com/KubeOperator/kubepi/pkg/util/grafana"
-	grafana "github.com/KubeOperator/kubepi/pkg/util/grafana/dashboards"
-	"github.com/KubeOperator/kubepi/pkg/util/lang"
-	"github.com/KubeOperator/kubepi/pkg/util/prometheus"
+	v1Monitor "github.com/1Panel-dev/KubePi/internal/model/v1/monitor"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	costomStorm "github.com/1Panel-dev/KubePi/pkg/storm"
+	grafanaClient "github.com/1Panel-dev/KubePi/pkg/util/grafana"
+	grafana "github.com/1Panel-dev/KubePi/pkg/util/grafana/dashboards"
+	"github.com/1Panel-dev/KubePi/pkg/util/lang"
+	"github.com/1Panel-dev/KubePi/pkg/util/prometheus"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"

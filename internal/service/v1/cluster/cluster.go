@@ -1,10 +1,10 @@
 package cluster
 
 import (
-	v1Cluster "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/pkg/storm"
-	"github.com/KubeOperator/kubepi/pkg/util/lang"
+	v1Cluster "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/pkg/storm"
+	"github.com/1Panel-dev/KubePi/pkg/util/lang"
 	"github.com/asdine/storm/v3/q"
 	"github.com/google/uuid"
 	"time"

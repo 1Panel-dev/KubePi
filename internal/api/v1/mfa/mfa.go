@@ -1,13 +1,13 @@
 package mfa
 
 import (
-	sessionAuth "github.com/KubeOperator/kubepi/internal/api/v1/session"
-	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
-	v1User "github.com/KubeOperator/kubepi/internal/model/v1/user"
-	"github.com/KubeOperator/kubepi/internal/server"
-	"github.com/KubeOperator/kubepi/internal/service/v1/common"
-	"github.com/KubeOperator/kubepi/internal/service/v1/user"
-	mfaUtil "github.com/KubeOperator/kubepi/pkg/util/mfa"
+	sessionAuth "github.com/1Panel-dev/KubePi/internal/api/v1/session"
+	v1 "github.com/1Panel-dev/KubePi/internal/model/v1"
+	v1User "github.com/1Panel-dev/KubePi/internal/model/v1/user"
+	"github.com/1Panel-dev/KubePi/internal/server"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/user"
+	mfaUtil "github.com/1Panel-dev/KubePi/pkg/util/mfa"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )

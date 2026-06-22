@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
+	v1 "github.com/1Panel-dev/KubePi/internal/model/v1"
 )
 
 type Cluster struct {

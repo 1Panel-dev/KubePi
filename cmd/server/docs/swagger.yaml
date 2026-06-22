@@ -35,12 +35,12 @@ definitions:
           type: string
         type: array
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Authentication:
     properties:
       bearerToken:
         type: string
       certificate:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate'
       configFileContent:
         items:
           type: integer
@@ -48,7 +48,7 @@ definitions:
       mode:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate:
     properties:
       certData:
         items:
@@ -59,14 +59,14 @@ definitions:
           type: integer
         type: array
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster:
     properties:
       apiVersion:
         type: string
       builtIn:
         type: boolean
       caCertificate:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate'
       createAt:
         type: string
       createdBy:
@@ -86,29 +86,29 @@ definitions:
           type: integer
         type: array
       spec:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec'
       status:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status'
       updateAt:
         type: string
       uuid:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Connect:
     properties:
       direction:
         type: string
       forward:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Forward'
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Forward:
     properties:
       apiServer:
         type: string
       proxy:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Proxy'
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Proxy:
     properties:
       password:
         type: string
@@ -117,16 +117,16 @@ definitions:
       username:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec:
     properties:
       authentication:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Authentication'
       connect:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Connect'
       local:
         type: boolean
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status:
+  github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status:
     properties:
       message:
         type: string
@@ -135,7 +135,7 @@ definitions:
       version:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo:
+  github_com_1Panel-dev_KubePi_internal_model_v1_clusterrepo.ClusterRepo:
     properties:
       apiVersion:
         type: string
@@ -160,14 +160,14 @@ definitions:
       uuid:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential:
+  github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo:
+  github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo:
     properties:
       allowAnonymous:
         type: boolean
@@ -182,7 +182,7 @@ definitions:
       createdBy:
         type: string
       credential:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential'
       description:
         type: string
       downloadUrl:
@@ -204,7 +204,7 @@ definitions:
       version:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse:
+  github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.RepoResponse:
     properties:
       continueToken:
         type: string
@@ -213,7 +213,7 @@ definitions:
           type: string
         type: array
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule:
+  github_com_1Panel-dev_KubePi_internal_model_v1_role.PolicyRule:
     properties:
       resource:
         items:
@@ -228,7 +228,7 @@ definitions:
           type: string
         type: array
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_role.Role:
+  github_com_1Panel-dev_KubePi_internal_model_v1_role.Role:
     properties:
       apiVersion:
         type: string
@@ -246,33 +246,33 @@ definitions:
         type: string
       rules:
         items:
-          $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule'
+          $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.PolicyRule'
         type: array
       updateAt:
         type: string
       uuid:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate:
+  github_com_1Panel-dev_KubePi_internal_model_v1_user.Authenticate:
     properties:
       password:
         type: string
       token:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa:
+  github_com_1Panel-dev_KubePi_internal_model_v1_user.Mfa:
     properties:
       enable:
         type: boolean
       secret:
         type: string
     type: object
-  github_com_KubeOperator_kubepi_internal_model_v1_user.User:
+  github_com_1Panel-dev_KubePi_internal_model_v1_user.User:
     properties:
       apiVersion:
         type: string
       authenticate:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.Authenticate'
       builtIn:
         type: boolean
       createAt:
@@ -290,7 +290,7 @@ definitions:
       language:
         type: string
       mfa:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.Mfa'
       name:
         type: string
       nickName:
@@ -311,7 +311,7 @@ definitions:
       builtIn:
         type: boolean
       caCertificate:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Certificate'
       caDataStr:
         type: string
       certDataStr:
@@ -343,9 +343,9 @@ definitions:
           type: integer
         type: array
       spec:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Spec'
       status:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Status'
       updateAt:
         type: string
       uuid:
@@ -443,7 +443,7 @@ definitions:
       createdBy:
         type: string
       credential:
-        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential'
+        $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.Credential'
       description:
         type: string
       downloadUrl:
@@ -936,7 +936,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://kubeoperator.io
+  termsOfService: https://github.com/1Panel-dev/KubePi
   title: KubePi Restful API
 paths:
   /clusters:
@@ -951,7 +951,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1254,7 +1254,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_clusterrepo.ClusterRepo'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1335,7 +1335,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1359,7 +1359,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Delete cluster by name
@@ -1381,7 +1381,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Get cluster by name
@@ -1486,7 +1486,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Delete repo by name
@@ -1508,7 +1508,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Get repo by name
@@ -1536,7 +1536,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Update repo by name
@@ -1559,7 +1559,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.RepoResponse'
       security:
       - ApiKeyAuth: []
       summary: List images by repo
@@ -1583,7 +1583,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_imagerepo.ImageRepo'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1628,7 +1628,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1645,14 +1645,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+          $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Create role
@@ -1675,7 +1675,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Delete role by name
@@ -1697,7 +1697,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Get role by name
@@ -1719,7 +1719,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Update role by name
@@ -1755,7 +1755,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
+              $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1779,7 +1779,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Create user
@@ -1802,7 +1802,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Delete user by name
@@ -1824,7 +1824,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Get user by name
@@ -1846,7 +1846,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
+            $ref: '#/definitions/github_com_1Panel-dev_KubePi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Update user by name

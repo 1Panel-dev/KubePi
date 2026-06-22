@@ -4,16 +4,16 @@ import (
 	"embed"
 	"runtime"
 
-	_ "github.com/KubeOperator/kubepi/cmd/server/docs"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/cluster"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/clusterrepo"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/docs"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/imagerepo"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/role"
-	_ "github.com/KubeOperator/kubepi/internal/model/v1/user"
-	"github.com/KubeOperator/kubepi/internal/route"
-	"github.com/KubeOperator/kubepi/internal/server"
-	"github.com/KubeOperator/kubepi/pkg/network/ip"
+	_ "github.com/1Panel-dev/KubePi/cmd/server/docs"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/clusterrepo"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/docs"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/imagerepo"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/role"
+	_ "github.com/1Panel-dev/KubePi/internal/model/v1/user"
+	"github.com/1Panel-dev/KubePi/internal/route"
+	"github.com/1Panel-dev/KubePi/internal/server"
+	"github.com/1Panel-dev/KubePi/pkg/network/ip"
 	"github.com/spf13/cobra"
 	_ "k8s.io/api/rbac/v1"
 )
@@ -74,7 +74,7 @@ var RootCmd = &cobra.Command{
 
 // @title KubePi Restful API
 // @version.go 1.0
-// @termsOfService http://kubeoperator.io
+// @termsOfService https://github.com/1Panel-dev/KubePi
 // @contact.name Fit2cloud Support
 // @contact.url https://www.fit2cloud.com
 // @contact.email support@fit2cloud.com
