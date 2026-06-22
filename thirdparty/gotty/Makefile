@@ -65,7 +65,7 @@ js/node_modules/xterm/dist/xterm.css:
 
 js/dist/gotty-bundle.js: js/src/* js/node_modules/webpack
 	cd js && \
-	`npm bin`/webpack
+	./node_modules/.bin/webpack
 
 js/node_modules/webpack:
 	cd js && \
