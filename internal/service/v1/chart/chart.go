@@ -5,9 +5,9 @@ import (
 	v1Chart "github.com/1Panel-dev/KubePi/internal/model/v1/chart"
 	v1ClusterApp "github.com/1Panel-dev/KubePi/internal/model/v1/clusterapp"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterapp"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
-	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
 	"github.com/1Panel-dev/KubePi/pkg/util/helm"
 	"github.com/asdine/storm/v3"
 	"helm.sh/helm/v3/cmd/helm/search"
@@ -17,21 +17,21 @@ import (
 
 type Service interface {
 	common.DBService
-	SearchRepo(cluster string) ([]*repo.Entry, error)
-	AddRepo(cluster string, create *v1Chart.RepoCreate) error
-	UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error
-	GetRepo(cluster string, name string) (*v1Chart.Repo, error)
-	RemoveRepo(cluster string, name string) error
-	ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error)
-	GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error)
-	GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error)
-	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error
-	ListAllInstalled(cluster, namespace string, num, size int, pattern string) ([]*release.Release, int, error)
-	UnInstallChart(cluster, namespace, name string) error
-	GetAppDetail(cluster string, name string) (*release.Release, error)
-	GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error)
-	UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}) error
-	SyncRepo(cluster, name string) error
+	SearchRepo(cluster string, user clusteraccess.User) ([]*repo.Entry, error)
+	AddRepo(cluster string, create *v1Chart.RepoCreate, user clusteraccess.User) error
+	UpdateRepo(cluster string, update *v1Chart.RepoUpdate, user clusteraccess.User) error
+	GetRepo(cluster string, name string, user clusteraccess.User) (*v1Chart.Repo, error)
+	RemoveRepo(cluster string, name string, user clusteraccess.User) error
+	ListCharts(cluster, repo string, num, size int, pattern string, user clusteraccess.User) ([]*search.Result, int, error)
+	GetCharts(cluster, repo, name string, user clusteraccess.User) (*v1Chart.ChArrayResult, error)
+	GetChartByVersion(cluster, repo, name, version string, user clusteraccess.User) (*v1Chart.ChDetail, error)
+	InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}, user clusteraccess.User) error
+	ListAllInstalled(cluster, namespace string, num, size int, pattern string, user clusteraccess.User) ([]*release.Release, int, error)
+	UnInstallChart(cluster, namespace, name string, user clusteraccess.User) error
+	GetAppDetail(cluster string, name string, user clusteraccess.User) (*release.Release, error)
+	GetChartsUpdate(cluster, chart, name string, user clusteraccess.User) (*v1Chart.UpdateResult, error)
+	UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}, user clusteraccess.User) error
+	SyncRepo(cluster, name string, user clusteraccess.User) error
 }
 
 func NewService() Service {
@@ -47,8 +47,8 @@ type service struct {
 	clusterAppService clusterapp.Service
 }
 
-func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) SearchRepo(cluster string, user clusteraccess.User) ([]*repo.Entry, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +59,8 @@ func (c *service) SearchRepo(cluster string) ([]*repo.Entry, error) {
 	return repos, err
 }
 
-func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return err
 	}
@@ -71,8 +71,8 @@ func (c *service) AddRepo(cluster string, create *v1Chart.RepoCreate) error {
 	return nil
 }
 
-func (c *service) GetRepo(cluster string, name string) (*v1Chart.Repo, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) GetRepo(cluster string, name string, user clusteraccess.User) (*v1Chart.Repo, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
@@ -83,10 +83,17 @@ func (c *service) GetRepo(cluster string, name string) (*v1Chart.Repo, error) {
 	return &v1Chart.Repo{Name: re.Name, Url: re.URL, UserName: re.Username, Password: re.Password}, nil
 }
 
-func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return err
+	}
+	if update.Password == "" {
+		current, err := helmClient.GetRepo(update.Name)
+		if err != nil {
+			return err
+		}
+		update.Password = current.Password
 	}
 	result, err := helmClient.RemoveRepo(update.Name)
 	if err != nil {
@@ -102,8 +109,8 @@ func (c *service) UpdateRepo(cluster string, update *v1Chart.RepoUpdate) error {
 	return nil
 }
 
-func (c *service) RemoveRepo(cluster string, name string) error {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) RemoveRepo(cluster string, name string, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return err
 	}
@@ -117,8 +124,8 @@ func (c *service) RemoveRepo(cluster string, name string) error {
 	return nil
 }
 
-func (c *service) ListCharts(cluster, repo string, num, size int, pattern string) ([]*search.Result, int, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) ListCharts(cluster, repo string, num, size int, pattern string, user clusteraccess.User) ([]*search.Result, int, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -151,8 +158,8 @@ func (c *service) ListCharts(cluster, repo string, num, size int, pattern string
 	return result, len(chartArray), nil
 }
 
-func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) GetCharts(cluster, repo, name string, user clusteraccess.User) (*v1Chart.ChArrayResult, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
@@ -184,8 +191,8 @@ func (c *service) GetCharts(cluster, repo, name string) (*v1Chart.ChArrayResult,
 	return &result, nil
 }
 
-func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateResult, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) GetChartsUpdate(cluster, chart, name string, user clusteraccess.User) (*v1Chart.UpdateResult, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
@@ -210,8 +217,8 @@ func (c *service) GetChartsUpdate(cluster, chart, name string) (*v1Chart.UpdateR
 	return update, nil
 }
 
-func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Chart.ChDetail, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) GetChartByVersion(cluster, repo, name, version string, user clusteraccess.User) (*v1Chart.ChDetail, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
@@ -230,8 +237,8 @@ func (c *service) GetChartByVersion(cluster, repo, name, version string) (*v1Cha
 	return &result, nil
 }
 
-func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}) error {
-	helmClient, err := NewHelmClient(cluster, namespace)
+func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, chartVersion string, values map[string]interface{}, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, namespace, user)
 	if err != nil {
 		return err
 	}
@@ -250,8 +257,8 @@ func (c *service) InstallChart(cluster, repoName, namespace, name, chartName, ch
 	return nil
 }
 
-func (c *service) UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}) error {
-	helmClient, err := NewHelmClient(cluster, namespace)
+func (c *service) UpgradeChart(cluster, namespace, repoName, name, chartName, chartVersion string, values map[string]interface{}, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, namespace, user)
 	if err != nil {
 		return err
 	}
@@ -262,8 +269,8 @@ func (c *service) UpgradeChart(cluster, namespace, repoName, name, chartName, ch
 	return nil
 }
 
-func (c *service) UnInstallChart(cluster, namespace, name string) error {
-	helmClient, err := NewHelmClient(cluster, namespace)
+func (c *service) UnInstallChart(cluster, namespace, name string, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, namespace, user)
 	if err != nil {
 		return err
 	}
@@ -278,8 +285,8 @@ func (c *service) UnInstallChart(cluster, namespace, name string) error {
 	return nil
 }
 
-func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pattern string) ([]*release.Release, int, error) {
-	helmClient, err := NewHelmClient(cluster, namespace)
+func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pattern string, user clusteraccess.User) ([]*release.Release, int, error) {
+	helmClient, err := NewHelmClient(cluster, namespace, user)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -290,28 +297,24 @@ func (c *service) ListAllInstalled(cluster, namespace string, num, size int, pat
 	return releases, total, nil
 }
 
-func (c *service) GetAppDetail(cluster string, name string) (*release.Release, error) {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) GetAppDetail(cluster string, name string, user clusteraccess.User) (*release.Release, error) {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return nil, err
 	}
 	return helmClient.GetDetail(name)
 }
 
-func (c *service) SyncRepo(cluster, name string) error {
-	helmClient, err := NewHelmClient(cluster, "")
+func (c *service) SyncRepo(cluster, name string, user clusteraccess.User) error {
+	helmClient, err := NewHelmClient(cluster, "", user)
 	if err != nil {
 		return err
 	}
 	return helmClient.UpdateRepo(name)
 }
 
-func NewHelmClient(clusterName, namespace string) (*helm.Client, error) {
-	clu, err := cluster.NewService().Get(clusterName, common.DBOptions{})
-	if err != nil {
-		return nil, err
-	}
-	kubeConfig, err := kubernetes.NewKubernetes(clu).Config()
+func NewHelmClient(clusterName, namespace string, user clusteraccess.User) (*helm.Client, error) {
+	kubeConfig, clu, err := clusteraccess.ConfigForUser(clusterName, user)
 	if err != nil {
 		return nil, err
 	}

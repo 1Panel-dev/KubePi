@@ -3,13 +3,10 @@ package file
 import (
 	"fmt"
 	"github.com/1Panel-dev/KubePi/internal/model/v1/file"
-	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
-	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
-	kubeClient "github.com/1Panel-dev/KubePi/pkg/kubernetes"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/pkg/util/podtool"
 	"github.com/sirupsen/logrus"
 	"io"
-	"k8s.io/client-go/kubernetes"
 	"os"
 	"path"
 	"path/filepath"
@@ -28,13 +25,10 @@ type Service interface {
 }
 
 type service struct {
-	clusterService cluster.Service
 }
 
 func NewService() Service {
-	return &service{
-		clusterService: cluster.NewService(),
-	}
+	return &service{}
 }
 
 func (f service) ExecNewCommand(request file.Request) ([]byte, error) {
@@ -47,16 +41,10 @@ func (f service) ExecNewCommand(request file.Request) ([]byte, error) {
 
 func (f service) GetPodTool(request file.Request) (podtool.PodTool, error) {
 	var pt podtool.PodTool
-	clu, err := f.clusterService.Get(request.Cluster, common.DBOptions{})
-	if err != nil {
-		return pt, err
-	}
-	client := kubeClient.Kubernetes{clu}
-	config, err := client.Config()
-	if err != nil {
-		return pt, err
-	}
-	clientset, err := kubernetes.NewForConfig(config)
+	clientset, config, _, err := clusteraccess.ClientForUser(request.Cluster, clusteraccess.User{
+		Name:            request.UserName,
+		IsAdministrator: request.IsAdmin,
+	})
 	if err != nil {
 		return pt, err
 	}

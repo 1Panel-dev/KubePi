@@ -17,6 +17,11 @@ func NewHandler() *Handler {
 	}
 }
 
+func sanitizeLdap(l Ldap) Ldap {
+	l.Password = ""
+	return l
+}
+
 func (h *Handler) ListLdap() iris.Handler {
 	return func(ctx *context.Context) {
 		ldaps, err := h.ldapService.List(common.DBOptions{})
@@ -24,6 +29,9 @@ func (h *Handler) ListLdap() iris.Handler {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
+		}
+		for i := range ldaps {
+			ldaps[i].Password = ""
 		}
 		ctx.Values().Set("data", ldaps)
 	}
@@ -42,6 +50,7 @@ func (h *Handler) AddLdap() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeLdap(req)
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -59,6 +68,7 @@ func (h *Handler) UpdateLdap() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeLdap(req)
 		ctx.Values().Set("data", &req)
 	}
 }

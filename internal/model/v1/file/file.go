@@ -12,6 +12,8 @@ type Request struct {
 	OldPath       string    `json:"oldPath"`
 	Commands      []string  `json:"-"`
 	Stdin         io.Reader `json:"-"`
+	UserName      string    `json:"-"`
+	IsAdmin       bool      `json:"-"`
 	Content       string    `json:"content"`
 	FilePath      string    `json:"filePath"`
 }

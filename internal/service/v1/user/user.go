@@ -82,6 +82,7 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 	us.UUID = cu.UUID
 	us.IsAdmin = cu.IsAdmin
 	us.Type = cu.Type
+	us.Authenticate = cu.Authenticate
 	us.CreateAt = cu.CreateAt
 	us.UpdateAt = time.Now()
 	if !us.Mfa.Enable {
@@ -90,6 +91,8 @@ func (u *service) Update(name string, us *v1User.User, options common.DBOptions)
 		if err != nil {
 			return err
 		}
+	} else if us.Mfa.Secret == "" {
+		us.Mfa.Secret = cu.Mfa.Secret
 	}
 
 	return db.Update(us)

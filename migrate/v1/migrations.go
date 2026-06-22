@@ -15,6 +15,7 @@ import (
 var Migrations = []migrations.Migration{
 	CreateAdministrator,
 	AddRoleManagerRepo,
+	MigrateFixedSSOPasswordUsers,
 }
 
 // 创建默认系统角色: Admin |Manage Cluster| Manage User|Read only|Common User | Manage Chart
@@ -170,5 +171,35 @@ var AddRoleManagerRepo = migrations.Migration{
 			},
 		}
 		return db.Save(&roleManageRepo)
+	},
+}
+
+var MigrateFixedSSOPasswordUsers = migrations.Migration{
+	Version: 3,
+	Message: "Migrate SSO users created with fixed password",
+	Handler: func(db storm.Node) error {
+		var users []v1User.User
+		if err := db.All(&users); err != nil {
+			return err
+		}
+		for i := range users {
+			if users[i].IsAdmin || users[i].Type != v1User.LOCAL || users[i].CreatedBy != "" {
+				continue
+			}
+			if err := bcrypt.CompareHashAndPassword([]byte(users[i].Authenticate.Password), []byte(`@=7kvi-$l*Pj+,s`)); err != nil {
+				continue
+			}
+			hash, err := bcrypt.GenerateFromPassword([]byte(uuid.NewString()), bcrypt.DefaultCost)
+			if err != nil {
+				return err
+			}
+			users[i].Type = v1User.SSO
+			users[i].Authenticate.Password = string(hash)
+			users[i].UpdateAt = time.Now()
+			if err := db.Update(&users[i]); err != nil {
+				return err
+			}
+		}
+		return nil
 	},
 }

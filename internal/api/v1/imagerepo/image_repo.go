@@ -27,6 +27,18 @@ func NewHandler() *Handler {
 	}
 }
 
+func sanitizeImageRepo(repo v1ImageRepo.ImageRepo) v1ImageRepo.ImageRepo {
+	repo.Credential.Password = ""
+	return repo
+}
+
+func sanitizeImageRepoList(repos []v1ImageRepo.ImageRepo) []v1ImageRepo.ImageRepo {
+	for i := range repos {
+		repos[i] = sanitizeImageRepo(repos[i])
+	}
+	return repos
+}
+
 func (h *Handler) SearchRepos() iris.Handler {
 	return func(ctx *context.Context) {
 		pageNum, _ := ctx.Values().GetInt(pkgV1.PageNum)
@@ -45,6 +57,7 @@ func (h *Handler) SearchRepos() iris.Handler {
 				return
 			}
 		}
+		repos = sanitizeImageRepoList(repos)
 		ctx.Values().Set("data", pkgV1.Page{Items: repos, Total: total})
 	}
 }
@@ -72,6 +85,7 @@ func (h *Handler) CreateRepo() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req.ImageRepo = sanitizeImageRepo(req.ImageRepo)
 		ctx.Values().Set("data", req)
 	}
 }
@@ -188,6 +202,7 @@ func (h *Handler) GetRepo() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		imageRepo = sanitizeImageRepo(imageRepo)
 		ctx.Values().Set("data", imageRepo)
 	}
 }
@@ -212,6 +227,7 @@ func (h *Handler) ListRepoForCluster() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		imageRepos = sanitizeImageRepoList(imageRepos)
 		ctx.Values().Set("data", imageRepos)
 	}
 }

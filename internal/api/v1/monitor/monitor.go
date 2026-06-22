@@ -23,6 +23,16 @@ func NewHandler() *Handler {
 	}
 }
 
+func sanitizeGrafanaConfig(cfg v1Monitor.GrafanaConfig) v1Monitor.GrafanaConfig {
+	cfg.ServiceAccountToken = ""
+	return cfg
+}
+
+func sanitizeMetricsConfig(cfg v1Monitor.MetricsConfig) v1Monitor.MetricsConfig {
+	cfg.Credential.Password = ""
+	return cfg
+}
+
 func (h *Handler) AddGrafana() iris.Handler {
 	return func(ctx *context.Context) {
 		var req v1Monitor.GrafanaConfig
@@ -36,6 +46,7 @@ func (h *Handler) AddGrafana() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeGrafanaConfig(req)
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -48,7 +59,8 @@ func (h *Handler) ListGrafana() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		ctx.Values().Set("data", monitor)
+		resp := sanitizeGrafanaConfig(*monitor)
+		ctx.Values().Set("data", &resp)
 	}
 }
 
@@ -65,6 +77,7 @@ func (h *Handler) UpdateGrafana() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeGrafanaConfig(req)
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -76,7 +89,7 @@ func (h *Handler) TestConnectGrafana() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		if err := h.monitorService.GrafanaTestConnect(&req); err != nil {
+		if err := h.monitorService.GrafanaTestConnect(&req, common.DBOptions{}); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -92,12 +105,13 @@ func (h *Handler) ImportDashboardsGrafana() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.monitorService.GrafanaImportDashboards(&req)
+		err := h.monitorService.GrafanaImportDashboards(&req, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeGrafanaConfig(req)
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -120,6 +134,9 @@ func (h *Handler) SearchMetrics() iris.Handler {
 				return
 			}
 		}
+		for i := range metrics {
+			metrics[i] = sanitizeMetricsConfig(metrics[i])
+		}
 		ctx.Values().Set("data", pkgV1.Page{Items: metrics, Total: total})
 	}
 }
@@ -137,6 +154,7 @@ func (h *Handler) AddMetrics() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req = sanitizeMetricsConfig(req)
 		ctx.Values().Set("data", req)
 	}
 }
@@ -170,6 +188,7 @@ func (h *Handler) GetMetrics() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		metrics = sanitizeMetricsConfig(metrics)
 		ctx.Values().Set("data", metrics)
 	}
 }

@@ -118,7 +118,8 @@ func (h *Handler) Login() iris.Handler {
 			return
 		}
 
-		if u.Type == v1User.LDAP {
+		switch u.Type {
+		case v1User.LDAP:
 			if !h.ldapService.CheckStatus() {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", "ldap is not enable!")
@@ -129,12 +130,16 @@ func (h *Handler) Login() iris.Handler {
 				ctx.Values().Set("message", "username or password error")
 				return
 			}
-		} else {
+		case "", v1User.LOCAL:
 			if err := bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(loginCredential.Password)); err != nil {
 				ctx.StatusCode(iris.StatusBadRequest)
 				ctx.Values().Set("message", "username or password error")
 				return
 			}
+		default:
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "username or password error")
+			return
 		}
 
 		permissions, err := h.AggregateResourcePermissions(loginCredential.Username)

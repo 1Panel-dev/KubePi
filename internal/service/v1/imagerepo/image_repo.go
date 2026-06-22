@@ -226,7 +226,7 @@ func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options c
 	repo.CreateAt = old.CreateAt
 	repo.UpdateAt = time.Now()
 
-	if !old.Auth {
+	if !repo.Auth {
 		repo.Credential.Password = ""
 		repo.Credential.Username = ""
 		repo.Credential = V1ImageRepo.Credential{}
@@ -234,6 +234,8 @@ func (s *service) UpdateRepo(name string, repo *V1ImageRepo.ImageRepo, options c
 		if err != nil {
 			return
 		}
+	} else if repo.Credential.Password == "" {
+		repo.Credential.Password = old.Credential.Password
 	}
 
 	if old.AllowAnonymous != repo.AllowAnonymous {

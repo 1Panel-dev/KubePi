@@ -1,7 +1,9 @@
 package chart
 
 import (
+	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/chart"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -18,11 +20,17 @@ func NewHandler() *Handler {
 	}
 }
 
+func userAccessFromContext(ctx *context.Context) clusteraccess.User {
+	u := ctx.Values().Get("profile")
+	profile := u.(session.UserProfile)
+	return clusteraccess.User{Name: profile.Name, IsAdministrator: profile.IsAdministrator}
+}
+
 func (h *Handler) DeleteRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
-		if err := h.chartService.RemoveRepo(cluster, name); err != nil {
+		if err := h.chartService.RemoveRepo(cluster, name, userAccessFromContext(ctx)); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -35,7 +43,7 @@ func (h *Handler) GetChart() iris.Handler {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.Params().GetString("cluster")
 		repo := ctx.URLParam("repo")
-		cs, err := h.chartService.GetCharts(cluster, repo, name)
+		cs, err := h.chartService.GetCharts(cluster, repo, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -47,7 +55,7 @@ func (h *Handler) GetChart() iris.Handler {
 func (h *Handler) ListRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
-		entrys, err := h.chartService.SearchRepo(cluster)
+		entrys, err := h.chartService.SearchRepo(cluster, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -68,12 +76,13 @@ func (h *Handler) GetRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
-		re, err := h.chartService.GetRepo(cluster, name)
+		re, err := h.chartService.GetRepo(cluster, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		re.Password = ""
 		ctx.Values().Set("data", re)
 	}
 }
@@ -87,12 +96,13 @@ func (h *Handler) AddRepo() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 		}
 
-		err := h.chartService.AddRepo(cluster, &req.RepoCreate)
+		err := h.chartService.AddRepo(cluster, &req.RepoCreate, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req.Password = ""
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -106,12 +116,13 @@ func (h *Handler) UpdateRepo() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 		}
 
-		err := h.chartService.UpdateRepo(cluster, &req.RepoUpdate)
+		err := h.chartService.UpdateRepo(cluster, &req.RepoUpdate, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		req.Password = ""
 		ctx.Values().Set("data", &req)
 	}
 }
@@ -121,7 +132,7 @@ func (h *Handler) SyncRepo() iris.Handler {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.Params().GetString("cluster")
 
-		err := h.chartService.SyncRepo(cluster, name)
+		err := h.chartService.SyncRepo(cluster, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -138,7 +149,7 @@ func (h *Handler) ListCharts() iris.Handler {
 		pattern := ctx.URLParam("pattern")
 		repo := ctx.URLParam("repo")
 		cluster := ctx.Params().GetString("cluster")
-		charts, total, err := h.chartService.ListCharts(cluster, repo, pageNum, pageSize, pattern)
+		charts, total, err := h.chartService.ListCharts(cluster, repo, pageNum, pageSize, pattern, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -164,7 +175,7 @@ func (h *Handler) GetChartByVersion() iris.Handler {
 		cluster := ctx.Params().GetString("cluster")
 		repo := ctx.URLParam("repo")
 		version := ctx.URLParam("version")
-		cs, err := h.chartService.GetChartByVersion(cluster, repo, name, version)
+		cs, err := h.chartService.GetChartByVersion(cluster, repo, name, version, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -179,7 +190,7 @@ func (h *Handler) GetChartForUpdate() iris.Handler {
 		name := ctx.Params().GetString("name")
 		cluster := ctx.Params().GetString("cluster")
 		chart := ctx.URLParam("chart")
-		cs, err := h.chartService.GetChartsUpdate(cluster, chart, name)
+		cs, err := h.chartService.GetChartsUpdate(cluster, chart, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -196,7 +207,7 @@ func (h *Handler) InstallChart() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Namespace, req.Name, req.ChartName, req.ChartVersion, req.Values)
+		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Namespace, req.Name, req.ChartName, req.ChartVersion, req.Values, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -213,7 +224,7 @@ func (h *Handler) UpdateChart() iris.Handler {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
 		}
-		err := h.chartService.UpgradeChart(req.Cluster, req.Namespace, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values)
+		err := h.chartService.UpgradeChart(req.Cluster, req.Namespace, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -230,7 +241,7 @@ func (h *Handler) AllInstalled() iris.Handler {
 		pattern := ctx.URLParam("pattern")
 		namespace := ctx.URLParam("namespace")
 		cluster := ctx.Params().GetString("cluster")
-		installed, total, err := h.chartService.ListAllInstalled(cluster, namespace, pageNum, pageSize, pattern)
+		installed, total, err := h.chartService.ListAllInstalled(cluster, namespace, pageNum, pageSize, pattern, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -245,7 +256,7 @@ func (h *Handler) UnInstall() iris.Handler {
 		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
 		namespace := ctx.Params().GetString("namespace")
-		err := h.chartService.UnInstallChart(cluster, namespace, name)
+		err := h.chartService.UnInstallChart(cluster, namespace, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -259,7 +270,7 @@ func (h *Handler) GetAppDetail() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
 		name := ctx.Params().GetString("name")
-		data, err := h.chartService.GetAppDetail(cluster, name)
+		data, err := h.chartService.GetAppDetail(cluster, name, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

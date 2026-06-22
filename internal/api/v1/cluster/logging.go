@@ -1,8 +1,8 @@
 package cluster
 
 import (
-	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
-	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
+	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/pkg/logging"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -58,14 +58,12 @@ func (h *Handler) LoggingHandler() iris.Handler {
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 		}
-		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
-		if err != nil {
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err)
-			return
-		}
-		k := kubernetes.NewKubernetes(c)
-		client, err := k.Client()
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		client, _, _, err := clusteraccess.ClientForUser(clusterName, clusteraccess.User{
+			Name:            profile.Name,
+			IsAdministrator: profile.IsAdministrator,
+		})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err)

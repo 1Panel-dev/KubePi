@@ -48,6 +48,24 @@ func NewHandler() *Handler {
 	}
 }
 
+func sanitizeClusterModel(c v1Cluster.Cluster) v1Cluster.Cluster {
+	c.PrivateKey = nil
+	c.Spec.Connect.Forward.Proxy.Password = ""
+	c.Spec.Authentication.BearerToken = ""
+	c.Spec.Authentication.Certificate.KeyData = nil
+	c.Spec.Authentication.ConfigFileContent = nil
+	return c
+}
+
+func sanitizeClusterResponse(c Cluster) Cluster {
+	c.Cluster = sanitizeClusterModel(c.Cluster)
+	c.KeyDataStr = ""
+	c.CertDataStr = ""
+	c.CaDataStr = ""
+	c.ConfigFileContentStr = ""
+	return c
+}
+
 // Create Cluster
 // @Tags clusters
 // @Summary Create Cluster
@@ -147,7 +165,8 @@ func (h *Handler) CreateCluster() iris.Handler {
 			return
 		}
 		_ = tx.Commit()
-		ctx.Values().Set("data", &req)
+		resp := sanitizeClusterResponse(req)
+		ctx.Values().Set("data", &resp)
 		go func() {
 			req.Status.Phase = clusterStatusInitializing
 			if e := h.clusterService.Update(req.Name, &req.Cluster, common.DBOptions{}); e != nil {
@@ -334,6 +353,9 @@ func (h *Handler) SearchClusters() iris.Handler {
 
 			<-ctx1.Done()
 		}
+		for i := range result {
+			result[i] = sanitizeClusterResponse(result[i])
+		}
 		ctx.Values().Set("data", pkgV1.Page{Items: result, Total: total})
 	}
 }
@@ -417,7 +439,8 @@ func (h *Handler) GetCluster() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get clusters failed: %s", err.Error()))
 			return
 		}
-		ctx.Values().Set("data", c)
+		resp := sanitizeClusterModel(*c)
+		ctx.Values().Set("data", &resp)
 	}
 }
 
@@ -454,12 +477,24 @@ func (h *Handler) UpdateCluster() iris.Handler {
 				req.Labels = []string{}
 			}
 		} else {
-			c.Spec.Authentication.ConfigFileContent = []byte(req.ConfigFileContent)
-			c.Spec.Authentication.Certificate.CertData = []byte(req.CertData)
-			c.Spec.Authentication.Certificate.KeyData = []byte(req.KeyData)
-			c.Spec.Connect.Forward.ApiServer = req.ApiServer
-			c.Spec.Authentication.Mode = req.Mode
-			c.Spec.Authentication.BearerToken = req.Token
+			if req.ConfigFileContent != "" {
+				c.Spec.Authentication.ConfigFileContent = []byte(req.ConfigFileContent)
+			}
+			if req.CertData != "" {
+				c.Spec.Authentication.Certificate.CertData = []byte(req.CertData)
+			}
+			if req.KeyData != "" {
+				c.Spec.Authentication.Certificate.KeyData = []byte(req.KeyData)
+			}
+			if req.ApiServer != "" {
+				c.Spec.Connect.Forward.ApiServer = req.ApiServer
+			}
+			if req.Mode != "" {
+				c.Spec.Authentication.Mode = req.Mode
+			}
+			if req.Token != "" {
+				c.Spec.Authentication.BearerToken = req.Token
+			}
 
 			client := kubernetes.NewKubernetes(c)
 			if err := client.Ping(); err != nil {
@@ -524,7 +559,7 @@ func (h *Handler) ListClusters() iris.Handler {
 					rc.Accessable = true
 				}
 			}
-			resultClusters = append(resultClusters, rc)
+			resultClusters = append(resultClusters, sanitizeClusterResponse(rc))
 		}
 		ctx.StatusCode(iris.StatusOK)
 		ctx.Values().Set("data", resultClusters)

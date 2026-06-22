@@ -39,6 +39,12 @@ func NewHandler() *Handler {
 	}
 }
 
+func sanitizeUser(u v1User.User) v1User.User {
+	u.Authenticate = v1User.Authenticate{}
+	u.Mfa.Secret = ""
+	return u
+}
+
 // Search User
 // @Tags users
 // @Summary Search users
@@ -70,7 +76,7 @@ func (h *Handler) SearchUsers() iris.Handler {
 		}
 		us := make([]User, 0)
 		for i := range users {
-			users[i].Authenticate = v1User.Authenticate{}
+			users[i] = sanitizeUser(users[i])
 			bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: users[i].Name}, common.DBOptions{})
 			if err != nil && !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
@@ -169,7 +175,7 @@ func (h *Handler) CreateUser() iris.Handler {
 			}
 		}
 		_ = tx.Commit()
-		req.Authenticate = v1User.Authenticate{}
+		req.User = sanitizeUser(req.User)
 		ctx.Values().Set("data", req)
 	}
 }
@@ -276,7 +282,7 @@ func (h *Handler) GetUser() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		u.Authenticate = v1User.Authenticate{}
+		*u = sanitizeUser(*u)
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: u.Name}, common.DBOptions{})
 		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -309,7 +315,7 @@ func (h *Handler) GetUsers() iris.Handler {
 			return
 		}
 		for i := range us {
-			us[i].Authenticate = v1User.Authenticate{}
+			us[i] = sanitizeUser(us[i])
 		}
 		ctx.Values().Set("data", us)
 	}
@@ -411,6 +417,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 		}
 
 		_ = tx.Commit()
+		req.User = sanitizeUser(req.User)
 		ctx.Values().Set("data", &req)
 	}
 }

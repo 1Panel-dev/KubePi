@@ -179,7 +179,7 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 	_, err = s.userService.GetByNameOrEmail(userInfo.Email, options)
 	if err != nil {
 		if errors.Is(err, storm.ErrNotFound) {
-			// 创建本地账号，密码默认设置为`@=7kvi-$l*Pj+,s`，默认不开启MFA
+			// 创建 SSO 账号，禁止通过普通密码入口登录，默认不开启MFA
 			userProfile := &v1User.User{
 				BaseModel: v1.BaseModel{
 					ApiVersion: "v1",
@@ -193,9 +193,9 @@ func (s *service) OpenID(openid *v1Sso.OpenID, options common.DBOptions) (v1Sess
 				Language: openid.Language,
 				IsAdmin:  false,
 				Authenticate: v1User.Authenticate{
-					Password: `@=7kvi-$l*Pj+,s`,
+					Password: uuid.NewString(),
 				},
-				Type: v1User.LOCAL,
+				Type: v1User.SSO,
 				Mfa: v1User.Mfa{
 					Enable: false,
 				},
@@ -324,7 +324,7 @@ func (s *service) Saml2(givenName, email, language string, options common.DBOpti
 	_, err := s.userService.GetByNameOrEmail(email, options)
 	if err != nil {
 		if errors.Is(err, storm.ErrNotFound) {
-			// 创建本地账号，密码默认设置为`@=7kvi-$l*Pj+,s`，默认不开启MFA
+			// 创建 SSO 账号，禁止通过普通密码入口登录，默认不开启MFA
 			userProfile := &v1User.User{
 				BaseModel: v1.BaseModel{
 					ApiVersion: "v1",
@@ -338,9 +338,9 @@ func (s *service) Saml2(givenName, email, language string, options common.DBOpti
 				Language: language,
 				IsAdmin:  false,
 				Authenticate: v1User.Authenticate{
-					Password: `@=7kvi-$l*Pj+,s`,
+					Password: uuid.NewString(),
 				},
-				Type: v1User.LOCAL,
+				Type: v1User.SSO,
 				Mfa: v1User.Mfa{
 					Enable: false,
 				},

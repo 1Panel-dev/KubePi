@@ -2,13 +2,20 @@ package cluster
 
 import (
 	"github.com/1Panel-dev/KubePi/internal/model/v1/clusterrepo"
-	_ "github.com/1Panel-dev/KubePi/internal/model/v1/imagerepo"
+	v1ImageRepo "github.com/1Panel-dev/KubePi/internal/model/v1/imagerepo"
 	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )
+
+func sanitizeImageRepos(repos []v1ImageRepo.ImageRepo) []v1ImageRepo.ImageRepo {
+	for i := range repos {
+		repos[i].Credential.Password = ""
+	}
+	return repos
+}
 
 // List ClusterRepos
 // @Tags clusters
@@ -52,7 +59,7 @@ func (h *Handler) ListClusterReposDetail() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		ctx.Values().Set("data", clusterRepos)
+		ctx.Values().Set("data", sanitizeImageRepos(clusterRepos))
 	}
 }
 

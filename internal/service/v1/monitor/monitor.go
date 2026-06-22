@@ -14,11 +14,11 @@ import (
 )
 
 type Service interface {
-	GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig) error
+	GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
 	GrafanaList(options common.DBOptions) (*v1Monitor.GrafanaConfig, error)
 	GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
 	GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
-	GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) error
+	GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error
 
 	MetricsSearch(num, size int, conditions common.Conditions, options common.DBOptions) (result []v1Monitor.MetricsConfig, count int, err error)
 	MetricsCreate(metr *v1Monitor.MetricsConfig, options common.DBOptions) error
@@ -38,7 +38,28 @@ type service struct {
 	common.DefaultDBService
 }
 
-func (s *service) GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig) error {
+func (s *service) keepGrafanaToken(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
+	if monitor.ServiceAccountToken != "" {
+		return nil
+	}
+	var old *v1Monitor.GrafanaConfig
+	var err error
+	if monitor.UUID != "" {
+		old, err = s.GrafanaGetById(monitor.UUID, options)
+	} else {
+		old, err = s.GrafanaList(options)
+	}
+	if err != nil {
+		return err
+	}
+	monitor.ServiceAccountToken = old.ServiceAccountToken
+	return nil
+}
+
+func (s *service) GrafanaTestConnect(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
+	if err := s.keepGrafanaToken(monitor, options); err != nil {
+		return err
+	}
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
 	if err := gc.TestConnect(monitor.Address); err != nil {
 		return err
@@ -103,6 +124,13 @@ func (s *service) GrafanaCreate(monitor *v1Monitor.GrafanaConfig, options common
 }
 
 func (s *service) GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
+	old, err := s.GrafanaGetById(id, options)
+	if err != nil {
+		return err
+	}
+	if monitor.ServiceAccountToken == "" {
+		monitor.ServiceAccountToken = old.ServiceAccountToken
+	}
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
 	if monitor.Enable {
 		if err := gc.TestConnect(monitor.Address); err != nil {
@@ -110,10 +138,6 @@ func (s *service) GrafanaUpdate(id string, monitor *v1Monitor.GrafanaConfig, opt
 		}
 	}
 
-	old, err := s.GrafanaGetById(id, options)
-	if err != nil {
-		return err
-	}
 	monitor.UUID = old.UUID
 	monitor.CreateAt = old.CreateAt
 	monitor.UpdateAt = time.Now()
@@ -137,7 +161,10 @@ func (s *service) GrafanaGetById(id string, options common.DBOptions) (*v1Monito
 	return &monitor, nil
 }
 
-func (s *service) GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig) error {
+func (s *service) GrafanaImportDashboards(monitor *v1Monitor.GrafanaConfig, options common.DBOptions) error {
+	if err := s.keepGrafanaToken(monitor, options); err != nil {
+		return err
+	}
 	gc := grafanaClient.NewGrafanaClient(monitor.Address, monitor.ServiceAccountToken, monitor.Enable, monitor.DefaultDashboard)
 	if err := gc.TestConnect(monitor.Address); err != nil {
 		return err
@@ -244,6 +271,8 @@ func (s *service) MetricsUpdate(name string, metr *v1Monitor.MetricsConfig, opti
 		if err := db.UpdateField(metr, "Credential", metr.Credential); err != nil {
 			return err
 		}
+	} else if metr.Credential.Password == "" {
+		metr.Credential.Password = old.Credential.Password
 	}
 
 	if old.Auth != metr.Auth {

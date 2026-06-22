@@ -1,20 +1,21 @@
 package podtool
 
+import "strings"
+
 func (p *PodTool) EditFile(path string, content string) error {
 	catCommand := []string{"cat", path}
 	oldContent, err := p.ExecCommand(catCommand)
 	if err != nil {
 		return err
 	}
-	_, err = p.ExecCommand([]string{"sh", "-c", "cat /dev/null > " + path})
+	defer func() {
+		p.ExecConfig.Stdin = nil
+	}()
+	p.ExecConfig.Stdin = strings.NewReader(content)
+	_, err = p.ExecCommand([]string{"tee", path})
 	if err != nil {
-		return err
-	}
-	command := "echo '" + content + "' >> " + path
-	_, err = p.ExecCommand([]string{"sh", "-c", command})
-	if err != nil {
-		command2 := "echo '" + string(oldContent) + "' >> " + path
-		_, _ = p.ExecCommand([]string{"sh", "-c", command2})
+		p.ExecConfig.Stdin = strings.NewReader(string(oldContent))
+		_, _ = p.ExecCommand([]string{"tee", path})
 		return err
 	}
 	return nil

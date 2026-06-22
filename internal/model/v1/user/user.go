@@ -27,6 +27,7 @@ type Mfa struct {
 const (
 	LDAP  = "LDAP"
 	LOCAL = "LOCAL"
+	SSO   = "SSO"
 )
 
 type ImportUser struct {

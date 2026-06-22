@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"errors"
 	"fmt"
+	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	fileModel "github.com/1Panel-dev/KubePi/internal/model/v1/file"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/file"
 	"github.com/kataras/iris/v12"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -25,6 +27,13 @@ func NewHandler() *Handler {
 	}
 }
 
+func withRequestUser(ctx *context.Context, req *fileModel.Request) {
+	u := ctx.Values().Get("profile")
+	profile := u.(session.UserProfile)
+	req.UserName = profile.Name
+	req.IsAdmin = profile.IsAdministrator
+}
+
 func (h *Handler) ListFiles() iris.Handler {
 	return func(ctx *context.Context) {
 		var req fileModel.Request
@@ -33,6 +42,7 @@ func (h *Handler) ListFiles() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		res, err := h.fileService.ListFiles(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -51,6 +61,7 @@ func (h *Handler) CreateFolder() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		req.Commands = []string{"mkdir", req.Path}
 		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -68,8 +79,9 @@ func (h *Handler) CreateFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		command := "echo '" + req.Content + "' >> " + req.Path
-		req.Commands = []string{"sh", "-c", command}
+		withRequestUser(ctx, &req)
+		req.Stdin = strings.NewReader(req.Content)
+		req.Commands = []string{"tee", req.Path}
 		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -86,6 +98,7 @@ func (h *Handler) UpdateFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		if err := h.fileService.EditFile(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -102,6 +115,7 @@ func (h *Handler) OpenFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		res, err := h.fileService.CatFile(req)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -120,6 +134,7 @@ func (h *Handler) ReNameFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		if req.OldPath == "" {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "file or path is not exist")
@@ -143,6 +158,7 @@ func (h *Handler) RmFolder() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		withRequestUser(ctx, &req)
 		req.Commands = []string{"rm", req.Path}
 		if _, err := h.fileService.ExecNewCommand(req); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -161,6 +177,7 @@ func (h *Handler) DownloadFolder() iris.Handler {
 		req.Cluster = ctx.URLParam("cluster")
 		req.PodName = ctx.URLParam("podName")
 		req.ContainerName = ctx.URLParam("containerName")
+		withRequestUser(ctx, &req)
 
 		file, err := h.fileService.DownloadFolder(req)
 		if err != nil {
@@ -187,6 +204,7 @@ func (h *Handler) DownloadFile() iris.Handler {
 		req.Cluster = ctx.URLParam("cluster")
 		req.PodName = ctx.URLParam("podName")
 		req.ContainerName = ctx.URLParam("containerName")
+		withRequestUser(ctx, &req)
 
 		file, err := h.fileService.DownloadFile(req)
 		if err != nil {
@@ -213,6 +231,7 @@ func (h *Handler) UploadFile() iris.Handler {
 		req.Cluster = ctx.URLParam("cluster")
 		req.PodName = ctx.URLParam("podName")
 		req.ContainerName = ctx.URLParam("containerName")
+		withRequestUser(ctx, &req)
 
 		srcPath := filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().UnixNano()))
 		err := saveTarFile(ctx, srcPath)

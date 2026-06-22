@@ -83,12 +83,15 @@ func (l *service) Update(id string, ldap *v1Ldap.Ldap, options common.DBOptions)
 	if err != nil {
 		return err
 	}
-	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
-	if err := lc.Connect(); err != nil {
-		return err
-	}
 	old, err := l.GetById(id, options)
 	if err != nil {
+		return err
+	}
+	if ldap.Password == "" {
+		ldap.Password = old.Password
+	}
+	lc := ldapClient.NewLdapClient(ldap.Address, ldap.Port, ldap.Username, ldap.Password, ldap.TLS)
+	if err := lc.Connect(); err != nil {
 		return err
 	}
 	ldap.UUID = old.UUID
