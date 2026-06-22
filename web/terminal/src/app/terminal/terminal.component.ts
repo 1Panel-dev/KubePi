@@ -14,7 +14,8 @@ declare let SockJS: any;
 @Component({
   selector: 'app-terminal',
   templateUrl: './terminal.component.html',
-  styleUrls: ['./terminal.component.css']
+  styleUrls: ['./terminal.component.css'],
+  standalone: false
 })
 
 export class TerminalComponent implements AfterViewInit {

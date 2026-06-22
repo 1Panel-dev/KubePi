@@ -3,6 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
 import {TerminalComponent} from './terminal/terminal.component';
+import {NodeShellTerminalComponent} from './terminal/node_terminal.component';
 import {HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
 import {routes} from "./app.routing";
@@ -12,6 +13,7 @@ import { LoggingComponent } from './logging/logging.component';
   declarations: [
     AppComponent,
     TerminalComponent,
+    NodeShellTerminalComponent,
     LoggingComponent
   ],
   imports: [

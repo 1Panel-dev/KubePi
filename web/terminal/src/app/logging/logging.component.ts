@@ -11,7 +11,8 @@ declare let SockJS: any;
 @Component({
   selector: 'app-logging',
   templateUrl: './logging.component.html',
-  styleUrls: ['./logging.component.css']
+  styleUrls: ['./logging.component.css'],
+  standalone: false
 })
 export class LoggingComponent implements AfterViewInit {
 
