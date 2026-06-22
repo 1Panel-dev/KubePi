@@ -48,7 +48,7 @@
             <div v-if="container.env">
               <h4 style="display: inline-block;">{{$t('business.workload.variable')}}</h4>
               <el-form-item :label="$t('business.workload.variable')">
-                <el-tag type="success" style="margin-right: 10px;" v-for="(item, index) in container.env" :key="index">{{item.name + " = " + item.value}}</el-tag>
+                <el-tag type="success" style="margin-right: 10px;" v-for="(item, index) in container.env" :key="index">{{formatEnv(item)}}</el-tag>
               </el-form-item>
             </div>
 
@@ -282,6 +282,26 @@ export default {
     }
   },
   methods:{
+     formatEnv(item) {
+       if (item.value !== undefined) {
+         return item.name + " = " + item.value
+       }
+       if (item.valueFrom) {
+         if (item.valueFrom.configMapKeyRef) {
+           return item.name + " = ConfigMap " + item.valueFrom.configMapKeyRef.name + "/" + item.valueFrom.configMapKeyRef.key
+         }
+         if (item.valueFrom.secretKeyRef) {
+           return item.name + " = Secret " + item.valueFrom.secretKeyRef.name + "/" + item.valueFrom.secretKeyRef.key
+         }
+         if (item.valueFrom.fieldRef) {
+           return item.name + " = " + item.valueFrom.fieldRef.fieldPath
+         }
+         if (item.valueFrom.resourceFieldRef) {
+           return item.name + " = " + item.valueFrom.resourceFieldRef.resource
+         }
+       }
+       return item.name + " = "
+     },
      getContainerStatusState(container_name){
        
        const status= this.containerStatuses[container_name]

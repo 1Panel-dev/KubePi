@@ -138,6 +138,10 @@ export default {
     },
     onOperate (data) {
       let data_to_save=data;
+      data_to_save.spec.tls = this.normalizeTls(data_to_save.spec.tls)
+      if (!data_to_save.spec.tls) {
+        delete data_to_save.spec.tls
+      }
       if(data_to_save.spec.defaultBackend){
          if(!data_to_save.spec.defaultBackend.service){
            data_to_save.spec.defaultBackend=null;
@@ -177,6 +181,27 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+    normalizeTls (tls) {
+      if (!tls) {
+        return undefined
+      }
+      const tlsList = []
+      for (const item of tls) {
+        const hosts = item.hosts ? item.hosts.filter(host => host !== "") : []
+        const secretName = item.secretName || ""
+        if (secretName !== "" || hosts.length !== 0) {
+          const tlsItem = {}
+          if (secretName !== "") {
+            tlsItem.secretName = secretName
+          }
+          if (hosts.length !== 0) {
+            tlsItem.hosts = hosts
+          }
+          tlsList.push(tlsItem)
+        }
+      }
+      return tlsList.length !== 0 ? tlsList : undefined
     },
     init () {
       this.loading = true

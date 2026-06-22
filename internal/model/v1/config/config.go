@@ -45,5 +45,6 @@ type SessionConfig struct {
 }
 
 type JwtConfig struct {
-	Key string `json:"key"`
+	Key     string `json:"key"`
+	Expires int    `json:"expires"`
 }

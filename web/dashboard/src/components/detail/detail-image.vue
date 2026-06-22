@@ -47,7 +47,7 @@ export default {
             this.form = newYamlInfo
             this.form.namespace = newYamlInfo.metadata.namespace
             if (newYamlInfo.spec.template.spec.initContainers) {
-              for (const c of newYamlInfo.spec.template.spec.containers) {
+              for (const c of newYamlInfo.spec.template.spec.initContainers) {
                 let index = c.image.lastIndexOf(":")
                 this.imagesData.push({
                   type: this.$t("business.workload.initContainer"),
