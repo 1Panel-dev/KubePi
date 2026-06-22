@@ -138,6 +138,7 @@ func (f service) UploadFile(request file.Request) error {
 			logrus.Error(err)
 			return
 		}
+		defer tarFile.Close()
 		_, err = io.Copy(writer, tarFile)
 		if err != nil {
 			logrus.Error(err)

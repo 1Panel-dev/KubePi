@@ -36,6 +36,11 @@ import (
 const defaultJwtExpires = 10
 
 const (
+	defaultAdminName     = "admin"
+	defaultAdminPassword = "kubepi"
+)
+
+const (
 	loginIPLocalAddress = "127.0.0.1"
 	loginIPLocalArea    = "本机"
 	loginIPPrivateArea  = "内网IP"
@@ -70,6 +75,77 @@ func jwtMaxAge() time.Duration {
 	return time.Duration(expires) * time.Minute
 }
 
+func (h *Handler) buildUserProfile(u *v1User.User, mfaApproved bool) (UserProfile, error) {
+	permissions, err := h.AggregateResourcePermissions(u.Name)
+	if err != nil {
+		return UserProfile{}, err
+	}
+	return UserProfile{
+		Name:                u.Name,
+		NickName:            u.NickName,
+		Email:               u.Email,
+		Language:            u.Language,
+		ResourcePermissions: permissions,
+		IsAdministrator:     u.IsAdmin,
+		Mfa: Mfa{
+			Enable:     u.Mfa.Enable,
+			Configured: strings.TrimSpace(u.Mfa.Secret) != "",
+			Approved:   mfaApproved,
+		},
+		ForceChangePassword: isDefaultAdminPassword(u),
+	}, nil
+}
+
+func isDefaultAdminPassword(u *v1User.User) bool {
+	if u == nil || u.Name != defaultAdminName || !u.IsAdmin {
+		return false
+	}
+	if u.Type != "" && u.Type != v1User.LOCAL {
+		return false
+	}
+	if strings.TrimSpace(u.Authenticate.Password) == "" {
+		return false
+	}
+	return bcrypt.CompareHashAndPassword([]byte(u.Authenticate.Password), []byte(defaultAdminPassword)) == nil
+}
+
+func currentSessionProfile(ctx *context.Context) (UserProfile, bool) {
+	loginUser := server.SessionMgr.Start(ctx).Get("profile")
+	p, ok := loginUser.(UserProfile)
+	if !ok || p.Name == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.Values().Set("message", "please login")
+		return UserProfile{}, false
+	}
+	return p, true
+}
+
+func ensureMfaApprovedSessionProfile(ctx *context.Context) (UserProfile, bool) {
+	p, ok := currentSessionProfile(ctx)
+	if !ok {
+		return UserProfile{}, false
+	}
+	if p.Mfa.Enable && !p.Mfa.Approved {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.Values().Set("message", "mfa is required")
+		return UserProfile{}, false
+	}
+	return p, true
+}
+
+func ensureActiveSessionProfile(ctx *context.Context) (UserProfile, bool) {
+	p, ok := ensureMfaApprovedSessionProfile(ctx)
+	if !ok {
+		return UserProfile{}, false
+	}
+	if p.ForceChangePassword {
+		ctx.StatusCode(iris.StatusForbidden)
+		ctx.Values().Set("message", "please change password")
+		return UserProfile{}, false
+	}
+	return p, true
+}
+
 func (h *Handler) IsLogin() iris.Handler {
 	return func(ctx *context.Context) {
 		session := server.SessionMgr.Start(ctx)
@@ -91,10 +167,14 @@ func (h *Handler) IsLogin() iris.Handler {
 				ctx.Values().Set("message", "no login user")
 				return
 			}
-		} else {
-			ctx.StatusCode(iris.StatusOK)
-			ctx.Values().Set("data", loginUser != nil)
 		}
+		if p.ForceChangePassword {
+			ctx.StatusCode(iris.StatusForbidden)
+			ctx.Values().Set("message", "please change password")
+			return
+		}
+		ctx.StatusCode(iris.StatusOK)
+		ctx.Values().Set("data", loginUser != nil)
 	}
 }
 
@@ -150,34 +230,32 @@ func (h *Handler) Login() iris.Handler {
 			return
 		}
 
-		permissions, err := h.AggregateResourcePermissions(loginCredential.Username)
+		profile, err := h.buildUserProfile(u, false)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
-		}
-		profile := UserProfile{
-			Name:                u.Name,
-			NickName:            u.NickName,
-			Email:               u.Email,
-			Language:            u.Language,
-			ResourcePermissions: permissions,
-			IsAdministrator:     u.IsAdmin,
-			Mfa: Mfa{
-				Secret:   u.Mfa.Secret,
-				Enable:   u.Mfa.Enable,
-				Approved: false,
-			},
 		}
 
 		authMethod := loginCredential.AuthMethod
 
 		switch authMethod {
 		case "jwt":
+			if profile.Mfa.Enable {
+				ctx.StatusCode(iris.StatusUnauthorized)
+				ctx.Values().Set("message", "mfa is required")
+				return
+			}
+			if profile.ForceChangePassword {
+				ctx.StatusCode(iris.StatusForbidden)
+				ctx.Values().Set("message", "please change password")
+				return
+			}
 			token, err := h.jwtSigner.Sign(profile)
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
+				return
 			}
 			ctx.StatusCode(iris.StatusOK)
 			ctx.Values().Set("token", token)
@@ -345,21 +423,11 @@ func (h *Handler) GetProfile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		p = UserProfile{
-			Name:            user.Name,
-			NickName:        user.NickName,
-			Email:           user.Email,
-			Language:        user.Language,
-			IsAdministrator: user.IsAdmin,
-		}
-		if !user.IsAdmin {
-			permissions, err := h.AggregateResourcePermissions(p.Name)
-			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
-			}
-			p.ResourcePermissions = permissions
+		p, err = h.buildUserProfile(user, p.Mfa.Approved)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
 		}
 		session.Set("profile", p)
 		ctx.StatusCode(iris.StatusOK)
@@ -369,6 +437,10 @@ func (h *Handler) GetProfile() iris.Handler {
 
 func (h *Handler) ListUserNamespace() iris.Handler {
 	return func(ctx *context.Context) {
+		profile, ok := ensureActiveSessionProfile(ctx)
+		if !ok {
+			return
+		}
 		name := ctx.Params().GetString("cluster_name")
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
@@ -376,9 +448,6 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
 		}
-		session := server.SessionMgr.Start(ctx)
-		u := session.Get("profile")
-		profile := u.(UserProfile)
 
 		k := kubernetes.NewKubernetes(c)
 		ns, err := k.GetUserNamespaceNames(profile.Name, profile.IsAdministrator)
@@ -393,7 +462,10 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 
 func (h *Handler) GetClusterProfile() iris.Handler {
 	return func(ctx *context.Context) {
-		session := server.SessionMgr.Start(ctx)
+		profile, ok := ensureActiveSessionProfile(ctx)
+		if !ok {
+			return
+		}
 		clusterName := ctx.Params().GetString("cluster_name")
 		namespace := ctx.URLParam("namespace")
 		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
@@ -409,8 +481,6 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get k8s client failed: %s", err.Error()))
 			return
 		}
-		u := session.Get("profile")
-		profile := u.(UserProfile)
 
 		if profile.IsAdministrator {
 			crp := ClusterUserProfile{

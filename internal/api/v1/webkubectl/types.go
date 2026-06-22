@@ -1,11 +1,16 @@
 package webkubectl
 
-import "k8s.io/client-go/rest"
+import (
+	"time"
+
+	"k8s.io/client-go/rest"
+)
 
 type Session struct {
-	User    string
-	config  *rest.Config
-	Cluster string `json:"cluster"`
+	User      string
+	config    *rest.Config
+	Cluster   string `json:"cluster"`
+	ExpiresAt time.Time
 }
 
 type SessionResponse struct {

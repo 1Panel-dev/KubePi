@@ -339,6 +339,9 @@ func (h *Handler) SearchClusters() iris.Handler {
 			wg := sync.WaitGroup{}
 			go func(result []Cluster) {
 				for i := range result {
+					if !profile.IsAdministrator && !result[i].Accessible {
+						continue
+					}
 					wg.Add(1)
 					c := kubernetes.NewKubernetes(&result[i].Cluster)
 					go func(i int, ctx1 goContext.Context) {

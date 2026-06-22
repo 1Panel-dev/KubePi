@@ -111,6 +111,9 @@ const message = {
             expires: "The authentication information has expired. Please log in again.",
             mfa_helper: "Scan the QR code below with the MFA Authenticator app to get a 6-digit verification code",
             mfa_login_helper:"Please enter 6-digit verification for MFA Authenticator",
+            force_change_password_title: "Change default password",
+            force_change_password_tip: "The current account is still using the default password. Change it before continuing.",
+            password_same: "The new password cannot be the same as the old password",
         },
         sso: {
             title: "SSO Redirecting",

@@ -286,7 +286,7 @@ func (s *service) localProfile(username, email string) (v1Session.UserProfile, e
 	}
 
 	handler := v1Session.NewHandler()
-	permissions, err := handler.AggregateResourcePermissions(username)
+	permissions, err := handler.AggregateResourcePermissions(u.Name)
 	if err != nil {
 		return v1Session.UserProfile{}, errors.New(err.Error())
 	}
@@ -298,9 +298,9 @@ func (s *service) localProfile(username, email string) (v1Session.UserProfile, e
 		ResourcePermissions: permissions,
 		IsAdministrator:     u.IsAdmin,
 		Mfa: v1Session.Mfa{
-			Secret:   u.Mfa.Secret,
-			Enable:   u.Mfa.Enable,
-			Approved: false,
+			Enable:     u.Mfa.Enable,
+			Configured: u.Mfa.Secret != "",
+			Approved:   false,
 		},
 	}, nil
 }

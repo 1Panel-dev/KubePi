@@ -444,14 +444,19 @@ func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, profile session.Use
 	if err != nil {
 		return nil, err
 	}
-	kubeConf := &rest.Config{
-		Host: c.Spec.Connect.Forward.ApiServer,
-		TLSClientConfig: rest.TLSClientConfig{
-			Insecure: true,
-			CertData: binding.Certificate,
-			KeyData:  pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey}),
-		},
+	k := kubernetes.NewKubernetes(c)
+	kubeConf, err := k.Config()
+	if err != nil {
+		return nil, err
 	}
+	kubeConf.Username = ""
+	kubeConf.Password = ""
+	kubeConf.BearerToken = ""
+	kubeConf.BearerTokenFile = ""
+	kubeConf.AuthProvider = nil
+	kubeConf.ExecProvider = nil
+	kubeConf.TLSClientConfig.CertData = binding.Certificate
+	kubeConf.TLSClientConfig.KeyData = pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey})
 	return rest.TransportFor(kubeConf)
 }
 

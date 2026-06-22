@@ -3,7 +3,10 @@ package webkubectl
 import (
 	"encoding/pem"
 	"fmt"
+	"time"
+
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
+	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterbinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
@@ -14,6 +17,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
+
+const sessionTokenTTL = 5 * time.Minute
 
 type Handler struct {
 	clusterBindingService clusterbinding.Service
@@ -46,6 +51,13 @@ func (h *Handler) GetConfigFile() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("can not find sessionId: %s in memory", sessionId))
 			return
 		}
+		loginUser := server.SessionMgr.Start(ctx).Get("profile")
+		profile, ok := loginUser.(session.UserProfile)
+		if !ok || profile.Name != sess.User {
+			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.Values().Set("message", "can not verify session user")
+			return
+		}
 
 		ctx.Header("Content-Type", "application/download")
 		ctx.Header("Content-Disposition", "attachment;filename=config")
@@ -64,14 +76,20 @@ func (h *Handler) GetConfigFile() iris.Handler {
 
 func toCmdConfig(sess *Session) *clientcmdapi.Config {
 	cc := clientcmdapi.NewConfig()
-	cc.Clusters[sess.Cluster] = &clientcmdapi.Cluster{
+	cluster := &clientcmdapi.Cluster{
 		Server:                sess.config.Host,
-		InsecureSkipTLSVerify: true,
+		InsecureSkipTLSVerify: sess.config.Insecure,
 	}
+	if !sess.config.Insecure {
+		cluster.CertificateAuthorityData = sess.config.CAData
+	}
+	cc.Clusters[sess.Cluster] = cluster
 	cc.AuthInfos[sess.User] = &clientcmdapi.AuthInfo{
 		ClientCertificateData: sess.config.CertData,
 		ClientKeyData:         sess.config.KeyData,
 		Token:                 sess.config.BearerToken,
+		Username:              sess.config.Username,
+		Password:              sess.config.Password,
 	}
 	contextName := fmt.Sprintf("%s@%s", sess.Cluster, sess.User)
 	cc.Contexts[contextName] = &clientcmdapi.Context{
@@ -118,6 +136,7 @@ func (h *Handler) CreateSession() iris.Handler {
 		}
 		sess.config = cfg
 		sess.User = profile.Name
+		sess.ExpiresAt = time.Now().Add(sessionTokenTTL)
 		sessionId := uuid.New().String()
 		h.sessionCache.Put(sessionId, &sess)
 		ctx.Values().Set("data", &SessionResponse{Token: sessionId})

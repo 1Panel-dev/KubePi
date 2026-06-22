@@ -4,17 +4,19 @@ import (
 	"archive/tar"
 	"errors"
 	"fmt"
-	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
-	fileModel "github.com/1Panel-dev/KubePi/internal/model/v1/file"
-	"github.com/1Panel-dev/KubePi/internal/service/v1/file"
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+	"unicode"
+
+	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
+	fileModel "github.com/1Panel-dev/KubePi/internal/model/v1/file"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/file"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
 )
 
 type Handler struct {
@@ -240,6 +242,7 @@ func (h *Handler) UploadFile() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		defer os.Remove(srcPath)
 
 		req.FilePath = srcPath
 		err = h.fileService.UploadFile(req)
@@ -263,15 +266,22 @@ func saveTarFile(ctx *context.Context, srcPath string) error {
 		return errors.New("files is null")
 	}
 	fw, err := os.Create(srcPath)
-	defer fw.Close()
 	if err != nil {
 		return err
 	}
+	defer fw.Close()
 	tw := tar.NewWriter(fw)
 	defer tw.Close()
 	for _, f := range files {
+		fileName, err := sanitizeUploadFileName(f.Filename)
+		if err != nil {
+			return err
+		}
+		if f.Size < 0 {
+			return errors.New("invalid file size")
+		}
 		hdr := &tar.Header{
-			Name: f.Filename,
+			Name: fileName,
 			Mode: 0644,
 			Size: f.Size,
 		}
@@ -284,11 +294,33 @@ func saveTarFile(ctx *context.Context, srcPath string) error {
 			return err
 		}
 		_, err = io.Copy(tw, _f)
+		closeErr := _f.Close()
 		if err != nil {
 			return err
 		}
+		if closeErr != nil {
+			return closeErr
+		}
 	}
 	return nil
+}
+
+func sanitizeUploadFileName(name string) (string, error) {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return "", errors.New("file name is empty")
+	}
+	if strings.Contains(name, "/") || strings.Contains(name, "\\") {
+		return "", errors.New("file name must not contain path separators")
+	}
+	if strings.ContainsFunc(name, unicode.IsControl) {
+		return "", errors.New("file name contains invalid characters")
+	}
+	cleaned := path.Clean(name)
+	if cleaned == "." || cleaned == ".." || path.IsAbs(cleaned) || cleaned != name {
+		return "", errors.New("invalid file name")
+	}
+	return cleaned, nil
 }
 
 func Install(parent iris.Party) {

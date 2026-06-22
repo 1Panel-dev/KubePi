@@ -1,6 +1,9 @@
 package webkubectl
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type TerminalSessions struct {
 	data  map[string]*Session
@@ -16,7 +19,15 @@ func NewTerminalSessions() *TerminalSessions {
 func (t *TerminalSessions) Get(key string) *Session {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
-	return t.data[key]
+	sess := t.data[key]
+	if sess == nil {
+		return nil
+	}
+	if !sess.ExpiresAt.IsZero() && time.Now().After(sess.ExpiresAt) {
+		delete(t.data, key)
+		return nil
+	}
+	return sess
 }
 
 func (t *TerminalSessions) Put(key string, sess *Session) {

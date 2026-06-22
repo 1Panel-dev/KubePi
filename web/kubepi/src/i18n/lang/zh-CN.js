@@ -111,6 +111,9 @@ const message = {
             expires: "认证信息已过期，请重新登录",
             mfa_helper: "使用 MFA 验证器应用扫描以下二维码，获取6位验证码",
             mfa_login_helper: "请输入MFA验证器的6位验证码",
+            force_change_password_title: "修改默认密码",
+            force_change_password_tip: "当前账号仍在使用默认密码，请修改后继续使用。",
+            password_same: "新密码不能与原密码相同",
         },
         sso: {
             title: "SSO 跳转中",

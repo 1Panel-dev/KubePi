@@ -1,9 +1,9 @@
 package mfa
 
 import (
+	"strings"
+
 	sessionAuth "github.com/1Panel-dev/KubePi/internal/api/v1/session"
-	v1 "github.com/1Panel-dev/KubePi/internal/model/v1"
-	v1User "github.com/1Panel-dev/KubePi/internal/model/v1/user"
 	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/user"
@@ -47,7 +47,18 @@ func (m *Handler) MfaValidate() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		success := mfaUtil.ValidCode(mfa.Code, mfa.Secret)
+		u, err := m.userService.GetByNameOrEmail(p.Name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if strings.TrimSpace(u.Mfa.Secret) == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "mfa is not configured")
+			return
+		}
+		success := mfaUtil.ValidCode(mfa.Code, u.Mfa.Secret)
 		if !success {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "code is invalid")
@@ -86,27 +97,36 @@ func (m *Handler) MfaBind() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
+		if strings.TrimSpace(mfa.Secret) == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "mfa secret is empty")
+			return
+		}
 		success := mfaUtil.ValidCode(mfa.Code, mfa.Secret)
 		if !success {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "code is invalid")
 			return
 		} else {
-			session.Delete("profile")
-			us := &v1User.User{
-				Metadata: v1.Metadata{
-					Name: mfa.Username,
-				},
-				Mfa: v1User.Mfa{
-					Enable: true,
-					Secret: mfa.Secret,
-				},
-			}
-			if err := m.userService.Update(mfa.Username, us, common.DBOptions{}); err != nil {
+			us, err := m.userService.GetByNameOrEmail(p.Name, common.DBOptions{})
+			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
 			}
+			if strings.TrimSpace(us.Mfa.Secret) != "" {
+				ctx.StatusCode(iris.StatusBadRequest)
+				ctx.Values().Set("message", "mfa is already configured")
+				return
+			}
+			us.Mfa.Enable = true
+			us.Mfa.Secret = mfa.Secret
+			if err := m.userService.Update(p.Name, us, common.DBOptions{}); err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				ctx.Values().Set("message", err.Error())
+				return
+			}
+			session.Delete("profile")
 			ctx.StatusCode(iris.StatusOK)
 			return
 		}
@@ -130,6 +150,17 @@ func (m *Handler) GetMfa() iris.Handler {
 		}
 		if p.Mfa.Enable == false {
 			ctx.StatusCode(iris.StatusOK)
+			return
+		}
+		u, err := m.userService.GetByNameOrEmail(p.Name, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if strings.TrimSpace(u.Mfa.Secret) != "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "mfa is already configured")
 			return
 		}
 		otp, err := mfaUtil.GetOtp(p.Name)

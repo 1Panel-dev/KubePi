@@ -1,16 +1,18 @@
 package sso
 
 import (
+	"net/http"
+	"strings"
+
 	v1Session "github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	v1Sso "github.com/1Panel-dev/KubePi/internal/model/v1/sso"
 	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/sso"
 	"github.com/crewjam/saml/samlsp"
+	"github.com/google/uuid"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"net/http"
-	"strings"
 )
 
 type Handler struct {
@@ -19,6 +21,8 @@ type Handler struct {
 
 var oauth2Config = &v1Sso.OpenID{}
 var saml2Config = &samlsp.Middleware{}
+
+const ssoStateSessionKey = "sso_oauth_state"
 
 func NewHandler() *Handler {
 	return &Handler{
@@ -115,7 +119,11 @@ func (h *Handler) LoginSso() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 				return
 			}
-			ctx.Redirect(oauth2Config.Oauth2Config.AuthCodeURL("state"), iris.StatusFound)
+			state := uuid.NewString()
+			sess := server.SessionMgr.Start(ctx)
+			ctx.SetCookieKV(server.SessionCookieName, sess.ID())
+			sess.Set(ssoStateSessionKey, state)
+			ctx.Redirect(oauth2Config.Oauth2Config.AuthCodeURL(state), iris.StatusFound)
 		case "saml2":
 			saml2Config, err = h.ssoService.Saml2Config(ssos, baseUrl)
 			if err != nil {
@@ -142,6 +150,15 @@ func (h *Handler) CallbackOpenID() iris.Handler {
 			language = "en-US"
 		}
 		code := r.URL.Query().Get("code")
+		state := r.URL.Query().Get("state")
+		stateSess := server.SessionMgr.Start(ctx)
+		expectedState, ok := stateSess.Get(ssoStateSessionKey).(string)
+		if !ok || expectedState == "" || state == "" || state != expectedState {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "invalid sso state")
+			return
+		}
+		stateSess.Delete(ssoStateSessionKey)
 
 		oauth2Config.Code = code
 		oauth2Config.Language = language

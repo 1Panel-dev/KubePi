@@ -45,9 +45,11 @@ const actions = {
     login({commit}, userInfo) {
         const {username, password} = userInfo
         return new Promise((resolve, reject) => {
-            commit("LOGIN")
             login({username: username.trim(), password: password}).then(response => {
-                commit("LOGIN")
+                const user = response.data || {}
+                if ((!user.mfa || !user.mfa.enable) && !user.forceChangePassword) {
+                    commit("LOGIN")
+                }
                 resolve(response)
             }).catch(error => {
                 reject(error)

@@ -60,15 +60,37 @@ func authHandler() iris.Handler {
 	return func(ctx *context.Context) {
 		var p session.UserProfile
 		if ctx.GetHeader("Authorization") != "" {
-			pr := jwt.Get(ctx).(*session.UserProfile)
+			pr, ok := jwt.Get(ctx).(*session.UserProfile)
+			if !ok || pr == nil {
+				ctx.Values().Set("message", "please login")
+				ctx.StopWithStatus(iris.StatusUnauthorized)
+				return
+			}
 			p = *pr
 
 		} else {
-			p = server.SessionMgr.Start(ctx).Get("profile").(session.UserProfile)
+			loginUser := server.SessionMgr.Start(ctx).Get("profile")
+			var ok bool
+			p, ok = loginUser.(session.UserProfile)
+			if !ok {
+				ctx.Values().Set("message", "please login")
+				ctx.StopWithStatus(iris.StatusUnauthorized)
+				return
+			}
 		}
 		if p.Name == "" {
 			ctx.Values().Set("message", "please login")
 			ctx.StopWithStatus(iris.StatusUnauthorized)
+			return
+		}
+		if p.Mfa.Enable && !p.Mfa.Approved {
+			ctx.Values().Set("message", "mfa is required")
+			ctx.StopWithStatus(iris.StatusUnauthorized)
+			return
+		}
+		if p.ForceChangePassword {
+			ctx.Values().Set("message", "please change password")
+			ctx.StopWithStatus(iris.StatusForbidden)
 			return
 		}
 		ctx.Values().Set("profile", p)

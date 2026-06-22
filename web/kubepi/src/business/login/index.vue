@@ -48,7 +48,7 @@
     <div class="login-container" v-if="!mfaPage">
       <el-row type="flex" v-loading="loading">
         <el-col :span="12">
-          <el-form :model="form" :rules="rules" ref="form" size="default">
+          <el-form v-if="!forcePasswordPage" :model="form" :rules="rules" ref="form" size="default">
             <div class="login-title">
               {{ systemName }}
             </div>
@@ -72,6 +72,39 @@
               </el-button>
             </div>
           </el-form>
+          <el-form
+            v-else
+            :model="forcePasswordForm"
+            :rules="forcePasswordRules"
+            ref="forcePasswordForm"
+            size="default">
+            <div class="login-title">
+              {{ $t("commons.login.force_change_password_title") }}
+            </div>
+            <div class="login-border"></div>
+            <div class="login-welcome">
+              {{ $t("commons.login.force_change_password_tip") }}
+            </div>
+            <div class="login-form">
+              <el-form-item prop="oldPassword" class="login">
+                <el-input type="password" show-password v-model="forcePasswordForm.oldPassword"
+                          :placeholder="$t('business.user.old_password')"/>
+              </el-form-item>
+              <el-form-item prop="newPassword" class="login">
+                <el-input type="password" show-password v-model="forcePasswordForm.newPassword"
+                          :placeholder="$t('business.user.new_password')"/>
+              </el-form-item>
+              <el-form-item prop="confirmPassword" class="login">
+                <el-input type="password" show-password v-model="forcePasswordForm.confirmPassword"
+                          :placeholder="$t('business.user.confirm_password')"/>
+              </el-form-item>
+            </div>
+            <div class="login-btn force-password-btn">
+              <el-button type="primary" class="submit" @click="changeDefaultPassword" size="default">
+                {{ $t("commons.button.confirm") }}
+              </el-button>
+            </div>
+          </el-form>
         </el-col>
         <el-col :span="12">
           <div class="login-image"></div>
@@ -82,11 +115,27 @@
 </template>
 <script>
 
+import { updatePassword } from "@/api/auth"
 import {bind, getOtp, valid} from "@/api/mfa"
+import Rules from "@/utils/rules"
 
 export default {
   name: "Login",
   data () {
+    const validateForcePassword = (rule, value, callback) => {
+      if (value === this.forcePasswordForm.oldPassword) {
+        callback(new Error(this.$t("commons.login.password_same")))
+      } else {
+        callback()
+      }
+    }
+    const validateForceConfirmPassword = (rule, value, callback) => {
+      if (value !== this.forcePasswordForm.newPassword) {
+        callback(new Error(this.$t("business.user.password_not_equal")))
+      } else {
+        callback()
+      }
+    }
     return {
       loading: false,
       form: {
@@ -125,9 +174,28 @@ export default {
         secret: "",
         code: "",
       },
-      user: {
-        secret: ""
-      }
+      pendingForceChangePassword: false,
+      forcePasswordPage: false,
+      forcePasswordForm: {
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      forcePasswordRules: {
+        oldPassword: [
+          Rules.RequiredRule
+        ],
+        newPassword: [
+          Rules.RequiredRule,
+          Rules.PasswordRule,
+          { validator: validateForcePassword, trigger: "blur" },
+        ],
+        confirmPassword: [
+          Rules.RequiredRule,
+          Rules.PasswordRule,
+          { validator: validateForceConfirmPassword, trigger: "blur" },
+        ]
+      },
     }
   },
   watch: {
@@ -153,7 +221,9 @@ export default {
     watchEnter (e) {
       let keyCode = e.keyCode
       if (keyCode === 13) {
-        if(this.mfaPage) {
+        if (this.forcePasswordPage) {
+          this.changeDefaultPassword()
+        } else if(this.mfaPage) {
           this.mfaLogin()
         }else {
           this.submit("form")
@@ -166,18 +236,20 @@ export default {
           this.loading = true
           this.$store.dispatch("user/login", this.form).then((res) => {
             const user = res.data
-            this.user.secret = user.mfa.secret
+            this.pendingForceChangePassword = !!user.forceChangePassword
             if (user.mfa.enable) {
               this.mfaPage = true
-              if (user.mfa.secret === "") {
+              this.loading = false
+              if (!user.mfa.configured) {
                 getOtp().then((res) => {
                   this.otp = res.data
                   this.mfaInit = true
                 })
+              } else {
+                this.mfaInit = false
               }
             } else {
-              this.$router.push({ path: "/" })
-              this.loading = false
+              this.completeLogin(user)
             }
           }).catch(() => {
             this.loading = false
@@ -189,7 +261,6 @@ export default {
     },
     bindMfa () {
       this.mfaCredential.secret = this.otp.secret
-      this.mfaCredential.userName = this.form.username
       bind(this.mfaCredential).then(() => {
         this.mfaPage = false
         location.reload()
@@ -197,10 +268,40 @@ export default {
       })
     },
     mfaLogin() {
-      this.mfaCredential.secret = this.user.secret
-      this.mfaCredential.userName = this.form.username
       valid(this.mfaCredential).then(() => {
-        this.$router.push({ path: "/" })
+        this.completeLogin({ forceChangePassword: this.pendingForceChangePassword })
+      })
+    },
+    completeLogin(user) {
+      this.loading = false
+      if (user.forceChangePassword) {
+        this.mfaPage = false
+        this.forcePasswordForm.oldPassword = this.form.password
+        this.forcePasswordForm.newPassword = ""
+        this.forcePasswordForm.confirmPassword = ""
+        this.forcePasswordPage = true
+        this.$nextTick(() => {
+          if (this.$refs.forcePasswordForm) {
+            this.$refs.forcePasswordForm.clearValidate()
+          }
+        })
+        return
+      }
+      this.$router.push({ path: "/" })
+    },
+    changeDefaultPassword() {
+      this.$refs.forcePasswordForm.validate((valid) => {
+        if (!valid) {
+          return
+        }
+        updatePassword({
+          oldPassword: this.forcePasswordForm.oldPassword,
+          newPassword: this.forcePasswordForm.newPassword,
+        }).then(() => {
+          this.$message.success(this.$t("commons.msg.update_success"))
+          this.forcePasswordPage = false
+          this.$router.push({ path: "/" })
+        })
       })
     },
 
@@ -352,5 +453,9 @@ export default {
     background-color: var(--kp-surface) !important;
     color: var(--kp-text) !important;
 
+  }
+
+  .force-password-btn {
+    margin-top: 24px !important;
   }
 </style>

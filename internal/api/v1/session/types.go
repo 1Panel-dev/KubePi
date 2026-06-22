@@ -33,6 +33,7 @@ type UserProfile struct {
 	ResourcePermissions map[string][]string `json:"resourcePermissions"`
 	IsAdministrator     bool                `json:"isAdministrator"`
 	Mfa                 Mfa                 `json:"mfa"`
+	ForceChangePassword bool                `json:"forceChangePassword"`
 }
 
 type ClusterUserProfile struct {
@@ -41,7 +42,7 @@ type ClusterUserProfile struct {
 }
 
 type Mfa struct {
-	Enable   bool   `json:"enable"`
-	Secret   string `json:"secret"`
-	Approved bool   `json:"approved"`
+	Enable     bool `json:"enable"`
+	Configured bool `json:"configured"`
+	Approved   bool `json:"approved"`
 }
