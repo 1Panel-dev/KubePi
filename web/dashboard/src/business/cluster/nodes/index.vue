@@ -107,6 +107,8 @@ import {checkPermissions} from "@/utils/permission"
 import {listNodeMetrics} from "@/api/apis"
 import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
 import writeXlsxFile from "write-excel-file";
+import {getCluster} from "@/api/clusters"
+import {useLegacyApi} from "@/utils/k8s"
 
 export default {
   name: "NodeList",
@@ -116,6 +118,7 @@ export default {
       data: [],
       loading: false,
       clusterName: "",
+      clusterVersion: "",
       paginationConfig: {
         currentPage: 1,
         pageSize: 10,
@@ -303,7 +306,7 @@ export default {
             continue
           }
           const rmPod = {
-            apiVersion: "policy/v1beta1",
+            apiVersion: useLegacyApi(this.clusterVersion, 21) ? "policy/v1beta1" : "policy/v1",
             kind: "Eviction",
             metadata: {
               name: pod.metadata.name,
@@ -481,6 +484,9 @@ export default {
   },
   created () {
     this.clusterName = this.$route.query.cluster
+    getCluster(this.clusterName).then(res => {
+      this.clusterVersion = res.data.status.version
+    })
     this.search()
   }
 }

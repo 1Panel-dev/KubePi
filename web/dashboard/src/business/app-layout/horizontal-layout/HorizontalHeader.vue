@@ -52,7 +52,7 @@ export default {
     height: 100%;
 
     .navbar-item {
-      color: #2E2E2E;
+      color: var(--kp-text-secondary);
       line-height: 50px;
       display: inline-block;
       padding-right: 20px;

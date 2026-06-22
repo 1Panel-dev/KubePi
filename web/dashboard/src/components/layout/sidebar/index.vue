@@ -15,11 +15,12 @@
                               :item="route"
                               :base-path="route.path"/>
             </el-menu>
-            <div v-if="!isCollapse">
-              <el-button class="copyRight" style="" type="text" @click="openApi">{{ $t('commons.personal.copy_right') }}</el-button>
-            </div>
         </el-scrollbar>
-
+        <div v-if="!isCollapse" class="sidebar-footer">
+            <button type="button" class="sidebar-copyright" @click="openApi">
+                {{ $t('commons.personal.copy_right') }}
+            </button>
+        </div>
     </div>
 </template>
 
@@ -120,11 +121,15 @@
 
     .sidebar {
         height: calc(100% - 30px);
+        display: flex;
+        flex-direction: column;
 
         .el-scrollbar {
             box-sizing: border-box;
             padding: 10px 0;
-            height: calc(100% - #{$header-height});
+            flex: 1;
+            min-height: 0;
+            height: auto;
 
             .el-scrollbar__bar {
                 &.is-vertical {
@@ -139,6 +144,43 @@
             .scrollbar-wrapper {
                 height: 100%;
                 overflow-x: hidden;
+            }
+        }
+
+        .sidebar-footer {
+            flex: 0 0 auto;
+            padding: 6px 14px 14px;
+            text-align: center;
+        }
+
+        .sidebar-copyright {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
+            min-height: 24px;
+            padding: 0;
+            border: 0;
+            appearance: none;
+            color: rgba(226, 232, 240, 0.62);
+            background: transparent;
+            font-family: inherit;
+            font-size: 12px;
+            line-height: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: color 0.2s ease;
+
+            &:hover,
+            &:focus {
+                color: rgba(255, 255, 255, 0.88);
+                background: transparent;
+                outline: none;
+            }
+
+            &:focus-visible {
+                outline: 1px solid rgba(148, 163, 184, 0.45);
+                outline-offset: 3px;
             }
         }
 
@@ -296,7 +338,7 @@
             overflow-y: auto;
 
             &::-webkit-scrollbar-track-piece {
-                background: #d3dce6;
+                background: rgba(203, 213, 225, 0.18);
             }
 
             &::-webkit-scrollbar {
@@ -304,16 +346,9 @@
             }
 
             &::-webkit-scrollbar-thumb {
-                background: #99a9bf;
+                background: rgba(148, 163, 184, 0.55);
                 border-radius: 20px;
             }
         }
-    }
-    .copyRight {
-        margin-left: 20px;
-        position: fixed;
-        float: center;
-        bottom: 10px;
-        font-size: 14px;
     }
 </style>

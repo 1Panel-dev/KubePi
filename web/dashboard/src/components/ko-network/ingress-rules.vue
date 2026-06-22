@@ -3,7 +3,7 @@
     <ko-card :title="$t('business.network.rule')">
       <el-form label-position="top" ref="form" :model="form">
         <el-card v-for="(row,ind) in form.rules" v-bind:key="ind"
-                 style="background-color: #292a2e;margin-top: 10px;position: relative">
+                 style="background-color: #f8fafc;margin-top: 10px;position: relative">
           <div style="float: right; padding: 3px 0;position: relative;z-index: 1">
             <el-button type="text" v-if="form.rules.length > 1"
                        @click="removeRule(ind)">{{ $t("commons.button.delete") }}

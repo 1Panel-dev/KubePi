@@ -3,6 +3,7 @@ package server
 import (
 	"embed"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -23,7 +24,6 @@ import (
 	"github.com/KubeOperator/kubepi/pkg/file"
 	"github.com/KubeOperator/kubepi/pkg/i18n"
 	"github.com/asdine/storm/v3"
-	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/sessions"
@@ -111,10 +111,12 @@ func (e *KubePiServer) setUpLogger() {
 
 func (e *KubePiServer) setUpDB() {
 	realDir := file.ReplaceHomeDir(e.config.Spec.DB.Path)
-	if !fileutil.Exist(realDir) {
+	if _, err := os.Stat(realDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(realDir, 0755); err != nil {
 			panic(fmt.Errorf("can not create database dir: %s message: %s", e.config.Spec.DB.Path, err))
 		}
+	} else if err != nil {
+		panic(fmt.Errorf("can not access database dir: %s message: %s", e.config.Spec.DB.Path, err))
 	}
 	d, err := storm.Open(path.Join(realDir, "kubepi.db"))
 	if err != nil {
@@ -138,15 +140,28 @@ func (e *KubePiServer) setUpStaticFile() {
 	spaOption := iris.DirOptions{SPA: true, IndexName: "index.html"}
 	party := e.rootRoute.Party("/")
 	party.Use(iris.Compression)
-	dashboardFS := iris.PrefixDir("web/dashboard", http.FS(EmbedWebDashboard))
+
+	dashboardSubFS, err := fs.Sub(EmbedWebDashboard, "web/dashboard")
+	if err != nil {
+		panic(err)
+	}
+	dashboardFS := http.FS(dashboardSubFS)
 	party.RegisterView(view.HTML(dashboardFS, ".html"))
 	party.HandleDir("/dashboard/", dashboardFS, spaOption)
 
-	terminalFS := iris.PrefixDir("web/terminal", http.FS(EmbedWebTerminal))
+	terminalSubFS, err := fs.Sub(EmbedWebTerminal, "web/terminal")
+	if err != nil {
+		panic(err)
+	}
+	terminalFS := http.FS(terminalSubFS)
 	party.RegisterView(view.HTML(terminalFS, ".html"))
 	party.HandleDir("/terminal/", terminalFS, spaOption)
 
-	kubePiFS := iris.PrefixDir("web/kubepi", http.FS(EmbedWebKubePi))
+	kubePiSubFS, err := fs.Sub(EmbedWebKubePi, "web/kubepi")
+	if err != nil {
+		panic(err)
+	}
+	kubePiFS := http.FS(kubePiSubFS)
 	party.RegisterView(view.HTML(kubePiFS, ".html"))
 	party.HandleDir("/", kubePiFS, spaOption)
 }

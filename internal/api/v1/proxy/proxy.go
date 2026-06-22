@@ -301,8 +301,21 @@ type keywordsMatcher struct {
 func compatibleClusterVersion(minor int, path *string) {
 	p := *path
 	if minor <= 18 {
-		if strings.Contains(p, "networking.k8s.io/v1") && strings.Contains(p, "ingresses") {
-			p = strings.Replace(p, "networking.k8s.io/v1", "networking.k8s.io/v1beta1", -1)
+		if strings.Contains(p, "networking.k8s.io/v1/") && strings.Contains(p, "ingresses") {
+			p = strings.Replace(p, "networking.k8s.io/v1/", "networking.k8s.io/v1beta1/", -1)
+		}
+	}
+	if minor <= 20 {
+		if strings.Contains(p, "batch/v1/") && strings.Contains(p, "cronjobs") {
+			p = strings.Replace(p, "batch/v1/", "batch/v1beta1/", -1)
+		}
+		if strings.Contains(p, "policy/v1/") && strings.Contains(p, "poddisruptionbudgets") {
+			p = strings.Replace(p, "policy/v1/", "policy/v1beta1/", -1)
+		}
+	}
+	if minor <= 22 {
+		if strings.Contains(p, "autoscaling/v2/") && strings.Contains(p, "horizontalpodautoscalers") {
+			p = strings.Replace(p, "autoscaling/v2/", "autoscaling/v2beta2/", -1)
 		}
 	}
 	*path = p

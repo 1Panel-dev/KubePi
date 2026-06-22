@@ -9,6 +9,43 @@ const instance = axios.create({
     timeout: 60000 // request timeout, default 1 min
 })
 
+const errorMessageCache = new Map()
+const errorMessageInterval = 5000
+
+const getErrorMessage = error => {
+    const data = error.response?.data
+    if (typeof data === "string" && data) {
+        return data
+    }
+    if (data?.message) {
+        return data.message
+    }
+    if (error.response) {
+        return i18n.t("commons.msg.cluster_api_error")
+    }
+    return error.message || i18n.t("commons.msg.cluster_api_error")
+}
+
+const shouldSkipErrorMessage = error => {
+    const url = error.config?.url || ""
+    const data = error.response?.data
+    if (url.indexOf("metrics.k8s.io") >= 0) {
+        return true
+    }
+    return data?.details?.kind === "secrets" && data?.code === 404
+}
+
+const shouldShowErrorMessage = message => {
+    const key = String(message)
+    const now = Date.now()
+    const lastShowTime = errorMessageCache.get(key) || 0
+    if (now - lastShowTime < errorMessageInterval) {
+        return false
+    }
+    errorMessageCache.set(key, now)
+    return true
+}
+
 
 instance.interceptors.request.use(
     config => {
@@ -82,14 +119,12 @@ instance.interceptors.response.use(response => {
     if (error.response) {
         checkAuth(error.response)
         checkPermission(error.response)
-        msg = error.response.data.message || error.response.data
+        msg = getErrorMessage(error)
     } else {
-        msg = error.message
+        msg = getErrorMessage(error)
     }
-    if (error.config.url.indexOf("metrics.k8s.io") < 0 ) {
-      if (!(error.response.data?.details?.kind === 'secrets' && error.response.data?.code === 404))  {
+    if (!shouldSkipErrorMessage(error) && shouldShowErrorMessage(msg)) {
         $error(msg)
-      }
     }
     return Promise.reject(error)
 })

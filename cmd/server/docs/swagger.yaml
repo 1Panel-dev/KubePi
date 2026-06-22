@@ -6,73 +6,6 @@ definitions:
       total:
         type: integer
     type: object
-  cluster.CreateRepo:
-    properties:
-      cluster:
-        type: string
-      repos:
-        items:
-          type: string
-        type: array
-    type: object
-  cluster.Member:
-    properties:
-      bindingName:
-        type: string
-      clusterRoles:
-        items:
-          type: string
-        type: array
-      createAt:
-        type: string
-      name:
-        type: string
-      namespaceRoles:
-        items:
-          $ref: '#/definitions/cluster.NamespaceRoles'
-        type: array
-    type: object
-  cluster.NamespaceRoles:
-    properties:
-      namespace:
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
-    type: object
-  cluster.UpdateCluster:
-    properties:
-      labels:
-        items:
-          type: string
-        type: array
-    type: object
-  clusterrepo.ClusterRepo:
-    properties:
-      apiVersion:
-        type: string
-      builtIn:
-        type: boolean
-      cluster:
-        type: string
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      kind:
-        type: string
-      name:
-        type: string
-      repo:
-        type: string
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
   docs.Authenticate:
     properties:
       password:
@@ -102,12 +35,12 @@ definitions:
           type: string
         type: array
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication:
     properties:
       bearerToken:
         type: string
       certificate:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
       configFileContent:
         items:
           type: integer
@@ -115,7 +48,7 @@ definitions:
       mode:
         type: string
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate:
     properties:
       certData:
         items:
@@ -126,14 +59,14 @@ definitions:
           type: integer
         type: array
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster:
     properties:
       apiVersion:
         type: string
       builtIn:
         type: boolean
       caCertificate:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
       createAt:
         type: string
       createdBy:
@@ -153,29 +86,29 @@ definitions:
           type: integer
         type: array
       spec:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
       status:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
       updateAt:
         type: string
       uuid:
         type: string
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect:
     properties:
       direction:
         type: string
       forward:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward'
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Forward:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Forward:
     properties:
       apiServer:
         type: string
       proxy:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy'
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Proxy:
     properties:
       password:
         type: string
@@ -184,16 +117,16 @@ definitions:
       username:
         type: string
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Spec:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec:
     properties:
       authentication:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Authentication'
       connect:
-        $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Connect'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Connect'
       local:
         type: boolean
     type: object
-  github.com_KubeOperator_kubepi_internal_model_v1_cluster.Status:
+  github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status:
     properties:
       message:
         type: string
@@ -202,14 +135,39 @@ definitions:
       version:
         type: string
     type: object
-  imagerepo.Credential:
+  github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      cluster:
+        type: string
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      repo:
+        type: string
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  imagerepo.ImageRepo:
+  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo:
     properties:
       allowAnonymous:
         type: boolean
@@ -224,7 +182,7 @@ definitions:
       createdBy:
         type: string
       credential:
-        $ref: '#/definitions/imagerepo.Credential'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential'
       description:
         type: string
       downloadUrl:
@@ -246,7 +204,229 @@ definitions:
       version:
         type: string
     type: object
-  imagerepo.RepoConfig:
+  github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse:
+    properties:
+      continueToken:
+        type: string
+      items:
+        items:
+          type: string
+        type: array
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule:
+    properties:
+      resource:
+        items:
+          type: string
+        type: array
+      resourceNames:
+        items:
+          type: string
+        type: array
+      verbs:
+        items:
+          type: string
+        type: array
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_role.Role:
+    properties:
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      kind:
+        type: string
+      name:
+        type: string
+      rules:
+        items:
+          $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.PolicyRule'
+        type: array
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate:
+    properties:
+      password:
+        type: string
+      token:
+        type: string
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa:
+    properties:
+      enable:
+        type: boolean
+      secret:
+        type: string
+    type: object
+  github_com_KubeOperator_kubepi_internal_model_v1_user.User:
+    properties:
+      apiVersion:
+        type: string
+      authenticate:
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Authenticate'
+      builtIn:
+        type: boolean
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      isAdmin:
+        type: boolean
+      kind:
+        type: string
+      language:
+        type: string
+      mfa:
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.Mfa'
+      name:
+        type: string
+      nickName:
+        type: string
+      type:
+        type: string
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  internal_api_v1_cluster.Cluster:
+    properties:
+      accessable:
+        type: boolean
+      apiVersion:
+        type: string
+      builtIn:
+        type: boolean
+      caCertificate:
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Certificate'
+      caDataStr:
+        type: string
+      certDataStr:
+        type: string
+      configContentStr:
+        type: string
+      createAt:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      extraClusterInfo:
+        $ref: '#/definitions/internal_api_v1_cluster.ExtraClusterInfo'
+      keyDataStr:
+        type: string
+      kind:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      memberCount:
+        type: integer
+      name:
+        type: string
+      privateKey:
+        items:
+          type: integer
+        type: array
+      spec:
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Spec'
+      status:
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Status'
+      updateAt:
+        type: string
+      uuid:
+        type: string
+    type: object
+  internal_api_v1_cluster.CreateRepo:
+    properties:
+      cluster:
+        type: string
+      repos:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_api_v1_cluster.ExtraClusterInfo:
+    properties:
+      cpuAllocatable:
+        type: number
+      cpuRequested:
+        type: number
+      health:
+        type: boolean
+      memoryAllocatable:
+        type: number
+      memoryRequested:
+        type: number
+      message:
+        type: string
+      readyNodeNum:
+        type: integer
+      totalNodeNum:
+        type: integer
+    type: object
+  internal_api_v1_cluster.Member:
+    properties:
+      bindingName:
+        type: string
+      clusterRoles:
+        items:
+          type: string
+        type: array
+      createAt:
+        type: string
+      name:
+        type: string
+      namespaceRoles:
+        items:
+          $ref: '#/definitions/internal_api_v1_cluster.NamespaceRoles'
+        type: array
+    type: object
+  internal_api_v1_cluster.NamespaceRoles:
+    properties:
+      namespace:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_api_v1_cluster.UpdateCluster:
+    properties:
+      apiServer:
+        type: string
+      certData:
+        type: string
+      configFileContent:
+        type: string
+      keyData:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      mode:
+        type: string
+      token:
+        type: string
+      withLabel:
+        type: boolean
+    type: object
+  internal_api_v1_imagerepo.RepoConfig:
     properties:
       allowAnonymous:
         type: boolean
@@ -263,7 +443,7 @@ definitions:
       createdBy:
         type: string
       credential:
-        $ref: '#/definitions/imagerepo.Credential'
+        $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.Credential'
       description:
         type: string
       downloadUrl:
@@ -294,156 +474,7 @@ definitions:
     - limit
     - page
     type: object
-  imagerepo.RepoResponse:
-    properties:
-      continueToken:
-        type: string
-      items:
-        items:
-          type: string
-        type: array
-    type: object
-  internal_model_v1_cluster.Authentication:
-    properties:
-      bearerToken:
-        type: string
-      certificate:
-        $ref: '#/definitions/internal_model_v1_cluster.Certificate'
-      configFileContent:
-        items:
-          type: integer
-        type: array
-      mode:
-        type: string
-    type: object
-  internal_model_v1_cluster.Certificate:
-    properties:
-      certData:
-        items:
-          type: integer
-        type: array
-      keyData:
-        items:
-          type: integer
-        type: array
-    type: object
-  internal_model_v1_cluster.Cluster:
-    properties:
-      apiVersion:
-        type: string
-      builtIn:
-        type: boolean
-      caCertificate:
-        $ref: '#/definitions/internal_model_v1_cluster.Certificate'
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      kind:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      privateKey:
-        items:
-          type: integer
-        type: array
-      spec:
-        $ref: '#/definitions/internal_model_v1_cluster.Spec'
-      status:
-        $ref: '#/definitions/internal_model_v1_cluster.Status'
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
-  internal_model_v1_cluster.Connect:
-    properties:
-      direction:
-        type: string
-      forward:
-        $ref: '#/definitions/internal_model_v1_cluster.Forward'
-    type: object
-  internal_model_v1_cluster.Forward:
-    properties:
-      apiServer:
-        type: string
-      proxy:
-        $ref: '#/definitions/internal_model_v1_cluster.Proxy'
-    type: object
-  internal_model_v1_cluster.Proxy:
-    properties:
-      password:
-        type: string
-      url:
-        type: string
-      username:
-        type: string
-    type: object
-  internal_model_v1_cluster.Spec:
-    properties:
-      authentication:
-        $ref: '#/definitions/internal_model_v1_cluster.Authentication'
-      connect:
-        $ref: '#/definitions/internal_model_v1_cluster.Connect'
-      local:
-        type: boolean
-    type: object
-  internal_model_v1_cluster.Status:
-    properties:
-      message:
-        type: string
-      phase:
-        type: string
-      version:
-        type: string
-    type: object
-  role.PolicyRule:
-    properties:
-      resource:
-        items:
-          type: string
-        type: array
-      resourceNames:
-        items:
-          type: string
-        type: array
-      verbs:
-        items:
-          type: string
-        type: array
-    type: object
-  role.Role:
-    properties:
-      apiVersion:
-        type: string
-      builtIn:
-        type: boolean
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      kind:
-        type: string
-      name:
-        type: string
-      rules:
-        items:
-          $ref: '#/definitions/role.PolicyRule'
-        type: array
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
-  session.LoginCredential:
+  internal_api_v1_session.LoginCredential:
     properties:
       authMethod:
         type: string
@@ -454,55 +485,6 @@ definitions:
       username:
         type: string
     type: object
-  user.Authenticate:
-    properties:
-      password:
-        type: string
-      token:
-        type: string
-    type: object
-  user.Mfa:
-    properties:
-      enable:
-        type: boolean
-      secret:
-        type: string
-    type: object
-  user.User:
-    properties:
-      apiVersion:
-        type: string
-      authenticate:
-        $ref: '#/definitions/user.Authenticate'
-      builtIn:
-        type: boolean
-      createAt:
-        type: string
-      createdBy:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      isAdmin:
-        type: boolean
-      kind:
-        type: string
-      language:
-        type: string
-      mfa:
-        $ref: '#/definitions/user.Mfa'
-      name:
-        type: string
-      nickName:
-        type: string
-      type:
-        type: string
-      updateAt:
-        type: string
-      uuid:
-        type: string
-    type: object
   v1.AggregationRule:
     properties:
       clusterRoleSelectors:
@@ -510,6 +492,7 @@ definitions:
           ClusterRoleSelectors holds a list of selectors which will be used to find ClusterRoles and create the rules.
           If any of the selectors match, then the ClusterRole's permissions will be added
           +optional
+          +listType=atomic
         items:
           $ref: '#/definitions/v1.LabelSelector'
         type: array
@@ -517,22 +500,13 @@ definitions:
   v1.ClusterRole:
     properties:
       aggregationRule:
-        $ref: '#/definitions/v1.AggregationRule'
+        allOf:
+        - $ref: '#/definitions/v1.AggregationRule'
         description: |-
           AggregationRule is an optional field that describes how to build the Rules for this ClusterRole.
           If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be
           stomped by the controller.
           +optional
-      annotations:
-        additionalProperties:
-          type: string
-        description: |-
-          Annotations is an unstructured key value map stored with a resource that may be
-          set by external tools to store and retrieve arbitrary metadata. They are not
-          queryable and should be preserved when modifying objects.
-          More info: http://kubernetes.io/docs/user-guide/annotations
-          +optional
-        type: object
       apiVersion:
         description: |-
           APIVersion defines the versioned schema of this representation of an object.
@@ -541,13 +515,157 @@ definitions:
           More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
           +optional
         type: string
-      clusterName:
+      kind:
         description: |-
-          The name of the cluster which the object belongs to.
-          This is used to distinguish resources with same name and namespace in different clusters.
-          This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
           +optional
         type: string
+      metadata:
+        allOf:
+        - $ref: '#/definitions/v1.ObjectMeta'
+        description: |-
+          Standard object's metadata.
+          +optional
+      rules:
+        description: |-
+          Rules holds all the PolicyRules for this ClusterRole
+          +optional
+          +listType=atomic
+          +k8s:alpha(since: "1.36")=+k8s:optional
+        items:
+          $ref: '#/definitions/v1.PolicyRule'
+        type: array
+    type: object
+  v1.FieldsV1:
+    type: object
+  v1.LabelSelector:
+    properties:
+      matchExpressions:
+        description: |-
+          matchExpressions is a list of label selector requirements. The requirements are ANDed.
+          +optional
+          +listType=atomic
+        items:
+          $ref: '#/definitions/v1.LabelSelectorRequirement'
+        type: array
+      matchLabels:
+        additionalProperties:
+          type: string
+        description: |-
+          matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+          map is equivalent to an element of matchExpressions, whose key field is "key", the
+          operator is "In", and the values array contains only "value". The requirements are ANDed.
+          +optional
+        type: object
+    type: object
+  v1.LabelSelectorOperator:
+    enum:
+    - In
+    - NotIn
+    - Exists
+    - DoesNotExist
+    type: string
+    x-enum-varnames:
+    - LabelSelectorOpIn
+    - LabelSelectorOpNotIn
+    - LabelSelectorOpExists
+    - LabelSelectorOpDoesNotExist
+  v1.LabelSelectorRequirement:
+    properties:
+      key:
+        description: key is the label key that the selector applies to.
+        type: string
+      operator:
+        allOf:
+        - $ref: '#/definitions/v1.LabelSelectorOperator'
+        description: |-
+          operator represents a key's relationship to a set of values.
+          Valid operators are In, NotIn, Exists and DoesNotExist.
+      values:
+        description: |-
+          values is an array of string values. If the operator is In or NotIn,
+          the values array must be non-empty. If the operator is Exists or DoesNotExist,
+          the values array must be empty. This array is replaced during a strategic
+          merge patch.
+          +optional
+          +listType=atomic
+        items:
+          type: string
+        type: array
+    type: object
+  v1.ManagedFieldsEntry:
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the version of this resource that this field set
+          applies to. The format is "group/version" just like the top-level
+          APIVersion field. It is necessary to track the version of a field
+          set because it cannot be automatically converted.
+        type: string
+      fieldsType:
+        description: |-
+          FieldsType is the discriminator for the different fields format and version.
+          There is currently only one possible value: "FieldsV1"
+        type: string
+      fieldsV1:
+        allOf:
+        - $ref: '#/definitions/v1.FieldsV1'
+        description: |-
+          FieldsV1 holds the first JSON version format as described in the "FieldsV1" type.
+          +optional
+      manager:
+        description: Manager is an identifier of the workflow managing these fields.
+        type: string
+      operation:
+        allOf:
+        - $ref: '#/definitions/v1.ManagedFieldsOperationType'
+        description: |-
+          Operation is the type of operation which lead to this ManagedFieldsEntry being created.
+          The only valid values for this field are 'Apply' and 'Update'.
+      subresource:
+        description: |-
+          Subresource is the name of the subresource used to update that object, or
+          empty string if the object was updated through the main resource. The
+          value of this field is used to distinguish between managers, even if they
+          share the same name. For example, a status update will be distinct from a
+          regular update using the same manager name.
+          Note that the APIVersion field is not related to the Subresource field and
+          it always corresponds to the version of the main resource.
+        type: string
+      time:
+        description: |-
+          Time is the timestamp of when the ManagedFields entry was added. The
+          timestamp will also be updated if a field is added, the manager
+          changes any of the owned fields value or removes a field. The
+          timestamp does not update when a field is removed from the entry
+          because another manager took it over.
+          +optional
+        type: string
+    type: object
+  v1.ManagedFieldsOperationType:
+    enum:
+    - Apply
+    - Update
+    type: string
+    x-enum-varnames:
+    - ManagedFieldsOperationApply
+    - ManagedFieldsOperationUpdate
+  v1.ObjectMeta:
+    properties:
+      annotations:
+        additionalProperties:
+          type: string
+        description: |-
+          Annotations is an unstructured key value map stored with a resource that may be
+          set by external tools to store and retrieve arbitrary metadata. They are not
+          queryable and should be preserved when modifying objects.
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+          +optional
+        type: object
       creationTimestamp:
         description: |-
           CreationTimestamp is a timestamp representing the server time when this object was
@@ -607,6 +725,7 @@ definitions:
           are not vulnerable to ordering changes in the list.
           +optional
           +patchStrategy=merge
+          +listType=set
         items:
           type: string
         type: array
@@ -620,10 +739,7 @@ definitions:
           and may be truncated by the length of the suffix required to make the value
           unique on the server.
 
-          If this field is specified and the generated name exists, the server will
-          NOT return a 409 - instead, it will either return 201 Created or 500 with Reason
-          ServerTimeout indicating a unique name could not be found in the time allotted, and the client
-          should retry (optionally after the time indicated in the Retry-After header).
+          If this field is specified and the generated name exists, the server will return a 409.
 
           Applied only if Name is not specified.
           More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
@@ -635,15 +751,6 @@ definitions:
           Populated by the system. Read-only.
           +optional
         type: integer
-      kind:
-        description: |-
-          Kind is a string value representing the REST resource this object represents.
-          Servers may infer this from the endpoint the client submits requests to.
-          Cannot be updated.
-          In CamelCase.
-          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-          +optional
-        type: string
       labels:
         additionalProperties:
           type: string
@@ -651,7 +758,7 @@ definitions:
           Map of string keys and values that can be used to organize and categorize
           (scope and select) objects. May match selectors of replication controllers
           and services.
-          More info: http://kubernetes.io/docs/user-guide/labels
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
           +optional
         type: object
       managedFields:
@@ -665,6 +772,7 @@ definitions:
           workflow used when modifying the object.
 
           +optional
+          +listType=atomic
         items:
           $ref: '#/definitions/v1.ManagedFieldsEntry'
         type: array
@@ -675,7 +783,7 @@ definitions:
           automatically. Name is primarily intended for creation idempotence and configuration
           definition.
           Cannot be updated.
-          More info: http://kubernetes.io/docs/user-guide/identifiers#names
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
           +optional
         type: string
       namespace:
@@ -687,7 +795,7 @@ definitions:
 
           Must be a DNS_LABEL.
           Cannot be updated.
-          More info: http://kubernetes.io/docs/user-guide/namespaces
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces
           +optional
         type: string
       ownerReferences:
@@ -699,6 +807,8 @@ definitions:
           +optional
           +patchMergeKey=uid
           +patchStrategy=merge
+          +listType=map
+          +listMapKey=uid
         items:
           $ref: '#/definitions/v1.OwnerReference'
         type: array
@@ -716,22 +826,9 @@ definitions:
           More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
           +optional
         type: string
-      rules:
-        description: |-
-          Rules holds all the PolicyRules for this ClusterRole
-          +optional
-        items:
-          $ref: '#/definitions/v1.PolicyRule'
-        type: array
       selfLink:
         description: |-
-          SelfLink is a URL representing this object.
-          Populated by the system.
-          Read-only.
-
-          DEPRECATED
-          Kubernetes will stop propagating this field in 1.20 release and the field is planned
-          to be removed in 1.21 release.
+          Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
           +optional
         type: string
       uid:
@@ -742,95 +839,7 @@ definitions:
 
           Populated by the system.
           Read-only.
-          More info: http://kubernetes.io/docs/user-guide/identifiers#uids
-          +optional
-        type: string
-    type: object
-  v1.FieldsV1:
-    type: object
-  v1.LabelSelector:
-    properties:
-      matchExpressions:
-        description: |-
-          matchExpressions is a list of label selector requirements. The requirements are ANDed.
-          +optional
-        items:
-          $ref: '#/definitions/v1.LabelSelectorRequirement'
-        type: array
-      matchLabels:
-        additionalProperties:
-          type: string
-        description: |-
-          matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-          map is equivalent to an element of matchExpressions, whose key field is "key", the
-          operator is "In", and the values array contains only "value". The requirements are ANDed.
-          +optional
-        type: object
-    type: object
-  v1.LabelSelectorRequirement:
-    properties:
-      key:
-        description: |-
-          key is the label key that the selector applies to.
-          +patchMergeKey=key
-          +patchStrategy=merge
-        type: string
-      operator:
-        description: |-
-          operator represents a key's relationship to a set of values.
-          Valid operators are In, NotIn, Exists and DoesNotExist.
-        type: string
-      values:
-        description: |-
-          values is an array of string values. If the operator is In or NotIn,
-          the values array must be non-empty. If the operator is Exists or DoesNotExist,
-          the values array must be empty. This array is replaced during a strategic
-          merge patch.
-          +optional
-        items:
-          type: string
-        type: array
-    type: object
-  v1.ManagedFieldsEntry:
-    properties:
-      apiVersion:
-        description: |-
-          APIVersion defines the version of this resource that this field set
-          applies to. The format is "group/version" just like the top-level
-          APIVersion field. It is necessary to track the version of a field
-          set because it cannot be automatically converted.
-        type: string
-      fieldsType:
-        description: |-
-          FieldsType is the discriminator for the different fields format and version.
-          There is currently only one possible value: "FieldsV1"
-        type: string
-      fieldsV1:
-        $ref: '#/definitions/v1.FieldsV1'
-        description: |-
-          FieldsV1 holds the first JSON version format as described in the "FieldsV1" type.
-          +optional
-      manager:
-        description: Manager is an identifier of the workflow managing these fields.
-        type: string
-      operation:
-        description: |-
-          Operation is the type of operation which lead to this ManagedFieldsEntry being created.
-          The only valid values for this field are 'Apply' and 'Update'.
-        type: string
-      subresource:
-        description: |-
-          Subresource is the name of the subresource used to update that object, or
-          empty string if the object was updated through the main resource. The
-          value of this field is used to distinguish between managers, even if they
-          share the same name. For example, a status update will be distinct from a
-          regular update using the same manager name.
-          Note that the APIVersion field is not related to the Subresource field and
-          it always corresponds to the version of the main resource.
-        type: string
-      time:
-        description: |-
-          Time is timestamp of when these fields were set. It should always be empty if Operation is 'Apply'
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
           +optional
         type: string
     type: object
@@ -844,6 +853,8 @@ definitions:
           If true, AND if the owner has the "foregroundDeletion" finalizer, then
           the owner cannot be deleted from the key-value store until this
           reference is removed.
+          See https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion
+          for how the garbage collector interacts with this field and enforces the foreground deletion.
           Defaults to false.
           To set this field, a user needs "delete" permission of the owner,
           otherwise 422 (Unprocessable Entity) will be returned.
@@ -862,12 +873,12 @@ definitions:
       name:
         description: |-
           Name of the referent.
-          More info: http://kubernetes.io/docs/user-guide/identifiers#names
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
         type: string
       uid:
         description: |-
           UID of the referent.
-          More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
         type: string
     type: object
   v1.PolicyRule:
@@ -875,8 +886,9 @@ definitions:
       apiGroups:
         description: |-
           APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of
-          the enumerated resources in any API group will be allowed.
+          the enumerated resources in any API group will be allowed. "" represents the core API group and "*" represents all API groups.
           +optional
+          +listType=atomic
         items:
           type: string
         type: array
@@ -886,6 +898,7 @@ definitions:
           Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding.
           Rules can either apply to API resources (such as "pods" or "secrets") or non-resource URL paths (such as "/api"),  but not both.
           +optional
+          +listType=atomic
         items:
           type: string
         type: array
@@ -893,6 +906,7 @@ definitions:
         description: |-
           ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.
           +optional
+          +listType=atomic
         items:
           type: string
         type: array
@@ -900,12 +914,16 @@ definitions:
         description: |-
           Resources is a list of resources this rule applies to. '*' represents all resources.
           +optional
+          +listType=atomic
         items:
           type: string
         type: array
       verbs:
-        description: Verbs is a list of Verbs that apply to ALL the ResourceKinds
-          and AttributeRestrictions contained in this rule. '*' represents all verbs.
+        description: |-
+          Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule. '*' represents all verbs.
+          +listType=atomic
+          +required
+          +k8s:alpha(since: "1.36")=+k8s:required
         items:
           type: string
         type: array
@@ -933,7 +951,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
             type: array
       security:
       - ApiKeyAuth: []
@@ -950,14 +968,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_model_v1_cluster.Cluster'
+          $ref: '#/definitions/internal_api_v1_cluster.Cluster'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_model_v1_cluster.Cluster'
+            $ref: '#/definitions/internal_api_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Create Cluster
@@ -1095,7 +1113,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/cluster.Member'
+              $ref: '#/definitions/internal_api_v1_cluster.Member'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1117,14 +1135,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.Member'
+          $ref: '#/definitions/internal_api_v1_cluster.Member'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Member'
+            $ref: '#/definitions/internal_api_v1_cluster.Member'
       security:
       - ApiKeyAuth: []
       summary: Create Cluster Member
@@ -1179,7 +1197,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Member'
+            $ref: '#/definitions/internal_api_v1_cluster.Member'
       security:
       - ApiKeyAuth: []
       summary: Get Cluster Member By name
@@ -1205,14 +1223,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.Member'
+          $ref: '#/definitions/internal_api_v1_cluster.Member'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.Member'
+            $ref: '#/definitions/internal_api_v1_cluster.Member'
       security:
       - ApiKeyAuth: []
       summary: Update Cluster Member
@@ -1222,7 +1240,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get ClusterRepo Detail
+      description: List all clusterRepos
       parameters:
       - description: 集群名称
         in: path
@@ -1236,11 +1254,11 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/imagerepo.ImageRepo'
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_clusterrepo.ClusterRepo'
             type: array
       security:
       - ApiKeyAuth: []
-      summary: Get ClusterRepo Detail
+      summary: List all clusterRepos
       tags:
       - clusters
     post:
@@ -1258,14 +1276,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.CreateRepo'
+          $ref: '#/definitions/internal_api_v1_cluster.CreateRepo'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.CreateRepo'
+            $ref: '#/definitions/internal_api_v1_cluster.CreateRepo'
       security:
       - ApiKeyAuth: []
       summary: Create Cluster Repo
@@ -1299,6 +1317,31 @@ paths:
       summary: Delete clusterRepo by name
       tags:
       - clusters
+  /clusters/{cluster}/repos/detail:
+    get:
+      consumes:
+      - application/json
+      description: Get ClusterRepo Detail
+      parameters:
+      - description: 集群名称
+        in: path
+        name: cluster
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get ClusterRepo Detail
+      tags:
+      - clusters
   /clusters/{name}:
     delete:
       consumes:
@@ -1316,7 +1359,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Delete cluster by name
@@ -1338,7 +1381,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github.com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_cluster.Cluster'
       security:
       - ApiKeyAuth: []
       summary: Get cluster by name
@@ -1354,7 +1397,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/cluster.UpdateCluster'
+          $ref: '#/definitions/internal_api_v1_cluster.UpdateCluster'
       - description: 集群名称
         in: path
         name: name
@@ -1366,7 +1409,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cluster.UpdateCluster'
+            $ref: '#/definitions/internal_api_v1_cluster.UpdateCluster'
       security:
       - ApiKeyAuth: []
       summary: Update cluster by name
@@ -1383,14 +1426,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/imagerepo.RepoConfig'
+          $ref: '#/definitions/internal_api_v1_imagerepo.RepoConfig'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/imagerepo.RepoConfig'
+            $ref: '#/definitions/internal_api_v1_imagerepo.RepoConfig'
       security:
       - ApiKeyAuth: []
       summary: Create repo
@@ -1443,7 +1486,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Delete repo by name
@@ -1465,7 +1508,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Get repo by name
@@ -1481,7 +1524,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/imagerepo.RepoConfig'
+          $ref: '#/definitions/internal_api_v1_imagerepo.RepoConfig'
       - description: 镜像仓库名称
         in: path
         name: name
@@ -1493,7 +1536,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/imagerepo.ImageRepo'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
       security:
       - ApiKeyAuth: []
       summary: Update repo by name
@@ -1516,7 +1559,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/imagerepo.RepoResponse'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.RepoResponse'
       security:
       - ApiKeyAuth: []
       summary: List images by repo
@@ -1540,7 +1583,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/imagerepo.ImageRepo'
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_imagerepo.ImageRepo'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1558,7 +1601,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/imagerepo.RepoConfig'
+          $ref: '#/definitions/internal_api_v1_imagerepo.RepoConfig'
       produces:
       - application/json
       responses:
@@ -1585,7 +1628,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/role.Role'
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1602,14 +1645,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/role.Role'
+          $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/role.Role'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Create role
@@ -1632,7 +1675,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/role.Role'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Delete role by name
@@ -1654,7 +1697,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/role.Role'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Get role by name
@@ -1676,7 +1719,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/role.Role'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_role.Role'
       security:
       - ApiKeyAuth: []
       summary: Update role by name
@@ -1693,7 +1736,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/session.LoginCredential'
+          $ref: '#/definitions/internal_api_v1_session.LoginCredential'
       produces:
       - application/json
       responses: {}
@@ -1712,7 +1755,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/user.User'
+              $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
             type: array
       security:
       - ApiKeyAuth: []
@@ -1736,7 +1779,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Create user
@@ -1759,7 +1802,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Delete user by name
@@ -1781,7 +1824,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Get user by name
@@ -1803,7 +1846,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/github_com_KubeOperator_kubepi_internal_model_v1_user.User'
       security:
       - ApiKeyAuth: []
       summary: Update user by name

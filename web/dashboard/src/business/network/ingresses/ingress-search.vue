@@ -86,7 +86,7 @@ export default {
                                 nodes.push({
                                     name: "Service " + serviceObject.metadata.namespace + "." + serviceObject.metadata.name,
                                     itemStyle: {
-                                        color: '#FF9900',			// 关系图节点标记的颜色
+                                        color: '#d97706',			// 关系图节点标记的颜色
                                     },
                                     draggable: true,
                                     symbolSize: [50, 50],
@@ -133,7 +133,7 @@ export default {
                         nodes.push({
                             name: "Pod " + podObject.metadata.namespace + "." + podObject.metadata.name,
                             itemStyle: {
-                                color: '#00FF00',			// 关系图节点标记的颜色
+                                color: '#16a34a',			// 关系图节点标记的颜色
                             },
                             draggable: true,
                             symbolSize: [50, 50],
@@ -231,7 +231,7 @@ export default {
                     nodes.push({
                         name: "Ingress " + ingress.metadata.namespace + "." + ingress.metadata.name,
                         itemStyle: {
-                            color: '#387DFF',			// 关系图节点标记的颜色
+                            color: '#2563eb',			// 关系图节点标记的颜色
                         },
                         draggable: true,
                         symbolSize: [50, 50],
@@ -257,7 +257,7 @@ export default {
             }
 
             var option = {
-                backgroundColor: '#ccc',	// 背景颜色
+                backgroundColor: '#f8fafc',	// 背景颜色
                 tooltip: {                  // 提示框的配置
                     formatter: function (param) {
                         if (param.dataType === 'edge') {
@@ -289,7 +289,7 @@ export default {
                     symbol: ['rect', 'arrow'],
                     lineStyle: {            // 关系边的公用线条样式。其中 lineStyle.color 支持设置为'source'或者'target'特殊值，此时边会自动取源节点或目标节点的颜色作为自己的颜色。
                         normal: {
-                            color: '#000',          // 线的颜色[ default: '#aaa' ]
+                            color: '#64748b',          // 线的颜色[ default: '#aaa' ]
                             width: 1,               // 线宽[ default: 1 ]
                             type: 'solid',          // 线的类型[ default: solid ]   'dashed'    'dotted'
                             opacity: 0.5,           // 图形透明度。支持从 0 到 1 的数字，为 0 时不绘制该图形。[ default: 0.5 ]
@@ -362,4 +362,3 @@ export default {
 </script>
 
 <style scoped></style>
-

@@ -1,6 +1,6 @@
 <template>
   <layout-content>
-    <div style="float: left; margin-bottom: 20px">
+    <div class="cluster-action-bar">
       <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
       <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
@@ -27,7 +27,7 @@
         width="70%"
         center>
       <el-form v-loading="isSubmitGoing" element-loading-spinner="el-icon-loading"
-               element-loading-background="rgba(0, 0, 0, 0.8)" :model="memberForm" label-position="left"
+               :model="memberForm" label-position="left"
                label-width="144px">
         <el-form-item :label="$t('business.user.user')+$t('commons.table.name')">
           <el-select v-model="memberForm.userName" style="width: 85%" filterable :disabled="operation==='edit'">
@@ -57,8 +57,8 @@
 
           <el-form-item :label="$t('business.cluster.namespace')+$t('business.cluster.role')">
             <el-button @click="onNamespaceRoleCreate"><i class="el-icon-plus "></i></el-button>
-            <table border="1" cellspacing="0" style="width: 85%">
-              <thead style="background-color: #1d3e4d">
+            <table class="cluster-rule-table cluster-rule-table--wide" border="1" cellspacing="0">
+              <thead>
               <tr>
                 <th style="width: 45%">{{ $t('business.cluster.namespace') }}</th>
                 <th style="width: 45%">{{ $t('business.cluster.role') }}</th>

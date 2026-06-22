@@ -3,7 +3,7 @@
 
     <el-row>
       <el-col :span="2">
-        <el-menu class="menuClass" router :default-active="$route.path"  background-color="#222629">
+        <el-menu class="menuClass cluster-role-menu" router :default-active="$route.path">
           <el-menu-item :index="'/clusters/detail/'+name+'/roles/cluster'">{{
               $t('business.cluster.cluster')
             }}

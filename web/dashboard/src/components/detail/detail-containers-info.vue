@@ -33,7 +33,7 @@
 
             <div v-if="container.ports">
               <h4 style="display: inline-block;">{{$t('business.workload.port')}}</h4>
-              <complex-table :header-cell-style="{background: '#19191c'}" :data="container.ports">
+              <complex-table :header-cell-style="{background: '#eef4fb'}" :data="container.ports">
                 <el-table-column :label="$t('commons.table.name')" prop="name" show-overflow-tooltip fix />
                 <el-table-column :label="$t('business.workload.container_port')" prop="containerPort" show-overflow-tooltip fix />
                 <el-table-column :label="$t('business.workload.protocol')" prop="protocol" show-overflow-tooltip fix />
@@ -54,7 +54,7 @@
 
             <div v-if="container.volumeMounts">
               <h4 style="display: inline-block;">{{$t('business.workload.mount')}}</h4>
-              <complex-table :header-cell-style="{background: '#19191c'}" :data="container.volumeMounts">
+              <complex-table :header-cell-style="{background: '#eef4fb'}" :data="container.volumeMounts">
                 <el-table-column :label="$t('commons.table.name')" prop="name" show-overflow-tooltip fix />
                 <el-table-column :label="$t('business.workload.path')" prop="mountPath" show-overflow-tooltip fix />
                 <el-table-column :label="$t('business.workload.read_only')" prop="readOnly" show-overflow-tooltip fix />
@@ -108,7 +108,7 @@
                 <el-form-item v-if="item._model.exec && item._model.exec.command" :label="$t('business.workload.command')">
                   <div v-for="(item, index) in item._model.exec.command" :key="index">
                     <el-tag v-if="item.length < 200" type="success">{{item}}</el-tag>
-                    <div v-else style="background-color: #1F261E;line-height: 20px;"><span class="spanStyle">{{item}}</span></div>
+                    <div v-else style="background-color: #f8fafc;line-height: 20px;border: 1px solid #e2e8f0;border-radius: 4px;"><span class="spanStyle">{{item}}</span></div>
                   </div>
                 </el-form-item>
               </div>

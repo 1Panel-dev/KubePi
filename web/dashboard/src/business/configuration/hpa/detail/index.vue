@@ -41,7 +41,7 @@
           <el-tabs type="border-card">
             <el-tab-pane label="Metrics" v-if="item.spec.metrics.length > 0">
               <div v-for="(metric,index) in item.spec.metrics" v-bind:key="index"
-                   style="border:1px solid #383c42;margin-top: 5px">
+                   style="border:1px solid #dbe4f0;margin-top: 5px">
                 <el-row :gutter="20">
                   <el-col :span="12">
                     <table style="width: 100%" class="myTable" v-if="metric.type">

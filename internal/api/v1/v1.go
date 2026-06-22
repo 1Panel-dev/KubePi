@@ -241,7 +241,7 @@ func roleHandler() iris.Handler {
 			Name: u.Name,
 		}, common.DBOptions{})
 		if err != nil {
-			if !errors.As(err, &storm.ErrNotFound) {
+			if !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return

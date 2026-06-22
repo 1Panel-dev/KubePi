@@ -1,44 +1,44 @@
 /* Element 变量 */
-$--color-primary: #3884c5;
-$--color-success: #87CB16;
-$--color-warning: #FFA534;
-$--color-danger: #FB404B;
-$--color-info: #0033FF;
-$--color-kubepi: #3884c5;
+$--color-primary: #2563eb;
+$--color-success: #16a34a;
+$--color-warning: #d97706;
+$--color-danger: #dc2626;
+$--color-info: #64748b;
+$--color-kubepi: #2563eb;
 
 $--box-shadow-light: 0 1px 4px 0 rgba(0, 0, 0, .14);
 
 $--color-text-primary: #3c4858;
 
 /* layout */
-$layout-bg-color: #1c1e20;
+$layout-bg-color: #f4f7fb;
 
 /* sidebar */
 $sidebar-open-width: 280px;
 $sidebar-close-width: 60px;
-$sidebar-bg-color: #2f3236;
-$sidebar-bg-gradient: linear-gradient(to bottom right, #30373D, #3E3E3D);
+$sidebar-bg-color: #172033;
+$sidebar-bg-gradient: linear-gradient(180deg, #172033 0%, #1f2d44 100%);
 
 /* menu */
 $menu-height: 50px; // 菜单项高度
 $menu-bg-color: transparent; // 菜单项背景
-$menu-bg-color-hover: mix($--color-kubepi, #000, 90%); // 菜单项hover背景
-$menu-color: #B6C0CD; // 菜单项字体颜色
-$menu-open-bg-color: #252B2F; // 菜单项展开背景
-$menu-active-color: #3884c5; // 菜单项激活时颜色
+$menu-bg-color-hover: rgba(96, 165, 250, 0.16); // 菜单项hover背景
+$menu-color: #cbd5e1; // 菜单项字体颜色
+$menu-open-bg-color: rgba(15, 23, 42, 0.52); // 菜单项展开背景
+$menu-active-color: #ffffff; // 菜单项激活时颜色
 $menu-active-bg-color: $--color-primary; // 菜单项激活时背景
 
 $submenu-height: 40px; // 子菜单项高度
-$submenu-bg-color-hover: mix($menu-open-bg-color, #000, 80%); // 子菜单项hover背景
-$submenu-active-color: $menu-active-color; // 子菜单项激活时颜色
-$submenu-active-bg-color: $menu-open-bg-color; // 子菜单项激活时背景
+$submenu-bg-color-hover: rgba(96, 165, 250, 0.12); // 子菜单项hover背景
+$submenu-active-color: #bfdbfe; // 子菜单项激活时颜色
+$submenu-active-bg-color: rgba(37, 99, 235, 0.16); // 子菜单项激活时背景
 
-$menu-active-prefix-color: #3884c5; // 菜单激活前缀颜色
+$menu-active-prefix-color: #60a5fa; // 菜单激活前缀颜色
 $menu-active-prefix-width: 4px; // 菜单激活前缀宽度
 
 /* logo */
 $logo-height: 40px;
-$logo-bg-color: #4E5051;
+$logo-bg-color: #172033;
 
 /* header */
 $header-height: 60px;
@@ -50,8 +50,8 @@ $view-padding: 15px;
 /* fit2cloud-ui的variables加载了element-ui的变量 */
 @import "~fit2cloud-ui/src/styles/common/variables";
 
-$ko-search-bar-condition-bgColor: #000000;
-$--input-placeholder-color: #C0C4CC;
+$ko-search-bar-condition-bgColor: #e0f2fe;
+$--input-placeholder-color: #94a3b8;
 
 :export {
   theme: $--color-primary;
@@ -62,15 +62,15 @@ $--input-placeholder-color: #C0C4CC;
 }
 
 .jv-dark {
-  background: #112234;
+  background: #f8fafc;
   white-space: nowrap;
-  color: #525252;
+  color: #334155;
   font-size: 14px;
-  font-family: Consolas, Menlo, Courier, monospace;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 
   .jv-ellipsis {
-    color: #999;
-    background-color: #eee;
+    color: #64748b;
+    background-color: #e2e8f0;
     display: inline-block;
     line-height: 0.9;
     font-size: 0.9em;
@@ -80,17 +80,17 @@ $--input-placeholder-color: #C0C4CC;
     cursor: pointer;
     user-select: none;
   }
-  .jv-button { color: #49b3ff }
-  .jv-key { color: #ce6b41 }
+  .jv-button { color: #2563eb }
+  .jv-key { color: #b45309 }
   .jv-item {
-    &.jv-array { color: #111111 }
-    &.jv-boolean { color: #fc1e70 }
-    &.jv-function { color: #067bca }
-    &.jv-number { color: #fc1e70 }
-    &.jv-number-float { color: #fc1e70 }
-    &.jv-number-integer { color: #fc1e70 }
-    &.jv-object { color: #eee }
-    &.jv-undefined { color: #e08331 }
+    &.jv-array { color: #334155 }
+    &.jv-boolean { color: #be123c }
+    &.jv-function { color: #0369a1 }
+    &.jv-number { color: #be123c }
+    &.jv-number-float { color: #be123c }
+    &.jv-number-integer { color: #be123c }
+    &.jv-object { color: #334155 }
+    &.jv-undefined { color: #b45309 }
     &.jv-string {
       color: #42b983;
       word-break: break-word;
@@ -105,14 +105,12 @@ $--input-placeholder-color: #C0C4CC;
       }
       &:hover {
         &:before {
-          background: #eee;
+          background: #e2e8f0;
         }
       }
     }
   }
 }
-
-
 
 
 

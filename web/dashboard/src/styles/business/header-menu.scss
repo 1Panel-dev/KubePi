@@ -2,7 +2,7 @@
 
 .header-menu {
   min-width: 100px;
-  color: #3E3E3D;
+  color: #475569;
 
   &.el-menu {
     background-color: transparent;
@@ -22,7 +22,7 @@
 }
 
 .header-menu-popper {
-  color: #3E3E3D;
+  color: #475569;
 
   .el-menu--popup {
     min-width: 100px;
@@ -34,7 +34,7 @@
     }
 
     &:hover {
-      background-color: #D5D5D5;
+      background-color: #eff6ff;
     }
   }
 }

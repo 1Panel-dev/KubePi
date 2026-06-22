@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="12">
           <el-input :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable
-                    v-model="searchConfig.keywords" @change="listAll(true)">
+                    v-model="searchConfig.keywords" @keyup.enter.native="listAll(true)" @clear="listAll(true)">
           </el-input>
         </el-col>
       </el-row>
@@ -147,13 +147,14 @@ export default {
 <style scoped>
     .d-card {
         height: 120px;
-        background-color: #1f2224;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
         margin-top: 10px;
     }
 
     .d-card:hover {
         cursor: pointer;
-        border: 1px solid #e92322;
+        border: 1px solid #2563eb;
         z-index: 1;
     }
 
@@ -167,7 +168,7 @@ export default {
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
         overflow: hidden;
-        color: #a1a9ae;
+        color: #64748b;
         font-size: small;
     }
 </style>

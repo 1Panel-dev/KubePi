@@ -108,7 +108,7 @@ export default {
     align-items: center;
   }
   .sso-background {
-    background-color: #FFFFFF;
+    background-color: var(--kp-bg);
     height: 100%;
     @include sso-center;
   }
@@ -116,8 +116,8 @@ export default {
     min-width: 640px;
     width: 960px;
     height: 280px;
-    background-color: #FFFFFF;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+    background-color: var(--kp-surface);
+    box-shadow: var(--kp-shadow);
     @media only screen and (max-width: 1280px) {
       width: 900px;
       height: 380px;
@@ -128,7 +128,7 @@ export default {
       font-size: 32px;
       letter-spacing: 0;
       text-align: left;
-      color: #000000;
+      color: var(--kp-text);
       @media only screen and (max-width: 1280px) {
         margin-top: 20px;
       }
@@ -139,7 +139,7 @@ export default {
       font-size: 22px;
       letter-spacing: 0;
       text-align: left;
-      color: #000000;
+      color: var(--kp-text-secondary);
       @media only screen and (max-width: 1280px) {
         margin-top: 20px;
       }
@@ -166,8 +166,8 @@ export default {
     }
     .spacing-button + .spacing-button {
       margin-left: 200px;
-      background-color: transparent;
-      color: black;
+      background-color: var(--kp-surface);
+      color: var(--kp-text-secondary);
     }
   }
 </style>

@@ -36,7 +36,7 @@
             <el-input v-model.number="form.sizeLimit" :placeholder="'1000'" type="number"></el-input>
           </el-form-item>
           <el-form-item>
-            <div style="font-size: 12px;color: #4E5051;">
+            <div style="font-size: 12px;color: var(--kp-text-muted);">
               {{ $t("business.user.ldap_mapping_helper") }}
               <br>
               {{ $t("business.user.ldap_helper") }}
@@ -102,7 +102,7 @@
     <el-dialog :visible.sync="importUserPageOpen" :title="$t('business.user.import_user')" style="height: 900px">
       <span>{{ $t("business.user.ldap_helper") }}</span>
       <div style="text-align: right;margin-bottom: 10px">
-        <el-input v-model="searchName" suffix-icon="el-icon-search" style="width: 30%" size="mini" clearable @change="handleSearch" />
+        <el-input v-model="searchName" suffix-icon="el-icon-search" style="width: 30%" size="mini" clearable @keyup.enter.native="handleSearch" @clear="handleSearch" />
       </div>
       <el-table
               :data="tableUsers.slice((pageConfig.currentPage-1)*pageConfig.pageSize,pageConfig.currentPage*pageConfig.pageSize)"
@@ -142,7 +142,6 @@
 
 <script>
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
@@ -179,7 +178,7 @@ export default {
       options: {
         value: "",
         mode: "application/json",
-        theme: "ayu-dark",
+        theme: "default",
         lineNumbers: true,
         tabSize: 2,
         lineWrapping: true,
@@ -364,6 +363,9 @@ export default {
     }
 
     .yaml-editor >>> .CodeMirror {
+        border: 1px solid var(--kp-border);
+        color: var(--kp-text);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
         height: auto;
         min-height: 100px;
     }

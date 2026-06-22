@@ -42,7 +42,7 @@
             </template>
 
             <el-form-item>
-              <div style="font-size: 12px;color: #4E5051;">
+              <div style="font-size: 12px;color: var(--kp-text-muted);">
                 {{ $t("business.user.sso_helper") }}
               </div>
             </el-form-item>
@@ -75,7 +75,6 @@
 
 <script>
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 import LayoutContent from "@/components/layout/LayoutContent"
 import Rule from "@/utils/rules"
@@ -215,6 +214,9 @@ export default {
         position: relative;
     }
     .yaml-editor >>> .CodeMirror {
+        border: 1px solid var(--kp-border);
+        color: var(--kp-text);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
         height: auto;
         min-height: 100px;
     }

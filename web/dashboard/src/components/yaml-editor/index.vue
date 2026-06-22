@@ -20,7 +20,6 @@
 <script>
 import "codemirror/addon/lint/lint.css"
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/yaml/yaml"
 import "codemirror/addon/lint/lint"
 import "codemirror/addon/lint/yaml-lint"
@@ -70,7 +69,7 @@ export default {
       options: {
         value: "",
         mode: "yaml",
-        theme: "ayu-dark",
+        theme: "default",
         lineNumbers: true,
         tabSize: 4,
         foldGutter: true,
@@ -150,19 +149,21 @@ export default {
   }
 
   .CodeMirror {
-    border: 1px solid #eee;
+    border: 1px solid #dbe4f0;
+    color: var(--kp-text);
     height: auto;
     min-height: 300px;
   }
 
   .CodeMirror-merge {
-    border: 1px solid #eee;
+    border: 1px solid #dbe4f0;
+    color: var(--kp-text);
     height: auto;
     min-height: 300px;
   }
 
   .CodeMirror-merge-r-chunk {
-    background: #3c3c3ce3;
+    background: #eff6ff;
   }
 
   .CodeMirror-merge-r-chunk-end {

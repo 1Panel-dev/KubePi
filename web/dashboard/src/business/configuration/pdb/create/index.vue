@@ -15,6 +15,8 @@
 import LayoutContent from "@/components/layout/LayoutContent"
 import YamlEditor from "@/components/yaml-editor"
 import {createPDB} from "@/api/poddisruptionbudgets"
+import {getCluster} from "@/api/clusters"
+import {useLegacyApi} from "@/utils/k8s"
 
 export default {
   name: "PDBCreate",
@@ -24,7 +26,7 @@ export default {
     return {
       loading: false,
       form: {
-        apiVersion: "policy/v1beta1",
+        apiVersion: "policy/v1",
         kind: "PodDisruptionBudget",
         metadata: {
           name: "",
@@ -56,6 +58,9 @@ export default {
   },
   created () {
     this.cluster = this.$route.query.cluster
+    getCluster(this.cluster).then(res => {
+      this.form.apiVersion = useLegacyApi(res.data.status.version, 20) ? "policy/v1beta1" : "policy/v1"
+    })
   }
 }
 </script>

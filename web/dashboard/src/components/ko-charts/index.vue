@@ -18,7 +18,7 @@ export default {
 
   methods: {
     loadColor(index) {
-      const colors = ['#fee82c','#abcd2c','#db2d45','#cd4d89','#1491d1','#f17f43','#108774','#7c4899','#282a88','#008B8B','#90EE90','#8B0000']
+      const colors = ['#2563eb','#16a34a','#d97706','#dc2626','#0891b2','#7c3aed','#db2777','#0f766e','#64748b','#f59e0b','#84cc16','#be123c']
       return colors[index]
     },
     initCharts(index) {

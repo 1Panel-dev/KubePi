@@ -3,10 +3,10 @@ package mfa
 import (
 	"bytes"
 	"encoding/base64"
+	"time"
+
 	"github.com/skip2/go-qrcode"
 	"github.com/xlzd/gotp"
-	"strconv"
-	"time"
 )
 
 const secretLength = 16
@@ -32,8 +32,5 @@ func GetOtp(username string) (otp Otp, err error) {
 
 func ValidCode(code string, secret string) bool {
 	totp := gotp.NewDefaultTOTP(secret)
-	now := time.Now().Unix()
-	strInt64 := strconv.FormatInt(now, 10)
-	id16, _ := strconv.Atoi(strInt64)
-	return totp.Verify(code, id16)
+	return totp.Verify(code, time.Now().Unix())
 }

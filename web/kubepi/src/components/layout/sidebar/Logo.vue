@@ -63,7 +63,7 @@ export default {
       right: #{$sidebar-close-width / 4};
       height: 1px;
       width: calc(100% - #{$sidebar-close-width / 2});
-      background-color: hsla(0, 0%, 100%, .5);
+      background-color: rgba(203, 213, 225, 0.28);
     }
 
     & .sidebar-logo-link {

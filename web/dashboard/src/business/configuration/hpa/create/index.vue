@@ -61,6 +61,8 @@ import Rule from "@/utils/rules"
 import KoHpaMetrics from "@/components/ko-configuration/ko-hpa-metrics"
 import KoKeyValue from "@/components/ko-configuration/ko-key-value"
 import KoSelect from "@/components/ko-select"
+import {getCluster} from "@/api/clusters"
+import {useLegacyApi} from "@/utils/k8s"
 
 
 export default {
@@ -70,7 +72,7 @@ export default {
   data () {
     return {
       form: {
-        apiVersion: "autoscaling/v2beta2",
+        apiVersion: "autoscaling/v2",
         kind: "HorizontalPodAutoscaler",
         metadata: {
           namespace: ""
@@ -131,6 +133,9 @@ export default {
   created () {
     this.cluster = this.$route.query.cluster
     this.showYaml = this.$route.query.yamlShow === "true"
+    getCluster(this.cluster).then(res => {
+      this.form.apiVersion = useLegacyApi(res.data.status.version, 22) ? "autoscaling/v2beta2" : "autoscaling/v2"
+    })
   }
 }
 </script>

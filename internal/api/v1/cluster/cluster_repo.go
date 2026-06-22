@@ -42,7 +42,7 @@ func (h *Handler) ListClusterRepos() iris.Handler {
 // @Param cluster path string true "集群名称"
 // @Success 200 {object} []imagerepo.ImageRepo
 // @Security ApiKeyAuth
-// @Router /clusters/{cluster}/repos [get]
+// @Router /clusters/{cluster}/repos/detail [get]
 func (h *Handler) ListClusterReposDetail() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("name")

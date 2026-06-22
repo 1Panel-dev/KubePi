@@ -59,7 +59,7 @@
         <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.containers") }}</span>
         <el-tabs tabPosition="left" v-model="activeName">
           <el-tab-pane label="Spec" name="Spec">
-            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameSpec">
+            <el-tabs :key="isRefresh" style="background-color: #ffffff;" type="border-card" v-model="activeNameSpec">
               <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
                 <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job" :upgradePolicyParentObj="form.spec" :resourceType="type" />
                 <ko-upgrade-common v-else :isReadOnly="readOnly" ref="ko_upgrade_common" :upgradePolicyParentObj="form.spec" :resourceType="type" />
@@ -97,7 +97,7 @@
                 <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
               </el-col>
             </el-row>
-            <el-tabs :key="isRefresh" style="background-color: #141418;" type="border-card" v-model="activeNameContainers">
+            <el-tabs :key="isRefresh" style="background-color: #ffffff;" type="border-card" v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
                 <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :containerType="currentContainerType" :metadata="podMetadata" :repoList="repo_list" />
               </el-tab-pane>
@@ -188,6 +188,7 @@ import KoVolumeMount from "@/components/ko-workloads/ko-volume-mount.vue"
 import KoServiceAdd from "@/components/ko-workloads/ko-service/ko-service-add.vue"
 
 import { listClusterReposDetail } from "../../../../kubepi/src/api/clusters"
+import { getCluster } from "@/api/clusters"
 import { getWorkLoadByName, createWorkLoad, updateWorkLoad, deleteWorkLoad } from "@/api/workloads"
 import { listSecretsWithNs, createSecret, editSecret } from "@/api/secrets"
 import { listConfigMapsWithNs } from "@/api/configmaps"
@@ -199,6 +200,7 @@ import { getNamespaces } from "@/api/auth"
 import KoSelect from "@/components/ko-select"
 
 import { checkPermissions } from "@/utils/permission"
+import { useLegacyApi } from "@/utils/k8s"
 
 export default {
   components: {
@@ -288,6 +290,7 @@ export default {
       podMetadata: {},
       isRefresh: false,
       clusterName: "",
+      clusterVersion: "",
       loading: false,
       operationLoading: false,
       numberRules: [Rule.NumberRule],
@@ -538,7 +541,7 @@ export default {
 
       if (this.isCronJob()) {
         delete this.form.spec.template
-        this.form.apiVersion = "batch/v1beta1"
+        this.form.apiVersion = useLegacyApi(this.clusterVersion, 20) ? "batch/v1beta1" : "batch/v1"
         this.form.spec.jobTemplate = { spec: {} }
         this.$refs.ko_upgrade_job.transformation(this.form.spec)
       } else if (this.isJob()) {
@@ -812,6 +815,9 @@ export default {
     this.readOnly = this.$route.query.readOnly && this.$route.query.readOnly === "true"
     this.showYaml = this.$route.query.yamlShow === "true"
     this.clusterName = this.$route.query.cluster
+    getCluster(this.clusterName).then((res) => {
+      this.clusterVersion = res.data.status.version
+    })
     this.type = this.$route.path.split("/")[2]
     this.operation = this.$route.params.operation
     this.loadNodes()

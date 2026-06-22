@@ -71,6 +71,8 @@ import {listPodsWithNsSelector, evictionPod} from "@/api/pods"
 import {cordonNode} from "@/api/nodes"
 import {checkPermissions} from "@/utils/permission"
 import { cpuUnitConvert, memoryUnitConvert } from "@/utils/unitConvert"
+import {getCluster} from "@/api/clusters"
+import {useLegacyApi} from "@/utils/k8s"
 
 export default {
   name: "KoDetailNodePods",
@@ -129,6 +131,7 @@ export default {
       evictionDialogVisible: false,
       pods: [],
       podItem: {},
+      clusterVersion: "",
     }
   },
   methods: {
@@ -177,7 +180,7 @@ export default {
       let data = { spec: { unschedulable: true } }
       cordonNode(this.cluster, this.podItem.spec.nodeName, data).then(() => {
         const rmPod = {
-          apiVersion: "policy/v1beta1",
+          apiVersion: useLegacyApi(this.clusterVersion, 21) ? "policy/v1beta1" : "policy/v1",
           kind: "Eviction",
           metadata: {
             name: this.podItem.metadata.name,
@@ -233,6 +236,11 @@ export default {
       })
       window.open(routeUrl.href, "_blank")
     },
+  },
+  created () {
+    getCluster(this.cluster).then(res => {
+      this.clusterVersion = res.data.status.version
+    })
   },
 }
 </script>

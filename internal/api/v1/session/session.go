@@ -4,6 +4,7 @@ import (
 	goContext "context"
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 	"time"
 
@@ -33,6 +34,13 @@ import (
 )
 
 var jwtMaxAge = 10 * time.Minute
+
+const (
+	loginIPLocalAddress = "127.0.0.1"
+	loginIPLocalArea    = "本机"
+	loginIPPrivateArea  = "内网IP"
+	loginIPUnknownArea  = "未知"
+)
 
 type Handler struct {
 	userService        user.Service
@@ -181,15 +189,60 @@ func (h *Handler) Login() iris.Handler {
 func (h *Handler) SaveLoginLog(ctx *context.Context, userName string) {
 	var logItem v1System.LoginLog
 	logItem.UserName = userName
-	logItem.Ip = ctx.RemoteAddr()
+	logItem.Ip = normalizeLoginIP(ctx.RemoteAddr())
+	logItem.City = getLoginIPArea(logItem.Ip)
+	systemService := v1SystemService.NewService()
+	systemService.CreateLoginLog(&logItem, common.DBOptions{})
+}
+
+func normalizeLoginIP(remoteAddr string) string {
+	ipValue := strings.TrimSpace(remoteAddr)
+	if host, _, err := net.SplitHostPort(ipValue); err == nil {
+		ipValue = host
+	}
+	ipValue = strings.Trim(ipValue, "[]")
+
+	parsedIP := net.ParseIP(ipValue)
+	if parsedIP == nil {
+		return ipValue
+	}
+	if parsedIP.IsLoopback() {
+		return loginIPLocalAddress
+	}
+	if ipv4 := parsedIP.To4(); ipv4 != nil {
+		return ipv4.String()
+	}
+	return parsedIP.String()
+}
+
+func getLoginIPArea(ipValue string) string {
+	parsedIP := net.ParseIP(ipValue)
+	if parsedIP == nil {
+		return loginIPUnknownArea
+	}
+	if parsedIP.IsLoopback() {
+		return loginIPLocalArea
+	}
+	if parsedIP.IsPrivate() || parsedIP.IsLinkLocalUnicast() {
+		return loginIPPrivateArea
+	}
+	if parsedIP.To4() == nil {
+		return loginIPUnknownArea
+	}
+
 	qqWry, err := ip.NewQQwry()
 	if err != nil {
 		server.Logger().Errorf("load qqwry datas failed: %s", err)
+		return loginIPUnknownArea
 	}
-	res := qqWry.Find(logItem.Ip)
-	logItem.City = res.Area
-	systemService := v1SystemService.NewService()
-	systemService.CreateLoginLog(&logItem, common.DBOptions{})
+	if len(qqWry.Data) == 0 {
+		return loginIPUnknownArea
+	}
+	res := qqWry.Find(ipValue)
+	if strings.TrimSpace(res.Area) == "" {
+		return loginIPUnknownArea
+	}
+	return res.Area
 }
 
 func (h *Handler) AggregateResourcePermissions(name string) (map[string][]string, error) {
@@ -197,7 +250,7 @@ func (h *Handler) AggregateResourcePermissions(name string) (map[string][]string
 		Kind: "User",
 		Name: name,
 	}, common.DBOptions{})
-	if err != nil && !errors.As(err, &storm.ErrNotFound) {
+	if err != nil && !errors.Is(err, storm.ErrNotFound) {
 		return nil, err
 	}
 
@@ -207,7 +260,7 @@ func (h *Handler) AggregateResourcePermissions(name string) (map[string][]string
 	}
 
 	rs, err := h.roleService.GetByNames(roleNames, common.DBOptions{})
-	if err != nil && !errors.As(err, &storm.ErrNotFound) {
+	if err != nil && !errors.Is(err, storm.ErrNotFound) {
 		return nil, err
 	}
 	mapping := map[string]*collectons.StringSet{}

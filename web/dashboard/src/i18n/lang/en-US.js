@@ -91,6 +91,10 @@ const message = {
       quickSearch: "Search",
       fullTextSearch: "Full Text Search",
     },
+    auto_refresh: {
+      manual: "Manual refresh",
+      seconds: "Auto refresh every {0}s",
+    },
     form: {
       name: "Name",
       detail: "Details",
@@ -118,6 +122,7 @@ const message = {
       create_failed: "Created failed",
       sync_success: "Sync successfully",
       upload_success: "Upload successfully",
+      cluster_api_error: "Cluster API error. Please check the cluster status or connection settings.",
     },
     confirm_message: {
       delete: "This operation cannot be undone, do you want to continue?",

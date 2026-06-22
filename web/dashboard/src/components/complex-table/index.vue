@@ -6,30 +6,29 @@
 
     <div class="complex-table__toolbar">
         <template v-if="searchConfig">
-          <el-row v-if="showFullTextSwitch">
-            <el-col :span="8">
-              <div  style="margin-top: 5px;  float: left">
-                 <span class="spanClass">{{$t('commons.search.fullTextSearch')}}</span>
-                 <el-switch class="interval"  v-model="isFullTextSearch" @change="OnIsFullTextSearchChange"/>
-              </div>
-            </el-col>  
-            <el-col :span="6">
-              <el-button size="mini" @click="search(true)"><i class="el-icon-search"/>{{this.$t('commons.button.search')}}</el-button>
-            </el-col> 
-            <el-col :span="10">
-              <el-input  :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
-              </el-input>
-            </el-col>
-          </el-row>  
-          <el-row v-if="!showFullTextSwitch">
-            <el-col :span="12">
-              <el-button size="mini" @click="search(true)"><i class="el-icon-search"/>{{this.$t('commons.button.search')}}</el-button>
-            </el-col>  
-            <el-col :span="12">
-              <el-input  :placeholder="$t('commons.button.search')" suffix-icon="el-icon-search" clearable v-model="searchConfig.keywords" @change="search(true)">
-              </el-input>
-            </el-col>
-          </el-row> 
+          <div class="complex-table__search-row">
+            <div v-if="showFullTextSwitch" class="complex-table__fulltext">
+              <span class="spanClass">{{$t('commons.search.fullTextSearch')}}</span>
+              <el-switch class="interval" v-model="isFullTextSearch" @change="OnIsFullTextSearchChange"/>
+            </div>
+            <el-button
+              class="complex-table__search-button"
+              size="mini"
+              icon="el-icon-search"
+              @click="search(true)">
+              {{ $t('commons.button.search') }}
+            </el-button>
+            <el-input
+              class="complex-table__search-input"
+              :placeholder="$t('commons.button.search')"
+              suffix-icon="el-icon-search"
+              clearable
+              v-model="searchConfig.keywords"
+              @keyup.enter.native="search(true)"
+              @change="search(true)"
+              @clear="search(true)">
+            </el-input>
+          </div>
         </template>
         <slot name="toolbar">
         </slot>
@@ -137,6 +136,30 @@ export default {
   .complex-table__toolbar {
     @include flex-row(flex-end, center);
     margin-bottom: 10px;
+  }
+
+  .complex-table__search-row {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .complex-table__fulltext {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .complex-table__search-button {
+    flex: 0 0 auto;
+  }
+
+  .complex-table__search-input {
+    width: 260px;
+    max-width: 100%;
   }
 
   .complex-table__pagination {

@@ -72,7 +72,7 @@ func (h *Handler) SearchUsers() iris.Handler {
 		for i := range users {
 			users[i].Authenticate = v1User.Authenticate{}
 			bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: users[i].Name}, common.DBOptions{})
-			if err != nil && !errors.As(err, &storm.ErrNotFound) {
+			if err != nil && !errors.Is(err, storm.ErrNotFound) {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
 				return
@@ -203,7 +203,7 @@ func (h *Handler) DeleteUser() iris.Handler {
 			Kind: "User",
 			Name: userName,
 		}, txOptions)
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -218,7 +218,7 @@ func (h *Handler) DeleteUser() iris.Handler {
 			}
 		}
 		cbs, err := h.clusterBindingService.GetBindingsByUserName(userName, txOptions)
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
@@ -278,7 +278,7 @@ func (h *Handler) GetUser() iris.Handler {
 		}
 		u.Authenticate = v1User.Authenticate{}
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: u.Name}, common.DBOptions{})
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
@@ -358,7 +358,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 			return
 		}
 		bindings, err := h.roleBindingService.GetRoleBindingBySubject(v1Role.Subject{Kind: "User", Name: userName}, common.DBOptions{})
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
