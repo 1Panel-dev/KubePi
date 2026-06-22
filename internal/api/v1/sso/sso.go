@@ -102,14 +102,14 @@ func (h *Handler) LoginSso() iris.Handler {
 
 		// 根据协议设置重定向URL
 		referer := ctx.GetHeader("Referer")
-		callbakOpenID := strings.Replace(referer, "sso", "api/v1/sso/callback", -1)
-		callbakSaml2 := strings.Replace(referer, "sso", "api/v1/sso/callback_saml2", -1)
+		callbackOpenID := strings.Replace(referer, "sso", "api/v1/sso/callback", -1)
+		callbackSaml2 := strings.Replace(referer, "sso", "api/v1/sso/callback_saml2", -1)
 		baseUrl := strings.Replace(referer, "sso", "api/v1/sso/", -1)
 
 		// 目前只支持OpenID
 		switch ssos.Protocol {
 		case "openid":
-			oauth2Config, err = h.ssoService.OpenIDConfig(ssos.ClientId, ssos.ClientSecret, ssos.InterfaceAddress, callbakOpenID)
+			oauth2Config, err = h.ssoService.OpenIDConfig(ssos.ClientId, ssos.ClientSecret, ssos.InterfaceAddress, callbackOpenID)
 			if err != nil {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.Values().Set("message", err.Error())
@@ -123,7 +123,7 @@ func (h *Handler) LoginSso() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 				return
 			}
-			ctx.Redirect(callbakSaml2, iris.StatusFound)
+			ctx.Redirect(callbackSaml2, iris.StatusFound)
 		default:
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", "目前只支持OpenID & SAML2 SSO认证~")

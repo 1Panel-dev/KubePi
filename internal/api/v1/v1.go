@@ -35,7 +35,7 @@ import (
 	v1RoleBindingService "github.com/1Panel-dev/KubePi/internal/service/v1/rolebinding"
 	v1SystemService "github.com/1Panel-dev/KubePi/internal/service/v1/system"
 	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
-	"github.com/1Panel-dev/KubePi/pkg/collectons"
+	"github.com/1Panel-dev/KubePi/pkg/collections"
 	"github.com/1Panel-dev/KubePi/pkg/i18n"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -297,7 +297,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 		//1. 确定所有的api资源有哪些
 		apiBuilder := party.(*router.APIBuilder)
 		routes := apiBuilder.GetRoutes()
-		resourceMap := map[string]*collectons.StringSet{}
+		resourceMap := map[string]*collections.StringSet{}
 		for i := range routes {
 			if strings.HasPrefix(routes[i].Path, "/kubepi/api/v1/") {
 				ss := strings.Split(routes[i].Path, "/")
@@ -308,7 +308,7 @@ func apiResourceHandler(party iris.Party) iris.Handler {
 						continue
 					}
 					if _, ok := resourceMap[resourceName]; !ok {
-						resourceMap[resourceName] = collectons.NewStringSet()
+						resourceMap[resourceName] = collections.NewStringSet()
 					}
 					resourceMap[resourceName].Add(getVerbByRoute(routes[i].Path, routes[i].Method))
 				}

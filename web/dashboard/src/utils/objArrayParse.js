@@ -1,4 +1,4 @@
-export function parseObjToArry(dataObj) {
+export function parseObjToArray(dataObj) {
   let data = [];
   if (dataObj) {
     for (const key in dataObj) {
@@ -13,7 +13,7 @@ export function parseObjToArry(dataObj) {
   return data;
 }
 
-export function parseArryToObj(data) {
+export function parseArrayToObj(data) {
   let obj = {};
   for (let i = 0; i < data.length; i++) {
     if (data[i].key !== "") {

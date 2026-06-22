@@ -19,7 +19,7 @@ import (
 	"github.com/1Panel-dev/KubePi/internal/service/v1/rolebinding"
 	v1SystemService "github.com/1Panel-dev/KubePi/internal/service/v1/system"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/user"
-	"github.com/1Panel-dev/KubePi/pkg/collectons"
+	"github.com/1Panel-dev/KubePi/pkg/collections"
 	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
 	"github.com/1Panel-dev/KubePi/pkg/logging"
 	"github.com/1Panel-dev/KubePi/pkg/network/ip"
@@ -237,7 +237,7 @@ func getLoginIPArea(ipValue string) string {
 
 	qqWry, err := ip.NewQQwry()
 	if err != nil {
-		server.Logger().Errorf("load qqwry datas failed: %s", err)
+		server.Logger().Errorf("load qqwry data failed: %s", err)
 		return loginIPUnknownArea
 	}
 	if len(qqWry.Data) == 0 {
@@ -268,7 +268,7 @@ func (h *Handler) AggregateResourcePermissions(name string) (map[string][]string
 	if err != nil && !errors.Is(err, storm.ErrNotFound) {
 		return nil, err
 	}
-	mapping := map[string]*collectons.StringSet{}
+	mapping := map[string]*collections.StringSet{}
 	var policyRoles []v1Role.PolicyRule
 	//merge permissions
 	for i := range rs {
@@ -278,7 +278,7 @@ func (h *Handler) AggregateResourcePermissions(name string) (map[string][]string
 		for j := range policyRoles[i].Resource {
 			_, ok := mapping[policyRoles[i].Resource[j]]
 			if !ok {
-				mapping[policyRoles[i].Resource[j]] = collectons.NewStringSet()
+				mapping[policyRoles[i].Resource[j]] = collections.NewStringSet()
 			}
 			for k := range policyRoles[i].Verbs {
 				mapping[policyRoles[i].Resource[j]].Add(policyRoles[i].Verbs[k])
@@ -387,7 +387,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 	return func(ctx *context.Context) {
 		session := server.SessionMgr.Start(ctx)
 		clusterName := ctx.Params().GetString("cluster_name")
-		namesapce := ctx.URLParam("namespace")
+		namespace := ctx.URLParam("namespace")
 		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -426,7 +426,7 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 			ctx.Values().Set("message", fmt.Sprintf("get cluster-role-binding failed: %s", err.Error()))
 			return
 		}
-		rolebindings, err := client.RbacV1().RoleBindings(namesapce).List(goContext.TODO(), metav1.ListOptions{
+		rolebindings, err := client.RbacV1().RoleBindings(namespace).List(goContext.TODO(), metav1.ListOptions{
 			LabelSelector: strings.Join(labels, ","),
 		})
 		if err != nil {

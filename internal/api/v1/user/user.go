@@ -16,7 +16,7 @@ import (
 	"github.com/1Panel-dev/KubePi/internal/service/v1/rolebinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/user"
 	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
-	"github.com/1Panel-dev/KubePi/pkg/collectons"
+	"github.com/1Panel-dev/KubePi/pkg/collections"
 	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -83,7 +83,7 @@ func (h *Handler) SearchUsers() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 				return
 			}
-			roles := collectons.NewStringSet()
+			roles := collections.NewStringSet()
 			for i := range bindings {
 				roles.Add(bindings[i].RoleRef)
 			}
@@ -289,7 +289,7 @@ func (h *Handler) GetUser() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		roles := collectons.NewStringSet()
+		roles := collections.NewStringSet()
 		for i := range bindings {
 			roles.Add(bindings[i].RoleRef)
 		}
@@ -369,7 +369,7 @@ func (h *Handler) UpdateUser() iris.Handler {
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		currentRoles := collectons.NewStringSet()
+		currentRoles := collections.NewStringSet()
 		for i := range bindings {
 			currentRoles.Add(bindings[i].RoleRef)
 		}

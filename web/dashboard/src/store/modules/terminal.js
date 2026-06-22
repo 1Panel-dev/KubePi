@@ -1,6 +1,6 @@
 const state = {
   terminals: [],
-  buttomHeight: "0",
+  bottomHeight: "0",
 };
 
 const mutations = {
@@ -8,7 +8,7 @@ const mutations = {
     state.terminals = value;
   },
   CHANGE_BOTTOM_HEIGHT: (state, value) => {
-    state.buttomHeight = value
+    state.bottomHeight = value
   },
 };
 

@@ -13,7 +13,7 @@
               <ko-form-item itemType="select2" @change="changeType" v-model="row.key" :selections="resource_list" />
             </td>
             <td v-if="loadSuffix(row) !== 'none'">
-              <ko-form-item :deviderName="loadSuffix(row)" itemType="number" v-model="row.value" />
+              <ko-form-item :dividerName="loadSuffix(row)" itemType="number" v-model="row.value" />
             </td>
             <td v-else>
               <ko-form-item itemType="input" v-model="row.value" />

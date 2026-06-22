@@ -11,7 +11,7 @@ import (
 	v1Cluster "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
-	"github.com/1Panel-dev/KubePi/pkg/collectons"
+	"github.com/1Panel-dev/KubePi/pkg/collections"
 	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
@@ -146,7 +146,7 @@ func (h *Handler) GetClusterMember() iris.Handler {
 		member.ClusterRoles = make([]string, 0)
 		member.NamespaceRoles = make([]NamespaceRoles, 0)
 		member.Name = binding.UserRef
-		set := collectons.NewStringSet()
+		set := collections.NewStringSet()
 		for i := range clusterRoleBindings.Items {
 			set.Add(clusterRoleBindings.Items[i].RoleRef.Name)
 		}

@@ -22,7 +22,7 @@
     </complex-table>
 
     <el-dialog :title="$t('business.workload.specific_information')" width="70%" :close-on-click-modal="false" :visible.sync="dialogSpecificVisible">
-      <yaml-editor :value="itemVerisonForm" :read-only="true" />
+      <yaml-editor :value="itemVersionForm" :read-only="true" />
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogSpecificVisible = false">{{ $t("commons.button.cancel") }}</el-button>
       </div>
@@ -90,7 +90,7 @@ export default {
       loading: false,
       pods: [],
       podUsage: [],
-      itemVerisonForm: {},
+      itemVersionForm: {},
       dialogSpecificVisible: false,
     }
   },
@@ -132,7 +132,7 @@ export default {
       })
     },
     SpecificInformation(row) {
-      this.itemVerisonForm = row
+      this.itemVersionForm = row
       this.dialogSpecificVisible = true
     },
   },

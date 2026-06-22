@@ -74,7 +74,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item :label="$t('business.pod.limit_byte')">
-              <ko-form-item itemType="number" v-model="form.limitBytes" deviderName="MB" />
+              <ko-form-item itemType="number" v-model="form.limitBytes" dividerName="MB" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -213,7 +213,7 @@ export default {
       this.terminal.url = this.getTerminalUrl()
       this.isRefresh = !this.isRefresh
     },
-    loadContainters() {
+    loadContainers() {
       this.containers = []
       getWorkLoadByName(this.terminal.cluster, "pods", this.terminal.namespace, this.terminal.pod).then((res) => {
         for (const c of res.spec.containers) {
@@ -258,7 +258,7 @@ export default {
       type: this.$route.query.type,
     }
     this.terminal.url = this.getTerminalUrl()
-    this.loadContainters()
+    this.loadContainers()
 
     this.getHeight()
     this.pullingSession()

@@ -315,7 +315,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 
 			c := Cluster{Cluster: clusters[i]}
 			if profile.IsAdministrator {
-				c.Accessable = true
+				c.Accessible = true
 			} else {
 				bs, err := h.clusterBindingService.GetClusterBindingByClusterName(c.Name, common.DBOptions{})
 				if err != nil && !errors.Is(err, storm.ErrNotFound) {
@@ -326,7 +326,7 @@ func (h *Handler) SearchClusters() iris.Handler {
 				c.MemberCount = len(bs)
 				for j := range bs {
 					if bs[j].UserRef == profile.Name {
-						c.Accessable = true
+						c.Accessible = true
 					}
 				}
 			}
@@ -556,7 +556,7 @@ func (h *Handler) ListClusters() iris.Handler {
 			}
 			for j := range mbs {
 				if mbs[j].UserRef == profile.Name {
-					rc.Accessable = true
+					rc.Accessible = true
 				}
 			}
 			resultClusters = append(resultClusters, sanitizeClusterResponse(rc))

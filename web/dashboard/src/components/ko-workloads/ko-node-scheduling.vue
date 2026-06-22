@@ -151,25 +151,25 @@ export default {
       schedulingItem.rules.splice(index, 1)
     },
     getMatchExpress(schedule) {
-      let matchs = []
+      let matches = []
       if (schedule.rules.length === 0) {
-        return matchs
+        return matches
       }
       for (const rule of schedule.rules) {
         if (rule.value) {
-          matchs.push({
+          matches.push({
             key: rule.key,
             operator: rule.operator,
             values: rule.value.split(","),
           })
         } else {
-          matchs.push({
+          matches.push({
             key: rule.key,
             operator: rule.operator,
           })
         }
       }
-      return matchs
+      return matches
     },
 
     changeType() {
@@ -191,14 +191,14 @@ export default {
         parentFrom.nodeAffinity = {}
         if (this.nodeSchedulings.length !== 0) {
           for (const nS of this.nodeSchedulings) {
-            const matchs = this.getMatchExpress(nS)
+            const matches = this.getMatchExpress(nS)
             let itemAdd = {}
             switch (nS.priority) {
               case "Preferred":
                 parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
                 itemAdd.weight = 1
                 itemAdd.preference = {}
-                itemAdd.preference.matchExpressions = matchs
+                itemAdd.preference.matchExpressions = matches
                 parentFrom.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
                 break
               case "Required":
@@ -206,14 +206,14 @@ export default {
                   parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
                 }
                 parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
-                itemAdd.matchExpressions = matchs
+                itemAdd.matchExpressions = matches
                 parentFrom.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
                 break
               case "None":
                 parentFrom.nodeAffinity.required = {
                   nodeSelectorTerms: [],
                 }
-                itemAdd.matchExpressions = matchs
+                itemAdd.matchExpressions = matches
                 parentFrom.nodeAffinity.required.nodeSelectorTerms.push(itemAdd)
                 break
             }

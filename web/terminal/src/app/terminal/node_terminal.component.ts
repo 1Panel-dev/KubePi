@@ -29,7 +29,7 @@ export class NodeShellTerminalComponent implements AfterViewInit {
   private connected_ = false;
   private debouncedFit_: Function
   private connSubject_ = new ReplaySubject<ShellFrame>(100)
-  private incommingMessage$_ = new Subject<ShellFrame>()
+  private incomingMessage$_ = new Subject<ShellFrame>()
   // private readonly endpoint_=
   private readonly unsubscribe_ = new Subject<void>()
   private readonly keyEvent$_ = new ReplaySubject<KeyboardEvent>(2)
@@ -68,7 +68,7 @@ export class NodeShellTerminalComponent implements AfterViewInit {
     if (this.term) {
       this.term.dispose();
     }
-    this.incommingMessage$_.complete();
+    this.incomingMessage$_.complete();
   }
 
 
@@ -86,8 +86,8 @@ export class NodeShellTerminalComponent implements AfterViewInit {
       this.term.dispose();
     }
 
-    this.incommingMessage$_.complete();
-    this.incommingMessage$_ = new Subject<ShellFrame>();
+    this.incomingMessage$_.complete();
+    this.incomingMessage$_ = new Subject<ShellFrame>();
   }
 
 
@@ -177,7 +177,7 @@ export class NodeShellTerminalComponent implements AfterViewInit {
       alert(frame.Data)
     }
 
-    this.incommingMessage$_.next(frame);
+    this.incomingMessage$_.next(frame);
     this.cdr_.markForCheck();
   }
 

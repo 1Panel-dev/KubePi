@@ -1,4 +1,4 @@
-package collectons
+package collections
 
 type StringSet struct {
 	data map[string]interface{}

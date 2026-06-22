@@ -75,11 +75,11 @@ export default {
     }
   },
   methods: {
-    loadNodes(datas) {
+    loadNodes(data) {
       this.node_name_list = []
-      this.node_list = datas
+      this.node_list = data
       let labels = []
-      for (const node of datas) {
+      for (const node of data) {
         this.node_name_list.push(node.metadata.name)
         for (const key in node.metadata.labels) {
           if (Object.prototype.hasOwnProperty.call(node.metadata.labels, key)) {

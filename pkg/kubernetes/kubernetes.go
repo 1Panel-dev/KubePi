@@ -12,7 +12,7 @@ import (
 
 	v1Cluster "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
 	"github.com/1Panel-dev/KubePi/pkg/certificate"
-	"github.com/1Panel-dev/KubePi/pkg/collectons"
+	"github.com/1Panel-dev/KubePi/pkg/collections"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
 	rbacV1 "k8s.io/api/rbac/v1"
@@ -244,7 +244,7 @@ func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	roleSet := collectons.NewStringSet()
+	roleSet := collections.NewStringSet()
 	labels := []string{
 		fmt.Sprintf("%s=%s", LabelManageKey, "kubepi"),
 		fmt.Sprintf("%s=%s", LabelClusterId, k.UUID),
@@ -265,7 +265,7 @@ func (k *Kubernetes) CanVisitAllNamespace(username string) (bool, error) {
 			return false, err
 		}
 		for i := range role.Rules {
-			if collectons.IndexOfStringSlice(role.Rules[i].APIGroups, "*") != -1 && collectons.IndexOfStringSlice(role.Rules[i].Resources, "*") != -1 {
+			if collections.IndexOfStringSlice(role.Rules[i].APIGroups, "*") != -1 && collections.IndexOfStringSlice(role.Rules[i].Resources, "*") != -1 {
 				return true, nil
 			}
 		}
@@ -287,7 +287,7 @@ func (k *Kubernetes) GetUserNamespaceNames(username string, options ...interface
 		}
 	}
 
-	namespaceSet := collectons.NewStringSet()
+	namespaceSet := collections.NewStringSet()
 	if all {
 		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {

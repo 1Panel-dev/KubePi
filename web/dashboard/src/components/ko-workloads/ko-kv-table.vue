@@ -89,7 +89,7 @@
 <script>
 import KoFormItem from "@/components/ko-form-item"
 import { deepClone } from "@/utils/deepClone"
-import { parseObjToArry, parseArryToObj } from "@/utils/objArryParse"
+import { parseObjToArray, parseArrayToObj } from "@/utils/objArrayParse"
 
 export default {
   name: "KoKvTable",
@@ -198,7 +198,7 @@ export default {
         podMetadata.labels = {}
       }
       if (this.isCreate) {
-        let labels = parseArryToObj(this.labels)
+        let labels = parseArrayToObj(this.labels)
         parentForm.spec.selector = { matchLabels: {} }
         for (const key in labels) {
           podMetadata.labels[key] = labels[key]
@@ -207,11 +207,11 @@ export default {
             parentForm.spec.selector.matchLabels[key] = labels[key]
           }
         }
-        parentForm.metadata.annotations = parseArryToObj(this.annotations)
+        parentForm.metadata.annotations = parseArrayToObj(this.annotations)
         return
       }
 
-      let selectors = parseArryToObj(this.selectors)
+      let selectors = parseArrayToObj(this.selectors)
       parentForm.spec.selector = { matchLabels: {} }
       for (const key in selectors) {
         podMetadata.labels[key] = selectors[key]
@@ -219,17 +219,17 @@ export default {
           parentForm.spec.selector.matchLabels[key] = selectors[key]
         }
       }
-      parentForm.metadata.labels = parseArryToObj(this.labels)
-      parentForm.metadata.annotations = parseArryToObj(this.annotations)
+      parentForm.metadata.labels = parseArrayToObj(this.labels)
+      parentForm.metadata.annotations = parseArrayToObj(this.annotations)
     },
   },
   mounted() {
     if (this.metadataObj) {
-      this.labels = parseObjToArry(this.metadataObj.labels)
-      this.annotations = parseObjToArry(this.metadataObj.annotations)
+      this.labels = parseObjToArray(this.metadataObj.labels)
+      this.annotations = parseObjToArray(this.metadataObj.annotations)
     }
     if (this.selectorObj) {
-      this.selectors = parseObjToArry(this.selectorObj.matchLabels)
+      this.selectors = parseObjToArray(this.selectorObj.matchLabels)
     }
   },
 }

@@ -18,13 +18,13 @@
 
         <el-row :gutter="20" v-if="form.spec.strategy.type === 'RollingUpdate'">
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.max_surge')" prop="spec.strategy.rollingUpdate.maxSurge" :rules="numberPersentRule">
+            <el-form-item :label="$t('business.workload.max_surge')" prop="spec.strategy.rollingUpdate.maxSurge" :rules="numberPercentRule">
               <span style="margin-left: 10px;" v-if="!enableEdit">{{form.spec.strategy.rollingUpdate.maxSurge}}</span>
               <el-input v-else v-model="form.spec.strategy.rollingUpdate.maxSurge" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('business.workload.max_unavaliable')" prop="spec.strategy.rollingUpdate.maxUnavailable" :rules="numberPersentRule">
+            <el-form-item :label="$t('business.workload.max_unavailable')" prop="spec.strategy.rollingUpdate.maxUnavailable" :rules="numberPercentRule">
               <span style="margin-left: 10px;" v-if="!enableEdit">{{form.spec.strategy.rollingUpdate.maxUnavailable}}</span>
               <el-input v-else v-model="form.spec.strategy.rollingUpdate.maxUnavailable" />
             </el-form-item>
@@ -92,7 +92,7 @@ export default {
         maxUnavailable: 0,
       },
       enableEdit: false,
-      numberPersentRule: Rule.NumberPersentRule,
+      numberPercentRule: Rule.NumberPercentRule,
     }
   },
   methods: {

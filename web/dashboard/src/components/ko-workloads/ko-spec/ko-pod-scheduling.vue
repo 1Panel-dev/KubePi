@@ -180,25 +180,25 @@ export default {
     },
 
     getMatchExpress(val) {
-      let matchs = []
+      let matches = []
       if (val.length === 0) {
-        return matchs
+        return matches
       }
       for (const rule of val) {
         if (rule.value) {
-          matchs.push({
+          matches.push({
             key: rule.key,
             operator: rule.operator,
             values: rule.value.split(","),
           })
         } else {
-          matchs.push({
+          matches.push({
             key: rule.key,
             operator: rule.operator,
           })
         }
       }
-      return matchs
+      return matches
     },
 
     valueTrans(type, priority, s) {
@@ -256,15 +256,15 @@ export default {
         for (const pS of this.podSchedulings) {
           let itemAdd = {}
           const itemTopologyKey = pS.topologyKey || undefined
-          const matchs = this.getMatchExpress(pS.rules)
-          const labelMatchs = this.getMatchLabels(pS.labelRules)
+          const matches = this.getMatchExpress(pS.rules)
+          const labelMatches = this.getMatchLabels(pS.labelRules)
           switch (pS.type + "+" + pS.priority) {
             case "Affinity+Required":
               if (!parentFrom.affinity.podAffinity) {
                 parentFrom.affinity.podAffinity = {}
               }
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
+              itemAdd.labelSelector = { matchExpressions: matches, matchLabels: labelMatches }
               itemAdd.topologyKey = itemTopologyKey
               parentFrom.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
@@ -273,7 +273,7 @@ export default {
                 parentFrom.affinity.podAffinity = {}
               }
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
+              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matches, matchLabels: labelMatches } }
               itemAdd.weight = pS.weight || 1
               parentFrom.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
@@ -282,7 +282,7 @@ export default {
                 parentFrom.affinity.podAntiAffinity = {}
               }
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.labelSelector = { matchExpressions: matchs, matchLabels: labelMatchs }
+              itemAdd.labelSelector = { matchExpressions: matches, matchLabels: labelMatches }
               itemAdd.topologyKey = itemTopologyKey
               parentFrom.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
@@ -291,7 +291,7 @@ export default {
                 parentFrom.affinity.podAntiAffinity = {}
               }
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
-              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matchs, matchLabels: labelMatchs } }
+              itemAdd.podAffinityTerm = { topologyKey: itemTopologyKey, labelSelector: { matchExpressions: matches, matchLabels: labelMatches } }
               itemAdd.weight = pS.weight || 1
               parentFrom.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
@@ -300,7 +300,7 @@ export default {
       }
       if (this.nodeSchedulings.length !== 0) {
         for (const nS of this.nodeSchedulings) {
-          const matchs = this.getMatchExpress(nS.rules)
+          const matches = this.getMatchExpress(nS.rules)
           const fields = this.getMatchExpress(nS.fields)
           let itemAdd = {}
           switch (nS.priority) {
@@ -310,7 +310,7 @@ export default {
               }
               parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = []
               itemAdd.weight = nS.weight
-              itemAdd.preference = { matchExpressions: matchs, matchFields: fields }
+              itemAdd.preference = { matchExpressions: matches, matchFields: fields }
               parentFrom.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.push(itemAdd)
               break
             case "Required":
@@ -321,7 +321,7 @@ export default {
                 parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {}
               }
               parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms = []
-              itemAdd.matchExpressions = matchs
+              itemAdd.matchExpressions = matches
               itemAdd.matchFields = fields
               parentFrom.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms.push(itemAdd)
               break

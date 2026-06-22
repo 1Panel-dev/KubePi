@@ -18,10 +18,10 @@ const CommonNameRule = {
   trigger: "blur"
 }
 // 支持数字或%
-const NumberPersentRule = {
+const NumberPercentRule = {
   required: true,
   pattern: /^[0-9]([0-9]*$|([0-9]*?%$))/,
-  message: i18n.t("commons.validate.number_persent_rules"),
+  message: i18n.t("commons.validate.number_percent_rules"),
   trigger: "blur"
 }
 const NumberRule = {
@@ -40,7 +40,7 @@ const UrlRule = {
 export default {
   RequiredRule,
   SelectRule,
-  NumberPersentRule,
+  NumberPercentRule,
   NumberRule,
   CommonNameRule,
   UrlRule,

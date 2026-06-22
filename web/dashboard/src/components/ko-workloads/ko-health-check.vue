@@ -56,17 +56,17 @@
             <el-row :gutter="10">
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.check_interval')" prop="periodSeconds">
-                  <ko-form-item placeholder="Default: 10" deviderName="sec" itemType="number" v-model.number="form.periodSeconds" />
+                  <ko-form-item placeholder="Default: 10" dividerName="sec" itemType="number" v-model.number="form.periodSeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.initial_delay')" prop="initialDelaySeconds">
-                  <ko-form-item placeholder="Default: 0" deviderName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
+                  <ko-form-item placeholder="Default: 0" dividerName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.timeout')" prop="timeoutSeconds">
-                  <ko-form-item placeholder="Default: 3" deviderName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
+                  <ko-form-item placeholder="Default: 3" dividerName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
                 </el-form-item>
               </el-col>
             </el-row>

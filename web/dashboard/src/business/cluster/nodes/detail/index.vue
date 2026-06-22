@@ -48,7 +48,7 @@
       <el-row class="row-box" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
         <el-card class="el-card">
           <el-row :gutter="20">
-            <h4>{{ $t('business.node.allocata') }}</h4>
+            <h4>{{ $t('business.node.allocated') }}</h4>
             <el-form label-position="top">
               <el-col :span="4">
                 <el-form-item :label="'CPU ' + $t('business.workload.reservation')">
@@ -83,7 +83,7 @@
       <el-row class="row-box" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
         <el-card class="el-card">
           <el-row :gutter="20">
-            <h4>{{$t('business.node.health_statu')}}</h4>
+            <h4>{{$t('business.node.health_status')}}</h4>
             <el-form label-position="top">
               <div v-for="(cond, index) in item.status.conditions" v-bind:key="index">
                 <el-col :span="8" v-if="cond.type === 'NetworkUnavailable'">
@@ -98,8 +98,8 @@
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
                       <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.network_statu')">
-                      <span>{{ $t('business.node.network_statu_help') }}</span>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.network_status')">
+                      <span>{{ $t('business.node.network_status_help') }}</span>
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
@@ -115,8 +115,8 @@
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
                       <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.memory_statu')">
-                      <span>{{ $t('business.node.memory_statu_help') }}</span>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.memory_status')">
+                      <span>{{ $t('business.node.memory_status_help') }}</span>
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
@@ -132,8 +132,8 @@
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
                       <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.disk_statu')">
-                      <span>{{ $t('business.node.disk_statu_help') }}</span>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.disk_status')">
+                      <span>{{ $t('business.node.disk_status_help') }}</span>
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
@@ -149,8 +149,8 @@
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
                       <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.pid_statu')">
-                      <span>{{ $t('business.node.pid_statu_help') }}</span>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.pid_status')">
+                      <span>{{ $t('business.node.pid_status_help') }}</span>
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
@@ -166,8 +166,8 @@
                       <div style="margin-top: 5px"><span>{{ cond.message }}</span></div>
                       <div style="margin-top: 2px"><span>{{ $t('business.pod.lastUpdateTime' )}}: {{ cond.lastTransitionTime | datetimeFormat }}</span></div>
                     </div>
-                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.node_statu')">
-                      <span>{{ $t('business.node.node_statu_help') }}</span>
+                    <el-form-item style="float: left; margin-left: 8px" :label="$t('business.node.node_status')">
+                      <span>{{ $t('business.node.node_status_help') }}</span>
                     </el-form-item>
                   </el-tooltip>
                 </el-col>

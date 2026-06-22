@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.termination_grace_period')" prop="terminationGracePeriodSeconds">
-            <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.terminationGracePeriodSeconds" />
+            <ko-form-item :dividerName="$t('business.workload.seconds')" itemType="number" v-model.number="form.terminationGracePeriodSeconds" />
           </el-form-item>
         </el-col>
       </el-row>

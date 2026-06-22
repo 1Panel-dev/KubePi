@@ -187,7 +187,7 @@ const message = {
             change_password: "修改密码",
             resource_name: "资源名称",
             please_input_password: "请输入密码",
-            please_input_password_agin: "请再次输入密码",
+            please_input_password_again: "请再次输入密码",
             password_not_equal: "两次输入密码不一致",
             ldap: "LDAP",
             ldap_address: "地址",

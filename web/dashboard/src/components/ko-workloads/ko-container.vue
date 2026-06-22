@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     changeName(val) {
-      this.$emit("updateContanerList", val)
+      this.$emit("updateContainerList", val)
     },
     checkIsValid() {
       let isValid = true

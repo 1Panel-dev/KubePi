@@ -16,24 +16,24 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.completions')" prop="completions">
-            <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.completions" />
+            <ko-form-item :dividerName="$t('business.workload.times')" itemType="number" v-model.number="form.completions" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.parallelism')" prop="parallelism">
-            <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.parallelism" />
+            <ko-form-item :dividerName="$t('business.workload.times')" itemType="number" v-model.number="form.parallelism" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.back_off_limit')" prop="backoffLimit">
-            <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.backoffLimit" />
+            <ko-form-item :dividerName="$t('business.workload.times')" itemType="number" v-model.number="form.backoffLimit" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.active_deadline')" prop="activeDeadlineSeconds">
-            <ko-form-item :deviderName="$t('business.workload.times')" itemType="number" v-model.number="form.activeDeadlineSeconds" />
+            <ko-form-item :dividerName="$t('business.workload.times')" itemType="number" v-model.number="form.activeDeadlineSeconds" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -52,7 +52,7 @@
       <el-row :gutter="20" v-if="isCronJob()">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.starting_deadline_seconds')" prop="startingDeadlineSeconds">
-            <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.startingDeadlineSeconds" />
+            <ko-form-item :dividerName="$t('business.workload.seconds')" itemType="number" v-model.number="form.startingDeadlineSeconds" />
           </el-form-item>
         </el-col>
       </el-row>

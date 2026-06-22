@@ -264,10 +264,10 @@ export default {
     },
     loadVerbs(row) {
       let verbs = []
-      for (const currentResouce of row.resources) {
+      for (const currentResource of row.resources) {
         for (const group of this.groupRootData) {
           for (const resource of group.resources) {
-            if (currentResouce == resource.resource) {
+            if (currentResource == resource.resource) {
               verbs = resource.verbs
             }
           }

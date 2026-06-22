@@ -84,7 +84,7 @@
         <el-row :gutter="20">
           <el-col :span="6" v-if="form.spec.sessionAffinity === 'ClientIP'">
             <el-form-item label="TimeoutSeconds">
-              <ko-form-item itemType="number" v-model.number="form.spec.sessionAffinityConfig.clientIP.timeoutSeconds" :deviderName="$t('business.workload.seconds')" />
+              <ko-form-item itemType="number" v-model.number="form.spec.sessionAffinityConfig.clientIP.timeoutSeconds" :dividerName="$t('business.workload.seconds')" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -117,7 +117,7 @@
 
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
-import { parseArryToObj, parseObjToArry } from "@/utils/objArryParse"
+import { parseArrayToObj, parseObjToArray } from "@/utils/objArrayParse"
 
 export default {
   name: "KoServiceAdd",
@@ -134,7 +134,7 @@ export default {
             this.serviceType = this.form.spec.type
           }
           if (this.form.metadata?.annotations) {
-            this.annotations = parseObjToArry(this.form.metadata.annotations)
+            this.annotations = parseObjToArray(this.form.metadata.annotations)
           }
           this.externalIPs = []
           if (this.form.spec?.externalIPs) {
@@ -252,7 +252,7 @@ export default {
       if (this.serviceType === "None") {
         return null
       }
-      this.form.metadata.annotations = parseArryToObj(this.annotations)
+      this.form.metadata.annotations = parseArrayToObj(this.annotations)
       for (const item of this.externalIPs) {
         this.form.spec.externalIPs.push(item.value)
       }

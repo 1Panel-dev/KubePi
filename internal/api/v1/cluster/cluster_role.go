@@ -179,7 +179,7 @@ func (h *Handler) DeleteClusterRole() iris.Handler {
 		if ok {
 			if createBy == "system" {
 				ctx.StatusCode(iris.StatusBadRequest)
-				ctx.Values().Set("message", "can not delete it ,beacuse it created by system")
+				ctx.Values().Set("message", "can not delete it ,because it created by system")
 				return
 			}
 		}

@@ -73,7 +73,7 @@
       <el-table-column :label="'CPU '+ $t('business.node.usage')" min-width="80px">
         <template v-slot:default="{row}">
           <div v-if="hasMetric === 'true'">
-            <div><span>{{row.cpuUsagePersent}}%</span></div>
+            <div><span>{{row.cpuUsagePercent}}%</span></div>
             <div><span>{{row.cpuUsage | cpu}} / {{ row.status.allocatable.cpu | cpu }} {{ $t('business.node.core') }}</span></div>
           </div>
           <div v-else>
@@ -84,7 +84,7 @@
       <el-table-column :label="$t('business.workload.memory')+ $t('business.node.usage')" min-width="80px">
         <template v-slot:default="{row}">
           <div v-if="hasMetric === 'true'">
-            <div><span>{{row.memoryUsagePersent}}%</span></div>
+            <div><span>{{row.memoryUsagePercent}}%</span></div>
             <div><span>{{row.memoryUsage | gi-memory}} / {{ row.status.allocatable.memory | gi-memory }} Gi</span></div>
           </div>
           <div v-else>
@@ -206,11 +206,11 @@ export default {
               if (n.metadata.name === item.metadata.name) {
                 if (item.usage?.cpu) {
                   n.cpuUsage = cpuUnitConvert(item.usage.cpu) + "m"
-                  n.cpuUsagePersent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
+                  n.cpuUsagePercent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
                 }
                 if (item.usage?.memory) {
                   n.memoryUsage = memoryUnitConvert(item.usage.memory).toFixed(2) + "Mi"
-                  n.memoryUsagePersent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
+                  n.memoryUsagePercent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
                 }
               }
             }
@@ -238,7 +238,7 @@ export default {
       } else {
         for (const item of this.selects) {
           if (!item.spec.unschedulable) {
-            this.$message({ type: "warning", message: this.$t("business.node.existing_actived") })
+            this.$message({ type: "warning", message: this.$t("business.node.existing_active") })
             return false
           }
         }
@@ -398,7 +398,7 @@ export default {
         column: "Cpu Used(%)",
         type: Number,
         value: (row) => {
-          return row.cpuUsagePersent
+          return row.cpuUsagePercent
         },
        },
        {
@@ -419,7 +419,7 @@ export default {
         column: "Mem Used(%)",
         type: Number,
         value: (row) => {
-          return row.memoryUsagePersent
+          return row.memoryUsagePercent
         },
        },
        {
@@ -461,11 +461,11 @@ export default {
               if (n.metadata.name === item.metadata.name) {
                 if (item.usage?.cpu) {
                   n.cpuUsage = cpuUnitConvert(item.usage.cpu) + "m"
-                  n.cpuUsagePersent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
+                  n.cpuUsagePercent = Math.round((cpuUnitConvert(item.usage.cpu) / cpuUnitConvert(n.status.allocatable.cpu)).toFixed(2) * 100)
                 }
                 if (item.usage?.memory) {
                   n.memoryUsage = memoryUnitConvert(item.usage.memory).toFixed(2) + "Mi"
-                  n.memoryUsagePersent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
+                  n.memoryUsagePercent = Math.round((memoryUnitConvert(item.usage.memory) / memoryUnitConvert(n.status.allocatable.memory)).toFixed(2) * 100)
                 }
               }
             }

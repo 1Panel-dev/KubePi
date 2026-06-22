@@ -39,13 +39,13 @@
     <el-row :gutter="20" v-if="showMetric && hasMetric === 'true'">
       <el-col :span="12">
         <el-card style="background-color: #f8fafc" class="n-card el-card">
-          <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatCpu}}</span>
+          <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatableCpu}}</span>
           <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.cpuPercent"></el-progress>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card style="background-color: #f8fafc" class="n-card el-card">
-          <span>Memory(Gi) {{clusterInfo.metricMemory}} / {{clusterInfo.allocatMemory}}</span>
+          <span>Memory(Gi) {{clusterInfo.metricMemory}} / {{clusterInfo.allocatableMemory}}</span>
           <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.memoryPercent"></el-progress>
         </el-card>
       </el-col>
@@ -114,7 +114,7 @@
       </complex-table>
     </el-row>
     <div v-if="dialogMetricVisible">
-      <metric-server @changeVisble="changeVisble" :clusterName="clusterName" :visible="dialogMetricVisible" />
+      <metric-server @changeVisible="changeVisible" :clusterName="clusterName" :visible="dialogMetricVisible" />
     </div>
   </layout-content>
 </template>
@@ -160,8 +160,8 @@ export default {
       showMetric: true,
       hasMetric: "false",
       clusterInfo: {
-        allocatCpu: 0,
-        allocatMemory: 0,
+        allocatableCpu: 0,
+        allocatableMemory: 0,
         cpuPercent: 0,
         metricCpu: 0,
         metricMemory: 0,
@@ -180,7 +180,7 @@ export default {
     formatMemory(percentage) {
       return `${percentage}% \nMemory`
     },
-    changeVisble(val) {
+    changeVisible(val) {
       this.dialogMetricVisible = val
     },
     jumpTo(val) {
@@ -200,14 +200,14 @@ export default {
               value: res.items? res.items.length : 0
             }]
           }
-          this.clusterInfo.allocatCpu = 0
-          this.clusterInfo.allocatMemory = 0
+          this.clusterInfo.allocatableCpu = 0
+          this.clusterInfo.allocatableMemory = 0
           for(const n of res.items) {
             if (n.status?.allocatable?.cpu) {
-              this.clusterInfo.allocatCpu += cpuUnitConvert(n.status.allocatable.cpu)
+              this.clusterInfo.allocatableCpu += cpuUnitConvert(n.status.allocatable.cpu)
             }
             if (n.status?.allocatable?.memory) {
-              this.clusterInfo.allocatMemory += memoryUnitConvert(n.status.allocatable.memory)
+              this.clusterInfo.allocatableMemory += memoryUnitConvert(n.status.allocatable.memory)
             }
           }
           this.resources.push(nodes)
@@ -223,12 +223,12 @@ export default {
                 this.clusterInfo.metricMemory += memoryUnitConvert(n.usage.memory)
               }
             }
-            this.clusterInfo.allocatCpu = Number((this.clusterInfo.allocatCpu / 1000).toFixed(2))
-            this.clusterInfo.allocatMemory = Number((this.clusterInfo.allocatMemory / 1024).toFixed(2))
+            this.clusterInfo.allocatableCpu = Number((this.clusterInfo.allocatableCpu / 1000).toFixed(2))
+            this.clusterInfo.allocatableMemory = Number((this.clusterInfo.allocatableMemory / 1024).toFixed(2))
             this.clusterInfo.metricCpu = Number((this.clusterInfo.metricCpu / 1000).toFixed(2))
             this.clusterInfo.metricMemory = Number((this.clusterInfo.metricMemory / 1024).toFixed(2))
-            this.clusterInfo.cpuPercent = Math.round((this.clusterInfo.metricCpu / this.clusterInfo.allocatCpu).toFixed(2) * 100)
-            this.clusterInfo.memoryPercent = Math.round((this.clusterInfo.metricMemory / this.clusterInfo.allocatMemory).toFixed(2) * 100)
+            this.clusterInfo.cpuPercent = Math.round((this.clusterInfo.metricCpu / this.clusterInfo.allocatableCpu).toFixed(2) * 100)
+            this.clusterInfo.memoryPercent = Math.round((this.clusterInfo.metricMemory / this.clusterInfo.allocatableMemory).toFixed(2) * 100)
           }).catch(() => {
             this.hasMetric = "false"
           })

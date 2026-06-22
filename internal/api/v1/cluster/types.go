@@ -20,7 +20,7 @@ type Cluster struct {
 	CertDataStr          string           `json:"certDataStr"`
 	CaDataStr            string           `json:"caDataStr"`
 	ConfigFileContentStr string           `json:"configContentStr"`
-	Accessable           bool             `json:"accessable"`
+	Accessible           bool             `json:"accessable"`
 	MemberCount          int              `json:"memberCount"`
 	ExtraClusterInfo     ExtraClusterInfo `json:"extraClusterInfo"`
 }

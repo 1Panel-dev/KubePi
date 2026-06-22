@@ -62,7 +62,7 @@ export default {
   data() {
     return {
       loading: true,
-      statu_list: [
+      status_list: [
         { label: this.$t("business.workload.pause"), value: true },
         { label: this.$t("business.workload.resume"), value: false },
       ],

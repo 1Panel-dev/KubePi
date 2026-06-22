@@ -35,7 +35,7 @@
             <ko-form-item itemType="select" v-model="row.effect" :selections="effect_list" />
           </td>
           <td>
-            <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" :deviderName="$t('business.workload.seconds')" v-model.number="row.tolerationSeconds" />
+            <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" :dividerName="$t('business.workload.seconds')" v-model.number="row.tolerationSeconds" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">

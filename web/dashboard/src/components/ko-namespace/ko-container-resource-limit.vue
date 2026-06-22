@@ -4,24 +4,24 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="CPU Reservation" prop="requestsCpu">
-            <ko-form-item placeholder="e.g. 1000" clearable itemType="number" deviderName="mCPUs" v-model="form.requestsCpu" />
+            <ko-form-item placeholder="e.g. 1000" clearable itemType="number" dividerName="mCPUs" v-model="form.requestsCpu" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="Memory Reservation" prop="requestsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="Mi" v-model="form.requestsMemory" />
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="Mi" v-model="form.requestsMemory" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="CPU Limit" prop="limitsCpu">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="mCPUs" v-model="form.limitsCpu" />
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="mCPUs" v-model="form.limitsCpu" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="Memory Limit" prop="limitsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" deviderName="Mi" v-model="form.limitsMemory" />
+            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="Mi" v-model="form.limitsMemory" />
           </el-form-item>
         </el-col>
       </el-row>

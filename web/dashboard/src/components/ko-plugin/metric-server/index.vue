@@ -422,9 +422,9 @@ export default {
     },
     onCancel() {
       this.dialogMetricVisible = false
-      this.$emit("changeVisble", this.dialogMetricVisible)
+      this.$emit("changeVisible", this.dialogMetricVisible)
     },
-    loadDatas() {
+    loadData() {
       listServiceAccounts(this.clusterName, "kube-system").then((res) => {
         this.serviceAccountList = res.items
       })
@@ -493,7 +493,7 @@ export default {
         }
         item.label = item.label + "  [" + item.count + "]    ---" + (item.hasPermission ? this.$t("business.dashboard.has_permission") : this.$t("business.dashboard.has_not_permission"))
       }
-      this.loadDatas()
+      this.loadData()
     },
   },
   created() {

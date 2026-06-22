@@ -99,7 +99,7 @@
             </el-row>
             <el-tabs :key="isRefresh" style="background-color: #ffffff;" type="border-card" v-model="activeNameContainers">
               <el-tab-pane :label="$t('business.workload.general')" name="General">
-                <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContanerList="updateContainerList" :containerParentObj="currentContainer" :containerType="currentContainerType" :metadata="podMetadata" :repoList="repo_list" />
+                <ko-container :isReadOnly="readOnly" ref="ko_container" @updateContainerList="updateContainerList" :containerParentObj="currentContainer" :containerType="currentContainerType" :metadata="podMetadata" :repoList="repo_list" />
               </el-tab-pane>
 
               <el-tab-pane :label="$t('business.workload.command')" name="Command">

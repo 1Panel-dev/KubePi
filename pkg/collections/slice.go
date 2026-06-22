@@ -1,4 +1,4 @@
-package collectons
+package collections
 
 func IndexOfStringSlice(s []string, target string) int {
 	for i := range s {

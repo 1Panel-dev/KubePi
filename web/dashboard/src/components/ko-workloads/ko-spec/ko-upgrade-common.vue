@@ -20,16 +20,16 @@
           <el-form-item :label="$t('business.workload.max_surge')" prop="strategy.rollingUpdate.maxSurge">
             <el-input onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" v-model.number="form.strategy.rollingUpdate.maxSurge">
               <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxSurgeUnit">
-                <el-option v-for="(item, index) in devider_list" :key="index" :label="item.label" :value="item.value" />
+                <el-option v-for="(item, index) in divider_list" :key="index" :label="item.label" :value="item.value" />
               </el-select>
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="isDeployment() || isDaemonset()">
-          <el-form-item :label="$t('business.workload.max_unavaliable')" prop="strategy.rollingUpdate.maxUnavailable">
+          <el-form-item :label="$t('business.workload.max_unavailable')" prop="strategy.rollingUpdate.maxUnavailable">
             <el-input onKeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" clearable v-model.number="form.strategy.rollingUpdate.maxUnavailable">
               <el-select slot="append" style="width: 80px" v-model="form.strategy.rollingUpdate.maxUnavailableUnit">
-                <el-option v-for="(item, index) in devider_list" :key="index" :label="item.label" :value="item.value" />
+                <el-option v-for="(item, index) in divider_list" :key="index" :label="item.label" :value="item.value" />
               </el-select>
             </el-input>
           </el-form-item>
@@ -39,12 +39,12 @@
       <el-row :gutter="20">
         <el-col :span="12" v-if="isDeployment() || isDaemonset()">
           <el-form-item :label="$t('business.workload.min_ready_time')" prop="minReadySeconds">
-            <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.minReadySeconds" />
+            <ko-form-item :dividerName="$t('business.workload.seconds')" itemType="number" v-model.number="form.minReadySeconds" />
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="isDeployment()">
           <el-form-item :label="$t('business.workload.progress_deadline')" prop="progressDeadlineSeconds">
-            <ko-form-item :deviderName="$t('business.workload.seconds')" itemType="number" v-model.number="form.progressDeadlineSeconds" />
+            <ko-form-item :dividerName="$t('business.workload.seconds')" itemType="number" v-model.number="form.progressDeadlineSeconds" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -52,7 +52,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.revision_history_limit')" prop="revisionHistoryLimit">
-            <ko-form-item :deviderName="$t('business.workload.revision')" itemType="number" v-model.number="form.revisionHistoryLimit" />
+            <ko-form-item :dividerName="$t('business.workload.revision')" itemType="number" v-model.number="form.revisionHistoryLimit" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -84,7 +84,7 @@ export default {
         { label: "OrderedReady", value: "OrderedReady" },
         { label: "Parallel", value: "Parallel" },
       ],
-      devider_list: [
+      divider_list: [
         { label: "Pods", value: "" },
         { label: "%", value: "%" },
       ],

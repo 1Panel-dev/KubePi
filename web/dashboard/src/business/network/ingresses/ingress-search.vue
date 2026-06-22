@@ -53,9 +53,9 @@ export default {
             var map = {}
             var result = []
             lines.forEach(m => {
-                if (!map[m.targte + "-" + m.source]) {
+                if (!map[m.target + "-" + m.source]) {
                     result.push(m)
-                    map[m.targte + "-" + m.source] = true
+                    map[m.target + "-" + m.source] = true
                 }
             })
             return result

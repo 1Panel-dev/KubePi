@@ -55,14 +55,14 @@ func (h *Handler) GetChart() iris.Handler {
 func (h *Handler) ListRepo() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
-		entrys, err := h.chartService.SearchRepo(cluster, userAccessFromContext(ctx))
+		entries, err := h.chartService.SearchRepo(cluster, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
-		repos := make([]Repo, len(entrys))
-		for i, en := range entrys {
+		repos := make([]Repo, len(entries))
+		for i, en := range entries {
 			repos[i] = Repo{
 				Name: en.Name,
 				Url:  en.URL,
