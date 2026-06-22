@@ -2,7 +2,7 @@
   <layout-content :header="$t('business.dashboard.dashboard')">
     <el-row :gutter="24" class="row-box">
       <el-col :span="24">
-        <el-card v-if="cluster" class="el-card" shadow="always" style="background-color: #243441;height: 120px">
+        <el-card v-if="cluster" class="el-card" shadow="always" style="background-color: #f8fafc;height: 120px">
           <el-row :gutter="24">
             <el-col :span="8">
               <span class="title">{{ $t("commons.table.name") }}</span>
@@ -38,22 +38,23 @@
 
     <el-row :gutter="20" v-if="showMetric && hasMetric === 'true'">
       <el-col :span="12">
-        <el-card style="background-color: #212e38" class="n-card el-card">
+        <el-card style="background-color: #f8fafc" class="n-card el-card">
           <span>CPU(core) {{clusterInfo.metricCpu}} / {{clusterInfo.allocatCpu}}</span>
           <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.cpuPercent"></el-progress>
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card style="background-color: #212e38" class="n-card el-card">
+        <el-card style="background-color: #f8fafc" class="n-card el-card">
           <span>Memory(Gi) {{clusterInfo.metricMemory}} / {{clusterInfo.allocatMemory}}</span>
           <el-progress style="margin-top: 20px" :stroke-width="20" :percentage="clusterInfo.memoryPercent"></el-progress>
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="showMetric && hasMetric !== 'true'">
-      <el-alert type="info" :closable="false">
-        <el-button type="text" style="font-size: 15px" @click="dialogMetricVisible = true" icon="el-icon-warning">{{ $t("business.dashboard.metric_server_help") }}</el-button>
-      </el-alert> 
+    <el-row v-if="showMetric && hasMetric !== 'true'" class="metric-notice-row">
+      <button class="metric-notice" type="button" @click="dialogMetricVisible = true">
+        <i class="el-icon-info metric-notice__icon"></i>
+        <span class="metric-notice__text">{{ $t("business.dashboard.metric_server_help") }}</span>
+      </button>
     </el-row>
     <br>
 
@@ -328,20 +329,29 @@ export default {
         const ns =sessionStorage.getItem("namespace")
         if(!this.isFullTextSearch){
           listEventsWithNs(this.clusterName, ns, true, this.searchConfig.keywords, this.paginationConfig.currentPage, this.paginationConfig.pageSize).then(res => {
-          this.events = res.items
-          this.loading = false
-          this.paginationConfig.total = res.total
-         })
+            this.events = res.items
+            this.paginationConfig.total = res.total
+          }).catch(() => {
+            this.events = []
+            this.paginationConfig.total = 0
+          }).finally(() => {
+            this.loading = false
+          })
         } else {
           listEventsWithNs(this.clusterName, ns,false)
           .then((res) => {
             const results = searchFullTextItems(res.items,this.searchConfig.keywords);
             this.events =results.slice(this.paginationConfig.currentPage*this.paginationConfig.pageSize-this.paginationConfig.pageSize,this.paginationConfig.currentPage*this.paginationConfig.pageSize)
             this.paginationConfig.total = results.length
+          }).catch(() => {
+            this.events = []
+            this.paginationConfig.total = 0
           }).finally(() => {
             this.loading = false
           }) 
         }
+      } else {
+        this.loading = false
       }
     },
     getData(items, keys) {
@@ -450,25 +460,66 @@ export default {
   margin-top: 10px;
   width: 1px;
   height: 80px;
-  background: #3884c5;
+  background: #2563eb;
 }
 
 .title {
   margin-left: 10px;
-  color: #a1a9ae;
+  color: #64748b;
 }
 
 .d-card {
   height: 90px;
-  background-color: #1d3e4d;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   margin-top: 10px;
 }
 
 .n-card {
   height: 100px;
-  background-color: #1d3e4d;
+  background-color: #f8fafc;
   margin-top: 10px;
   border: none;
+}
+
+.metric-notice-row {
+  margin-top: 12px;
+}
+
+.metric-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  color: #2563eb;
+  text-align: left;
+  line-height: 20px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.metric-notice:hover,
+.metric-notice:focus {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  outline: none;
+}
+
+.metric-notice__icon {
+  flex: 0 0 auto;
+  font-size: 16px;
+}
+
+.metric-notice__text {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .card-content {
@@ -479,6 +530,6 @@ export default {
 }
 
 .card-content > span:first-child {
-  color: #a1a9ae;
+  color: #64748b;
 }
 </style>

@@ -7,7 +7,6 @@
 
 <script>
 import "codemirror/lib/codemirror.css"
-import "codemirror/theme/ayu-dark.css"
 import "codemirror/mode/javascript/javascript"
 
 export default {
@@ -26,7 +25,7 @@ export default {
       options: {
         value: "",
         mode: "application/json",
-        theme: "ayu-dark",
+        theme: "default",
         lineNumbers: true,
         tabSize: 2,
         readOnly: true,
@@ -63,6 +62,9 @@ export default {
     }
 
     .yaml-editor >>> .CodeMirror {
+        border: 1px solid var(--kp-border);
+        color: var(--kp-text);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
         height: auto;
         min-height: 300px;
     }

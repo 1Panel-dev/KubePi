@@ -119,7 +119,7 @@ func (h *Handler) DeleteRole() iris.Handler {
 		tx, _ := server.DB().Begin(true)
 		txOptions := common.DBOptions{DB: tx}
 		rbs, err := h.roleBindingService.GetRoleBindingsByRoleName(roleName, txOptions)
-		if err != nil && !errors.As(err, &storm.ErrNotFound) {
+		if err != nil && !errors.Is(err, storm.ErrNotFound) {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())

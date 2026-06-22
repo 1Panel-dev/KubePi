@@ -15,7 +15,6 @@ import (
 	"github.com/KubeOperator/kubepi/pkg/collectons"
 	v1 "k8s.io/api/authorization/v1"
 	certv1 "k8s.io/api/certificates/v1"
-	certv1beta1 "k8s.io/api/certificates/v1beta1"
 	rbacV1 "k8s.io/api/rbac/v1"
 	apiextensionv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
@@ -389,110 +388,51 @@ func (k *Kubernetes) CreateCommonUser(commonName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	v, err := client.ServerVersion()
+	csr := certv1.CertificateSigningRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: fmt.Sprintf("%s-%s-%d", commonName, "kubepi", time.Now().Unix()),
+		},
+		Spec: certv1.CertificateSigningRequestSpec{
+			SignerName: "kubernetes.io/kube-apiserver-client",
+			Request:    cert,
+			Groups: []string{
+				"system:authenticated",
+			},
+			Usages: []certv1.KeyUsage{
+				"client auth",
+			},
+		},
+	}
+	createResp, err := client.CertificatesV1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
 	if err != nil {
 		return nil, err
 	}
-	reg := regexp.MustCompile("[^0-9]")
-	minor, err := strconv.Atoi(reg.ReplaceAllString(v.Minor, ""))
+	// 审批证书
+	createResp.Status.Conditions = append(createResp.Status.Conditions, certv1.CertificateSigningRequestCondition{
+		Reason:         "Approved by KubePi",
+		Type:           certv1.CertificateApproved,
+		LastUpdateTime: metav1.Now(),
+		Status:         "True",
+	})
+
+	updateResp, err := client.CertificatesV1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp.Name, createResp, metav1.UpdateOptions{})
 	if err != nil {
 		return nil, err
 	}
 	var data []byte
-	if minor > 18 {
-		csr := certv1.CertificateSigningRequest{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("%s-%s-%d", commonName, "kubepi", time.Now().Unix()),
-			},
-			Spec: certv1.CertificateSigningRequestSpec{
-				SignerName: "kubernetes.io/kube-apiserver-client",
-				Request:    cert,
-				Groups: []string{
-					"system:authenticated",
-				},
-				Usages: []certv1.KeyUsage{
-					"client auth",
-				},
-			},
-		}
-		createResp, err := client.CertificatesV1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
+	for i := 0; i < 30; i++ {
+		time.Sleep(1 * time.Second)
+		getResp, err := client.CertificatesV1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
 		if err != nil {
 			return nil, err
 		}
-		// 审批证书
-		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1.CertificateSigningRequestCondition{
-			Reason:         "Approved by KubePi",
-			Type:           certv1.CertificateApproved,
-			LastUpdateTime: metav1.Now(),
-			Status:         "True",
-		})
-
-		updateResp, err := client.CertificatesV1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp.Name, createResp, metav1.UpdateOptions{})
-		if err != nil {
-			return nil, err
+		if getResp.Status.Certificate != nil {
+			data = getResp.Status.Certificate
+			break
 		}
-		for i := 0; i < 30; i++ {
-			time.Sleep(1 * time.Second)
-			getResp, err := client.CertificatesV1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
-			if err != nil {
-				return nil, err
-			}
-			if getResp.Status.Certificate != nil {
-				data = getResp.Status.Certificate
-				break
-			}
-		}
-		if data == nil {
-			return nil, errors.New("csr approve time out ,30 sec")
-		}
-	} else {
-		name := "kubernetes.io/kube-apiserver-client"
-		csr := certv1beta1.CertificateSigningRequest{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: fmt.Sprintf("%s-%s-%d", commonName, "kubepi", time.Now().Unix()),
-			},
-			Spec: certv1beta1.CertificateSigningRequestSpec{
-				SignerName: &name,
-				Request:    cert,
-				Groups: []string{
-					"system:authenticated",
-				},
-				Usages: []certv1beta1.KeyUsage{
-					"client auth",
-				},
-			},
-		}
-		createResp, err := client.CertificatesV1beta1().CertificateSigningRequests().Create(context.TODO(), &csr, metav1.CreateOptions{})
-		if err != nil {
-			return nil, err
-		}
-		// 审批证书
-		createResp.Status.Conditions = append(createResp.Status.Conditions, certv1beta1.CertificateSigningRequestCondition{
-			Reason:         "Approved by KubePi",
-			Type:           certv1beta1.CertificateApproved,
-			LastUpdateTime: metav1.Now(),
-			Status:         "True",
-		})
-
-		updateResp, err := client.CertificatesV1beta1().CertificateSigningRequests().UpdateApproval(context.TODO(), createResp, metav1.UpdateOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		for i := 0; i < 10; i++ {
-			time.Sleep(1 * time.Second)
-			getResp, err := client.CertificatesV1beta1().CertificateSigningRequests().Get(context.TODO(), updateResp.Name, metav1.GetOptions{})
-			if err != nil {
-				return nil, err
-			}
-			if getResp.Status.Certificate != nil {
-				data = getResp.Status.Certificate
-				break
-			}
-		}
-		if data == nil {
-			return nil, errors.New("csr approve time out")
-		}
+	}
+	if data == nil {
+		return nil, errors.New("csr approve time out ,30 sec")
 	}
 
 	return data, nil

@@ -1,6 +1,6 @@
 <template>
   <layout-content>
-    <div style="float: left; margin-bottom: 20px">
+    <div class="cluster-action-bar">
       <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.create") }}</el-button>
       <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
@@ -45,8 +45,8 @@
 
         <el-form-item :label="$t('business.cluster.rule')">
           <el-button @click="onRuleCreate"><i class="el-icon-plus "></i></el-button>
-          <table border="1" cellspacing="0" style="width: 80%">
-            <thead style="background-color: #1d3e4d">
+          <table class="cluster-rule-table" border="1" cellspacing="0">
+            <thead>
               <tr>
                 <th style="width: 30%">{{ $t('business.cluster.api_group') }}</th>
                 <th style="width: 30%">{{ $t('business.cluster.resource') }}</th>
@@ -102,8 +102,8 @@
         </el-form-item>
 
         <el-form-item :label="$t('business.cluster.rule')">
-          <table border="1" cellspacing="0" style="width: 80%">
-            <thead style="background-color: #1d3e4d">
+          <table class="cluster-rule-table" border="1" cellspacing="0">
+            <thead>
               <tr>
                 <th style="width: 30%">{{ $t('business.cluster.api_group') }}</th>
                 <th style="width: 30%">{{ $t('business.cluster.resource') }}</th>

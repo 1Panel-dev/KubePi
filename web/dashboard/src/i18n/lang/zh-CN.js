@@ -92,6 +92,10 @@ const message = {
       quickSearch: "搜索",
       fullTextSearch: "全文搜索",
     },
+    auto_refresh: {
+      manual: "手动刷新",
+      seconds: "{0}秒自动刷新",
+    },
     form: {
       name: "名称",
       detail: "详情",
@@ -119,6 +123,7 @@ const message = {
       create_failed: "创建失败",
       sync_success: "同步成功",
       upload_success: "上传成功",
+      cluster_api_error: "集群接口异常，请检查集群状态或连接配置",
     },
     confirm_message: {
       delete: "此操作不可撤销, 是否继续?",

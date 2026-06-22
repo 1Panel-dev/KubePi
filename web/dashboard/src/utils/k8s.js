@@ -15,7 +15,7 @@ export function getK8sObject(kind, namespace, version) {
     case "jobs":
       return jobObj(namespace);
     case "cronjobs":
-      return cronjobObj(namespace);
+      return cronjobObj(namespace, version);
     case "endpoints":
       return endPointObj(namespace);
     case "ingresses":
@@ -31,9 +31,9 @@ export function getK8sObject(kind, namespace, version) {
     case "limitranges":
       return limitRangesObj(namespace);
     case "horizontalpodautoscalers":
-      return hpaObj(namespace);
+      return hpaObj(namespace, version);
     case "poddisruptionbudgets":
-      return pdbObj(namespace);
+      return pdbObj(namespace, version);
     case "persistentvolumeclaims":
       return pvcObj(namespace);
     case "persistentvolumes":
@@ -52,7 +52,7 @@ export function getK8sObject(kind, namespace, version) {
       return clusterRoleBindingObj;
     case "podsecuritypolicies":
       return pspObj;
-case "mutatingwebhookconfigurations":
+    case "mutatingwebhookconfigurations":
       return mutatingwebhookconfigurationsObj;
     case "validatingwebhookconfigurations":
       return validatingwebhookconfigurationsObj;
@@ -60,6 +60,13 @@ case "mutatingwebhookconfigurations":
       return {};
   }
 }
+
+export const getK8sMinorVersion = (version) => {
+  const matched = `${version || ""}`.match(/^v?1\.(\d+)/);
+  return matched ? Number(matched[1]) : Number.MAX_SAFE_INTEGER;
+};
+
+export const useLegacyApi = (version, maxMinor) => getK8sMinorVersion(version) <= maxMinor;
 
 const namespaceObj = {
   apiVersion: "v1",
@@ -142,9 +149,9 @@ const deploymentObj = (namespace) => {
   };
 };
 
-const cronjobObj = (namespace) => {
+const cronjobObj = (namespace, version) => {
   return {
-    apiVersion: "batch/v1beta1",
+    apiVersion: useLegacyApi(version, 20) ? "batch/v1beta1" : "batch/v1",
     kind: "CronJob",
     metadata: {
       name: "hello",
@@ -395,12 +402,9 @@ const endPointObj = (namespace) => {
 };
 
 const ingressObj = (namespace, version) => {
-  let apiVersion =
-    version.indexOf("v1.20.") !== -1
-      ? "networking.k8s.io/v1"
-      : "networking.k8s.io/v1beta1";
+  const legacyApi = useLegacyApi(version, 18);
   return {
-    apiVersion: apiVersion,
+    apiVersion: legacyApi ? "networking.k8s.io/v1beta1" : "networking.k8s.io/v1",
     kind: "Ingress",
     metadata: {
       name: "minimal-ingress",
@@ -416,8 +420,11 @@ const ingressObj = (namespace, version) => {
             paths: [
               {
                 path: "/testpath",
-                pathType: "Prefix",
-                backend: {
+                ...(legacyApi ? {} : { pathType: "Prefix" }),
+                backend: legacyApi ? {
+                  serviceName: "test",
+                  servicePort: 80,
+                } : {
                   service: {
                     name: "test",
                     port: {
@@ -588,9 +595,9 @@ const limitRangesObj = (namespace) => {
   };
 };
 
-const hpaObj = (namespace) => {
+const hpaObj = (namespace, version) => {
   return {
-    apiVersion: "autoscaling/v2",
+    apiVersion: useLegacyApi(version, 22) ? "autoscaling/v2beta2" : "autoscaling/v2",
     kind: "HorizontalPodAutoscaler",
     metadata: {
       name: "php-apache",
@@ -620,9 +627,9 @@ const hpaObj = (namespace) => {
   };
 };
 
-const pdbObj = (namespace) => {
+const pdbObj = (namespace, version) => {
   return {
-    apiVersion: "policy/v1beta1",
+    apiVersion: useLegacyApi(version, 20) ? "policy/v1beta1" : "policy/v1",
     kind: "PodDisruptionBudget",
     metadata: {
       name: "zk-pdb",

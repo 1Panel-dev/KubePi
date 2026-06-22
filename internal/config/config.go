@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/KubeOperator/kubepi/internal/model/v1/config"
 	"github.com/KubeOperator/kubepi/pkg/file"
-	"github.com/coreos/etcd/pkg/fileutil"
 	"github.com/spf13/viper"
 	"math/big"
 	"strconv"
@@ -25,23 +27,36 @@ func ReadConfig(c *config.Config, path ...string) error {
 	v.SetConfigName("app")
 	v.SetConfigType("yaml")
 
-	configFilePaths = append(configFilePaths, path...)
-	for i := range configFilePaths {
-		realDir := file.ReplaceHomeDir(configFilePaths[i])
+	paths := append([]string{}, configFilePaths...)
+	paths = append(paths, path...)
+	var loadedConfigFile string
+	for i := range paths {
+		realDir := file.ReplaceHomeDir(paths[i])
 
-		if exists := fileutil.Exist(realDir); !exists {
+		if _, err := os.Stat(realDir); os.IsNotExist(err) {
+			fmt.Println(fmt.Sprintf(configNotFoundSkipErr, realDir))
+			continue
+		} else if err != nil {
+			fmt.Println(fmt.Sprintf(configReadErr, realDir, err.Error()))
+			continue
+		}
+
+		configFile, ok, err := resolveConfigFile(realDir)
+		if err != nil {
+			fmt.Println(fmt.Sprintf(configReadErr, realDir, err.Error()))
+			continue
+		}
+		if !ok {
 			fmt.Println(fmt.Sprintf(configNotFoundSkipErr, realDir))
 			continue
 		}
 
-		v.AddConfigPath(realDir)
-		if err := v.ReadInConfig(); err != nil {
-			fmt.Println(fmt.Sprintf(configReadErr, realDir, err.Error()))
+		v.SetConfigFile(configFile)
+		if err := v.MergeInConfig(); err != nil {
+			fmt.Println(fmt.Sprintf(configMergeErr, paths))
 			continue
 		}
-		if err := v.MergeInConfig(); err != nil {
-			fmt.Println(fmt.Sprintf(configMergeErr, configFilePaths))
-		}
+		loadedConfigFile = configFile
 
 	}
 
@@ -58,12 +73,35 @@ func ReadConfig(c *config.Config, path ...string) error {
 	}
 	if c.Spec.Jwt.Key == "" {
 		c.Spec.Jwt.Key = generate(32)
-		v.Set("spec.jwt.key", c.Spec.Jwt.Key)
-		if err := v.WriteConfig(); err != nil {
-			return err
+		if loadedConfigFile != "" {
+			v.Set("spec.jwt.key", c.Spec.Jwt.Key)
+			v.SetConfigFile(loadedConfigFile)
+			if err := v.WriteConfig(); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
+}
+
+func resolveConfigFile(path string) (string, bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return "", false, err
+	}
+	if !info.IsDir() {
+		return path, true, nil
+	}
+
+	for _, name := range []string{"app.yml", "app.yaml"} {
+		configFile := filepath.Join(path, name)
+		if _, err := os.Stat(configFile); err == nil {
+			return configFile, true, nil
+		} else if !os.IsNotExist(err) {
+			return "", false, err
+		}
+	}
+	return "", false, nil
 }
 
 func generate(length int) string {

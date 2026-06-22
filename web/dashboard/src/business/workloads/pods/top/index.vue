@@ -1,13 +1,52 @@
 <template>
   <div>
     <layout-content header="Top Pod">
-      <el-alert v-if="showText" :title="$t('business.pod.metric_server_tip')" type="warning" />
-      <br>
-      <el-button style="margin-left: 20px" :disabled="namespaceDisabled" icon="el-icon-sort-down" type="text" @click="sortBy('namespace')">{{ $t('business.namespace.namespace') }} / {{ $t('business.workload.name') }}</el-button>
-      <el-button icon="el-icon-sort-down" :disabled="cpuDisabled" type="text" @click="sortBy('cpu')">CPU</el-button>
-      <el-button icon="el-icon-sort-down" :disabled="memoryDisabled" type="text" @click="sortBy('memory')">{{ $t('business.workload.memory') }}</el-button>
-
-      <el-button icon="el-icon-refresh" type="text" @click="listPodMetric">{{ $t('commons.button.refresh') }}</el-button>
+      <el-alert
+        v-if="showText"
+        class="top-pod-alert"
+        :title="$t('business.pod.metric_server_tip')"
+        type="warning"
+      />
+      <div class="top-pod-sort-toolbar">
+        <el-button
+          class="top-pod-sort-button"
+          :class="{'is-active': namespaceDisabled}"
+          size="mini"
+          :disabled="namespaceDisabled"
+          icon="el-icon-sort-down"
+          @click="sortBy('namespace')"
+        >
+          {{ $t('business.namespace.namespace') }} / {{ $t('business.workload.name') }}
+        </el-button>
+        <el-button
+          class="top-pod-sort-button"
+          :class="{'is-active': cpuDisabled}"
+          size="mini"
+          :disabled="cpuDisabled"
+          icon="el-icon-sort-down"
+          @click="sortBy('cpu')"
+        >
+          CPU
+        </el-button>
+        <el-button
+          class="top-pod-sort-button"
+          :class="{'is-active': memoryDisabled}"
+          size="mini"
+          :disabled="memoryDisabled"
+          icon="el-icon-sort-down"
+          @click="sortBy('memory')"
+        >
+          {{ $t('business.workload.memory') }}
+        </el-button>
+        <el-button
+          class="top-pod-refresh-button"
+          size="mini"
+          icon="el-icon-refresh"
+          @click="listPodMetric"
+        >
+          {{ $t('commons.button.refresh') }}
+        </el-button>
+      </div>
 
       <complex-table :data="data" v-loading="loading">
         <el-table-column :label="$t('business.namespace.namespace')" prop="metadata.namespace" min-width="60" show-overflow-tooltip fix>
@@ -171,3 +210,45 @@ export default {
 }
 </script>
 
+<style scoped>
+.top-pod-sort-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+
+.top-pod-sort-toolbar .el-button + .el-button {
+  margin-left: 0;
+}
+
+.top-pod-sort-button.el-button,
+.top-pod-refresh-button.el-button {
+  padding: 7px 10px;
+  color: var(--kp-text-secondary);
+  background-color: var(--kp-surface);
+  border-color: var(--kp-border);
+  box-shadow: none;
+}
+
+.top-pod-sort-button.el-button:hover,
+.top-pod-sort-button.el-button:focus,
+.top-pod-refresh-button.el-button:hover,
+.top-pod-refresh-button.el-button:focus {
+  color: var(--kp-primary);
+  background-color: var(--kp-primary-soft);
+  border-color: #bfdbfe;
+}
+
+.top-pod-sort-button.el-button.is-active,
+.top-pod-sort-button.el-button.is-disabled.is-active,
+.top-pod-sort-button.el-button.is-disabled.is-active:hover,
+.top-pod-sort-button.el-button.is-disabled.is-active:focus {
+  color: var(--kp-primary);
+  background-color: var(--kp-primary-soft);
+  border-color: #bfdbfe;
+  opacity: 1;
+  cursor: default;
+}
+</style>

@@ -1,1 +1,53 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --kp-primary: #2563eb;
+  --kp-primary-hover: #1d4ed8;
+  --kp-bg: #f4f7fb;
+  --kp-surface: #ffffff;
+  --kp-text: #1f2937;
+  --kp-text-secondary: #475569;
+  --kp-border: #dbe4f0;
+  --kp-terminal-bg: #0f172a;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  color: var(--kp-text);
+  background: var(--kp-bg);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  color: var(--kp-primary);
+}
+
+a:hover {
+  color: var(--kp-primary-hover);
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
+}
+
+.xterm-anchor {
+  background: var(--kp-terminal-bg);
+}
+
+.xterm {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}

@@ -16,7 +16,7 @@
                               name: d.metadata.name
                            }">
                   <span style="float: left">{{ d.metadata.name }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ deploymentItem.kind }}</span>
+                  <span style="float: right; color: var(--kp-text-muted); font-size: 13px">{{ deploymentItem.kind }}</span>
                 </el-option>
                 <el-option v-for="d in replicaSetItem.items"
                            :key="d.metadata.name"
@@ -27,7 +27,7 @@
                               name: d.metadata.name
                            }">
                   <span style="float: left">{{ d.metadata.name }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ replicaSetItem.kind }}</span>
+                  <span style="float: right; color: var(--kp-text-muted); font-size: 13px">{{ replicaSetItem.kind }}</span>
                 </el-option>
               </el-select>
             </el-form-item>

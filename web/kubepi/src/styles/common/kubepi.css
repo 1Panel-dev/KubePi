@@ -1,10 +1,10 @@
 .el-loading-mask {
-    background: rgba(0, 0, 0, 0.8)
+    background: rgba(248, 250, 252, 0.78)
 }
 
 .el-drawer__header {
     color: #FFFFFF;
-    background-color: #3884c5;
+    background-color: #2563eb;
     padding-bottom: 20px;
 }
 
@@ -18,7 +18,7 @@
     width: 50%;
     padding: 8px;
     height: 23px;
-    border-bottom: 1px solid #383c42;
+    border-bottom: 1px solid #dbe4f0;
     word-wrap: break-word;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .myTable tr:hover {
-    background-color: #2b2f33;
+    background-color: #f8fbff;
 }
 
 .myTable tr:first-child:hover {
@@ -40,7 +40,7 @@
 }
 
 .myTable tr td:nth-child(even) {
-    color: #85888e;
+    color: #64748b;
 }
 
 
@@ -50,7 +50,7 @@
 }
 
 .el-progress-circle__track {
-    stroke: #414248;
+    stroke: #e2e8f0;
 }
 
 .dTable {
@@ -81,7 +81,7 @@
 }
 
 .dTable tr:nth-child(odd) td {
-    color: #85888e;
+    color: #64748b;
 }
 
 .card_title {
@@ -106,7 +106,7 @@
     border: 0;
     height: 25px;
     font-size: 15px;
-    color: #868690;
+    color: #475569;
     padding: 5px;
 }
 
@@ -115,7 +115,7 @@
 }
 
 .tab-table tr:nth-child(odd) td {
-    color: #85888e;
+    color: #64748b;
 }
 
 .tab-content {
@@ -149,4 +149,3 @@
 .yaml-button {
     margin-left: 20px;
 }
-

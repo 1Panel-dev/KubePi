@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/docker/distribution/reference"
+	"github.com/distribution/reference"
 	"github.com/docker/distribution/registry/client"
 )
 

@@ -18,9 +18,9 @@ import (
 	_ "k8s.io/api/rbac/v1"
 )
 
-//go:generate swag init
+//go:generate sh -c "cd ../.. && go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g cmd/server/main.go -o cmd/server/docs --parseDependency --parseInternal --parseDepth 2"
 
-//swag init -g "cmd/server/main.go" -o "cmd/server/docs" --parseDependency --parseInternal --parseDepth 2
+//go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g "cmd/server/main.go" -o "cmd/server/docs" --parseDependency --parseInternal --parseDepth 2
 
 var (
 	configPath     string

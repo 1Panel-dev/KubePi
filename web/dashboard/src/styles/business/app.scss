@@ -1,17 +1,19 @@
-@import "~@/assets/font/Roboto/index.css";
-
 html {
   height: 100%;
   box-sizing: border-box;
 }
 
 body {
-  font-family: Roboto, Helvetica, PingFang SC, Arial, sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   height: 100%;
+  color: #1f2937;
+  background: #f4f7fb;
 }
 
 #app {
@@ -43,7 +45,7 @@ a:hover {
 // 滑块
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: #4A4B4D;
+  background-color: #cbd5e1;
 }
 
 // icon图标属性
@@ -77,27 +79,39 @@ a:hover {
 }
 
 .ko-dialog {
-  font-size: 12px;
+  color: var(--kp-text-secondary);
+  font-size: 13px;
   font-weight: 400;
-  line-height: 25px;
+  line-height: 1.6;
+  .el-dialog {
+    overflow: hidden;
+    background-color: var(--kp-surface);
+    border: 1px solid var(--kp-border);
+    border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+  }
   .el-dialog__header {
     padding: 0;
   }
   .el-dialog__body {
     padding: 0;
+    color: var(--kp-text-secondary);
+    background-color: var(--kp-surface);
   }
   .el-link.el-link--default {
-    color: unset;
+    color: var(--kp-primary);
+  }
+  .el-link.el-link--default:hover {
+    color: var(--kp-primary-hover);
   }
   .iconfont {
     font-size: 14px;
   }
   .iconStarStar:before {
-    color: #FDBF16;
+    color: #f59e0b;
   }
   .aboutBackground {
-    background: url("~@/assets/about-background.jpg") no-repeat;
-    background-size: cover;
+    background-color: var(--kp-surface);
   }
   .el-link--inner {
     padding-left: 5px;
@@ -105,17 +119,17 @@ a:hover {
 }
 
 .el-input.is-disabled .el-input__inner {
-  background-color: #31353a;
-  color: white;
+  background-color: #f1f5f9;
+  color: #94a3b8;
 }
 .el-textarea.is-disabled .el-textarea__inner {
-  background-color: #31353a;
-  border-color: #909399;
-  color: white;
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 .el-radio__input.is-disabled + span.el-radio__label {
-  color: white;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 .el-radio-button__inner {
@@ -156,20 +170,20 @@ a:hover {
   width: 39%;
   text-align: center;
   font-size: 14px;
-  color: #ebeef5;
-  background-color: #19191c;
+  color: #1f2937;
+  background-color: #ffffff;
 }
 .el-picker-panel {
-  color: #338ccd;
-  border: 1px solid #909399;
-  background: #1a1a1e;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
   border-radius: 4px;
   line-height: 30px;
   margin: 5px 0;
 }
 
 .span-link {
-  color: #338ccd;
+  color: #2563eb;
   font-size: 14px;
   font-weight: 500;
   margin: 2px;
@@ -177,6 +191,6 @@ a:hover {
 }
 .span-link:hover {
   padding-bottom:3px;
-  color: rgb(255, 255, 255);
+  color: #1d4ed8;
   border-bottom:1px solid;
 }

@@ -1,4 +1,4 @@
-FROM node:18.10.0-alpine as stage-web-build
+FROM node:22-alpine as stage-web-build
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache make
 ARG NPM_REGISTRY="https://registry.npmmirror.com"
@@ -16,7 +16,7 @@ RUN make build_web
 
 RUN rm -fr web
 
-FROM golang:1.22 as stage-bin-build
+FROM golang:1.26.4 as stage-bin-build
 
 ENV GOPROXY="https://goproxy.cn,direct"
 
@@ -35,7 +35,7 @@ RUN go mod download
 RUN make build_gotty
 RUN make build_bin
 
-FROM alpine:3.16
+FROM alpine:3.22
 
 WORKDIR /
 
@@ -46,7 +46,8 @@ RUN ARCH=$(uname -m) \
     && echo "ARCH: " $ARCH \
     && apk add --update --no-cache bash bash-completion curl wget openssl iputils busybox-extras vim tini \
     && sed -i "s/nobody:\//nobody:\/nonexistent/g" /etc/passwd \
-    && curl -sLf https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kubectl/v1.22.1/${ARCH}/kubectl > /usr/bin/kubectl \
+    && KUBECTL_VERSION=v1.36.2 \
+    && curl -sLf https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl > /usr/bin/kubectl \
     && chmod +x /usr/bin/kubectl \
     && cd /opt/ \
     && wget https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/kubectl-aliases/kubectl-aliases.tar.gz \
@@ -73,8 +74,8 @@ RUN ARCH=$(uname -m) \
     && tar -xvf kubectx_${KUBECTX_VERSION}_linux_${ARCH}.tar.gz \
     && chmod +x kubectx \
     && mv kubectx /usr/bin \
-    && HELM_VERSION=v3.10.2 \
-    && wget http://kubeoperator.oss-cn-beijing.aliyuncs.com/helm/${HELM_VERSION}/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
+    && HELM_VERSION=v3.21.1 \
+    && wget https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
     && tar -xvf helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
     && mv linux-${ARCH}/helm /usr/local/bin \
     && chmod +x /usr/local/bin/helm \

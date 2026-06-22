@@ -13,7 +13,7 @@
                       <el-option v-for="(vs,index) in versions"
                                  :label="vs.version" :key="index" :value="vs.version">
                         <span style="float: left">{{ vs.version }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">AppVersion:{{ vs.appVersion }}</span>
+                        <span style="float: right; color: var(--kp-text-muted); font-size: 13px">AppVersion:{{ vs.appVersion }}</span>
                         <span style="float: right;" v-if="vs.version === oldChart.metadata.version">(current)</span>
                       </el-option>
                     </el-select>

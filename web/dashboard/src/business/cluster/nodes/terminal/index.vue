@@ -1,8 +1,8 @@
 <template>
-  <div style="background-color: #1f2224" >
+  <div class="terminal-page">
     <el-row>
       <div style="float: right;margin-top: 15px;margin-bottom: 5px;margin-right: 30px">
-        <span style="font-size: 20px; color: white">node path / is mounted to shell /host</span>
+        <span class="terminal-title">node path / is mounted to shell /host</span>
       </div>
 
     </el-row>
@@ -64,6 +64,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.terminal-page {
+  background-color: var(--kp-terminal-bg);
+}
+
+.terminal-title {
+  color: #e2e8f0;
+  font-size: 20px;
+}
+
 .terminalOption {
   float: left;
   margin-left: 5px;
@@ -72,7 +81,7 @@ export default {
 }
 .spanClass {
   margin-left: 20px;
-  color: white;
+  color: #e2e8f0;
 }
 .interval {
   margin-left: 10px;

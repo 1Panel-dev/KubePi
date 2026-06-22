@@ -59,9 +59,9 @@ export default {
           
 <style>
 .el-pagination-button {
-    color: #61616a;
-    background-color: #1a1a1e;
-    border: none;
+    color: #475569;
+    background-color: #ffffff;
+    border: 1px solid #dbe4f0;
     padding: 0 6px;
 
     display: inline-block;
@@ -75,11 +75,13 @@ export default {
 
 .el-pager-li {
     padding: 0 4px;
-    background: #1a1a1e;
+    background: #ffffff;
     font-size: 13px;
     min-width: 35.5px;
     height: 28px;
     line-height: 28px;
     box-sizing: border-box;
+    color: #2563eb;
+    border: 1px solid #dbe4f0;
 }
 </style>

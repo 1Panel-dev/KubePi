@@ -19,7 +19,7 @@
     "@angular/platform-browser-dynamic": "~16.2.11",
     "@angular/router": "~16.2.11",
     "@types/lodash": "^4.14.170",
-    "loadsh": "0.0.4",
+    "lodash": "^4.18.1",
     "rxjs": "~6.6.0",
     "sockjs-client": "^1.6.1",
     "tslib": "^2.1.0",

@@ -1,7 +1,7 @@
 <template>
-    <span style="color: white;margin-left: 20px">
+    <span class="auto-refresh">
         <el-select v-model="autorefresh"  @change="changeAutorefresh">
-                  <el-option v-for="(vs,index) in autorefreshs" :key="vs.value"
+                  <el-option v-for="vs in autorefreshs" :key="vs.value"
                              :label="vs.label"
                              :value="vs.value"
                   ></el-option>
@@ -18,11 +18,15 @@ export default {
   data () {
     return {
       autorefresh: '-1',
-      autorefreshs:[
-        {value:'-1',label:"手动刷新"},
-        {value:'5',label:"5秒自动刷新"},
-        {value:'10',label:"10秒自动刷新"},
-        {value:'30',label:"30秒自动刷新"},
+    }
+  },
+  computed: {
+    autorefreshs () {
+      return [
+        {value: '-1', label: this.$t("commons.auto_refresh.manual")},
+        {value: '5', label: this.$t("commons.auto_refresh.seconds", [5])},
+        {value: '10', label: this.$t("commons.auto_refresh.seconds", [10])},
+        {value: '30', label: this.$t("commons.auto_refresh.seconds", [30])},
       ]
     }
   },
@@ -46,6 +50,8 @@ export default {
 </script>
 
 <style scoped>
-
+.auto-refresh {
+  color: var(--kp-text-secondary);
+  margin-left: 20px;
+}
 </style>
-

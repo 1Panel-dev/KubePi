@@ -25,6 +25,15 @@ docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 
 使用手册请参考: [https://github.com/1Panel-dev/KubePi/wiki](https://github.com/1Panel-dev/KubePi/wiki)。
 
+## 版本兼容性
+
+KubePi v2.0.0 使用 Go 1.26 和 Kubernetes client-go v0.36 构建。
+
+- 最低支持 Kubernetes 版本：v1.24。
+- 推荐 Kubernetes 版本：v1.34 - v1.36。
+- Kubernetes v1.23 及更早版本不再作为 v2.0.0 的支持范围。
+- PodSecurityPolicy 已在 Kubernetes v1.25 移除，KubePi 仅在目标集群仍提供 `policy/v1beta1` API 时展示相关入口。
+
 ## UI 展示
 
 ![UI展示](https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/02-dashboard.png)
@@ -32,11 +41,12 @@ docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
 ## 飞致云的其他明星项目
 
 - [1Panel](https://github.com/1panel-dev/1panel/) - 现代化、开源的 Linux 服务器运维管理面板
+- [Cordys CRM](https://github.com/1Panel-dev/CordysCRM) - 新一代的开源 AI CRM 系统
 - [JumpServer](https://github.com/jumpserver/jumpserver/) - 广受欢迎的开源堡垒机
+- [MaxKB](https://github.com/1Panel-dev/MaxKB/) - 基于 LLM 大语言模型的开源知识库问答系统
 - [DataEase](https://github.com/dataease/dataease/) - 人人可用的开源数据可视化分析工具
 - [MeterSphere](https://github.com/metersphere/metersphere/) - 开源持续测试工具
 - [Halo](https://github.com/halo-dev/halo/) - 强大易用的开源建站工具
-- [MaxKB](https://github.com/1Panel-dev/MaxKB/) - 基于 LLM 大语言模型的开源知识库问答系统
 
 ## License
 

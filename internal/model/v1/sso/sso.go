@@ -2,8 +2,9 @@ package sso
 
 import (
 	"context"
+
 	v1 "github.com/KubeOperator/kubepi/internal/model/v1"
-	"github.com/coreos/go-oidc"
+	oidc "github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 )
 

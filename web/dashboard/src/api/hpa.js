@@ -1,10 +1,10 @@
 import {del, get, put, post,} from "@/plugins/request"
 
 const hpaUrl = (cluster_name) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2beta2/horizontalpodautoscalers`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2/horizontalpodautoscalers`
 }
 const namespaceHpaUrl = (cluster_name, namespace) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2beta2/namespaces/${namespace}/horizontalpodautoscalers`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/autoscaling/v2/namespaces/${namespace}/horizontalpodautoscalers`
 }
 
 export function listHpas (cluster_name, search, keywords, pageNum, pageSize) {

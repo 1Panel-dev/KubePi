@@ -226,7 +226,7 @@ export default {
   }
 
   .login-background {
-    background-color: #FFFFFF;
+    background-color: var(--kp-bg);
     height: 100%;
     @include login-center;
   }
@@ -235,8 +235,8 @@ export default {
     min-width: 640px;
     width: 960px;
     height: 480px;
-    background-color: #FFFFFF;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+    background-color: var(--kp-surface);
+    box-shadow: var(--kp-shadow);
     @media only screen and (max-width: 1280px) {
       width: 900px;
       height: 380px;
@@ -259,7 +259,7 @@ export default {
       font-size: 32px;
       letter-spacing: 0;
       text-align: center;
-      color: #999999;
+      color: var(--kp-text);
 
       @media only screen and (max-width: 1280px) {
         margin-top: 20px;
@@ -280,7 +280,7 @@ export default {
     .login-welcome {
       margin-top: 10px;
       font-size: 14px;
-      color: #999999;
+      color: var(--kp-text-muted);
       letter-spacing: 0;
       line-height: 18px;
       text-align: center;
@@ -349,8 +349,8 @@ export default {
   }
 
   .login ::v-deep input {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
+    background-color: var(--kp-surface) !important;
+    color: var(--kp-text) !important;
 
   }
 </style>

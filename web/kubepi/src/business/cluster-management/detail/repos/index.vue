@@ -1,6 +1,6 @@
 <template>
   <layout-content>
-    <div style="float: left; margin-bottom: 20px">
+    <div class="cluster-action-bar">
       <el-button type="primary" size="small" @click="onCreate">{{ $t("commons.button.add") }}</el-button>
       <el-button :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
     </div>
@@ -20,11 +20,11 @@
       <fu-table-operations :buttons="buttons" :label="$t('commons.table.action')" fix/>
     </complex-table>
     <el-dialog :visible.sync="formDialogOpened" :close-on-click-modal="false"
-               :title="$t('business.cluster.repo_auth')"  v-loading="isSubmitGoing"   z-index="10"
+               :title="$t('business.cluster.repo_auth')" v-loading="isSubmitGoing"
+               element-loading-spinner="el-icon-loading" z-index="10"
                width="70%"
                center>
-      <el-form element-loading-spinner="el-icon-loading"
-               element-loading-background="rgba(0, 0, 0, 0.8)" :model="repoForm" label-position="left"
+      <el-form :model="repoForm" label-position="left"
                label-width="144px">
         <el-form-item :label="$t('business.cluster.repo')">
           <el-select v-model="repoForm.repos" style="width: 85%" filterable multiple>

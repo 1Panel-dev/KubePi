@@ -31,8 +31,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/xterm/css/xterm.css"
+              "node_modules/xterm/css/xterm.css",
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/sockjs-client/dist/sockjs.min.js"

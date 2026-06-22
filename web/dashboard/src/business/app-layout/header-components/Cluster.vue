@@ -1,5 +1,5 @@
 <template>
-    <span style="color: white;margin-left: 20px">{{cluster}}</span>
+    <span class="cluster-name">{{cluster}}</span>
 </template>
 
 <script>
@@ -20,5 +20,8 @@ export default {
 </script>
 
 <style scoped>
-
+.cluster-name {
+  color: var(--kp-text-secondary);
+  margin-left: 20px;
+}
 </style>

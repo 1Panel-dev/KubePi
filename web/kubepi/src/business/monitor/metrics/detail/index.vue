@@ -141,7 +141,7 @@ export default {
     margin-top: 20px;
   }
   .table-container {
-    border: 2px solid #444444;
+    border: 1px solid var(--kp-border);
     border-radius: 0 !important;
     padding: 10px;
     margin-top: 10px;

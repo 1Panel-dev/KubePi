@@ -250,9 +250,9 @@ export default {
       if(this .myChart!=null){
         this .myChart.showLoading({
           text: 'loading',
-          color: '#c23531',
-          textColor: '#000',
-          maskColor: 'black',
+          color: '#2563eb',
+          textColor: '#475569',
+          maskColor: 'rgba(248,250,252,0.78)',
           zlevel: 0,
         })
       }
@@ -312,7 +312,7 @@ export default {
            legend: {
             data: ['cpu','fs','mem'],
             textStyle: {
-              color: '#FFF',
+              color: '#475569',
             },
            },
            xAxis: {
@@ -337,7 +337,7 @@ export default {
             //y轴线的颜色以及宽度
               show: true,
               lineStyle: {
-                color: '#FFFFFF',
+                color: '#cbd5e1',
                 width: 1,
                 type: 'solid',
               },
@@ -346,7 +346,7 @@ export default {
              splitLine: {
               show: true,
               lineStyle: {
-                 color: 'rgba(255,255,255,0.3)',
+                 color: 'rgba(148,163,184,0.28)',
               },
              },
              name: 'c', //单位
@@ -361,7 +361,7 @@ export default {
             //y轴线的颜色以及宽度
               show: true,
               lineStyle: {
-                color: '#FFFFFF',
+                color: '#cbd5e1',
                 width: 1,
                 type: 'solid',
               },
@@ -370,7 +370,7 @@ export default {
              splitLine: {
               show: true,
               lineStyle: {
-                 color: 'rgba(255,255,255,0.3)',
+                 color: 'rgba(148,163,184,0.28)',
               },
              },
              name: 'MiB', //单位
@@ -386,7 +386,7 @@ export default {
             //y轴线的颜色以及宽度
               show: true,
               lineStyle: {
-                color: '#FFFFFF',
+                color: '#cbd5e1',
                 width: 1,
                 type: 'solid',
               },
@@ -395,7 +395,7 @@ export default {
              splitLine: {
               show: true,
               lineStyle: {
-                 color: 'rgba(255,255,255,0.3)',
+                 color: 'rgba(148,163,184,0.28)',
               },
              },
              name: 'MiB', //单位

@@ -1,13 +1,12 @@
 <template>
   <layout-content :header="$t('business.cluster.list')">
-    <div style="float: left">
+    <div class="cluster-action-bar cluster-action-bar--flush">
       <el-button v-has-permissions="{resource:'clusters',verb:'create'}" type="primary" size="small" @click="onCreate">{{ $t("commons.button.import") }}</el-button>
       <el-button v-has-permissions="{resource:'clusters',verb:'delete'}" :disabled="selects.length===0" type="primary" size="small" @click="onDelete()">{{ $t("commons.button.delete") }}</el-button>
       <el-button  :disabled="selects.length===0" type="primary" size="small" @click="onExportAllHelmReleases()">{{ $t("commons.button.export") }}</el-button>
     </div>
     <complex-table v-loading="loading" :search-config="searchConfig" :selects.sync="selects" :data="data"
-                   :pagination-config="paginationConfig" @search="search"
-                   element-loading-background="rgba(0, 0, 0, 0.8)">
+                   :pagination-config="paginationConfig" @search="search">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.status')" min-width="80px" fix>
         <template v-slot:default="{row}">
@@ -99,7 +98,7 @@
 
       <el-table-column label=" " width="100">
         <template v-slot:default="{row}">
-          <el-button @click="onGotoDashboard(row)" :disabled="!row.extraClusterInfo.health">
+          <el-button class="cluster-dashboard-button" size="mini" @click="onGotoDashboard(row)" :disabled="!row.extraClusterInfo.health">
             {{ $t("business.cluster.open_dashboard") }}
           </el-button>
         </template>
@@ -318,7 +317,7 @@ export default {
       if (row.accessable) {
         sessionStorage.removeItem("namespace")
         const url = `${process.env.VUE_APP_DASHBOARD_URL_PREFIX}/dashboard?cluster=${row.name}`
-        window.open(url, "_blank")
+        window.location.href = url
       } else {
         this.$message.error(this.$t('business.cluster.user_not_in_cluster'))
       }
@@ -378,5 +377,27 @@ export default {
   margin-left: 10px;
   margin-top: 20px;
   min-height: 169px;
+}
+
+.cluster-dashboard-button {
+  color: var(--kp-primary) !important;
+  background-color: var(--kp-primary-soft) !important;
+  border-color: #bfdbfe !important;
+  box-shadow: none;
+}
+
+.cluster-dashboard-button:hover,
+.cluster-dashboard-button:focus {
+  color: var(--kp-primary-hover) !important;
+  background-color: #dbeafe !important;
+  border-color: #93c5fd !important;
+}
+
+.cluster-dashboard-button.is-disabled,
+.cluster-dashboard-button.is-disabled:hover,
+.cluster-dashboard-button.is-disabled:focus {
+  color: var(--kp-text-muted) !important;
+  background-color: #f1f5f9 !important;
+  border-color: var(--kp-border) !important;
 }
 </style>

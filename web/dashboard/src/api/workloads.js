@@ -12,12 +12,6 @@ const appsV1Url = (cluster_name, type) => {
 const appsV1UrlWithNsUrl = (cluster_name, type, namespaces) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/apps/v1/namespaces/${namespaces}/${type}`
 }
-const batchV1beta1Url = (cluster_name, type) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/${type}`
-}
-const batchV1beta1WithNsUrl = (cluster_name, type, namespaces) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1beta1/namespaces/${namespaces}/${type}`
-}
 const batchV1Url = (cluster_name, type) => {
   return `/api/v1/proxy/${cluster_name}/k8s/apis/batch/v1/${type}`
 }
@@ -45,8 +39,6 @@ export function listWorkLoads (
       url = apiV1Url(cluster_name, type)
       break
     case "cronjobs":
-      url = batchV1beta1Url(cluster_name, type)
-      break
     case "jobs":
       url = batchV1Url(cluster_name, type)
       break
@@ -74,7 +66,7 @@ export function getWorkLoadByName (cluster_name, type, namespace, name) {
       )
     case "cronjobs":
       return get(
-        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`
+        `${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`
       )
     case "pods":
       return get(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`)
@@ -93,7 +85,7 @@ export function deleteWorkLoad (cluster_name, type, namespace, name) {
       )
     case "cronjobs":
       return del(
-        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`
+        `${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`
       )
     case "pods":
       return del(`${apiV1UrlWithNsUrl(cluster_name, type, namespace)}/${name}`)
@@ -114,7 +106,7 @@ export function forceDeleteWorkLoad (cluster_name, type, namespace, name) {
       )
     case "cronjobs":
       return delWithData(
-        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`,{
+        `${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`,{
           gracePeriodSeconds: 0
         }
       )
@@ -137,7 +129,7 @@ export function createWorkLoad (cluster_name, type, namespace, data) {
       return post(`${appsV1UrlWithNsUrl(cluster_name, type, namespace)}`, data)
     case "cronjobs":
       return post(
-        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}`,
+        `${batchV1WithNsUrl(cluster_name, type, namespace)}`,
         data
       )
     case "pods":
@@ -159,7 +151,7 @@ export function updateWorkLoad (cluster_name, type, namespace, name, data) {
       )
     case "cronjobs":
       return put(
-        `${batchV1beta1WithNsUrl(cluster_name, type, namespace)}/${name}`,
+        `${batchV1WithNsUrl(cluster_name, type, namespace)}/${name}`,
         data
       )
     case "pods":

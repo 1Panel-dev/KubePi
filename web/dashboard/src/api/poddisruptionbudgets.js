@@ -2,11 +2,11 @@ import {del, get, put, post} from "@/plugins/request"
 
 
 const pdbUrl = (cluster_name) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/policy/v1beta1/poddisruptionbudgets`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/policy/v1/poddisruptionbudgets`
 }
 
 const namespacePDBUrl = (cluster_name, namespace) => {
-  return `/api/v1/proxy/${cluster_name}/k8s/apis/policy/v1beta1/namespaces/${namespace}/poddisruptionbudgets`
+  return `/api/v1/proxy/${cluster_name}/k8s/apis/policy/v1/namespaces/${namespace}/poddisruptionbudgets`
 }
 
 export function listPDBs (cluster_name, search, keywords, pageNum, pageSize) {

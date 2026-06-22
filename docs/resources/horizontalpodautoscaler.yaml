@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: kuard-hpa
@@ -27,7 +27,7 @@ spec:
     resource:
       name: memory
       target:
-        type: Utilization
+        type: AverageValue
         averageValue: 200Mi
 ---
 kind: ClusterRoleBinding

@@ -39,12 +39,12 @@
         width: 80%;
         text-align: center;
         margin-top: 70px;
-        color: #666666;
+        color: var(--kp-text-secondary);
 
         .oops {
             font-size: 32px;
             font-weight: bold;
-            color: #e27426;
+            color: var(--kp-primary);
             margin-right: 10px;
         }
     }

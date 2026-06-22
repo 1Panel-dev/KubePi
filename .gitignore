@@ -39,6 +39,7 @@ dist
 *.so
 *.dylib
 cmd/server/web
+.runtime/
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

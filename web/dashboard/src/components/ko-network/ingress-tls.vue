@@ -3,7 +3,7 @@
     <ko-card :title="$t('business.configuration.certificate')">
       <el-form label-position="top" ref="form" :model="form">
         <el-card v-for="(row,ind) in form.tls" v-bind:key="ind"
-                 style="background-color: #292a2e;margin-top: 10px;position: relative">
+                 style="background-color: #f8fafc;margin-top: 10px;position: relative">
           <div style="float: right;margin-top:-15px;position: relative;z-index: 1">
             <el-button type="text" v-if="form.tls.length > 1"
                        @click="removeTls(ind)">{{ $t("commons.button.delete") }}

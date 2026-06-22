@@ -2,11 +2,13 @@
   <layout-content header="Pod Security Policies">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'policy',resource:'poddisruptionbudgets',verb:'create'}">
+                  v-if="supported"
+                  v-has-permissions="{scope:'cluster',apiGroup:'policy',resource:'podsecuritypolicies',verb:'create'}">
         YAML
       </el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
-                  v-has-permissions="{scope:'namespace',apiGroup:'policy',resource:'poddisruptionbudgets',verb:'delete'}">
+                  v-if="supported"
+                  v-has-permissions="{scope:'cluster',apiGroup:'policy',resource:'podsecuritypolicies',verb:'delete'}">
         {{ $t("commons.button.delete") }}
       </el-button>
     </div>
@@ -35,6 +37,7 @@ import ComplexTable from "@/components/complex-table"
 import {downloadYaml} from "@/utils/actions"
 import KoTableOperations from "@/components/ko-table-operations"
 import {checkPermissions} from "@/utils/permission"
+import {checkApi} from "@/utils/apis"
 import {deletePSP, getPSP, listPSPs} from "@/api/podsecuritypolicies"
 import { searchFullTextItems } from "@/api/fulltextsearch/fulltextsearch"
 
@@ -46,6 +49,7 @@ export default {
       data: [],
       selects: [],
       loading: false,
+      supported: true,
       cluster: "",
       buttons: [
         {
@@ -59,9 +63,9 @@ export default {
           },
           disabled: () => {
             return !checkPermissions({
-              scope: "namespace",
+              scope: "cluster",
               apiGroup: "policy",
-              resource: "poddisruptionbudgets",
+              resource: "podsecuritypolicies",
               verb: "update"
             })
           }
@@ -81,9 +85,9 @@ export default {
           },
           disabled: () => {
             return !checkPermissions({
-              scope: "namespace",
+              scope: "cluster",
               apiGroup: "policy",
-              resource: "poddisruptionbudgets",
+              resource: "podsecuritypolicies",
               verb: "delete"
             })
           }
@@ -101,8 +105,16 @@ export default {
     }
   },
   methods: {
-    search(resetPage) {
+    async search(resetPage) {
       this.loading = true
+      this.supported = await checkApi(this.cluster, "policy", "v1beta1", "PodSecurityPolicy")
+      if (!this.supported) {
+        this.data = []
+        this.selects = []
+        this.paginationConfig.total = 0
+        this.loading = false
+        return
+      }
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }

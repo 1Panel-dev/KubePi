@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/discovery"
 )
 
 func (h *Handler) ListApiGroups() iris.Handler {
@@ -29,7 +30,7 @@ func (h *Handler) ListApiGroups() iris.Handler {
 			return
 		}
 		_, rss, err := client.ServerGroupsAndResources()
-		if err != nil {
+		if err != nil && !canUsePartialDiscoveryResult(err, len(rss)) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
@@ -102,7 +103,7 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 			return
 		}
 		gss, rss, err := client.ServerGroupsAndResources()
-		if err != nil {
+		if err != nil && !canUsePartialDiscoveryResult(err, len(rss)) {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("get cluster failed: %s", err.Error()))
 			return
@@ -147,4 +148,8 @@ func (h *Handler) ListApiGroupResources() iris.Handler {
 		ctx.Values().Set("data", resources)
 
 	}
+}
+
+func canUsePartialDiscoveryResult(err error, resourceListCount int) bool {
+	return discovery.IsGroupDiscoveryFailedError(err) && resourceListCount > 0
 }

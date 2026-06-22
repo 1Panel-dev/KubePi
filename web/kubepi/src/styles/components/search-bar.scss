@@ -14,7 +14,7 @@
     left: 0;
     height: 1px;
     width: 100%;
-    background-color: #000000;
+    background-color: #dbe4f0;
   }
 
   @include e(content) {
@@ -141,7 +141,7 @@
     left: 0;
     height: 1px;
     width: 100%;
-    background-color: #D5D5D5;
+    background-color: #dbe4f0;
   }
 
   input {
@@ -152,7 +152,7 @@
     width: 200px;
     box-sizing: border-box;
     // color: $--button-default-font-color;
-    background-color: #232529;
+    background-color: transparent;
 
     &:focus {
       outline: none;

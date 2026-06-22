@@ -26,7 +26,7 @@
       <ko-card :title="$t('business.access_control.object')">
         <el-form label-position="top" ref="form" :model="form">
           <el-card v-for="(row,ind) in form.subjects" v-bind:key="ind"
-                   style="background-color: #292a2e;margin-top: 10px;position: relative">
+                   style="background-color: #f8fafc;margin-top: 10px;position: relative">
             <div style="float: right; padding: 3px 0;position: relative;z-index: 1">
               <el-button type="text" @click="removeSubject(ind)">{{ $t("commons.button.delete") }}
               </el-button>

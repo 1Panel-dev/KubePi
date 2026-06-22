@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #1f2224" v-title :data-title="$t('business.pod.controller') + terminal.namespace + '/' + terminal.pod + '/' + terminal.container">
+  <div class="terminal-page" v-title :data-title="$t('business.pod.controller') + terminal.namespace + '/' + terminal.pod + '/' + terminal.container">
     <el-row>
       <div class="terminalOption" v-if="terminal.type ==='terminal'">
         <el-radio-group size="mini" @change="changeConditions()" v-model="shell">
@@ -13,7 +13,7 @@
           <el-option v-for="c in containers" :key="c" :label="c" :value="c" />
         </el-select>
       </div>
-      <div v-if="terminal.type ==='log'" style="background-color: #000000; display:inline">
+      <div v-if="terminal.type ==='log'" class="log-options">
         <div class="terminalOption">
           <span class="spanClass">{{$t('business.pod.lines')}}</span>
           <el-select class="interval" @change="changeConditions()" size="mini" v-model="tailLines">
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div style="float: right;margin-top: 15px;margin-bottom: 5px;margin-right: 30px">
-        <span style="font-size: 20px; color: white">{{terminal.namespace}}/{{terminal.pod}}/{{terminal.container}}</span>
+        <span class="terminal-title">{{terminal.namespace}}/{{terminal.pod}}/{{terminal.container}}</span>
       </div>
 
     </el-row>
@@ -267,6 +267,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.terminal-page {
+  background-color: var(--kp-terminal-bg);
+}
+
+.log-options {
+  display: inline;
+  background-color: var(--kp-terminal-bg);
+}
+
+.terminal-title {
+  color: #e2e8f0;
+  font-size: 20px;
+}
+
 .terminalOption {
   float: left;
   margin-left: 5px;
@@ -275,7 +289,7 @@ export default {
 }
 .spanClass {
   margin-left: 20px;
-  color: white;
+  color: #e2e8f0;
 }
 .interval {
   margin-left: 10px;

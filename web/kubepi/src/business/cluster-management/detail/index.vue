@@ -1,11 +1,10 @@
 <template>
   <layout-content :header="$t('business.cluster.cluster_detail')+'-'+name" :back-to="{ name: 'Clusters' }">
-    <el-menu class="menuClass" router :default-active="activeRoute()" mode="horizontal"  background-color="#222629">
+    <el-menu class="menuClass cluster-detail-menu" router :default-active="activeRoute()" mode="horizontal">
       <el-menu-item :index="membersPath">{{ $t('business.cluster.member') }}</el-menu-item>
       <el-menu-item :index="rolesPath">{{ $t('business.cluster.role') }}</el-menu-item>
       <el-menu-item :index="reposPath">{{ $t('business.cluster.repo') }}</el-menu-item>
     </el-menu>
-    <br/>
     <div class="detailClass">
       <router-view></router-view>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home-entry">
     <el-button icon="el-icon-s-home" @click="toHome()"></el-button>
   </div>
 </template>
@@ -20,5 +20,7 @@ export default {
 </script>
 
 <style scoped>
-
+.home-entry {
+  margin-left: 12px;
+}
 </style>
