@@ -40,5 +40,19 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "typescript": "~5.1.6"
+  },
+  "overrides": {
+    "@babel/core": "7.29.7",
+    "@tootallnate/once": "2.0.1",
+    "esbuild": "0.25.0",
+    "picomatch": "2.3.2",
+    "piscina": "4.9.3",
+    "postcss": "8.5.15",
+    "serialize-javascript": "7.0.5",
+    "tar": "7.5.16",
+    "tmp": "0.2.7",
+    "uuid": "11.1.1",
+    "vite": "6.4.3",
+    "webpack": "5.107.2"
   }
 }
