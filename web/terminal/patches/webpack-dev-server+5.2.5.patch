@@ -1,0 +1,18 @@
+diff --git a/node_modules/webpack-dev-server/lib/Server.js b/node_modules/webpack-dev-server/lib/Server.js
+index 28f1687..74941a0 100644
+--- a/node_modules/webpack-dev-server/lib/Server.js
++++ b/node_modules/webpack-dev-server/lib/Server.js
+@@ -2288,7 +2288,12 @@ class Server {
+     });
+ 
+     if (this.options.proxy) {
+-      const { createProxyMiddleware } = require("http-proxy-middleware");
++      const {
++        createProxyMiddleware: modernCreateProxyMiddleware,
++        legacyCreateProxyMiddleware,
++      } = require("http-proxy-middleware");
++      const createProxyMiddleware =
++        legacyCreateProxyMiddleware || modernCreateProxyMiddleware;
+ 
+       /**
+        * @param {ProxyConfigArrayItem} proxyConfig proxy config

@@ -6,7 +6,8 @@
     "start": "ng serve --proxy-config proxy.config.json",
     "build": "ng build --configuration production --aot",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "postinstall": "patch-package"
   },
   "private": true,
   "engines": {
@@ -42,12 +43,14 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "patch-package": "^8.0.1",
     "typescript": "~5.9.3"
   },
   "overrides": {
     "@babel/core": "7.29.7",
     "@tootallnate/once": "2.0.1",
     "esbuild": "0.25.0",
+    "http-proxy-middleware": "3.0.7",
     "picomatch": "2.3.2",
     "piscina": "4.9.3",
     "postcss": "8.5.15",
