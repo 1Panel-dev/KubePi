@@ -12,6 +12,16 @@ const state = {
     isAdmin: false,
 }
 
+const isForceChangePasswordError = (error) => {
+    const response = error && error.response
+    if (!response || response.status !== 403) {
+        return false
+    }
+    const data = response.data
+    const message = data && typeof data === "object" ? data.message : data
+    return message === "please change password"
+}
+
 const mutations = {
     LOGIN: (state) => {
         state.login = true
@@ -45,7 +55,7 @@ const actions = {
     login({commit}, userInfo) {
         const {username, password} = userInfo
         return new Promise((resolve, reject) => {
-            login({username: username.trim(), password: password}).then(response => {
+            login({username: username.trim(), password: password}, {silentError: true}).then(response => {
                 const user = response.data || {}
                 if ((!user.mfa || !user.mfa.enable) && !user.forceChangePassword) {
                     commit("LOGIN")
@@ -88,7 +98,7 @@ const actions = {
             if (state.login) {
                 resolve(true)
             }
-            isLogin().then((data) => {
+            isLogin({silentError: isForceChangePasswordError}).then((data) => {
                 if (data.data) {
                     commit("LOGIN")
                     resolve(true)
