@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Pod Disruption Budget">
+  <layout-content :header="$t('business.configuration.pod_disruption_budget')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
-                  v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-has-permissions="{apiGroup:'policy',scope:'namespace',resource:'poddisruptionbudgets',verb:'delete'}">
         {{ $t("commons.button.delete") }}

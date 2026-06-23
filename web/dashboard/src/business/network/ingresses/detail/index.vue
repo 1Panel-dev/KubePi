@@ -21,11 +21,11 @@
                  <td>{{ c.signatureAlgorithm }}</td>
               </tr>
               <tr>
-                 <td>subject</td>
+	                 <td>{{ $t("business.configuration.subject") }}</td>
                  <td>{{ c.subject }}</td>
               </tr>
               <tr>
-                 <td>issuer</td>
+	                 <td>{{ $t("business.configuration.issuer") }}</td>
                  <td>{{ c.issuer }}</td>
               </tr>
               <tr>
@@ -130,8 +130,8 @@ export default {
             }
             if(tls && tls.length==0){
               this.certificate_errs.push({
-                secret: "No Settings",
-                err:"The tls attribute is not null but no secrets"
+	                secret: this.$t("business.network.no_settings"),
+	                err: this.$t("business.network.tls_secret_empty")
               })
               return ;
             }

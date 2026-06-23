@@ -9,7 +9,7 @@
       </el-table-column>
       <el-table-column   :label="$t('business.network.target_port')" prop="targetPort">
       </el-table-column>
-      <el-table-column  label="Node Port" prop="nodePort">
+      <el-table-column  :label="$t('business.network.node_port')" prop="nodePort">
       </el-table-column>
     </complex-table>
   </div>

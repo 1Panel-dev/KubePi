@@ -1,22 +1,22 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="Session Affinity">
+    <ko-card :title="$t('business.network.session_affinity')">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-radio-group v-model="specObj.sessionAffinity" @change="changeType(specObj.sessionAffinity)" :key="key">
             <div style="margin-top: 5px">
-              <el-radio label="None">None</el-radio>
+              <el-radio label="None">{{ $t("business.workload.none") }}</el-radio>
             </div>
             <div style="margin-top: 5px">
-              <el-radio label="ClientIP">Client IP</el-radio>
+              <el-radio label="ClientIP">{{ $t("business.network.client_ip") }}</el-radio>
             </div>
           </el-radio-group>
         </el-col>
         <div v-if="specObj.sessionAffinity === 'ClientIP'">
           <el-col :span="11">
-            <div>Session Sticky Time</div>
+            <div>{{ $t("business.network.session_sticky_time") }}</div>
             <el-input v-model.number="specObj.sessionAffinityConfig.clientIP.timeoutSeconds" @input="$forceUpdate()">
-              <template slot="append">Seconds</template>
+              <template slot="append">{{ $t("business.network.seconds") }}</template>
             </el-input>
           </el-col>
         </div>

@@ -23,7 +23,7 @@ const Configuration = {
       component: () => import("@/business/configuration/config-maps"),
       name: "ConfigMaps",
       meta: {
-        title: "Config Maps",
+        title: "business.configuration.config_maps",
       }
     },
     {
@@ -86,7 +86,7 @@ const Configuration = {
       component: () => import("@/business/configuration/secrets"),
       name: "Secrets",
       meta: {
-        title: "Secrets",
+        title: "business.configuration.secrets",
       }
     },
     {
@@ -149,7 +149,7 @@ const Configuration = {
       component: () => import("@/business/configuration/resource-quotas"),
       name: "ResourceQuotas",
       meta: {
-        title: "Resource Quotas",
+        title: "business.common.resource_quotas",
       }
     },
     {
@@ -212,7 +212,7 @@ const Configuration = {
       component: () => import("@/business/configuration/limit-ranges"),
       name: "LimitRanges",
       meta: {
-        title: "Limit Ranges",
+        title: "business.common.limit_ranges",
       }
     },
     {
@@ -274,7 +274,7 @@ const Configuration = {
       component: () => import("@/business/configuration/hpa"),
       name: "HPA",
       meta: {
-        title: "HPA",
+        title: "business.configuration.horizontal_pod_autoscalers",
       }
     },
     {
@@ -335,7 +335,7 @@ const Configuration = {
       component: () => import("@/business/configuration/pdb"),
       name: "PDBs",
       meta: {
-        title: "Pod Disruption Budgets",
+        title: "business.configuration.pod_disruption_budgets",
       }
     },
     {
@@ -351,7 +351,7 @@ const Configuration = {
       component: () => import("@/business/configuration/pdb/create"),
       name: "PDBCreate",
       meta: {
-        title: "Pod Disruption Budget",
+        title: "business.configuration.pod_disruption_budget",
         activeMenu: "/poddisruptionbudgets"
       }
     },
@@ -368,7 +368,7 @@ const Configuration = {
       component: () => import("@/business/configuration/pdb/edit"),
       name: "PDBEdit",
       meta: {
-        title: "Pod Disruption Budget",
+        title: "business.configuration.pod_disruption_budget",
         activeMenu: "/poddisruptionbudgets"
       }
     },
@@ -385,7 +385,7 @@ const Configuration = {
       component: () => import("@/business/configuration/pdb/detail"),
       name: "PDBDetail",
       meta: {
-        title: "Pod Disruption Budget",
+        title: "business.configuration.pod_disruption_budget",
         activeMenu: "/poddisruptionbudgets"
       }
     },
@@ -400,7 +400,7 @@ const Configuration = {
       component: () => import("@/business/configuration/apiservices"),
       name: "Apiservices",
       meta: {
-        title: "APIServices",
+        title: "business.configuration.api_services",
       }
     },
     {
@@ -415,7 +415,7 @@ const Configuration = {
       hidden: true,
       props: true,
       meta: {
-        title: "ApiserviceEdit",
+        title: "business.configuration.api_service_edit",
         activeMenu: "/apiservices",
       }
     },
@@ -430,7 +430,7 @@ const Configuration = {
       component: () => import("@/business/configuration/mutatingwebhookconfigurations"),
       name: "Mutatingwebhookconfigurations",
       meta: {
-        title: "Mutating Webhook Configurations",
+        title: "business.configuration.mutating_webhook_configurations",
       }
     },
     {
@@ -444,7 +444,7 @@ const Configuration = {
       name: "MutatingWebhookConfigurationCreate",
       hidden: true,
       meta: {
-        title: "MutatingWebhookConfiguration Create",
+        title: "business.configuration.mutating_webhook_configuration_create",
         activeMenu: "/mutatingwebhookconfigurations",
       }
     },
@@ -460,7 +460,7 @@ const Configuration = {
       hidden: true,
       props: true,
       meta: {
-        title: "MutatingwebhookconfigurationEdit",
+        title: "business.configuration.mutating_webhook_configuration_edit",
         activeMenu: "/mutatingwebhookconfigurations",
       }
     },
@@ -475,7 +475,7 @@ const Configuration = {
       component: () => import("@/business/configuration/validatingwebhookconfigurations"),
       name: "Validatingwebhookconfigurations",
       meta: {
-        title: "Validating Webhook Configurations",
+        title: "business.configuration.validating_webhook_configurations",
       }
     },
     {
@@ -489,7 +489,7 @@ const Configuration = {
       name: "ValidatingwebhookconfigurationCreate",
       hidden: true,
       meta: {
-        title: "Validatingwebhookconfiguration Create",
+        title: "business.configuration.validating_webhook_configuration_create",
         activeMenu: "/validatingwebhookconfigurations",
       }
     },
@@ -505,7 +505,7 @@ const Configuration = {
       hidden: true,
       props: true,
       meta: {
-        title: "ValidatingwebhookconfigurationEdit",
+        title: "business.configuration.validating_webhook_configuration_edit",
         activeMenu: "/validatingwebhookconfigurations",
       }
     }

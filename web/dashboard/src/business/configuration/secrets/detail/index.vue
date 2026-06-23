@@ -19,11 +19,11 @@
                  <td>{{ c.signatureAlgorithm }}</td>
               </tr>
               <tr>
-                 <td>subject</td>
+                 <td>{{ $t("business.configuration.subject") }}</td>
                  <td>{{ c.subject }}</td>
               </tr>
               <tr>
-                 <td>issuer</td>
+                 <td>{{ $t("business.configuration.issuer") }}</td>
                  <td>{{ c.issuer }}</td>
               </tr>
               <tr>

@@ -3,25 +3,25 @@
     <el-form label-position="top" ref="form" :rules="rules" :model="form">
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="CPU Reservation" prop="requestsCpu">
-            <ko-form-item placeholder="e.g. 1000" clearable itemType="number" dividerName="mCPUs" v-model="form.requestsCpu" />
+          <el-form-item :label="$t('business.common.cpu') + ' ' + $t('business.workload.reservation')" prop="requestsCpu">
+            <ko-form-item :placeholder="$t('commons.placeholder.example_1000')" clearable itemType="number" dividerName="mCPUs" v-model="form.requestsCpu" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Memory Reservation" prop="requestsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="Mi" v-model="form.requestsMemory" />
+          <el-form-item :label="$t('business.common.memory') + ' ' + $t('business.workload.reservation')" prop="requestsMemory">
+            <ko-form-item :placeholder="$t('commons.placeholder.example_128')" clearable itemType="number" dividerName="Mi" v-model="form.requestsMemory" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="CPU Limit" prop="limitsCpu">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="mCPUs" v-model="form.limitsCpu" />
+          <el-form-item :label="$t('business.common.cpu') + ' ' + $t('business.workload.limit')" prop="limitsCpu">
+            <ko-form-item :placeholder="$t('commons.placeholder.example_128')" clearable itemType="number" dividerName="mCPUs" v-model="form.limitsCpu" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Memory Limit" prop="limitsMemory">
-            <ko-form-item placeholder="e.g. 128" clearable itemType="number" dividerName="Mi" v-model="form.limitsMemory" />
+          <el-form-item :label="$t('business.common.memory') + ' ' + $t('business.workload.limit')" prop="limitsMemory">
+            <ko-form-item :placeholder="$t('commons.placeholder.example_128')" clearable itemType="number" dividerName="Mi" v-model="form.limitsMemory" />
           </el-form-item>
         </el-col>
       </el-row>

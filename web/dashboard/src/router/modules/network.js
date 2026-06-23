@@ -23,7 +23,7 @@ const Network = {
       component: () => import("@/business/network/services"),
       name: "Services",
       meta: {
-        title: "Services",
+        title: "business.network.services",
       }
     },
     {
@@ -85,7 +85,7 @@ const Network = {
       component: () => import("@/business/network/endpoints"),
       name: "Endpoints",
       meta: {
-        title: "Endpoints",
+        title: "business.network.endpoints",
       }
     },
     {
@@ -147,7 +147,7 @@ const Network = {
       component: () => import("@/business/network/ingresses"),
       name: "Ingresses",
       meta: {
-        title: "Ingresses",
+        title: "business.network.ingresses",
       }
     },
     {
@@ -209,7 +209,7 @@ const Network = {
       component: () => import("@/business/network/ingresses/ingress-search.vue"),
       name: "IngressesSearch",
       meta: {
-        title: "Ingresses Search",
+        title: "business.network.ingress_search",
       }
     },
 
@@ -224,7 +224,7 @@ const Network = {
       component: () => import("@/business/network/network-policies"),
       name: "NetworkPolicies",
       meta: {
-        title: "Network Policies",
+        title: "business.network.network_policies",
       }
     },
     {

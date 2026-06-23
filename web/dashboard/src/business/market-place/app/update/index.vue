@@ -3,7 +3,7 @@
     <el-form ref="form" label-position='left' label-width="220px" :model="form" :rules="rules">
       <fu-steps ref="steps" footerAlign="flex" finish-status="success" @finish="onSubmit" @cancel="onCancel"
                 showCancel>
-        <fu-step id="version" :title="'Version'">
+        <fu-step id="version" :title="$t('business.chart.version')">
           <div class="example">
             <el-scrollbar style="height:100%">
               <el-row>
@@ -14,7 +14,7 @@
                                  :label="vs.version" :key="index" :value="vs.version">
                         <span style="float: left">{{ vs.version }}</span>
                         <span style="float: right; color: var(--kp-text-muted); font-size: 13px">AppVersion:{{ vs.appVersion }}</span>
-                        <span style="float: right;" v-if="vs.version === oldChart.metadata.version">(current)</span>
+                        <span style="float: right;" v-if="vs.version === oldChart.metadata.version">({{ $t("business.chart.current") }})</span>
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -23,7 +23,7 @@
             </el-scrollbar>
           </div>
         </fu-step>
-        <fu-step id="values" :title="'Values'">
+        <fu-step id="values" :title="$t('business.chart.values')">
           <div class="example">
             <el-scrollbar style="height:100%">
               <yaml-editor :value="form.values" ref="yaml_editor"></yaml-editor>

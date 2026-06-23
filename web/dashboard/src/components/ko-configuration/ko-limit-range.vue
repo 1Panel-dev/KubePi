@@ -12,24 +12,24 @@
       <div v-if="form.type === 'Container' || form.type === 'Pod'">
         <el-row :gutter="20" style="margin-left: 5px">
           <el-col :span="6">
-            <el-form-item label="Min CPU" prop="cpuMin">
+            <el-form-item :label="$t('business.configuration.min_cpu')" prop="cpuMin">
               <ko-form-item itemType="number" dividerName="mCPUs" v-model="form.cpuMin" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Max CPU" prop="memoryRequest">
+            <el-form-item :label="$t('business.configuration.max_cpu')" prop="memoryRequest">
               <ko-form-item itemType="number" dividerName="mCPUs" v-model="form.cpuMax" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin-left: 5px">
           <el-col :span="6">
-            <el-form-item label="Min Memory" prop="memoryMin">
+            <el-form-item :label="$t('business.configuration.min_memory')" prop="memoryMin">
               <ko-form-item itemType="number" dividerName="Mi" v-model="form.memoryMin" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Max Memory" prop="memoryMax">
+            <el-form-item :label="$t('business.configuration.max_memory')" prop="memoryMax">
               <ko-form-item itemType="number" dividerName="Mi" v-model="form.memoryMax" />
             </el-form-item>
           </el-col>
@@ -38,12 +38,12 @@
 
       <el-row :gutter="20" style="margin-left: 5px" v-if="form.type === 'PersistentVolumeClaim'">
         <el-col :span="6">
-          <el-form-item label="Min Storage" prop="storageMin">
+          <el-form-item :label="$t('business.configuration.min_storage')" prop="storageMin">
             <ko-form-item itemType="number" dividerName="Mi" v-model="form.storageMin" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="Max Storage" prop="storageMax">
+          <el-form-item :label="$t('business.configuration.max_storage')" prop="storageMax">
             <ko-form-item itemType="number" dividerName="Mi" v-model="form.storageMax" />
           </el-form-item>
         </el-col>

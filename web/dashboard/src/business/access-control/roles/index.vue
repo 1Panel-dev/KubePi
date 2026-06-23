@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Roles">
+  <layout-content :header="$t('business.access_control.roles')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'roles',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{apiGroup:'rbac.authorization.k8s.io',scope:'namespace',resource:'roles',verb:'create'}">
         {{ $t("commons.button.create") }}

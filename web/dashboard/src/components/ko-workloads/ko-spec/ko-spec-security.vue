@@ -54,10 +54,10 @@
           <table style="width: 100%;margin-top:10px" class="tab-table">
             <tr v-for="(row,index) in form.sysctls" :key="index">
               <td width="48%">
-                <ko-form-item placeholder="e.g. key" itemType="input" v-model="row.name" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_key')" itemType="input" v-model="row.name" />
               </td>
               <td width="48%">
-                <ko-form-item placeholder="e.g. value" itemType="input" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_value')" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleSysctlsDelete(index)">

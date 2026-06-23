@@ -29,14 +29,14 @@
                 </el-table-column>
               </complex-table>
             </el-tab-pane>
-            <el-tab-pane  label="pods" v-if="pods &&  pods.length>0">
+            <el-tab-pane :label="$t('business.common.pods')" v-if="pods &&  pods.length>0">
               <complex-table :data="pods">
-                <el-table-column label="namespace" min-width="30" >
+                <el-table-column :label="$t('business.namespace.namespace')" min-width="30" >
                   <template v-slot:default="{ row }">
                     {{ row.metadata.namespace }}
                   </template>
                 </el-table-column>
-                <el-table-column label="name" min-width="30">
+                <el-table-column :label="$t('commons.table.name')" min-width="30">
                   <template v-slot:default="{ row }">
                     <span class="span-link" @click="openPodDetail(row)">{{ row.metadata.name }}</span>
       

@@ -17,18 +17,18 @@
             <el-col :span="3">
               <el-form-item :label="$t('business.configuration.type')" required>
                 <el-select v-model="type" @change="changeType">
-                  <el-option label="Cluster IP" value="ClusterIP"></el-option>
-                  <el-option label="Headless" value="Headless"></el-option>
-                  <el-option label="External Name" value="ExternalName"></el-option>
-                  <el-option label="Load Balancer" value="LoadBalancer"></el-option>
-                  <el-option label="Node Port" value="NodePort"></el-option>
+                  <el-option :label="$t('business.network.cluster_ip')" value="ClusterIP"></el-option>
+                  <el-option :label="$t('business.network.headless')" value="Headless"></el-option>
+                  <el-option :label="$t('business.network.external_name')" value="ExternalName"></el-option>
+                  <el-option :label="$t('business.network.load_balancer')" value="LoadBalancer"></el-option>
+                  <el-option :label="$t('business.network.node_port')" value="NodePort"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" ref=tabs>
-                <el-tab-pane name="ExternalName" label="External Name" v-if="form.spec.type==='ExternalName'">
+                <el-tab-pane name="ExternalName" :label="$t('business.network.external_name')" v-if="form.spec.type==='ExternalName'">
                   <ko-service-external-name :external-name.sync="form.spec.externalName"></ko-service-external-name>
                 </el-tab-pane>
                 <el-tab-pane name="ServicePorts"  :label="$t('business.network.service_port')" v-if="form.spec.type!=='ExternalName'">
@@ -37,7 +37,7 @@
                 <el-tab-pane name="Selectors" :label="$t('business.network.selector')" v-if="form.spec.type!=='ExternalName' ">
                   <ko-key-value :title="$t('business.network.selector')" :value.sync="form.spec.selector"></ko-key-value>
                 </el-tab-pane>
-                <el-tab-pane name="SessionAffinity" label="Session Affinity" v-if="form.spec.type!=='ExternalName'">
+                <el-tab-pane name="SessionAffinity" :label="$t('business.network.session_affinity')" v-if="form.spec.type!=='ExternalName'">
                   <ko-service-session-affinity :specObj.sync="form.spec"></ko-service-session-affinity>
                 </el-tab-pane>
                 <el-tab-pane name="IPAddresses" :label="$t('business.network.ip_address')">

@@ -27,7 +27,7 @@
         </el-col>
         <el-col :span="6">
           <div class="detail">
-            <span class="title">Chart Versions</span>
+            <span class="title">{{ $t("business.chart.chart_versions") }}</span>
             <br>
             <table>
               <tr>
@@ -47,7 +47,7 @@
             </table>
           </div>
           <div class="detail">
-            <span class="title">Application Version</span>
+            <span class="title">{{ $t("business.chart.application_version") }}</span>
             <br>
             <table>
               <tr>
@@ -56,7 +56,7 @@
             </table>
           </div>
           <div class="detail">
-            <span class="title">Maintainers</span>
+            <span class="title">{{ $t("business.chart.maintainers") }}</span>
             <br>
             <table>
               <tr v-for="(maintainer,index) in current.metadata.maintainers" :key="index">
@@ -65,7 +65,7 @@
             </table>
           </div>
           <div class="detail">
-            <span class="title">Related</span>
+            <span class="title">{{ $t("business.chart.related") }}</span>
             <br>
             <table>
               <tr v-for="(source,index) in current.metadata.sources" :key="index">
@@ -74,7 +74,7 @@
             </table>
           </div>
           <div class="detail">
-            <span class="title">Keywords</span>
+            <span class="title">{{ $t("business.chart.keywords") }}</span>
             <br>
             <table>
               <tr>
@@ -94,7 +94,7 @@
         <fu-steps ref="steps" footerAlign="flex" finish-status="success" @finish="onSubmit" @cancel="onCancel" :beforeLeave="beforeLeave"
                   :isLoading="loading"
                   showCancel>
-          <fu-step id="metadata" :title="'Metadata'">
+          <fu-step id="metadata" :title="$t('business.chart.metadata')">
             <div class="example">
               <el-scrollbar style="height:100%">
                 <el-row>
@@ -113,7 +113,7 @@
               </el-scrollbar>
             </div>
           </fu-step>
-          <fu-step id="values" :title="'Values'">
+          <fu-step id="values" :title="$t('business.chart.values')">
             <div class="example">
               <el-scrollbar style="height:100%">
                 <yaml-editor :value="form.values" ref="yaml_editor"></yaml-editor>

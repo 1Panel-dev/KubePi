@@ -71,7 +71,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="4">
-                <el-form-item label="Pods">
+                <el-form-item :label="$t('business.node.pods')">
                   <span>{{ podsData.podsCount }} ({{ podsData.usage }}%)</span>
                 </el-form-item>
               </el-col>
@@ -179,7 +179,7 @@
       <el-row>
         <br>
         <el-tabs type="border-card" v-if="Object.keys(item.metadata).length > 0">
-          <el-tab-pane label="Pods" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
+          <el-tab-pane :label="$t('business.node.pods')" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
             <ko-detail-node-pods :cluster="cluster" :allocatable="item.status.allocatable" :field-selector="'spec.nodeName='+item.metadata.name"></ko-detail-node-pods>
           </el-tab-pane>
           <el-tab-pane :label="$t('business.pod.image')">
@@ -197,7 +197,7 @@
           <el-tab-pane :label="$t('business.pod.resource')">
             <table style="width: 100%" class="myTable">
               <tr>
-                <td>Pod CIDR</td>
+                <td>{{ $t("business.node.pod_cidr") }}</td>
                 <td>{{ item.spec.podCIDR }}</td>
               </tr>
               <tr>
@@ -209,30 +209,30 @@
                 </td>
               </tr>
               <tr>
-                <td>Allocatable</td>
+                <td>{{ $t("business.node.allocatable") }}</td>
                 <td>
                   <div>
                     <el-tag type="success">CPU : {{item.status.allocatable.cpu}}</el-tag>
                   </div>
                   <div>
-                    <el-tag type="success">Memory : {{item.status.allocatable.memory}}</el-tag>
+                    <el-tag type="success">{{ $t("business.common.memory") }} : {{item.status.allocatable.memory}}</el-tag>
                   </div>
                   <div>
-                    <el-tag type="success">Pods : {{item.status.allocatable.pods}}</el-tag>
+                    <el-tag type="success">{{ $t("business.node.pods") }} : {{item.status.allocatable.pods}}</el-tag>
                   </div>
                 </td>
               </tr>
               <tr>
-                <td>Capacity</td>
+                <td>{{ $t("business.node.capacity") }}</td>
                 <td>
                   <div>
                     <el-tag type="success">CPU : {{item.status.capacity.cpu}}</el-tag>
                   </div>
                   <div>
-                    <el-tag type="success">Memory : {{item.status.capacity.memory}}</el-tag>
+                    <el-tag type="success">{{ $t("business.common.memory") }} : {{item.status.capacity.memory}}</el-tag>
                   </div>
                   <div>
-                    <el-tag type="success">Pods : {{item.status.capacity.pods}}</el-tag>
+                    <el-tag type="success">{{ $t("business.node.pods") }} : {{item.status.capacity.pods}}</el-tag>
                   </div>
                 </td>
               </tr>

@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="CronJobs">
+  <layout-content :header="$t('business.workload.cronjobs')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}"
-                  type="primary" size="small"  @click="yamlCreate">
-        YAML
-      </el-button>
+                  type="primary" size="small"  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'cronjobs',verb:'create'}">
         {{ $t("commons.button.create") }}

@@ -13,7 +13,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item :label="$t('business.network.host')" prop="host">
-                  <el-input placeholder="e.g. example.com" v-model="row.host"></el-input>
+                  <el-input :placeholder="$t('commons.placeholder.example_domain')" v-model="row.host"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>

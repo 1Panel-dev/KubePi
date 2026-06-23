@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Deployment Processing</h3>
+    <h3>{{ $t("business.workload.deployment_processing") }}</h3>
     <div v-loading="loading">
       <el-form label-position="top" ref="form" :model="form">
         <el-row :gutter="20">
@@ -84,7 +84,7 @@ export default {
     },
     changeStatus() {
       if (this.form.spec.paused) {
-        this.$confirm(this.$t("business.workload.suspend") + "  Deployments ?", this.$t("commons.message_box.prompt"), {
+        this.$confirm(this.$t("business.workload.suspend_deployment_confirm"), this.$t("commons.message_box.prompt"), {
           confirmButtonText: this.$t("commons.button.confirm"),
           cancelButtonText: this.$t("commons.button.cancel"),
           type: "warning",

@@ -26,14 +26,14 @@
                    @tab-click="handleClick">
             <el-tab-pane :label="$t('commons.form.setting')">
               <div style="margin-top: 20px">
-                <ko-card title="Customize">
+                <ko-card :title="$t('business.storage.customize')">
                   <el-row :gutter="24">
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.accessModes')" required>
                         <el-checkbox-group v-model="form.spec.accessModes">
-                          <el-checkbox label="ReadWriteOnce">ReadWriteOnce</el-checkbox>
-                          <el-checkbox label="ReadOnlyMany">ReadOnlyMany</el-checkbox>
-                          <el-checkbox label="ReadWriteMany">ReadWriteMany</el-checkbox>
+                          <el-checkbox label="ReadWriteOnce">{{ $t("business.storage.read_write_once") }}</el-checkbox>
+                          <el-checkbox label="ReadOnlyMany">{{ $t("business.storage.read_only_many") }}</el-checkbox>
+                          <el-checkbox label="ReadWriteMany">{{ $t("business.storage.read_write_many") }}</el-checkbox>
                         </el-checkbox-group>
                       </el-form-item>
                     </el-col>
@@ -41,7 +41,7 @@
                 </ko-card>
               </div>
               <div style="margin-top: 20px">
-                <ko-card title="Volume Claim">
+                <ko-card :title="$t('business.storage.volume_claim')">
                   <el-row :gutter="24">
                     <el-col :span="6">
                       <el-form-item v-if="currentVolumeClaimSource === 'sc'" :label="$t('business.storage.assignSc')">

@@ -4,7 +4,7 @@
       <el-row :gutter="20" style="margin-top: 10px">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.working_dir')" prop="workingDir">
-            <ko-form-item placeholder="e.g. /myapp" itemType="input" v-model="form.workingDir" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_workdir')" itemType="input" v-model="form.workingDir" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -29,7 +29,7 @@
             </tr>
             <tr v-for="(row,index) in form.command" :key="index">
               <td>
-                <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_command')" itemType="textarea" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(index)">
@@ -54,7 +54,7 @@
             </tr>
             <tr v-for="(row,index) in form.args" :key="index">
               <td>
-                <ko-form-item placeholder="e.g. /bin/sh" itemType="textarea" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_command')" itemType="textarea" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleArgsDelete(index)">

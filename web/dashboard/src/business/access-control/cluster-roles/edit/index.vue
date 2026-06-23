@@ -12,7 +12,7 @@
             <el-col :span="24">
               <el-tabs v-model="activeName" tab-position="top" type="border-card"
                        @tab-click="handleClick" v-if="form.rules">
-                <el-tab-pane label="Grant Resources">
+                <el-tab-pane :label="$t('business.access_control.grant_resources')">
                   <ko-grant-resource :cluster="cluster"  :rulesArray.sync="form.rules"></ko-grant-resource>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('business.workload.labels_annotations')">

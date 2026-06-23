@@ -23,7 +23,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/service-accounts"),
       name: "ServiceAccounts",
       meta: {
-        title: "Service Accounts",
+        title: "business.access_control.service_accounts",
         global: false,
         scope: "namespace"
       },
@@ -93,7 +93,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/roles"),
       name: "Roles",
       meta: {
-        title: "Roles",
+        title: "business.access_control.roles",
         global: false,
         scope: "namespace"
       },
@@ -161,7 +161,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/role-bindings"),
       name: "RoleBindings",
       meta: {
-        title: "Role Bindings",
+        title: "business.access_control.role_bindings",
         global: false,
         scope: "namespace"
       },
@@ -229,7 +229,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/cluster-roles"),
       name: "ClusterRoles",
       meta: {
-        title: "Cluster Roles",
+        title: "business.access_control.cluster_roles",
         global: false,
       },
     },
@@ -297,7 +297,7 @@ const AccessControl = {
         import("@/business/access-control/cluster-role-bindings"),
       name: "ClusterRoleBindings",
       meta: {
-        title: "Cluster Role Bindings",
+        title: "business.access_control.cluster_role_bindings",
         global: false,
       },
     },
@@ -365,7 +365,7 @@ const AccessControl = {
       component: () => import("@/business/access-control/pod-security-policies"),
       name: "PSPs",
       meta: {
-        title: "Pod Security Policies",
+        title: "business.access_control.pod_security_policies",
         scope: "cluster"
       }
     },

@@ -14,13 +14,13 @@
             <ko-form-item itemType="input" v-model="row.name" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. 8080" itemType="number" v-model.number="row.containerPort" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_8080')" itemType="number" v-model.number="row.containerPort" />
           </td>
           <td>
             <ko-form-item itemType="select" v-model="row.protocol" :selections="protocol_list" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. 80" itemType="number" v-model.number="row.hostPort" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_80')" itemType="number" v-model.number="row.hostPort" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">

@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Events">
+  <layout-content :header="$t('business.event.event')">
     <complex-table :data="data" @search="search" v-loading="loading" :pagination-config="paginationConfig"
                    :search-config="searchConfig"
                    :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">

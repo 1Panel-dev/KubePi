@@ -44,7 +44,7 @@
                 <td>{{ item.spec.scope }}</td>
               </tr>
               <tr>
-                <td>Group</td>
+                <td>{{ $t("business.custom_resource.group") }}</td>
                 <td>{{ item.spec.group }}</td>
               </tr>
             </table>
@@ -66,11 +66,11 @@
                   <td>{{ item.spec.names.plural }}</td>
                 </tr>
                 <tr>
-                  <td>Kind</td>
+                  <td>{{ $t("business.custom_resource.kind") }}</td>
                   <td>{{ item.spec.names.kind }}</td>
                 </tr>
                 <tr>
-                  <td>List Kind</td>
+                  <td>{{ $t("business.custom_resource.list_kind") }}</td>
                   <td>{{ item.spec.names.listKind }}</td>
                 </tr>
               </table>

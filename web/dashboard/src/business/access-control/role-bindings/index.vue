@@ -1,12 +1,10 @@
 <template>
-  <layout-content header="Role Bindings">
+  <layout-content :header="$t('business.access_control.role_bindings')">
     <div style="float: left">
       <el-button
           v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}"
           type="primary" size="small"
-          @click="yamlCreate">
-        YAML
-      </el-button>
+          @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'rbac.authorization.k8s.io',resource:'rolebindings',verb:'create'}">
         {{ $t("commons.button.create") }}
@@ -30,26 +28,26 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Role" show-overflow-tooltip>
+      <el-table-column :label="$t('business.access_control.role')" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span>{{ row.roleRef.kind }}/{{ row.roleRef.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Users" show-overflow-tooltip>
+      <el-table-column :label="$t('business.access_control.user')" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'User'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="Groups" show-overflow-tooltip>
+      <el-table-column :label="$t('business.access_control.group')" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'Group'">{{ subject.name }}</span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="ServiceAccounts" show-overflow-tooltip>
+      <el-table-column :label="$t('business.access_control.service_account')" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span v-for="(subject,index) in row.subjects" v-bind:key="index">
             <span v-if="subject.kind === 'ServiceAccount'">{{ subject.name }}</span>

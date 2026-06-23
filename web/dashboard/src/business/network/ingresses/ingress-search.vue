@@ -1,9 +1,9 @@
 <template>
-    <layout-content header="Ingress Search" v-loading.fullscreen.lock="loading">
+    <layout-content :header="$t('business.network.ingress_search')" v-loading.fullscreen.lock="loading">
         <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td align="center" valign="top"><el-input clearable v-model="search_url"
-                        placeholder="Input Url to Search Ingresses" @keyup.enter.native="renderCharts"></el-input></td>
+                        :placeholder="$t('business.network.search_ingress_placeholder')" @keyup.enter.native="renderCharts"></el-input></td>
             </tr>
             <tr>
                 <td align="center" valign="top">

@@ -17,7 +17,7 @@
             <ko-form-item itemType="input" v-model="row.prefix_or_alias" />
           </td>
           <td>
-            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled placeholder="N/A" />
+            <ko-form-item v-if="row.type === 'Key/Value Pair' || row.type === 'Pod Field'" itemType="input" disabled :placeholder="$t('commons.placeholder.not_available')" />
             <ko-form-item v-if="row.type === 'Resource' || row.type === 'Field'" itemType="input" v-model="row.source" />
             <ko-form-item v-if="row.type === 'ConfigMap key'" itemType="select2" v-model="row.source" @change="changeConfigMap(row)" :selections="config_map_name_list" />
             <ko-form-item v-if="row.type === 'ConfigMap'" itemType="select2" v-model="row.source" :selections="config_map_name_list" />
@@ -28,7 +28,7 @@
             <ko-form-item v-if="row.type ==='Key/Value Pair' || row.type === 'Pod Field'" itemType="textarea" v-model="row.value" />
             <ko-form-item v-if="row.type ==='Resource'" itemType="select2" v-model="row.value" :selections="resource_value_list" />
             <ko-form-item v-if="row.type ==='Secret key' || row.type ==='ConfigMap key'" itemType="select2" v-model="row.value" :selections="row.value_list" />
-            <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" placeholder="N/A" />
+            <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" :placeholder="$t('commons.placeholder.not_available')" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">

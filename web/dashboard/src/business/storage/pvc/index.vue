@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Persistent Volume Claims">
+  <layout-content :header="$t('business.storage.persistent_volume_claims')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'persistentvolumeclaims',verb:'create'}"
                   @click="onCreate">
@@ -32,14 +30,14 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip :label="$t('business.namespace.namespace')" prop="metadata.namespace"/>
-      <el-table-column show-overflow-tooltip label="Volume" prop="spec.volumeName">
+      <el-table-column show-overflow-tooltip :label="$t('business.workload.volume')" prop="spec.volumeName">
         <template v-slot:default="{row}">
           <span class="span-link" @click="openPvDetail(row)">{{ row.spec.volumeName }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('business.storage.capacity')" prop="spec.resources.requests.storage"/>
       <el-table-column :label="$t('business.storage.storageClass')" prop="spec.storageClassName"/>
-      <el-table-column label="volumeMode" prop="spec.volumeMode"/>
+      <el-table-column :label="$t('business.storage.volumeMode')" prop="spec.volumeMode"/>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">
           {{ row.metadata.creationTimestamp | age }}

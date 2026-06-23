@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Config Maps">
+  <layout-content :header="$t('business.configuration.config_maps')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'configmaps',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'configmaps',verb:'create'}">
         {{ $t("commons.button.create") }}

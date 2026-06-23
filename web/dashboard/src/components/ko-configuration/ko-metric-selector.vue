@@ -22,8 +22,8 @@
           <el-select v-model="row.operator" style="width: 100%" @change="changeOperator(row)">
             <el-option label="=" value="In"></el-option>
             <el-option label="≠" value="NotIn"></el-option>
-            <el-option label="Exists" value="Exists"></el-option>
-            <el-option label="Dose Not Exist" value="DoesNotExist"></el-option>
+            <el-option :label="$t('business.configuration.exists')" value="Exists"></el-option>
+            <el-option :label="$t('business.configuration.does_not_exist')" value="DoesNotExist"></el-option>
           </el-select>
         </td>
         <td>

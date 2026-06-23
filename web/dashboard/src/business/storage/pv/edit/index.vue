@@ -29,9 +29,9 @@
           </el-row>
           <el-tabs v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick"  v-if="Object.keys(form.metadata).length !== 0">
-            <el-tab-pane label="Customize">
+            <el-tab-pane :label="$t('business.storage.customize')">
               <div style="margin-top: 20px">
-                <ko-card title="Customize">
+                <ko-card :title="$t('business.storage.customize')">
                   <el-row :gutter="24">
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.assignSc')">
@@ -47,9 +47,9 @@
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.accessModes')" required>
                         <el-radio-group disabled v-model="currentAccessModes">
-                          <el-radio @change="setFormAccessModel" label="ReadWriteOnce">ReadWriteOnce</el-radio>
-                          <el-radio @change="setFormAccessModel" label="ReadOnlyMany">ReadOnlyMany</el-radio>
-                          <el-radio @change="setFormAccessModel" label="ReadWriteMany">ReadWriteMany</el-radio>
+                          <el-radio @change="setFormAccessModel" label="ReadWriteOnce">{{ $t("business.storage.read_write_once") }}</el-radio>
+                          <el-radio @change="setFormAccessModel" label="ReadOnlyMany">{{ $t("business.storage.read_only_many") }}</el-radio>
+                          <el-radio @change="setFormAccessModel" label="ReadWriteMany">{{ $t("business.storage.read_write_many") }}</el-radio>
                         </el-radio-group>
                       </el-form-item>
                     </el-col>
@@ -59,27 +59,27 @@
                                     :nodeList="[]" :nodeSchedulingParentObj="form.spec"/>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="Plugin Configuration">
+            <el-tab-pane :label="$t('business.storage.plugin_configuration')">
               <div style="margin-top: 20px">
-                <ko-card title="Plugin Configuration">
+                <ko-card :title="$t('business.storage.plugin_configuration')">
                   <el-form v-if="currentStorageType === 'NFS'">
                     <el-row :gutter="24">
                       <el-col :span="8">
-                        <el-form-item label="PATH" required>
-                          <el-input disabled clearable placeholder="eg: /nfs-share"
+                        <el-form-item :label="$t('business.storage.path')" required>
+                          <el-input disabled clearable :placeholder="$t('commons.placeholder.example_nfs_path')"
                                     v-model="form.spec.nfs.path"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
-                        <el-form-item label="Server" required>
-                          <el-input disabled clearable placeholder="eg: 172.16.10.100"
+                        <el-form-item :label="$t('business.storage.server')" required>
+                          <el-input disabled clearable :placeholder="$t('commons.placeholder.example_ip')"
                                     v-model="form.spec.nfs.server"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
-                        <el-form-item label="ReadOnly">
-                          <el-radio disabled v-model="form.spec.nfs.readOnly" :label="true">Yes</el-radio>
-                          <el-radio disabled v-model="form.spec.nfs.readOnly" :label="false">No</el-radio>
+                        <el-form-item :label="$t('business.storage.read_only')">
+                          <el-radio disabled v-model="form.spec.nfs.readOnly" :label="true">{{ $t("business.workload.yes") }}</el-radio>
+                          <el-radio disabled v-model="form.spec.nfs.readOnly" :label="false">{{ $t("business.workload.no") }}</el-radio>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -87,21 +87,21 @@
                   </el-form>
                   <el-form v-if="currentStorageType === 'Local'">
                     <el-col :span="8">
-                      <el-form-item label="Path on the Node" required>
-                        <el-input disabled clearable placeholder="eg: /data" v-model="form.spec.local.path"></el-input>
+                      <el-form-item :label="$t('business.storage.path_on_node')" required>
+                        <el-input disabled clearable :placeholder="$t('commons.placeholder.example_data_path')" v-model="form.spec.local.path"></el-input>
                       </el-form-item>
                     </el-col>
                   </el-form>
                   <el-form v-if="currentStorageType === 'Host'">
                     <el-row :gutter="24">
                       <el-col :span="8">
-                        <el-form-item label="PATH" required>
-                          <el-input disabled clearable placeholder="eg: /data"
+                        <el-form-item :label="$t('business.storage.path')" required>
+                          <el-input disabled clearable :placeholder="$t('commons.placeholder.example_data_path')"
                                     v-model="form.spec.hostPath.path"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
-                        <el-form-item label="Path on the Node" required>
+                        <el-form-item :label="$t('business.storage.path_on_node')" required>
                           <el-select disabled v-model="form.spec.hostPath.type">
                             <el-option v-for="(h, index) in hostPathTypes"
                                        :key="index"
@@ -204,13 +204,13 @@ export default {
       cluster: "",
       storageTypes: [{
         value: "NFS",
-        label: "NFS Share"
+        label: this.$t("business.storage.nfs_share")
       }, {
         value: "Local",
-        label: "Local Volume"
+        label: this.$t("business.storage.local_volume")
       }, {
         value: "Host",
-        label: "Host Path"
+        label: this.$t("business.storage.host_path")
       }],
       hostPathTypes: [{
         value: "DirectoryOrCreate",

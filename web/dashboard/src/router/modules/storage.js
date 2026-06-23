@@ -23,7 +23,7 @@ const Storage = {
       name: "PersistentVolumeClaim",
       props: true,
       meta: {
-        title: "Persistent Volume Claims",
+        title: "business.storage.persistent_volume_claims",
         activeMenu: "/persistentVolumeClaim",
         scope: "namespace"
       }
@@ -39,7 +39,7 @@ const Storage = {
       name: "PersistentVolumeClaimCreate",
       hidden: true,
       meta: {
-        title: "PersistentVolumeClaim Create",
+        title: "business.storage.persistent_volume_claim_create",
         activeMenu: "/persistentVolumeClaim",
       }
     }, {
@@ -55,7 +55,7 @@ const Storage = {
       hidden: true,
       props: true,
       meta: {
-        title: "PersistentVolumeClaim Detail",
+        title: "business.storage.persistent_volume_claim_detail",
         activeMenu: "/persistentVolumeClaim",
       }
     }, {
@@ -71,7 +71,7 @@ const Storage = {
       hidden: true,
       props: true,
       meta: {
-        title: "PersistentVolumeClaim Edit",
+        title: "business.storage.persistent_volume_claim_edit",
         activeMenu: "/persistentVolumeClaim",
       }
     },
@@ -86,7 +86,7 @@ const Storage = {
       component: () => import("@/business/storage/pv"),
       name: "PersistentVolumes",
       meta: {
-        title: "Persistent Volumes",
+        title: "business.storage.persistent_volumes",
       },
     },
     {
@@ -101,7 +101,7 @@ const Storage = {
       name: "PersistentVolumeCreate",
       hidden: true,
       meta: {
-        title: "Persistent Volume Create",
+        title: "business.storage.persistent_volume_create",
         activeMenu: "/persistentvolumes",
       }
     },
@@ -118,7 +118,7 @@ const Storage = {
       props: true,
       hidden: true,
       meta: {
-        title: "Persistent Volume Edit",
+        title: "business.storage.persistent_volume_edit",
         activeMenu: "/persistentvolumes"
       }
     },
@@ -135,7 +135,7 @@ const Storage = {
       props: true,
       hidden: true,
       meta: {
-        title: "Persistent Volume Detail",
+        title: "business.storage.persistent_volume_detail",
         activeMenu: "/persistentvolumes"
       }
     },
@@ -150,7 +150,7 @@ const Storage = {
       component: () => import("@/business/storage/sc"),
       name: "StorageClasses",
       meta: {
-        title: "Storage Classes",
+        title: "business.storage.storage_classes",
         activeMenu: "/storageclasses",
       }
     },
@@ -165,7 +165,7 @@ const Storage = {
       name: "StorageClassCreate",
       hidden: true,
       meta: {
-        title: "Storage Classes Create",
+        title: "business.storage.storage_class_create",
         activeMenu: "/storageclasses",
       }
     },
@@ -181,7 +181,7 @@ const Storage = {
       hidden: true,
       props: true,
       meta: {
-        title: "Storage Classes Edit",
+        title: "business.storage.storage_class_edit",
         activeMenu: "/storageclasses",
       }
     },
@@ -197,7 +197,7 @@ const Storage = {
       props: true,
       hidden: true,
       meta: {
-        title: "Storage Classes Detail",
+        title: "business.storage.storage_class_detail",
         activeMenu: "/storageclasses",
       }
     },

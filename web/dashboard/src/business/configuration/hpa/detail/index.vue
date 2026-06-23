@@ -39,7 +39,7 @@
         <el-col :span="24">
           <br>
           <el-tabs type="border-card">
-            <el-tab-pane label="Metrics" v-if="item.spec.metrics.length > 0">
+            <el-tab-pane :label="$t('business.common.metrics')" v-if="item.spec.metrics.length > 0">
               <div v-for="(metric,index) in item.spec.metrics" v-bind:key="index"
                    style="border:1px solid #dbe4f0;margin-top: 5px">
                 <el-row :gutter="20">
@@ -47,24 +47,24 @@
                     <table style="width: 100%" class="myTable" v-if="metric.type">
                       <tr>
                         <th scope="col" width="30%" align="left">
-                          <h3>{{ metric.type }} Metric</h3>
+                          <h3>{{ metric.type }} {{ $t("business.common.metrics") }}</h3>
                         </th>
                         <th scope="col"></th>
                       </tr>
                       <tr>
-                        <td>Target Name</td>
+                        <td>{{ $t("business.configuration.target_name") }}</td>
                         <td>{{ metric[metric.type.toLowerCase()].target.type }}</td>
                       </tr>
                       <tr>
-                        <td>Value</td>
+                        <td>{{ $t("business.configuration.value") }}</td>
                         <td>{{ getTargetValue(metric[metric.type.toLowerCase()].target) }}</td>
                       </tr>
                       <tr v-if="metric[metric.type.toLowerCase()].name">
-                        <td>Resource Name</td>
+                        <td>{{ $t("business.configuration.resource_name") }}</td>
                         <td>{{ metric[metric.type.toLowerCase()].name }}</td>
                       </tr>
                       <tr v-if="metric[metric.type.toLowerCase()].metric">
-                        <td>Name</td>
+                        <td>{{ $t("business.configuration.name") }}</td>
                         <td>{{ metric[metric.type.toLowerCase()].metric.name }}</td>
                       </tr>
                     </table>
@@ -73,23 +73,23 @@
                     <table style="width: 100%" class="myTable">
                       <tr>
                         <th scope="col" width="30%" align="left">
-                          <h3>Current Metrics</h3>
+                          <h3>{{ $t("business.configuration.current_metrics") }}</h3>
                         </th>
                         <th scope="col"></th>
                       </tr>
                       <tr v-if="item.status.currentMetrics && item.status.currentMetrics[index].type !== '' ">
-                        <td>Average Utilization</td>
+                        <td>{{ $t("business.configuration.average_utilization") }}</td>
                         <td v-if="metric.type">
                           {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageUtilization }}
                         </td>
                       </tr>
                       <tr v-if="item.status.currentMetrics && item.status.currentMetrics[index].type !== '' ">
-                        <td>Average Value</td>
+                        <td>{{ $t("business.configuration.average_value") }}</td>
                         <td v-if="metric.type">
                           {{ item.status.currentMetrics[index][metric.type.toLowerCase()].current.averageValue }}
                         </td>
                       </tr>
-                      <span v-if="item.status.currentMetrics && item.status.currentMetrics[index].type === '' ">No Current Metrics</span>
+                      <span v-if="item.status.currentMetrics && item.status.currentMetrics[index].type === '' ">{{ $t("business.configuration.no_current_metrics") }}</span>
                     </table>
                   </el-col>
                 </el-row>
@@ -98,7 +98,7 @@
             <el-tab-pane :label="$t('business.common.conditions')">
               <ko-detail-conditions :conditions="item.status.conditions"></ko-detail-conditions>
             </el-tab-pane>
-            <el-tab-pane label="Events">
+            <el-tab-pane :label="$t('business.common.events')">
               <ko-detail-events :namespace="namespace" :cluster="cluster"
                                 :selector="'involvedObject.kind=HorizontalPodAutoscaler,involvedObject.name='+name"></ko-detail-events>
             </el-tab-pane>

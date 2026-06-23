@@ -10,7 +10,7 @@
         <el-col :span="24">
           <br>
           <el-tabs type="border-card">
-            <el-tab-pane label="Rule" v-if="item.rules.length >0">
+            <el-tab-pane :label="$t('business.access_control.rule')" v-if="item.rules.length >0">
               <ko-detail-roles :rules="item.rules"></ko-detail-roles>
             </el-tab-pane>
           </el-tabs>

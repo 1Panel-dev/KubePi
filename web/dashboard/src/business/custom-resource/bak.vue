@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Custom Resource Definitions">
+  <layout-content :header="$t('business.custom_resource.custom_resource_definitions')">
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig">
       <template #header>
           <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
@@ -12,7 +12,7 @@
           <span class="span-link" @click="openDetail(row)">{{ row.spec.names.kind }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Group" prop="spec.group">
+      <el-table-column :label="$t('business.custom_resource.group')" prop="spec.group">
         <template v-slot:default="{row}">
           {{ row.spec.group }}
         </template>

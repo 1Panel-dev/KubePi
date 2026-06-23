@@ -11,7 +11,7 @@
         <td colspan="4">{{ item.metadata.namespace }}</td>
       </tr>
       <tr v-if="item.metadata.finalizers">
-        <td>Finalizers</td>
+        <td>{{ $t("business.common.finalizers") }}</td>
         <td colspan="4">
           <div v-for="value in item.metadata.finalizers" v-bind:key="value" class="myTag">
             <el-tag type="info" size="small">
@@ -31,7 +31,7 @@
         </td>
       </tr>
       <tr v-if="item.kind === 'Namespace'">
-        <td>Resource Quotas</td>
+        <td>{{ $t("business.common.resource_quotas") }}</td>
         <td colspan="4">
           <div v-for="(item,index) in resourceQuotas" v-bind:key="index" class="my-tag">
             <el-link @click="toResourceQuota(item)">{{item.metadata.name}}</el-link>
@@ -39,7 +39,7 @@
         </td>
       </tr>
       <tr v-if="item.kind === 'Namespace'">
-        <td>Limit Ranges</td>
+        <td>{{ $t("business.common.limit_ranges") }}</td>
         <td colspan="4">
           <div v-for="(item,index) in limitRanges" v-bind:key="index" class="my-tag">
             <el-link @click="toLimitRange(item)">

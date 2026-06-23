@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Nodes">
+  <layout-content :header="$t('business.cluster.nodes')">
     <div style="float: left">
       <el-button type="primary" size="small"
                    v-has-permissions="{scope:'cluster',apiGroup:'',resource:'nodes',verb:'update'}"
@@ -29,7 +29,7 @@
           <span class="span-link" @click="onDetail(row)"> {{ row.metadata.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Internal IP" prop="metadata.name" max-width="30px">
+      <el-table-column :label="$t('business.node.internal_ip')" prop="metadata.name" max-width="30px">
         <template v-slot:default="{row}">
           <div v-for="(address,index) in row.status.addresses" v-bind:key="index">
             <span v-if="address.type === 'InternalIP'">{{ address.address }}</span>
@@ -58,7 +58,7 @@
           {{row.spec.taints ? row.spec.taints.length+"" : ""}}
         </template>
       </el-table-column>
-      <el-table-column label="Pods" min-width="80px">
+      <el-table-column :label="$t('business.node.pods')" min-width="80px">
         <template v-slot:default="{row}">
           {{row.pods}}
         </template>

@@ -21,13 +21,13 @@
           <td>
             <el-select multiple v-model="row.verbs" style="width: 100%" @change="changeVerbs(row)">
               <el-option label="*" :value="'*'"></el-option>
-              <el-option label="create" :value="'create'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="delete" :value="'delete'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="list" :value="'list'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="get" :value="'get'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="patch" :value="'patch'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="update" :value="'update'" :disabled="row.verbs[0]==='*'"></el-option>
-              <el-option label="watch" :value="'watch'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.create')" :value="'create'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.delete')" :value="'delete'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.list')" :value="'list'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.get')" :value="'get'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.patch')" :value="'patch'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.update')" :value="'update'" :disabled="row.verbs[0]==='*'"></el-option>
+              <el-option :label="$t('business.access_control.watch')" :value="'watch'" :disabled="row.verbs[0]==='*'"></el-option>
             </el-select>
           </td>
           <td>

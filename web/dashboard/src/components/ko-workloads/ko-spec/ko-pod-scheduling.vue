@@ -26,10 +26,10 @@
             </el-col>
           </el-row>
 
-          <div style="margin-top: 20px"><span>matchExpressions</span></div>
+          <div style="margin-top: 20px"><span>{{ $t("business.workload.match_expressions") }}</span></div>
           <ko-match-table :matchTables.sync="item.rules" :isReadOnly="isReadOnly" />
 
-          <div style="margin-top: 20px"><span>matchLabels</span></div>
+          <div style="margin-top: 20px"><span>{{ $t("business.workload.match_labels") }}</span></div>
           <table style="width: 100%; margin-top: 5px" class="tab-table">
             <tr v-for="(row, index) in item.labelRules" v-bind:key="'l'+index">
               <td width="48%">
@@ -54,7 +54,7 @@
           <el-row style="margin-top: 10px">
             <el-col :span=24>
               <el-form-item :label="$t('business.workload.topology_key')" required>
-                <ko-form-item itemType="input" placeholder="e.g. failure-domain.beta.kubernetes.io/zone" v-model="item.topologyKey" />
+                <ko-form-item itemType="input" :placeholder="$t('commons.placeholder.example_zone')" v-model="item.topologyKey" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -82,9 +82,9 @@
             </el-col>
           </el-row>
 
-          <div style="margin-top: 20px"><span>matchLabels</span></div>
+          <div style="margin-top: 20px"><span>{{ $t("business.workload.match_labels") }}</span></div>
           <ko-match-table :matchTables.sync="item.rules" :isReadOnly="isReadOnly" />
-          <div style="margin-top: 20px"><span>matchFields</span></div>
+          <div style="margin-top: 20px"><span>{{ $t("business.workload.match_fields") }}</span></div>
           <ko-match-table :matchTables.sync="item.fields" :isReadOnly="isReadOnly" />
         </el-card>
       </div>

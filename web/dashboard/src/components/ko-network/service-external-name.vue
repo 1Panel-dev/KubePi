@@ -1,9 +1,9 @@
 <template>
   <div style="margin-top: 20px">
-    <ko-card title="External Name">
+    <ko-card :title="$t('business.network.external_name')">
       <el-row>
         <el-col :span="12">
-          <el-input placeholder="e.g. database.example.com" v-model="name" @change="transformation"></el-input>
+          <el-input :placeholder="$t('commons.placeholder.example_database_domain')" v-model="name" @change="transformation"></el-input>
         </el-col>
       </el-row>
     </ko-card>

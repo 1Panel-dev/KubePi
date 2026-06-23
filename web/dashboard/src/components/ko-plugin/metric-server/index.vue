@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <el-dialog title="Metric Server" :visible.sync="dialogMetricVisible" width="50%" @close="onCancel" :close-on-click-modal="false">
+    <el-dialog :title="$t('business.dashboard.metric_server')" :visible.sync="dialogMetricVisible" width="50%" @close="onCancel" :close-on-click-modal="false">
       <el-form label-position="top" :model="createForm" ref="createForm" style="margin-left: 20px">
         <el-form-item :label="$t('business.dashboard.metric_server_install_help')">
           <el-tree :data="data" :props="defaultProps"></el-tree>

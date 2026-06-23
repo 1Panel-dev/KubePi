@@ -4,7 +4,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-select style="width: 100%" v-model="repo" @change="listAll(true)">
-            <el-option label="All" value="KRepoAll"></el-option>
+            <el-option :label="$t('business.chart.all')" value="KRepoAll"></el-option>
             <el-option v-for="(r,index) in repos" :key="index" :label="r.name" :value="r.name"></el-option>
           </el-select>
         </el-col>

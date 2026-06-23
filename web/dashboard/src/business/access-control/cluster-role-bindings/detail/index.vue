@@ -17,7 +17,7 @@
                 <th scope="col"></th>
               </tr>
               <tr>
-                <td>Kind</td>
+                <td>{{ $t("business.access_control.kind") }}</td>
                 <td>{{ item.roleRef.kind }}</td>
               </tr>
               <tr>

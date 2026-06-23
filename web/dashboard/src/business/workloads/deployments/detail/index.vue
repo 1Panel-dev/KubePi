@@ -47,13 +47,13 @@
       </el-row>
       <el-row style="margin-top:20px" class="row-box">
         <el-card class="el-card">
-          <h3>Pods</h3>
+          <h3>{{ $t("business.common.pods") }}</h3>
           <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
         </el-card>
       </el-row>
       <el-row style="margin-top:20px" class="row-box">
         <el-card class="el-card">
-          <h3>History</h3>
+          <h3>{{ $t("business.common.history") }}</h3>
           <Ko-detail-replicasets :cluster="clusterName" :namespace="namespace" :name="name" :selector="selectors" />
         </el-card>
       </el-row>

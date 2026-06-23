@@ -38,7 +38,7 @@
           <table style="width: 100%;margin-top:10px" class="tab-table">
             <tr v-for="(row,index) in form.dnsConfig.nameservers" :key="index">
               <td width="90%">
-                <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_host')" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(index)">
@@ -58,7 +58,7 @@
           <table style="width: 100%;margin-top:10px" class="tab-table">
             <tr v-for="(row,index) in form.dnsConfig.searches" :key="index">
               <td width="90%">
-                <ko-form-item placeholder="e.g. mycompany.com" itemType="input" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_company_domain')" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(index)">
@@ -86,10 +86,10 @@
             </tr>
             <tr v-for="(row,index) in form.dnsConfig.options" :key="index">
               <td>
-                <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.name" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_foo')" itemType="input" v-model="row.name" />
               </td>
               <td>
-                <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_bar')" itemType="input" v-model="row.value" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(index)">
@@ -114,10 +114,10 @@
             </tr>
             <tr v-for="(row, index) in form.hostAliases" v-bind:key="index">
               <td>
-                <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.ip" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_host')" itemType="input" v-model="row.ip" />
               </td>
               <td>
-                <ko-form-item placeholder="e.g. foo.com,bar.com" itemType="input" v-model="row.hostnames" />
+                <ko-form-item :placeholder="$t('commons.placeholder.example_searches')" itemType="input" v-model="row.hostnames" />
               </td>
               <td>
                 <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
@@ -137,12 +137,12 @@
       <el-row :gutter="20" style="margin-top:20px">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.hostname')" prop="hostname">
-            <ko-form-item placeholder="hostname" itemType="input" v-model="form.hostname" />
+            <ko-form-item :placeholder="$t('commons.placeholder.hostname')" itemType="input" v-model="form.hostname" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.sub_domain')" prop="subdomain">
-            <ko-form-item placeholder="subdomain" itemType="input" v-model="form.subdomain" />
+            <ko-form-item :placeholder="$t('commons.placeholder.subdomain')" itemType="input" v-model="form.subdomain" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -231,7 +231,7 @@ export default {
     },
     checkIsValid(item) {
       if (this.form.hostPID && this.form.shareProcessNamespace) {
-        this.$notify({ title: this.$t("commons.message_box.prompt"), message: "shareProcessNamespace 和 hostPID 不能同时为 true", type: "warning" })
+        this.$notify({ title: this.$t("commons.message_box.prompt"), message: this.$t("business.workload.share_process_namespace_host_pid_conflict"), type: "warning" })
         if (item === "hostPID") {
           this.form.hostPID = null
         } else {

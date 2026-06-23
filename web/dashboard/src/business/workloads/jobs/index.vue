@@ -1,9 +1,7 @@
 <template>
-  <layout-content header="Jobs">
+  <layout-content :header="$t('business.workload.jobs')">
     <div style="float: left">
-      <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
-        YAML
-      </el-button>
+      <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'batch',resource:'jobs',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>

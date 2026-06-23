@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Endpoints">
+  <layout-content :header="$t('business.network.endpoints')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="yamlCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'endpoints',verb:'create'}">
         {{ $t("commons.button.create") }}
@@ -28,7 +26,7 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Endpoints" prop="subsets" min-width="200px">
+      <el-table-column :label="$t('business.network.endpoints')" prop="subsets" min-width="200px">
         <template v-slot:default="{row}">
           <div v-for="(subset,index) in row.subsets" v-bind:key="index">
             <div v-for="(address,index) in subset.addresses" v-bind:key="index" style="display:inline-block">

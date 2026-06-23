@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Network Policies">
+  <layout-content :header="$t('business.network.network_policies')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'networkpolicies',verb:'delete'}">
         {{ $t("commons.button.delete") }}

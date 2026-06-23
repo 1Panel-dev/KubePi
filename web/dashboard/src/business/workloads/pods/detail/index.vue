@@ -20,7 +20,7 @@
                 <td colspan="4">{{ form.metadata.namespace }}</td>
               </tr>
               <tr>
-                <td>Pod IP</td>
+                <td>{{ $t("business.workload.pod_ip") }}</td>
                 <td colspan="4">{{ form.status.podIP }}</td>
               </tr>
               <tr>
@@ -86,7 +86,7 @@
         <el-table-column :label="$t('business.pod.message')" prop="message" min-width="150" />
       </complex-table>
 
-      <h2 style="margin-top: 40px">Spec</h2>
+      <h2 style="margin-top: 40px">{{ $t("business.workload.spec") }}</h2>
       <el-row :gutter="20" style="margin-top: 20px" class="row-box">
         <el-col :span="8">
           <el-card class="el-card">

@@ -23,7 +23,7 @@ const Clusters = {
             component: () => import("@/business/cluster/nodes"),
             name: "Nodes",
             meta: {
-                title: "Nodes",
+                title: "business.cluster.nodes",
             }
         },
         {
@@ -57,7 +57,7 @@ const Clusters = {
                 scope: "cluster"
             },
             meta: {
-                title: "Namespaces"
+                title: "business.namespace.namespace"
             }
         },
         {
@@ -100,7 +100,7 @@ const Clusters = {
                 scope: "cluster"
             },
             meta: {
-                title: "Events",
+                title: "business.event.event",
             }
         },
         {
@@ -110,7 +110,7 @@ const Clusters = {
             name: "EventDetail",
             hidden: true,
             meta: {
-                title: "EventDetail",
+                title: "business.event.event_detail",
                 activeMenu: "/events"
             }
         },
@@ -125,7 +125,7 @@ const Clusters = {
                 scope:"cluster"
             },
             meta: {
-                title: "CRD",
+                title: "business.custom_resource.custom_resource_definitions",
             },
         },
         {

@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Validating Webhook Configurations">
+  <layout-content :header="$t('business.configuration.validating_webhook_configurations')">
     <div style="float: left">
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'cluster',apiGroup:'admissionregistration.k8s.io',resource:'validatingwebhookconfigurations',verb:'create'}"
-                  @click="onCreate">
-        YAML
-      </el-button>
+                  @click="onCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'cluster',apiGroup:'admissionregistration.k8s.io',resource:'validatingwebhookconfigurations',verb:'delete'}"
                   :disabled="selects.length===0" @click="onDelete()">
@@ -17,7 +15,7 @@
                    :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip></el-table-column>
-      <el-table-column label="webhooks" prop="webhooks" fix>
+      <el-table-column :label="$t('business.configuration.webhooks')" prop="webhooks" fix>
         <template v-slot:default="{row}">
           {{ getWebhooksCount(row) }}
         </template>
@@ -215,4 +213,3 @@ export default {
 
 <style scoped>
 </style>
-

@@ -1,11 +1,11 @@
 <template>
-  <layout-content header="Horizontal Pod Autoscalers">
+  <layout-content :header="$t('business.configuration.horizontal_pod_autoscalers')">
     <div style="float: left">
       <el-button
               v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}"
               type="primary" size="small"
               @click="yamlCreate">
-        YAML
+        {{ $t("commons.button.yaml") }}
       </el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'autoscaling',resource:'horizontalpodautoscalers',verb:'create'}">
@@ -30,22 +30,22 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Workload" prop="spec.scaleTargetRef.kind">
+      <el-table-column :label="$t('business.workload.workload')" prop="spec.scaleTargetRef.kind">
         <template v-slot:default="{row}">
           {{ row.spec.scaleTargetRef.kind }}/{{ row.spec.scaleTargetRef.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Min Replicas" prop="spec.scaleTargetRef.minReplicas ">
+      <el-table-column :label="$t('business.configuration.min_replicas')" prop="spec.scaleTargetRef.minReplicas ">
         <template v-slot:default="{row}">
           {{ row.spec.minReplicas }}
         </template>
       </el-table-column>
-      <el-table-column label="Max Replicas" prop="spec.scaleTargetRef.maxReplicas">
+      <el-table-column :label="$t('business.configuration.max_replicas')" prop="spec.scaleTargetRef.maxReplicas">
         <template v-slot:default="{row}">
           {{ row.spec.maxReplicas }}
         </template>
       </el-table-column>
-      <el-table-column label="Current Replicas" prop="status.currentReplicas">
+      <el-table-column :label="$t('business.configuration.current_replicas')" prop="status.currentReplicas">
         <template v-slot:default="{row}">
           {{ row.status.currentReplicas }}
         </template>

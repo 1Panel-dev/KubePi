@@ -18,11 +18,11 @@
               <ko-key-value :title="$t('business.workload.annotations')" :value.sync="form.metadata.annotations"></ko-key-value>
             </el-tab-pane>
 
-            <el-tab-pane label="Resource Quotas">
+            <el-tab-pane :label="$t('business.common.resource_quotas')">
               <ko-resource-quota style="margin-left: 20px" :hasSelector="false" :resourceQuotaObj="quotaForm.spec" ref="ko_resource_quota" />
             </el-tab-pane>
 
-            <el-tab-pane label="Limit Range">
+            <el-tab-pane :label="$t('business.common.limit_ranges')">
               <ko-limit-range style="margin-left: 20px" :limitRangeObj="rangeForm.spec.limits.length === 0 ? null : rangeForm.spec.limits[0]" ref="ko_limit_range" />
             </el-tab-pane>
           </el-tabs>

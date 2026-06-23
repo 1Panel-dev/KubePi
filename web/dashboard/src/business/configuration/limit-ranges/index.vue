@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Limit Ranges">
+  <layout-content :header="$t('business.common.limit_ranges')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="yamlCreate"
-                  v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create',scope:'namespace'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{apiGroup:'',resource:'limitranges',verb:'create',scope:'namespace'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'limitranges',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>

@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Namespaces" v-loading="loading">
+  <layout-content :header="$t('business.namespace.namespace')" v-loading="loading">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
                    type="primary" size="small"
-                   @click="yamlCreate">
-          YAML
-        </el-button>
+                   @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
         <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
                    type="primary" size="small"
                    @click="onCreate">
