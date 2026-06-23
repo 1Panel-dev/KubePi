@@ -66,6 +66,21 @@ func sanitizeClusterResponse(c Cluster) Cluster {
 	return c
 }
 
+func clusterAPIServerDisplayName(c *v1Cluster.Cluster) string {
+	if c.Spec.Connect.Forward.ApiServer != "" {
+		return c.Spec.Connect.Forward.ApiServer
+	}
+	return c.Name
+}
+
+func clusterVerifyErrorMessage(c *v1Cluster.Cluster, err error) []string {
+	apiServer := clusterAPIServerDisplayName(c)
+	if errors.Is(err, goContext.DeadlineExceeded) || strings.Contains(err.Error(), "context deadline exceeded") {
+		return []string{"kubernetes api server %s connection timed out", apiServer}
+	}
+	return []string{"can not verify kubernetes api server %s: %s", apiServer, err.Error()}
+}
+
 // Create Cluster
 // @Tags clusters
 // @Summary Create Cluster
@@ -95,6 +110,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 			req.Spec.Authentication.Certificate.KeyData = []byte(req.KeyDataStr)
 		}
 		if req.Spec.Connect.Forward.ApiServer != "" {
+			req.Spec.Connect.Forward.ApiServer = strings.TrimRight(strings.TrimSpace(req.Spec.Connect.Forward.ApiServer), "/")
 			if !strings.HasPrefix(req.Spec.Connect.Forward.ApiServer, "https://") && !strings.HasPrefix(req.Spec.Connect.Forward.ApiServer, "http://") {
 				req.Spec.Connect.Forward.ApiServer = fmt.Sprintf("%s%s", "https://", req.Spec.Connect.Forward.ApiServer)
 			}
@@ -111,10 +127,15 @@ func (h *Handler) CreateCluster() iris.Handler {
 		client := kubernetes.NewKubernetes(&req.Cluster)
 		if err := client.Ping(); err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", err.Error())
+			ctx.Values().Set("message", clusterVerifyErrorMessage(&req.Cluster, err))
 			return
 		}
-		v, _ := client.Version()
+		v, err := client.Version()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", clusterVerifyErrorMessage(&req.Cluster, err))
+			return
+		}
 		req.Status.Version = v.GitVersion
 		if req.Spec.Authentication.Mode == "configFile" {
 			kubeCfg, err := client.Config()
@@ -145,11 +166,11 @@ func (h *Handler) CreateCluster() iris.Handler {
 		}
 
 		requiredPermissions := map[string][]string{
-			"namespaces":       {"get", "post", "delete"},
-			"clusterroles":     {"get", "post", "delete"},
-			"clusterrolebings": {"get", "post", "delete"},
-			"roles":            {"get", "post", "delete"},
-			"rolebindings":     {"get", "post", "delete"},
+			"namespaces":          {"get", "post", "delete"},
+			"clusterroles":        {"get", "post", "delete"},
+			"clusterrolebindings": {"get", "post", "delete"},
+			"roles":               {"get", "post", "delete"},
+			"rolebindings":        {"get", "post", "delete"},
 		}
 		notAllowed, err := checkRequiredPermissions(client, requiredPermissions)
 		if err != nil {
@@ -161,7 +182,7 @@ func (h *Handler) CreateCluster() iris.Handler {
 		if notAllowed != "" {
 			_ = tx.Rollback()
 			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", []string{"permission %s required", notAllowed})
+			ctx.Values().Set("message", fmt.Sprintf("permission %s required", notAllowed))
 			return
 		}
 		_ = tx.Commit()
@@ -249,31 +270,34 @@ func (h *Handler) updateUserCert(client kubernetes.Interface, binding *v1Cluster
 
 func checkRequiredPermissions(client kubernetes.Interface, requiredPermissions map[string][]string) (string, error) {
 	wg := sync.WaitGroup{}
-	errCh := make(chan error)
-	resultCh := make(chan kubernetes.PermissionCheckResult)
+	totalChecks := 0
+	for key := range requiredPermissions {
+		totalChecks += len(requiredPermissions[key])
+	}
+	errCh := make(chan error, totalChecks)
+	resultCh := make(chan kubernetes.PermissionCheckResult, totalChecks)
 	doneCh := make(chan struct{})
 	for key := range requiredPermissions {
 		for i := range requiredPermissions[key] {
 			wg.Add(1)
 			i := i
 			go func(key string, index int) {
+				defer wg.Done()
 				rs, err := client.HasPermission(authV1.ResourceAttributes{
-					Verb:     requiredPermissions[key][i],
+					Verb:     requiredPermissions[key][index],
 					Resource: key,
 				})
 				if err != nil {
 					errCh <- err
-					wg.Done()
 					return
 				}
 				resultCh <- rs
-				wg.Done()
 			}(key, i)
 		}
 	}
 	go func() {
 		wg.Wait()
-		doneCh <- struct{}{}
+		close(doneCh)
 	}()
 	for {
 		select {
