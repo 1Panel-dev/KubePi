@@ -52,6 +52,8 @@ type Kubernetes struct {
 	*v1Cluster.Cluster
 }
 
+const defaultRequestTimeout = 10 * time.Second
+
 func (k *Kubernetes) VersionMinor() (int, error) {
 	v, err := k.Version()
 	if err != nil {
@@ -443,7 +445,9 @@ func (k *Kubernetes) HasPermission(attributes v1.ResourceAttributes) (Permission
 	if err != nil {
 		return PermissionCheckResult{}, err
 	}
-	resp, err := client.AuthorizationV1().SelfSubjectAccessReviews().Create(context.TODO(), &v1.SelfSubjectAccessReview{
+	ctx, cancel := context.WithTimeout(context.Background(), defaultRequestTimeout)
+	defer cancel()
+	resp, err := client.AuthorizationV1().SelfSubjectAccessReviews().Create(ctx, &v1.SelfSubjectAccessReview{
 		Spec: v1.SelfSubjectAccessReviewSpec{
 			ResourceAttributes: &attributes,
 		},
@@ -511,8 +515,9 @@ func (k *Kubernetes) Ping() error {
 	if err != nil {
 		return err
 	}
-	_, err = client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-	client.AuthorizationV1().SelfSubjectAccessReviews()
+	ctx, cancel := context.WithTimeout(context.Background(), defaultRequestTimeout)
+	defer cancel()
+	_, err = client.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@
       <el-col :span="4"><br/></el-col>
       <el-col :span="10">
         <div class="grid-content bg-purple-light">
-          <el-form ref="form" :rules="rules" :model="form" label-width="150px" label-position="left">
+          <el-form ref="form" v-loading="loading" element-loading-spinner="el-icon-loading" :rules="rules" :model="form" label-width="150px" label-position="left">
 
             <el-form-item :label="$t('commons.table.name')" prop="name">
               <el-input v-model="form.name" clearable></el-input>
@@ -66,7 +66,7 @@
             <el-form-item>
               <div style="float: right">
                 <el-button @click="onCancel()">{{ $t("commons.button.cancel") }}</el-button>
-                <el-button type="primary" @click="onConfirm()" :disabled="isSubmitGoing">{{
+                <el-button type="primary" @click="onConfirm()" :loading="isSubmitGoing" :disabled="isSubmitGoing">{{
                     $t("commons.button.confirm")
                   }}
                 </el-button>
@@ -149,6 +149,9 @@ export default {
     onCancel() {
       this.$router.push({name: "Clusters"})
     },
+    normalizeApiServer(apiServer) {
+      return trim(apiServer).replace(/\/+$/, "")
+    },
     onConfirm() {
       if (this.isSubmitGoing) {
         return
@@ -184,7 +187,7 @@ export default {
       }
       if (this.form.direction === 'forward') {
         const forwardConfig = {}
-        forwardConfig.apiServer = trim(this.form.apiServer)
+        forwardConfig.apiServer = this.normalizeApiServer(this.form.apiServer)
         if (this.form.proxyEnable) {
           forwardConfig.proxy.username = trim(this.form.proxyUsername)
           forwardConfig.proxy.password = trim(this.form.proxyPassword)
