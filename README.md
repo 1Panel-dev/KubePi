@@ -1,7 +1,6 @@
 <p align="center"><a href="https://github.com/1Panel-dev/KubePi"><img src="https://kubeoperator.oss-cn-beijing.aliyuncs.com/kubepi/img/logo-red.png" alt="kubepi" width="300" /></a></p>
 <P align="center"><b>KubePi</b> [kubəˈpaɪ]，一个现代化的 K8s 面板。</P>
 <p align="center">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://shields.io/github/license/1Panel-dev/KubePi?color=%231890FF" alt="License: GPL v3"></a>
   <a href="https://github.com/1Panel-dev/KubePi/releases"><img src="https://img.shields.io/github/v/release/1Panel-dev/KubePi" alt="GitHub release"></a>
   <a href="https://github.com/1Panel-dev/KubePi"><img src="https://img.shields.io/github/stars/1Panel-dev/KubePi?color=%231890FF&style=flat-square" alt="GitHub Stars"></a>
   <a href="https://hub.docker.com/r/1panel/kubepi"><img src="https://img.shields.io/docker/pulls/1panel/kubepi?label=downloads" alt="Docker Pulls"></a>
@@ -50,10 +49,11 @@ KubePi v2.0.0 使用 Go 1.26 和 Kubernetes client-go v0.36 构建。
 
 ## License
 
-Copyright (c) 2014-2026 [FIT2CLOUD 飞致云](https://fit2cloud.com/), All rights reserved.
+本仓库遵循 [FIT2CLOUD Open Source License](LICENSE) 开源协议，该许可证本质上是 GPLv3，但有一些额外的限制。
 
-Licensed under The GNU General Public License version 3 (GPLv3)  (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+你可以基于 KubePi 的源代码进行二次开发，但是需要遵守以下规定：
 
-<https://www.gnu.org/licenses/gpl-3.0.html>
+- 不能替换和修改 KubePi 的 Logo 和版权信息；
+- 二次开发后的衍生作品必须遵守 GPL V3 的开源义务。
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+如需商业授权，请联系：`support@fit2cloud.com`。
