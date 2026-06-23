@@ -1,4 +1,4 @@
-FROM node:22-alpine as stage-web-build
+FROM node:22-alpine AS stage-web-build
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache make
 ARG NPM_REGISTRY="https://registry.npmmirror.com"
@@ -16,7 +16,7 @@ RUN make build_web
 
 RUN rm -fr web
 
-FROM golang:1.26.4 as stage-bin-build
+FROM golang:1.26.4 AS stage-bin-build
 
 ENV GOPROXY="https://goproxy.cn,direct"
 
