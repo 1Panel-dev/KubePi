@@ -13,7 +13,12 @@
     <el-dialog class="ko-dialog" :show-close="false" :visible.sync="aboutDialogVisible" width="560px">
       <div class="aboutBackground about-panel">
         <div class="about-heading">
-          <img :src="require('@/assets/KubePi-red.png')" class="about-logo" alt="KubePi Logo">
+          <div class="about-brand">
+            <span class="about-logo-card">
+              <img :src="require('@/assets/KubePi-assist-red.png')" class="about-logo" alt="KubePi Logo">
+            </span>
+            <span class="about-name">KubePi</span>
+          </div>
           <div class="about-version">{{ $t("commons.personal.version") }}: v2.0.0</div>
         </div>
         <p class="about-text">{{ $t("commons.personal.introduction") }}</p>
@@ -77,11 +82,10 @@ export default {
   @import "~@/styles/business/header-menu.scss";
 
 .about-logo {
-  width: 132px;
-  height: auto;
-  max-height: 44px;
+  display: block;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
-  vertical-align: middle;
 }
 
 .el-dropdown-link {
@@ -95,24 +99,61 @@ export default {
 .about-heading {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 14px;
   margin-bottom: 22px;
-  padding: 16px 18px;
-  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  padding: 14px 16px;
+  background-color: var(--kp-surface-soft);
   border: 1px solid var(--kp-border);
   border-radius: 8px;
-  flex-wrap: wrap;
+}
+
+.about-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.about-logo-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--kp-surface);
+  border: 1px solid var(--kp-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .06);
+}
+
+.about-name {
+  overflow: hidden;
+  color: var(--kp-text);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .about-version {
-  display: inline-block;
-  padding: 3px 9px;
+  flex: 0 0 auto;
+  padding: 4px 10px;
   color: var(--kp-primary);
   background-color: var(--kp-primary-soft);
   border: 1px solid #bfdbfe;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 12px;
   line-height: 20px;
+}
+
+@media only screen and (max-width: 560px) {
+  .about-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 .about-text {

@@ -32,6 +32,14 @@ const checkAuth = response => {
     }
 }
 
+const shouldSilentError = error => {
+    const silentError = error.config && error.config.silentError
+    if (typeof silentError === "function") {
+        return silentError(error)
+    }
+    return !!silentError
+}
+
 
 // 请根据实际需求修改
 instance.interceptors.response.use(response => {
@@ -45,7 +53,9 @@ instance.interceptors.response.use(response => {
     } else {
         msg = error.message
     }
-    $error(msg)
+    if (!shouldSilentError(error)) {
+        $error(msg)
+    }
     return Promise.reject(error)
 })
 
@@ -69,16 +79,16 @@ const promise = (request, loading = {}) => {
     })
 }
 
-export const get = (url, data, loading) => {
-    return promise(request({url: url, method: "get", params: data}), loading)
+export const get = (url, data, loading, config = {}) => {
+    return promise(request({...config, url: url, method: "get", params: data}), loading)
 }
 
-export const post = (url, data, loading) => {
-    return promise(request({url: url, method: "post", data}), loading)
+export const post = (url, data, loading, config = {}) => {
+    return promise(request({...config, url: url, method: "post", data}), loading)
 }
 
-export const put = (url, data, loading) => {
-    return promise(request({url: url, method: "put", data}), loading)
+export const put = (url, data, loading, config = {}) => {
+    return promise(request({...config, url: url, method: "put", data}), loading)
 }
 
 export const del = (url, loading) => {

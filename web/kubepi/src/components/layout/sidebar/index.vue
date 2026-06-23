@@ -17,6 +17,19 @@
       </el-menu>
     </el-scrollbar>
     <div v-if="!isCollapse" class="sidebar-footer">
+      <a class="sidebar-ad"
+         href="https://1panel.cn"
+         target="_blank"
+         rel="noopener noreferrer">
+        <span class="sidebar-ad-mark" aria-hidden="true">
+          <img :src="require('@/assets/1panel-menu-logo.svg')" class="sidebar-ad-logo" alt="">
+        </span>
+        <span class="sidebar-ad-content">
+          <span class="sidebar-ad-title">1Panel</span>
+          <span class="sidebar-ad-desc">{{ $t('commons.personal.one_panel_ad') }}</span>
+        </span>
+        <i class="el-icon-top-right sidebar-ad-icon"></i>
+      </a>
       <button type="button" class="sidebar-copyright" @click="openApi">
         {{ $t('commons.personal.copy_right') }}
       </button>
@@ -147,8 +160,91 @@ export default {
 
     .sidebar-footer {
       flex: 0 0 auto;
-      padding: 6px 14px 14px;
+      padding: 8px 12px 14px;
       text-align: center;
+    }
+
+    .sidebar-ad {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-sizing: border-box;
+      min-height: 58px;
+      margin-bottom: 10px;
+      padding: 10px;
+      color: #e2e8f0;
+      text-align: left;
+      text-decoration: none;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(96, 165, 250, 0.08));
+      border: 1px solid rgba(96, 165, 250, 0.24);
+      border-radius: 8px;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+      &:hover,
+      &:focus {
+        color: #ffffff;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.34), rgba(96, 165, 250, 0.14));
+        border-color: rgba(147, 197, 253, 0.46);
+        transform: translateY(-1px);
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: 1px solid rgba(147, 197, 253, 0.62);
+        outline-offset: 3px;
+      }
+    }
+
+    .sidebar-ad-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 28px;
+      width: 28px;
+      height: 28px;
+      padding: 4px;
+      box-sizing: border-box;
+      background: $--color-primary;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 7px;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+    }
+
+    .sidebar-ad-logo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .sidebar-ad-content {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .sidebar-ad-title {
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 18px;
+    }
+
+    .sidebar-ad-desc {
+      margin-top: 1px;
+      color: rgba(226, 232, 240, 0.72);
+      font-size: 12px;
+      line-height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sidebar-ad-icon {
+      flex: 0 0 auto;
+      color: rgba(226, 232, 240, 0.7);
+      font-size: 14px;
     }
 
     .sidebar-copyright {

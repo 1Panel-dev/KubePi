@@ -18,6 +18,7 @@ const message = {
             star: "Star",
             version: "Version",
             copy_right: "Copyright © 2014-2026 FIT2CLOUD",
+            one_panel_ad: "Open-source Linux panel",
             introduction: "KubePi is a modern K8s panel.",
             introduction2: "KubePi allows administrators to import multiple Kubernetes clusters and assign permissions of different clusters and namespaces to specific users through permission control. It allows developers to manage and troubleshoot applications running in the Kubernetes cluster to better deal with the complexity in the Kubernetes cluster."
         },

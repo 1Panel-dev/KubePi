@@ -7,10 +7,10 @@ export function getOtp() {
   return get(`${mfa}/`)
 }
 
-export function bind(data){
-  return post( `${mfa}/bind`,data)
+export function bind(data, config){
+  return post(`${mfa}/bind`, data, undefined, config)
 }
 
-export function valid(data) {
-  return post(`${mfa}/valid`,data)
+export function valid(data, config) {
+  return post(`${mfa}/valid`, data, undefined, config)
 }
