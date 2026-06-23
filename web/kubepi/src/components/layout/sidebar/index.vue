@@ -31,7 +31,7 @@
         <i class="el-icon-top-right sidebar-ad-icon"></i>
       </a>
       <button type="button" class="sidebar-copyright" @click="openApi">
-        {{ $t('commons.personal.copy_right') }}
+        {{ $t('commons.personal.copy_right', { year: currentYear }) }}
       </button>
     </div>
   </div>
@@ -68,6 +68,9 @@ export default {
     },
     isCollapse () {
       return !this.sidebar.opened
+    },
+    currentYear () {
+      return new Date().getFullYear()
     },
   }
 }
