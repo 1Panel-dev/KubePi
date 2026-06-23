@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Custom Resource">
+  <layout-content :header="$t('business.custom_resource.custom_resource')">
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading"
       :pagination-config="paginationConfig" :search-config="searchConfig"
       :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
@@ -11,9 +11,9 @@
       </template>
       <el-table-column type="selection" fix></el-table-column>
 
-      <el-table-column label="ApiVersion" show-overflow-tooltip prop="apiVersion">
+      <el-table-column :label="$t('business.configuration.api_version')" show-overflow-tooltip prop="apiVersion">
       </el-table-column>
-      <el-table-column label="Kind" show-overflow-tooltip prop="kind">
+      <el-table-column :label="$t('business.custom_resource.kind')" show-overflow-tooltip prop="kind">
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" show-overflow-tooltip prop="metadata.name">
         <template v-slot:default="{ row }">

@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-form-item :label="$t('business.configuration.type')">
           <el-select v-model="row.pods.target.type" style="width: 100%">
-            <el-option value="AverageValue" label="Average Value"></el-option>
+            <el-option value="AverageValue" :label="$t('business.configuration.average_value')"></el-option>
           </el-select>
         </el-form-item>
       </el-col>

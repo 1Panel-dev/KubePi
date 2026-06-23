@@ -51,17 +51,17 @@
       <el-form label-position="top" style="margin-left: 40px">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="Namespace">
+            <el-form-item :label="$t('business.namespace.namespace')">
               <span>{{terminal.namespace}}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="Pod">
+            <el-form-item :label="$t('business.workload.pod')">
               <div class="spanInFormStyle"><span :title="terminal.pod">{{terminal.pod}}</span></div>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="Container">
+            <el-form-item :label="$t('business.workload.container')">
               <div class="spanInFormStyle"><span :title="terminal.container">{{terminal.container}}</span></div>
             </el-form-item>
           </el-col>

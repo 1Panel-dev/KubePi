@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="APIServices">
+  <layout-content :header="$t('business.configuration.api_services')">
     <div style="float: left">
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'cluster',apiGroup:'apiregistration.k8s.io',resource:'apiservices',verb:'delete'}"
@@ -12,12 +12,12 @@
                    :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name" show-overflow-tooltip></el-table-column>
-      <el-table-column label="Service"  fix>
+      <el-table-column :label="$t('business.common.service')"  fix>
         <template v-slot:default="{row}">
           {{ getService(row) }}
         </template>
       </el-table-column>
-      <el-table-column label="Service"  fix>
+      <el-table-column :label="$t('business.common.service')"  fix>
         <template v-slot:default="{row}">
           {{ getService(row) }}
         </template>
@@ -239,5 +239,4 @@ export default {
 
 <style scoped>
 </style>
-
 

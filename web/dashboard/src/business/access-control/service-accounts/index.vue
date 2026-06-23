@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Service Accounts">
+  <layout-content :header="$t('business.access_control.service_accounts')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'serviceaccounts',verb:'delete'}">
         {{ $t("commons.button.delete") }}

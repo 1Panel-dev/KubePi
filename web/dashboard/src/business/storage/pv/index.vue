@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Persistent Volumes">
+  <layout-content :header="$t('business.storage.persistent_volumes')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small"
                   v-has-permissions="{scope:'cluster',apiGroup:'',resource:'persistentvolumes',verb:'create'}"
                   @click="onCreate">
@@ -53,7 +51,7 @@
           {{ row.metadata.creationTimestamp | age }}
         </template>
       </el-table-column>
-      <el-table-column label="Claim"  fix>
+      <el-table-column :label="$t('business.storage.claim')"  fix>
         <template v-slot:default="{row}" >
           <span class="span-link" @click="openChaimDetail(row)" v-if="row.spec.claimRef">{{ row.spec.claimRef.name }}</span>
         </template>

@@ -1,6 +1,6 @@
 <template>
   <div style="margin-right: 20px;margin-top: 5px">
-    <el-button size="mini" @click="onOpenTerminal"><i class="el-icon-arrow-right"/>Terminal</el-button>
+    <el-button size="mini" @click="onOpenTerminal"><i class="el-icon-arrow-right"/>{{ $t("commons.button.terminal") }}</el-button>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <layout-content header="Custom Resource Definitions">
+  <layout-content :header="$t('business.custom_resource.custom_resource_definitions')">
     <div style="float: left">
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()" v-has-permissions="{scope:'namespace',apiGroup:'apiextensions.k8s.io',resource:'customresourcedefinitions',verb:'delete'}">
         {{ $t("commons.button.delete") }}
@@ -7,14 +7,14 @@
     </div>
     <complex-table :data="data" @search="search" :selects.sync="selects" v-loading="loading" :pagination-config="paginationConfig" :search-config="searchConfig" :showFullTextSwitch="true" @update:isFullTextSearch="OnIsFullTextSearchChange">
       <el-table-column type="selection" fix></el-table-column>
-      <el-table-column label="Kind" show-overflow-tooltip>
+      <el-table-column :label="$t('business.custom_resource.kind')" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <span class="span-link" @click="openDetail(row)">{{ row.spec.names.kind }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Group" prop="spec.group">
+      <el-table-column :label="$t('business.custom_resource.group')" prop="spec.group">
       </el-table-column>
-      <el-table-column label="Versions" prop="spec.versions">
+      <el-table-column :label="$t('business.custom_resource.versions')" prop="spec.versions">
         <template v-slot:default="{row}">
           <span v-for="(value, index) in row.spec.versions" v-bind:key="index">
             {{value.name}}
@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column :label="$t('commons.table.name')" prop="metadata.name">
       </el-table-column>
-      <el-table-column label="Scope" prop="spec.scope">
+      <el-table-column :label="$t('business.custom_resource.scope')" prop="spec.scope">
       </el-table-column>
       <el-table-column :label="$t('commons.table.created_time')" prop="metadata.creationTimestamp" fix>
         <template v-slot:default="{row}">

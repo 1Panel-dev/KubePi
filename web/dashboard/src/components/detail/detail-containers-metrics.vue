@@ -1,7 +1,7 @@
 <template>
   <table width="100%" v-show="currentPrometheusServer!=null">
       <tr>
-       <td style="width:150px">Prometheus Sources:</td>
+       <td style="width:150px">{{ $t("business.common.prometheus_sources") }}:</td>
        <td style="width:150px" align="left">
       <el-select v-model="currentPrometheusServerLabel" filterable @change="handlePrometheusSwitch" v-if="currentPrometheusServer">
  
@@ -9,7 +9,7 @@
 
       </el-select>
       </td>
-      <td style="width:150px">time range select:</td>
+      <td style="width:150px">{{ $t("business.common.time_range_select") }}:</td>
        <td style="width:150px" align="left">
       <el-select v-model="selectedTimeLabel" filterable @change="handleSelectTime" v-if="currentPrometheusServer">
  
@@ -17,7 +17,7 @@
       
       </el-select>
       </td>
-      <td style="width:150px">refresh interval:</td>
+      <td style="width:150px">{{ $t("business.common.refresh_interval") }}:</td>
        <td style="width:150px" align="left">
       <el-select v-model="refresh_interval" filterable @change="handleSelectRefreshInterval" v-if="currentPrometheusServer">
  
@@ -25,7 +25,7 @@
       
       </el-select>
       </td>
-      <td style="width:150px"><el-button type="primary" size="small" @click="loadMetrics">Refresh</el-button></td>
+      <td style="width:150px"><el-button type="primary" size="small" @click="loadMetrics">{{ $t("commons.button.refresh") }}</el-button></td>
       <td style="width:(100%-1050px)"></td>
 
       </tr>
@@ -101,45 +101,45 @@ export default {
       time_interval: 1,/*坐标间隔*/
       times:[
         {
-          label:"Half Hour ago",
+          label: this.$t("business.common.half_hour_ago"),
           secs:1800,/*半小时*/
           time_interval: 1
         },
         {
-          label:"1 Hour ago",
+          label: this.$t("business.common.one_hour_ago"),
           secs:3600,/*1小时*/
           time_interval: 2
         },
         {
-          label:"12 Hour ago",
+          label: this.$t("business.common.twelve_hours_ago"),
           secs:3600*12,/*12小时*/
           time_interval: 24
         },
         {
-          label:"24 Hour ago",
+          label: this.$t("business.common.twenty_four_hours_ago"),
           secs:3600*24,/*24小时*/
           time_interval: 48
         }
       ],
-      selectedTimeLabel:"Half Hour ago",
+      selectedTimeLabel: this.$t("business.common.half_hour_ago"),
       //刷新频率
       refresh_interval: 60000,/*一分钟*/
       refresh_intervals:[
         {
           refresh_interval: -1,/*不自动刷新*/
-          label:"no auto refresh"
+          label: this.$t("business.common.no_auto_refresh")
         },
         {
           refresh_interval: 60000,/*1分钟*/
-          label:"1 Minutes"
+          label: this.$t("business.common.one_minute")
         },
         {
           refresh_interval: 300000,/*5分钟*/
-          label:"5 Minutes"
+          label: this.$t("business.common.five_minutes")
         },
         {
           refresh_interval: 600000,/*10分钟*/
-          label:"10 Minutes"
+          label: this.$t("business.common.ten_minutes")
         }
       ]
    }

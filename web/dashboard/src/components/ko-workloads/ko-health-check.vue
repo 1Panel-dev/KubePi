@@ -36,7 +36,7 @@
                 </tr>
                 <tr v-for="(row,index) in form.exec.command" :key="index">
                   <td>
-                    <ko-form-item placeholder="e.g. /tmp/health" itemType="textarea" v-model="row.value" />
+                    <ko-form-item :placeholder="$t('commons.placeholder.example_health_path')" itemType="textarea" v-model="row.value" />
                   </td>
                   <td>
                     <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(index)">
@@ -56,29 +56,29 @@
             <el-row :gutter="10">
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.check_interval')" prop="periodSeconds">
-                  <ko-form-item placeholder="Default: 10" dividerName="sec" itemType="number" v-model.number="form.periodSeconds" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.default_10')" dividerName="sec" itemType="number" v-model.number="form.periodSeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.initial_delay')" prop="initialDelaySeconds">
-                  <ko-form-item placeholder="Default: 0" dividerName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.default_0')" dividerName="sec" itemType="number" v-model.number="form.initialDelaySeconds" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item :label="$t('business.workload.timeout')" prop="timeoutSeconds">
-                  <ko-form-item placeholder="Default: 3" dividerName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.default_3')" dividerName="sec" itemType="number" v-model.number="form.timeoutSeconds" />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">
                 <el-form-item :label="$t('business.workload.seccess_threshold')" prop="successThreshold">
-                  <ko-form-item placeholder="Default: 1" itemType="number" v-model.number="form.successThreshold" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.default_1')" itemType="number" v-model.number="form.successThreshold" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item :label="$t('business.workload.failure_threshold')" prop="failureThreshold">
-                  <ko-form-item placeholder="Default: 3" itemType="number" v-model.number="form.failureThreshold" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.default_3')" itemType="number" v-model.number="form.failureThreshold" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -92,10 +92,10 @@
                 </tr>
                 <tr v-for="(row, index) in form.httpHeaders" v-bind:key="index">
                   <td>
-                    <ko-form-item placeholder="e.g. foo" itemType="input" v-model="row.key" />
+                    <ko-form-item :placeholder="$t('commons.placeholder.example_foo')" itemType="input" v-model="row.key" />
                   </td>
                   <td>
-                    <ko-form-item placeholder="e.g. bar" itemType="input" v-model="row.value" />
+                    <ko-form-item :placeholder="$t('commons.placeholder.example_bar')" itemType="input" v-model="row.value" />
                   </td>
                   <td>
                     <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
@@ -105,7 +105,7 @@
                 </tr>
                 <tr>
                   <td align="left">
-                    <el-button @click="handleAdd">Add</el-button>
+                    <el-button @click="handleAdd">{{ $t("commons.button.add") }}</el-button>
                   </td>
                 </tr>
               </table>

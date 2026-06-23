@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Pod Security Policies">
+  <layout-content :header="$t('business.access_control.pod_security_policies')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
                   v-if="supported"
-                  v-has-permissions="{scope:'cluster',apiGroup:'policy',resource:'podsecuritypolicies',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{scope:'cluster',apiGroup:'policy',resource:'podsecuritypolicies',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-if="supported"
                   v-has-permissions="{scope:'cluster',apiGroup:'policy',resource:'podsecuritypolicies',verb:'delete'}">

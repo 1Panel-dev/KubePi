@@ -1,9 +1,7 @@
 <template>
-  <layout-content header="Ingresses">
+  <layout-content :header="$t('business.network.ingresses')">
     <div style="float: left">
-      <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}" type="primary" size="small" @click="yamlCreate">
-        YAML
-      </el-button>
+      <el-button v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}" type="primary" size="small" @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'networking.k8s.io',resource:'ingresses',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>

@@ -28,7 +28,7 @@
             <ko-form-item itemType="select" v-model="row.operator" :selections="operator_list" />
           </td>
           <td>
-            <ko-form-item v-if="row.operator === 'Exists'" disabled placeholder="N/A" itemType="input" v-model="row.value" />
+            <ko-form-item v-if="row.operator === 'Exists'" disabled :placeholder="$t('commons.placeholder.not_available')" itemType="input" v-model="row.value" />
             <ko-form-item v-if="row.operator !== 'Exists'" itemType="input" v-model="row.value" />
           </td>
           <td>

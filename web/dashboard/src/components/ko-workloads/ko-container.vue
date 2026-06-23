@@ -20,7 +20,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item :label="$t('business.workload.container_image')" prop="image" :rules="inputRule" v-if="repo.name===''">
-            <ko-form-item placeholder="e.g. nginx:latest" itemType="input" v-model="form.image" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_image')" itemType="input" v-model="form.image" />
           </el-form-item>
           <el-form-item :label="$t('business.workload.container_image')" prop="image" :rules="selectRule" v-else>
             <el-select v-model="form.image" @change="changeImage(form.image)" style="width: 100%" filterable>

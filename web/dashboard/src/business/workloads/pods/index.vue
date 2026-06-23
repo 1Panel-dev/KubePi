@@ -1,14 +1,12 @@
 <template>
   <div>
-  <layout-content header="Pods">
+  <layout-content :header="$t('business.workload.pods')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="onCreate"
-                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">
-        YAML
-      </el-button>
+                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onTop"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'list'}">
-        Top
+        {{ $t("business.workload.top") }}
       </el-button>
       <el-button type="primary" size="small" :disabled="selects.length===0" @click="onDelete()"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'pods',verb:'delete'}">
@@ -61,7 +59,7 @@
           {{ getPodStatus(row) }}
         </template>
       </el-table-column>
-      <el-table-column label="IP" min-width="40" prop="podIP" sortable="podIP"/>
+      <el-table-column :label="$t('business.workload.pod_ip')" min-width="40" prop="podIP" sortable="podIP"/>
       <el-table-column :label="$t('business.cluster.nodes')" min-width="45" show-overflow-tooltip prop="nodeName" sortable="nodeName"/>
       <el-table-column :label="$t('commons.table.created_time')" show-overflow-tooltip min-width="35" prop="creationTimestamp" fix sortable="creationTimestamp">
         <template v-slot:default="{row}">

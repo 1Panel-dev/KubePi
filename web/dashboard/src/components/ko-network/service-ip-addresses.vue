@@ -4,7 +4,7 @@
       <div v-if="type === 'ClusterIP' || type === 'LoadBalancer' || type === 'NodePort'">
         <el-row>
           <el-col :span="12">
-            <el-input placeholder="e.g. 10.1.1.1" v-model="specObj.clusterIP" @input="$forceUpdate()"></el-input>
+            <el-input :placeholder="$t('commons.placeholder.example_cluster_ip')" v-model="specObj.clusterIP" @input="$forceUpdate()"></el-input>
           </el-col>
         </el-row>
         <h2>{{ $t("business.network.external_ip") }}</h2>
@@ -14,7 +14,7 @@
           <span v-if="false">{{ row }}</span>
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-input placeholder="e.g. 10.1.1.1" v-model="specObj.externalIPs[index]"
+              <el-input :placeholder="$t('commons.placeholder.example_cluster_ip')" v-model="specObj.externalIPs[index]"
                         @input="$forceUpdate()"></el-input>
             </el-col>
             <el-col :span="2">

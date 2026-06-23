@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Secrets">
+  <layout-content :header="$t('business.configuration.secrets')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'secrets',verb:'create'}">
         {{ $t("commons.button.create") }}

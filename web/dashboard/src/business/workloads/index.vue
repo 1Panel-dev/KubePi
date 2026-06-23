@@ -58,7 +58,7 @@
       <el-card style="margin-top: 20px;border: 0" class="el-card">
         <span style="font-size: 14px;font-weight: bold;">{{ $t("business.workload.containers") }}</span>
         <el-tabs tabPosition="left" v-model="activeName">
-          <el-tab-pane label="Spec" name="Spec">
+          <el-tab-pane :label="$t('business.workload.spec')" name="Spec">
             <el-tabs :key="isRefresh" style="background-color: #ffffff;" type="border-card" v-model="activeNameSpec">
               <el-tab-pane :label="$t('business.workload.upgrade_policy')" name="Scaling/Upgrade Policy">
                 <ko-upgrade-job v-if="isCronJob() || isJob()" :isReadOnly="readOnly" ref="ko_upgrade_job" :upgradePolicyParentObj="form.spec" :resourceType="type" />
@@ -91,7 +91,7 @@
             </el-tabs>
           </el-tab-pane>
 
-          <el-tab-pane label="Containers" name="Container">
+          <el-tab-pane :label="$t('business.workload.containers')" name="Container">
             <el-row :gutter="20">
               <el-col :span="18">
                 <ko-base :isReadOnly="readOnly" :baseParentObj="podSpec" @refreshContainer="refreshContainer" @gatherFormData="gatherFormData" @addContainer="addContainer" @deleteContainer="deleteContainer" />
@@ -134,7 +134,7 @@
             </el-tabs>
           </el-tab-pane>
 
-          <el-tab-pane label="Service" name="Service" v-if="hasService()">
+          <el-tab-pane :label="$t('business.common.service')" name="Service" v-if="hasService()">
             <ko-service-add ref="service_add" :serviceObj="serviceForm" />
           </el-tab-pane>
         </el-tabs>

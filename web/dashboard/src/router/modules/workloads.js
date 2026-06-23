@@ -23,7 +23,7 @@ const Workloads = {
       component: () => import("@/business/workloads/pods"),
       name: "Pods",
       meta: {
-        title: "Pods",
+        title: "business.workload.pods",
       },
     },
     {
@@ -118,7 +118,7 @@ const Workloads = {
       component: () => import("@/business/workloads/deployments"),
       name: "Deployments",
       meta: {
-        title: "Deployments",
+        title: "business.workload.deployments",
       },
     },
     {
@@ -179,7 +179,7 @@ const Workloads = {
       component: () => import("@/business/workloads/daemonsets"),
       name: "DaemonSets",
       meta: {
-        title: "DaemonSets",
+        title: "business.workload.daemonsets",
       },
     },
     {
@@ -240,7 +240,7 @@ const Workloads = {
       component: () => import("@/business/workloads/statefulsets"),
       name: "StatefulSets",
       meta: {
-        title: "StatefulSets",
+        title: "business.workload.statefulsets",
       },
     },
     {
@@ -301,7 +301,7 @@ const Workloads = {
       component: () => import("@/business/workloads/jobs"),
       name: "Jobs",
       meta: {
-        title: "Jobs",
+        title: "business.workload.jobs",
       },
     },
     {
@@ -362,7 +362,7 @@ const Workloads = {
       component: () => import("@/business/workloads/cronjobs"),
       name: "CronJobs",
       meta: {
-        title: "CronJobs",
+        title: "business.workload.cronjobs",
       },
     },
     {

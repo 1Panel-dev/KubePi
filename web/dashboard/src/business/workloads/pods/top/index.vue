@@ -1,6 +1,6 @@
 <template>
   <div>
-    <layout-content header="Top Pod">
+    <layout-content :header="$t('business.workload.top_pod')">
       <el-alert
         v-if="showText"
         class="top-pod-alert"
@@ -26,7 +26,7 @@
           icon="el-icon-sort-down"
           @click="sortBy('cpu')"
         >
-          CPU
+          {{ $t("business.common.cpu") }}
         </el-button>
         <el-button
           class="top-pod-sort-button"
@@ -68,7 +68,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="CPU" min-width="35">
+        <el-table-column :label="$t('business.common.cpu')" min-width="35">
           <template v-slot:default="{row}">
             <div v-for="(c, index) in row.containers" :key="index">
               <div>

@@ -20,12 +20,12 @@
           <div v-if="item._type === 'NFS'">
             <el-row :gutter="20">
               <el-col v-if="item._path" :span="12">
-                <el-form-item style="margin-left: 20px;" label="Path">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.storage.path')">
                   <span>{{item._path}}</span>
                 </el-form-item>
               </el-col>
               <el-col v-if="item._server" :span="12">
-                <el-form-item style="margin-left: 20px;" label="Server">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.storage.server')">
                   <span>{{item._server}}</span>
                 </el-form-item>
               </el-col>
@@ -35,7 +35,7 @@
           <div v-if="item._type === 'PVC'">
             <el-row :gutter="20">
               <el-col v-if="item._detail" :span="12">
-                <el-form-item style="margin-left: 20px;" label="claimName">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.storage.claim_name')">
                   <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
@@ -45,12 +45,12 @@
           <div v-if="item._type === 'HostPath'">
             <el-row :gutter="20">
               <el-col v-if="item._path" :span="12">
-                <el-form-item style="margin-left: 20px;" label="Path">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.storage.path')">
                   <div class="spanInFormStyle"><span :title="item._path">{{item._path}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col v-if="item._hostType" :span="12">
-                <el-form-item style="margin-left: 20px;" label="HostType">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.host_type')">
                   <div class="spanInFormStyle"><span :title="item._hostType">{{item._hostType}}</span></div>
                 </el-form-item>
               </el-col>
@@ -60,12 +60,12 @@
           <div v-if="item._type === 'ConfigMap'">
             <el-row :gutter="20">
               <el-col v-if="item._detail" :span="12">
-                <el-form-item style="margin-left: 20px;" label="ConfigMapName">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.configuration.config_map_name')">
                   <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col v-if="item._defaultMode" :span="12">
-                <el-form-item style="margin-left: 20px;" label="DefaultMode">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.default_mode')">
                   <span>{{item._defaultMode}}</span>
                 </el-form-item>
               </el-col>
@@ -75,12 +75,12 @@
           <div v-if="item._type === 'Secret'">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item style="margin-left: 20px;" label="SecretName">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.configuration.secret_name')">
                   <div class="spanInFormStyle"><span :title="item._detail">{{item._detail}}</span></div>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item style="margin-left: 20px;" label="DefaultMode">
+                <el-form-item style="margin-left: 20px;" :label="$t('business.workload.default_mode')">
                   <span>{{item._defaultMode}}</span>
                 </el-form-item>
               </el-col>

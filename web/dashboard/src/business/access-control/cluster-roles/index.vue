@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Cluster Roles">
+  <layout-content :header="$t('business.access_control.cluster_roles')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'cluster',apiGroup:'',resource:'namespaces',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'cluster',apiGroup:'rbac.authorization.k8s.io',resource:'clusterroles',verb:'create'}">
         {{ $t("commons.button.create") }}

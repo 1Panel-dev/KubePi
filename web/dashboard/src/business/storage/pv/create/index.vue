@@ -29,9 +29,9 @@
           </el-row>
           <el-tabs v-model="activeName" tab-position="top" type="border-card"
                    @tab-click="handleClick">
-            <el-tab-pane label="Customize">
+            <el-tab-pane :label="$t('business.storage.customize')">
               <div style="margin-top: 20px">
-                <ko-card title="Customize">
+                <ko-card :title="$t('business.storage.customize')">
                   <el-row :gutter="24">
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.assignSc')">
@@ -47,9 +47,9 @@
                     <el-col :span="12">
                       <el-form-item :label="$t('business.storage.accessModes')" required>
                         <el-checkbox-group v-model="form.spec.accessModes">
-                          <el-checkbox label="ReadWriteOnce">ReadWriteOnce</el-checkbox>
-                          <el-checkbox label="ReadOnlyMany">ReadOnlyMany</el-checkbox>
-                          <el-checkbox label="ReadWriteMany">ReadWriteMany</el-checkbox>
+                          <el-checkbox label="ReadWriteOnce">{{ $t("business.storage.read_write_once") }}</el-checkbox>
+                          <el-checkbox label="ReadOnlyMany">{{ $t("business.storage.read_only_many") }}</el-checkbox>
+                          <el-checkbox label="ReadWriteMany">{{ $t("business.storage.read_write_many") }}</el-checkbox>
                         </el-checkbox-group>
                       </el-form-item>
                     </el-col>
@@ -60,9 +60,9 @@
                                     :nodeSchedulingParentObj="form.spec"/>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="Plugin Configuration">
+            <el-tab-pane :label="$t('business.storage.plugin_configuration')">
               <div style="margin-top: 20px">
-                <ko-card title="Plugin Configuration">
+                <ko-card :title="$t('business.storage.plugin_configuration')">
                   <pv-nfs v-if="currentStorageType === 'NFS'" :spec.sync="form.spec"></pv-nfs>
                   <local v-if="currentStorageType === 'Local'" :spec.sync="form.spec"></local>
                   <host-path v-if="currentStorageType === 'Host'" :spec.sync="form.spec"></host-path>
@@ -151,13 +151,13 @@ export default {
       cluster: "",
       storageTypes: [{
         value: "NFS",
-        label: "NFS Share"
+        label: this.$t("business.storage.nfs_share")
       }, {
         value: "Local",
-        label: "Local Volume"
+        label: this.$t("business.storage.local_volume")
       }, {
         value: "Host",
-        label: "Host Path"
+        label: this.$t("business.storage.host_path")
       }],
       hostPathTypes: [{
         value: "DirectoryOrCreate",

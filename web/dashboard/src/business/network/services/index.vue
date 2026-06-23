@@ -1,11 +1,9 @@
 <template>
-  <layout-content header="Services">
+  <layout-content :header="$t('business.network.services')">
     <div style="float: left">
       <el-button v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'create'}"
                   type="primary" size="small"
-                  @click="yamlCreate">
-        YAML
-      </el-button>
+                  @click="yamlCreate">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate"
                   v-has-permissions="{scope:'namespace',apiGroup:'',resource:'services',verb:'create'}">
         {{ $t("commons.button.create") }}
@@ -33,12 +31,12 @@
           {{ row.spec.type }}
         </template>
       </el-table-column>
-      <el-table-column label="ClusterIP" prop="spec.clusterIP" min-width="100px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.network.cluster_ip')" prop="spec.clusterIP" min-width="100px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           {{ row.spec.clusterIP || "" }}
         </template>
       </el-table-column>
-      <el-table-column label="ExternalIP" prop="spec.externalIPs" min-width="100px" show-overflow-tooltip>
+      <el-table-column :label="$t('business.network.external_ip')" prop="spec.externalIPs" min-width="100px" show-overflow-tooltip>
         <template v-slot:default="{row}">
           <div v-for="(value,key,index) in row.status.loadBalancer.ingress" v-bind:key="index">
             <div>

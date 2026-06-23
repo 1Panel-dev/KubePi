@@ -3,12 +3,12 @@
     <el-form>
       <el-row :gutter="24">
         <el-col :span="8">
-          <el-form-item label="PATH" required>
-            <el-input clearable placeholder="eg: /data" v-model="spec.hostPath.path"></el-input>
+          <el-form-item :label="$t('business.storage.path')" required>
+            <el-input clearable :placeholder="$t('commons.placeholder.example_data_path')" v-model="spec.hostPath.path"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Path on the Node" required>
+          <el-form-item :label="$t('business.storage.path_on_node')" required>
             <el-select v-model="spec.hostPath.type">
               <el-option v-for="(h, index) in hostPathTypes"
                          :key="index"

@@ -36,9 +36,9 @@
                 <el-col :span="6">
                   <el-form-item :label="$t('business.configuration.kind')" prop="kind">
                     <el-select v-model="row.kind" style="width: 100%" @change="changeSubjectKind(row)">
-                      <el-option label="User" :value="'User'"></el-option>
-                      <el-option label="Group" :value="'Group'"></el-option>
-                      <el-option label="ServiceAccount" :value="'ServiceAccount'"></el-option>
+                      <el-option :label="$t('business.access_control.user')" :value="'User'"></el-option>
+                      <el-option :label="$t('business.access_control.group')" :value="'Group'"></el-option>
+                      <el-option :label="$t('business.access_control.service_account')" :value="'ServiceAccount'"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -55,7 +55,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
-                    <el-form-item label="ServiceAccount" prop="serviceAccount">
+                    <el-form-item :label="$t('business.access_control.service_account')" prop="serviceAccount">
                       <el-select v-model="row.name" v-loading="loading">
                         <el-option v-for="item in serviceAccountArray[ind]"
                                    :key="item.metadata.name"

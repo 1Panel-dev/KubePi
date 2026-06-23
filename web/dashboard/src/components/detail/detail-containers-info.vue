@@ -5,10 +5,10 @@
       <el-row :gutter="20" style="margin-top: 20px" class="row-box">
         <el-col :span="8">
           <el-card class="el-card" :title="$t('business.pod.image')">
-            <el-form-item label="State" v-if="containerStatusStates[container.name]!=''">
+            <el-form-item :label="$t('business.pod.state')" v-if="containerStatusStates[container.name]!=''">
               <span><pre>{{containerStatusStates[container.name]}}</pre></span>
             </el-form-item>
-            <el-form-item label="LastState" v-if="containerStatusLastStates[container.name]!=''">
+            <el-form-item :label="$t('business.pod.last_state')" v-if="containerStatusLastStates[container.name]!=''">
               <span></span><pre>{{containerStatusLastStates[container.name]}}</pre></span>
             </el-form-item>
             <el-form-item :label="$t('business.workload.pull_policy')">

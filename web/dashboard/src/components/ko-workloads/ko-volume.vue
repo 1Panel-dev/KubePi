@@ -44,14 +44,14 @@
               </td>
             </tr>
           </table>
-          <el-form-item label="Optional" v-if="hasOptional(item.type)">
+          <el-form-item :label="$t('business.workload.optional')" v-if="hasOptional(item.type)">
             <ko-form-item itemType="radio" v-model="item.optional" :radios="optional_list" />
           </el-form-item>
           <div v-if="item.type === 'NFS'">
-            <el-form-item label="Path">
+            <el-form-item :label="$t('business.storage.path')">
               <ko-form-item itemType="input" v-model="item.path" />
             </el-form-item>
-            <el-form-item label="Server">
+            <el-form-item :label="$t('business.storage.server')">
               <ko-form-item itemType="input" v-model="item.server" />
             </el-form-item>
           </div>

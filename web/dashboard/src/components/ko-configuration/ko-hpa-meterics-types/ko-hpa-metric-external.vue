@@ -4,8 +4,8 @@
       <el-col :span="12">
         <el-form-item :label="$t('business.configuration.type')" key="external">
           <el-select v-model="row.external.target.type" style="width: 100%" @change="changeExternalType(row)">
-            <el-option value="Value" label="Value"></el-option>
-            <el-option value="AverageValue" label="Average Value"></el-option>
+            <el-option value="Value" :label="$t('business.configuration.value')"></el-option>
+            <el-option value="AverageValue" :label="$t('business.configuration.average_value')"></el-option>
           </el-select>
         </el-form-item>
       </el-col>

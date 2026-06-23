@@ -16,7 +16,7 @@
         <el-row :gutter="20" v-if="registryType==='Custom'">
           <el-col :span="12">
             <el-form-item :label="$t('business.configuration.registry_domain_name')" prop="registry">
-              <ko-form-item itemType="input" v-model="form.registry" placeholder="e.g. some.docker.io"
+              <ko-form-item itemType="input" v-model="form.registry" :placeholder="$t('commons.placeholder.example_registry')"
                             @change.native="transform"></ko-form-item>
             </el-form-item>
           </el-col>

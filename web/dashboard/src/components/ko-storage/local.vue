@@ -2,8 +2,8 @@
   <div>
     <el-form>
       <el-col :span="8">
-        <el-form-item label="Path on the Node" required>
-          <el-input clearable placeholder="eg: /data" v-model="spec.local.path"></el-input>
+        <el-form-item :label="$t('business.storage.path_on_node')" required>
+          <el-input clearable :placeholder="$t('commons.placeholder.example_data_path')" v-model="spec.local.path"></el-input>
         </el-form-item>
       </el-col>
     </el-form>

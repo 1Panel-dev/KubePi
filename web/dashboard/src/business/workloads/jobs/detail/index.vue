@@ -17,7 +17,7 @@
 
       <el-row>
         <el-tabs style="margin-top:20px" v-model="activeName" type="border-card">
-          <el-tab-pane label="Pods" name="Pods">
+          <el-tab-pane :label="$t('business.common.pods')" name="Pods">
             <ko-detail-pods :cluster="clusterName" :namespace="namespace" :selector="selectors" />
           </el-tab-pane>
           <el-tab-pane :label="$t('business.event.event')" name="Events">

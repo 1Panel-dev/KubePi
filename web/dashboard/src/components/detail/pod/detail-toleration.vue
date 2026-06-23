@@ -7,17 +7,17 @@
           <div v-if="item.key" slot="title" class="spanInFormStyle"><span :title="item.key">{{item.key}}</span></div>
           <el-row :gutter="20">
             <el-col v-if="item.key" :span="12">
-              <el-form-item style="margin-left: 20px;" label="key">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.key')">
                 <div class="spanInFormStyle"><span :title="item.key">{{item.key}}</span></div>
               </el-form-item>
             </el-col>
             <el-col v-if="item.operator" :span="12">
-              <el-form-item style="margin-left: 20px;" label="operator">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.operator')">
                 <span>{{item.operator}}</span>
               </el-form-item>
             </el-col>
             <el-col v-if="item.effect" :span="12">
-              <el-form-item style="margin-left: 20px;" label="effect">
+              <el-form-item style="margin-left: 20px;" :label="$t('business.workload.effect')">
                 <span>{{item.effect}}</span>
               </el-form-item>
             </el-col>

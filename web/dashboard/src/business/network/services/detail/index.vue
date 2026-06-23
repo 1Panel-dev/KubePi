@@ -25,7 +25,7 @@
                 <td colspan="4">{{ item.spec.clusterIP }}</td>
               </tr>
               <tr>
-                <td>Session Affinity</td>
+                <td>{{ $t("business.network.session_affinity") }}</td>
                 <td colspan="4">{{ item.spec.sessionAffinity }}</td>
               </tr>
               <tr>
@@ -58,11 +58,11 @@
         <el-col :span="24">
           <br>
           <el-tabs type="border-card">
-            <el-tab-pane label="Pods" v-if="Object.keys(item.metadata).length!==0">
+            <el-tab-pane :label="$t('business.common.pods')" v-if="Object.keys(item.metadata).length!==0">
               <resource-pod :cluster="cluster" :namespace="item.metadata.namespace"
                             :selector="getSelector(item.spec.selector)"></resource-pod>
             </el-tab-pane>
-            <el-tab-pane label="Ports" v-if="Object.keys(item.spec).length!==0">
+            <el-tab-pane :label="$t('business.network.ports')" v-if="Object.keys(item.spec).length!==0">
               <resource-ports :data="item.spec.ports"></resource-ports>
             </el-tab-pane>
           </el-tabs>

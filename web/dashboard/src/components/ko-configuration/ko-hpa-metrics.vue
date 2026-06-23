@@ -14,10 +14,10 @@
               <el-col :span="12">
                 <el-form-item :label="$t('business.configuration.source')">
                   <el-select v-model="row.type" style="width: 100%" value-key="type" @change="change(row,index)">
-                    <el-option label="Resource" value="Resource"></el-option>
-                    <el-option label="External" value="External"></el-option>
-                    <el-option label="Object" value="Object"></el-option>
-                    <el-option label="Pods" value="Pods"></el-option>
+                    <el-option :label="$t('business.configuration.resource')" value="Resource"></el-option>
+                    <el-option :label="$t('business.configuration.external')" value="External"></el-option>
+                    <el-option :label="$t('business.configuration.object')" value="Object"></el-option>
+                    <el-option :label="$t('business.configuration.pods')" value="Pods"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>

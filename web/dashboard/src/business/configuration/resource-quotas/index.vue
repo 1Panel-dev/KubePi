@@ -1,10 +1,8 @@
 <template>
-  <layout-content header="Resource Quotas">
+  <layout-content :header="$t('business.common.resource_quotas')">
     <div style="float: left">
       <el-button type="primary" size="small" @click="yamlCreate"
-                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">
-        YAML
-      </el-button>
+                  v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'',resource:'resourcequotas',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>
@@ -30,7 +28,7 @@
           {{ row.metadata.namespace }}
         </template>
       </el-table-column>
-      <el-table-column label="Request" min-width="100px">
+      <el-table-column :label="$t('business.configuration.request')" min-width="100px">
         <template v-slot:default="{row}">
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> pods: {{ row.status.used.pods }} /
             {{ row.status.hard.pods }}
@@ -55,7 +53,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Limit" min-width="100px">
+      <el-table-column :label="$t('business.workload.limit')" min-width="100px">
         <template v-slot:default="{row}">
           <el-tag type="info" size="mini" v-if="row.status.used && row.status.hard"> cpu:
             {{ row.status.used["limits.cpu"] }} / {{ row.status.hard["limits.cpu"] }}

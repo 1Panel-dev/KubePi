@@ -12,9 +12,9 @@
           <div style="margin-top: 20px">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item :label="$t('business.configuration.certificate') + '- Secret Name'">
+                <el-form-item :label="$t('business.configuration.certificate') + ' - Secret Name'">
                   <el-select v-model="row.secretName" style="width: 100%">
-                    <el-option label="Default Ingress Controller Certificate" value=""></el-option>
+                    <el-option :label="$t('business.network.default_ingress_controller_certificate')" value=""></el-option>
                     <el-option v-for="(secret,index) in secrets" :label="secret.metadata.name"
                                :value="secret.metadata.name" v-bind:key="index"></el-option>
                   </el-select>
@@ -24,7 +24,7 @@
                 <el-row :gutter="20">
                   <div style="margin-top: 5px">
                     <el-col :span="24">
-                      <span>Hosts</span>
+                      <span>{{ $t("business.network.hosts") }}</span>
                     </el-col>
                     <div v-for="(host,index) in row.hosts" v-bind:key="index">
                       <el-col :span="20">
@@ -40,7 +40,7 @@
                     </div>
                     <div>
                       <el-col :span="24">
-                        <el-button style="margin-top: 10px" @click="addHost(row)">{{ $t("commons.button.add") }} Host
+                        <el-button style="margin-top: 10px" @click="addHost(row)">{{ $t("business.network.add_host") }}
                         </el-button>
                       </el-col>
                     </div>

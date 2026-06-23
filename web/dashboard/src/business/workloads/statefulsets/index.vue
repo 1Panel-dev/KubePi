@@ -1,9 +1,7 @@
 <template>
-  <layout-content header="StatefulSets">
+  <layout-content :header="$t('business.workload.statefulsets')">
     <div style="float: left">
-      <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}">
-          YAML
-      </el-button>
+      <el-button type="primary" size="small" @click="yamlCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}">{{ $t("commons.button.yaml") }}</el-button>
       <el-button type="primary" size="small" @click="onCreate" v-has-permissions="{scope:'namespace',apiGroup:'apps',resource:'statefulsets',verb:'create'}">
         {{ $t("commons.button.create") }}
       </el-button>

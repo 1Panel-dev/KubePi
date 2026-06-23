@@ -14,7 +14,7 @@
             <table style="width: 100%" class="tab-table">
               <tr v-for="(row,index) in annotations" :key="index">
                 <td width="49%">
-                  <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.example_foo')" clearable itemType="input" v-model="row.key" />
                 </td>
                 <td width="49%">
                   <ko-form-item clearable itemType="input" v-model="row.value" />
@@ -76,14 +76,14 @@
 
         <el-row :gutter="20" style="margin-top: 20px">
           <el-col :span="6">
-            <el-form-item label="SessionAffinity">
+            <el-form-item :label="$t('business.network.session_affinity')">
               <ko-form-item itemType="radio" v-model="form.spec.sessionAffinity" :radios="session_type_list" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6" v-if="form.spec.sessionAffinity === 'ClientIP'">
-            <el-form-item label="TimeoutSeconds">
+            <el-form-item :label="$t('business.network.session_sticky_time')">
               <ko-form-item itemType="number" v-model.number="form.spec.sessionAffinityConfig.clientIP.timeoutSeconds" :dividerName="$t('business.workload.seconds')" />
             </el-form-item>
           </el-col>
@@ -94,7 +94,7 @@
             <table style="width: 100%;margin-top:10px" class="tab-table">
               <tr v-for="(row,index) in externalIPs" :key="index">
                 <td width="97%">
-                  <ko-form-item placeholder="e.g. 1.1.1.1" itemType="input" v-model="row.value" />
+                  <ko-form-item :placeholder="$t('commons.placeholder.example_host')" itemType="input" v-model="row.value" />
                 </td>
                 <td>
                   <el-button type="text" style="font-size: 10px" @click="handleExternalIPsDelete(index)">

@@ -20,9 +20,9 @@
             <el-col :span="3">
               <el-form-item :label="$t('business.configuration.type')" required>
                 <el-select v-model="item.type" disabled>
-                  <el-option label="Opaque" value="Opaque"></el-option>
+                  <el-option :label="$t('business.configuration.opaque')" value="Opaque"></el-option>
                   <!--                  <el-option label="Service Account Token	" value="kubernetes.io/service-account-token"></el-option>-->
-                  <el-option label="Docker Registry" value="kubernetes.io/dockerconfigjson"></el-option>
+                  <el-option :label="$t('business.configuration.docker_registry')" value="kubernetes.io/dockerconfigjson"></el-option>
                   <el-option :label="$t('business.configuration.basic_auth')"
                              value="kubernetes.io/basic-auth"></el-option>
                   <el-option :label="$t('business.configuration.ssh_auth')" value="kubernetes.io/ssh-auth"></el-option>
@@ -48,7 +48,7 @@
                 <el-tab-pane :label="$t('business.configuration.data')" v-if="item.type==='kubernetes.io/basic-auth'">
                   <ko-secret-authentication :authentication-obj.sync="item.data"></ko-secret-authentication>
                 </el-tab-pane>
-                <el-tab-pane label="TLS" v-if="item.type==='kubernetes.io/tls'">
+                <el-tab-pane :label="$t('business.configuration.tls_auth')" v-if="item.type==='kubernetes.io/tls'">
                   <ko-secret-certificate :certificate-obj.sync="item.data"></ko-secret-certificate>
                 </el-tab-pane>
                 <el-tab-pane name="1" :label="$t('business.workload.labels_annotations')">

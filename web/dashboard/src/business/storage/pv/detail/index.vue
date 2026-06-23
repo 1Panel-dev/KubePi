@@ -94,19 +94,19 @@
         <el-col :span="16">
           <el-card v-if="'nfs' in item.spec">
             <div class="card_title">
-              <h3>Network File System</h3>
+              <h3>{{ $t("business.storage.network_file_system") }}</h3>
             </div>
             <table style="width: 100%" class="myTable">
               <tr>
-                <td>Server</td>
+                <td>{{ $t("business.storage.server") }}</td>
                 <td colspan="3">{{ item.spec.nfs.server }}</td>
               </tr>
               <tr>
-                <td>Path</td>
+                <td>{{ $t("business.storage.path") }}</td>
                 <td colspan="3">{{ item.spec.nfs.path }}</td>
               </tr>
               <tr v-if="item.spec.nfs.readOnly">
-                <td>Read Only</td>
+                <td>{{ $t("business.storage.read_only") }}</td>
                 <td colspan="3">{{ item.spec.nfs.readOnly }}</td>
               </tr>
             </table>

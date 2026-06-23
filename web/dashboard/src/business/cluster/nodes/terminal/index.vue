@@ -2,7 +2,7 @@
   <div class="terminal-page">
     <el-row>
       <div style="float: right;margin-top: 15px;margin-bottom: 5px;margin-right: 30px">
-        <span class="terminal-title">node path / is mounted to shell /host</span>
+        <span class="terminal-title">{{ $t("business.node.node_path_mounted") }}</span>
       </div>
 
     </el-row>

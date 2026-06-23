@@ -5,7 +5,7 @@
         <table style="width: 100%" class="tab-table">
           <tr v-for="(row,index) in annotations" :key="index">
             <td width="48%">
-              <ko-form-item :disabled="disableOperator(row)" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+              <ko-form-item :disabled="disableOperator(row)" :placeholder="$t('commons.placeholder.example_foo')" clearable itemType="input" v-model="row.key" />
             </td>
             <td width="48%">
               <ko-form-item :disabled="disableOperator(row)" clearable itemType="input" v-model="row.value" />
@@ -28,7 +28,7 @@
         <table style="width: 100%" class="tab-table">
           <tr v-for="(row,index) in labels" :key="index">
             <td width="48%">
-              <ko-form-item :disabled="disableOperator(row)" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+              <ko-form-item :disabled="disableOperator(row)" :placeholder="$t('commons.placeholder.example_foo')" clearable itemType="input" v-model="row.key" />
             </td>
             <td width="48%">
               <ko-form-item :disabled="disableOperator(row)" clearable itemType="input" v-model="row.value" />
@@ -60,7 +60,7 @@
         <table style="width: 100%;" class="tab-table">
           <tr v-for="(row,index) in form.data" :key="index">
             <td width="49%">
-              <ko-form-item :disabled="disableDialogRowDelete(row)" placeholder="e.g. foo" clearable itemType="input" v-model="row.key" />
+              <ko-form-item :disabled="disableDialogRowDelete(row)" :placeholder="$t('commons.placeholder.example_foo')" clearable itemType="input" v-model="row.key" />
             </td>
             <td width="49%">
               <ko-form-item :disabled="disableDialogRowDelete(row)" clearable itemType="input" v-model="row.value" />

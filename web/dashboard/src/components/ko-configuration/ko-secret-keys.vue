@@ -45,7 +45,7 @@ export default {
     checkIsValid () {
       let result = {
         success: false,
-        messages: ["测试用户"]
+        messages: [this.$t("business.configuration.test_user")]
       }
       this.$refs["form"].validate((valid) => {
         result.success = valid

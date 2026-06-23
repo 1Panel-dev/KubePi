@@ -33,7 +33,7 @@
       </el-row>
 
       <div v-if="hasSelector">
-        <h4 style="float: left; margin-top:20px">Quota Scopes</h4>
+        <h4 style="float: left; margin-top:20px">{{ $t("business.configuration.quota_scopes") }}</h4>
         <el-tooltip class="item" effect="dark" placement="bottom">
           <i style="margin-top: 20px; margin-left: 7px" class="el-icon-question"></i>
           <div slot="content">
@@ -54,9 +54,9 @@
       <el-row v-if="hasSelector">
         <table style="width: 98%" class="tab-table">
           <tr>
-            <th scope="col" width="30%" align="left"><label>ScopeName</label></th>
-            <th scope="col" width="30%" align="left"><label>Operator</label></th>
-            <th scope="col" width="30%" align="left"><label>Values</label></th>
+            <th scope="col" width="30%" align="left"><label>{{ $t("business.configuration.scope_name") }}</label></th>
+            <th scope="col" width="30%" align="left"><label>{{ $t("business.configuration.operator") }}</label></th>
+            <th scope="col" width="30%" align="left"><label>{{ $t("business.configuration.values") }}</label></th>
             <th align="left"></th>
           </tr>
           <tr v-for="(row, index) in selectors" v-bind:key="index">

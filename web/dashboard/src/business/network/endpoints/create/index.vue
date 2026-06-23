@@ -23,7 +23,7 @@
                   <table style="width: 100%;padding: 0" class="tab-table">
                     <tr>
                       <th scope="col" width="30%" align="left">
-                        <label>ip</label>
+                        <label>{{ $t("business.network.ip_address") }}</label>
                       </th>
                       <th>
                       </th>
@@ -51,8 +51,8 @@
                   <table style="width: 100%;padding: 0" class="tab-table">
                     <tr>
                       <th scope="col" width="20%" align="left"><label>{{$t('business.network.port_name')}}</label></th>
-                      <th scope="col" width="20%" align="left"><label>port</label></th>
-                      <th scope="col" width="10%" align="left"><label>protocol</label></th>
+                      <th scope="col" width="20%" align="left"><label>{{ $t("business.network.port") }}</label></th>
+                      <th scope="col" width="10%" align="left"><label>{{ $t("business.network.protocol") }}</label></th>
                       <th>
                       </th>
                     </tr>

@@ -13,10 +13,10 @@
         </tr>
         <tr v-for="(label,index) in data" v-bind:key="label.index">
           <td>
-            <ko-form-item placeholder="e.g. foo" clearable itemType="input" v-model="label.key" @change.native="transformation" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_foo')" clearable itemType="input" v-model="label.key" @change.native="transformation" />
           </td>
           <td>
-            <ko-form-item placeholder="e.g. bar" clearable itemType="textarea" v-model="label.value" @change.native="transformation" />
+            <ko-form-item :placeholder="$t('commons.placeholder.example_bar')" clearable itemType="textarea" v-model="label.value" @change.native="transformation" />
           </td>
           <td>
             <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
