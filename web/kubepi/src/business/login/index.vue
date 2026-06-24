@@ -454,10 +454,21 @@ export default {
       overflow: hidden;
       background-color: #0f2f8f;
 
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -28px;
+        background: url(../../assets/KubePi-login.jpg) center center / cover no-repeat;
+        filter: blur(18px);
+        opacity: 0.9;
+        transform: scale(1.04);
+      }
+
       &::after {
         content: "";
         position: absolute;
         inset: 0;
+        z-index: 2;
         background:
           linear-gradient(90deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.02) 48%, rgba(255, 255, 255, 0.34) 100%),
           linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(15, 23, 42, 0.1) 100%);
@@ -468,6 +479,7 @@ export default {
     .login-image {
       position: absolute;
       inset: 0;
+      z-index: 1;
       width: 100%;
       height: 100%;
       background: url(../../assets/KubePi-login.jpg) no-repeat;

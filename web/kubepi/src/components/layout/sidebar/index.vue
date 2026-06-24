@@ -17,22 +17,25 @@
       </el-menu>
     </el-scrollbar>
     <div v-if="!isCollapse" class="sidebar-footer">
-      <a class="sidebar-ad"
-         href="https://1panel.cn"
-         target="_blank"
-         rel="noopener noreferrer">
-        <span class="sidebar-ad-mark" aria-hidden="true">
-          <img :src="require('@/assets/1panel-menu-logo.svg')" class="sidebar-ad-logo" alt="">
-        </span>
-        <span class="sidebar-ad-content">
-          <span class="sidebar-ad-title">1Panel</span>
-          <span class="sidebar-ad-desc">{{ $t('commons.personal.one_panel_ad') }}</span>
-        </span>
-        <i class="el-icon-top-right sidebar-ad-icon"></i>
-      </a>
-      <button type="button" class="sidebar-copyright" @click="openApi">
-        {{ $t('commons.personal.copy_right', { year: currentYear }) }}
-      </button>
+      <div class="sidebar-footer-links">
+        <a class="sidebar-footer-link"
+           href="https://1panel.cn"
+           target="_blank"
+           rel="noopener noreferrer">
+          <span class="sidebar-footer-mark" aria-hidden="true">
+            <img :src="require('@/assets/1panel-menu-logo.svg')" class="sidebar-ad-logo" alt="">
+          </span>
+          <span class="sidebar-footer-content">
+            <span class="sidebar-footer-text">{{ $t('commons.personal.one_panel_ad') }}</span>
+          </span>
+        </a>
+        <button type="button" class="sidebar-footer-link sidebar-footer-link--copyright" @click="openApi">
+          <span class="sidebar-footer-mark sidebar-footer-mark--copyright" aria-hidden="true">©</span>
+          <span class="sidebar-footer-content">
+            <span class="sidebar-footer-text">{{ $t('commons.personal.copy_right', { year: currentYear }) }}</span>
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -163,122 +166,97 @@ export default {
 
     .sidebar-footer {
       flex: 0 0 auto;
-      padding: 8px 12px 14px;
-      text-align: center;
+      padding: 10px 12px 14px;
+      text-align: left;
     }
 
-    .sidebar-ad {
+    .sidebar-footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .sidebar-footer-link {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       box-sizing: border-box;
-      min-height: 58px;
-      margin-bottom: 10px;
-      padding: 10px;
-      color: #e2e8f0;
+      width: 100%;
+      min-height: 32px;
+      padding: 6px 8px;
+      border: 0;
+      border-radius: 2px;
+      appearance: none;
+      color: #cbd5e1;
       text-align: left;
       text-decoration: none;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(96, 165, 250, 0.08));
-      border: 1px solid rgba(96, 165, 250, 0.24);
-      border-radius: 8px;
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      background: transparent;
+      font-family: inherit;
+      cursor: pointer;
+      overflow: visible;
+      transition: background 0.2s ease, color 0.2s ease;
 
       &:hover,
       &:focus {
         color: #ffffff;
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.34), rgba(96, 165, 250, 0.14));
-        border-color: rgba(147, 197, 253, 0.46);
-        transform: translateY(-1px);
+        background: $menu-bg-color-hover;
         outline: none;
       }
 
       &:focus-visible {
-        outline: 1px solid rgba(147, 197, 253, 0.62);
-        outline-offset: 3px;
+        outline: 1px solid rgba(148, 163, 184, 0.56);
+        outline-offset: -2px;
       }
     }
 
-    .sidebar-ad-mark {
+    .sidebar-footer-mark {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      flex: 0 0 28px;
-      width: 28px;
-      height: 28px;
-      padding: 4px;
+      flex: 0 0 18px;
+      width: 18px;
+      height: 18px;
+      padding: 0;
       box-sizing: border-box;
-      background: $--color-primary;
-      border: 1px solid rgba(255, 255, 255, 0.34);
-      border-radius: 7px;
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+      color: rgba(203, 213, 225, 0.78);
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+
+      &--copyright {
+        color: rgba(203, 213, 225, 0.78);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+      }
     }
 
     .sidebar-ad-logo {
       display: block;
-      width: 100%;
-      height: 100%;
+      width: 16px;
+      height: 16px;
       object-fit: contain;
     }
 
-    .sidebar-ad-content {
+    .sidebar-footer-content {
       display: flex;
       flex: 1;
       flex-direction: column;
       min-width: 0;
     }
 
-    .sidebar-ad-title {
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 18px;
-    }
-
-    .sidebar-ad-desc {
-      margin-top: 1px;
-      color: rgba(226, 232, 240, 0.72);
+    .sidebar-footer-text {
+      color: inherit;
       font-size: 12px;
-      line-height: 18px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .sidebar-ad-icon {
-      flex: 0 0 auto;
-      color: rgba(226, 232, 240, 0.7);
-      font-size: 14px;
-    }
-
-    .sidebar-copyright {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      max-width: 100%;
-      min-height: 24px;
-      padding: 0;
-      border: 0;
-      appearance: none;
-      color: rgba(226, 232, 240, 0.62);
-      background: transparent;
-      font-family: inherit;
-      font-size: 12px;
-      line-height: 20px;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: color 0.2s ease;
-
-      &:hover,
-      &:focus {
-        color: rgba(255, 255, 255, 0.88);
-        background: transparent;
-        outline: none;
-      }
-
-      &:focus-visible {
-        outline: 1px solid rgba(148, 163, 184, 0.45);
-        outline-offset: 3px;
-      }
+      font-weight: 500;
+      line-height: 16px;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      word-break: keep-all;
     }
 
     a {
