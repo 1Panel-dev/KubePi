@@ -50,7 +50,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="showMetric && hasMetric !== 'true'" class="metric-notice-row">
+    <el-row v-if="showMetric && hasMetric === 'false'" class="metric-notice-row">
       <button class="metric-notice" type="button" @click="dialogMetricVisible = true">
         <i class="el-icon-info metric-notice__icon"></i>
         <span class="metric-notice__text">{{ $t("business.dashboard.metric_server_help") }}</span>
@@ -158,7 +158,7 @@ export default {
         keywords: ""
       },
       showMetric: true,
-      hasMetric: "false",
+      hasMetric: "",
       clusterInfo: {
         allocatableCpu: 0,
         allocatableMemory: 0,
