@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
-	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterbinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
@@ -49,13 +48,6 @@ func (h *Handler) GetConfigFile() iris.Handler {
 		} else {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", fmt.Sprintf("can not find sessionId: %s in memory", sessionId))
-			return
-		}
-		loginUser := server.SessionMgr.Start(ctx).Get("profile")
-		profile, ok := loginUser.(session.UserProfile)
-		if !ok || profile.Name != sess.User {
-			ctx.StatusCode(iris.StatusUnauthorized)
-			ctx.Values().Set("message", "can not verify session user")
 			return
 		}
 
