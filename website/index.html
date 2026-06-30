@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KubePi - 开源 Kubernetes Dashboard / K8s 多集群管理面板</title>
+        <meta
+            name="description"
+            content="KubePi 是 1Panel 团队出品的现代化开源 Kubernetes Dashboard / K8s 面板，适合多集群管理、权限控制、资源管理和应用排障，也适用于 Kubernetes Dashboard 替代、Kuboard、KubeSphere、Rancher、Lens 等同类工具对比场景。"
+        />
+        <meta name="keywords" content="KubePi,KubePi v2.0.0,Kubernetes Dashboard,K8s Dashboard,Kubernetes Dashboard 替代,K8s Dashboard 替代,Kuboard,Kuboard 同类,KubeSphere,KubeSphere 同类,Rancher,Lens,OpenLens,Headlamp,Kubernetes 管理面板,K8s 面板,多集群管理,开源 Kubernetes 管理平台,1Panel 团队" />
+        <meta name="author" content="FIT2CLOUD 飞致云" />
+        <meta name="application-name" content="KubePi" />
+        <meta name="subject" content="开源 Kubernetes Dashboard 与 K8s 多集群管理面板" />
+        <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+        <meta name="theme-color" content="#3370ff" />
+        <link rel="canonical" href="https://kubepi.org/" />
+        <meta property="og:locale" content="zh_CN" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://kubepi.org/" />
+        <meta property="og:site_name" content="KubePi" />
+        <meta property="og:title" content="KubePi - 开源 Kubernetes Dashboard / K8s 多集群管理面板" />
+        <meta property="og:description" content="KubePi 是 1Panel 团队出品的现代化开源 Kubernetes / K8s 管理面板，支持多集群、权限控制、资源管理和应用排障。" />
+        <meta property="og:image" content="https://kubepi.org/images/kubepi-logo.png" />
+        <meta property="og:image:alt" content="KubePi Logo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://kubepi.org/" />
+        <meta name="twitter:title" content="KubePi - 开源 Kubernetes Dashboard / K8s 多集群管理面板" />
+        <meta name="twitter:description" content="现代化开源 Kubernetes / K8s 面板，面向多集群管理、权限控制、资源管理和同类工具对比场景。" />
+        <meta name="twitter:image" content="https://kubepi.org/images/kubepi-logo.png" />
+        <meta name="twitter:image:alt" content="KubePi Logo" />
+        <link rel="me" href="https://github.com/1Panel-dev/KubePi" />
+        <link rel="author" href="https://www.fit2cloud.com/" />
+        <link rel="icon" href="./images/favicon.png" />
+        <link rel="apple-touch-icon" href="./images/favicon.png" />
+        <link rel="stylesheet" href="./css/styles.css" />
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "Organization",
+                        "@id": "https://www.fit2cloud.com/#organization",
+                        "name": "FIT2CLOUD 飞致云",
+                        "url": "https://www.fit2cloud.com/",
+                        "sameAs": ["https://1panel.cn/"]
+                    },
+                    {
+                        "@type": "SoftwareApplication",
+                        "@id": "https://kubepi.org/#software",
+                        "name": "KubePi",
+                        "url": "https://kubepi.org/",
+                        "alternateName": ["KubePi Kubernetes Dashboard", "KubePi K8s Dashboard", "开源 Kubernetes Dashboard", "Kubernetes Dashboard 替代方案"],
+                        "applicationCategory": "DeveloperApplication",
+                        "operatingSystem": ["Kubernetes", "Linux"],
+                        "softwareVersion": "2.0.0",
+                        "isAccessibleForFree": true,
+                        "license": "https://github.com/1Panel-dev/KubePi/blob/main/LICENSE",
+                        "codeRepository": "https://github.com/1Panel-dev/KubePi",
+                        "downloadUrl": "https://hub.docker.com/r/1panel/kubepi",
+                        "creator": {
+                            "@id": "https://www.fit2cloud.com/#organization"
+                        },
+                        "publisher": {
+                            "@id": "https://www.fit2cloud.com/#organization"
+                        },
+                        "description": "KubePi 是 1Panel 团队出品的现代化开源 Kubernetes / K8s 管理面板，支持多集群导入、集群与命名空间级权限控制、资源管理、应用排障和 Docker / 1Panel 应用商店部署。",
+                        "keywords": ["KubePi", "Kubernetes Dashboard", "K8s Dashboard", "Kubernetes Dashboard 替代", "K8s Dashboard 替代", "Kuboard", "Kuboard 同类", "KubeSphere", "KubeSphere 同类", "Rancher", "Lens", "OpenLens", "Headlamp", "Kubernetes 多集群管理", "Kubernetes 权限控制", "开源 Kubernetes 管理平台"],
+                        "featureList": ["多 Kubernetes 集群统一接入与管理", "集群与命名空间级权限控制", "Kubernetes 资源和应用管理", "应用状态查看与故障排查", "Docker 快速启动", "1Panel 应用商店部署"],
+                        "sameAs": ["https://github.com/1Panel-dev/KubePi", "https://hub.docker.com/r/1panel/kubepi", "https://github.com/1Panel-dev/KubePi/releases"]
+                    },
+                    {
+                        "@type": "WebPage",
+                        "@id": "https://kubepi.org/#homepage",
+                        "url": "https://kubepi.org/",
+                        "name": "KubePi 官网",
+                        "inLanguage": "zh-CN",
+                        "about": {
+                            "@id": "https://kubepi.org/#software"
+                        },
+                        "mainEntity": {
+                            "@id": "https://kubepi.org/#software"
+                        },
+                        "mentions": [
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Kubernetes Dashboard"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Kuboard"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "KubeSphere"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Rancher"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Lens"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "OpenLens"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Headlamp"
+                            },
+                            {
+                                "@type": "SoftwareApplication",
+                                "name": "Kubernetes"
+                            }
+                        ],
+                        "audience": {
+                            "@type": "Audience",
+                            "audienceType": "Kubernetes 管理员、平台工程师、DevOps 团队、开发人员"
+                        }
+                    }
+                ]
+            }
+        </script>
+    </head>
+    <body>
+        <div class="top-bar" id="topBar">
+            <div class="top-bar-container">
+                <div class="top-bar-left">
+                    <a class="top-bar-brand" href="https://www.fit2cloud.com/" target="_blank" rel="noopener noreferrer">
+                        <img src="./images/logo-light-FIT2CLOUD.svg" alt="FIT2CLOUD 飞致云 Logo" />
+                    </a>
+                </div>
+                <div class="top-bar-right">
+                    <div class="top-bar-dropdown">
+                        <button class="top-bar-dropdown-btn" type="button" id="productsToggle" aria-expanded="false" aria-haspopup="true">飞致云旗下开源产品 <span class="dropdown-arrow">▼</span></button>
+                        <div class="top-bar-dropdown-content" id="productsMenu">
+                            <a href="https://1panel.cn" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">1Panel</span><span class="top-bar-dropdown-item__desc">现代化、开源的 Linux 面板</span></a>
+                            <a href="https://cordys.cn/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">Cordys</span><span class="top-bar-dropdown-item__desc">新一代的开源 AI CRM 系统</span></a>
+                            <a href="https://www.jumpserver.org/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">JumpServer</span><span class="top-bar-dropdown-item__desc">广受欢迎的开源堡垒机</span></a>
+                            <a href="https://maxkb.cn/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">MaxKB</span><span class="top-bar-dropdown-item__desc">强大易用的企业级智能体平台</span></a>
+                            <a href="https://dataease.cn/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">DataEase</span><span class="top-bar-dropdown-item__desc">人人可用的开源 BI 工具</span></a>
+                            <a href="https://sqlbot.org/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">SQLBot</span><span class="top-bar-dropdown-item__desc">基于大模型的开源智能问数系统</span></a>
+                            <a href="https://metersphere.io/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">MeterSphere</span><span class="top-bar-dropdown-item__desc">新一代的开源持续测试工具</span></a>
+                            <a href="https://halo.run/" target="_blank" class="top-bar-dropdown-item" rel="noopener noreferrer"><span class="top-bar-dropdown-item__name">Halo</span><span class="top-bar-dropdown-item__desc">强大易用的开源建站工具</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <header class="site-header" id="siteHeader">
+            <div class="container">
+                <nav class="nav" aria-label="主导航">
+                    <a class="nav__brand" href="#hero" aria-label="KubePi 首页">
+                        <img src="./images/kubepi-logo.png" alt="KubePi" />
+                    </a>
+                    <div class="nav__links" id="navLinks">
+                        <a href="#hero">首页</a>
+                        <a href="#positioning">产品定位</a>
+                        <a href="#features">核心能力</a>
+                        <a href="#quickstart">快速开始</a>
+                        <a class="nav__mobile-action" href="https://github.com/1Panel-dev/KubePi" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+                        <a class="nav__mobile-action nav__mobile-action--primary" href="https://hub.docker.com/r/1panel/kubepi" target="_blank" rel="noopener noreferrer">Docker 镜像</a>
+                    </div>
+                    <div class="nav__actions">
+                        <a class="button button--ghost" href="https://github.com/1Panel-dev/KubePi" target="_blank" rel="noopener noreferrer">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path
+                                    d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 4.6 3 8.5 7.1 9.9.5.1.7-.2.7-.5v-1.9c-2.9.6-3.5-1.2-3.5-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.6 1.1 1.6 1.1.9 1.5 2.4 1.1 3 .8.1-.7.4-1.1.7-1.4-2.3-.3-4.8-1.2-4.8-5.2 0-1.2.4-2.1 1.1-2.8-.1-.3-.5-1.3.1-2.8 0 0 .9-.3 2.9 1.1.8-.2 1.7-.3 2.6-.3s1.8.1 2.6.3c2-1.4 2.9-1.1 2.9-1.1.6 1.5.2 2.5.1 2.8.7.7 1.1 1.6 1.1 2.8 0 4-2.4 4.9-4.8 5.2.4.3.8 1 .8 1.9v2.8c0 .3.2.6.7.5 4.1-1.4 7.1-5.3 7.1-9.9 0-5.8-4.7-10.5-10.5-10.5Z"
+                                />
+                            </svg>
+                            GitHub
+                        </a>
+                        <a class="button button--primary" href="https://hub.docker.com/r/1panel/kubepi" target="_blank" rel="noopener noreferrer">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 17h16a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Zm3-5h3v3H7v-3Zm4 0h3v3h-3v-3Zm4 0h3v3h-3v-3ZM7 8h3v3H7V8Zm4 0h3v3h-3V8Zm0-4h3v3h-3V4Z" />
+                            </svg>
+                            Docker 镜像
+                        </a>
+                    </div>
+                    <button class="nav__toggle" type="button" id="navToggle" aria-label="打开导航" aria-expanded="false">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero" id="hero">
+                <div class="container hero__inner">
+                    <div class="hero__content">
+                        <div class="hero__kicker" aria-label="KubePi 出品方">
+                            <a href="https://1panel.cn/" target="_blank" rel="noopener noreferrer"><span>1Panel 团队出品</span></a>
+                        </div>
+                        <h1 class="hero__title">
+                            <span>KubePi</span>
+                            <span class="hero__pronunciation">[kubəˈpaɪ]</span>
+                        </h1>
+                        <p class="hero__lead">现代化的 Kubernetes 多集群管理面板，帮助管理员统一接入集群、细化集群与命名空间权限，并让开发人员更高效地管理应用和定位问题。</p>
+                        <div class="hero__actions">
+                            <a class="button button--primary button--large" href="#quickstart">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M8 5v14l11-7-11-7Z" />
+                                </svg>
+                                快速开始
+                            </a>
+                        </div>
+                        <dl class="hero__facts" aria-label="KubePi 关键信息">
+                            <div>
+                                <dt>多集群</dt>
+                                <dd>统一导入与管理</dd>
+                            </div>
+                            <div>
+                                <dt>权限控制</dt>
+                                <dd>集群与命名空间</dd>
+                            </div>
+                            <div>
+                                <dt>K8s 版本</dt>
+                                <dd>最低 v1.24</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
+            <section class="quickstart-band" id="quickstart">
+                <div class="container quickstart">
+                    <div class="quickstart__copy">
+                        <h2>一条命令启动 KubePi</h2>
+                        <p>运行 Docker 镜像即可完成体验。登录后导入 Kubernetes 集群，就可以开始管理资源。</p>
+                        <p class="quickstart__store">也可通过图形化方式部署：<a href="https://apps.fit2cloud.com/1panel" target="_blank" rel="noopener noreferrer">前往 1Panel 应用商店</a></p>
+                    </div>
+                    <div class="code-panel">
+                        <div class="code-panel__bar">
+                            <span>Docker</span>
+                            <button type="button" id="copyCommand" aria-label="复制启动命令" title="复制启动命令">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M8 8h11v11H8V8Zm-3 8H4V4h12v1" />
+                                </svg>
+                            </button>
+                        </div>
+                        <pre><code id="installCommand">docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi</code></pre>
+                        <div class="quickstart__meta">
+                            <span>默认用户：admin</span>
+                            <span>默认密码：kubepi</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section--neutral" id="positioning">
+                <div class="container">
+                    <div class="section__header">
+                        <h2>一个面向团队协作的 K8s 控制台</h2>
+                        <p>KubePi 将集群管理、资源操作、权限划分和排障入口收敛到统一的 Web 界面，让 Kubernetes 的日常使用更直观。</p>
+                    </div>
+                    <div class="role-grid">
+                        <article class="role-card">
+                            <span class="role-card__icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7l-8-4Zm0 4v10" />
+                                </svg>
+                            </span>
+                            <h3>管理员</h3>
+                            <p>接入多个 Kubernetes 集群，围绕团队、集群和命名空间建立清晰的访问边界。</p>
+                        </article>
+                        <article class="role-card">
+                            <span class="role-card__icon role-card__icon--blue">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 5h16v11H4V5Zm4 15h8M12 16v4" />
+                                </svg>
+                            </span>
+                            <h3>开发人员</h3>
+                            <p>在被授权的范围内查看资源、管理应用、排查服务运行状态，减少频繁切换命令行上下文。</p>
+                        </article>
+                        <article class="role-card">
+                            <span class="role-card__icon role-card__icon--green">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 18V7l8-4 8 4v11l-8 4-8-4Zm8-15v19M4 7l8 4 8-4" />
+                                </svg>
+                            </span>
+                            <h3>运维团队</h3>
+                            <p>结合监控、指标和日志审计能力，把集群资源状态与日常运维动作放在同一个入口。</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="features">
+                <div class="container">
+                    <div class="section__header">
+                        <h2>保留 Kubernetes 的完整能力，降低日常使用门槛</h2>
+                        <p>KubePi 覆盖多集群接入、资源管理、权限控制与运维排障等核心场景，帮助团队高效管理 Kubernetes 环境。</p>
+                    </div>
+                    <div class="feature-grid">
+                        <article class="feature-card">
+                            <h3>多集群管理</h3>
+                            <p>支持导入多个 Kubernetes 集群，统一进入集群列表与资源视图。</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>精细权限控制</h3>
+                            <p>将不同集群、命名空间的访问权限分配给指定用户，适配多人协作场景。</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>资源与应用管理</h3>
+                            <p>帮助开发人员管理 Kubernetes 集群中运行的应用程序，减少重复、分散的操作。</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>故障排查入口</h3>
+                            <p>在 Web 控制台内查看资源状态、定位应用问题，更快处理集群中的复杂性。</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>监控指标集成</h3>
+                            <p>支持对接 Prometheus、Grafana 等观测能力，帮助团队持续掌握集群运行状态。</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>轻量部署</h3>
+                            <p>支持 Docker 快速启动，也可以通过 1Panel 应用商店快速部署。</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <div class="container footer__inner">
+                <div class="footer__summary">
+                    <a class="footer__brand" href="#hero">
+                        <img src="./images/kubepi-symbol.png" alt="" />
+                        <span>KubePi</span>
+                    </a>
+                    <p>现代化的 Kubernetes 多集群管理面板，让集群接入、资源管理与权限协作更直观。</p>
+                </div>
+                <nav class="footer__nav" aria-label="底部导航">
+                    <div class="footer__group">
+                        <h2>项目资源</h2>
+                        <a href="https://github.com/1Panel-dev/KubePi" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+                        <a href="https://hub.docker.com/r/1panel/kubepi" target="_blank" rel="noopener noreferrer">Docker 镜像</a>
+                        <a href="https://github.com/1Panel-dev/KubePi/releases" target="_blank" rel="noopener noreferrer">版本发布</a>
+                    </div>
+                    <div class="footer__group">
+                        <h2>相关站点</h2>
+                        <a href="https://www.fit2cloud.com/" target="_blank" rel="noopener noreferrer">飞致云官网</a>
+                        <a href="https://1panel.cn/" target="_blank" rel="noopener noreferrer">1Panel 官网</a>
+                        <a href="https://kubernetes.io/" target="_blank" rel="noopener noreferrer">Kubernetes 官网</a>
+                        <a href="https://apps.fit2cloud.com/1panel" target="_blank" rel="noopener noreferrer">1Panel 应用商店</a>
+                    </div>
+                </nav>
+            </div>
+            <div class="container footer__copyright">
+                <p>© 2026 FIT2CLOUD 飞致云. 保留所有权利.</p>
+                <div class="footer__legal">
+                    <a href="https://fit2cloud.com/legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">隐私政策</a>
+                    <a href="https://fit2cloud.com/legal/licenses.html" target="_blank" rel="noopener noreferrer">许可协议</a>
+                </div>
+            </div>
+        </footer>
+
+        <script src="./js/main.js"></script>
+    </body>
+</html>
