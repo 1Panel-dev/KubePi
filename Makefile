@@ -26,7 +26,7 @@ build_bin:
 	GOOS=$(GOOS) GOARCH=$(GOARCH)  $(GOBUILD) -trimpath  -ldflags "-s -w"  -o $(BUILDDIR)/$(APP_NAME) $(MAIN)
 
 build_gotty:
-	cd $(GOTTYDIR) && make && mkdir -p  ${BUILDDIR} && mv gotty ${BUILDDIR}
+	cd $(GOTTYDIR) && GOOS=$(GOOS) GOARCH=$(GOARCH) make && mkdir -p  ${BUILDDIR} && mv gotty ${BUILDDIR}
 
 build_all: build_web build_gotty build_bin
 

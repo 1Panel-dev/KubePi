@@ -1,1 +1,7 @@
 **/node_modules
+.git
+.runtime
+/build
+/cmd/server/web
+/dist
+/web/terminal/.angular
