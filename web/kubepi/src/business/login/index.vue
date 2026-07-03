@@ -284,21 +284,7 @@ export default {
           this.loading = true
           this.$store.dispatch("user/login", this.form).then((res) => {
             const user = res.data
-            this.pendingForceChangePassword = !!user.forceChangePassword
-            if (user.mfa.enable) {
-              this.mfaPage = true
-              this.loading = false
-              if (!user.mfa.configured) {
-                getOtp().then((res) => {
-                  this.otp = res.data
-                  this.mfaInit = true
-                })
-              } else {
-                this.mfaInit = false
-              }
-            } else {
-              this.completeLogin(user)
-            }
+            this.handleLoginSuccess(user)
           }).catch((error) => {
             this.loading = false
             this.loginError = this.formatLoginError(this.getErrorMessage(error))
@@ -326,6 +312,23 @@ export default {
       }).catch((error) => {
         this.mfaError = this.getErrorMessage(error)
       })
+    },
+    handleLoginSuccess(user) {
+      this.pendingForceChangePassword = !!user.forceChangePassword
+      if (user.mfa.enable) {
+        this.mfaPage = true
+        this.loading = false
+        if (!user.mfa.configured) {
+          getOtp().then((res) => {
+            this.otp = res.data
+            this.mfaInit = true
+          })
+        } else {
+          this.mfaInit = false
+        }
+      } else {
+        this.completeLogin(user)
+      }
     },
     completeLogin(user) {
       this.loading = false
@@ -355,10 +358,25 @@ export default {
           newPassword: this.forcePasswordForm.newPassword,
         }, {silentError: true}).then(() => {
           this.$message.success(this.$t("commons.msg.update_success"))
-          this.forcePasswordPage = false
-          this.$router.push({ path: "/" })
+          this.form.password = this.forcePasswordForm.newPassword
+          return this.enterSystemAfterPasswordChange()
         }).catch((error) => {
+          this.loading = false
           this.forcePasswordError = this.getErrorMessage(error)
+        })
+      })
+    },
+    enterSystemAfterPasswordChange() {
+      this.loading = true
+      return this.$store.dispatch("user/isLogin").then((isLogin) => {
+        if (isLogin) {
+          this.forcePasswordPage = false
+          this.loading = false
+          return this.$router.push({ path: "/" })
+        }
+        return this.$store.dispatch("user/login", this.form).then((res) => {
+          this.forcePasswordPage = false
+          this.handleLoginSuccess(res.data)
         })
       })
     },
