@@ -38,6 +38,18 @@ export const constantRoutes = [
         ]
     },
     {
+        path: "/password",
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: "",
+                name: "ProfilePassword",
+                component: () => import("@/business/user-management/user/password")
+            }
+        ]
+    },
+    {
         path: "/login",
         component: () => import("@/business/login"),
         hidden: true
@@ -83,4 +95,3 @@ export function resetRouter() {
 }
 
 export default router
-

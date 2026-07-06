@@ -47,6 +47,7 @@ const message = {
             sync: "同步",
             bind: "绑定",
             change_password: '改密',
+            reset_password: '重置密码',
             export: '导出所有 Helm release',
         },
         table: {
@@ -190,6 +191,7 @@ const message = {
             old_password: "原密码",
             new_password: "新密码",
             change_password: "修改密码",
+            reset_password: "重置密码",
             resource_name: "资源名称",
             please_input_password: "请输入密码",
             please_input_password_again: "请再次输入密码",

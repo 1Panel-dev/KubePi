@@ -47,6 +47,7 @@ const message = {
             sync: "Sync",
             bind: "Bind",
             change_password: 'Change Password',
+            reset_password: 'Reset Password',
             export: 'Export All Helm Releases',
         },
         table: {
@@ -190,6 +191,7 @@ const message = {
             old_password: "Old Password",
             new_password: "New Password",
             change_password: "Change Password",
+            reset_password: "Reset Password",
             resource_name: "Resource Name",
             please_input_password: "Please enter a password",
             please_input_password_again: "Please enter the password again",

@@ -81,13 +81,14 @@ export default {
           }
         },
         {
-          label: this.$t("commons.button.change_password"),
+          label: this.$t("commons.button.reset_password"),
           icon: "el-icon-edit-outline",
           click: (row) => {
             this.onChangePassword(row.name)
           },
-          disabled: () => {
-            return  !checkPermissions({resource: "users", verb: "update"})
+          disabled: (row) => {
+            const isLocalUser = !row.type || row.type === "LOCAL"
+            return row.name === this.$store.getters.name || !this.$store.getters.isAdmin || !isLocalUser || !checkPermissions({resource: "users", verb: "update"})
           }
         },
         {
