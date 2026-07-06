@@ -1,13 +1,16 @@
 package chart
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/chart"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"strings"
 )
 
 type Handler struct {
@@ -24,6 +27,27 @@ func userAccessFromContext(ctx *context.Context) clusteraccess.User {
 	u := ctx.Values().Get("profile")
 	profile := u.(session.UserProfile)
 	return clusteraccess.User{Name: profile.Name, IsAdministrator: profile.IsAdministrator}
+}
+
+func writeClusterAccessError(ctx *context.Context, err error) {
+	if errors.Is(err, clusteraccess.ErrClusterAccessDenied) {
+		ctx.StatusCode(iris.StatusForbidden)
+		ctx.Values().Set("message", "user can not access cluster")
+		return
+	}
+	ctx.StatusCode(iris.StatusInternalServerError)
+	ctx.Values().Set("message", err.Error())
+}
+
+func requireClusterAccess() iris.Handler {
+	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("cluster")
+		if err := clusteraccess.CheckClusterAccess(cluster, userAccessFromContext(ctx), common.DBOptions{}); err != nil {
+			writeClusterAccessError(ctx, err)
+			return
+		}
+		ctx.Next()
+	}
 }
 
 func (h *Handler) DeleteRepo() iris.Handler {
@@ -202,11 +226,14 @@ func (h *Handler) GetChartForUpdate() iris.Handler {
 
 func (h *Handler) InstallChart() iris.Handler {
 	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("cluster")
 		var req ChInstall
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
+			return
 		}
+		req.Cluster = cluster
 		err := h.chartService.InstallChart(req.Cluster, req.Repo, req.Namespace, req.Name, req.ChartName, req.ChartVersion, req.Values, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -219,11 +246,14 @@ func (h *Handler) InstallChart() iris.Handler {
 
 func (h *Handler) UpdateChart() iris.Handler {
 	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("cluster")
 		var req ChInstall
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
+			return
 		}
+		req.Cluster = cluster
 		err := h.chartService.UpgradeChart(req.Cluster, req.Namespace, req.Repo, req.Name, req.ChartName, req.ChartVersion, req.Values, userAccessFromContext(ctx))
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -283,6 +313,7 @@ func (h *Handler) GetAppDetail() iris.Handler {
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/charts/:cluster")
+	sp.Use(requireClusterAccess())
 	sp.Get("/repos", handler.ListRepo())
 	sp.Get("/repos/:name", handler.GetRepo())
 	sp.Post("/repos", handler.AddRepo())
@@ -295,6 +326,7 @@ func Install(parent iris.Party) {
 	sp.Get("/detail/:name", handler.GetChartByVersion())
 	sp.Post("/install", handler.InstallChart())
 	app := parent.Party("/apps/:cluster")
+	app.Use(requireClusterAccess())
 	app.Get("/search", handler.AllInstalled())
 	app.Delete("/:namespace/:name", handler.UnInstall())
 	app.Get("/:name", handler.GetAppDetail())

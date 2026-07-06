@@ -13,6 +13,7 @@ import (
 	v1User "github.com/1Panel-dev/KubePi/internal/model/v1/user"
 	"github.com/1Panel-dev/KubePi/internal/server"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/ldap"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/role"
@@ -118,6 +119,25 @@ func currentSessionProfile(ctx *context.Context) (UserProfile, bool) {
 		return UserProfile{}, false
 	}
 	return p, true
+}
+
+func clusterAccessUser(profile UserProfile) clusteraccess.User {
+	return clusteraccess.User{Name: profile.Name, IsAdministrator: profile.IsAdministrator}
+}
+
+func ensureClusterAccess(ctx *context.Context, clusterName string, profile UserProfile) bool {
+	err := clusteraccess.CheckClusterAccess(clusterName, clusterAccessUser(profile), common.DBOptions{})
+	if err == nil {
+		return true
+	}
+	if errors.Is(err, clusteraccess.ErrClusterAccessDenied) {
+		ctx.StatusCode(iris.StatusForbidden)
+		ctx.Values().Set("message", "user can not access cluster")
+		return false
+	}
+	ctx.StatusCode(iris.StatusInternalServerError)
+	ctx.Values().Set("message", err.Error())
+	return false
 }
 
 func ensureMfaApprovedSessionProfile(ctx *context.Context) (UserProfile, bool) {
@@ -442,6 +462,9 @@ func (h *Handler) ListUserNamespace() iris.Handler {
 			return
 		}
 		name := ctx.Params().GetString("cluster_name")
+		if !ensureClusterAccess(ctx, name, profile) {
+			return
+		}
 		c, err := h.clusterService.Get(name, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
@@ -468,6 +491,9 @@ func (h *Handler) GetClusterProfile() iris.Handler {
 		}
 		clusterName := ctx.Params().GetString("cluster_name")
 		namespace := ctx.URLParam("namespace")
+		if !ensureClusterAccess(ctx, clusterName, profile) {
+			return
+		}
 		c, err := h.clusterService.Get(clusterName, common.DBOptions{})
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
