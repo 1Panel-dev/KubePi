@@ -24,6 +24,10 @@ export function updateUser(name, user) {
     return put(`${baseUrl}/${name}`, user)
 }
 
+export function resetPassword(name, password) {
+    return put(`${baseUrl}/${name}/password`, {password: password})
+}
+
 export function listUsers() {
     return get(`${baseUrl}`)
 }

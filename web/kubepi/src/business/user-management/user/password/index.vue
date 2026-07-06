@@ -1,11 +1,11 @@
 <template>
-    <layout-content :header="$t('business.user.change_password')" :back-to="{ name: 'Users' }">
-      <el-row>
+    <layout-content :header="headerTitle" :back-to="backTo">
+      <el-row v-loading="loading">
         <el-col :span="4"><br/></el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple-light">
-            <el-form :rules="passwordChangeRules" ref="passwordChangeFrom" :model="passwordChangeFrom" label-width="150px" label-position="left">
-                <el-form-item :label="$t('business.user.old_password')" prop="oldPassword">
+            <el-form :rules="passwordChangeRules" :validate-on-rule-change="false" ref="passwordChangeFrom" :model="passwordChangeFrom" label-width="150px" label-position="left">
+                <el-form-item v-if="isCurrentUser" :label="$t('business.user.old_password')" prop="oldPassword">
                     <el-input type="password" show-password v-model="passwordChangeFrom.oldPassword"></el-input>
                 </el-form-item>
 
@@ -28,14 +28,14 @@
         </el-col>
         <el-col :span="4"><br/></el-col>
       </el-row>
-  
+
     </layout-content>
   </template>
   
   <script>
   import LayoutContent from "@/components/layout/LayoutContent"
-  import {getCurrentUser} from "@/api/auth"
-  import {updateUser} from "@/api/users"
+  import {getCurrentUser, updatePassword} from "@/api/auth"
+  import {resetPassword} from "@/api/users"
   import Rules from "@/utils/rules"
   
   export default {
@@ -43,17 +43,60 @@
     props: ["name"],
     components: { LayoutContent },
     data () {
-      var validatePass = (rule, value, callback) => {
+      return {
+        loading: false,
+        currentUserName: "",
+        targetName: this.name || "",
+        passwordChangeFrom: {
+            oldPassword: "",
+            newPassword: "",
+            confirmPassword: ""
+        }
+      }
+    },
+    computed: {
+      isCurrentUser() {
+        return this.targetName !== "" && this.targetName === this.currentUserName
+      },
+      headerTitle() {
+        return this.isCurrentUser ? this.$t("business.user.change_password") : this.$t("business.user.reset_password")
+      },
+      backTo() {
+        return this.isCurrentUser ? null : { name: "Users" }
+      },
+      passwordChangeRules() {
+        const rules = {
+          newPassword: [
+            Rules.RequiredRule,
+            Rules.PasswordRule,
+            {validator: this.validateNewPassword, trigger: 'blur'},
+          ],
+          confirmPassword: [
+            Rules.RequiredRule,
+            Rules.PasswordRule,
+            {validator: this.validateConfirmPassword, trigger: 'blur'}
+          ]
+        }
+        if (this.isCurrentUser) {
+          rules.oldPassword = [
+            Rules.RequiredRule
+          ]
+        }
+        return rules
+      }
+    },
+    methods: {
+      validateNewPassword(rule, value, callback) {
         if (value === "") {
           callback(new Error(this.$t("business.user.please_input_password")))
         } else {
-          if (this.passwordChangeFrom.newPassword !== "") {
-            this.$refs.passwordChangeFrom.validateField("checkPass")
+          if (this.passwordChangeFrom.confirmPassword !== "") {
+            this.$refs.passwordChangeFrom.validateField("confirmPassword")
           }
           callback()
         }
-      }
-      var validatePass2 = (rule, value, callback) => {
+      },
+      validateConfirmPassword(rule, value, callback) {
         if (value === "") {
           callback(new Error(this.$t("business.user.please_input_password")))
         } else if (value !== this.passwordChangeFrom.newPassword) {
@@ -61,58 +104,52 @@
         } else {
           callback()
         }
-      }
-      return {
-        passwordChangeFrom: {
-            oldPassword: "",
-            newPassword: "",
-            confirmPassword: ""
-        },
-        passwordChangeRules: {
-            oldPassword: [
-                Rules.RequiredRule
-            ],
-            newPassword: [
-                Rules.RequiredRule,
-                Rules.PasswordRule,
-                {validator: validatePass, trigger: 'blur'},
-            ],
-            confirmPassword: [
-                Rules.RequiredRule,
-                Rules.PasswordRule,
-                {validator: validatePass2, trigger: 'blur'}
-            ]
+      },
+      clearPasswordValidate() {
+        if (this.$refs.passwordChangeFrom) {
+          this.$refs.passwordChangeFrom.clearValidate()
         }
-      }
-    },
-    methods: {
+      },
       onChangePasswordConfirm () {
         this.$refs["passwordChangeFrom"].validate((valid) => {
           if (valid) {
-            updateUser(this.name, {
-                "oldPassword": this.passwordChangeFrom.oldPassword,
-                "password": this.passwordChangeFrom.newPassword
-            }).then(() => {
-                this.$message.success(this.$t("commons.msg.update_success"))
-                this.onCancel()
+            const request = this.isCurrentUser
+              ? updatePassword({
+                  "oldPassword": this.passwordChangeFrom.oldPassword,
+                  "newPassword": this.passwordChangeFrom.newPassword
+                })
+              : resetPassword(this.targetName, this.passwordChangeFrom.newPassword)
+            request.then(() => {
+              this.$message.success(this.$t("commons.msg.update_success"))
+              this.onCancel()
             })
           }
         })
       },
       onCancel () {
+        if (this.isCurrentUser) {
+          this.$router.push({ path: "/" })
+          return
+        }
         this.$router.push({ name: "Users" })
       }
     },
     created() {
-      if (!this.name) {
-        getCurrentUser().then(data => {
-          this.name = data.data.name
+      this.loading = true
+      getCurrentUser().then(data => {
+        this.currentUserName = data.data.name
+        if (!this.targetName) {
+          this.targetName = this.currentUserName
+        }
+      }).finally(() => {
+        this.loading = false
+        this.$nextTick(() => {
+          this.clearPasswordValidate()
         })
-      }
+      })
     }
   }
   </script>
-  
+
   <style scoped>
   </style>
-  

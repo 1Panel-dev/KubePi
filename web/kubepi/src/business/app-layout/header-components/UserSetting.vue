@@ -44,7 +44,7 @@ export default {
           this.$router.push("/profile")
           break
         case "password":
-          this.$router.push({name: "UserPassword", params: {name: this.name}})
+          this.$router.push({name: "ProfilePassword"})
           break
         default:
           this.aboutDialogVisible = true

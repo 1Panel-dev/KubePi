@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/1Panel-dev/KubePi/internal/api/v1/commons"
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
@@ -422,6 +423,52 @@ func (h *Handler) UpdateUser() iris.Handler {
 	}
 }
 
+func (h *Handler) ResetPassword() iris.Handler {
+	return func(ctx *context.Context) {
+		userName := ctx.Params().GetString("name")
+		var req User
+		if err := ctx.ReadJSON(&req); err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if strings.TrimSpace(req.Password) == "" {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "password can not be empty")
+			return
+		}
+		u := ctx.Values().Get("profile")
+		profile := u.(session.UserProfile)
+		if !profile.IsAdministrator {
+			ctx.StatusCode(iris.StatusForbidden)
+			ctx.Values().Set("message", "only administrator can reset user password")
+			return
+		}
+		target, err := h.userService.GetByNameOrEmail(userName, common.DBOptions{})
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		if target.Name == profile.Name {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "can not reset your own password")
+			return
+		}
+		if target.Type != "" && target.Type != v1User.LOCAL {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.Values().Set("message", "only local user password can be reset")
+			return
+		}
+		if err := h.userService.ResetPassword(target.Name, req.Password, common.DBOptions{}); err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		ctx.Values().Set("data", "ok")
+	}
+}
+
 func Install(parent iris.Party) {
 	handler := NewHandler()
 	sp := parent.Party("/users")
@@ -429,6 +476,7 @@ func Install(parent iris.Party) {
 	sp.Post("/", handler.CreateUser())
 	sp.Delete("/:name", handler.DeleteUser())
 	sp.Get("/:name", handler.GetUser())
+	sp.Put("/:name/password", handler.ResetPassword())
 	sp.Put("/:name", handler.UpdateUser())
 	sp.Get("/", handler.GetUsers())
 }
