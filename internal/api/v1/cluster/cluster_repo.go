@@ -76,11 +76,14 @@ func (h *Handler) ListClusterReposDetail() iris.Handler {
 // @Router /clusters/{cluster}/repos [post]
 func (h *Handler) AddCLusterRepo() iris.Handler {
 	return func(ctx *context.Context) {
+		cluster := ctx.Params().GetString("name")
 		var req CreateRepo
 		if err := ctx.ReadJSON(&req); err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.Values().Set("message", err.Error())
+			return
 		}
+		req.Cluster = cluster
 		tx, err := server.DB().Begin(true)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)

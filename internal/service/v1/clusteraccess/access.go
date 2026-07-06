@@ -2,19 +2,41 @@ package clusteraccess
 
 import (
 	"encoding/pem"
+	"errors"
+	"strings"
 
 	v1Cluster "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterbinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
+	"github.com/asdine/storm/v3"
 	kubernetesClient "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
 
+var ErrClusterAccessDenied = errors.New("cluster access denied")
+
 type User struct {
 	Name            string
 	IsAdministrator bool
+}
+
+func CheckClusterAccess(clusterName string, user User, options common.DBOptions) error {
+	if user.IsAdministrator {
+		return nil
+	}
+	if strings.TrimSpace(clusterName) == "" || strings.TrimSpace(user.Name) == "" {
+		return ErrClusterAccessDenied
+	}
+	_, err := clusterbinding.NewService().GetBindingByClusterNameAndUserName(clusterName, user.Name, options)
+	if err != nil {
+		if errors.Is(err, storm.ErrNotFound) {
+			return ErrClusterAccessDenied
+		}
+		return err
+	}
+	return nil
 }
 
 func ConfigForUser(clusterName string, user User) (*rest.Config, *v1Cluster.Cluster, error) {
@@ -33,6 +55,9 @@ func ConfigForUser(clusterName string, user User) (*rest.Config, *v1Cluster.Clus
 
 	binding, err := clusterbinding.NewService().GetBindingByClusterNameAndUserName(c.Name, user.Name, common.DBOptions{})
 	if err != nil {
+		if errors.Is(err, storm.ErrNotFound) {
+			return nil, nil, ErrClusterAccessDenied
+		}
 		return nil, nil, err
 	}
 	cfg.Username = ""

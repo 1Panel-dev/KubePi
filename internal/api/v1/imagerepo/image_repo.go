@@ -14,6 +14,7 @@ import (
 	v1ImageRepo "github.com/1Panel-dev/KubePi/internal/model/v1/imagerepo"
 	v1Role "github.com/1Panel-dev/KubePi/internal/model/v1/role"
 	"github.com/1Panel-dev/KubePi/internal/server"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterrepo"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/imagerepo"
@@ -125,6 +126,30 @@ func canManageImageRepos(ctx *context.Context) bool {
 			}
 		}
 	}
+	return false
+}
+
+func ensureClusterAccess(ctx *context.Context, cluster string) bool {
+	profile, ok := ctx.Values().Get("profile").(v1Session.UserProfile)
+	if !ok || profile.Name == "" {
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.Values().Set("message", "please login")
+		return false
+	}
+	err := clusteraccess.CheckClusterAccess(cluster, clusteraccess.User{
+		Name:            profile.Name,
+		IsAdministrator: profile.IsAdministrator,
+	}, common.DBOptions{})
+	if err == nil {
+		return true
+	}
+	if errors.Is(err, clusteraccess.ErrClusterAccessDenied) {
+		ctx.StatusCode(iris.StatusForbidden)
+		ctx.Values().Set("message", "user can not access cluster")
+		return false
+	}
+	ctx.StatusCode(iris.StatusInternalServerError)
+	ctx.Values().Set("message", err.Error())
 	return false
 }
 
@@ -338,6 +363,9 @@ func (h *Handler) GetRepo() iris.Handler {
 func (h *Handler) ListRepoForCluster() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
+		if !ensureClusterAccess(ctx, cluster) {
+			return
+		}
 		var imageRepos []v1ImageRepo.ImageRepo
 		imageRepos, err := h.imageRepoService.ListByCluster(cluster, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
@@ -364,6 +392,9 @@ func (h *Handler) ListRepoForCluster() iris.Handler {
 func (h *Handler) ListImages() iris.Handler {
 	return func(ctx *context.Context) {
 		cluster := ctx.Params().GetString("cluster")
+		if !ensureClusterAccess(ctx, cluster) {
+			return
+		}
 		name := ctx.Params().GetString("repo")
 		imageRepos, err := h.imageRepoService.ListImages(name, cluster, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {

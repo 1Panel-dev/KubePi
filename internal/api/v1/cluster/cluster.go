@@ -328,14 +328,29 @@ func (h *Handler) SearchClusters() iris.Handler {
 		}
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
-		clusters, total, err := h.clusterService.Search(pageNum, pageSize, conditions.Conditions, common.DBOptions{})
+		searchPageNum := pageNum
+		searchPageSize := pageSize
+		if !profile.IsAdministrator {
+			searchPageNum = 0
+			searchPageSize = 0
+		}
+		clusters, total, err := h.clusterService.Search(searchPageNum, searchPageSize, conditions.Conditions, common.DBOptions{})
 		if err != nil && err != storm.ErrNotFound {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
+		accessSet, err := h.clusterAccessSet(profile)
+		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.Values().Set("message", err.Error())
 			return
 		}
 		result := make([]Cluster, 0)
 		for i := range clusters {
+			if !canAccessCluster(profile, accessSet, clusters[i].Name) {
+				continue
+			}
 
 			c := Cluster{Cluster: clusters[i]}
 			if profile.IsAdministrator {
@@ -355,6 +370,10 @@ func (h *Handler) SearchClusters() iris.Handler {
 				}
 			}
 			result = append(result, c)
+		}
+		if !profile.IsAdministrator {
+			total = len(result)
+			result = paginateClusterResults(result, pageNum, pageSize)
 		}
 		if showExtra {
 			ctx1, cancel := goContext.WithTimeout(goContext.Background(), 2*time.Second)
@@ -571,20 +590,28 @@ func (h *Handler) ListClusters() iris.Handler {
 		resultClusters := make([]Cluster, 0)
 		u := ctx.Values().Get("profile")
 		profile := u.(session.UserProfile)
+		accessSet, err := h.clusterAccessSet(profile)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Values().Set("message", err.Error())
+			return
+		}
 		for i := range clusters {
-			mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
-			if err != nil && !errors.Is(err, storm.ErrNotFound) {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.Values().Set("message", err.Error())
-				return
+			if !canAccessCluster(profile, accessSet, clusters[i].Name) {
+				continue
 			}
 			rc := Cluster{
-				Cluster: clusters[i],
+				Cluster:    clusters[i],
+				Accessible: true,
 			}
-			for j := range mbs {
-				if mbs[j].UserRef == profile.Name {
-					rc.Accessible = true
+			if !profile.IsAdministrator {
+				mbs, err := h.clusterBindingService.GetClusterBindingByClusterName(clusters[i].Name, common.DBOptions{})
+				if err != nil && !errors.Is(err, storm.ErrNotFound) {
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", err.Error())
+					return
 				}
+				rc.MemberCount = len(mbs)
 			}
 			resultClusters = append(resultClusters, sanitizeClusterResponse(rc))
 		}
@@ -668,28 +695,31 @@ func Install(parent iris.Party) {
 	sp := parent.Party("/clusters")
 	sp.Post("", handler.CreateCluster())
 	sp.Get("", handler.ListClusters())
-	sp.Get("/:name", handler.GetCluster())
-	sp.Put("/:name", handler.UpdateCluster())
-	sp.Delete("/:name", handler.DeleteCluster())
 	sp.Post("/search", handler.SearchClusters())
-	sp.Get("/:name/members", handler.ListClusterMembers())
-	sp.Post("/:name/members", handler.CreateClusterMember())
-	sp.Delete("/:name/members/:member", handler.DeleteClusterMember())
-	sp.Put("/:name/members/:member", handler.UpdateClusterMember())
-	sp.Get("/:name/members/:member", handler.GetClusterMember())
-	sp.Get("/:name/clusterroles", handler.ListClusterRoles())
-	sp.Post("/:name/clusterroles", handler.CreateClusterRole())
-	sp.Put("/:name/clusterroles/:clusterrole", handler.UpdateClusterRole())
-	sp.Delete("/:name/clusterroles/:clusterrole", handler.DeleteClusterRole())
-	sp.Get("/:name/:scope/apigroups", handler.ListApiGroups())
-	sp.Get("/:name/apigroups/{group:path}", handler.ListApiGroupResources())
-	sp.Get("/:name/namespaces", handler.ListNamespace())
-	sp.Get("/:name/terminal/session", handler.TerminalSessionHandler())
+
+	clusterParty := sp.Party("/:name")
+	clusterParty.Use(handler.requireClusterAccess())
+	clusterParty.Get("", handler.GetCluster())
+	clusterParty.Put("", handler.UpdateCluster())
+	clusterParty.Delete("", handler.DeleteCluster())
+	clusterParty.Get("/members", handler.ListClusterMembers())
+	clusterParty.Post("/members", handler.CreateClusterMember())
+	clusterParty.Delete("/members/:member", handler.DeleteClusterMember())
+	clusterParty.Put("/members/:member", handler.UpdateClusterMember())
+	clusterParty.Get("/members/:member", handler.GetClusterMember())
+	clusterParty.Get("/clusterroles", handler.ListClusterRoles())
+	clusterParty.Post("/clusterroles", handler.CreateClusterRole())
+	clusterParty.Put("/clusterroles/:clusterrole", handler.UpdateClusterRole())
+	clusterParty.Delete("/clusterroles/:clusterrole", handler.DeleteClusterRole())
+	clusterParty.Get("/:scope/apigroups", handler.ListApiGroups())
+	clusterParty.Get("/apigroups/{group:path}", handler.ListApiGroupResources())
+	clusterParty.Get("/namespaces", handler.ListNamespace())
+	clusterParty.Get("/terminal/session", handler.TerminalSessionHandler())
 	//node shell
-	sp.Get("/:name/node_terminal/session", handler.NodeTerminalSessionHandler())
-	sp.Get("/:name/logging/session", handler.LoggingHandler())
-	sp.Get("/:name/repos", handler.ListClusterRepos())
-	sp.Get("/:name/repos/detail", handler.ListClusterReposDetail())
-	sp.Post("/:name/repos", handler.AddCLusterRepo())
-	sp.Delete("/:name/repos/:repo", handler.DeleteClusterRepo())
+	clusterParty.Get("/node_terminal/session", handler.NodeTerminalSessionHandler())
+	clusterParty.Get("/logging/session", handler.LoggingHandler())
+	clusterParty.Get("/repos", handler.ListClusterRepos())
+	clusterParty.Get("/repos/detail", handler.ListClusterReposDetail())
+	clusterParty.Post("/repos", handler.AddCLusterRepo())
+	clusterParty.Delete("/repos/:repo", handler.DeleteClusterRepo())
 }
