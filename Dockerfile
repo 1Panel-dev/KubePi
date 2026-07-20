@@ -95,6 +95,7 @@ RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apk del tzdata
 
 COPY conf/app.yml /etc/kubepi/app.yml
+RUN chmod 600 /etc/kubepi/app.yml
 
 COPY vimrc.local /etc/vim
 

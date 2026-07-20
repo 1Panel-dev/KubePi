@@ -2,6 +2,7 @@ package server
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -26,6 +27,7 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/middleware/jwt"
 	"github.com/kataras/iris/v12/sessions"
 	"github.com/kataras/iris/v12/view"
 	"github.com/sirupsen/logrus"
@@ -34,6 +36,11 @@ import (
 const SessionCookieName = "SESS_COOKIE_KUBEPI"
 
 var SessionMgr *sessions.Sessions
+var jwtVerifier *jwt.Verifier
+
+func JWTVerifier() *jwt.Verifier {
+	return jwtVerifier
+}
 
 var EmbedWebKubePi embed.FS
 var EmbedWebDashboard embed.FS
@@ -168,6 +175,8 @@ func (e *KubePiServer) setUpStaticFile() {
 
 func (e *KubePiServer) setUpSession() {
 	SessionMgr = sessions.New(sessions.Config{Cookie: SessionCookieName, AllowReclaim: true, Expires: time.Duration(e.config.Spec.Session.Expires) * time.Hour})
+	jwtVerifier = jwt.NewVerifier(jwt.HS256, e.config.Spec.Jwt.Key)
+	jwtVerifier.WithDefaultBlocklist()
 	e.rootRoute.Use(SessionMgr.Handler())
 }
 
@@ -266,14 +275,72 @@ func (e *KubePiServer) setUpErrHandler() {
 func (e *KubePiServer) runMigrations() {
 	migrate.RunMigrate(e.db, e.logger)
 }
+
+type webkubectlJWTClaims struct {
+	Name                string `json:"name"`
+	ForceChangePassword bool   `json:"forceChangePassword"`
+	Mfa                 struct {
+		Enable   bool `json:"enable"`
+		Approved bool `json:"approved"`
+	} `json:"mfa"`
+}
+
+func isActiveWebkubectlProfile(profile interface{}) bool {
+	payload, err := json.Marshal(profile)
+	if err != nil {
+		return false
+	}
+	return isActiveWebkubectlPayload(payload)
+}
+
+func isActiveWebkubectlPayload(payload []byte) bool {
+	var claims webkubectlJWTClaims
+	if err := json.Unmarshal(payload, &claims); err != nil {
+		return false
+	}
+	return claims.Name != "" && (!claims.Mfa.Enable || claims.Mfa.Approved) && !claims.ForceChangePassword
+}
+
+func hasValidWebkubectlJWT(ctx *context.Context) bool {
+	if jwtVerifier == nil {
+		return false
+	}
+	token := jwt.FromHeader(ctx)
+	if token == "" {
+		return false
+	}
+	verifiedToken, err := jwtVerifier.VerifyToken([]byte(token), jwtVerifier.Blocklist)
+	if err != nil {
+		return false
+	}
+	return isActiveWebkubectlPayload(verifiedToken.Payload)
+}
+
+func requireWebkubectlSession(ctx *context.Context) bool {
+	if SessionMgr != nil {
+		if profile := SessionMgr.Start(ctx).Get("profile"); profile != nil && isActiveWebkubectlProfile(profile) {
+			return true
+		}
+	}
+	if hasValidWebkubectlJWT(ctx) {
+		return true
+	}
+	ctx.Values().Set("message", "please login")
+	ctx.StopWithStatus(iris.StatusUnauthorized)
+	return false
+}
+
 func (e *KubePiServer) setWebkubectlProxy() {
 	handler := func(ctx *context.Context) {
+		if !requireWebkubectlSession(ctx) {
+			return
+		}
 		p := ctx.Params().Get("p")
 		if strings.Contains(p, "root") {
 			ctx.Request().URL.Path = strings.ReplaceAll(ctx.Request().URL.Path, "root", "")
 			ctx.Request().RequestURI = strings.ReplaceAll(ctx.Request().RequestURI, "root", "")
 		}
-		u, _ := url.Parse("http://localhost:8080")
+		u, _ := url.Parse(webkubectlBackendURL)
 		proxy := httputil.NewSingleHostReverseProxy(u)
 		proxy.ModifyResponse = func(resp *http.Response) error {
 			if resp.StatusCode == iris.StatusMovedPermanently {

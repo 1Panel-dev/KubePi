@@ -50,6 +50,9 @@ func ReadConfig(c *config.Config, path ...string) error {
 			fmt.Println(fmt.Sprintf(configNotFoundSkipErr, realDir))
 			continue
 		}
+		if err := secureConfigFile(configFile); err != nil {
+			return err
+		}
 
 		v.SetConfigFile(configFile)
 		if err := v.MergeInConfig(); err != nil {
@@ -79,7 +82,24 @@ func ReadConfig(c *config.Config, path ...string) error {
 			if err := v.WriteConfig(); err != nil {
 				return err
 			}
+			if err := secureConfigFile(loadedConfigFile); err != nil {
+				return err
+			}
 		}
+	}
+	return nil
+}
+
+func secureConfigFile(configFile string) error {
+	info, err := os.Stat(configFile)
+	if err != nil {
+		return fmt.Errorf("can not inspect config file %s: %w", configFile, err)
+	}
+	if info.Mode().Perm()&0077 == 0 {
+		return nil
+	}
+	if err := os.Chmod(configFile, 0600); err != nil {
+		return fmt.Errorf("can not secure config file %s: %w", configFile, err)
 	}
 	return nil
 }

@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+const (
+	webkubectlBindAddress = "127.0.0.1"
+	webkubectlBackendURL  = "http://127.0.0.1:8080"
+)
+
 func (e *KubePiServer) localWebkubectlSessionURL() string {
 	host := strings.TrimSpace(e.config.Spec.Server.Bind.Host)
 	switch host {
