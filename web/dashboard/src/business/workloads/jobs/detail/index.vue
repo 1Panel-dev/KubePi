@@ -91,6 +91,7 @@ export default {
           this.selectors = this.selectors.length !== 0 ? this.selectors.substring(0, this.selectors.length - 1) : ""
           this.eventSelectors = "involvedObject.name=" + res.metadata.name + ",involvedObject.namespace=" + res.metadata.namespace + ",involvedObject.uid=" + res.metadata.uid
         }
+      }).finally(() => {
         this.loading = false
       })
     },

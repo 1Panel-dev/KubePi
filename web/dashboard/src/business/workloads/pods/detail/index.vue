@@ -167,12 +167,15 @@ export default {
   methods: {
     async  getDetail() {
       this.loading = true
-      const res=await getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name)
-      this.sourceYaml= structuredClone(res)
-      this.form = res
-      await this.loadEvents()
-      await this.get_pod_domain()
-      this.loading = false
+      try {
+        const res=await getWorkLoadByName(this.clusterName, "pods", this.namespace, this.name)
+        this.sourceYaml= structuredClone(res)
+        this.form = res
+        await this.loadEvents()
+        await this.get_pod_domain()
+      } finally {
+        this.loading = false
+      }
     },
     async   loadEvents() {
       let selects = "involvedObject.name={PodName}&involvedObject.namespace={Namespace}&involvedObject.uid={Uid}&limit=500"
