@@ -11,7 +11,7 @@ import (
 
 func (e *KubePiServer) startTty() {
 	cmd := "gotty"
-	params := []string{"--permit-write", "bash", "init-kube.sh"}
+	params := []string{"--address", webkubectlBindAddress, "--permit-write", "bash", "init-kube.sh"}
 	go func() {
 		c := exec.Command(cmd, params...)
 		c.Env = append(os.Environ(), "KUBEPI_WEBKUBECTL_SESSION_URL="+e.localWebkubectlSessionURL())

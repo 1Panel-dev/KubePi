@@ -8,7 +8,7 @@ import (
 )
 
 type Options struct {
-	Address              string           `hcl:"address" flagName:"address" flagSName:"a" flagDescribe:"IP address to listen" default:"0.0.0.0"`
+	Address              string           `hcl:"address" flagName:"address" flagSName:"a" flagDescribe:"IP address to listen" default:"127.0.0.1"`
 	Port                 string           `hcl:"port" flagName:"port" flagSName:"p" flagDescribe:"Port number to liten" default:"8080"`
 	PermitWrite          bool             `hcl:"permit_write" flagName:"permit-write" flagSName:"w" flagDescribe:"Permit clients to write to the TTY (BE CAREFUL)" default:"false"`
 	EnableBasicAuth      bool             `hcl:"enable_basic_auth" default:"false"`
@@ -102,7 +102,7 @@ type HtermPrefernces struct {
 	UserCss                       string                       `hcl:"user_css" json:"user-css,omitempty"`
 }
 
-//RedisOptions contain whether use redis and redis connection options
+// RedisOptions contain whether use redis and redis connection options
 type RedisOptions struct {
 	UseRedisTokenCache string `hcl:"use_redis_token_cache" flagName:"use-redis-token-cache" flagDescribe:"if true,will use redis cache token;if false,will use memory cache token." default:"false"`
 	// host:port address.
@@ -131,7 +131,7 @@ type RedisOptions struct {
 	MaxConnAge time.Duration `hcl:"redis_max_conn_age" flagName:"redis-max-conn-age" flagDescribe:"redis connection age at which client retires (closes) the connection" default:"0"`
 }
 
-//Convert RedisOptions to redis-go Options
+// Convert RedisOptions to redis-go Options
 func (ro *RedisOptions) Convert() *redis.Options {
 	return &redis.Options{
 		Addr:         ro.Addr,
