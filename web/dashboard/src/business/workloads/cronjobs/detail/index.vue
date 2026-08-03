@@ -118,6 +118,7 @@ export default {
       this.events = []
       getWorkLoadByName(this.clusterName, "cronjobs", this.namespace, this.name).then((res) => {
         this.form = res
+      }).finally(() => {
         this.loading = false
       })
       listJobsWithNsSelector(this.clusterName, this.namespace).then((res) => {
@@ -129,6 +130,7 @@ export default {
             }
           }
         }
+      }).finally(() => {
         this.loading = false
       })
     },

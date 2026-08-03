@@ -127,6 +127,7 @@ export default {
           }
           this.selectors = this.selectors.length !== 0 ? this.selectors.substring(0, this.selectors.length - 1) : ""
         }
+      }).finally(() => {
         this.loading = false
       })
     },
