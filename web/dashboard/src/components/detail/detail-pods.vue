@@ -114,14 +114,16 @@ export default {
         this.paginationConfig.currentPage = 1
       }
       if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
+        this.loading = false
         return
       }
       listPodsWithNsSelector(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
         this.pods = res.items
-        this.loading = false
         listPodMetrics(this.cluster, this.namespace, this.selector).then(res => {
           this.podUsage = res.items
         })
+      }).finally(() => {
+        this.loading = false
       })
     },
     openDetail (row) {
