@@ -100,15 +100,15 @@ export default {
       if (resetPage) {
         this.paginationConfig.currentPage = 1
       }
-      if (!checkPermissions({ scope: "namespace", apiGroup: "", resource: "pods", verb: "list" })) {
+      if (!checkPermissions({ scope: "namespace", apiGroup: "apps", resource: "replicasets", verb: "list" })) {
+        this.loading = false
         return
       }
       listNsReplicaSetsWorkload(this.cluster, this.namespace, this.selector, this.fieldSelector).then((res) => {
-        this.loading = false
         res.items.sort((a, b) => b.metadata.annotations["deployment.kubernetes.io/revision"] - a.metadata.annotations["deployment.kubernetes.io/revision"])
-        for (var i = 0; i < res.items.length; i++) {
-          this.pods.push(res.items[i])
-        }
+        this.pods = res.items
+      }).finally(() => {
+        this.loading = false
       })
     },
     OptionRollback(row) {

@@ -20,7 +20,7 @@
           </div>
         </td>
       </tr>
-      <tr v-if="hasPodContainers()">
+      <tr v-if="containers.length > 0">
         <td>{{ $t("business.pod.image") }}</td>
         <td colspan="4">
           <div v-for="(item,index) in containers" v-bind:key="index" class="myTag">
@@ -83,10 +83,23 @@ export default {
     item: Object,
     yamlShow: Boolean,
   },
+  computed: {
+    containers() {
+      let podSpec
+      if (this.item.spec?.template?.spec) {
+        podSpec = this.item.spec.template.spec
+      } else if (this.item.spec?.jobTemplate?.spec?.template?.spec) {
+        podSpec = this.item.spec.jobTemplate.spec.template.spec
+      }
+      if (!podSpec?.containers) {
+        return []
+      }
+      return [...(podSpec.initContainers || []), ...podSpec.containers]
+    },
+  },
   data() {
     return {
       show: false,
-      containers: [],
       limitRanges: [],
       resourceQuotas: [],
       cluster: ""
@@ -96,23 +109,6 @@ export default {
     showYaml() {
       this.show = !this.show
       this.$emit("update:yamlShow", this.show)
-    },
-    hasPodContainers() {
-      let podSpec
-      if (this.item.spec?.template?.spec) {
-        podSpec = this.item.spec.template.spec
-      } else if (this.item.spec?.jobTemplate?.spec?.template?.spec) {
-        podSpec = this.item.spec.jobTemplate.spec.template.spec
-      }
-      if (!podSpec || !podSpec.containers) {
-        return false
-      }
-      this.containers = []
-      if (podSpec.initContainers) {
-        this.containers = this.containers.concat(podSpec.initContainers)
-      }
-      this.containers = this.containers.concat(podSpec.containers)
-      return true
     },
     listResources() {
       listResourceQuotaByNamespace(this.cluster,this.item.metadata.name).then(res => {
