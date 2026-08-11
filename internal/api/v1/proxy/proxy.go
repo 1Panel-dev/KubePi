@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -16,6 +15,7 @@ import (
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	v1Cluster "github.com/1Panel-dev/KubePi/internal/model/v1/cluster"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterbinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	pkgV1 "github.com/1Panel-dev/KubePi/pkg/api/v1"
@@ -449,14 +449,7 @@ func (h *Handler) generateTLSTransport(c *v1Cluster.Cluster, profile session.Use
 	if err != nil {
 		return nil, err
 	}
-	kubeConf.Username = ""
-	kubeConf.Password = ""
-	kubeConf.BearerToken = ""
-	kubeConf.BearerTokenFile = ""
-	kubeConf.AuthProvider = nil
-	kubeConf.ExecProvider = nil
-	kubeConf.TLSClientConfig.CertData = binding.Certificate
-	kubeConf.TLSClientConfig.KeyData = pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey})
+	clusteraccess.ApplyUserAccessConfig(kubeConf, c, binding)
 	return rest.TransportFor(kubeConf)
 }
 

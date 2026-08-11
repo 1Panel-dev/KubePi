@@ -60,6 +60,15 @@ func ConfigForUser(clusterName string, user User) (*rest.Config, *v1Cluster.Clus
 		}
 		return nil, nil, err
 	}
+	ApplyUserAccessConfig(cfg, c, binding)
+	return cfg, c, nil
+}
+func ApplyUserAccessConfig(cfg *rest.Config, c *v1Cluster.Cluster, binding *v1Cluster.Binding) {
+	if len(binding.Certificate) == 0 {
+		cfg.Impersonate = rest.ImpersonationConfig{UserName: binding.UserRef}
+		return
+	}
+
 	cfg.Username = ""
 	cfg.Password = ""
 	cfg.BearerToken = ""
@@ -69,7 +78,6 @@ func ConfigForUser(clusterName string, user User) (*rest.Config, *v1Cluster.Clus
 	cfg.Impersonate = rest.ImpersonationConfig{}
 	cfg.CertData = binding.Certificate
 	cfg.KeyData = pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey})
-	return cfg, c, nil
 }
 
 func ClientForUser(clusterName string, user User) (*kubernetesClient.Clientset, *rest.Config, *v1Cluster.Cluster, error) {

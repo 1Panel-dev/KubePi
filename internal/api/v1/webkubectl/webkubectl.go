@@ -1,12 +1,12 @@
 package webkubectl
 
 import (
-	"encoding/pem"
 	"fmt"
 	"time"
 
 	"github.com/1Panel-dev/KubePi/internal/api/v1/session"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/cluster"
+	"github.com/1Panel-dev/KubePi/internal/service/v1/clusteraccess"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/clusterbinding"
 	"github.com/1Panel-dev/KubePi/internal/service/v1/common"
 	"github.com/1Panel-dev/KubePi/pkg/kubernetes"
@@ -82,6 +82,10 @@ func toCmdConfig(sess *Session) *clientcmdapi.Config {
 		Token:                 sess.config.BearerToken,
 		Username:              sess.config.Username,
 		Password:              sess.config.Password,
+		Impersonate:           sess.config.Impersonate.UserName,
+		ImpersonateUID:        sess.config.Impersonate.UID,
+		ImpersonateGroups:     sess.config.Impersonate.Groups,
+		ImpersonateUserExtra:  sess.config.Impersonate.Extra,
 	}
 	contextName := fmt.Sprintf("%s@%s", sess.Cluster, sess.User)
 	cc.Contexts[contextName] = &clientcmdapi.Context{
@@ -123,8 +127,7 @@ func (h *Handler) CreateSession() iris.Handler {
 				ctx.Values().Set("message", err.Error())
 				return
 			}
-			cfg.CertData = rb.Certificate
-			cfg.KeyData = pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: c.PrivateKey})
+			clusteraccess.ApplyUserAccessConfig(cfg, c, rb)
 		}
 		sess.config = cfg
 		sess.User = profile.Name
