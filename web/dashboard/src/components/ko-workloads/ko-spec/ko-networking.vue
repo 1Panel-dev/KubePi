@@ -41,7 +41,7 @@
                 <ko-form-item :placeholder="$t('commons.placeholder.example_host')" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleNameserversDelete(index)">
+                <el-button type="text" @click="handleNameserversDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -61,7 +61,7 @@
                 <ko-form-item :placeholder="$t('commons.placeholder.example_company_domain')" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleSearchesDelete(index)">
+                <el-button type="text" @click="handleSearchesDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -92,7 +92,7 @@
                 <ko-form-item :placeholder="$t('commons.placeholder.example_bar')" itemType="input" v-model="row.value" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleOptionsDelete(index)">
+                <el-button type="text" @click="handleOptionsDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>
@@ -120,7 +120,7 @@
                 <ko-form-item :placeholder="$t('commons.placeholder.example_searches')" itemType="input" v-model="row.hostnames" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleAliasDelete(index)">
+                <el-button type="text" @click="handleAliasDelete(index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>

@@ -21,7 +21,7 @@
                           v-model="label.value" @change.native="transform"/>
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(label)">
+            <el-button type="text" @click="handleDelete(label)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

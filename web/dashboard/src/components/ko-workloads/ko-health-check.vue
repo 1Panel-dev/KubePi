@@ -39,7 +39,7 @@
                     <ko-form-item :placeholder="$t('commons.placeholder.example_health_path')" itemType="textarea" v-model="row.value" />
                   </td>
                   <td>
-                    <el-button type="text" style="font-size: 10px" @click="handleCommandDelete(index)">
+                    <el-button type="text" @click="handleCommandDelete(index)">
                       {{ $t("commons.button.delete") }}
                     </el-button>
                   </td>
@@ -98,7 +98,7 @@
                     <ko-form-item :placeholder="$t('commons.placeholder.example_bar')" itemType="input" v-model="row.value" />
                   </td>
                   <td>
-                    <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+                    <el-button type="text" @click="handleDelete(index)">
                       {{ $t("commons.button.delete") }}
                     </el-button>
                   </td>

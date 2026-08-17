@@ -511,6 +511,11 @@ export default {
         this.unValidInfo = this.$t("business.workload.container") + this.$t("commons.validate.params_not_complete")
         return
       }
+      if (!this.$refs.ko_security_context.checkIsValid(this.podSpec, this.currentContainerType, this.currentContainerIndex)) {
+        this.isValid = false
+        this.unValidInfo = this.$t("business.workload.security_context") + this.$t("commons.validate.params_not_complete")
+        return
+      }
       if (!this.$refs.ko_pod_scheduling.checkIsValid()) {
         this.isValid = false
         this.unValidInfo = "Pod " + this.$t("business.workload.schedule") + this.$t("commons.validate.params_not_complete")

@@ -43,7 +43,7 @@
             </el-select>
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="removeResource(index)">
+            <el-button type="text" @click="removeResource(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

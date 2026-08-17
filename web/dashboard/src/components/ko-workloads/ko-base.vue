@@ -2,7 +2,7 @@
   <el-form>
     <el-row style="margin-top: 20px;">
       <el-col :span="6">
-        <el-radio-group style="width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
+        <el-radio-group class="ko-container-type-selector" style="width: 100%" @change="selectContainer(true)" v-model="selectContainerType">
           <el-radio-button :disabled="isReadOnly && initContainers === null" style="width: 50%" v-for="(item, index) in type_list" :key="index" :label="item.value">{{item.label}}</el-radio-button>
         </el-radio-group>
       </el-col>

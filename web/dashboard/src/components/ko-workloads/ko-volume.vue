@@ -33,7 +33,7 @@
                 <ko-form-item itemType="input" v-model="row.path" />
               </td>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleDelete(item, index)">
+                <el-button type="text" @click="handleDelete(item, index)">
                   {{ $t("commons.button.delete") }}
                 </el-button>
               </td>

@@ -31,7 +31,7 @@
             <ko-form-item v-if="row.type === 'Secret' || row.type === 'ConfigMap'" disabled itemType="input" v-model="row.key" :placeholder="$t('commons.placeholder.not_available')" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+            <el-button type="text" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

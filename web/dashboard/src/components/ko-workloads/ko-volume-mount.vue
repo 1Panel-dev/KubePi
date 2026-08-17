@@ -26,7 +26,7 @@
           <el-checkbox v-model="row.readOnly" />
         </td>
         <td>
-          <el-button type="text" style="font-size: 10px" @click="handleMountDelete(index)">
+          <el-button type="text" @click="handleMountDelete(index)">
             {{ $t("commons.button.delete") }}
           </el-button>
         </td>
