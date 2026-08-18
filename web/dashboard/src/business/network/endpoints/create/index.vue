@@ -33,7 +33,7 @@
                         <el-input v-model="address.ip"></el-input>
                       </td>
                       <td>
-                        <el-button type="text" style="font-size: 10px" @click="handleDelete(subset, index2)">
+                        <el-button type="text" @click="handleDelete(subset, index2)">
                           {{ $t("commons.button.delete") }}
                         </el-button>
                       </td>
@@ -70,7 +70,7 @@
                         </el-select>
                       </td>
                       <td>
-                        <el-button type="text" style="font-size: 10px" @click="handlePortDelete(subset, index)">
+                        <el-button type="text" @click="handlePortDelete(subset, index)">
                           {{ $t("commons.button.delete") }}
                         </el-button>
                       </td>

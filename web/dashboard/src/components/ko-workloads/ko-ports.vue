@@ -23,7 +23,7 @@
             <ko-form-item :placeholder="$t('commons.placeholder.example_80')" itemType="number" v-model.number="row.hostPort" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+            <el-button type="text" @click="handleDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

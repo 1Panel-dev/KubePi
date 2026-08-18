@@ -38,7 +38,7 @@
             <ko-form-item :disabled="row.effect !== 'NoExecute'" itemType="number" :dividerName="$t('business.workload.seconds')" v-model.number="row.tolerationSeconds" />
           </td>
           <td>
-            <el-button type="text" style="font-size: 10px" @click="handleTolerationsDelete(index)">
+            <el-button type="text" @click="handleTolerationsDelete(index)">
               {{ $t("commons.button.delete") }}
             </el-button>
           </td>

@@ -11,7 +11,7 @@
               <ko-form-item :disabled="disableOperator(row)" clearable itemType="input" v-model="row.value" />
             </td>
             <td width="4%" v-if="isCreate">
-              <el-button type="text" :disabled="disableOperator(row)" style="font-size: 10px" @click="handleDelete(annotations, index)">
+              <el-button type="text" :disabled="disableOperator(row)" @click="handleDelete(annotations, index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>
@@ -34,7 +34,7 @@
               <ko-form-item :disabled="disableOperator(row)" clearable itemType="input" v-model="row.value" />
             </td>
             <td width="4%" v-if="isCreate">
-              <el-button type="text" :disabled="disableOperator(row)" style="font-size: 10px" @click="handleDelete(labels, index)">
+              <el-button type="text" :disabled="disableOperator(row)" @click="handleDelete(labels, index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>
@@ -66,7 +66,7 @@
               <ko-form-item :disabled="disableDialogRowDelete(row)" clearable itemType="input" v-model="row.value" />
             </td>
             <td width="4%">
-              <el-button type="text" :disabled="disableDialogRowDelete(row)" style="font-size: 10px" @click="handleDelete(form.data, index)">
+              <el-button type="text" :disabled="disableDialogRowDelete(row)" @click="handleDelete(form.data, index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>

@@ -78,7 +78,7 @@
                       </el-select>
                     </td>
                     <td>
-                      <el-button type="text" style="font-size: 10px" @click="deletePath(ind,index)">
+                      <el-button type="text" @click="deletePath(ind,index)">
                         {{ $t("commons.button.delete") }}
                       </el-button>
                     </td>

@@ -21,7 +21,7 @@
                             @change.native="transformation"/>
             </td>
             <td>
-              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+              <el-button type="text" @click="handleDelete(index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>

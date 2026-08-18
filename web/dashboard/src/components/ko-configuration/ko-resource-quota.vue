@@ -19,7 +19,7 @@
               <ko-form-item itemType="input" v-model="row.value" />
             </td>
             <td>
-              <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">
+              <el-button type="text" @click="handleDelete(index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>
@@ -70,7 +70,7 @@
               <ko-form-item :disabled="row.operator === 'Exists' || row.operator === 'DoesNotExist'" :placeholder="$t('business.configuration.split_help')" itemType="input" v-model="row.values" />
             </td>
             <td>
-              <el-button type="text" style="font-size: 10px" @click="handleScopeDelete(index)">
+              <el-button type="text" @click="handleScopeDelete(index)">
                 {{ $t("commons.button.delete") }}
               </el-button>
             </td>

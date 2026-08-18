@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-position="top" ref="form" :model="form" :disabled="isReadOnly">
+    <el-form label-position="top" ref="form" :model="form" :rules="rules" :disabled="isReadOnly">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.privileged')" prop="privileged">
@@ -28,14 +28,14 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.run_as_user')" prop="runAsUser">
-            <ko-form-item itemType="input" placeholder="runAsUser" v-model="form.runAsUser" />
+            <ko-form-item clearable itemType="number" placeholder="runAsUser" v-model="form.runAsUser" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item :label="$t('business.workload.run_as_group')" prop="runAsGroup">
-            <ko-form-item itemType="input" placeholder="runAsGroup" v-model="form.runAsGroup" />
+            <ko-form-item clearable itemType="number" placeholder="runAsGroup" v-model="form.runAsGroup" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -88,6 +88,8 @@
 <script>
 import KoFormItem from "@/components/ko-form-item/index"
 
+const maxSecurityContextId = 2147483647
+
 export default {
   name: "KoSecurity",
   components: { KoFormItem },
@@ -114,6 +116,10 @@ export default {
         { label: this.$t("business.workload.filesystem_read_only"), value: true },
       ],
       capability_list: ["ALL", "AUDIT_CONTROL", "AUDIT_WRITE", "BLOCK_SUSPEND", "CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER", "FSETID", "IPC_LOCK", "IPC_OWNER", "KILL", "LEASE", "LINUX_IMMUTABLE", "MAC_ADMIN", "MAC_OVERRIDE", "MKNOD", "NET_ADMIN", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_RAW", "SETFCAP", "SETGID", "SETPCAP", "SETUID", "SYSLOGSYS_ADMIN", "SYS_BOOT", "SYS_CHROOT", "SYS_MODULE", "SYS_NICE", "SYS_PACCT", "SYS_PTRACE", "SYS_RAWIO", "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "WAKE_ALARM"],
+      rules: {
+        runAsUser: [{ validator: this.validateSecurityContextId, message: this.$t("commons.validate.number_limit"), trigger: "blur" }],
+        runAsGroup: [{ validator: this.validateSecurityContextId, message: this.$t("commons.validate.number_limit"), trigger: "blur" }],
+      },
       form: {
         privileged: null,
         allowPrivilegeEscalation: null,
@@ -136,6 +142,48 @@ export default {
     }
   },
   methods: {
+    isSecurityContextIdEmpty(value) {
+      return value === "" || value === undefined || value === null
+    },
+    isSecurityContextIdValid(value) {
+      if (this.isSecurityContextIdEmpty(value)) {
+        return true
+      }
+      if (typeof value === "number") {
+        return Number.isSafeInteger(value) && value >= 0 && value <= maxSecurityContextId
+      }
+      if (typeof value !== "string" || !/^\d+$/.test(value)) {
+        return false
+      }
+      const numberValue = Number(value)
+      return Number.isSafeInteger(numberValue) && numberValue >= 0 && numberValue <= maxSecurityContextId
+    },
+    validateSecurityContextId(rule, value, callback) {
+      if (this.isSecurityContextIdValid(value)) {
+        callback()
+        return
+      }
+      callback(new Error(rule.message))
+    },
+    serializeSecurityContextId(value) {
+      if (this.isSecurityContextIdEmpty(value)) {
+        return undefined
+      }
+      return this.isSecurityContextIdValid(value) ? Number(value) : value
+    },
+    checkIsValid(podSpec, currentContainerType, currentContainerIndex) {
+      let isValid = true
+      this.$refs.form.validate((valid) => {
+        isValid = valid
+      })
+      const areContainersValid = (containers, containerType) => containers.every((container, index) => {
+        if ((containerType === currentContainerType && index === currentContainerIndex) || !container.securityContext) {
+          return true
+        }
+        return this.isSecurityContextIdValid(container.securityContext.runAsUser) && this.isSecurityContextIdValid(container.securityContext.runAsGroup)
+      })
+      return isValid && areContainersValid(podSpec.containers || [], "standardContainers") && areContainersValid(podSpec.initContainers || [], "initContainers")
+    },
     privilegedChanged(value) {
       this.privileged_escalation_list[0].disabledOption = value
     },
@@ -147,8 +195,8 @@ export default {
       parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation || undefined
       parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
       parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem || undefined
-      parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
-      parentFrom.securityContext.runAsGroup = this.form.runAsGroup || undefined
+      parentFrom.securityContext.runAsUser = this.serializeSecurityContextId(this.form.runAsUser)
+      parentFrom.securityContext.runAsGroup = this.serializeSecurityContextId(this.form.runAsGroup)
       parentFrom.securityContext.procMount = this.form.procMount || undefined
       parentFrom.securityContext.capabilities = {
         add: this.form.capabilities.add.length !== 0 ? this.form.capabilities.add : undefined,
@@ -177,10 +225,10 @@ export default {
         if (this.securityContextParentObj.securityContext.readOnlyRootFilesystem !== undefined) {
           this.form.readOnlyRootFilesystem = this.securityContextParentObj.securityContext.readOnlyRootFilesystem
         }
-        if (this.securityContextParentObj.securityContext.runAsUser) {
+        if (this.securityContextParentObj.securityContext.runAsUser !== undefined) {
           this.form.runAsUser = this.securityContextParentObj.securityContext.runAsUser
         }
-        if (this.securityContextParentObj.securityContext.runAsGroup) {
+        if (this.securityContextParentObj.securityContext.runAsGroup !== undefined) {
           this.form.runAsGroup = this.securityContextParentObj.securityContext.runAsGroup
         }
         if (this.securityContextParentObj.securityContext.procMount) {

@@ -20,7 +20,7 @@
                   <ko-form-item clearable itemType="input" v-model="row.value" />
                 </td>
                 <td width="2%">
-                  <el-button type="text" style="font-size: 10px" @click="handleAnnoDelete(index)">
+                  <el-button type="text" @click="handleAnnoDelete(index)">
                     {{ $t("commons.button.delete") }}
                   </el-button>
                 </td>
@@ -63,7 +63,7 @@
                 <ko-form-item v-if="serviceType==='NodePort'" itemType="number" v-model.number="row.nodePort" />
               </th>
               <td>
-                <el-button type="text" style="font-size: 10px" @click="handleDelete(index)">{{ $t("commons.button.delete") }}</el-button>
+                <el-button type="text" @click="handleDelete(index)">{{ $t("commons.button.delete") }}</el-button>
               </td>
             </tr>
             <tr>
@@ -97,7 +97,7 @@
                   <ko-form-item :placeholder="$t('commons.placeholder.example_host')" itemType="input" v-model="row.value" />
                 </td>
                 <td>
-                  <el-button type="text" style="font-size: 10px" @click="handleExternalIPsDelete(index)">
+                  <el-button type="text" @click="handleExternalIPsDelete(index)">
                     {{ $t("commons.button.delete") }}
                   </el-button>
                 </td>
