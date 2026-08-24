@@ -17,6 +17,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // Update Cluster Member
@@ -214,6 +215,28 @@ func (h *Handler) ListClusterMembers() iris.Handler {
 // @Success 200 {object} Member
 // @Security ApiKeyAuth
 // @Router /clusters/{cluster}/members [post]
+func canContinueWithoutMemberCertificate(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "csr approve time out")
+}
+func shouldUseImpersonationOnly(c *v1Cluster.Cluster) bool {
+	if c == nil || strings.ToLower(c.Spec.Authentication.Mode) != "configfile" {
+		return false
+	}
+	kubeConfig, err := clientcmd.Load(c.Spec.Authentication.ConfigFileContent)
+	if err != nil {
+		return false
+	}
+	ctx := kubeConfig.Contexts[kubeConfig.CurrentContext]
+	if ctx == nil {
+		return false
+	}
+	authInfo := kubeConfig.AuthInfos[ctx.AuthInfo]
+	if authInfo == nil {
+		return false
+	}
+	return (authInfo.Token != "" || authInfo.Exec != nil) && len(authInfo.ClientCertificateData) == 0 && len(authInfo.ClientKeyData) == 0
+}
+
 func (h *Handler) CreateClusterMember() iris.Handler {
 	return func(ctx *context.Context) {
 		name := ctx.Params().GetString("name")
@@ -257,12 +280,17 @@ func (h *Handler) CreateClusterMember() iris.Handler {
 		}
 
 		k := kubernetes.NewKubernetes(c)
-		cert, err := k.CreateCommonUser(req.Name)
-		if err != nil {
-			_ = tx.Rollback()
-			ctx.StatusCode(iris.StatusInternalServerError)
-			ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
-			return
+		var cert []byte
+		if !shouldUseImpersonationOnly(c) {
+			cert, err = k.CreateCommonUser(req.Name)
+			if err != nil {
+				if !canContinueWithoutMemberCertificate(err) {
+					_ = tx.Rollback()
+					ctx.StatusCode(iris.StatusInternalServerError)
+					ctx.Values().Set("message", fmt.Sprintf("create common user failed: %s", err.Error()))
+					return
+				}
+			}
 		}
 		binding.Certificate = cert
 		if err := h.clusterBindingService.CreateClusterBinding(&binding, common.DBOptions{DB: tx}); err != nil {
