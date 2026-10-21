@@ -9,6 +9,7 @@ export function registerImageRepo(program: Parameters<typeof registerModule>[0])
     description: 'manage image registries (镜像仓库)',
     basePath: '/imagerepos',
     searchPath: '/imagerepos/search',
+    forceSearch: true,
     defaultColumns: ['name', 'type', 'endPoint', 'repoName', 'auth', 'createAt'],
     createOptions: (c) => {
       c.option('--name <name>', 'registry name');

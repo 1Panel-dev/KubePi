@@ -53,6 +53,8 @@ export interface ModuleDef {
   moduleOptions?: (cmd: Command) => void;
   /** Extra query params for the plain-GET list path. */
   listQuery?: (opts: Opts) => Record<string, string | number | boolean | undefined>;
+  /** List via searchPath even without filter/search, for servers exposing only POST /search. */
+  forceSearch?: boolean;
   /** Post-process output data (e.g. strip sensitive fields). */
   sanitize?: (data: unknown) => unknown;
 }
@@ -140,8 +142,8 @@ export async function listItems(def: ModuleDef, opts: Opts, auth: ResolvedAuth):
   const conditions = searchPath ? buildConditions(groups, opts.search) : null;
 
   let items: unknown[];
-  if (searchPath && conditions) {
-    const body = { conditions };
+  if (searchPath && (conditions || def.forceSearch)) {
+    const body = { conditions: conditions ?? {} };
     if (opts.all) {
       items = [];
       const size = 100;
