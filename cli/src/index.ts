@@ -11,6 +11,7 @@ import { registerMonitor } from './modules/monitor.js';
 import { registerRole } from './modules/role.js';
 import { registerSystem } from './modules/system.js';
 import { registerUser } from './modules/user.js';
+import { registerAddSkill } from './skill.js';
 import { collect } from './shared.js';
 import pkg from '../package.json';
 
@@ -31,6 +32,7 @@ Modules:
   monitor                    grafana & metrics      (KubePi >= v2.0)
   log                        login / operation logs
   k8s                        generic Kubernetes API passthrough
+  add-skill                  install the bundled Agent skill for supported AI agents
 
 Shorthand:
   kubepi <module>                     list
@@ -45,6 +47,7 @@ Examples:
   kubepi user --search=tom --format=json
   kubepi cluster create --name=dev --mode=configFile --kubeconfig=~/.kube/config
   kubepi k8s dev /api/v1/pods --namespace=default
+  kubepi add-skill kimi-code
 `;
 
 function buildProgram(): Command {
@@ -72,6 +75,7 @@ function buildProgram(): Command {
     .addHelpText('after', MODULES_HELP);
   
   registerAuth(program);
+  registerAddSkill(program);
   registerCluster(program);
   registerUser(program);
   registerRole(program);

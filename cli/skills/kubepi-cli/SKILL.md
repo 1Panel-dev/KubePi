@@ -17,11 +17,21 @@ metadata:
 ### 安装
 
 ```bash
-cd cli && npm install && npm run build && npm link
-# 或 bun install && bun run build && bun link
+npm install -g kubepi-cli
+
+# 安装技能到指定 Agent
+kubepi add-skill kimi-code
+
+# 安装到全部支持的 Agent
+kubepi add-skill all
+
+# 或导出到自定义目录
+kubepi add-skill --output ./skills
 ```
 
-构建产物为 `dist/index.js`，`bin/kubepi.js` 为入口。也可以不 link，直接 `node bin/kubepi.js` 使用。
+支持的 Agent：`claude-code`、`cursor`、`cherry-studio`、`codex`、`opencode`、`vscode`、`antigravity`、`gemini`、`kimi-code`、`zcode`。
+
+源码开发方式：`cd cli && npm install && npm run build && npm link`，或 `bun install && bun run build && bun link`。构建产物为 `dist/index.js`，`bin/kubepi.js` 为入口。也可以不 link，直接 `node bin/kubepi.js` 使用。
 
 ### 认证
 

@@ -1,6 +1,6 @@
 {
   "name": "kubepi-cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "KubePi 命令行工具，支持在终端里访问和操作 KubePi（Kubernetes 多集群管理面板），对 AI Agents 友好。",
   "type": "module",
   "license": "GPL-3.0",
