@@ -139,8 +139,15 @@ export function registerChart(program: Parameters<typeof registerModule>[0]): vo
       {
         name: 'installed',
         description: 'list installed releases (apps) in the cluster',
-        run: async (_args, opts, auth) => api.get(auth, `/apps/${encodeURIComponent(String(opts.cluster))}/search`),
-        printColumns: ['name', 'namespace', 'chart', 'status'],
+        run: async (_args, opts, auth) => {
+          const query = opts.page || opts.pageSize ? { pageNum: str(opts.page) ?? '1', pageSize: str(opts.pageSize) ?? '10' } : undefined;
+          const res = await api.get(auth, `/apps/${encodeURIComponent(String(opts.cluster))}/search`, query);
+          if (res && typeof res === 'object' && !Array.isArray(res) && Array.isArray((res as { items?: unknown[] }).items)) {
+            return (res as { items: unknown[] }).items;
+          }
+          return res;
+        },
+        printColumns: ['name', 'namespace', 'chart.metadata.name', 'chart.metadata.version', 'info.status'],
       },
       {
         name: 'uninstall <name>',

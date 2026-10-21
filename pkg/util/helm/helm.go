@@ -105,6 +105,16 @@ func NewClient(config *Config) (*Client, error) {
 	return &client, nil
 }
 
+// pageOffset converts a 1-based page number into helm's 0-based list offset.
+// helm's List.Run slices results[offset:] without guarding negative values,
+// so an absent page number (0) must map to 0 rather than -1.
+func pageOffset(pageNum int) int {
+	if pageNum < 1 {
+		return 0
+	}
+	return pageNum - 1
+}
+
 func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int, error) {
 	client := action.NewList(c.actionConfig)
 	if c.Namespace == "" {
@@ -117,7 +127,7 @@ func (c Client) List(limit, offset int, pattern string) ([]*release.Release, int
 		return nil, 0, err
 	}
 	client.Limit = limit
-	client.Offset = offset - 1
+	client.Offset = pageOffset(offset)
 	if pattern != "" {
 		client.Filter = pattern
 	}
